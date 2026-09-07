@@ -28,7 +28,7 @@ jobs:
       - name: שמירת המקורות בריפו (גיבוי)
         run: |
           git config user.name "leokmei-watcher"; git config user.email "watcher@users.noreply.github.com"
-          git add -A input site && (git commit -m "עדכון אוטומטי $(date -u +'%d.%m.%Y %H:%M')" && git push) || echo "אין שינוי"
+          git add -A input && (git commit -m "עדכון אוטומטי $(date -u +'%d.%m.%Y %H:%M')" && git push) || echo "אין שינוי"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with: { path: site }

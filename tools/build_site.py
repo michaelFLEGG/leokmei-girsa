@@ -131,12 +131,12 @@ def build(json_path, out_path, masechet):
   .main{text-align:justify;text-align-last:right}
   .main p{margin:0} .main p.sp{margin-top:.28em} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
   .dafmark{display:block;font-family:'VilnaG','Vilna',serif;font-size:1.3em;line-height:1;color:var(--red);margin-top:.25em}
-  .anchor{display:inline-block;font-family:'Vilna',serif;font-weight:900;font-size:.64em;line-height:1.6;
-          color:var(--grey);white-space:nowrap;max-width:calc(var(--rail) - .4em);overflow:hidden;text-overflow:ellipsis}
+  .anchor{display:inline-block;font-family:'Vilna',serif;font-weight:900;font-size:.9em;line-height:1.18;
+          color:#5a5044;white-space:nowrap;max-width:calc(var(--rail) - .4em);overflow:hidden;text-overflow:ellipsis}
   .mlabel{font-size:.55em;color:#8a7d66}
-  .mishna{background:#eeeae1;padding:.08em .12em;margin:.12em 0;font-family:'Vilna',serif;font-weight:700;font-size:.82em;border-right:.1em solid var(--gold)}
-  .dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;font-size:1.45em;margin:.14em 0 .05em}
-  .nose{text-align:center;text-align-last:center;font-weight:700;font-size:.8em;letter-spacing:.03em;margin-top:.4em;color:#4a4137}
+  .mishna{background:#eeeae1;padding:.1em .15em;margin:.15em 0;font-family:'Vilna',serif;font-weight:700;font-size:.97em;line-height:1.12;border-right:.1em solid var(--gold)}
+  .dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;font-size:1.18em;line-height:1.15;margin:.3em 0 .08em}
+  .nose{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;font-size:1.02em;line-height:1.15;margin-top:.45em;color:var(--ink)}
   .hatz{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;font-size:.82em;letter-spacing:.35em;color:#8a7d66;margin:.3em 0}
   .perek-num .main{font-family:'Franknatan','Vilna',serif;color:var(--red);font-size:1.45em;line-height:1.1}
   .perek-name .main{font-family:'Franknatan','Vilna',serif;color:#8a7d66;font-size:1.09em}
@@ -144,8 +144,8 @@ def build(json_path, out_path, masechet):
   .perek-start .main{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;font-size:1.09em}
   .hadran .main{text-align:center;text-align-last:center;font-size:1.09em;margin:.8em 0}
   i{font-style:normal}
-  .am{font-family:'Vilna',serif;font-weight:400;font-size:.72em}
-  .ps{font-family:'Vilna',serif;font-weight:700;font-size:.8em;color:#2e3f6b} body.hc .ps{color:#000;text-decoration:underline}
+  .am{font-family:'Vilna',serif;font-weight:400;font-size:.88em}
+  .ps{font-family:'Vilna',serif;font-weight:700;font-size:.9em;color:#2e3f6b} body.hc .ps{color:#000;text-decoration:underline}
   .kt{font-weight:700} .hs{font-size:.82em;color:#4a4137} .ot{font-weight:700;font-size:.8em} .tn{font-weight:900} .ns{font-weight:700} .b{font-weight:700}
   .u .main:hover{background:rgba(201,162,74,.14)} .hit{background:rgba(201,162,74,.3)}
   mark{background:#ffe27a;color:inherit}
@@ -162,7 +162,7 @@ def build(json_path, out_path, masechet):
   @media(max-width:760px){:root{--fs:20px}
     .flow{column-width:auto;column-count:1;column-rule:0;width:auto;padding:.7em .8em}
     .row{grid-template-columns:1fr} .rail{text-align:right;padding:0}
-    .anchor{max-width:none;display:block;margin-top:.2em;font-size:.7em}
+    .anchor{max-width:none;display:block;margin-top:.2em;font-size:.82em;color:#4a4137}
     .dafmark{display:inline-block;margin-left:.5em}}
   '''
 

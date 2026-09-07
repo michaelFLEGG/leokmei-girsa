@@ -97,69 +97,124 @@ def build(json_path, out_path, masechet):
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 
   CSS=r'''
-  @font-face{font-family:'Vilna';src:url(fonts/BA_TM_Vilna_ExtraBold.ttf);font-weight:900}
-  @font-face{font-family:'Vilna';src:url(fonts/BA_Vilna_Bold.ttf);font-weight:700}
-  @font-face{font-family:'Frank';src:url(fonts/FrankRuehl.ttf);font-weight:400}
-  :root{--ink:#1d1a16;--paper:#fbf8f1;--grey:#767171;--gold:#c9a24a;--rail:20mm;--body:60mm;--zoom:2.1;--fs:9pt;--lh:11pt}
+  @font-face{font-family:'Frank';src:url(fonts/frank.ttf);font-weight:400;font-display:swap}
+  @font-face{font-family:'Vilna';src:url(fonts/vilna-r.otf);font-weight:400;font-display:swap}
+  @font-face{font-family:'Vilna';src:url(fonts/vilna-m.ttf);font-weight:500;font-display:swap}
+  @font-face{font-family:'Vilna';src:url(fonts/vilna-b.otf);font-weight:700;font-display:swap}
+  @font-face{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900;font-display:swap}
+  @font-face{font-family:'VilnaG';src:url(fonts/vilna-g.ttf);font-display:swap}
+  @font-face{font-family:'Franknatan';src:url(fonts/franknatan.otf);font-display:swap}
+  @font-face{font-family:'Leukmey';src:url(fonts/leukmey.otf);font-display:swap}
+  /* היחס בין גודל האות לרוחב השורה נעול. כל המידות נמדדות ב-em של גוף הטקסט:
+     עמוד הספר הוא 60 מ"מ טקסט ב-11 נקודות, כלומר 15.46em, ורצועת הדף 5.15em.
+     לכן הגדלה והקטנה משנות הכל יחד, ושבירת השורות אינה זזה לעולם. */
+  :root{--fs:24px;--measure:15.46em;--rail:5.15em;--gut:2.57em;
+        --ink:#1d1a16;--paper:#fbf8f1;--grey:#767171;--gold:#c9a24a;--red:#a83c2f;--bar:46px}
   *{box-sizing:border-box}
-  html,body{margin:0;background:#e9e4d8;color:var(--ink);font-family:'Frank','Frank Ruhl Libre',FrankRuehl,serif}
-  body.hc{--ink:#000;--paper:#fff;--grey:#333;background:#ddd}
-  .bar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 12px;background:#2b2620;color:#f1ead9;font-size:14px}
-  .bar b{font-weight:500} .bar .sp{flex:1}
+  html,body{margin:0;height:100%;background:#e9e4d8;color:var(--ink);font-family:'Frank','Frank Ruhl Libre',serif;overflow:hidden}
+  body.hc{--ink:#000;--paper:#fff;--grey:#333}
+  .bar{position:relative;z-index:5;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 12px;background:#2b2620;color:#f1ead9;font-size:14px;height:var(--bar)}
+  .bar .nm{font-family:'Leukmey','Vilna',serif;font-size:20px;line-height:1}
+  .bar .sp{flex:1}
   .bar button,.bar select,.bar input{font:inherit;background:#4a4137;color:#f1ead9;border:0;border-radius:4px;padding:3px 9px;cursor:pointer}
   .bar input{cursor:text;width:150px} .bar button.on{background:var(--gold);color:#2b2620}
-  .bar button[title]{position:relative}
   .nav{display:flex;gap:4px;align-items:center}
-  .nav .daf{min-width:56px;text-align:center;font-weight:700;font-size:16px}
-  .stage{display:flex;justify-content:center;padding:22px 12px 60px}
-  .sheet{width:90mm;min-height:130mm;background:var(--paper);box-shadow:0 2px 20px rgba(0,0,0,.25);padding:5mm 15mm 6mm 10mm;transform:scale(var(--zoom));transform-origin:top center;position:relative;margin-bottom:calc(130mm * (var(--zoom) - 1))}
-  .head{display:flex;justify-content:space-between;font-size:6pt;letter-spacing:.06em;color:#5a5044;border-bottom:.2pt solid #b9ad99;padding-bottom:1mm;margin-bottom:1.5mm}
-  .row{display:grid;grid-template-columns:var(--rail) 1fr;width:calc(var(--rail) + var(--body));margin-right:calc(-1 * var(--rail))}
-  .rail{text-align:left;padding-left:1.4mm}
-  .main{font-size:var(--fs);line-height:var(--lh);text-align:justify;text-align-last:right}
-  .main p{margin:0} .main p.sp{margin-top:3pt} .main p.nk{font-size:calc(var(--fs) + 1pt)} .main p.hr{font-size:7pt;line-height:8pt;color:#4a4137}
-  .anchor{display:inline-block;font-family:'Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:7pt;line-height:var(--lh);color:var(--grey);white-space:nowrap;max-width:20mm;overflow:hidden;text-overflow:ellipsis}
-  .mlabel{font-size:5.5pt;color:#8a7d66;line-height:var(--lh)}
-  .mishna{background:#eeeae1;padding:.6mm 1mm;margin:1mm 0;font-family:'Vilna','David Libre',serif;font-weight:700;border-right:1.2pt solid var(--gold)}
-  .dh{text-align:center;text-align-last:center;font-family:'Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:10pt;margin:1.2mm 0 .4mm}
-  .nose{text-align:center;text-align-last:center;font-family:'Vilna','David Libre',serif;font-weight:900;margin-top:3pt;font-size:var(--fs)}
-  .hatz{text-align:center;text-align-last:center;letter-spacing:.3em;color:#8a7d66;line-height:9pt;margin:1mm 0}
-  .perek-num .main{color:#a83c2f;font-size:5pt;line-height:6pt;font-weight:700} .perek-range .main{color:#a83c2f;font-size:6pt;line-height:7pt}
-  .perek-name .main{color:#bfb4a2;font-family:'Vilna',serif;font-weight:900;font-size:8pt;text-align:right} .perek-start .main{text-align:center;text-align-last:center;font-weight:700}
-  .hadran .main{text-align:center;text-align-last:center;font-weight:500;font-size:10pt;margin:3mm 0}
-  i{font-style:normal} .am{font-weight:700} .ps{font-family:'Vilna','David Libre',serif;font-weight:700;color:#2e3f6b} body.hc .ps{color:#000;text-decoration:underline}
-  .kt{font-weight:700} .hs{font-size:7pt;color:#4a4137} .ot{font-weight:700;font-size:6.5pt} .tn{font-weight:900} .ns{font-weight:700} .b{font-weight:700}
-  .u .main:hover{background:rgba(201,162,74,.14)} .u:target .main,.hit{background:rgba(201,162,74,.28)}
+  .nav .daf{min-width:52px;text-align:center;font-family:'VilnaG','Vilna',serif;font-size:17px}
+  .flow{font-size:var(--fs);line-height:1.06;height:calc(100vh - var(--bar));background:var(--paper);
+        padding:.9em var(--gut);overflow:auto;scroll-behavior:smooth;
+        column-width:calc(var(--rail) + var(--measure));column-gap:calc(var(--gut) * 2);
+        column-fill:auto;column-rule:1px solid #e6ddc9}
+  .flow.vert{column-width:auto;column-count:1;column-rule:0;
+             width:calc(var(--rail) + var(--measure) + var(--gut) * 2);margin:0 auto}
+  .row{display:grid;grid-template-columns:var(--rail) var(--measure);break-inside:avoid-column}
+  .rail{text-align:left;padding-left:.36em}
+  .main{text-align:justify;text-align-last:right}
+  .main p{margin:0} .main p.sp{margin-top:.28em} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
+  .dafmark{display:block;font-family:'VilnaG','Vilna',serif;font-size:1.3em;line-height:1;color:var(--red);margin-top:.25em}
+  .anchor{display:inline-block;font-family:'Vilna',serif;font-weight:900;font-size:.64em;line-height:1.6;
+          color:var(--grey);white-space:nowrap;max-width:calc(var(--rail) - .4em);overflow:hidden;text-overflow:ellipsis}
+  .mlabel{font-size:.55em;color:#8a7d66}
+  .mishna{background:#eeeae1;padding:.08em .12em;margin:.12em 0;font-family:'Vilna',serif;font-weight:700;font-size:.82em;border-right:.1em solid var(--gold)}
+  .dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;font-size:1.45em;margin:.14em 0 .05em}
+  .nose{text-align:center;text-align-last:center;font-weight:700;font-size:.8em;letter-spacing:.03em;margin-top:.4em;color:#4a4137}
+  .hatz{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;font-size:.82em;letter-spacing:.35em;color:#8a7d66;margin:.3em 0}
+  .perek-num .main{font-family:'Franknatan','Vilna',serif;color:var(--red);font-size:1.45em;line-height:1.1}
+  .perek-name .main{font-family:'Franknatan','Vilna',serif;color:#8a7d66;font-size:1.09em}
+  .perek-range .main{color:var(--red);font-size:.73em}
+  .perek-start .main{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;font-size:1.09em}
+  .hadran .main{text-align:center;text-align-last:center;font-size:1.09em;margin:.8em 0}
+  i{font-style:normal}
+  .am{font-family:'Vilna',serif;font-weight:400;font-size:.72em}
+  .ps{font-family:'Vilna',serif;font-weight:700;font-size:.8em;color:#2e3f6b} body.hc .ps{color:#000;text-decoration:underline}
+  .kt{font-weight:700} .hs{font-size:.82em;color:#4a4137} .ot{font-weight:700;font-size:.8em} .tn{font-weight:900} .ns{font-weight:700} .b{font-weight:700}
+  .u .main:hover{background:rgba(201,162,74,.14)} .hit{background:rgba(201,162,74,.3)}
   mark{background:#ffe27a;color:inherit}
-  .panel{position:fixed;top:44px;right:0;bottom:0;width:min(420px,100vw);background:#fbf8f1;box-shadow:-2px 0 16px rgba(0,0,0,.25);overflow:auto;padding:14px 18px;z-index:6;display:none;font-size:15px;line-height:1.6}
+  .panel{position:fixed;top:var(--bar);right:0;bottom:0;width:min(420px,100vw);background:#fbf8f1;box-shadow:-2px 0 16px rgba(0,0,0,.25);overflow:auto;padding:14px 18px;z-index:6;display:none;font-size:15px;line-height:1.6}
   .panel.open{display:block} .panel h3{margin:12px 0 4px;font-size:15px;color:#5a5044;font-weight:500;border-bottom:1px solid #d9d1bd}
-  .panel a{color:var(--ink);text-decoration:none;display:block;padding:2px 0;cursor:pointer} .panel a:hover{color:#a83c2f}
+  .panel a{color:var(--ink);text-decoration:none;display:block;padding:2px 0;cursor:pointer} .panel a:hover{color:var(--red)}
   .panel .x{float:left;background:none;border:0;font-size:22px;cursor:pointer;color:#5a5044}
   .panel .n{color:#8a7d66;font-size:12px} .res{padding:5px 0;border-bottom:1px dotted #d9d1bd} .res small{color:#8a7d66}
   .tag{display:inline-block;background:#eeeae1;border-radius:3px;padding:0 6px;margin:2px;font-size:13px}
   .chips{display:flex;flex-wrap:wrap}
-  .foot{position:fixed;bottom:0;left:0;right:0;background:#2b2620;color:#cfc4ad;font-size:12px;padding:5px 12px;text-align:center}
-  @media print{.bar,.panel,.foot{display:none} .stage{padding:0;display:block} .sheet{transform:none;box-shadow:none;margin:0} @page{size:90mm 130mm;margin:0}}
-  @media(max-width:700px){:root{--zoom:1} .stage{padding:8px 0 70px} .sheet{width:100vw;min-height:0;margin-bottom:0;padding:4mm 5mm} .row{grid-template-columns:1fr;margin-right:0;width:auto} .rail{text-align:right;padding:0} .anchor{max-width:none;display:block;margin-top:2pt} .main{font-size:12pt;line-height:17pt} .dh{font-size:14pt} .bar input{width:110px} [data-z]{display:none}}
+  @media print{.bar,.panel{display:none} html,body{overflow:visible;background:#fff}
+    .flow{height:auto;overflow:visible}
+    @page{size:90mm 260mm;margin:0}}
+  @media(max-width:760px){:root{--fs:20px}
+    .flow{column-width:auto;column-count:1;column-rule:0;width:auto;padding:.7em .8em}
+    .row{grid-template-columns:1fr} .rail{text-align:right;padding:0}
+    .anchor{max-width:none;display:block;margin-top:.2em;font-size:.7em}
+    .dafmark{display:inline-block;margin-left:.5em}}
   '''
 
   JS=r'''
-  const D=DATA;let cur=0;const $=s=>document.querySelector(s);
+  const D=DATA;const $=s=>document.querySelector(s);
   const params=new URLSearchParams(location.hash.slice(1));
   function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
-  function render(i,q){cur=Math.max(0,Math.min(D.pages.length-1,i));const p=D.pages[cur];
-   let h=`<div class="head"><span>${D.masechet}</span><span>${esc(p.perekName)} · ${esc(p.perek)}</span><span>${esc(p.daf)}</span></div>`;
-   for(const u of p.units){
-    if(u.k==='u'){h+=`<div class="row u" id="u${u.id}"><div class="rail"><span class="anchor">${u.a}</span></div><div class="main">${u.l.map(l=>`<p class="${l[0]}">${l[1]}</p>`).join('')}</div></div>`}
-    else if(u.k==='m'){h+=`<div class="row"><div class="rail"><span class="mlabel">משנה</span></div><div class="main mishna">${u.l.map(l=>`<p>${l[1]}</p>`).join('')}</div></div>`}
-    else if(u.k==='hatz'){h+=`<div class="row"><div class="rail"></div><div class="main hatz">* * *</div></div>`}
-    else h+=`<div class="row ${u.k}"><div class="rail"></div><div class="main ${u.k==='dh'||u.k==='nose'?u.k:''}">${u.a}</div></div>`}
-   $('#sheet').innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;$('#dafsel').value=cur;$('#curdaf').textContent=p.daf;$('#peresel').value=p.perek;
-   document.title=`לאוקמי גירסא · ${D.masechet} ${p.daf}`;location.hash=`daf=${cur}`;window.scrollTo(0,0)}
+
+  /* מקטע = פרק. מעבר עמוד קיים רק בין מקטעים, ובתוך המקטע הטקסט רץ ברצף. */
+  const SEC=[];
+  D.pages.forEach((p,i)=>{const L=SEC[SEC.length-1];
+    if(!L||L.perek!==p.perek||L.perekName!==p.perekName)SEC.push({perek:p.perek,perekName:p.perekName,from:i,to:i});
+    else L.to=i});
+  function secOf(pi){for(let i=0;i<SEC.length;i++)if(pi>=SEC[i].from&&pi<=SEC[i].to)return i;return 0}
+  let cur=0;
+
+  /* כיוון הגלילה בטורים מימין לשמאל אינו זהה בכל הדפדפנים, ולכן הוא נמדד ולא מנוחש */
+  let SGN=-1;
+  (function(){const t=document.createElement('div');t.style.cssText='position:absolute;top:-999px;width:60px;height:10px;overflow:auto;direction:rtl';
+    t.innerHTML='<div style="width:300px;height:4px"></div>';document.body.appendChild(t);t.scrollLeft=2;SGN=t.scrollLeft>0?1:-1;t.remove()})();
+
+  function unitHTML(u,daf,pi){
+    const mk=daf!=null?`<b class="dafmark" id="d${pi}">${esc(daf)}</b>`:'';
+    if(u.k==='u')return `<div class="row u" id="u${u.id}"><div class="rail">${mk}<span class="anchor">${u.a}</span></div><div class="main">${u.l.map(l=>`<p class="${l[0]}">${l[1]}</p>`).join('')}</div></div>`;
+    if(u.k==='m')return `<div class="row" id="u${u.id}"><div class="rail">${mk}<span class="mlabel">משנה</span></div><div class="main mishna">${u.l.map(l=>`<p>${l[1]}</p>`).join('')}</div></div>`;
+    if(u.k==='hatz')return `<div class="row" id="u${u.id}"><div class="rail">${mk}</div><div class="main hatz">* * *</div></div>`;
+    return `<div class="row ${u.k}" id="u${u.id}"><div class="rail">${mk}</div><div class="main ${u.k==='dh'||u.k==='nose'?u.k:''}">${u.a}</div></div>`;
+  }
+  function render(si,q){
+    cur=Math.max(0,Math.min(SEC.length-1,si));const s=SEC[cur];let h='';
+    for(let pi=s.from;pi<=s.to;pi++){const p=D.pages[pi];
+      if(!p.units.length){h+=`<div class="row"><div class="rail"><b class="dafmark" id="d${pi}">${esc(p.daf)}</b></div><div class="main"></div></div>`;continue}
+      let first=true;
+      for(const u of p.units){h+=unitHTML(u,first?p.daf:null,first?pi:null);first=false}}
+    const f=$('#flow');f.innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;
+    f.scrollTop=0;f.scrollLeft=0;
+    $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].daf;$('#dafsel').value=s.from;
+    document.title=`לאוקמי גירסא · ${D.masechet} · ${s.perekName||s.perek||D.pages[s.from].daf}`;
+    location.hash=`p=${cur}`;
+  }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
-  function go(d){render(cur+d)}
-  function zoom(v){document.documentElement.style.setProperty('--zoom',v);document.querySelectorAll('[data-z]').forEach(b=>b.classList.toggle('on',+b.dataset.z===v))}
-  function fs(d){const r=document.documentElement,f=parseFloat(getComputedStyle(r).getPropertyValue('--fs'))+d;r.style.setProperty('--fs',f+'pt');r.style.setProperty('--lh',(f+2)+'pt')}
+  function toDaf(pi){const si=secOf(pi);if(si!==cur)render(si);
+    setTimeout(()=>{const e=$('#d'+pi);if(e)e.scrollIntoView({inline:'start',block:'nearest'});$('#curdaf').textContent=D.pages[pi].daf;$('#dafsel').value=pi},20)}
+  function goDaf(d){const now=+$('#dafsel').value||0;toDaf(Math.max(0,Math.min(D.pages.length-1,now+d)))}
+  function goScreen(d){const f=$('#flow');
+    if(f.classList.contains('vert'))f.scrollBy({top:d*f.clientHeight*.9});else f.scrollBy({left:d*SGN*f.clientWidth})}
+  function fs(d){const r=document.documentElement;
+    const v=Math.max(12,Math.min(60,parseFloat(getComputedStyle(r).getPropertyValue('--fs'))+d));setFs(v)}
+  function setFs(v){document.documentElement.style.setProperty('--fs',v+'px');localStorage.setItem('lg-fs',v);sizeBtns(v)}
+  function sizeBtns(v){document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',+b.dataset.fs===+v))}
+  function vert(){const v=$('#flow').classList.toggle('vert');
+    localStorage.setItem('lg-vert',v?'1':'');$('#vbtn').classList.toggle('on',v)}
   function panel(id){const p=$('#'+id),o=p.classList.contains('open');document.querySelectorAll('.panel').forEach(x=>x.classList.remove('open'));if(!o)p.classList.add('open')}
   function dec(s){return s.replace(/&quot;/g,'"').replace(/&#x27;/g,"'").replace(/&amp;/g,'&')}
   function txt(u){return dec(u.a.replace(/<[^>]+>/g,'')+' '+u.l.map(l=>l[1].replace(/<[^>]+>/g,'')).join(' '))}
@@ -168,39 +223,58 @@ def build(json_path, out_path, masechet):
    out.innerHTML=`<div class="n">${n} תוצאות</div>`+res.map((r,i)=>`<div class="res"><a onclick="jumpR(${i})"><small>${r.daf}</small> …${esc(r.s).replace(esc(q),'<mark>'+esc(q)+'</mark>')}…</a></div>`).join('');
    $('#search').classList.add('open')}
   let RES=[],LASTQ='';function jumpR(i){jump(RES[i].pi,RES[i].id,LASTQ)}
-  function jump(pi,id,q){render(pi,q);setTimeout(()=>{const e=$('#u'+id);if(e){e.classList.add('hit');e.scrollIntoView({block:'center'})}},50)}
+  function jump(pi,id,q){const si=secOf(pi);render(si,q);
+    setTimeout(()=>{const e=$('#u'+id);if(e){e.classList.add('hit');e.scrollIntoView({inline:'center',block:'nearest'})}$('#dafsel').value=pi;$('#curdaf').textContent=D.pages[pi].daf},20)}
   function amq(i){$('#q').value=D.am[i][0];search(D.am[i][0])}
-  function build(){const ds=$('#dafsel');D.pages.forEach((p,i)=>ds.add(new Option(p.daf,i)));
-   const ps=$('#peresel'),seen={};D.pages.forEach((p,i)=>{if(!seen[p.perek]){seen[p.perek]=1;ps.add(new Option(p.perek+' · '+p.perekName,p.perek))}});
-   ps.onchange=()=>render(D.pages.findIndex(p=>p.perek===ps.value));ds.onchange=()=>render(+ds.value);
-   let t='',lp='';for(const [pi,id,s] of D.toc){const p=D.pages[pi];if(p.perek!==lp){lp=p.perek;t+=`<h3>${esc(p.perek)} · ${esc(p.perekName)}</h3>`}t+=`<a onclick="jump(${pi},${id})"><small class="n">${p.daf}</small> ${esc(s)}</a>`}$('#tocb').innerHTML=t;
+  function build(){
+   const ds=$('#dafsel');D.pages.forEach((p,i)=>ds.add(new Option(p.daf,i)));ds.onchange=()=>toDaf(+ds.value);
+   const ps=$('#peresel');SEC.forEach((s,i)=>ps.add(new Option((s.perek||'רצף')+(s.perekName?' · '+s.perekName:''),i)));ps.onchange=()=>render(+ps.value);
+   let t='',lp=-1;for(const [pi,id,s] of D.toc){const si=secOf(pi);
+     if(si!==lp){lp=si;t+=`<h3>${esc(SEC[si].perek||'')} ${esc(SEC[si].perekName||'')}</h3>`}
+     t+=`<a onclick="jump(${pi},${id})"><small class="n">${esc(D.pages[pi].daf)}</small> ${esc(s)}</a>`}
+   $('#tocb').innerHTML=t;
    $('#amb').innerHTML=`<div class="n">${D.nAm} אזכורי אמוראים מסומנים בקובץ; ${D.nPsk} ציטוטי פסוקים שונים</div><div class="chips">`+D.am.map((a,i)=>`<a class="tag" onclick="amq(${i})">${esc(a[0])} <span class="n">${a[1]}</span></a>`).join('')+'</div>';
    $('#qab').innerHTML=D.qa.length?D.qa.map(q=>`<div class="res"><b>${q[0]}</b>: ${esc(q[1])}</div>`).join(''):'לא נמצאו חריגות';
-   document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='ArrowLeft'){go(1);e.preventDefault()}if(e.ctrlKey&&e.key==='ArrowRight'){go(-1);e.preventDefault()}if(e.ctrlKey&&(e.key==='='||e.key==='+')){fs(1);e.preventDefault()}if(e.ctrlKey&&e.key==='-'){fs(-1);e.preventDefault()}if(e.key==='Escape')document.querySelectorAll('.panel').forEach(x=>x.classList.remove('open'))});
-   render(+(params.get('daf')||0))}
+   const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(24);
+   if(localStorage.getItem('lg-vert')){$('#flow').classList.add('vert');$('#vbtn').classList.add('on')}
+   $('#flow').addEventListener('wheel',e=>{const f=$('#flow');if(f.classList.contains('vert'))return;
+     if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){f.scrollLeft+=SGN*e.deltaY;e.preventDefault()}},{passive:false});
+   document.addEventListener('keydown',e=>{
+     if(e.target.tagName==='INPUT')return;
+     if(e.key==='PageDown'||e.key===' '){goScreen(1);e.preventDefault()}
+     if(e.key==='PageUp'){goScreen(-1);e.preventDefault()}
+     if(e.ctrlKey&&e.key==='ArrowLeft'){goDaf(1);e.preventDefault()}
+     if(e.ctrlKey&&e.key==='ArrowRight'){goDaf(-1);e.preventDefault()}
+     if(e.ctrlKey&&(e.key==='='||e.key==='+')){fs(2);e.preventDefault()}
+     if(e.ctrlKey&&e.key==='-'){fs(-2);e.preventDefault()}
+     if(e.key==='Escape')document.querySelectorAll('.panel').forEach(x=>x.classList.remove('open'))});
+   render(+(params.get('p')||0));
+  }
   build();
   '''
 
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=David+Libre:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>{CSS}</style></head><body>
-  <div class="bar"><a href="index.html" style="color:inherit;text-decoration:none"><b>לאוקמי גירסא</b></a> <span>{masechet}</span>
+  <div class="bar"><a href="index.html" style="color:inherit;text-decoration:none"><span class="nm">לאוקמי גירסא</span></a> <span>{masechet}</span>
   <select id="peresel" title="פרק"></select>
-  <div class="nav"><button onclick="go(-1)" title="הקודם (Ctrl+חץ ימין)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="go(1)" title="הבא (Ctrl+חץ שמאל)">‹ הבא</button></div>
+  <div class="nav"><button onclick="goDaf(-1)" title="דף קודם (Ctrl+חץ ימין)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="goDaf(1)" title="דף הבא (Ctrl+חץ שמאל)">‹ הבא</button></div>
   <select id="dafsel" title="דף"></select>
   <input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)">
   <span class="sp"></span>
   <button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>
-  <button data-z="1" onclick="zoom(1)">גודל ספר</button><button data-z="2.1" class="on" onclick="zoom(2.1)">מסך</button><button data-z="3" onclick="zoom(3)">גדול</button>
-  <button onclick="fs(1)" title="Ctrl+=">א+</button><button onclick="fs(-1)" title="Ctrl+-">א-</button><button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="window.print()">הדפסה</button></div>
+  <button id="vbtn" onclick="vert()" title="טור אחד במקום טורים">טור אחד</button>
+  <button data-fs="18" onclick="setFs(18)">קטן</button><button data-fs="24" onclick="setFs(24)">רגיל</button><button data-fs="32" onclick="setFs(32)">גדול</button>
+  <button onclick="fs(2)" title="Ctrl+=">א+</button><button onclick="fs(-2)" title="Ctrl+-">א-</button>
+  <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="window.print()">הדפסה</button></div>
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
   <div class="panel" id="toc"><button class="x" onclick="panel('toc')">×</button><h3>תוכן העניינים - נושאי הסוגיות</h3><div id="tocb"></div></div>
   <div class="panel" id="am"><button class="x" onclick="panel('am')">×</button><h3>אמוראים ותנאים - לפי הסימון בקובץ</h3><div id="amb"></div></div>
   <div class="panel" id="qa"><button class="x" onclick="panel('qa')">×</button><h3>בקרת הקובץ - חריגות שנמצאו בהמרה</h3><div id="qab"></div></div>
-  <div class="stage"><div class="sheet" id="sheet"></div></div>
-  <div class="foot">לאוקמי גירסא · קיצור התלמוד הבבלי · מסכת {masechet} · {len(pages)} עמודים · נבנה אוטומטית מקובץ הוורד</div>
+  <div class="flow" id="flow"></div>
   <script>const DATA={J};</script><script>{JS}</script></body></html>'''
+
   open(out_path,'w',encoding='utf-8').write(page)
   return {'pages':len(pages),'toc':len(toc),'qa':qa}
 

@@ -3,6 +3,9 @@ from lxml import etree
 ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
 W = '{%s}' % ns['w']
 
+# שמות סגנון חלופיים שמשמעותם זהה. "דף בצד מעודכן" מופיע בקובץ סוכה בלבד.
+STYLE_ALIAS = {'דף בצד מעודכן': 'דף בצד'}
+
 def convert(path):
     z = zipfile.ZipFile(path)
     doc = etree.fromstring(z.read('word/document.xml'))
@@ -17,6 +20,7 @@ def convert(path):
     for p in doc.find('w:body', ns).findall('w:p', ns):
         ps = p.find('w:pPr/w:pStyle', ns)
         style = names.get(ps.get(W + 'val'), ps.get(W + 'val')) if ps is not None else 'Normal'
+        style = STYLE_ALIAS.get(style, style)
         if style.startswith('toc'):
             continue
         runs = []

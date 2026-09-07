@@ -20,32 +20,119 @@ LATIN = ['berakhot','shabbat','eruvin','pesachim','shekalim','yoma','sukkah','be
          'zevachim','menachot','chullin','bekhorot','arakhin','temurah','keritot','meilah','tamid','niddah']
 SLUG = dict(zip(ALL, LATIN))
 
+# הגופנים שקובצי הוורד מבקשים, ושם הקובץ שהם מועתקים אליו באתר.
+# ההתאמה נעשית לפי המפתח הארוך ביותר שנמצא בשם הקובץ, כדי ש"Franknatan" לא ייחשב "frank".
 FONT_MAP = {'vilna-xb.otf': ['ExtraBold'], 'vilna-b.otf': ['Vilna-Bold', 'Vilna Bold'], 'vilna-m.ttf': ['Medium'],
-            'vilna-r.otf': ['Vilna Regular', 'vilna-regular'], 'frank.ttf': ['frank'], 'franknatan.otf': ['Franknatan'], 'leukmey.otf': ['Leukmey']}
+            'vilna-r.otf': ['Vilna Regular', 'vilna-regular'], 'vilna-g.ttf': ['DBSVILNA'],
+            'frank.ttf': ['frank.ttf', 'FrankRuehl'], 'franknatan.otf': ['Franknatan'], 'leukmey.otf': ['Leukmey']}
+
+GEM = {'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,'ל':30,'מ':40,
+       'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400}
+
+def daf_key(d):
+    """מפתח מספרי לציון דף: גימטריה כפול שתיים, ועוד אחד לעמוד ב. זהה לחישוב שב-build_site."""
+    if not d: return None
+    t = d.strip()
+    amud = 1 if t.endswith(':') else 0
+    t = t.rstrip('.:').replace('"', '').replace("'", '').replace('\u05f4', '').replace('\u05f3', '').strip()
+    n = sum(GEM.get(c, 0) for c in t)
+    return n * 2 + amud if n else None
+
+# קיצורי מסכת כפי שהם מופיעים בשמות הקבצים
+ABBR = {'בבא קמא': ["ב''ק", 'ב"ק', 'ב\u05f4ק'],
+        'בבא מציעא': ["ב''מ", 'ב"מ', 'ב\u05f4מ'],
+        'בבא בתרא': ["ב''ב", 'ב"ב', 'ב\u05f4ב'],
+        'סנהדרין': ["סנה'", 'סנה\u05f3'],
+        'עבודה זרה': ["ע''ז", 'ע"ז', 'ע\u05f4ז'],
+        'ראש השנה': ["ר''ה", 'ר"ה', 'ר\u05f4ה'],
+        'מועד קטן': ["מו''ק", 'מו"ק', 'מו\u05f4ק']}
+
+# מסכת שנבנית משני קובצי מקור. לכל חלק: סימן זיהוי בשם הקובץ, ומאיזה מפתח דף עד איזה.
+# סנהדרין: הקובץ הראשון מוגה עד סוף דף סח. (לפני פרק בן סורר), והשני נוטל משם ועד סוף המסכת.
+MERGE = {'סנהדרין': [('סנהדרין עד בן סורר', None, 136),
+                     ("סנה'", 137, None)]}
 
 def masechet_of(filename):
     name = filename.replace('.docx', '')
     hits = [m for m in sorted(ALL, key=len, reverse=True) if m in name]
-    return hits[0] if hits else None
+    if hits:
+        return hits[0]
+    for m, keys in ABBR.items():
+        if any(k in name for k in keys):
+            return m
+    return None
+
+def merge_masechet(m, files, ddir):
+    """מאחד כמה קובצי מקור למסכת אחת לפי טווחי הדפים שנקבעו ב-MERGE.
+    בלי כלל איחוד אין ניחוש: נבנה הקובץ הגדול, והשאר מדווח בקול."""
+    plan = MERGE.get(m)
+    if not plan:
+        big = max(files, key=lambda f: os.path.getsize(os.path.join(ddir, f)))
+        print('אזהרה: יותר מקובץ אחד למסכת', m, 'ואין כלל איחוד. נבנה', big,
+              '| לא נכללו:', ', '.join(f for f in files if f != big))
+        return convert(os.path.join(ddir, big)), big
+    out, used = [], []
+    for sign, lo, hi in plan:
+        match = [f for f in files if sign in f]
+        if not match:
+            print('אזהרה: כלל האיחוד של', m, 'מחפש', sign, 'ולא נמצא קובץ מתאים'); continue
+        f = match[0]; used.append(f)
+        blocks = convert(os.path.join(ddir, f))
+        started, pending, last = False, [], None
+        for b in blocks:
+            k = daf_key(b['daf'])
+            if k is not None: last = k
+            k = k if k is not None else last   # ציון דף ריק יורש את מקומו, ואינו מפיל את מה שאחריו
+            if k is None:
+                keep = not out          # פתיח נלקח מן החלק הראשון בלבד
+            else:
+                keep = (lo is None or k >= lo) and (hi is None or k <= hi)
+            if not keep:
+                if b['style'] == 'פרק': pending = [b]
+                elif b['style'] == 'פרק שם': pending.append(b)
+                continue
+            if not started:             # החזרת כותרת הפרק שנחתכה יחד עם הפתיח
+                started = True
+                for pb in pending: out.append(dict(pb, i=len(out)))
+                pending = []
+            out.append(dict(b, i=len(out)))
+    for f in files:
+        if f not in used:
+            print('אזהרה: הקובץ', f, 'שייך למסכת', m, 'ואינו מכוסה בכלל האיחוד')
+    return out, ' + '.join(used)
 
 def main():
     # fonts
     fdir = os.path.join(IN, 'fonts')
     if os.path.isdir(fdir):
-        for f in os.listdir(fdir):
+        for f in sorted(os.listdir(fdir)):
+            if f.startswith('._'): continue
+            best = None
             for target, keys in FONT_MAP.items():
-                if any(k.lower() in f.lower() for k in keys) and not f.startswith('._'):
-                    shutil.copy(os.path.join(fdir, f), os.path.join(SITE, 'fonts', target))
+                for k in keys:
+                    if k.lower() in f.lower() and (best is None or len(k) > best[1]):
+                        best = (target, len(k))
+            if best:
+                shutil.copy(os.path.join(fdir, f), os.path.join(SITE, 'fonts', best[0]))
+        absent = [t for t in FONT_MAP if not os.path.exists(os.path.join(SITE, 'fonts', t))]
+        if absent: print('אזהרה: גופן חסר באתר:', ', '.join(absent))
     # masechtot
     built = {}
     ddir = os.path.join(IN, 'docx')
+    groups = {}
     for f in sorted(os.listdir(ddir)):
         if not f.endswith('.docx') or f.startswith('~$'): continue
         m = masechet_of(f)
         if not m:
             print('לא זוהתה מסכת:', f); continue
+        groups.setdefault(m, []).append(f)
+    for m in sorted(groups, key=ALL.index):
+        files = groups[m]
         try:
-            blocks = convert(os.path.join(ddir, f))
+            if len(files) == 1:
+                blocks = convert(os.path.join(ddir, files[0])); f = files[0]
+            else:
+                blocks, f = merge_masechet(m, files, ddir)
             jp = os.path.join(SITE, SLUG[m] + '.json')
             json.dump(blocks, open(jp, 'w', encoding='utf-8'), ensure_ascii=False)
             r = build(jp, os.path.join(SITE, SLUG[m] + '.html'), m)
@@ -53,7 +140,7 @@ def main():
             built[m] = {'file': f, 'pages': r['pages'], 'toc': r['toc'], 'qa': len(r['qa'])}
             print('נבנה', m, r['pages'], 'עמודים', len(r['qa']), 'חריגות')
         except Exception as e:
-            print('נכשל', f, repr(e))
+            print('נכשל', m, repr(e))
     # index
     now = datetime.datetime.now().strftime('%d.%m.%Y %H:%M')
     rows = ''
@@ -69,9 +156,9 @@ def main():
     idx = f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>לאוקמי גירסא · קיצור התלמוד הבבלי</title>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
-<style>@font-face{{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900}}@font-face{{font-family:'Frank';src:url(fonts/frank.ttf)}}
+<style>@font-face{{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900}}@font-face{{font-family:'Frank';src:url(fonts/frank.ttf)}}@font-face{{font-family:'Leukmey';src:url(fonts/leukmey.otf)}}
 body{{margin:0;background:#e9e4d8;color:#1d1a16;font-family:'Frank','Frank Ruhl Libre',serif}}
-header{{background:#2b2620;color:#f1ead9;padding:34px 20px 26px;text-align:center}} header h1{{font-family:'Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:44px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#cfc4ad;font-size:18px}}
+header{{background:#2b2620;color:#f1ead9;padding:34px 20px 26px;text-align:center}} header h1{{font-family:'Leukmey','Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#cfc4ad;font-size:18px}}
 main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500;font-size:20px;color:#5a5044;border-bottom:1px solid #c9bfa8;margin:26px 0 10px;padding-bottom:4px}}
 .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}}
 .m{{display:block;background:#f3eee2;border-radius:6px;padding:12px 14px;text-decoration:none;color:#8a7d66;border:1px solid #e0d8c4}} .m.on{{background:#fbf8f1;color:#1d1a16;border-color:#c9a24a;box-shadow:0 1px 4px rgba(0,0,0,.08)}} .m.on:hover{{background:#fff}}

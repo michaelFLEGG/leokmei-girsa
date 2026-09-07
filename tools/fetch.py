@@ -36,10 +36,17 @@ def download(file_id):
             data = get(url + '&confirm=' + m.group(1).decode())
     return data
 
-def sync(folder_id, fallback, dest, exts):
+def sync(folder_id, fallback, dest, exts, roster=None):
     os.makedirs(dest, exist_ok=True)
-    files = list_folder(folder_id) or fallback
+    listed = list_folder(folder_id)
+    files = listed or fallback
     changed = False
+    if listed and roster:
+        # רשימת השמות שבתיקייה עכשיו. קובץ שהמנהל שינה את שמו נשאר כגיבוי
+        # ואינו נמחק, אך הבנייה תדע להתעלם ממנו ולבנות מן הקובץ החי.
+        names = sorted(n for n in listed if n.lower().endswith(exts) and not n.startswith('._'))
+        if len(names) >= 5:
+            json.dump(names, open(roster, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     for name, fid in files.items():
         if not name.lower().endswith(exts) or name.startswith('._'):
             continue
@@ -55,6 +62,7 @@ def sync(folder_id, fallback, dest, exts):
     return changed
 
 if __name__ == '__main__':
-    c1 = sync(SRC['docx_folder'], SRC['fallback_files'], os.path.join(ROOT, 'input', 'docx'), ('.docx',))
+    c1 = sync(SRC['docx_folder'], SRC['fallback_files'], os.path.join(ROOT, 'input', 'docx'), ('.docx',),
+              roster=os.path.join(ROOT, 'input', 'current-docx.json'))
     c2 = sync(SRC['fonts_folder'], SRC['fallback_fonts'], os.path.join(ROOT, 'input', 'fonts'), ('.otf', '.ttf'))
     print('CHANGED' if (c1 or c2) else 'NOCHANGE')

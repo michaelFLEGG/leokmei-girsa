@@ -49,8 +49,38 @@ ABBR = {'בבא קמא': ["ב''ק", 'ב"ק', 'ב\u05f4ק'],
 
 # מסכת שנבנית משני קובצי מקור. לכל חלק: סימן זיהוי בשם הקובץ, ומאיזה מפתח דף עד איזה.
 # סנהדרין: הקובץ הראשון מוגה עד סוף דף סח. (לפני פרק בן סורר), והשני נוטל משם ועד סוף המסכת.
-MERGE = {'סנהדרין': [('סנהדרין עד בן סורר', None, 136),
-                     ("סנה'", 137, None)]}
+MERGE = {'סנהדרין': [('עד בן סורר', None, 136),
+                     ('עז.', 137, None)]}
+
+# קובץ אחד הנושא שתי מסכתות. החיתוך נמדד ואינו מנוחש: הוא נעשה במקום היחיד
+# שבו ציון הדף חוזר לתחילת המסכת. אם לא נמצאה נקודה כזאת, הקובץ נבנה כמסכת אחת.
+SPLIT = {("ע''ז הוריות", 'ע"ז הוריות', 'ע״ז הוריות'): ['עבודה זרה', 'הוריות']}
+
+def split_of(filename):
+    """מחזיר את רשימת המסכתות שבקובץ, אם שמו מסמן קובץ שתי מסכתות."""
+    for signs, ms in SPLIT.items():
+        if any(k in filename for k in signs):
+            return ms
+    return None
+
+
+def split_file(path, masechtot):
+    """חותך קובץ שתי מסכתות במקום שבו ציון הדף חוזר לתחילת המסכת.
+    מחזיר None אם מספר נקודות החיתוך אינו כמספר המסכתות פחות אחת."""
+    blocks = convert(path)
+    cuts, prev = [], None
+    for b in blocks:
+        k = daf_key(b['daf'])
+        if k is None: continue
+        if prev is not None and k <= 6 and prev - k > 20:
+            cuts.append(b['i'])
+        prev = k
+    if len(cuts) != len(masechtot) - 1:
+        return None
+    bounds = [0] + cuts + [len(blocks)]
+    return [(m, [dict(b, i=j) for j, b in enumerate(blocks[bounds[n]:bounds[n + 1]])])
+            for n, m in enumerate(masechtot)]
+
 
 def masechet_of(filename):
     name = filename.replace('.docx', '')
@@ -102,6 +132,7 @@ def merge_masechet(m, files, ddir):
     return out, ' + '.join(used)
 
 def main():
+    preconv = {}
     # fonts
     fdir = os.path.join(IN, 'fonts')
     if os.path.isdir(fdir):
@@ -119,17 +150,38 @@ def main():
     # masechtot
     built = {}
     ddir = os.path.join(IN, 'docx')
+    # רשימת הקבצים שנמצאים כרגע בתיקיית הדרייב, כפי שרשם אותה fetch.py.
+    # קובץ שהמנהל שינה את שמו נשאר כאן כגיבוי ואינו נמחק, אך אינו נבנה,
+    # כדי שהאתר יבנה תמיד מן הקובץ החי ולא מעותק ישן שנושא שם שנעלם.
+    live = None
+    lp = os.path.join(IN, 'current-docx.json')
+    if os.path.exists(lp):
+        names = json.load(open(lp, encoding='utf-8'))
+        if len(names) >= 5: live = set(names)
     groups = {}
     for f in sorted(os.listdir(ddir)):
         if not f.endswith('.docx') or f.startswith('~$'): continue
+        if live is not None and f not in live:
+            print('אינו עוד בתיקיית הדרייב, לא נבנה:', f); continue
+        sp = split_of(f)
+        if sp:
+            parts = split_file(os.path.join(ddir, f), sp)
+            if parts:
+                for m, blocks in parts:
+                    preconv[m] = (blocks, f)
+                continue
+            print('אזהרה: הקובץ', f, 'אמור לשאת את', ' ועוד '.join(sp),
+                  'ולא נמצאה בו נקודת חיתוך ברורה. נבנה כמסכת אחת')
         m = masechet_of(f)
         if not m:
             print('לא זוהתה מסכת:', f); continue
         groups.setdefault(m, []).append(f)
-    for m in sorted(groups, key=ALL.index):
-        files = groups[m]
+    for m in sorted(set(groups) | set(preconv), key=ALL.index):
+        files = groups.get(m, [])
         try:
-            if len(files) == 1:
+            if m in preconv:
+                blocks, f = preconv[m]
+            elif len(files) == 1:
                 blocks = convert(os.path.join(ddir, files[0])); f = files[0]
             else:
                 blocks, f = merge_masechet(m, files, ddir)

@@ -26,7 +26,7 @@
   .nav{display:flex;gap:4px;align-items:center}
   .nav .daf{min-width:52px;text-align:center;font-family:'VilnaG','Vilna',serif;font-size:17px}
   .flow{font-size:var(--fs);line-height:1.06;height:calc(100vh - var(--bar));background:var(--paper);
-        padding:.9em var(--gut);overflow:auto;scroll-behavior:smooth;
+        padding:.9em var(--gut);overflow:auto;
         column-width:calc(var(--rail) + var(--measure));column-gap:calc(var(--gut) * 2);
         column-fill:auto;column-rule:1px solid #e6ddc9}
   .flow.vert{column-width:auto;column-count:1;column-rule:0;
@@ -104,6 +104,11 @@
   (function(){const t=document.createElement('div');t.style.cssText='position:absolute;top:-999px;width:60px;height:10px;overflow:auto;direction:rtl';
     t.innerHTML='<div style="width:300px;height:4px"></div>';document.body.appendChild(t);t.scrollLeft=2;SGN=t.scrollLeft>0?1:-1;t.remove()})();
 
+  /* scrollIntoView אינו גולל מכולת-טורים, ולכן המיקום מחושב במידות פיזיות:
+     מיישרים את קצה האלמנט לקצה הימני של המסגרת. הנוסחה נכונה בשני מוסכמות ה-RTL. */
+  function toEl(e){const f=$('#flow');
+    if(f.classList.contains('vert')){e.scrollIntoView({block:'center'});return}
+    f.scrollLeft += e.getBoundingClientRect().right - f.getBoundingClientRect().right;}
   function unitHTML(u,daf,pi){
     const mk=daf!=null?`<b class="dafmark" id="d${pi}">${esc(daf)}</b>`:'';
     if(u.k==='u')return `<div class="row u" id="u${u.id}"><div class="rail">${mk}<span class="anchor">${u.a}</span></div><div class="main">${u.l.map(l=>`<p class="${l[0]}">${l[1]}</p>`).join('')}</div></div>`;
@@ -118,17 +123,18 @@
       let first=true;
       for(const u of p.units){h+=unitHTML(u,first?p.daf:null,first?pi:null);first=false}}
     const f=$('#flow');f.innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;
-    f.scrollTop=0;f.scrollLeft=0;
+    f.scrollTop=0;f.scrollLeft=SGN>0?f.scrollWidth:0;
     $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].daf;$('#dafsel').value=s.from;
     document.title=`לאוקמי גירסא · ${D.masechet} · ${s.perekName||s.perek||D.pages[s.from].daf}`;
     location.hash=`p=${cur}`;
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){const si=secOf(pi);if(si!==cur)render(si);
-    setTimeout(()=>{const e=$('#d'+pi);if(e)e.scrollIntoView({inline:'start',block:'nearest'});$('#curdaf').textContent=D.pages[pi].daf;$('#dafsel').value=pi},20)}
+    setTimeout(()=>{const e=$('#d'+pi);if(e)toEl(e);$('#curdaf').textContent=D.pages[pi].daf;$('#dafsel').value=pi},20)}
   function goDaf(d){const now=+$('#dafsel').value||0;toDaf(Math.max(0,Math.min(D.pages.length-1,now+d)))}
   function goScreen(d){const f=$('#flow');
-    if(f.classList.contains('vert'))f.scrollBy({top:d*f.clientHeight*.9});else f.scrollBy({left:d*SGN*f.clientWidth})}
+    if(f.classList.contains('vert'))f.scrollBy({top:d*f.clientHeight*.9,behavior:'smooth'});
+    else f.scrollBy({left:-d*f.clientWidth,behavior:'smooth'})}
   function fs(d){const r=document.documentElement;
     const v=Math.max(12,Math.min(60,parseFloat(getComputedStyle(r).getPropertyValue('--fs'))+d));setFs(v)}
   function setFs(v){document.documentElement.style.setProperty('--fs',v+'px');localStorage.setItem('lg-fs',v);sizeBtns(v)}
@@ -144,7 +150,7 @@
    $('#search').classList.add('open')}
   let RES=[],LASTQ='';function jumpR(i){jump(RES[i].pi,RES[i].id,LASTQ)}
   function jump(pi,id,q){const si=secOf(pi);render(si,q);
-    setTimeout(()=>{const e=$('#u'+id);if(e){e.classList.add('hit');e.scrollIntoView({inline:'center',block:'nearest'})}$('#dafsel').value=pi;$('#curdaf').textContent=D.pages[pi].daf},20)}
+    setTimeout(()=>{const e=$('#u'+id);if(e){e.classList.add('hit');toEl(e)}$('#dafsel').value=pi;$('#curdaf').textContent=D.pages[pi].daf},20)}
   function amq(i){$('#q').value=D.am[i][0];search(D.am[i][0])}
   function build(){
    const ds=$('#dafsel');D.pages.forEach((p,i)=>ds.add(new Option(p.daf,i)));ds.onchange=()=>toDaf(+ds.value);
@@ -158,7 +164,7 @@
    const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(24);
    if(localStorage.getItem('lg-vert')){$('#flow').classList.add('vert');$('#vbtn').classList.add('on')}
    $('#flow').addEventListener('wheel',e=>{const f=$('#flow');if(f.classList.contains('vert'))return;
-     if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){f.scrollLeft+=SGN*e.deltaY;e.preventDefault()}},{passive:false});
+     if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){f.scrollLeft-=e.deltaY;e.preventDefault()}},{passive:false});
    document.addEventListener('keydown',e=>{
      if(e.target.tagName==='INPUT')return;
      if(e.key==='PageDown'||e.key===' '){goScreen(1);e.preventDefault()}

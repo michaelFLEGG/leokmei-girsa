@@ -13,9 +13,12 @@
 import json, re, html, os, datetime, collections
 
 HEB = 'א-ת'
+# הכרעת בעל הפרויקט 27.9.2026: בספר הזה גרש בודד משמש גם לסגור מילה
+# שנחתכה (סנהד' במקום סנהדרין), ולא רק לראשי תיבות. לכן זה אינו ממצא.
 SKIP_TRUNC = {'אמרי', 'אפי', 'דאפי', 'ואפי', 'שאפי', 'גזרי', 'ילפי', 'דבעי', 'בעי', 'מתני',
               'דממתני', 'ותרצי', 'כדחזי', 'חזי', 'ודחי', 'דחי', 'ומספקי', 'מספקי', 'וספינ',
-              'חיישי', 'מיירי', 'אמרינ', 'קמ', 'דמצי', 'מצי'}
+              'חיישי', 'מיירי', 'אמרינ', 'קמ', 'דמצי', 'מצי', 'סנהד', 'דתני', 'דאמרי',
+              'בחצצרות', 'דאמרינ', 'ומתני', 'כדאמרי'}
 
 # זהה למפה שב-build_site. סגנון שאינו כאן נחשב גוף.
 ROLE = {'Normal': 'body', 'רגיל ללא רווח': 'body', 'רווח לפני': 'body-sp', 'נקודה': 'body-nk',
@@ -80,9 +83,9 @@ def _auto(blocks):
             w = m.group(1)
             if w in SKIP_TRUNC: continue
             if t[:m.start()].count("'") % 2: continue
-            out.append(('בינוני', 'סימני קיצור', b['i'],
-                        'הגרש שאחרי "%s" סוגר ציטוט שאין לו גרש פותח' % w,
-                        'להוסיף גרש פותח בראש הציטוט', m.group(0)))
+            out.append(('קל', 'סימני קיצור', b['i'],
+                        'גרש סוגר אחרי "%s" - קיצור של המילה, או ציטוט שחסר לו גרש פותח?' % w,
+                        'אם ציטוט - להוסיף גרש פותח בראשו', m.group(0)))
         # יו"ד כפולה בראש ראשי-תיבות
         for m in re.finditer(r'(?<![%s])יי[%s]{0,3}["״]' % (HEB, HEB), t):
             out.append(('בינוני', 'שגיאת כתיב', b['i'],
@@ -125,6 +128,7 @@ main{max-width:940px;margin:0 auto;padding:16px 14px 70px}
 .lead{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin-bottom:14px;line-height:1.65}
 .lead h1{font-family:'Vilna',serif;font-weight:900;font-size:26px;margin:0 0 6px}
 .lead p{margin:6px 0}
+.ban{background:#e8efe3;border-right:4px solid #4a6b3f;border-radius:5px;padding:9px 13px;margin:9px 0;line-height:1.55}
 .counts{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
 .cbox{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:7px 14px;font-size:14px;text-align:center}
 .cbox b{font-size:21px;display:block;font-family:'Vilna',serif;font-weight:900}
@@ -255,7 +259,7 @@ PAGE = '''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">
  <button id="cpb" onclick="copy()">העתק ללוח</button>
  <button onclick="out()">הורד לקובץ</button></div>
 <main>
-<div class="lead"><h1>הגהת מסכת __M__</h1>
+<div class="lead"><h1>הגהת מסכת __M__</h1>__BANNER__
 <p>לפניך מה שנמצא בקובץ בקריאה מלאה ובסריקה: טעויות כתיב, ציוני דף שאינם במקומם, סימני קיצור שאינם אחידים, ומקום שהתוכן בו נראה הפוך. כל ממצא מביא את השורה כלשונה בקובץ, את ההצעה, וקישור אל המקום עצמו בדף המסכת.</p>
 <p><b>איך מאשרים:</b> בכל ממצא יש שלושה כפתורים. <b>"תקן"</b> אומר לי להכניס את התיקון לקובץ הוורד שלך; <b>"דחה תיקון"</b> סוגר את הממצא; <b>"לעיון"</b> משאיר אותו פתוח. אם התיקון הנכון שונה מהצעתי, כתוב אותו בשורת ההערה שלצד הכפתורים - היא גוברת על ההצעה.</p>
 <p>ממהר? <b>"תקן את כל טעוני התיקון"</b> שלמטה מאשר בלחיצה אחת את הממצאים החמורים. הסימון נשמר בדפדפן וימתין לך גם מחר.</p>
@@ -282,10 +286,12 @@ def build(blocks, out_path, masechet, slug, curated_path=None, source=''):
     daf = {b['i']: (b.get('daf') or '') for b in blocks}
     txt = {b['i']: b['text'] for b in blocks}
     rows = []
+    banner = ''
     seen = set()
     if curated_path and os.path.exists(curated_path):
         cur = json.load(open(curated_path, encoding='utf-8'))
         source = source or cur.get('source', '')
+        banner = cur.get('banner', '')
         for r in cur.get('findings', []):
             rows.append((r['sev'], r['kind'], r['i'], r['note'], r.get('fix', ''), r.get('mark', '')))
             seen.add((r['i'], r.get('mark', '')))
@@ -317,6 +323,7 @@ def build(blocks, out_path, masechet, slug, curated_path=None, source=''):
     page = (PAGE.replace('__CSS__', CSS).replace('__JS__', JS).replace('__DATA__', data)
             .replace('__M__', masechet).replace('__SLUG__', slug).replace('__GEN__', gen)
             .replace('__SRC__', html.escape(source or masechet))
+            .replace('__BANNER__', '<div class="ban">' + html.escape(banner) + '</div>' if banner else '')
             .replace('__N0__', str(stat.get('חמור', 0))).replace('__N1__', str(stat.get('בינוני', 0)))
             .replace('__N2__', str(stat.get('קל', 0))).replace('__TOT__', str(len(F)))
             .replace('__DATE__', datetime.datetime.now().strftime('%d.%m.%Y')))

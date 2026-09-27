@@ -142,7 +142,9 @@ def build(json_path, out_path, masechet, hagaha=False):
      פס-הגלילה ולעולם אין גלילה אופקית. */
   .flow.vert{column-width:auto;column-count:auto;column-rule:0;column-fill:balance;
              width:auto;padding:.9em .6em;overflow-x:hidden}
-  .flow.vert .row{margin:0 auto}
+  /* 'margin:auto' לבדו אינו ממרכז אלמנט-בלוק שרוחבו אוטומטי - הוא נמתח.
+     fit-content מצמצם את השורה לרוחב שתי המסילות, ואז המירכוז תופס. */
+  .flow.vert .row{width:fit-content;margin:0 auto}
   .row{display:grid;grid-template-columns:var(--rail) var(--measure);break-inside:avoid-column}
   .rail{text-align:left;padding-left:.36em}
   .main{text-align:justify;text-align-last:right}

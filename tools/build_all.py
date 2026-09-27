@@ -4,6 +4,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from docx2json import convert
 from build_site import build
 import hagaha
+import font_unicode
+import style_spacing
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IN = os.path.join(ROOT, 'input'); SITE = os.path.join(ROOT, 'site')
@@ -145,7 +147,20 @@ def main():
                     if k.lower() in f.lower() and (best is None or len(k) > best[1]):
                         best = (target, len(k))
             if best:
-                shutil.copy(os.path.join(fdir, f), os.path.join(SITE, 'fonts', best[0]))
+                src = os.path.join(fdir, f); dst = os.path.join(SITE, 'fonts', best[0])
+                # גופן עברי מן הדור הישן אינו יודע יוניקוד: אותיותיו יושבות
+                # במשבצות לטיניות. סוכן סריקת התצוגה גילה שכל ציוני הדף
+                # נצבעו בגופן חלופי בלי שאיש ידע. מוסיפים לגופן טבלת יוניקוד
+                # שמכוונת אל אותם גליפים; הטקסט באתר אינו משתנה.
+                try:
+                    if font_unicode.needs_patch(src):
+                        n = font_unicode.add_hebrew_cmap(src, dst)
+                        print('הגופן', best[0], 'קיבל טבלת יוניקוד ל-%d אותיות' % n)
+                    else:
+                        shutil.copy(src, dst)
+                except Exception as e:
+                    print('אזהרה: לא נוספה טבלת יוניקוד ל', best[0], '-', e)
+                    shutil.copy(src, dst)
         absent = [t for t in FONT_MAP if not os.path.exists(os.path.join(SITE, 'fonts', t))]
         if absent: print('אזהרה: גופן חסר באתר:', ', '.join(absent))
     # masechtot
@@ -202,8 +217,18 @@ def main():
                 sources = json.load(open(sp, encoding='utf-8'))
                 os.makedirs(os.path.join(SITE, 'sources'), exist_ok=True)
                 shutil.copy(sp, os.path.join(SITE, 'sources', SLUG[m] + '.json'))
+            # המרווחים האנכיים שבדף נגזרים מ-w:spacing שבסגנונות הקובץ
+            # הזה, ולא ממספרים שנבחרו לעין. קובץ מאוחד: המרווחים נלקחים
+            # מן החלק הראשון, שהוא הגדול.
+            spacing = {}
+            try:
+                src_doc = os.path.join(ddir, f.split(' + ')[0])
+                if os.path.exists(src_doc):
+                    spacing, _ = style_spacing.read(src_doc)
+            except Exception as e:
+                print('   אזהרה: המרווחים לא נגזרו מן הוורד של', m, '-', e)
             r = build(jp, os.path.join(SITE, SLUG[m] + '.html'), m, hagaha=has_hagaha,
-                      sources=sources)
+                      sources=sources, spacing=spacing)
             if has_hagaha:
                 h = hagaha.build(blocks, os.path.join(SITE, SLUG[m] + '-hagaha.html'), m, SLUG[m], cur, f)
                 print('   מסך הגהה:', h['findings'], 'ממצאים,', h['severe'], 'טעונים תיקון')

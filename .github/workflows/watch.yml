@@ -21,12 +21,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: pip install lxml
+      - run: pip install lxml fonttools playwright
       - name: הורדה מהדרייב
         id: fetch
         run: python tools/fetch.py | tee fetch.log; grep -q CHANGED fetch.log && echo changed=1 >> $GITHUB_OUTPUT || echo changed=0 >> $GITHUB_OUTPUT
       - name: בנייה
         run: python tools/build_all.py
+      # סוכן סריקת התצוגה. אינו חוסם את הפרסום: אם הוא נכשל או מתארך,
+      # האתר עולה בכל זאת, והמונים פשוט לא יתחדשו בלוח הבקרה.
+      - name: סריקת תצוגה
+        continue-on-error: true
+        timeout-minutes: 8
+        run: python tools/layout_audit.py --modes flow,phone --no-shots --channel chrome --label שומר
       - name: שמירת המקורות בריפו (גיבוי)
         run: |
           git config user.name "leokmei-watcher"; git config user.email "watcher@users.noreply.github.com"

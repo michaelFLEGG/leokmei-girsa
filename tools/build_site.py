@@ -1,10 +1,50 @@
 import json, html, re, collections, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from styles_map import ROLE, CS, MISSING_FONTS
+# סמן החץ שוורד מציב במסגרת צפה ליד שורה. אינו תוכן.
+ARROW = chr(0x25c4)
 import match_sources
+import font_ink
 MISSING_FONTS_REV={v:k for k,v in MISSING_FONTS.items()}
-def build(json_path, out_path, masechet, hagaha=False, sources=None):
+def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=None):
   blocks = json.load(open(json_path, encoding='utf-8'))
+  spacing = spacing or {}
+
+  # ---------- ג1: סולם הכותרות נמדד לעין, לא בנקודות נקובות ----------
+  # וילנא מודגש גדול לעין בהרבה מפרנקריהל באותו גודל נקוב: גובה תיבת
+  # הדיו שלו הוא 1.017 של ה-em מול 0.933. לכן גודל האות של כל כותרת
+  # נגזר כאן מגובה האותיות שנמדד בקובץ הגופן עצמו, וכך היחס שהלומד
+  # רואה הוא היחס שנקבע: נושא = גוף כפול 10/9, משנה = כגוף, ודיבור
+  # המתחיל של משנה = משנה כפול 8/9. סוכן סריקת התצוגה מאמת את אותם
+  # מספרים בדפדפן, ב-canvas measureText.
+  _fd = os.path.join(os.path.dirname(os.path.abspath(out_path)), 'fonts')
+  def _ink(name, dflt):
+      pth = os.path.join(_fd, name)
+      try: return font_ink.ink_per_em(pth) if os.path.exists(pth) else dflt
+      except Exception: return dflt
+  I_body = _ink('frank.ttf', 0.9331)       # גוף: FrankRuehl
+  I_v700 = _ink('vilna-b.otf', 1.0173)     # משנה ונושא: BA Vilna Bold
+  I_v900 = _ink('vilna-xb.otf', 1.0173)    # דיבור המתחיל: BA Vilna Extra-Bold
+  K_MISHNA = I_body / I_v700
+  K_NOSE   = I_body / I_v700 * 10.0 / 9.0
+  K_DH     = I_body / I_v900 * 8.0 / 9.0
+
+  # ---------- ג3: רשת השורות ----------
+  # כל מרווח אנכי בדף נגזר מ-w:spacing של הסגנון בוורד, ולא ממספר
+  # שנבחר לעין, והוא מעוגל לחצאי שורה כדי שהטקסט יחזור לרשת.
+  _bl = ((spacing.get('Normal') or {}).get('line')) or 11.0
+  def _half(v):
+      return max(0, min(4, int(round(((v or 0.0) / _bl) * 2))))
+  def sp_cls(style):
+      sp = spacing.get(style) or {}
+      return 'b%d a%d' % (_half(sp.get('before')), _half(sp.get('after')))
+  def line_ratio(role, dflt=1.0):
+      """מרווח השורה של תפקיד, ביחידות שורת הגוף."""
+      best = None
+      for name, sp in spacing.items():
+          if ROLE.get(name) == role and sp.get('line'):
+              best = sp['line'] if best is None else max(best, sp['line'])
+      return round(best / _bl, 4) if best else dflt
 
   # מפת הסגנונות יושבת בקובץ אחד, tools/styles_map.py, שגם מסך ההגהה קורא
   # ממנו. עותק שני היה נפרד בשקט ושובר את העיגון שבין שני המסכים.
@@ -20,10 +60,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
           else: out.append(dict(r))
       return out
 
+  def disp(t):
+      """הטקסט כפי שהוא מוצג. סמן החץ הוא סמן פריסה של וורד - מסגרת צפה
+      שמצביעה על שורה - ואין לו טעם בדף; וטאב ממילא מתמוטט לרווח בהטמעת
+      HTML. הנתונים עצמם אינם משתנים."""
+      return re.sub(r'[ ]{2,}', ' ', t.replace(ARROW, ' ').replace('	', ' '))
+
   def runs_html(runs):
       out=[]
       for r in fuse_stars(runs):
-          t=html.escape(r['t']); c=CS.get(r['cs'])
+          t=html.escape(disp(r['t'])); c=CS.get(r['cs'])
           if r['b'] and not c: c='b'
           out.append(f'<i class="{c}">{t}</i>' if c else t)
       return ''.join(out)
@@ -65,6 +111,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
   if heavy: qa.insert(0,('טעון תשומת לב','סגנון שאינו ממופה ומופיע הרבה: '+', '.join(heavy[:8])))
   long_anchor=[b for b in blocks if b['style']=='חלון 3' and len(b['text'])>25]
   for b in long_anchor: qa.append(('חלון ארוך',b['text'][:40]))
+  # פסקת כוכביות שאינה בסגנון החציצה: העיטור אינו נוצר, והלומד רואה
+  # כוכביות. זהו תוכן הוורד ולא פגם בתצוגה, ולכן מדווח ואינו מתוקן.
+  stars=[b for b in blocks if ROLE.get(b['style'],'body').startswith('body')
+         and b['text'].strip() and set(b['text'].strip())<=set('* ')]
+  if stars:
+      qa.append(('כוכביות בסגנון רגיל',
+                 '%d פסקאות כוכביות אינן בסגנון החציצה, ולכן אינן הופכות '
+                 'לעיטור. הפסקאות: %s' % (len(stars), ', '.join(str(b['i']) for b in stars[:8]))))
   empty_anchor=[b for b in blocks if b['style']=='חלון 3' and not b['text'].strip()]
   if empty_anchor: qa.append(('חלון ריק',f'{len(empty_anchor)} חלונות ריקים'))
 
@@ -73,14 +127,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
   cur=None; perek=''; perekName=''; unit=None
   order=[]
   toc=[]
-  # החץ ◄ שבחלון הצד אינו קישוט: פירושו "כך נפסק להלכה", והוא שייך
-  # ליחידה שאחריו. חלון שכולו חץ אינו פותח יחידה משלו - הוא מדליק דגל
-  # שנצמד ליחידה הבאה. בלעדי זה נפתחו בדף עשרות שורות ריקות.
-  halacha=False
-  def flag(u):
-      nonlocal halacha
-      if halacha: u['h']=1; halacha=False
-      return u
+  # ב2 - סמן החץ שבחלון הצד הוא סמן פריסה של וורד, לא הבחנה תוכנית.
+  # נמדד בשלושה קבצים (סוכה, ביצה, בבא בתרא): הפסקה שאחרי חלון שכולו חץ
+  # היא משנה ב-69 מקרים, גוף ב-52 ונושא ב-2 - כלומר אין לו מובן אחיד.
+  # לפיכך חלון שכולו חץ אינו פותח יחידה (בלעדי זה נפתחו עשרות שורות
+  # ריקות בדף) ואף אינו מדליק סימון תצוגה. הנתונים נשארים כמות שהם,
+  # והמונה מוצג בבקרה כדי שההשמטה לא תהיה שקטה.
+  n_hal=0
+  pend=None      # חלון הממתין למה שיבוא אחריו
+  n_lone=0       # חלון שאין אחריו דבר - תוכן הוורד, לא פגם בקוד
   def toc_text(raw):
       """כותרת לתוכן העניינים, מן הטקסט הגולמי ולפני כל בריחה.
       כך אין ישויות HTML, ואין חץ ואין טאבים."""
@@ -102,26 +157,43 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
       if r=='perek-num': perek=t
       if r=='perek-name': perekName=t
       if r=='daf':
+          if pend is not None and cur is not None:
+              cur['units'].append({'k':'u','a':pend[0],'l':[],'id':pend[1]}); n_lone+=1; pend=None
           cur={'daf':t,'perek':perek,'perekName':perekName,'units':[]}; pages.append(cur); unit=None
           continue
       if cur is None: continue
       cur['perek']=perek; cur['perekName']=perekName
+      # חלון הכותרת הוא מסגרת צפה בוורד, והוא מצביע על מה שאחריו. עד כאן
+      # הוא פתח מיד יחידה משלו, וכשאחריו באה כותרת "נושא" נשארה בדף שורה
+      # שכל תוכנה חלון - שורה לבנה לכל דבר. מעתה הוא ממתין: אם אחריו גוף,
+      # הוא פותח את היחידה כמקודם; ואם אחריו כותרת, הוא יושב במסילה שלה.
       if r=='anchor':
-          if t=='◄':
-              halacha=True; continue        # דגל בלבד, אינו פותח יחידה
-          unit=flag({'k':'u','a':h,'l':[],'id':b['i']}); cur['units'].append(unit)
+          if t and set(t) <= {ARROW}:
+              n_hal+=1; continue            # סמן פריסה של וורד, אינו יחידה
+          if pend is not None:
+              cur['units'].append({'k':'u','a':pend[0],'l':[],'id':pend[1]}); n_lone+=1
+          pend=(h,b['i']); unit=None
       elif r.startswith('body'):
-          if unit is None or unit['k']!='u':
-              unit=flag({'k':'u','a':'','l':[],'id':b['i']}); cur['units'].append(unit)
-          unit['l'].append([r[5:] if len(r)>4 else '',h])
+          if pend is not None:
+              unit={'k':'u','a':pend[0],'l':[],'id':pend[1]}; cur['units'].append(unit); pend=None
+          elif unit is None or unit['k']!='u':
+              unit={'k':'u','a':'','l':[],'id':b['i']}; cur['units'].append(unit)
+          unit['l'].append([((r[5:] if len(r)>4 else '')+' '+sp_cls(b['style'])).strip(),h])
       elif r=='mishna':
-          if cur['units'] and cur['units'][-1]['k']=='m': cur['units'][-1]['l'].append(['',h])
+          if cur['units'] and cur['units'][-1]['k']=='m' and pend is None:
+              cur['units'][-1]['l'].append([sp_cls(b['style']),h])
           else:
-              cur['units'].append(flag({'k':'m','a':'','l':[['',h]],'id':b['i']})); add_toc('m',b)
+              u={'k':'m','a':'','l':[[sp_cls(b['style']),h]],'id':b['i']}
+              if pend is not None: u['w']=pend[0]; pend=None
+              cur['units'].append(u); add_toc('m',b)
           unit=None
       elif r in ('dh','nose','hatz','perek-num','perek-name','perek-range','perek-start','hadran'):
-          cur['units'].append(flag({'k':r,'a':h,'l':[],'id':b['i']})); unit=None
+          u={'k':r,'a':h,'l':[],'id':b['i'],'s':sp_cls(b['style'])}
+          if pend is not None: u['w']=pend[0]; pend=None
+          cur['units'].append(u); unit=None
           if r in ('dh','nose'): add_toc(r,b)
+  if pend is not None and cur is not None:
+      cur['units'].append({'k':'u','a':pend[0],'l':[],'id':pend[1]}); n_lone+=1; pend=None
 
   # יחידה בלי חלון ובלי פסקת גוף שיש בה טקסט אינה נכתבת לדף: בדף היא
   # נראית כשורה ריקה, ולומד אינו יודע שחסר כאן דבר. המונה מוצג בבקרה.
@@ -137,6 +209,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
       p['units']=keep
   if n_empty:
       qa.append(('יחידות ריקות',f'{n_empty} יחידות ריקות הושמטו מן הדף'))
+  if n_lone:
+      qa.append(('חלון שאין תחתיו טקסט',
+                 f'{n_lone} חלונות כותרת אין אחריהם לא פסקת גוף ולא כותרת. '
+                 'זהו תוכן הוורד ולא פגם בתצוגה, והם מוצגים בשורה משלהם'))
+  if n_hal:
+      qa.append(('סמני חץ של וורד',
+                 f'{n_hal} סמני חץ הושמטו מן התצוגה. בוורד זו מסגרת צפה '
+                 'שמצביעה על שורה, ולא הבחנה בתוכן'))
   for st,n in n_skip.most_common():
       why=('הגופן %s אינו באתר, והטקסט היה נקרא כג\'יבריש'%MISSING_FONTS_REV[st]) \
           if st in MISSING_FONTS_REV else 'ריהוט עמוד; הדף מצייר אותו בעצמו'
@@ -236,7 +316,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
   .bar input{cursor:text;width:150px} .bar button.on{background:var(--gold);color:#2b2620}
   .nav{display:flex;gap:4px;align-items:center}
   .nav .daf{min-width:52px;text-align:center;font-family:'VilnaG','Vilna',serif;font-size:17px}
-  .flow{font-size:var(--fs);line-height:1.06;flex:1 1 auto;min-height:0;background:var(--paper);
+  /* --lhpx הוא גובה שורת הגוף במידה מוחלטת. פריטי המסילה זקוקים לו:
+     line-height שהוא מספר מתייחס לגודל האות של האלמנט עצמו, ולכן ציון דף
+     של 1.3em היה מקבל שורה גבוהה ב-30 אחוזים ומגביה את כל היחידה. */
+  .flow{--lhpx:calc(var(--fs) * 1.06);
+        font-size:var(--fs);line-height:1.06;flex:1 1 auto;min-height:0;background:var(--paper);
         padding:.9em var(--gut);overflow:auto;
         column-width:calc(var(--rail) + var(--measure));column-gap:calc(var(--gut) * 2);
         column-fill:auto;column-rule:1px solid #e6ddc9}
@@ -250,36 +334,78 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
   /* 'margin:auto' לבדו אינו ממרכז אלמנט-בלוק שרוחבו אוטומטי - הוא נמתח.
      fit-content מצמצם את השורה לרוחב שתי המסילות, ואז המירכוז תופס. */
   .flow.vert .row{width:fit-content;margin:0 auto}
-  .row{display:grid;grid-template-columns:var(--rail) var(--measure);break-inside:avoid-column}
-  .rail{text-align:left;padding-left:.36em}
+  /* ב1 - המסילה בשני נתיבים, זה לצד זה ולא זה על זה.
+     עד כאן היה ציון הדף display:block, ולכן חלון הכותרת ירד לשורה שנייה
+     של המסילה. ביחידה בת שורה אחת נפערה שורה לבנה, והחלון עמד ליד חלל
+     או ליד היחידה הבאה - לא ליד השורה שהוא מסמן.
+
+     מעתה המסילה היא גריד בן שני נתיבים, בכיוון הקריאה: החיצוני (הימני,
+     בקצה העמוד) לציון הדף, והפנימי (הצמוד לטקסט) לחלון או לתווית "משנה".
+     כך יושבים שני סמני צד של אותה שורה זה לצד זה, כמו בוורד.
+
+     align-items:baseline בשני המקומות מיישר את שניהם לקו הבסיס של השורה
+     הראשונה של הטקסט. line-height:0 לפריטי המסילה הוא הדרך היחידה שבה
+     גובה המסילה לעולם אינו עולה על גובה הטקסט: תיבת השורה שלהם אפס,
+     האותיות נראות (אין overflow:hidden), וקו הבסיס נשמר. */
+  .row{display:grid;grid-template-columns:var(--rail) var(--measure);
+       align-items:baseline;break-inside:avoid-column}
+  .rail{display:grid;grid-template-columns:var(--dafw,2.9em) minmax(0,1fr);
+        align-items:baseline;column-gap:.14em;padding-left:.36em}
+  .rail>*{line-height:0}
+  .win.w2{line-height:var(--lhpx)}
+  /* יחידה שאין לה ציון דף: נתיב הדף מתאפס, והחלון מקבל את כל המסילה */
+  .rail:not(:has(.dafmark)){grid-template-columns:0 minmax(0,1fr)}
+  /* דף שאין בו יחידות: הטקסט ריק, והמסילה אינה תופסת גובה. בלי המינימום
+     הזה היה ציון הדף נופל על השורה הבאה. */
+  .row>.main:empty{min-height:var(--lhpx)}
   .main{text-align:justify;text-align-last:right}
-  .main p{margin:0} .main p.sp{margin-top:.28em} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
+  .main p{margin:0} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
   /* פסקה מוזחת (פיסקת תשובה, וסעיפי רשימה): הזחה תלויה, כמו בוורד */
   .main p.in{padding-right:.9em;text-indent:-.9em}
-  .dafmark{display:block;font-family:'VilnaG','Vilna',serif;font-size:1.3em;line-height:1;color:var(--red);margin-top:.25em}
-  .anchor{display:inline-block;font-family:'Vilna',serif;font-weight:900;font-size:.9em;line-height:1.18;
-          color:#5a5044;white-space:nowrap;max-width:calc(var(--rail) - .4em);overflow:hidden;text-overflow:ellipsis}
-  .mlabel{font-size:.55em;color:#8a7d66}
-  /* החץ של "כך נפסק להלכה". הוא יושב במסילה לפני חלון הכותרת, ברוחב
-     קבוע, כדי שלא ידחק אותה ולא יקצר אותה בלא צורך. */
-  .hal{display:inline-block;width:.8em;color:var(--gold);font-size:.85em;line-height:1}
-  .row[data-halacha] .anchor{max-width:calc(var(--rail) - 1.3em)}
-  .mishna{background:#eeeae1;padding:.1em .15em;margin:.15em 0;font-family:'Vilna',serif;font-weight:700;font-size:1em;line-height:1.12;border-right:.1em solid var(--gold)}
-  .dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
-      font-size:calc((var(--body-pt) - 1) / var(--body-pt) * 1em);line-height:1.15;margin:.3em 0 .08em}
-  .nose{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;
-        font-size:calc((var(--body-pt) + 1) / var(--body-pt) * 1em);line-height:1.15;margin-top:.45em;color:var(--ink)}
+  .dafmark{grid-column:1;justify-self:center;font-family:'VilnaG','Vilna',serif;
+           font-size:1.3em;color:var(--red);margin:0}
+  /* אין עוד overflow:hidden ואין ellipsis: חלון שנחתך בשקט הוא כישלון
+     שקט. חלון שאינו נכנס מטופל במדידה (fitAnchors), ובסוף מוצג קטן יותר
+     ולא נחתך. */
+  /* הנתיב הפנימי: חלון הכותרת ותווית "משנה" יחד, זה לצד זה */
+  .win{grid-column:2;justify-self:end;white-space:nowrap;text-align:left}
+  .anchor{font-family:'Vilna',serif;font-weight:900;font-size:.9em;color:#5a5044}
+  /* חלון שנמדד ואינו נכנס בשורה אחת, וליחידה יש שתי שורות טקסט לפחות */
+  .win.w2{white-space:normal;line-height:var(--lhpx);text-align:left}
+  .mlabel{font-size:.55em;color:#8a7d66;margin-right:.3em}
+  /* ג: גודל האות של כל כותרת נגזר מגובה האותיות שנמדד בקובץ הגופן
+     (--k-*, נכתבים בסוף גיליון הסגנונות), ולא מנקודות נקובות. מרווח
+     השורה של כולן הוא רשת הגוף, וכל מרווח אנכי בא ממחלקות b/a שנגזרו
+     מ-w:spacing שבוורד. בלי זה נפערו חללים שנראו כשורות לבנות. */
+  .main.mishna{background:#eeeae1;padding:0 .15em;margin:0;font-family:'Vilna',serif;font-weight:700;
+          font-size:calc(var(--k-mishna) * 1em);border-right:.1em solid var(--gold)}
+  /* ‏.dh ו-.nose יושבים גם על השורה וגם על הטקסט שבתוכה. כלל שאינו
+     מוגבל ל-.main היה מוכפל פעמיים, וגודל הכותרת יצא בריבוע המקדם -
+     שורש נוסף לכותרות הגדולות. סוכן סריקת התצוגה מדד זאת. */
+  .main.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
+      font-size:calc(var(--k-dh) * 1em);margin:0}
+  .main.nose{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;
+        font-size:calc(var(--k-nose) * 1em);margin:0;color:var(--ink)}
   /* ב. הכוכביות אינן כוכביות: בגופני וילנא יש שרשרת ליגטורות ב-rlig,
      וכל מספר כוכביות נותן עיטור אחר. letter-spacing ביטל אותה, ולכן
      הוא חוזר ל-normal והליגטורות נדלקות במפורש. */
-  .hatz{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
-        font-size:1.1em;letter-spacing:normal;color:#8a7d66;margin:.3em 0;
+  .main.hatz{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
+        font-size:1.1em;letter-spacing:normal;color:#8a7d66;margin:0;
         font-variant-ligatures:common-ligatures;font-feature-settings:"rlig" 1,"liga" 1}
   .perek-num .main{font-family:'Franknatan','Vilna',serif;color:var(--red);font-size:1.45em;line-height:1.1}
   .perek-name .main{font-family:'Franknatan','Vilna',serif;color:#8a7d66;font-size:1.09em}
   .perek-range .main{color:var(--red);font-size:.73em}
   .perek-start .main{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;font-size:1.09em}
-  .hadran .main{text-align:center;text-align-last:center;font-size:1.09em;margin:.8em 0}
+  .hadran .main{text-align:center;text-align-last:center;font-size:1.09em;margin:0}
+  /* מרווחי וורד, בחצאי שורה של רשת הגוף. b=לפני, a=אחרי.
+     הכללים נכתבים כצאצא של .row כדי שמשקלם יגבר על '.main p{margin:0}'
+     ועל כללי הכותרות. בלי זה הם לא חלו כלל, והמרווח שבוורד נעלם. */
+  .row .b0{margin-top:0}.row .b1{margin-top:calc(var(--lhpx) * .5)}
+  .row .b2{margin-top:var(--lhpx)}.row .b3{margin-top:calc(var(--lhpx) * 1.5)}
+  .row .b4{margin-top:calc(var(--lhpx) * 2)}
+  .row .a0{margin-bottom:0}.row .a1{margin-bottom:calc(var(--lhpx) * .5)}
+  .row .a2{margin-bottom:var(--lhpx)}.row .a3{margin-bottom:calc(var(--lhpx) * 1.5)}
+  .row .a4{margin-bottom:calc(var(--lhpx) * 2)}
   i{font-style:normal}
   .am{font-family:'Vilna',serif;font-weight:400;font-size:.88em}
   .ps{font-family:'Vilna',serif;font-weight:700;font-size:.9em;color:#2e3f6b} body.hc .ps{color:#000;text-decoration:underline}
@@ -358,28 +484,34 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
   @media screen and (max-width:760px){.src.split{left:0;right:0;top:auto;bottom:0;width:auto;height:60vh}
     body.splitsrc .flow{width:auto;margin-left:0}}
   @media print{.src,.srcb{display:none!important}}
-  /* ---- תצוגת ספר: גיליונות זה לצד זה ----
-     גיליון = טור אחד בעמוד הספר: 20 מ"מ מסילה ועוד 60 מ"מ טקסט, בגובה
-     של 245 מ"מ (260 פחות השוליים). במידות ה-em שנקבעו בח0: רוחב 27.67em
-     וגובה 84.73em. מרווח השורה כאן הוא של הספר - 11 נקודות על גוף של
-     9 - ולא זה שבזרימה הרציפה, שהוא צפוף יותר לפי טעמו. */
-  .flow.book{--lh:1.342;column-width:auto;column-count:auto;column-rule:0;
+  /* ---- תצוגת ספר והדפסה: עמוד הספר, 90x130 מ"מ ----
+     הכרעת בעל הפרויקט, 27.9.2026: שורה נטו 6 ס"מ, שוליים ימין 2 ושמאל 1,
+     וגובה הדף 13 ס"מ - וההדפסה כמו בוורד וכמו בתצוגה. נמדדו כל 28 קובצי
+     הוורד, וזו הגיאומטריה של רובם המכריע; סוכה בת שני הטורים היא החריגה,
+     ושני טוריה הם בעצם שני עמודים של 90 זה לצד זה.
+
+     הגיליון הוא עתה העמוד כולו: 90x130 מ"מ, שוליים עליון 10, תחתון 5,
+     שמאל 10; ובתוכו מסילה 20 ומידה 60. הכותרת הרצה יושבת בתוך 10 המ"מ
+     העליונים ואינה אוכלת מגובה הטקסט, שהוא 115 מ"מ נטו.
+     במידות ה-em של היחס הנעול (60 מ"מ = 20.75em): עמוד 31.125x44.979,
+     כותרת רצה 3.458, שוליים תחתונים 1.729, וגוף הטקסט 39.792. */
+  .flow.book{--lh:1.342;--lhpx:calc(var(--fs) * var(--lh));
+             column-width:auto;column-count:auto;column-rule:0;
              column-fill:balance;line-height:var(--lh);
-             display:grid;grid-template-columns:repeat(var(--sheets,2),27.67em);
+             display:grid;grid-template-columns:repeat(var(--sheets,2),31.125em);
              gap:1.4em;justify-content:center;align-content:start;
              padding:1em var(--gut);overflow:auto;direction:rtl}
-  .sheet{width:27.67em;height:84.73em;background:var(--paper);overflow:hidden;
+  .sheet{width:31.125em;height:44.979em;background:var(--paper);overflow:hidden;
          box-shadow:0 1px 6px rgba(0,0,0,.14);border:1px solid #e6ddc9;border-radius:2px;
-         padding:.5em .55em;display:flex;flex-direction:column}
-  .shhd{flex:0 0 auto;display:flex;align-items:baseline;gap:.5em;font-size:.62em;
-        color:#8a7d66;border-bottom:1px solid #e0d8c4;padding-bottom:.25em;margin-bottom:.45em;
-        overflow:hidden;white-space:nowrap}
+         padding:0 0 1.729em 3.458em;display:flex;flex-direction:column}
+  .shhd{flex:0 0 auto;height:3.458em;display:flex;align-items:center;gap:.5em;font-size:.62em;
+        color:#8a7d66;overflow:hidden;white-space:nowrap}
   /* הנושא הוא החלק שמתקצר, ולא שם המסכת וציון הדף */
   .shhd>span:nth-child(2){overflow:hidden;text-overflow:ellipsis;min-width:0}
   .shhd .nm{font-family:'Vilna',serif;font-weight:700;color:#5a5044}
   .shhd .sp{flex:1}
   .shhd .df{font-family:'VilnaG','Vilna',serif;color:var(--red);font-size:1.25em}
-  .shbody{flex:1 1 auto;overflow:hidden}
+  .shbody{flex:1 1 auto;overflow:hidden;width:27.667em}
   .flow.book .row{break-inside:auto}
   #gauge{position:fixed;top:0;left:0;visibility:hidden;pointer-events:none;
          z-index:-1;overflow:hidden;contain:layout style;background:var(--paper)}
@@ -387,52 +519,46 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
      זה בדיוק מה שהכלל הנעול מתיר: היחס קבוע, ורק --fs זז. בלעדי זה
      הגיליון יצא 553 פיקסל במסך של 375, והלומד היה נדרש לגלול לצדדים. */
   @media screen and (max-width:900px){.flow.book{--sheets:1!important;
-    font-size:min(var(--fs),calc((100vw - 2.2rem) / 27.67))}}
-  /* ח2 - ההדפסה עוברת למנוע הגיליונות: שני גיליונות בעמוד, והכותרת
-     הרצה מגיעה בחינם, מה שטורי-CSS לא ידעו לתת. */
+    font-size:min(var(--fs),calc((100vw - 2.2rem) / 31.125))}}
+  /* ד - ההדפסה היא מנוע הגיליונות, גיליון אחד בעמוד. גודל האות נגזר
+     מן היחס הנעול (60 מ"מ חלקי 20.75) ורשת השורות 11 נקודות, כבוורד. */
   @media print{
-    .flow.book{display:grid;grid-template-columns:repeat(2,80mm)!important;gap:0;
-               width:160mm;padding:0;justify-content:start;line-height:11pt}
-    .sheet{width:80mm;height:245mm;box-shadow:none;border:0;border-radius:0;
-           padding:0;break-inside:avoid}
-    .flow.book .sheet:nth-child(2n){break-after:page}
-    .shhd{font-size:7pt}
+    .flow.book{display:grid!important;grid-template-columns:90mm!important;gap:0;
+               width:90mm;padding:0;justify-content:start;
+               line-height:11pt;--lhpx:11pt;overflow:visible}
+    .sheet{width:90mm;height:130mm;box-shadow:none;border:0;border-radius:0;
+           padding:0 0 5mm 10mm;break-inside:avoid;break-after:page}
+    .flow.book .sheet:last-child{break-after:auto}
+    .shbody{width:80mm}
+    .shhd{height:10mm;font-size:6.5pt}
   }
   /* ---- הדפסה: עמוד הספר עצמו ----
-     עד היום הדפיס הדף טור אחד על גיליון של 90 מ"מ, וזה לא היה העמוד
-     של בעל הפרויקט. מעתה הגיאומטריה היא זו שנמדדה מקובץ הוורד:
+     הכרעת בעל הפרויקט, 27.9.2026: עמוד 90x130 מ"מ, טור אחד, מידה 60,
+     שוליים ימין 20 (הם המסילה עצמה) ושמאל 10, עליון 10 ותחתון 5. זו
+     הגיאומטריה של רוב קובצי הוורד; העמוד של 170 בשני טורים, שכויל
+     בשלב ח1 על סוכה, היה החריג ולא הכלל.
 
-       גיליון 170x260 מ"מ, שוליים עליון 10 ותחתון 5.
-       שולי ימין 0 - מפני שהמסילה עצמה היא 20 המ"מ שוורד קורא להם
-       שוליים ימניים - ושולי שמאל 10. רוחב התוכן: 160 מ"מ.
-       שני טורים של 80 מ"מ בלי רווח ביניהם, וכל טור הוא מסילה של
-       20 ומידה של 60, בדיוק כבוורד.
+     ההדפסה כולה עוברת עתה במנוע הגיליונות: הוא לבדו יודע לעמד בזהירות
+     (כותרת אינה נפרדת מן התוכן שאחריה) ולתת כותרת רצה, ושני הדברים
+     אינם אפשריים בטורי-CSS. לכן אין כאן עוד מסלול הדפסה של .flow.
 
-     גודל האות בהדפסה נגזר מן היחס הנעול ולא נקבע לחוד: המידה היא
-     60 מ"מ, והיחס 20.75, ולכן האות היא 60/20.75 מ"מ (כ-8.2 נקודות).
-     בוורד האות היא 9 נקודות, וההפרש הוא אותו הפרש שנמדד בשלב ח0 -
-     frank.ttf שבדפדפן רחב בכעשרה אחוזים ל-em מ-FrankRuehl. לו נקבעה
-     האות ל-9 נקודות היו השורות נשברות מוקדם מבוורד, וזה בדיוק מה
-     שהכלל הנעול בא למנוע. כך השורות מתלכדות עם הספר, ורשת השורות
+     גודל האות בהדפסה נגזר מן היחס הנעול ולא נקבע לחוד: המידה 60 מ"מ
+     והיחס 20.75, ולכן האות היא 60/20.75 מ"מ (כ-8.2 נקודות). בוורד היא
+     9 נקודות, וההפרש הוא זה שנמדד בח0 - frank.ttf שבדפדפן רחב בכעשרה
+     אחוזים ל-em מ-FrankRuehl. כך השורות מתלכדות עם הספר, ורשת השורות
      נשארת 11 נקודות כבוורד. */
   @media print{
     .bar,.panel{display:none}
     html,body{overflow:visible;background:#fff;height:auto}
     body{display:block}
     :root{--measure:60mm;--rail:20mm;--gut:0;--fs:calc(60mm / 20.75)}
-    .flow{width:160mm;height:auto;overflow:visible;padding:0;
-          font-size:var(--fs);line-height:11pt;
-          columns:80mm 2;column-gap:0;column-rule:0;column-fill:auto}
-    /* מצב הרצף שעל המסך אינו נגרר להדפסה: העמוד המודפס הוא תמיד
-       עמוד הספר, בשני טורים. */
-    .flow.vert{width:160mm;columns:80mm 2;column-gap:0;column-fill:auto;padding:0}
+    .flow{width:90mm;height:auto;overflow:visible;padding:0;
+          font-size:var(--fs);line-height:11pt;--lhpx:11pt;
+          columns:auto;column-count:1;column-gap:0;column-rule:0}
+    .flow.vert{width:90mm;columns:auto;column-count:1;padding:0}
     .flow.vert .row{width:auto;margin:0}
     .row{grid-template-columns:20mm 60mm;break-inside:avoid}
-    .anchor{max-width:17mm}
-    /* פרק חדש פותח טור חדש, כמו sectPr type=nextColumn בוורד */
-    .row.perek-num{break-before:column}
-    .flow > .row.perek-num:first-child{break-before:auto}
-    @page{size:170mm 260mm;margin:10mm 0 5mm 10mm}
+    @page{size:90mm 130mm;margin:0}
   }
   /* שאילתת הטלפון מוגבלת למסך במפורש. בלעדי זה היא תפסה גם בהדפסה:
      עמוד של 170 מ"מ הוא כ-643 פיקסל, כלומר פחות מ-760, והיא באה אחרי
@@ -440,11 +566,32 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
      המודפס יצא טור אחד רחב. */
   @media screen and (max-width:760px){:root{--fs:20px}
     .flow{column-width:auto;column-count:1;column-rule:0;width:auto;padding:.7em .8em}
-    .row{grid-template-columns:1fr} .rail{text-align:right;padding:0}
-    .anchor{max-width:none;display:inline;margin-top:.2em;font-size:.82em;color:#4a4137}
-    .row[data-halacha] .anchor{max-width:none}
-    .dafmark{display:inline-block;margin-left:.5em}}
+    .row{grid-template-columns:1fr;align-items:start}
+    /* בטלפון המסילה מעל הטקסט, בשורה אחת, וציון הדף והחלון זה לצד זה */
+    .rail{display:block;text-align:right;padding:0;line-height:1.06}
+    .rail>*{line-height:inherit}
+    .win{display:inline;white-space:normal}
+    .win.w2{line-height:inherit}
+    .anchor{display:inline;font-size:.82em;color:#4a4137}
+    .dafmark{display:inline-block;margin-left:.5em}
+    .mlabel{display:inline-block;margin-left:.4em}}
   '''
+
+  # שער: סוגר מיותר בגיליון הסגנונות מבטל בשקט את הכלל שאחריו. כך אבדה
+  # פעם שאילתת הטלפון כולה, והדף נראה תקין בכל מסך אחר.
+  if CSS.count('{') != CSS.count('}'):
+      raise SystemExit('עצירה: גיליון הסגנונות אינו מאוזן - %d פתיחות מול %d סגירות'
+                       % (CSS.count('{'), CSS.count('}')))
+
+  # ג: המקדמים שנמדדו מן הגופנים, ומרווחי השורה שנמדדו מן הוורד של
+  # המסכת הזאת. הם נכתבים בסוף גיליון הסגנונות, ולכן גוברים על מה
+  # שנכתב למעלה. מרווח השורה של כותרות פרק אינו נוגע כאן במתכוון:
+  # פתיחת פרק תופסת מקום גם בספר.
+  CSS = CSS + ('''
+  :root{--k-nose:%.4f;--k-dh:%.4f;--k-mishna:%.4f}
+  .main.nose,.main.dh,.main.mishna{line-height:var(--lhpx)}
+  .main.hatz{line-height:calc(var(--lhpx) * %.4f)}
+  ''' % (K_NOSE, K_DH, K_MISHNA, line_ratio('hatz')))
 
   JS=r'''
   const D=DATA;const $=s=>document.querySelector(s);
@@ -545,7 +692,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
         }
       }
       if(i<ps.length){requestAnimationFrame(chunk);if(btn)btn.title='מאחה... '+i+'/'+ps.length}
-      else if(btn){btn.classList.toggle('on',SQ);btn.title=fixed+' שורות אוחו מתוך '+ps.length}
+      else {
+        /* האיחוי מקצר פסקאות, ולכן יחידה שהיו לה שתי שורות יכולה להיות
+           בת שורה אחת. החלון נפרש לשתי שורות רק כשיש לטקסט שתיים, ולכן
+           ההתאמה נעשית כאן שוב - אחרת נפערה שורה לבנה ליד החלון. */
+        fitAnchors();
+        if(btn){btn.classList.toggle('on',SQ);btn.title=fixed+' שורות אוחו מתוך '+ps.length}
+      }
     }
     requestAnimationFrame(chunk);
   }
@@ -553,22 +706,122 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
     GEN++;
     $('#flow').querySelectorAll('.main p').forEach(p=>{p.style.wordSpacing='';p.style.letterSpacing=''});
     if(!SQ){$('#fbtn').classList.remove('on');$('#fbtn').title='האיחוי כבוי'}else squeezeRun()}
-  /* ---- הדפסה ל-PDF: כל המסכת, טור אחד, פרק בכל עמוד ---- */
-  function toPdf(){const was=ALL;ALL=true;render(cur);
-    setTimeout(()=>{window.print();ALL=was;render(cur)},600)}
+  /* ---- ב1: רוחב נתיב הדף, והתאמת החלון לנתיב שלו ----
+     רוחב נתיב ציון הדף אינו מספר שנבחר: הוא נמדד מציון הדף הרחב ביותר
+     במסכת, בגופן שבפועל, ונמדד מחדש אחרי שהגופנים נטענו. */
+  let DAFW=0;
+  function setDafW(){
+    const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
+    const cv=document.createElement('canvas'),cx=cv.getContext('2d');
+    cx.font='400 '+(1.3*fs)+"px 'VilnaG','Vilna',serif";
+    let w=0;for(const p of D.pages){const x=cx.measureText(p.daf||'').width;if(x>w)w=x}
+    DAFW=Math.max(w+2,fs*1.1);
+    document.documentElement.style.setProperty('--dafw',(DAFW/fs).toFixed(3)+'em');
+  }
+  function dafWidth(txt){
+    const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
+    const cv=document.createElement('canvas'),cx=cv.getContext('2d');
+    cx.font='400 '+(1.3*fs)+"px 'VilnaG','Vilna',serif";
+    return cx.measureText(txt||'').width+2;
+  }
+  /* חלון שאינו נכנס לנתיב הפנימי מטופל בסדר שנקבע: קודם מצטמצם נתיב הדף
+     של אותה יחידה בלבד; אחר כך - ורק אם לטקסט שתי שורות לפחות - מותר לו
+     לשורה שנייה; ואם גם זה לא, הוא מוקטן. לעולם אינו נחתך ואין ellipsis.
+     הקריאות והכתיבות מופרדות, כדי שלא תהיה פריסה מחדש לכל יחידה. */
+  const ASCALE=[1,.88,.8,.72];
+  function trackW(rail){
+    const g=getComputedStyle(rail).gridTemplateColumns.split(' ');
+    return parseFloat(g[g.length-1])||0;
+  }
+  function fitAnchors(){
+    const f=$('#flow');if(!f)return;
+    const items=[];
+    for(const r of f.querySelectorAll('.row')){
+      const a=r.querySelector(':scope > .rail > .win');
+      if(!a||!a.textContent.trim())continue;
+      a.classList.remove('w2');a.style.fontSize='';r.style.removeProperty('--dafw');
+      items.push({r,a,rail:a.parentElement});
+    }
+    if(!items.length)return;
+    const lhpx=parseFloat(getComputedStyle(f).getPropertyValue('--lhpx'))||
+               parseFloat(getComputedStyle(f).lineHeight)||18;
+    /* קריאה */
+    for(const o of items){
+      o.aw=o.a.getBoundingClientRect().width;
+      o.tw=trackW(o.rail);
+      const m=o.r.querySelector(':scope > .main');
+      /* מספר שורות הטקסט נמדד על השורות עצמן ולא על גובה האלמנט: מרווח
+         שנגזר מוורד יושב בתוך .main, ופסקה בת שורה אחת עם חצי שורת
+         מרווח נראתה כשתי שורות - והחלון הורשה להיפרש על שתיים. */
+      let ln=1;
+      if(m){const rg=document.createRange();rg.selectNodeContents(m);
+        const rs=[...rg.getClientRects()].filter(x=>x.height>0.5);
+        if(rs.length){const t=Math.min(...rs.map(x=>x.top)),bt=Math.max(...rs.map(x=>x.bottom));
+          ln=Math.max(1,Math.round((bt-t)/lhpx))}}
+      o.lines=ln;
+      o.dm=o.r.querySelector('.dafmark');
+    }
+    /* כתיבה ראשונה: צמצום נתיב הדף ליחידה שצריכה זאת */
+    const still=[];
+    for(const o of items){
+      if(o.aw<=o.tw+.5)continue;
+      if(o.dm){const w=dafWidth(o.dm.textContent.trim());
+        if(w<DAFW-.5){o.r.style.setProperty('--dafw',w.toFixed(1)+'px');still.push(o);continue}}
+      still.push(o);
+    }
+    if(!still.length)return;
+    /* קריאה שנייה, ואז ההכרעה */
+    for(const o of still)o.tw=trackW(o.rail);
+    const wrapped=[];
+    for(const o of still){
+      if(o.aw<=o.tw+.5)continue;
+      if(o.lines>=2){o.a.classList.add('w2');wrapped.push(o);continue}
+      const need=o.tw/o.aw;
+      let sc=ASCALE[ASCALE.length-1];
+      for(const c of ASCALE)if(c<=need){sc=c;break}
+      o.a.style.fontSize=sc.toFixed(3)+'em';
+    }
+    /* חלון שנפרש נשאר בגבול שתי שורות, ולעולם אינו עולה על מספר שורות
+       הטקסט: אחרת הוא בעצמו פוער את השורה הלבנה שבאנו למנוע. הוא מוקטן
+       עד שהוא נכנס, ולעולם אינו נחתך. */
+    for(const o of wrapped){
+      const cap=Math.min(2,o.lines)*lhpx+1;
+      let sc=1;
+      while(o.a.getBoundingClientRect().height>cap&&sc>0.62){
+        sc-=0.07;o.a.style.fontSize=sc.toFixed(3)+'em';
+      }
+    }
+  }
+  /* ---- ד6: ההדפסה עוברת כולה במנוע הגיליונות ----
+     רק הוא יודע לעמד בזהירות (כותרת אינה נפרדת מן התוכן שאחריה) ולתת
+     כותרת רצה. שני הכפתורים וגם Ctrl+P של הדפדפן עוברים דרכו. */
+  let PRINTING=0, PREBOOK=0;
+  function printNow(all){
+    const wasB=BOOK, wasA=ALL;
+    BOOK=true; ALL=all; render(cur);
+    setTimeout(()=>{PRINTING=1;window.print();PRINTING=0;
+                    BOOK=wasB;ALL=wasA;render(cur)},700);
+  }
+  function toPdf(){printNow(true)}
+  function printPerek(){printNow(false)}
+  addEventListener('beforeprint',()=>{if(!PRINTING&&!BOOK){PREBOOK=1;BOOK=true;render(cur)}});
+  addEventListener('afterprint',()=>{if(PREBOOK){PREBOOK=0;BOOK=false;render(cur)}});
   function unitHTML(u,daf,pi){
     const mk=daf!=null?`<b class="dafmark" id="d${pi}">${esc(daf)}</b>`:'';
-    /* ◄ פירושו "כך נפסק להלכה". הוא נשען על היחידה שאחריו, ולכן הוא
-       נכתב כאן במסילה שלה ולא כשורה משלו. */
-    const H=(u.h?' data-halacha="1"':'')+(u.ref?' data-ref="'+u.ref+'"':''),
-          hal=u.h?'<span class="hal" title="כך נפסק להלכה">\u25c4</span>':'',
+    const H=(u.ref?' data-ref="'+u.ref+'"':''),
           sb=u.ref?`<button class="srcb" onclick="openSrc('${u.ref}')" title="הגמרא המנוקדת (מקש מ)">מקור</button>`:'';
-    if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}><div class="rail">${mk}${hal}<span class="anchor">${u.a}</span></div><div class="main">${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
-    if(u.k==='m')return `<div class="row" id="u${u.id}"${H}><div class="rail">${mk}${hal}<span class="mlabel">משנה</span></div><div class="main mishna">${u.l.map((l,n)=>`<p>${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
+    /* המסילה היא גריד בן שני נתיבים: ציון הדף בחיצוני, וכל סמני הצד
+       הפנימיים בתוך .win אחד - כדי שחלון ותווית "משנה" יישבו זה לצד זה
+       באותה שורה, ולא ידחפו זה את זה לשורה שנייה. */
+    const win=(w,lab)=>`<div class="rail">${mk}<span class="win">`+
+      (w?`<span class="anchor">${w}</span>`:'')+(lab?'<span class="mlabel">משנה</span>':'')+
+      `</span></div>`;
+    if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}>${win(u.a,0)}<div class="main">${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
+    if(u.k==='m')return `<div class="row" id="u${u.id}"${H}>${win(u.w,1)}<div class="main mishna">${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
     /* הכוכביות מוצגות כלשונן בקובץ. מספרן אינו מנורמל: כל מספר נותן
        עיטור אחר בגופן, וזו כוונת המחבר. */
-    if(u.k==='hatz')return `<div class="row" id="u${u.id}"${H}><div class="rail">${mk}${hal}</div><div class="main hatz">${u.a}</div></div>`;
-    return `<div class="row ${u.k}" id="u${u.id}"${H}><div class="rail">${mk}${hal}</div><div class="main ${u.k==='dh'||u.k==='nose'?u.k:''}">${u.a}${sb}</div></div>`;
+    if(u.k==='hatz')return `<div class="row" id="u${u.id}"${H}>${win(u.w,0)}<div class="main hatz ${u.s||''}">${u.a}</div></div>`;
+    return `<div class="row ${u.k}" id="u${u.id}"${H}>${win(u.w,0)}<div class="main ${u.k==='dh'||u.k==='nose'?u.k:''} ${u.s||''}">${u.a}${sb}</div></div>`;
   }
   /* ALL: מצב רצף - כל המסכת בטור אחד, מן הדף הראשון עד האחרון בגלילה אחת. */
   let ALL=false;
@@ -591,6 +844,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
     $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].daf;$('#dafsel').value=s.from;
     document.title=`לאוקמי גירסא · ${D.masechet} · ${ALL?'רצף':(s.perekName||s.perek||D.pages[s.from].daf)}`;
     location.hash=`p=${cur}`;
+    fitAnchors();
     markEditable();applyEdits();
     if(EDIT)setEdit(true);
     if(!BOOK)squeezeRun();
@@ -604,7 +858,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
     else f.scrollBy({left:-d*f.clientWidth,behavior:'smooth'})}
   function fs(d){const r=document.documentElement;
     const v=Math.max(12,Math.min(60,parseFloat(getComputedStyle(r).getPropertyValue('--fs'))+d));setFs(v)}
-  function setFs(v){document.documentElement.style.setProperty('--fs',v+'px');localStorage.setItem('lg-fs',v);sizeBtns(v)}
+  function setFs(v){document.documentElement.style.setProperty('--fs',v+'px');localStorage.setItem('lg-fs',v);sizeBtns(v);setDafW();fitAnchors()}
   function sizeBtns(v){document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',+b.dataset.fs===+v))}
   function vert(){const v=$('#flow').classList.toggle('vert');
     ALL=v;localStorage.setItem('lg-vert',v?'1':'');$('#vbtn').classList.toggle('on',v);
@@ -622,6 +876,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
     setTimeout(()=>{const e=$('#u'+id);if(e){e.classList.add('hit');toEl(e)}$('#dafsel').value=pi;$('#curdaf').textContent=D.pages[pi].daf},20)}
   function amq(i){$('#q').value=D.am[i][0];search(D.am[i][0])}
   function build(){
+   setDafW();
+   if(document.fonts&&document.fonts.ready)
+     document.fonts.ready.then(()=>{setDafW();fitAnchors()});
    const ds=$('#dafsel');D.pages.forEach((p,i)=>ds.add(new Option(p.daf,i)));ds.onchange=()=>toDaf(+ds.value);
    const ps=$('#peresel');SEC.forEach((s,i)=>ps.add(new Option((s.perek||'רצף')+(s.perekName?' · '+s.perekName:''),i)));ps.onchange=()=>render(+ps.value);
    let t='',lp=-1;const TL={dh:'ד\u05f4ה',m:'משנה'};
@@ -632,6 +889,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
    $('#tocb').innerHTML=t;
    $('#amb').innerHTML=`<div class="n">${D.nAm} אזכורי אמוראים מסומנים בקובץ; ${D.nPsk} ציטוטי פסוקים שונים</div><div class="chips">`+D.am.map((a,i)=>`<a class="tag" onclick="amq(${i})">${esc(a[0])} <span class="n">${a[1]}</span></a>`).join('')+'</div>';
    $('#qab').innerHTML=D.qa.length?D.qa.map(q=>`<div class="res"><b>${q[0]}</b>: ${esc(q[1])}</div>`).join(''):'לא נמצאו חריגות';
+   /* מונֵי סוכן סריקת התצוגה, מן הסריקה האחרונה. הקריאה עצלה ואינה
+      חוסמת דבר: בפתיחת קובץ מקומי היא נכשלת, והבקרה נשארת כשהיתה. */
+   const MDNM={flow:'זרימה',book:'תצוגת ספר',print:'הדפסה'};
+   if(location.protocol==='http:'||location.protocol==='https:')
+   fetch('layout-audit.json').then(r=>r.json()).then(a=>{
+     const m=a.m&&a.m[SLUG];if(!m||!m.modes)return;
+     let t='<h3>סריקת תצוגה - '+esc(String(a.stamp||'').slice(0,16).replace('T',' '))+'</h3>';
+     for(const md in m.modes){const c=m.modes[md];
+       const li=Object.keys(c).filter(k=>c[k]).map(k=>esc(a.codes[k])+' '+c[k]).join(', ');
+       t+='<div class="res"><b>'+esc(MDNM[md]||md)+'</b>: '+(li||'נקי')+'</div>'}
+     $('#qab').insertAdjacentHTML('beforeend',t);
+   }).catch(()=>{});
    const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(18);
    if(localStorage.getItem('lg-vert')){$('#flow').classList.add('vert');$('#vbtn').classList.add('on');ALL=true}
    if(BOOK){$('#bkbtn').classList.add('on');$('#shsel').style.display=''}
@@ -680,6 +949,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
         u.l.forEach((l,i)=>out.push({pi,daf:p.daf,k:'u'+u.id+'.'+(i+1),t:plain(l[1])})); }
       else if(u.k==='m'){ u.l.forEach((l,i)=>out.push({pi,daf:p.daf,k:'u'+u.id+'.'+(i+1),t:plain(l[1])})); }
       else if(u.k==='dh'||u.k==='nose'){ out.push({pi,daf:p.daf,k:'u'+u.id+'.0',t:plain(u.a)}); }
+      if(u.k!=='u'&&u.w)out.push({pi,daf:p.daf,k:'u'+u.id+'.w',t:plain(u.w)});
     }));
     return out}
   let SLOTS=null;
@@ -705,8 +975,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
     const f=$('#flow');
     f.querySelectorAll('.row').forEach(row=>{
       const id=row.id;if(!id)return;
+      /* חלון שיושב במסילה של כותרת אינו הכותרת עצמה, ולכן הוא נושא
+         מפתח משלו. בלעדי זה היו שני אלמנטים באותו מפתח, ועריכת כותרת
+         היתה נופלת על החלון. */
       const a=row.querySelector('.anchor');
-      if(a)a.dataset.ek=id+'.0';
+      if(a)a.dataset.ek=id+(row.classList.contains('u')?'.0':'.w');
       const m=row.querySelector('.main');
       if(!m)return;
       const ps=m.querySelectorAll('p');
@@ -1012,37 +1285,124 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
     if(!g){g=document.createElement('div');g.id='gauge';document.body.appendChild(g)}
     g.className='flow book';
     g.style.cssText+=';display:block;height:auto;width:auto;padding:0;';
-    g.innerHTML='<div class="sheet" style="height:auto;box-shadow:none;border:0">'+
+    g.innerHTML='<div class="sheet" style="height:auto;box-shadow:none;border:0;padding:0">'+
                 '<div class="shbody">'+html+'</div></div>';
     const body=g.querySelector('.shbody');
     const rows=[...body.children];
-    /* פריסה אחת בלבד: כל הקריאות שאחריה אינן מחייבות פריסה נוספת */
+    /* פריסה אחת בלבד: כל הקריאות שאחריה אינן מחייבות פריסה נוספת.
+       לכל שורה נמדד גם מקומן של הפסקאות שבתוכה ומספר שורות הטקסט שלה,
+       כדי שהעימוד יוכל לחתוך יחידה ארוכה בין פסקאות ולדעת אם לכותרת
+       יש די טקסט אחריה. */
     const box=body.getBoundingClientRect();
-    const out=rows.map(r=>{const b=r.getBoundingClientRect();return {h:b.height,top:b.top-box.top}});
+    const out=rows.map(r=>{
+      const b=r.getBoundingClientRect();
+      /* גובה המלבן אינו כולל את המרווחים האנכיים, ולכן סכום הגבהים היה
+         קטן מן הגובה בפועל והעמוד גלש. הגובה נגזר מן ההפרש בין ראשי
+         השורות, שכולל את המרווח שביניהן. */
+      const main=r.querySelector(':scope > .main');
+      const ps=main?[...main.querySelectorAll(':scope > p')]:[];
+      const lh=parseFloat(getComputedStyle(r).getPropertyValue('--lhpx'))||
+               parseFloat(getComputedStyle(r).lineHeight)||18;
+      return {h:b.height, top:b.top-box.top,
+              lines:main?Math.max(main.textContent.trim()?1:0,Math.round(main.getBoundingClientRect().height/lh)):0,
+              pt:ps.map(x=>x.getBoundingClientRect().top-b.top)};});
+    for(let i=0;i<out.length;i++)
+      out[i].h=(i+1<out.length?out[i+1].top:box.height)-out[i].top;
     g.innerHTML='';
     return out}
-  function paginate(units,daf0){
-    /* גובה הגיליון נטו: 84.73em פחות הכותרת הרצה */
+
+  /* ---- ד4: עימוד זהיר ----
+     כותרת לעולם אינה הפריט האחרון בעמוד, ציון דף אינו עומד לבדו
+     בתחתיתו, פרק פותח עמוד חדש, ויחידה ארוכה מחצי עמוד רשאית להתחלק -
+     אך רק בין פסקאות, ועם לפחות שתי שורות בכל צד. הכללים פועלים על
+     מדידה בפועל ולא על הערכה. */
+  /* כותרת שהתוכן שלה בא אחריה. 'הדרן' אינו כאן: הוא סיום פרק ואין
+     אחריו דבר. 'פרק שם' ו'דפים בפרק' שייכים לגוש פתיחת הפרק, וגוש זה
+     נשמר יחד ממילא מפני ש'פרק' פותח עמוד חדש. */
+  const HEADK=['nose','dh','perek-num'];
+  const isHead=u=>HEADK.indexOf(u.k)>-1||(!u.lines&&u.daf);
+  function paginate(units){
     const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
-    const H=(84.73-2.2)*fs;
-    const html=units.map(u=>u.html).join('');
-    const m=measureRows(html);
+    /* גובה הטקסט נטו בעמוד: 115 מ"מ, והכותרת הרצה כבר מחוץ לו */
+    const H=39.79*fs;
+    const m=measureRows(units.map(u=>u.html).join(''));
+    units.forEach((u,i)=>{u.h=m[i]?m[i].h:0;u.lines=m[i]?m[i].lines:0;u.pt=m[i]?m[i].pt:[]});
+
     const sheets=[];let cur=[],h=0;
-    units.forEach((u,i)=>{
-      const uh=m[i]?m[i].h:0;
-      if(cur.length&&h+uh>H){sheets.push(cur);cur=[];h=0}
-      cur.push(u);h+=uh});
-    if(cur.length)sheets.push(cur);
-    return sheets}
+    const push=()=>{if(cur.length){sheets.push(cur);cur=[];h=0}};
+    for(let i=0;i<units.length;i++){
+      const u=units[i], nx=units[i+1];
+      /* ד. פרק חדש פותח עמוד חדש, כמו sectPr בוורד */
+      if(u.k==='perek-num'&&cur.length)push();
+      /* א+ג. כותרת, או ציון דף שאין תחתיו טקסט, אינם נשארים לבדם בתחתית
+         העמוד: אם אין מקום להם ולשתי שורות מן הבא אחריהם - העמוד נסגר
+         כאן, והם יורדים יחד עם התוכן שלהם. הבדיקה לפני החלוקה, ולכן
+         אינה מותירה עמוד שחציו ריק. */
+      if(cur.length&&nx&&isHead(u)){
+        /* הבדיקה אינה "האם יש מקום לשתי שורות" אלא "האם התוכן עצמו
+           ייכנס": יחידה אינה נחתכת בידי הדפדפן, ולכן אם היא אינה נכנסת
+           כולה ואי אפשר לחתוך אותה כדין - היא תרד לעמוד הבא והכותרת
+           תישאר לבדה. שרשרת כותרות (נושא ואחריו ד"ה) נבדקת כגוש אחד. */
+        let need=0,j=i;
+        while(j<units.length&&isHead(units[j])){need+=units[j].h;j++}
+        let got=0;
+        for(;j<units.length&&got<2;j++){
+          const v=units[j], room=H-h-need;
+          /* שורת כותרת אינה "שורת טקסט": כותרת נוספת שנכנסת עדיין
+             אינה מספקת את התוכן שהכותרת הראשונה מבטיחה. */
+          if(v.h<=room){need+=v.h;if(!isHead(v))got+=v.lines||0;continue}
+          const cut=splitAt(v,room);
+          if(cut){got+=cut[0].lines||0}
+          break;
+        }
+        if(got<2&&j<units.length)push();
+      }
+      /* ב. יחידה שאינה נכנסת ביתרת העמוד מתחלקת בין פסקאות, עם שתי
+         שורות לפחות בכל צד. אם אי אפשר - העמוד נסגר לפניה. */
+      if(cur.length&&h+u.h>H){
+        const cut=splitAt(u,H-h);
+        if(cut){cur.push(cut[0]);h+=cut[0].h;push();units.splice(i+1,0,cut[1]);continue}
+        push();
+      }
+      /* יחידה ארוכה מעמוד שלם חייבת להתחלק, אחרת היא נחתכת בשקט */
+      if(!cur.length&&u.h>H){
+        const cut=splitAt(u,H);
+        if(cut){cur.push(cut[0]);push();units.splice(i+1,0,cut[1]);continue}
+      }
+      cur.push(u);h+=u.h;
+    }
+    push();
+    return sheets;
+  }
+  /* חותך יחידה בגובה 'room': מחזיר שתי יחידות, או null אם אין חיתוך
+     חוקי. הפסקאות נמדדו מראש, ולכן אין כאן פריסה נוספת. סמני הצד
+     נשארים עם החלק הראשון. */
+  function splitAt(u,room){
+    if(!u.u||!u.u.l||u.u.l.length<2||!u.pt||u.pt.length<2)return null;
+    const lh=u.h/Math.max(1,u.lines);
+    let k=0;
+    for(let n=1;n<u.pt.length;n++){if(u.pt[n]<=room)k=n;else break}
+    if(!k)return null;
+    if(u.pt[k]<2*lh||u.h-u.pt[k]<2*lh)return null;
+    const A=Object.assign({},u,{u:Object.assign({},u.u,{l:u.u.l.slice(0,k)})});
+    const B=Object.assign({},u,{u:Object.assign({},u.u,{l:u.u.l.slice(k),a:'',w:''})});
+    A.html=unitHTML(A.u,A.daf0,A.pi0); A.h=u.pt[k];
+    A.lines=Math.max(1,Math.round(A.h/lh)); A.pt=u.pt.slice(0,k);
+    B.html=unitHTML(B.u,null,null);    B.h=u.h-u.pt[k];
+    B.lines=Math.max(1,Math.round(B.h/lh)); B.daf0=null; B.pi0=null; B.split=1;
+    B.pt=u.pt.slice(k).map(x=>x-u.pt[k]);
+    return [A,B];
+  }
   function bookHTML(from,to){
     /* אוספים את היחידות עם ההקשר שלהן: דף נוכחי ונושא נוכחי */
     const units=[];let nose='';
     for(let pi=from;pi<=to;pi++){const p=D.pages[pi];
-      if(!p.units.length){units.push({html:`<div class="row"><div class="rail"><b class="dafmark" id="d${pi}">${esc(p.daf)}</b></div><div class="main"></div></div>`,daf:p.daf,nose});continue}
+      if(!p.units.length){units.push({html:`<div class="row"><div class="rail"><b class="dafmark" id="d${pi}">${esc(p.daf)}</b></div><div class="main"></div></div>`,daf:p.daf,nose,k:'daf'});continue}
       let first=true;
       for(const u of p.units){
         if(u.k==='nose')nose=dec(u.a.replace(/<[^>]+>/g,''));
-        units.push({html:unitHTML(u,first?p.daf:null,first?pi:null),daf:p.daf,nose});
+        units.push({html:unitHTML(u,first?p.daf:null,first?pi:null),daf:p.daf,nose,
+                    k:u.k,u:u,daf0:first?p.daf:null,pi0:first?pi:null});
         first=false}}
     if(!units.length)return '';
     const sheets=paginate(units);
@@ -1086,7 +1446,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
   <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button>
   <button data-fs="15" onclick="setFs(15)">קטן</button><button data-fs="18" onclick="setFs(18)">רגיל</button><button data-fs="24" onclick="setFs(24)">גדול</button>
   <button onclick="fs(2)" title="Ctrl+=">א+</button><button onclick="fs(-2)" title="Ctrl+-">א-</button>
-  <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="window.print()" title="הדפסת הפרק הנוכחי בלבד">הדפס פרק</button>
+  <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר">הדפס פרק</button>
   <button id="edbtn" style="display:none" onclick="askAdmin()" title="עריכה תוך כדי לימוד (Ctrl+Alt+E)">עריכה</button>
   <button onclick="suggest()" title="סמן טקסט בדף, או לחץ כאן ובחר קטע">הצע תיקון</button>
   <button onclick="panel('sg');drawSg()">ההצעות שלי</button></div>

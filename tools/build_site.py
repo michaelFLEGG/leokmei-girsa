@@ -61,6 +61,10 @@ def build(json_path, out_path, masechet, hagaha=False):
   order=[]
   for b in blocks:
       r=ROLE.get(b['style'],'body'); h=runs_html(b['runs']); t=b['text'].strip()
+      # כותרת ריקה אינה יוצרת יחידה. בלעדי זה נפער בדף חלל בלא טקסט,
+      # ופסקת "פרק" ריקה אף היתה מאפסת את שם הפרק ומזיזה את גבול המקטע.
+      if not t and r in ('perek-num','perek-name','perek-range','perek-start','hadran','nose','dh','mishna','hatz'):
+          continue
       if r=='perek-num': perek=t
       if r=='perek-name': perekName=t
       if r=='daf':

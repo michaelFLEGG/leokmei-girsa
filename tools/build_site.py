@@ -287,6 +287,39 @@ def build(json_path, out_path, masechet, hagaha=False):
   .panel .n{color:#8a7d66;font-size:12px} .res{padding:5px 0;border-bottom:1px dotted #d9d1bd} .res small{color:#8a7d66}
   .tag{display:inline-block;background:#eeeae1;border-radius:3px;padding:0 6px;margin:2px;font-size:13px}
   .chips{display:flex;flex-wrap:wrap}
+  /* ---- מצב עריכה (מנהל) ---- */
+  .ed [contenteditable]{outline:1px dashed rgba(201,162,74,.75);outline-offset:1px;border-radius:2px}
+  .ed [contenteditable]:focus{outline:1.5px solid var(--gold);background:rgba(201,162,74,.10)}
+  .ed [data-edited]{background:rgba(74,107,63,.13)}
+  .edbar{position:fixed;bottom:0;right:0;left:0;z-index:8;display:flex;flex-wrap:wrap;gap:8px 14px;
+         align-items:center;padding:7px 14px;background:#4a6b3f;color:#fff;font-size:15px}
+  .edbar button{font:inherit;font-size:14px;background:#3d5a34;color:#fff;border:0;border-radius:4px;padding:4px 12px;cursor:pointer}
+  .edbar .sp{flex:1}
+  .edrow{padding:7px 0;border-bottom:1px dotted #d9d1bd;line-height:1.5}
+  .edrow .was{color:#a83c2f;text-decoration:line-through} .edrow .now{color:#4a6b3f;font-weight:700}
+  .edrow small{color:#8a7d66} .edrow button{font:inherit;font-size:13px;background:#eeeae1;border:1px solid #e0d8c4;border-radius:4px;padding:2px 9px;cursor:pointer;margin-right:6px}
+  .edlost{background:#fdf1d8;border-right:3px solid #a83c2f;padding-right:8px}
+  .edsum{background:#eeeae1;border-radius:5px;padding:7px 11px;margin-bottom:8px;font-size:14px;line-height:1.6}
+  /* ---- הצע תיקון (לכל הלומדים) ---- */
+  .pick #flow .main p:hover,.pick #flow .anchor:hover,.pick #flow .main.dh:hover,.pick #flow .main.nose:hover{
+    background:rgba(201,162,74,.28);cursor:crosshair;border-radius:2px}
+  .hint{position:fixed;top:calc(var(--bar) + 8px);right:50%;transform:translateX(50%);z-index:9;
+        background:#2b2620;color:#f1ead9;padding:7px 16px;border-radius:5px;font-size:15px;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+  .modal{position:fixed;inset:0;z-index:10;background:rgba(29,26,22,.45);display:flex;align-items:center;justify-content:center;padding:14px}
+  .modal .box{background:var(--paper);border-radius:9px;max-width:540px;width:100%;max-height:88vh;overflow:auto;
+              padding:16px 20px;box-shadow:0 6px 30px rgba(0,0,0,.35);font-size:15px;line-height:1.6}
+  .modal h3{margin:0 0 4px;font-family:'Vilna',serif;font-weight:700;font-size:20px}
+  .modal .ref{color:#8a7d66;font-size:13px;margin-bottom:9px}
+  .modal .sel{background:#fff;border:1px dashed #d9d1bd;border-radius:5px;padding:8px 11px;margin-bottom:10px;max-height:150px;overflow:auto}
+  .modal label{display:block;margin:9px 0 3px;font-size:14px;color:#5a5044}
+  .modal textarea,.modal input{font:inherit;width:100%;border:1px solid #d9d1bd;border-radius:5px;padding:6px 9px;background:#fff}
+  .modal textarea{min-height:92px;resize:vertical}
+  .modal .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+  .modal button{font:inherit;font-size:15px;border:0;border-radius:5px;padding:7px 16px;cursor:pointer;background:#eeeae1;color:#4a4137}
+  .modal button.go{background:#4a6b3f;color:#fff}
+  .sgrow{padding:7px 0;border-bottom:1px dotted #d9d1bd;line-height:1.5}
+  .sgrow q{color:#5a5044} .sgrow b{display:block} .sgrow small{color:#8a7d66}
+  .sgrow button{font:inherit;font-size:13px;background:#eeeae1;border:1px solid #e0d8c4;border-radius:4px;padding:2px 9px;cursor:pointer}
   /* ---- הדפסה: עמוד הספר עצמו ----
      עד היום הדפיס הדף טור אחד על גיליון של 90 מ"מ, וזה לא היה העמוד
      של בעל הפרויקט. מעתה הגיאומטריה היא זו שנמדדה מקובץ הוורד:
@@ -473,6 +506,8 @@ def build(json_path, out_path, masechet, hagaha=False):
     $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].daf;$('#dafsel').value=s.from;
     document.title=`לאוקמי גירסא · ${D.masechet} · ${ALL?'רצף':(s.perekName||s.perek||D.pages[s.from].daf)}`;
     location.hash=`p=${cur}`;
+    markEditable();applyEdits();
+    if(EDIT)setEdit(true);
     squeezeRun();
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
@@ -532,6 +567,272 @@ def build(json_path, out_path, masechet, hagaha=False):
    if(u0){let pi=0;D.pages.forEach((p,i)=>{if(p.units.some(x=>x.id==u0))pi=i});jump(pi,+u0)}
    else render(+(params.get('p')||0));
   }
+  /* =================== מצב עריכה למנהל ===================
+     האתר סטטי ונבנה מחדש מן הוורד, ולכן עריכה כאן אינה יכולה לשנות
+     את המקור. היא נשמרת במכשיר, מוחלת מחדש בכל טעינה, ומיוצאת לקובץ
+     שנכנס לוורד במעקב דרך הכלי היחיד שכותב לשם.
+
+     העיגון אינו נשען על מספר הפסקה בלבד: לכל עריכה נשמרים גם הנוסח
+     שהיה, הנוסח החדש, ציון הדף וכארבעים תווים מסביב. אם הפסקאות זזו
+     בוורד, העריכה מאותרת מחדש באותו דף ועמוד לכל צד - ורק אם נמצאה
+     התאמה אחת ויחידה. אחרת היא מוצגת בקול כ"תלושה" ואינה מוחלת, כדי
+     ששינוי מבני בוורד לא יפזר עריכות על פסקאות זרות. */
+  const AKEY='lg-admin', EKEY='lg-ed-'+SLUG, ADMIN_WORD='לאוקמי';
+  const OKCLS=['am','ps','kt','hs','ot','tn','ns','df','b'];
+  let ED=[]; try{ED=JSON.parse(localStorage.getItem(EKEY)||'[]')}catch(e){ED=[]}
+  let EDIT=false, EDSTAT={taken:0,lost:0};
+  function isAdmin(){try{return localStorage.getItem(AKEY)==='1'}catch(e){return false}}
+  function saveED(){try{localStorage.setItem(EKEY,JSON.stringify(ED))}catch(e){}}
+  function plain(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent}
+
+  /* כל המקומות הניתנים לעריכה, בכל המסכת, באותו סדר שבו הם מסומנים בדף */
+  function slots(){const out=[];
+    D.pages.forEach((p,pi)=>p.units.forEach(u=>{
+      if(u.k==='u'){ if(u.a)out.push({pi,daf:p.daf,k:'u'+u.id+'.0',t:plain(u.a)});
+        u.l.forEach((l,i)=>out.push({pi,daf:p.daf,k:'u'+u.id+'.'+(i+1),t:plain(l[1])})); }
+      else if(u.k==='m'){ u.l.forEach((l,i)=>out.push({pi,daf:p.daf,k:'u'+u.id+'.'+(i+1),t:plain(l[1])})); }
+      else if(u.k==='dh'||u.k==='nose'){ out.push({pi,daf:p.daf,k:'u'+u.id+'.0',t:plain(u.a)}); }
+    }));
+    return out}
+  let SLOTS=null;
+  function dafKey(d){if(!d)return null;const V={'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,'ל':30,'מ':40,'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400};
+    const t=d.trim();const am=t.endsWith(':')?1:0;let n=0;
+    for(const c of t.replace(/[.:"'\u05f3\u05f4]/g,''))n+=V[c]||0;return n?n*2+am:null}
+
+  /* מאתר את המקום של עריכה. מחזיר מפתח, או null אם היא תלושה. */
+  function locate(e){
+    if(!SLOTS)SLOTS=slots();
+    const byKey=SLOTS.find(s=>s.k===e.k);
+    if(byKey&&(byKey.t===e.now||byKey.t===e.was))return byKey.k;
+    const k0=dafKey(e.daf);
+    const win=SLOTS.filter(s=>{const k=dafKey(s.daf);return k0===null||k===null?true:Math.abs(k-k0)<=1});
+    for(const want of [e.was,e.now]){
+      const hits=win.filter(s=>s.t===want);
+      if(hits.length===1)return hits[0].k;
+    }
+    return null}
+
+  /* מסמן כל מקום שניתן לעריכה, ומחיל את מה שנשמר */
+  function markEditable(){
+    const f=$('#flow');
+    f.querySelectorAll('.row').forEach(row=>{
+      const id=row.id;if(!id)return;
+      const a=row.querySelector('.anchor');
+      if(a)a.dataset.ek=id+'.0';
+      const m=row.querySelector('.main');
+      if(!m)return;
+      const ps=m.querySelectorAll('p');
+      if(ps.length)ps.forEach((x,i)=>x.dataset.ek=id+'.'+(i+1));
+      else if(m.classList.contains('dh')||m.classList.contains('nose'))m.dataset.ek=id+'.0';
+    })}
+  function applyEdits(){
+    if(!ED.length)return;
+    SLOTS=slots();
+    const f=$('#flow');let taken=0,lost=0,keep=[];
+    for(const e of ED){
+      const k=locate(e);
+      if(k===null){lost++;e.lost=1;keep.push(e);continue}
+      e.lost=0;if(k!==e.k)e.k=k;
+      const el=f.querySelector('[data-ek="'+k+'"]');
+      const cur=el?el.textContent:(SLOTS.find(s=>s.k===k)||{}).t;
+      if(cur===e.now){taken++;continue}          /* כבר נכנס לוורד - אין מה להחיל */
+      if(el&&cur===e.was){el.textContent=e.now;el.dataset.edited='1'}
+      keep.push(e)}
+    EDSTAT={taken,lost};
+    if(keep.length!==ED.length){ED=keep;saveED()}
+    if($('#edn'))$('#edn').textContent=ED.length}
+
+  function ctxOf(el){
+    const rows=[...$('#flow').querySelectorAll('.main p, .main.dh, .main.nose, .anchor')];
+    const i=rows.indexOf(el);
+    return {b:(i>0?rows[i-1].textContent:'').slice(-40),a:(i>=0&&i<rows.length-1?rows[i+1].textContent:'').slice(0,40)}}
+
+  function clean(el){
+    /* רק עיצוב התו המוכר נשאר. כל תגית אחרת מוסרת והטקסט נשמר. */
+    el.querySelectorAll('*').forEach(n=>{
+      const tag=n.tagName.toLowerCase();
+      const ok=(tag==='i'&&[...n.classList].every(c=>OKCLS.includes(c)))||tag==='b';
+      n.removeAttribute('style');
+      if(!ok){const t=document.createTextNode(n.textContent);n.replaceWith(t)}})}
+
+  function edFocus(ev){const el=ev.target.closest('[contenteditable]');if(!el)return;
+    el.__was=el.textContent}
+  function edBlur(ev){const el=ev.target.closest('[contenteditable]');if(!el)return;
+    clean(el);
+    const now=el.textContent, was=el.__was;
+    if(was===undefined||now===was)return;
+    const k=el.dataset.ek;const row=el.closest('.row');
+    const daf=(()=>{let r=row;while(r){const d=r.querySelector('.dafmark');if(d)return d.textContent;r=r.previousElementSibling}return ''})();
+    const old=ED.find(x=>x.k===k);
+    if(old){ if(now===old.was){ED=ED.filter(x=>x!==old);delete el.dataset.edited} else old.now=now }
+    else ED.push({k,was,now,daf,ctx:ctxOf(el),t:Date.now()});
+    if(now!==was)el.dataset.edited='1';
+    saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd()}
+
+  function setEdit(on){
+    EDIT=on;document.body.classList.toggle('ed',on);
+    const f=$('#flow');
+    f.querySelectorAll('[data-ek]').forEach(el=>{
+      if(on){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false')}
+      else el.removeAttribute('contenteditable')});
+    let bar=$('#edbar');
+    if(on&&!bar){bar=document.createElement('div');bar.className='edbar';bar.id='edbar';
+      bar.innerHTML='<b>מצב עריכה</b><span>· <span id="edn">'+ED.length+'</span> תיקונים</span>'+
+        '<button onclick="panel(\'ed\')">העריכות שלי</button><span class="sp"></span>'+
+        '<button onclick="setEdit(false)">סיום</button>';
+      document.body.appendChild(bar)}
+    else if(!on&&bar)bar.remove();
+    if(on)drawEd()}
+  function askAdmin(){
+    if(isAdmin()){setEdit(!EDIT);return}
+    const a=prompt('מילת המנהל:');
+    if(a===null)return;
+    if(a.trim()===ADMIN_WORD){try{localStorage.setItem(AKEY,'1')}catch(e){}
+      $('#edbtn').style.display='';setEdit(true)}
+    else alert('המילה אינה נכונה.')}
+
+  function drawEd(){
+    const box=$('#edb');if(!box)return;
+    const by={};for(const e of ED)(by[e.daf||'']=by[e.daf||'']||[]).push(e);
+    let h='<div class="edsum">'+ED.length+' תיקונים ממתינים'+
+      (EDSTAT.taken?' · '+EDSTAT.taken+' כבר נקלטו בוורד':'')+
+      (EDSTAT.lost?' · <b style="color:#a83c2f">'+EDSTAT.lost+' תלושים</b> - הפסקה שלהם השתנתה בוורד ולכן אינם מוחלים':'')+
+      '</div>';
+    for(const d of Object.keys(by)){
+      h+='<h3>'+esc(d||'בלא ציון דף')+'</h3>';
+      by[d].forEach(e=>{const i=ED.indexOf(e);
+        h+='<div class="edrow'+(e.lost?' edlost':'')+'">'+
+          (e.lost?'<small>תלוש - לא הוחל</small><br>':'')+
+          '<span class="was">'+esc(e.was.slice(0,90))+'</span><br>'+
+          '<span class="now">'+esc(e.now.slice(0,90))+'</span><br>'+
+          '<button onclick="undoEd('+i+')">ביטול</button></div>'})}
+    if(!ED.length)h='<div class="edsum">אין עדיין תיקונים.</div>';
+    h+='<div style="margin-top:12px;display:flex;gap:7px;flex-wrap:wrap">'+
+       '<button onclick="edDownload()">הורד את כל התיקונים</button>'+
+       '<button id="edcp" onclick="edCopy()">העתק ללוח</button>'+
+       '<button onclick="edClear()">נקה הכל</button></div>';
+    box.innerHTML=h}
+  function undoEd(i){const e=ED[i];if(!e)return;
+    const el=$('#flow').querySelector('[data-ek="'+e.k+'"]');
+    if(el){el.textContent=e.was;delete el.dataset.edited}
+    ED.splice(i,1);saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd()}
+  function edClear(){if(!confirm('למחוק את כל '+ED.length+' התיקונים?'))return;
+    ED=[];saveED();render(cur);drawEd()}
+  function edText(){
+    let t='תיקוני '+D.masechet+' - לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n';
+    t+=ED.length+' תיקונים\n\n';
+    for(const e of ED){t+='דף '+(e.daf||'-')+(e.lost?'  [תלוש - הפסקה השתנתה בוורד]':'')+'\n';
+      t+='  היה: '+e.was+'\n  יהיה: '+e.now+'\n\n'}
+    t+='\n==== נתוני עיבוד (אין לערוך) ====\n';
+    t+=JSON.stringify({v:1,slug:SLUG,masechet:D.masechet,when:new Date().toISOString(),edits:ED});
+    return t}
+  function edDownload(){const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([edText()],{type:'text/plain;charset=utf-8'}));
+    a.download='תיקוני-'+D.masechet+'.txt';a.click()}
+  function edCopy(){const t=edText();const done=()=>{const b=$('#edcp');b.textContent='הועתק ✓';setTimeout(()=>b.textContent='העתק ללוח',2200)};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,fb);else fb();
+    function fb(){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done()}catch(e){alert('לא הצלחתי להעתיק. השתמש בכפתור ההורדה.')}ta.remove()}}
+
+  /* הקלדה: Enter חסום כדי שלא תיווצר פסקה חדשה, והדבקה נכנסת כטקסט נקי */
+  document.addEventListener('keydown',e=>{
+    if(e.ctrlKey&&e.altKey&&(e.key==='e'||e.key==='E'||e.key==='ק')){askAdmin();e.preventDefault();return}
+    if(EDIT&&e.key==='Enter'&&e.target.isContentEditable)e.preventDefault()});
+  document.addEventListener('paste',e=>{
+    if(!EDIT||!e.target.isContentEditable)return;
+    e.preventDefault();
+    const t=(e.clipboardData||window.clipboardData).getData('text/plain').replace(/\s+/g,' ');
+    document.execCommand('insertText',false,t)});
+  document.addEventListener('focusin',edFocus);
+  document.addEventListener('focusout',edBlur);
+  if(location.hash.indexOf('admin')>-1){try{localStorage.setItem(AKEY,'1')}catch(e){}}
+  if(isAdmin())$('#edbtn').style.display='';
+
+  /* =================== הצע תיקון ===================
+     פתוח לכל לומד, בלי שרת ובלי הרשמה. ההצעה נשמרת במכשיר עוד לפני
+     שנעשה בה דבר, כדי שלא תאבד אם משהו ייכשל אחר כך. היציאה היא
+     העתקה ללוח או הורדה לקובץ - שתיהן עובדות תמיד.
+
+     SUGGEST_MAIL ריק בכוונה. כתובת דואר תיכנס לכאן רק כשבעל הפרויקט
+     ימסור אותה; עד אז כפתור הדואר אינו מוצג כלל, ואין להמציא כתובת. */
+  const SUGGEST_MAIL='';
+  const SKEY='lg-sg-'+SLUG;
+  let SG=[]; try{SG=JSON.parse(localStorage.getItem(SKEY)||'[]')}catch(e){SG=[]}
+  let PICK=false;
+  function saveSG(){try{localStorage.setItem(SKEY,JSON.stringify(SG))}catch(e){}}
+  function unitOf(el){const r=el.closest('.row');if(!r)return{daf:'',uid:''};
+    let x=r,daf='';while(x){const d=x.querySelector('.dafmark');if(d){daf=d.textContent;break}x=x.previousElementSibling}
+    return {daf,uid:(r.id||'').replace(/^u/,'')}}
+  function suggest(){
+    const s=window.getSelection();
+    const t=s&&String(s).trim();
+    if(t&&s.rangeCount&&$('#flow').contains(s.getRangeAt(0).commonAncestorContainer)){
+      const el=(s.getRangeAt(0).commonAncestorContainer.nodeType===1
+                ?s.getRangeAt(0).commonAncestorContainer
+                :s.getRangeAt(0).commonAncestorContainer.parentElement);
+      openSg(t,el);return}
+    setPick(true)}
+  function setPick(on){PICK=on;document.body.classList.toggle('pick',on);
+    let h=$('#hint');
+    if(on&&!h){h=document.createElement('div');h.className='hint';h.id='hint';
+      h.textContent='לחץ על הקטע שברצונך להעיר עליו. Esc לביטול.';document.body.appendChild(h)}
+    else if(!on&&h)h.remove()}
+  $('#flow').addEventListener('click',e=>{
+    if(!PICK)return;
+    const el=e.target.closest('.main p, .anchor, .main.dh, .main.nose');
+    if(!el)return;
+    e.preventDefault();setPick(false);openSg(el.textContent.trim(),el)});
+  function openSg(text,el){
+    const u=unitOf(el);
+    const m=document.createElement('div');m.className='modal';m.id='sgm';
+    m.innerHTML='<div class="box"><h3>הצעת תיקון</h3>'+
+      '<div class="ref">'+esc(D.masechet)+(u.daf?' · דף '+esc(u.daf):'')+(u.uid?' · יחידה '+esc(u.uid):'')+'</div>'+
+      '<div class="sel">'+esc(text)+'</div>'+
+      '<label for="sgn">מה להציע?</label><textarea id="sgn" placeholder="כתוב כאן את ההערה או את הנוסח המוצע"></textarea>'+
+      '<label for="sgw">שמך (לא חובה)</label><input id="sgw" value="'+esc(localStorage.getItem('lg-sg-name')||'')+'">'+
+      '<div class="btns"><button class="go" id="sgok">שמור את ההצעה</button>'+
+      '<button onclick="closeSg()">ביטול</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',e=>{if(e.target===m)closeSg()});
+    $('#sgn').focus();
+    $('#sgok').onclick=()=>{
+      const note=$('#sgn').value.trim();
+      if(!note){alert('כתוב מה להציע.');return}
+      const name=$('#sgw').value.trim();
+      try{localStorage.setItem('lg-sg-name',name)}catch(e){}
+      SG.push({sel:text,note,name,daf:u.daf,uid:u.uid,t:Date.now()});
+      saveSG();closeSg();panel('sg');drawSg()};
+  }
+  function closeSg(){const m=$('#sgm');if(m)m.remove()}
+  function drawSg(){const box=$('#sgb');if(!box)return;
+    let h='<div class="edsum">'+SG.length+' הצעות שמורות במכשיר הזה.</div>';
+    SG.forEach((g,i)=>{h+='<div class="sgrow"><small>'+esc(g.daf||'')+'</small> <q>'+esc(g.sel.slice(0,80))+'</q>'+
+      '<b>'+esc(g.note)+'</b><button onclick="delSg('+i+')">מחק</button></div>'});
+    if(!SG.length)h='<div class="edsum">עדיין לא הצעת דבר. סמן טקסט בדף, ולחץ "הצע תיקון".</div>';
+    h+='<div style="margin-top:12px;display:flex;gap:7px;flex-wrap:wrap">'+
+       '<button id="sgcp" onclick="sgCopy()">העתק ללוח</button>'+
+       '<button onclick="sgDownload()">הורד לקובץ</button>'+
+       (SUGGEST_MAIL?'<button onclick="sgMail()">שלח בדואר</button>':'')+
+       '<button onclick="sgClear()">נקה הכל</button></div>';
+    box.innerHTML=h}
+  function delSg(i){SG.splice(i,1);saveSG();drawSg()}
+  function sgClear(){if(!confirm('למחוק את כל '+SG.length+' ההצעות?'))return;SG=[];saveSG();drawSg()}
+  function sgText(){let t='הצעות תיקון · '+D.masechet+' · לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n\n';
+    SG.forEach(g=>{t+='דף '+(g.daf||'-')+(g.uid?' · יחידה '+g.uid:'')+(g.name?' · '+g.name:'')+'\n';
+      t+='  הקטע: '+g.sel+'\n  ההצעה: '+g.note+'\n\n'});
+    return t}
+  function sgDownload(){const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([sgText()],{type:'text/plain;charset=utf-8'}));
+    a.download='הצעות-'+D.masechet+'.txt';a.click()}
+  function sgCopy(){const t=sgText();const done=()=>{const b=$('#sgcp');b.textContent='הועתק ✓';setTimeout(()=>b.textContent='העתק ללוח',2200)};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,fb);else fb();
+    function fb(){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done()}catch(e){alert('לא הצלחתי להעתיק. השתמש בכפתור ההורדה.')}ta.remove()}}
+  function sgMail(){if(!SUGGEST_MAIL)return;
+    location.href='mailto:'+SUGGEST_MAIL+'?subject='+encodeURIComponent('הצעות תיקון · '+D.masechet)+
+      '&body='+encodeURIComponent(sgText().slice(0,1800))}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(PICK)setPick(false);closeSg()}});
+
   build();
   '''
 
@@ -555,13 +856,18 @@ def build(json_path, out_path, masechet, hagaha=False):
   <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button>
   <button data-fs="15" onclick="setFs(15)">קטן</button><button data-fs="18" onclick="setFs(18)">רגיל</button><button data-fs="24" onclick="setFs(24)">גדול</button>
   <button onclick="fs(2)" title="Ctrl+=">א+</button><button onclick="fs(-2)" title="Ctrl+-">א-</button>
-  <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="window.print()" title="הדפסת הפרק הנוכחי בלבד">הדפס פרק</button></div>
+  <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="window.print()" title="הדפסת הפרק הנוכחי בלבד">הדפס פרק</button>
+  <button id="edbtn" style="display:none" onclick="askAdmin()" title="עריכה תוך כדי לימוד (Ctrl+Alt+E)">עריכה</button>
+  <button onclick="suggest()" title="סמן טקסט בדף, או לחץ כאן ובחר קטע">הצע תיקון</button>
+  <button onclick="panel('sg');drawSg()">ההצעות שלי</button></div>
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
   <div class="panel" id="toc"><button class="x" onclick="panel('toc')">×</button><h3>תוכן העניינים - נושאי הסוגיות</h3><div id="tocb"></div></div>
   <div class="panel" id="am"><button class="x" onclick="panel('am')">×</button><h3>אמוראים ותנאים - לפי הסימון בקובץ</h3><div id="amb"></div></div>
   <div class="panel" id="qa"><button class="x" onclick="panel('qa')">×</button><h3>בקרת הקובץ - חריגות שנמצאו בהמרה</h3><div id="qab"></div></div>
+  <div class="panel" id="ed"><button class="x" onclick="panel('ed')">×</button><h3>העריכות שלי</h3><div id="edb"></div></div>
+  <div class="panel" id="sg"><button class="x" onclick="panel('sg')">×</button><h3>ההצעות שלי</h3><div id="sgb"></div></div>
   <div class="flow" id="flow"></div>
-  <script>const DATA={J};</script><script>{JS}</script></body></html>'''
+  <script>const DATA={J},SLUG="{slug}";</script><script>{JS}</script></body></html>'''
 
   open(out_path,'w',encoding='utf-8').write(page)
   return {'pages':len(pages),'toc':n_nose,'qa':qa,'empty':n_empty,'heavy':heavy}

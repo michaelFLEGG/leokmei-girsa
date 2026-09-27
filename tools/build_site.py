@@ -139,7 +139,7 @@ def build(json_path, out_path, masechet, hagaha=False):
      המכולה נשארת רב-טורית, ותוכן שאינו נכנס בגובה גולש לטורים נוספים לצדדים
      במקום לגלול למטה. רק 'auto' בשניהם מוציא אותה ממצב טורים. */
   .flow.vert{column-width:auto;column-count:auto;column-rule:0;column-fill:balance;
-             width:calc(var(--rail) + var(--measure) + var(--gut) * 2);margin:0 auto}
+             width:calc(var(--rail) + var(--measure) + var(--gut) * 2);max-width:100%;margin:0 auto}
   .row{display:grid;grid-template-columns:var(--rail) var(--measure);break-inside:avoid-column}
   .rail{text-align:left;padding-left:.36em}
   .main{text-align:justify;text-align-last:right}
@@ -178,7 +178,7 @@ def build(json_path, out_path, masechet, hagaha=False):
           width:auto;padding:0;font-size:11pt}
     .row{break-inside:avoid}
     .row.perek-num{break-before:page}
-    .row.perek-num:first-of-type{break-before:auto}
+    .flow > .row.perek-num:first-child{break-before:auto}
     @page{size:90mm 260mm;margin:6mm 5mm}}
   @media(max-width:760px){:root{--fs:20px}
     .flow{column-width:auto;column-count:1;column-rule:0;width:auto;padding:.7em .8em}

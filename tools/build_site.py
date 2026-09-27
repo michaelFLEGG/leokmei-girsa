@@ -131,7 +131,10 @@ def build(json_path, out_path, masechet, hagaha=False):
         padding:.9em var(--gut);overflow:auto;
         column-width:calc(var(--rail) + var(--measure));column-gap:calc(var(--gut) * 2);
         column-fill:auto;column-rule:1px solid #e6ddc9}
-  .flow.vert{column-width:auto;column-count:1;column-rule:0;
+  /* מצב רצף: מבטלים את מכולת-הטורים לגמרי. 'column-count:1' לבדו אינו מספיק -
+     המכולה נשארת רב-טורית, ותוכן שאינו נכנס בגובה גולש לטורים נוספים לצדדים
+     במקום לגלול למטה. רק 'auto' בשניהם מוציא אותה ממצב טורים. */
+  .flow.vert{column-width:auto;column-count:auto;column-rule:0;column-fill:balance;
              width:calc(var(--rail) + var(--measure) + var(--gut) * 2);margin:0 auto}
   .row{display:grid;grid-template-columns:var(--rail) var(--measure);break-inside:avoid-column}
   .rail{text-align:left;padding-left:.36em}
@@ -164,9 +167,15 @@ def build(json_path, out_path, masechet, hagaha=False):
   .panel .n{color:#8a7d66;font-size:12px} .res{padding:5px 0;border-bottom:1px dotted #d9d1bd} .res small{color:#8a7d66}
   .tag{display:inline-block;background:#eeeae1;border-radius:3px;padding:0 6px;margin:2px;font-size:13px}
   .chips{display:flex;flex-wrap:wrap}
-  @media print{.bar,.panel{display:none} html,body{overflow:visible;background:#fff}
-    .flow{height:auto;overflow:visible}
-    @page{size:90mm 260mm;margin:0}}
+  /* בהדפסה: טור אחד רציף, וכל פרק פותח עמוד חדש. המידות נשארות ב-em,
+     ולכן שבירת השורות זהה למסך. */
+  @media print{.bar,.panel{display:none} html,body{overflow:visible;background:#fff;height:auto}
+    .flow{height:auto;overflow:visible;column-width:auto;column-count:1;column-rule:0;
+          width:auto;padding:0;font-size:11pt}
+    .row{break-inside:avoid}
+    .row.perek-num{break-before:page}
+    .row.perek-num:first-of-type{break-before:auto}
+    @page{size:90mm 260mm;margin:6mm 5mm}}
   @media(max-width:760px){:root{--fs:20px}
     .flow{column-width:auto;column-count:1;column-rule:0;width:auto;padding:.7em .8em}
     .row{grid-template-columns:1fr} .rail{text-align:right;padding:0}
@@ -197,6 +206,86 @@ def build(json_path, out_path, masechet, hagaha=False):
   function toEl(e){const f=$('#flow');
     if(f.classList.contains('vert')){e.scrollIntoView({block:'center'});return}
     f.scrollLeft += e.getBoundingClientRect().right - f.getBoundingClientRect().right;}
+  /* ---- איחוי שורה יתומה ----
+     מילה בודדת שגלשה לשורה משלה נמשכת אל השורה שמעליה בדחיסה עדינה:
+     קודם מצטמצם הרווח בין המילים, ורק אם לא די בכך מצטמצם גם הרווח בין
+     האותיות. הסולם עוצר בערך הראשון שמצליח, ואם אף אחד לא הצליח הפסקה
+     נשארת כשהיתה - כדי שהדחיסה לא תהיה ניכרת לעין.
+
+     המדידה אינה נעשית על הדף עצמו: פריסה מחדש של מכולת-הטורים עולה
+     מילישניות רבות לכל מדידה, ומאות פסקאות היו מקפיאות את הדף לשניות.
+     לכן נבנה "סרגל" - עותק מבודד ברוחב זהה, מחוץ למסך - וכל הניסיונות
+     נעשים בו. אל הדף עצמו נכתב רק הערך שנבחר. */
+  const STEPS=[[-0.012,0],[-0.026,0],[-0.045,0],[-0.045,-0.008],[-0.065,-0.013],[-0.085,-0.019],[-0.105,-0.026]];
+  let SQ=localStorage.getItem('lg-sq')!=='0', GEN=0, GAUGE=null, GP=null, GM=null;
+  function gauge(){
+    if(GAUGE)return;
+    GAUGE=document.createElement('div');
+    GAUGE.className='flow';
+    GAUGE.style.cssText='position:absolute;left:-99999px;top:0;height:auto;overflow:hidden;'+
+      'column-count:1;column-width:auto;column-rule:0;padding:0;contain:layout style;';
+    GAUGE.innerHTML='<div class="row"><div class="rail"></div><div class="main"><p></p></div></div>';
+    document.body.appendChild(GAUGE);
+    GP=GAUGE.querySelector('p');GM=GAUGE.querySelector('.main');
+  }
+  function lastLineIsLone(p){
+    /* משווים את הגובה של המילה האחרונה לזה של המילה שלפניה. אם הן בשורות
+       שונות - השורה האחרונה נושאת מילה אחת. */
+    const w=document.createTreeWalker(p,NodeFilter.SHOW_TEXT);
+    const nodes=[];let nd;while(nd=w.nextNode())if(nd.nodeValue.trim())nodes.push(nd);
+    if(!nodes.length)return false;
+    const full=nodes.map(x=>x.nodeValue).join('');
+    const m=[...full.matchAll(/\S+/g)];
+    if(m.length<3)return false;
+    const r=document.createRange();
+    function topAt(i){let off=m[i].index;
+      for(const x of nodes){const L=x.nodeValue.length;
+        if(off<L){r.setStart(x,off);r.setEnd(x,Math.min(off+1,L));
+          const b=r.getBoundingClientRect();return b.height?b.top:null}
+        off-=L}
+      return null}
+    const a=topAt(m.length-1),b=topAt(m.length-2);
+    return a!==null&&b!==null&&Math.abs(a-b)>2;
+  }
+  function squeezeRun(){
+    const g=++GEN;
+    if(!SQ)return;
+    gauge();
+    const ps=[...$('#flow').querySelectorAll('.main p')].filter(p=>p.textContent.trim().length>30);
+    let i=0,fixed=0;
+    const btn=$('#fbtn');
+    function chunk(){
+      if(g!==GEN)return;                     /* הדף נבנה מחדש - הריצה בטלה */
+      const t0=performance.now();
+      while(i<ps.length&&performance.now()-t0<12){
+        const p=ps[i++];
+        GM.className=p.parentElement.className;   /* mishna וכדומה משנים גופן */
+        GP.className=p.className;
+        GP.style.wordSpacing='';GP.style.letterSpacing='';
+        GP.innerHTML=p.innerHTML;
+        const h0=GP.offsetHeight;
+        if(h0>=GP.__lh*1.5||true){
+          if(lastLineIsLone(GP)){
+            for(const [ws,ls] of STEPS){
+              GP.style.wordSpacing=ws+'em';GP.style.letterSpacing=ls?ls+'em':'';
+              if(GP.offsetHeight<h0){p.style.wordSpacing=ws+'em';
+                if(ls)p.style.letterSpacing=ls+'em';fixed++;break}
+            }
+          }
+        }
+      }
+      if(i<ps.length){requestAnimationFrame(chunk);if(btn)btn.title='מאחה... '+i+'/'+ps.length}
+      else if(btn){btn.classList.toggle('on',SQ);btn.title=fixed+' שורות אוחו מתוך '+ps.length}
+    }
+    requestAnimationFrame(chunk);
+  }
+  function squeeze(){SQ=!SQ;localStorage.setItem('lg-sq',SQ?'1':'0');
+    GEN++;
+    $('#flow').querySelectorAll('.main p').forEach(p=>{p.style.wordSpacing='';p.style.letterSpacing=''});
+    if(!SQ){$('#fbtn').classList.remove('on');$('#fbtn').title='האיחוי כבוי'}else squeezeRun()}
+  /* ---- הדפסה ל-PDF: כל המסכת, טור אחד, פרק בכל עמוד ---- */
+  function toPdf(){const was=ALL;ALL=true;render(cur);
+    setTimeout(()=>{window.print();ALL=was;render(cur)},600)}
   function unitHTML(u,daf,pi){
     const mk=daf!=null?`<b class="dafmark" id="d${pi}">${esc(daf)}</b>`:'';
     if(u.k==='u')return `<div class="row u" id="u${u.id}"><div class="rail">${mk}<span class="anchor">${u.a}</span></div><div class="main">${u.l.map(l=>`<p class="${l[0]}">${l[1]}</p>`).join('')}</div></div>`;
@@ -204,17 +293,23 @@ def build(json_path, out_path, masechet, hagaha=False):
     if(u.k==='hatz')return `<div class="row" id="u${u.id}"><div class="rail">${mk}</div><div class="main hatz">* * *</div></div>`;
     return `<div class="row ${u.k}" id="u${u.id}"><div class="rail">${mk}</div><div class="main ${u.k==='dh'||u.k==='nose'?u.k:''}">${u.a}</div></div>`;
   }
-  function render(si,q){
-    cur=Math.max(0,Math.min(SEC.length-1,si));const s=SEC[cur];let h='';
-    for(let pi=s.from;pi<=s.to;pi++){const p=D.pages[pi];
+  /* ALL: מצב רצף - כל המסכת בטור אחד, מן הדף הראשון עד האחרון בגלילה אחת. */
+  let ALL=false;
+  function pagesHTML(from,to){let h='';
+    for(let pi=from;pi<=to;pi++){const p=D.pages[pi];
       if(!p.units.length){h+=`<div class="row"><div class="rail"><b class="dafmark" id="d${pi}">${esc(p.daf)}</b></div><div class="main"></div></div>`;continue}
       let first=true;
       for(const u of p.units){h+=unitHTML(u,first?p.daf:null,first?pi:null);first=false}}
+    return h}
+  function render(si,q){
+    cur=Math.max(0,Math.min(SEC.length-1,si));const s=SEC[cur];
+    const h=ALL?pagesHTML(0,D.pages.length-1):pagesHTML(s.from,s.to);
     const f=$('#flow');f.innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;
-    f.scrollTop=0;f.scrollLeft=SGN>0?f.scrollWidth:0;
+    if(!ALL){f.scrollTop=0;f.scrollLeft=SGN>0?f.scrollWidth:0}
     $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].daf;$('#dafsel').value=s.from;
-    document.title=`לאוקמי גירסא · ${D.masechet} · ${s.perekName||s.perek||D.pages[s.from].daf}`;
+    document.title=`לאוקמי גירסא · ${D.masechet} · ${ALL?'רצף':(s.perekName||s.perek||D.pages[s.from].daf)}`;
     location.hash=`p=${cur}`;
+    squeezeRun();
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){const si=secOf(pi);if(si!==cur)render(si);
@@ -228,7 +323,9 @@ def build(json_path, out_path, masechet, hagaha=False):
   function setFs(v){document.documentElement.style.setProperty('--fs',v+'px');localStorage.setItem('lg-fs',v);sizeBtns(v)}
   function sizeBtns(v){document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',+b.dataset.fs===+v))}
   function vert(){const v=$('#flow').classList.toggle('vert');
-    localStorage.setItem('lg-vert',v?'1':'');$('#vbtn').classList.toggle('on',v)}
+    ALL=v;localStorage.setItem('lg-vert',v?'1':'');$('#vbtn').classList.toggle('on',v);
+    const keep=+$('#dafsel').value||0;render(cur);
+    if(v)setTimeout(()=>{const e=$('#d'+keep);if(e)e.scrollIntoView({block:'start'})},30)}
   function panel(id){const p=$('#'+id),o=p.classList.contains('open');document.querySelectorAll('.panel').forEach(x=>x.classList.remove('open'));if(!o)p.classList.add('open')}
   function dec(s){return s.replace(/&quot;/g,'"').replace(/&#x27;/g,"'").replace(/&amp;/g,'&')}
   function txt(u){return dec(u.a.replace(/<[^>]+>/g,'')+' '+u.l.map(l=>l[1].replace(/<[^>]+>/g,'')).join(' '))}
@@ -250,7 +347,9 @@ def build(json_path, out_path, masechet, hagaha=False):
    $('#amb').innerHTML=`<div class="n">${D.nAm} אזכורי אמוראים מסומנים בקובץ; ${D.nPsk} ציטוטי פסוקים שונים</div><div class="chips">`+D.am.map((a,i)=>`<a class="tag" onclick="amq(${i})">${esc(a[0])} <span class="n">${a[1]}</span></a>`).join('')+'</div>';
    $('#qab').innerHTML=D.qa.length?D.qa.map(q=>`<div class="res"><b>${q[0]}</b>: ${esc(q[1])}</div>`).join(''):'לא נמצאו חריגות';
    const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(24);
-   if(localStorage.getItem('lg-vert')){$('#flow').classList.add('vert');$('#vbtn').classList.add('on')}
+   if(localStorage.getItem('lg-vert')){$('#flow').classList.add('vert');$('#vbtn').classList.add('on');ALL=true}
+   if(SQ)$('#fbtn').classList.add('on');
+   let rsz;addEventListener('resize',()=>{clearTimeout(rsz);rsz=setTimeout(squeezeRun,250)});
    $('#flow').addEventListener('wheel',e=>{const f=$('#flow');if(f.classList.contains('vert'))return;
      if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){f.scrollLeft-=e.deltaY;e.preventDefault()}},{passive:false});
    document.addEventListener('keydown',e=>{
@@ -285,7 +384,9 @@ def build(json_path, out_path, masechet, hagaha=False):
   <input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)">
   <span class="sp"></span>
   <button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>{hgbtn}
-  <button id="vbtn" onclick="vert()" title="טור אחד במקום טורים">טור אחד</button>
+  <button id="vbtn" onclick="vert()" title="כל המסכת בטור אחד, בגלילה מלמעלה למטה">טור רצוף</button>
+  <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
+  <button onclick="toPdf()" title="הדפסה או שמירה כקובץ PDF, פרק בכל עמוד">PDF</button>
   <button data-fs="18" onclick="setFs(18)">קטן</button><button data-fs="24" onclick="setFs(24)">רגיל</button><button data-fs="32" onclick="setFs(32)">גדול</button>
   <button onclick="fs(2)" title="Ctrl+=">א+</button><button onclick="fs(-2)" title="Ctrl+-">א-</button>
   <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="window.print()">הדפסה</button></div>

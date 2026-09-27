@@ -1,5 +1,5 @@
 """build_all.py - ממיר כל קובץ וורד ב-input/docx לעמוד מסכת, בונה שער ומעתיק גופנים ל-site/"""
-import os, sys, json, shutil, re, datetime
+import os, sys, json, shutil, re, html, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from docx2json import convert
 from build_site import build
@@ -200,7 +200,9 @@ def main():
                 print('   מסך הגהה:', h['findings'], 'ממצאים,', h['severe'], 'טעונים תיקון')
             os.remove(jp)
             built[m] = {'file': f, 'pages': r['pages'], 'toc': r['toc'], 'qa': len(r['qa']),
-                        'hagaha': has_hagaha}
+                        'hagaha': has_hagaha, 'heavy': r.get('heavy', [])}
+            if r.get('heavy'):
+                print('   טעון תשומת לב:', '; '.join(r['heavy'][:6]))
             print('נבנה', m, r['pages'], 'עמודים', len(r['qa']), 'חריגות')
         except Exception as e:
             print('נכשל', m, repr(e))
@@ -213,11 +215,12 @@ def main():
             if m in built:
                 b = built[m]
                 extra = f'<a class="hg" href="{SLUG[m]}-hagaha.html">הגהה</a>' if b.get('hagaha') else ''
-                cells += (f'<a class="m on" href="{SLUG[m]}.html"><b>{m}</b><small>{b["pages"]} עמודים · '
-                          f'{b["toc"]} נושאים{" · " + str(b["qa"]) + " לבקרה" if b["qa"] else ""}</small></a>{extra}'
-                          if not extra else
-                          f'<div class="mw"><a class="m on" href="{SLUG[m]}.html"><b>{m}</b><small>{b["pages"]} עמודים · '
-                          f'{b["toc"]} נושאים{" · " + str(b["qa"]) + " לבקרה" if b["qa"] else ""}</small></a>{extra}</div>')
+                red = ' warn' if b.get('heavy') else ''
+                tip = (' title="' + html.escape('סגנון שאינו ממופה ומופיע הרבה: '
+                       + '; '.join(b['heavy'][:5])) + '"') if b.get('heavy') else ''
+                body = (f'<a class="m on{red}" href="{SLUG[m]}.html"{tip}><b>{m}</b><small>{b["pages"]} עמודים · '
+                        f'{b["toc"]} נושאים{" · " + str(b["qa"]) + " לבקרה" if b["qa"] else ""}</small></a>')
+                cells += body + extra if not extra else f'<div class="mw">{body}{extra}</div>'
             else:
                 cells += f'<span class="m"><b>{m}</b><small>בעריכה</small></span>'
         rows += f'<section><h2>סדר {seder}</h2><div class="grid">{cells}</div></section>'
@@ -232,6 +235,7 @@ main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500
 .m{{display:block;background:#f3eee2;border-radius:6px;padding:12px 14px;text-decoration:none;color:#8a7d66;border:1px solid #e0d8c4}} .m.on{{background:#fbf8f1;color:#1d1a16;border-color:#c9a24a;box-shadow:0 1px 4px rgba(0,0,0,.08)}} .m.on:hover{{background:#fff}}
 .m b{{display:block;font-size:19px;font-weight:700}} .m small{{font-size:12px;color:#8a7d66}}
 .mw{{position:relative}} .mw .m{{padding-bottom:26px}}
+.m.warn{{border-color:#a83c2f;box-shadow:inset 3px 0 0 #a83c2f}} .m.warn small{{color:#a83c2f}}
 .hg{{position:absolute;bottom:7px;right:14px;font-size:12px;background:#c9a24a;color:#2b2620;border-radius:4px;padding:1px 9px;text-decoration:none;font-weight:700}}
 .hg:hover{{background:#b8912f}}
 footer{{text-align:center;color:#8a7d66;font-size:13px;padding:20px}}</style></head><body>

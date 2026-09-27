@@ -49,7 +49,9 @@ def convert(path):
     carry = None      # פסקה שסימנה נמחק, וממתינה להתאחד עם הבאה
     dropped = 0       # פסקאות שנמחקו כליל במעקב
     joined = 0        # פסקאות שאוחו עם הבאה אחריהן
-    for p in doc.find('w:body', ns).findall('w:p', ns):
+    empty = 0         # פסקאות ריקות שאינן נכתבות
+    pmap = {}         # מספר הפסקה שכאן, אל מקומה ברשימת ה-w:p שבמסמך
+    for pn, p in enumerate(doc.find('w:body', ns).findall('w:p', ns)):
         ps = p.find('w:pPr/w:pStyle', ns)
         style = names.get(ps.get(W + 'val'), ps.get(W + 'val')) if ps is not None else 'Normal'
         style = ALIAS.get(style, style)
@@ -96,12 +98,17 @@ def convert(path):
             else:
                 merged.append(dict(r))
         text = ''.join(r['t'] for r in merged)
-        if not text.strip() and style == 'Normal':
+        # פסקה ריקה אינה נכתבת בשום סגנון, מפני שבדף היא נפתחת כשורה
+        # ריקה. היוצא מן הכלל הוא ציון דף ריק: הוא ממצא הגהה של ממש,
+        # ולכן הוא נשמר ומדווח.
+        if not text.strip() and style != 'דף בצד':
+            empty += 1
             continue
         if style == 'דף בצד':
             cur_daf = text.strip()
         if style == 'פרק':
             cur_perek = text.strip()
+        pmap[len(blocks)] = pn
         blocks.append({'i': len(blocks), 'style': style, 'daf': cur_daf, 'perek': cur_perek,
                        'text': text, 'runs': merged})
     if carry:
@@ -115,15 +122,15 @@ def convert(path):
                 merged.append(dict(r))
         blocks.append({'i': len(blocks), 'style': 'Normal', 'daf': cur_daf, 'perek': cur_perek,
                        'text': ''.join(r['t'] for r in merged), 'runs': merged})
-    convert.last = {'dropped': dropped, 'joined': joined}
+    convert.last = {'dropped': dropped, 'joined': joined, 'empty': empty, 'pmap': pmap}
     return blocks
 
 
-convert.last = {'dropped': 0, 'joined': 0}
+convert.last = {'dropped': 0, 'joined': 0, 'empty': 0, 'pmap': {}}
 
 if __name__ == '__main__':
     blocks = convert(sys.argv[1])
     json.dump(blocks, open(sys.argv[2], 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     c = collections.Counter(b['style'] for b in blocks)
-    print(len(blocks), 'blocks', convert.last)
+    print(len(blocks), 'blocks', {k: v for k, v in convert.last.items() if k != 'pmap'})
     print(c.most_common())

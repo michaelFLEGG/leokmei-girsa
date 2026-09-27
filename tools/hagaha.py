@@ -35,6 +35,9 @@ def _locate(blocks):
         r = ROLE.get(b['style'], 'body')
         if r == 'daf':
             pi += 1; unit = None; pend.append(b['i']); continue
+        if r == 'skip':
+            # אינו מוצג בדף, ולכן הוא נתלה ביחידה הבאה - שם ייראה המגיה
+            pend.append(b['i']); continue
         if pi < 0:
             pend.append(b['i']); continue
         if r == 'anchor':

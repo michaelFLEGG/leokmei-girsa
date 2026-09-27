@@ -278,35 +278,16 @@ def apply(path, ops, author, masechet, log=print, dry=False):
 
 
 def _paragraph_map(doc, blocks):
-    """מקשר בין מספר הפסקה שבהמרה ובין אלמנט w:p שבמסמך."""
-    out, n = {}, 0
-    carry = False
-    for p in doc.find('w:body', ns).findall('w:p', ns):
-        ps = p.find('w:pPr/w:pStyle', ns)
-        sid = ps.get(W + 'val') if ps is not None else ''
-        if sid and sid.startswith('toc'):
-            continue
-        mark_del = p.find('w:pPr/w:rPr/w:del', ns) is not None
-        live = ''.join(t for _, t, _ in _runs_of(p))
-        if mark_del and not live.strip():
-            continue
-        if carry:
-            carry = False
-        if mark_del:
-            carry = True
-            continue
-        if not live.strip():
-            # פסקה ריקה בסגנון Normal מדולגת בהמרה. נשענים על הטקסט
-            # עצמו כדי לא לאבד סנכרון.
-            if n < len(blocks) and blocks[n]['style'] == 'Normal' and not blocks[n]['text'].strip():
-                pass
-            else:
-                continue
-        if n >= len(blocks):
-            break
-        out[blocks[n]['i']] = p
-        n += 1
-    return out
+    """מקשר בין מספר הפסקה שבהמרה ובין אלמנט w:p שבמסמך.
+
+    המפה נבנית בידי ההמרה עצמה ולא משוחזרת כאן מחדש. שחזור היה מחייב
+    להעתיק את כללי הדילוג, וכל שינוי בהם היה מזיז את הכתיבה בשקט
+    לפסקה שכנה."""
+    ps = doc.find('w:body', ns).findall('w:p', ns)
+    pmap = convert.last.get('pmap') or {}
+    if len(pmap) != len(blocks):
+        raise Refused('מפת הפסקאות אינה תואמת את ההמרה (%d מול %d)' % (len(pmap), len(blocks)))
+    return {i: ps[n] for i, n in pmap.items() if n < len(ps)}
 
 
 def _diff_check(before, after, expect):

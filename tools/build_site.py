@@ -1,15 +1,27 @@
 import json, html, re, collections, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from styles_map import ROLE, CS
+from styles_map import ROLE, CS, MISSING_FONTS
+MISSING_FONTS_REV={v:k for k,v in MISSING_FONTS.items()}
 def build(json_path, out_path, masechet, hagaha=False):
   blocks = json.load(open(json_path, encoding='utf-8'))
 
   # מפת הסגנונות יושבת בקובץ אחד, tools/styles_map.py, שגם מסך ההגהה קורא
   # ממנו. עותק שני היה נפרד בשקט ושובר את העיגון שבין שני המסכים.
 
-  def runs_html(runs):
+  def fuse_stars(runs):
+      """כוכביות שוורד פיצל לשני קטעי-תו מתאחות לקטע אחד. בלי זה
+      שרשרת הליגטורות נקטעת באמצע, והעיטור אינו נוצר."""
       out=[]
       for r in runs:
+          if out and set(out[-1]['t'])<=set('* ') and set(r['t'])<=set('* ') \
+             and ('*' in out[-1]['t'] or '*' in r['t']):
+              out[-1]=dict(out[-1],t=out[-1]['t']+r['t'])
+          else: out.append(dict(r))
+      return out
+
+  def runs_html(runs):
+      out=[]
+      for r in fuse_stars(runs):
           t=html.escape(r['t']); c=CS.get(r['cs'])
           if r['b'] and not c: c='b'
           out.append(f'<i class="{c}">{t}</i>' if c else t)
@@ -41,9 +53,15 @@ def build(json_path, out_path, masechet, hagaha=False):
       prev=max(prev or 0,key)
   unknown=collections.Counter(b['style'] for b in blocks if b['style'] not in ROLE)
   for s,n in unknown.items(): qa.append(('סגנון לא ממופה',f'{s} ({n})'))
+  # סגנון שאינו ממופה ומופיע הרבה אינו תקלה קטנה: מדור שלם מאבד את
+  # צורתו. המסכת נבנית ומתפרסמת בכל זאת - השמטתה היתה גרועה מכך -
+  # אבל היא מסומנת באדום בשער ובבקרה.
+  heavy=[f'{s} ({n})' for s,n in unknown.most_common() if n>20]
   # סגנון תו שאינו במפה מאבד את עיצובו בלי שיאמר דבר. הוא נמנה כאן כדי שלא ייפער חור שקט.
   unk_cs=collections.Counter(r['cs'] for b in blocks for r in b['runs'] if r['cs'] and r['cs'] not in CS)
   for s,n in unk_cs.items(): qa.append(('סגנון תו לא ממופה',f'{s} ({n})'))
+  heavy+= [f'{s} תו ({n})' for s,n in unk_cs.most_common() if n>20]
+  if heavy: qa.insert(0,('טעון תשומת לב','סגנון שאינו ממופה ומופיע הרבה: '+', '.join(heavy[:8])))
   long_anchor=[b for b in blocks if b['style']=='חלון 3' and len(b['text'])>25]
   for b in long_anchor: qa.append(('חלון ארוך',b['text'][:40]))
   empty_anchor=[b for b in blocks if b['style']=='חלון 3' and not b['text'].strip()]
@@ -53,8 +71,29 @@ def build(json_path, out_path, masechet, hagaha=False):
   pages=[]  # {daf, perek, perekName, units:[...]}
   cur=None; perek=''; perekName=''; unit=None
   order=[]
+  toc=[]
+  # החץ ◄ שבחלון הצד אינו קישוט: פירושו "כך נפסק להלכה", והוא שייך
+  # ליחידה שאחריו. חלון שכולו חץ אינו פותח יחידה משלו - הוא מדליק דגל
+  # שנצמד ליחידה הבאה. בלעדי זה נפתחו בדף עשרות שורות ריקות.
+  halacha=False
+  def flag(u):
+      nonlocal halacha
+      if halacha: u['h']=1; halacha=False
+      return u
+  def toc_text(raw):
+      """כותרת לתוכן העניינים, מן הטקסט הגולמי ולפני כל בריחה.
+      כך אין ישויות HTML, ואין חץ ואין טאבים."""
+      return re.sub(r'\s+',' ',raw.replace('◄',' ').replace('\t',' ')).strip()
+  def add_toc(kind,b):
+      t=toc_text(b['text'])
+      if t: toc.append([len(pages)-1,b['i'],t,kind])
+  n_skip=collections.Counter()
   for b in blocks:
       r=ROLE.get(b['style'],'body'); h=runs_html(b['runs']); t=b['text'].strip()
+      # ריהוט עמוד (כותרת רצה, שם המסכת, תווית המסילה) אינו תוכן ואינו
+      # נכתב לדף. הוא נספר ומדווח, כדי שההשמטה לא תהיה שקטה.
+      if r=='skip':
+          n_skip[b['style']]+=1; continue
       # כותרת ריקה אינה יוצרת יחידה. בלעדי זה נפער בדף חלל בלא טקסט,
       # ופסקת "פרק" ריקה אף היתה מאפסת את שם הפרק ומזיזה את גבול המקטע.
       if not t and r in ('perek-num','perek-name','perek-range','perek-start','hadran','nose','dh','mishna','hatz'):
@@ -67,22 +106,50 @@ def build(json_path, out_path, masechet, hagaha=False):
       if cur is None: continue
       cur['perek']=perek; cur['perekName']=perekName
       if r=='anchor':
-          unit={'k':'u','a':h,'l':[],'id':b['i']}; cur['units'].append(unit)
+          if t=='◄':
+              halacha=True; continue        # דגל בלבד, אינו פותח יחידה
+          unit=flag({'k':'u','a':h,'l':[],'id':b['i']}); cur['units'].append(unit)
       elif r.startswith('body'):
-          if unit is None or unit['k']!='u': unit={'k':'u','a':'','l':[],'id':b['i']}; cur['units'].append(unit)
+          if unit is None or unit['k']!='u':
+              unit=flag({'k':'u','a':'','l':[],'id':b['i']}); cur['units'].append(unit)
           unit['l'].append([r[5:] if len(r)>4 else '',h])
       elif r=='mishna':
           if cur['units'] and cur['units'][-1]['k']=='m': cur['units'][-1]['l'].append(['',h])
-          else: cur['units'].append({'k':'m','a':'','l':[['',h]],'id':b['i']})
+          else:
+              cur['units'].append(flag({'k':'m','a':'','l':[['',h]],'id':b['i']})); add_toc('m',b)
           unit=None
       elif r in ('dh','nose','hatz','perek-num','perek-name','perek-range','perek-start','hadran'):
-          cur['units'].append({'k':r,'a':h,'l':[],'id':b['i']}); unit=None
+          cur['units'].append(flag({'k':r,'a':h,'l':[],'id':b['i']})); unit=None
+          if r in ('dh','nose'): add_toc(r,b)
 
-  # nose TOC
-  toc=[]
-  for pi,p in enumerate(pages):
+  # יחידה בלי חלון ובלי פסקת גוף שיש בה טקסט אינה נכתבת לדף: בדף היא
+  # נראית כשורה ריקה, ולומד אינו יודע שחסר כאן דבר. המונה מוצג בבקרה.
+  def bare(x): return re.sub('<[^>]+>','',x).replace('\u200f','').strip()
+  n_units=sum(len(p['units']) for p in pages); n_empty=0
+  drop_ids=set()
+  for p in pages:
+      keep=[]
       for u in p['units']:
-          if u['k']=='nose': toc.append([pi,u['id'],re.sub('<[^>]+>','',u['a'])])
+          if not bare(u['a']) and not any(bare(x[1]) for x in u['l']):
+              n_empty+=1; drop_ids.add(u['id']); continue
+          keep.append(u)
+      p['units']=keep
+  if n_empty:
+      qa.append(('יחידות ריקות',f'{n_empty} יחידות ריקות הושמטו מן הדף'))
+  for st,n in n_skip.most_common():
+      why=('הגופן %s אינו באתר, והטקסט היה נקרא כג\'יבריש'%MISSING_FONTS_REV[st]) \
+          if st in MISSING_FONTS_REV else 'ריהוט עמוד; הדף מצייר אותו בעצמו'
+      qa.append(('הושמט במתכוון',f'{st}: {n} פסקאות. {why}'))
+  if n_units and n_empty > n_units*0.05:
+      raise SystemExit('עצירה: %d מתוך %d היחידות ריקות (מעל חמישה אחוזים) ב%s. '
+                       'לא מפרסמים לפני בדיקה.' % (n_empty,n_units,masechet))
+  toc=[e for e in toc if e[1] not in drop_ids]
+  # שער: ערך שנשארה בו ישות HTML עוצר את הבנייה. הכותרת נבנית מן
+  # הטקסט הגולמי, ולכן ישות כאן פירושה שמשהו נשבר בצינור.
+  for e in toc:
+      if re.search(r'&[a-zA-Z#0-9]+;', e[2]):
+          raise SystemExit('עצירה: ישות HTML בתוכן העניינים של %s: %r' % (masechet,e[2]))
+  n_nose=sum(1 for e in toc if e[3]=='nose')
   # amoraim index
   am=collections.Counter()
   for b in blocks:
@@ -110,22 +177,53 @@ def build(json_path, out_path, masechet, hagaha=False):
   @font-face{font-family:'VilnaG';src:url(fonts/vilna-g.ttf);font-display:swap}
   @font-face{font-family:'Franknatan';src:url(fonts/franknatan.otf);font-display:swap}
   @font-face{font-family:'Leukmey';src:url(fonts/leukmey.otf);font-display:swap}
-  /* היחס בין גודל האות לרוחב השורה נעול. כל המידות נמדדות ב-em של גוף הטקסט:
-     עמוד הספר הוא 60 מ"מ טקסט ב-11 נקודות, כלומר 15.46em, ורצועת הדף 5.15em.
-     לכן הגדלה והקטנה משנות הכל יחד, ושבירת השורות אינה זזה לעולם. */
-  :root{--fs:24px;--measure:15.46em;--rail:5.15em;--gut:2.57em;
+  /* היחס בין גודל האות לרוחב השורה נעול. כל המידות נמדדות ב-em של גוף
+     הטקסט, ולכן הגדלה והקטנה משנות הכל יחד ושבירת השורות אינה זזה.
+
+     הערכים נמדדו מקובץ הוורד עצמו (27.9.2026), ולא נבחרו לעין:
+       sectPr - עמוד 170x260 מ"מ, שוליים 20 ימין ו-10 שמאל, שני טורים
+                ומסילה של 20 מ"מ ביניהם. רוחב הטור: (140-20)/2 = 60 מ"מ.
+       Normal - szCs 18, כלומר גוף של 9 נקודות, ומרווח שורה מדויק 11.
+     9 נקודות הן 3.175 מ"מ, ומכאן: הטור הוא 60/3.175 = 18.9em והמסילה
+     20/3.175 = 6.3em, והשוליים 10/3.175 = 3.15em.
+
+     עד היום עמדו כאן 15.46em ו-5.15em. אלה 60 מ"מ ו-20 מ"מ חלקי 11
+     נקודות - כלומר היחס נגזר ממרווח השורה במקום מגודל האות, והשורה
+     באתר יצאה צרה בכ-18 אחוזים מזו שבספר. משם באו השורות שנשברו
+     לשתיים ו"השורה היתומה".
+
+     והערך שנקבע כאן אינו 18.9 אלא 20.75, מפני שהחשבון לבדו אינו מספיק
+     ונדרש כיול. נמדדו 43 פסקאות גוף ארוכות מכל רוחב המסכת: נספרו
+     השורות שוורד פורש בהן כל פסקה, ומולן נספרו השורות שהדפדפן פורש
+     באותו טקסט ברוחבים שונים. התוצאה:
+         15.46em - 9 אחוזי התאמה   (המצב עד היום)
+         18.90em - 79 אחוזים       (החשבון הגאומטרי לבדו)
+         20.75em - 95 אחוזים       (הנבחר)
+     ההפרש נובע מן הגופן: frank.ttf שבדפדפן רחב בכעשרה אחוזים ל-em
+     מ-FrankRuehl שוורד מצייר. המסילה והשוליים גדלו באותו יחס בדיוק,
+     כדי שפרופורציית העמוד תישמר: מסילה = טור חלקי שלוש, שוליים = חלקי שש.
+
+     --fs נקבע ל-18 כדי שרוחב הטור על המסך יישאר כשהיה (כ-373 פיקסל
+     במקום 371), והשורה תחזיק מעתה כשליש יותר טקסט - כמו בספר. */
+  /* סולם הכותרות נגזר ממידת הגוף שבוורד, ולא ממספרים שנבחרו לעין:
+     נושא = נקודה אחת מעל הגוף, משנה = כגוף, וד"ה משנה = נקודה אחת
+     מתחת למשנה. שינוי --body-pt מזיז את שלושתם יחד. */
+  :root{--fs:18px;--body-pt:9;--measure:20.75em;--rail:6.92em;--gut:3.46em;
         --ink:#1d1a16;--paper:#fbf8f1;--grey:#767171;--gold:#c9a24a;--red:#a83c2f;--bar:46px}
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:#e9e4d8;color:var(--ink);font-family:'Frank','Frank Ruhl Libre',serif;overflow:hidden}
+  /* פריסת עמודה: בטלפון הסרגל נשבר לשתי שורות ויותר, וגובה קבוע לו
+     הסתיר את ראש הטקסט. מעתה הסרגל תופס את גובהו והטקסט את השאר. */
+  body{display:flex;flex-direction:column}
   body.hc{--ink:#000;--paper:#fff;--grey:#333}
-  .bar{position:relative;z-index:5;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 12px;background:#2b2620;color:#f1ead9;font-size:14px;height:var(--bar)}
+  .bar{position:relative;z-index:5;flex:0 0 auto;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 12px;background:#2b2620;color:#f1ead9;font-size:14px;min-height:var(--bar)}
   .bar .nm{font-family:'Leukmey','Vilna',serif;font-size:20px;line-height:1}
   .bar .sp{flex:1}
   .bar button,.bar select,.bar input{font:inherit;background:#4a4137;color:#f1ead9;border:0;border-radius:4px;padding:3px 9px;cursor:pointer}
   .bar input{cursor:text;width:150px} .bar button.on{background:var(--gold);color:#2b2620}
   .nav{display:flex;gap:4px;align-items:center}
   .nav .daf{min-width:52px;text-align:center;font-family:'VilnaG','Vilna',serif;font-size:17px}
-  .flow{font-size:var(--fs);line-height:1.06;height:calc(100vh - var(--bar));background:var(--paper);
+  .flow{font-size:var(--fs);line-height:1.06;flex:1 1 auto;min-height:0;background:var(--paper);
         padding:.9em var(--gut);overflow:auto;
         column-width:calc(var(--rail) + var(--measure));column-gap:calc(var(--gut) * 2);
         column-fill:auto;column-rule:1px solid #e6ddc9}
@@ -143,14 +241,27 @@ def build(json_path, out_path, masechet, hagaha=False):
   .rail{text-align:left;padding-left:.36em}
   .main{text-align:justify;text-align-last:right}
   .main p{margin:0} .main p.sp{margin-top:.28em} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
+  /* פסקה מוזחת (פיסקת תשובה, וסעיפי רשימה): הזחה תלויה, כמו בוורד */
+  .main p.in{padding-right:.9em;text-indent:-.9em}
   .dafmark{display:block;font-family:'VilnaG','Vilna',serif;font-size:1.3em;line-height:1;color:var(--red);margin-top:.25em}
   .anchor{display:inline-block;font-family:'Vilna',serif;font-weight:900;font-size:.9em;line-height:1.18;
           color:#5a5044;white-space:nowrap;max-width:calc(var(--rail) - .4em);overflow:hidden;text-overflow:ellipsis}
   .mlabel{font-size:.55em;color:#8a7d66}
-  .mishna{background:#eeeae1;padding:.1em .15em;margin:.15em 0;font-family:'Vilna',serif;font-weight:700;font-size:.97em;line-height:1.12;border-right:.1em solid var(--gold)}
-  .dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;font-size:1.18em;line-height:1.15;margin:.3em 0 .08em}
-  .nose{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;font-size:1.02em;line-height:1.15;margin-top:.45em;color:var(--ink)}
-  .hatz{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;font-size:.82em;letter-spacing:.35em;color:#8a7d66;margin:.3em 0}
+  /* החץ של "כך נפסק להלכה". הוא יושב במסילה לפני חלון הכותרת, ברוחב
+     קבוע, כדי שלא ידחק אותה ולא יקצר אותה בלא צורך. */
+  .hal{display:inline-block;width:.8em;color:var(--gold);font-size:.85em;line-height:1}
+  .row[data-halacha] .anchor{max-width:calc(var(--rail) - 1.3em)}
+  .mishna{background:#eeeae1;padding:.1em .15em;margin:.15em 0;font-family:'Vilna',serif;font-weight:700;font-size:1em;line-height:1.12;border-right:.1em solid var(--gold)}
+  .dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
+      font-size:calc((var(--body-pt) - 1) / var(--body-pt) * 1em);line-height:1.15;margin:.3em 0 .08em}
+  .nose{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;
+        font-size:calc((var(--body-pt) + 1) / var(--body-pt) * 1em);line-height:1.15;margin-top:.45em;color:var(--ink)}
+  /* ב. הכוכביות אינן כוכביות: בגופני וילנא יש שרשרת ליגטורות ב-rlig,
+     וכל מספר כוכביות נותן עיטור אחר. letter-spacing ביטל אותה, ולכן
+     הוא חוזר ל-normal והליגטורות נדלקות במפורש. */
+  .hatz{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
+        font-size:1.1em;letter-spacing:normal;color:#8a7d66;margin:.3em 0;
+        font-variant-ligatures:common-ligatures;font-feature-settings:"rlig" 1,"liga" 1}
   .perek-num .main{font-family:'Franknatan','Vilna',serif;color:var(--red);font-size:1.45em;line-height:1.1}
   .perek-name .main{font-family:'Franknatan','Vilna',serif;color:#8a7d66;font-size:1.09em}
   .perek-range .main{color:var(--red);font-size:.73em}
@@ -166,6 +277,12 @@ def build(json_path, out_path, masechet, hagaha=False):
   .panel{position:fixed;top:var(--bar);right:0;bottom:0;width:min(420px,100vw);background:#fbf8f1;box-shadow:-2px 0 16px rgba(0,0,0,.25);overflow:auto;padding:14px 18px;z-index:6;display:none;font-size:15px;line-height:1.6}
   .panel.open{display:block} .panel h3{margin:12px 0 4px;font-size:15px;color:#5a5044;font-weight:500;border-bottom:1px solid #d9d1bd}
   .panel a{color:var(--ink);text-decoration:none;display:block;padding:2px 0;cursor:pointer} .panel a:hover{color:var(--red)}
+  /* שלושת סוגי הערכים בתוכן. נושא הוא העיקר ולכן אין לו תווית;
+     ד"ה ומשנה מוזחים ונושאים תווית קטנה, ומשנה בצבע פס-המשנה. */
+  .panel a.t-dh,.panel a.t-m{padding-right:1.3em;font-size:14px}
+  .panel a.t-dh{font-family:'Vilna',serif;font-weight:700}
+  .tl{display:inline-block;font-size:11px;background:#eeeae1;color:#8a7d66;border-radius:3px;padding:0 5px;margin-left:5px;font-family:'Frank',serif;font-weight:400}
+  .tl.tlm{background:#f4e9cd;color:#8a6d2f}
   .panel .x{float:left;background:none;border:0;font-size:22px;cursor:pointer;color:#5a5044}
   .panel .n{color:#8a7d66;font-size:12px} .res{padding:5px 0;border-bottom:1px dotted #d9d1bd} .res small{color:#8a7d66}
   .tag{display:inline-block;background:#eeeae1;border-radius:3px;padding:0 6px;margin:2px;font-size:13px}
@@ -182,7 +299,8 @@ def build(json_path, out_path, masechet, hagaha=False):
   @media(max-width:760px){:root{--fs:20px}
     .flow{column-width:auto;column-count:1;column-rule:0;width:auto;padding:.7em .8em}
     .row{grid-template-columns:1fr} .rail{text-align:right;padding:0}
-    .anchor{max-width:none;display:block;margin-top:.2em;font-size:.82em;color:#4a4137}
+    .anchor{max-width:none;display:inline;margin-top:.2em;font-size:.82em;color:#4a4137}
+    .row[data-halacha] .anchor{max-width:none}
     .dafmark{display:inline-block;margin-left:.5em}}
   '''
 
@@ -298,10 +416,15 @@ def build(json_path, out_path, masechet, hagaha=False):
     setTimeout(()=>{window.print();ALL=was;render(cur)},600)}
   function unitHTML(u,daf,pi){
     const mk=daf!=null?`<b class="dafmark" id="d${pi}">${esc(daf)}</b>`:'';
-    if(u.k==='u')return `<div class="row u" id="u${u.id}"><div class="rail">${mk}<span class="anchor">${u.a}</span></div><div class="main">${u.l.map(l=>`<p class="${l[0]}">${l[1]}</p>`).join('')}</div></div>`;
-    if(u.k==='m')return `<div class="row" id="u${u.id}"><div class="rail">${mk}<span class="mlabel">משנה</span></div><div class="main mishna">${u.l.map(l=>`<p>${l[1]}</p>`).join('')}</div></div>`;
-    if(u.k==='hatz')return `<div class="row" id="u${u.id}"><div class="rail">${mk}</div><div class="main hatz">* * *</div></div>`;
-    return `<div class="row ${u.k}" id="u${u.id}"><div class="rail">${mk}</div><div class="main ${u.k==='dh'||u.k==='nose'?u.k:''}">${u.a}</div></div>`;
+    /* ◄ פירושו "כך נפסק להלכה". הוא נשען על היחידה שאחריו, ולכן הוא
+       נכתב כאן במסילה שלה ולא כשורה משלו. */
+    const H=u.h?' data-halacha="1"':'', hal=u.h?'<span class="hal" title="כך נפסק להלכה">\u25c4</span>':'';
+    if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}><div class="rail">${mk}${hal}<span class="anchor">${u.a}</span></div><div class="main">${u.l.map(l=>`<p class="${l[0]}">${l[1]}</p>`).join('')}</div></div>`;
+    if(u.k==='m')return `<div class="row" id="u${u.id}"${H}><div class="rail">${mk}${hal}<span class="mlabel">משנה</span></div><div class="main mishna">${u.l.map(l=>`<p>${l[1]}</p>`).join('')}</div></div>`;
+    /* הכוכביות מוצגות כלשונן בקובץ. מספרן אינו מנורמל: כל מספר נותן
+       עיטור אחר בגופן, וזו כוונת המחבר. */
+    if(u.k==='hatz')return `<div class="row" id="u${u.id}"${H}><div class="rail">${mk}${hal}</div><div class="main hatz">${u.a}</div></div>`;
+    return `<div class="row ${u.k}" id="u${u.id}"${H}><div class="rail">${mk}${hal}</div><div class="main ${u.k==='dh'||u.k==='nose'?u.k:''}">${u.a}</div></div>`;
   }
   /* ALL: מצב רצף - כל המסכת בטור אחד, מן הדף הראשון עד האחרון בגלילה אחת. */
   let ALL=false;
@@ -350,13 +473,15 @@ def build(json_path, out_path, masechet, hagaha=False):
   function build(){
    const ds=$('#dafsel');D.pages.forEach((p,i)=>ds.add(new Option(p.daf,i)));ds.onchange=()=>toDaf(+ds.value);
    const ps=$('#peresel');SEC.forEach((s,i)=>ps.add(new Option((s.perek||'רצף')+(s.perekName?' · '+s.perekName:''),i)));ps.onchange=()=>render(+ps.value);
-   let t='',lp=-1;for(const [pi,id,s] of D.toc){const si=secOf(pi);
+   let t='',lp=-1;const TL={dh:'ד\u05f4ה',m:'משנה'};
+   for(const [pi,id,s,kind] of D.toc){const si=secOf(pi);
      if(si!==lp){lp=si;t+=`<h3>${esc(SEC[si].perek||'')} ${esc(SEC[si].perekName||'')}</h3>`}
-     t+=`<a onclick="jump(${pi},${id})"><small class="n">${esc(D.pages[pi].daf)}</small> ${esc(s)}</a>`}
+     const lab=TL[kind]?`<span class="tl${kind==='m'?' tlm':''}">${TL[kind]}</span>`:'';
+     t+=`<a class="t-${kind}" onclick="jump(${pi},${id})"><small class="n">${esc(D.pages[pi].daf)}</small> ${lab}${esc(s)}</a>`}
    $('#tocb').innerHTML=t;
    $('#amb').innerHTML=`<div class="n">${D.nAm} אזכורי אמוראים מסומנים בקובץ; ${D.nPsk} ציטוטי פסוקים שונים</div><div class="chips">`+D.am.map((a,i)=>`<a class="tag" onclick="amq(${i})">${esc(a[0])} <span class="n">${a[1]}</span></a>`).join('')+'</div>';
    $('#qab').innerHTML=D.qa.length?D.qa.map(q=>`<div class="res"><b>${q[0]}</b>: ${esc(q[1])}</div>`).join(''):'לא נמצאו חריגות';
-   const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(24);
+   const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(18);
    if(localStorage.getItem('lg-vert')){$('#flow').classList.add('vert');$('#vbtn').classList.add('on');ALL=true}
    if(SQ)$('#fbtn').classList.add('on');
    let rsz;addEventListener('resize',()=>{clearTimeout(rsz);rsz=setTimeout(squeezeRun,250)});
@@ -397,7 +522,7 @@ def build(json_path, out_path, masechet, hagaha=False):
   <button id="vbtn" onclick="vert()" title="כל המסכת בטור אחד, בגלילה מלמעלה למטה">טור רצוף</button>
   <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
   <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button>
-  <button data-fs="18" onclick="setFs(18)">קטן</button><button data-fs="24" onclick="setFs(24)">רגיל</button><button data-fs="32" onclick="setFs(32)">גדול</button>
+  <button data-fs="15" onclick="setFs(15)">קטן</button><button data-fs="18" onclick="setFs(18)">רגיל</button><button data-fs="24" onclick="setFs(24)">גדול</button>
   <button onclick="fs(2)" title="Ctrl+=">א+</button><button onclick="fs(-2)" title="Ctrl+-">א-</button>
   <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="window.print()" title="הדפסת הפרק הנוכחי בלבד">הדפס פרק</button></div>
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
@@ -408,7 +533,7 @@ def build(json_path, out_path, masechet, hagaha=False):
   <script>const DATA={J};</script><script>{JS}</script></body></html>'''
 
   open(out_path,'w',encoding='utf-8').write(page)
-  return {'pages':len(pages),'toc':len(toc),'qa':qa}
+  return {'pages':len(pages),'toc':n_nose,'qa':qa,'empty':n_empty,'heavy':heavy}
 
 if __name__=='__main__':
   r=build(sys.argv[1],sys.argv[2],sys.argv[3]); print(r['pages'],'pages',len(r['qa']),'qa')

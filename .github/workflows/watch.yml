@@ -31,8 +31,8 @@ jobs:
       # האתר עולה בכל זאת, והמונים פשוט לא יתחדשו בלוח הבקרה.
       - name: סריקת תצוגה
         continue-on-error: true
-        timeout-minutes: 8
-        run: python tools/layout_audit.py --modes flow,phone --no-shots --channel chrome --label שומר
+        timeout-minutes: 10
+        run: python tools/layout_audit.py --modes flow,phone --max-sections 2 --no-shots --channel chrome --label שומר
       - name: שמירת המקורות בריפו (גיבוי)
         run: |
           git config user.name "leokmei-watcher"; git config user.email "watcher@users.noreply.github.com"

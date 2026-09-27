@@ -170,6 +170,16 @@ def run(args):
     result = {'stamp': datetime.datetime.now().isoformat(timespec='seconds'),
               'label': args.label or '', 'modes': modes, 'codes': CODES, 'masechtot': {}}
 
+    # התוצאה לבקרה שבדף נכתבת אחרי כל מסכת ולא בסוף: בשומר יש תקרת זמן,
+    # וריצה שנקטעה באמצע השאירה את הקובץ חסר - והדף ביקש אותו וקיבל 404.
+    def write_brief():
+        brief = {'stamp': result['stamp'], 'label': result['label'], 'codes': CODES,
+                 'm': {sl: {'modes': {md: v['counts'] for md, v in r['modes'].items()}}
+                       for sl, r in result['masechtot'].items()}}
+        with open(os.path.join(site, 'layout-audit.json'), 'w', encoding='utf-8') as fh:
+            json.dump(brief, fh, ensure_ascii=False)
+    write_brief()
+
     with sync_playwright() as pw:
         br = pw.chromium.launch(channel=args.channel) if args.channel else pw.chromium.launch()
         for slug in slugs:
@@ -265,6 +275,7 @@ def run(args):
                 }
                 if args.all_findings:
                     rec['modes'][mode]['all'] = every
+                write_brief()
                 print('%-16s %-6s %s' % (slug, mode,
                       ' '.join('%d=%d' % (k, counts[k]) for k in sorted(CODES) if counts[k])) or 'נקי')
                 ctx.close()
@@ -276,12 +287,6 @@ def run(args):
     mp = os.path.join(rdir, 'סריקת-תצוגה-%s%s.md' % (stamp, label))
     with open(mp, 'w', encoding='utf-8') as fh:
         fh.write(markdown(result))
-    # התוצאה לבקרה שבדף עצמו: מונים בלבד, בלי הדוגמאות, כדי שהקובץ יישאר קטן.
-    brief = {'stamp': result['stamp'], 'label': result['label'], 'codes': CODES,
-             'm': {s: {'modes': {md: v['counts'] for md, v in r['modes'].items()}}
-                   for s, r in result['masechtot'].items()}}
-    with open(os.path.join(site, 'layout-audit.json'), 'w', encoding='utf-8') as fh:
-        json.dump(brief, fh, ensure_ascii=False)
     print('\nהדוח:', mp)
     return result
 

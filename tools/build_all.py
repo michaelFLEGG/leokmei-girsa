@@ -3,6 +3,7 @@ import os, sys, json, shutil, re, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from docx2json import convert
 from build_site import build
+import hagaha
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IN = os.path.join(ROOT, 'input'); SITE = os.path.join(ROOT, 'site')
@@ -187,9 +188,17 @@ def main():
                 blocks, f = merge_masechet(m, files, ddir)
             jp = os.path.join(SITE, SLUG[m] + '.json')
             json.dump(blocks, open(jp, 'w', encoding='utf-8'), ensure_ascii=False)
-            r = build(jp, os.path.join(SITE, SLUG[m] + '.html'), m)
+            # מסך הגהה נבנה רק למסכת שיש לה קובץ ממצאים ידני. בלעדיו אין
+            # למגיה מה לעשות שם, והגלאים לבדם רק היו מציפים אותו.
+            cur = os.path.join(ROOT, 'data', 'hagaha-' + SLUG[m] + '.json')
+            has_hagaha = os.path.exists(cur)
+            r = build(jp, os.path.join(SITE, SLUG[m] + '.html'), m, hagaha=has_hagaha)
+            if has_hagaha:
+                h = hagaha.build(blocks, os.path.join(SITE, SLUG[m] + '-hagaha.html'), m, SLUG[m], cur, f)
+                print('   מסך הגהה:', h['findings'], 'ממצאים,', h['severe'], 'טעונים תיקון')
             os.remove(jp)
-            built[m] = {'file': f, 'pages': r['pages'], 'toc': r['toc'], 'qa': len(r['qa'])}
+            built[m] = {'file': f, 'pages': r['pages'], 'toc': r['toc'], 'qa': len(r['qa']),
+                        'hagaha': has_hagaha}
             print('נבנה', m, r['pages'], 'עמודים', len(r['qa']), 'חריגות')
         except Exception as e:
             print('נכשל', m, repr(e))
@@ -201,7 +210,12 @@ def main():
         for m in ms:
             if m in built:
                 b = built[m]
-                cells += f'<a class="m on" href="{SLUG[m]}.html"><b>{m}</b><small>{b["pages"]} עמודים · {b["toc"]} נושאים{" · " + str(b["qa"]) + " לבקרה" if b["qa"] else ""}</small></a>'
+                extra = f'<a class="hg" href="{SLUG[m]}-hagaha.html">הגהה</a>' if b.get('hagaha') else ''
+                cells += (f'<a class="m on" href="{SLUG[m]}.html"><b>{m}</b><small>{b["pages"]} עמודים · '
+                          f'{b["toc"]} נושאים{" · " + str(b["qa"]) + " לבקרה" if b["qa"] else ""}</small></a>{extra}'
+                          if not extra else
+                          f'<div class="mw"><a class="m on" href="{SLUG[m]}.html"><b>{m}</b><small>{b["pages"]} עמודים · '
+                          f'{b["toc"]} נושאים{" · " + str(b["qa"]) + " לבקרה" if b["qa"] else ""}</small></a>{extra}</div>')
             else:
                 cells += f'<span class="m"><b>{m}</b><small>בעריכה</small></span>'
         rows += f'<section><h2>סדר {seder}</h2><div class="grid">{cells}</div></section>'
@@ -215,6 +229,9 @@ main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500
 .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}}
 .m{{display:block;background:#f3eee2;border-radius:6px;padding:12px 14px;text-decoration:none;color:#8a7d66;border:1px solid #e0d8c4}} .m.on{{background:#fbf8f1;color:#1d1a16;border-color:#c9a24a;box-shadow:0 1px 4px rgba(0,0,0,.08)}} .m.on:hover{{background:#fff}}
 .m b{{display:block;font-size:19px;font-weight:700}} .m small{{font-size:12px;color:#8a7d66}}
+.mw{{position:relative}} .mw .m{{padding-bottom:26px}}
+.hg{{position:absolute;bottom:7px;right:14px;font-size:12px;background:#c9a24a;color:#2b2620;border-radius:4px;padding:1px 9px;text-decoration:none;font-weight:700}}
+.hg:hover{{background:#b8912f}}
 footer{{text-align:center;color:#8a7d66;font-size:13px;padding:20px}}</style></head><body>
 <header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p></header>
 <main>{rows}</main><footer>עודכן {now} · האתר נבנה אוטומטית מקובצי הוורד</footer></body></html>'''

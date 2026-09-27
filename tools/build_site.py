@@ -1,13 +1,17 @@
-import json, html, re, collections, sys
-def build(json_path, out_path, masechet):
+import json, html, re, collections, sys, os
+def build(json_path, out_path, masechet, hagaha=False):
   blocks = json.load(open(json_path, encoding='utf-8'))
 
   # ---------- normalization of style names (canonical roles) ----------
   ROLE = {
-   'Normal':'body','רווח לפני':'body-sp','נקודה':'body-nk','הסבר ורקע':'body-hr','אמוראים':'body','פסוק':'body',
-   'חלון 3':'anchor','דף בצד':'daf','פרק':'perek-num','פרק שם':'perek-name','דפים בפרק ב':'perek-range','תחילת פרק':'perek-start','הדרן עלך':'hadran',
-   'משניות':'mishna','חלק משנה מודגש':'mishna',"ד''ה משנה":'dh',"משנה ד''ה":'dh',"ד''ה משנה מודגש אפור":'dh','נושא':'nose','חציצה':'hatz'}
-  CS = {'אמוראים תו':'am','פסוק תו':'ps','כותרת 3 תו':'kt','הסבר':'hs','נושא תו':'ns','אות בודדת תו':'ot','תנאי משנה תו':'tn','חלק משנה מודגש תו':'tn'}
+   'Normal':'body','רגיל ללא רווח':'body','רווח לפני':'body-sp','נקודה':'body-nk','הסבר ורקע':'body-hr','הסבר':'body-hr','אמוראים':'body','פסוק':'body','פרנקיל מודגש':'body',
+   'חלון 3':'anchor','דף בצד':'daf','פרק':'perek-num','פרק שם':'perek-name','דפים בפרק ב':'perek-range','תחילת פרק':'perek-start','הדרן עלך':'hadran','סוף פרק':'hadran',
+   'משניות':'mishna','חלק משנה מודגש':'mishna','חלק משנה מודגשת':'mishna',"ד''ה משנה":'dh',"משנה ד''ה":'dh',"ד''ה משנה מודגש אפור":'dh','נושא':'nose','חציצה':'hatz'}
+  # סגנון תו שאינו כאן מאבד את עיצובו בשקט, ולכן כל שם שנמצא בקבצים נרשם - גם כשהוא נרדף לשם קיים.
+  CS = {'אמוראים תו':'am','אמוראי משנה תו':'am','פסוק תו':'ps','כותרת 3 תו':'kt','חלון 3 תו':'kt','פרנקיל מודגש תו':'kt',
+        'הסבר':'hs','הסבר תו':'hs','נושא תו':'ns','נושא משנה':'ns','אות בודדת תו':'ot','אות מוגדשת תו':'ot',
+        'תנאי משנה תו':'tn','חלק משנה מודגש תו':'tn','חלק משנה מודגשת תו':'tn',"ד''ה משנה תו":'tn',
+        'דף בצד תו':'df','דף בצד מעודכן תו':'df','רווח לפני תו':None}
 
   def runs_html(runs):
       out=[]
@@ -43,6 +47,9 @@ def build(json_path, out_path, masechet):
       prev=max(prev or 0,key)
   unknown=collections.Counter(b['style'] for b in blocks if b['style'] not in ROLE)
   for s,n in unknown.items(): qa.append(('סגנון לא ממופה',f'{s} ({n})'))
+  # סגנון תו שאינו במפה מאבד את עיצובו בלי שיאמר דבר. הוא נמנה כאן כדי שלא ייפער חור שקט.
+  unk_cs=collections.Counter(r['cs'] for b in blocks for r in b['runs'] if r['cs'] and r['cs'] not in CS)
+  for s,n in unk_cs.items(): qa.append(('סגנון תו לא ממופה',f'{s} ({n})'))
   long_anchor=[b for b in blocks if b['style']=='חלון 3' and len(b['text'])>25]
   for b in long_anchor: qa.append(('חלון ארוך',b['text'][:40]))
   empty_anchor=[b for b in blocks if b['style']=='חלון 3' and not b['text'].strip()]
@@ -146,6 +153,7 @@ def build(json_path, out_path, masechet):
   i{font-style:normal}
   .am{font-family:'Vilna',serif;font-weight:400;font-size:.88em}
   .ps{font-family:'Vilna',serif;font-weight:700;font-size:.9em;color:#2e3f6b} body.hc .ps{color:#000;text-decoration:underline}
+  .df{font-family:'VilnaG','Vilna',serif;color:var(--red)} body.hc .df{color:#000}
   .kt{font-weight:700} .hs{font-size:.82em;color:#4a4137} .ot{font-weight:700;font-size:.8em} .tn{font-weight:900} .ns{font-weight:700} .b{font-weight:700}
   .u .main:hover{background:rgba(201,162,74,.14)} .hit{background:rgba(201,162,74,.3)}
   mark{background:#ffe27a;color:inherit}
@@ -254,11 +262,18 @@ def build(json_path, out_path, masechet):
      if(e.ctrlKey&&(e.key==='='||e.key==='+')){fs(2);e.preventDefault()}
      if(e.ctrlKey&&e.key==='-'){fs(-2);e.preventDefault()}
      if(e.key==='Escape')document.querySelectorAll('.panel').forEach(x=>x.classList.remove('open'))});
-   render(+(params.get('p')||0));
+   /* קישור עמוק מדף ההגהה: p=מקטע, u=מזהה היחידה. היחידה מודגשת ונגללת אליה. */
+   const u0=params.get('u');
+   if(u0){let pi=0;D.pages.forEach((p,i)=>{if(p.units.some(x=>x.id==u0))pi=i});jump(pi,+u0)}
+   else render(+(params.get('p')||0));
   }
   build();
   '''
 
+  # קישור למסך ההגהה נוסף רק כשיש מסך כזה למסכת הזאת.
+  slug=os.path.basename(out_path)[:-5]
+  hgbtn=(f'<a href="{slug}-hagaha.html" style="background:var(--gold);color:#2b2620;border-radius:4px;'
+         f'padding:3px 10px;text-decoration:none;font-weight:700">הגהה</a>') if hagaha else ''
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -269,7 +284,7 @@ def build(json_path, out_path, masechet):
   <select id="dafsel" title="דף"></select>
   <input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)">
   <span class="sp"></span>
-  <button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>
+  <button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>{hgbtn}
   <button id="vbtn" onclick="vert()" title="טור אחד במקום טורים">טור אחד</button>
   <button data-fs="18" onclick="setFs(18)">קטן</button><button data-fs="24" onclick="setFs(24)">רגיל</button><button data-fs="32" onclick="setFs(32)">גדול</button>
   <button onclick="fs(2)" title="Ctrl+=">א+</button><button onclick="fs(-2)" title="Ctrl+-">א-</button>

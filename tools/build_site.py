@@ -138,10 +138,11 @@ def build(json_path, out_path, masechet, hagaha=False):
   /* מצב רצף: מבטלים את מכולת-הטורים לגמרי. 'column-count:1' לבדו אינו מספיק -
      המכולה נשארת רב-טורית, ותוכן שאינו נכנס בגובה גולש לטורים נוספים לצדדים
      במקום לגלול למטה. רק 'auto' בשניהם מוציא אותה ממצב טורים. */
+  /* המכולה נשארת ברוחב מלא, והשורות עצמן ממורכזות. כך אין תלות ברוחב
+     פס-הגלילה ולעולם אין גלילה אופקית. */
   .flow.vert{column-width:auto;column-count:auto;column-rule:0;column-fill:balance;
-             /* ועוד רוחב פס-הגלילה, שאחרת הוא גוזל מן הטור ונוצרת גלילה אופקית */
-             width:calc(var(--rail) + var(--measure) + var(--gut) * 2 + 18px);
-             max-width:100%;margin:0 auto}
+             width:auto;padding:.9em .6em;overflow-x:hidden}
+  .flow.vert .row{margin:0 auto}
   .row{display:grid;grid-template-columns:var(--rail) var(--measure);break-inside:avoid-column}
   .rail{text-align:left;padding-left:.36em}
   .main{text-align:justify;text-align-last:right}

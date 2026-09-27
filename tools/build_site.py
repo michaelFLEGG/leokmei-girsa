@@ -231,8 +231,11 @@ def build(json_path, out_path, masechet, hagaha=False):
     if(GAUGE)return;
     GAUGE=document.createElement('div');
     GAUGE.className='flow';
-    GAUGE.style.cssText='position:absolute;left:-99999px;top:0;height:auto;overflow:hidden;'+
-      'column-count:1;column-width:auto;column-rule:0;padding:0;contain:layout style;';
+    /* הסרגל יושב ב-fixed ובלא נראוּת: כך הוא נמדד אך אינו נצבע, ואינו מותח
+       את רוחב המסמך. הצבתו ב-left:-99999px מתחה אותו למאה אלף פיקסלים. */
+    GAUGE.style.cssText='position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;'+
+      'height:auto;overflow:hidden;column-count:1;column-width:auto;column-rule:0;'+
+      'padding:0;contain:layout style;z-index:-1;';
     GAUGE.innerHTML='<div class="row"><div class="rail"></div><div class="main"><p></p></div></div>';
     document.body.appendChild(GAUGE);
     GP=GAUGE.querySelector('p');GM=GAUGE.querySelector('.main');

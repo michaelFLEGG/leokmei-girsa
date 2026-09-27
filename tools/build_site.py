@@ -355,9 +355,49 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
   .srcall p.hit{background:#fdf1d8;box-shadow:inset 3px 0 0 var(--gold)}
   .srcft{flex:0 0 auto;padding:6px 14px;font-size:12px;color:#8a7d66;background:#f3eee2;border-top:1px solid #e0d8c4}
   .srcbody .ld{color:#8a7d66;font-size:15px}
-  @media(max-width:760px){.src.split{left:0;right:0;top:auto;bottom:0;width:auto;height:60vh}
+  @media screen and (max-width:760px){.src.split{left:0;right:0;top:auto;bottom:0;width:auto;height:60vh}
     body.splitsrc .flow{width:auto;margin-left:0}}
   @media print{.src,.srcb{display:none!important}}
+  /* ---- תצוגת ספר: גיליונות זה לצד זה ----
+     גיליון = טור אחד בעמוד הספר: 20 מ"מ מסילה ועוד 60 מ"מ טקסט, בגובה
+     של 245 מ"מ (260 פחות השוליים). במידות ה-em שנקבעו בח0: רוחב 27.67em
+     וגובה 84.73em. מרווח השורה כאן הוא של הספר - 11 נקודות על גוף של
+     9 - ולא זה שבזרימה הרציפה, שהוא צפוף יותר לפי טעמו. */
+  .flow.book{--lh:1.342;column-width:auto;column-count:auto;column-rule:0;
+             column-fill:balance;line-height:var(--lh);
+             display:grid;grid-template-columns:repeat(var(--sheets,2),27.67em);
+             gap:1.4em;justify-content:center;align-content:start;
+             padding:1em var(--gut);overflow:auto;direction:rtl}
+  .sheet{width:27.67em;height:84.73em;background:var(--paper);overflow:hidden;
+         box-shadow:0 1px 6px rgba(0,0,0,.14);border:1px solid #e6ddc9;border-radius:2px;
+         padding:.5em .55em;display:flex;flex-direction:column}
+  .shhd{flex:0 0 auto;display:flex;align-items:baseline;gap:.5em;font-size:.62em;
+        color:#8a7d66;border-bottom:1px solid #e0d8c4;padding-bottom:.25em;margin-bottom:.45em;
+        overflow:hidden;white-space:nowrap}
+  /* הנושא הוא החלק שמתקצר, ולא שם המסכת וציון הדף */
+  .shhd>span:nth-child(2){overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .shhd .nm{font-family:'Vilna',serif;font-weight:700;color:#5a5044}
+  .shhd .sp{flex:1}
+  .shhd .df{font-family:'VilnaG','Vilna',serif;color:var(--red);font-size:1.25em}
+  .shbody{flex:1 1 auto;overflow:hidden}
+  .flow.book .row{break-inside:auto}
+  #gauge{position:fixed;top:0;left:0;visibility:hidden;pointer-events:none;
+         z-index:-1;overflow:hidden;contain:layout style;background:var(--paper)}
+  /* בטלפון גיליון אחד, וגודל האות מוקטן כדי שרוחב הגיליון ייכנס למסך.
+     זה בדיוק מה שהכלל הנעול מתיר: היחס קבוע, ורק --fs זז. בלעדי זה
+     הגיליון יצא 553 פיקסל במסך של 375, והלומד היה נדרש לגלול לצדדים. */
+  @media screen and (max-width:900px){.flow.book{--sheets:1!important;
+    font-size:min(var(--fs),calc((100vw - 2.2rem) / 27.67))}}
+  /* ח2 - ההדפסה עוברת למנוע הגיליונות: שני גיליונות בעמוד, והכותרת
+     הרצה מגיעה בחינם, מה שטורי-CSS לא ידעו לתת. */
+  @media print{
+    .flow.book{display:grid;grid-template-columns:repeat(2,80mm)!important;gap:0;
+               width:160mm;padding:0;justify-content:start;line-height:11pt}
+    .sheet{width:80mm;height:245mm;box-shadow:none;border:0;border-radius:0;
+           padding:0;break-inside:avoid}
+    .flow.book .sheet:nth-child(2n){break-after:page}
+    .shhd{font-size:7pt}
+  }
   /* ---- הדפסה: עמוד הספר עצמו ----
      עד היום הדפיס הדף טור אחד על גיליון של 90 מ"מ, וזה לא היה העמוד
      של בעל הפרויקט. מעתה הגיאומטריה היא זו שנמדדה מקובץ הוורד:
@@ -540,15 +580,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
     return h}
   function render(si,q){
     cur=Math.max(0,Math.min(SEC.length-1,si));const s=SEC[cur];
-    const h=ALL?pagesHTML(0,D.pages.length-1):pagesHTML(s.from,s.to);
-    const f=$('#flow');f.innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;
-    if(!ALL){f.scrollTop=0;f.scrollLeft=SGN>0?f.scrollWidth:0}
+    const f=$('#flow');
+    f.classList.toggle('book',BOOK);
+    if(BOOK)f.style.setProperty('--sheets',sheetsNow());
+    const h=BOOK?bookHTML(ALL?0:s.from,ALL?D.pages.length-1:s.to)
+                :(ALL?pagesHTML(0,D.pages.length-1):pagesHTML(s.from,s.to));
+    f.innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;
+    if(!ALL&&!BOOK){f.scrollTop=0;f.scrollLeft=SGN>0?f.scrollWidth:0}
+    if(BOOK){f.scrollTop=0;f.scrollLeft=0}
     $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].daf;$('#dafsel').value=s.from;
     document.title=`לאוקמי גירסא · ${D.masechet} · ${ALL?'רצף':(s.perekName||s.perek||D.pages[s.from].daf)}`;
     location.hash=`p=${cur}`;
     markEditable();applyEdits();
     if(EDIT)setEdit(true);
-    squeezeRun();
+    if(!BOOK)squeezeRun();
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){const si=secOf(pi);if(si!==cur)render(si);
@@ -589,6 +634,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
    $('#qab').innerHTML=D.qa.length?D.qa.map(q=>`<div class="res"><b>${q[0]}</b>: ${esc(q[1])}</div>`).join(''):'לא נמצאו חריגות';
    const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(18);
    if(localStorage.getItem('lg-vert')){$('#flow').classList.add('vert');$('#vbtn').classList.add('on');ALL=true}
+   if(BOOK){$('#bkbtn').classList.add('on');$('#shsel').style.display=''}
+   $('#shsel').value=SHEETS;
+   addEventListener('resize',()=>{if(BOOK){$('#flow').style.setProperty('--sheets',sheetsNow())}});
    if(SQ)$('#fbtn').classList.add('on');
    let rsz;addEventListener('resize',()=>{clearTimeout(rsz);rsz=setTimeout(squeezeRun,250)});
    $('#flow').addEventListener('wheel',e=>{const f=$('#flow');if(f.classList.contains('vert'))return;
@@ -941,6 +989,77 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
     if(e.key==='Escape')closeSrc()});
   addEventListener('resize',barH);
 
+  /* =================== תצוגת ספר (משימה י) ===================
+     מנוע עימוד: ממלא גיליון עד שהיחידה הבאה אינה נכנסת, ואינו שובר
+     יחידה בין גיליונות.
+
+     המדידה אינה נעשית בדף עצמו. פריסה מחדש של מכולת-טורים עולה
+     מילישניות רבות לכל מדידה, ומאות יחידות היו מקפיאות את הדף
+     לשניות. לכן נבנה סרגל מבודד באותו רוחב ובאותם class - כולל של
+     .main, שאחרת הגופן שונה - וכל היחידות נכתבות אליו בבת אחת.
+     ואז, בפריסה אחת, נקראים offsetTop ו-offsetHeight של כולן. זה
+     ההבדל בין פריסה אחת ובין מאות.
+
+     הסרגל עצמו ב-position:fixed וב-visibility:hidden ולא ב-
+     left:-99999px, שמתח בעבר את רוחב המסמך למאה אלף פיקסלים. */
+  /* #book בכתובת מדליק את תצוגת הספר, כדי שאפשר יהיה לשלוח קישור
+     ישיר אליה וגם להדפיס אותה בלא לגעת בהעדפה שבמכשיר. */
+  let BOOK=localStorage.getItem('lg-book')==='1'||location.hash.indexOf('book')>-1;
+  let SHEETS=+localStorage.getItem('lg-sheets')||2;
+  function sheetsNow(){return innerWidth<900?1:SHEETS}
+  function measureRows(html){
+    let g=$('#gauge');
+    if(!g){g=document.createElement('div');g.id='gauge';document.body.appendChild(g)}
+    g.className='flow book';
+    g.style.cssText+=';display:block;height:auto;width:auto;padding:0;';
+    g.innerHTML='<div class="sheet" style="height:auto;box-shadow:none;border:0">'+
+                '<div class="shbody">'+html+'</div></div>';
+    const body=g.querySelector('.shbody');
+    const rows=[...body.children];
+    /* פריסה אחת בלבד: כל הקריאות שאחריה אינן מחייבות פריסה נוספת */
+    const box=body.getBoundingClientRect();
+    const out=rows.map(r=>{const b=r.getBoundingClientRect();return {h:b.height,top:b.top-box.top}});
+    g.innerHTML='';
+    return out}
+  function paginate(units,daf0){
+    /* גובה הגיליון נטו: 84.73em פחות הכותרת הרצה */
+    const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
+    const H=(84.73-2.2)*fs;
+    const html=units.map(u=>u.html).join('');
+    const m=measureRows(html);
+    const sheets=[];let cur=[],h=0;
+    units.forEach((u,i)=>{
+      const uh=m[i]?m[i].h:0;
+      if(cur.length&&h+uh>H){sheets.push(cur);cur=[];h=0}
+      cur.push(u);h+=uh});
+    if(cur.length)sheets.push(cur);
+    return sheets}
+  function bookHTML(from,to){
+    /* אוספים את היחידות עם ההקשר שלהן: דף נוכחי ונושא נוכחי */
+    const units=[];let nose='';
+    for(let pi=from;pi<=to;pi++){const p=D.pages[pi];
+      if(!p.units.length){units.push({html:`<div class="row"><div class="rail"><b class="dafmark" id="d${pi}">${esc(p.daf)}</b></div><div class="main"></div></div>`,daf:p.daf,nose});continue}
+      let first=true;
+      for(const u of p.units){
+        if(u.k==='nose')nose=dec(u.a.replace(/<[^>]+>/g,''));
+        units.push({html:unitHTML(u,first?p.daf:null,first?pi:null),daf:p.daf,nose});
+        first=false}}
+    if(!units.length)return '';
+    const sheets=paginate(units);
+    return sheets.map(sh=>{
+      const d=sh[0].daf||'', n=sh[0].nose||'';
+      return '<div class="sheet"><div class="shhd"><span class="nm">'+esc(D.masechet)+'</span>'+
+        (n?'<span>· '+esc(n.slice(0,42))+'</span>':'')+
+        '<span class="sp"></span><span class="df">'+esc(d)+'</span></div>'+
+        '<div class="shbody">'+sh.map(u=>u.html).join('')+'</div></div>'}).join('')}
+  function book(){
+    BOOK=!BOOK;localStorage.setItem('lg-book',BOOK?'1':'');
+    $('#bkbtn').classList.toggle('on',BOOK);
+    $('#shsel').style.display=BOOK?'':'none';
+    render(cur)}
+  function setSheets(n){SHEETS=+n;localStorage.setItem('lg-sheets',SHEETS);
+    $('#flow').style.setProperty('--sheets',sheetsNow());render(cur)}
+
   build();
   '''
 
@@ -959,6 +1078,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None):
   <input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)">
   <span class="sp"></span>
   <button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>{hgbtn}
+  <button id="bkbtn" onclick="book()" title="גיליונות זה לצד זה, בגיאומטריה של עמוד הספר">תצוגת ספר</button>
+  <select id="shsel" style="display:none" onchange="setSheets(this.value)" title="כמה גיליונות זה לצד זה">
+    <option value="1">גיליון אחד</option><option value="2">שני גיליונות</option><option value="3">שלושה גיליונות</option></select>
   <button id="vbtn" onclick="vert()" title="כל המסכת בטור אחד, בגלילה מלמעלה למטה">טור רצוף</button>
   <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
   <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button>

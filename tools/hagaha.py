@@ -136,6 +136,11 @@ main{max-width:940px;margin:0 auto;padding:16px 14px 70px}
 .daf{font-family:'VilnaG','Vilna',serif;color:var(--red);font-size:19px;min-width:44px}
 .tag{background:#eeeae1;border-radius:4px;padding:1px 9px;font-size:13px;color:#5a5044}
 .note{font-size:16px}
+.st{border-radius:4px;padding:1px 9px;font-size:13px;font-weight:700}
+.st.ok{background:#4a6b3f;color:#fff} .st.no{background:#8a7d66;color:#fff} .st.wait{background:#c9a24a;color:#2b2620}
+.bulk{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.bulk button{font:inherit;font-size:15px;background:#4a6b3f;color:#fff;border:0;border-radius:5px;padding:7px 15px;cursor:pointer}
+.bulk button:hover{background:#3d5a34}
 .quote{background:#fff;border:1px dashed var(--line);border-radius:5px;padding:8px 11px;margin:7px 0;font-size:17px;white-space:pre-wrap}
 .quote mark{background:#ffe27a;color:inherit;padding:0 2px;border-radius:2px}
 .fix{color:#4a6b3f;font-size:15px}
@@ -157,6 +162,9 @@ footer{text-align:center;color:var(--grey);font-size:13px;padding:24px}
 JS = r'''
 const K='lg-hagaha-'+SLUG;
 let ST={};try{ST=JSON.parse(localStorage.getItem(K)||'{}')}catch(e){ST={}}
+// סימונים משמות קודמים ממשיכים לחיות
+const MIG={'תוקן':'אושר','נכון':'נדחה'};
+for(const k in ST){if(ST[k]&&MIG[ST[k].s])ST[k].s=MIG[ST[k].s]}
 function save(){try{localStorage.setItem(K,JSON.stringify(ST))}catch(e){}}
 function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
 const SEV=['חמור','בינוני','קל'];
@@ -164,26 +172,32 @@ function mk(text,m){const t=esc(text);if(!m)return t;const e=esc(m);
   const k=t.indexOf(e);if(k<0)return t;return t.slice(0,k)+'<mark>'+e+'</mark>'+t.slice(k+e.length)}
 function card(f){const st=ST[f.id]||{};
   return '<div class="f s'+SEV.indexOf(f.sev)+(st.s&&st.s!=='עיון'?' done':'')+'" id="f'+f.id+'">'
-   +'<div class="hd"><span class="daf">'+esc(f.daf)+'</span><span class="tag">'+esc(f.kind)+'</span></div>'
+   +'<div class="hd"><span class="daf">'+esc(f.daf)+'</span><span class="tag">'+esc(f.kind)+'</span>'
+   +(st.s?'<span class="st '+(st.s==='אושר'?'ok':st.s==='נדחה'?'no':'wait')+'">'+(st.s==='אושר'?'לתיקון':st.s)+'</span>':'')+'</div>'
    +'<div class="note">'+esc(f.note)+'</div>'
    +'<div class="quote">'+mk(f.text.replace(/\t/g,'   ').trim(),f.mark)+'</div>'
-   +(f.fix?'<div class="fix">הצעה: <b>'+esc(f.fix)+'</b></div>':'')
+   +(f.fix?'<div class="fix">הצעת התיקון: <b>'+esc(f.fix)+'</b></div>':'')
    +'<div class="act">'
-   +'<button onclick="set('+f.id+',\'תוקן\')" class="'+(st.s==='תוקן'?'on':'')+'">תוקן בוורד</button>'
-   +'<button onclick="set('+f.id+',\'נכון\')" class="'+(st.s==='נכון'?'on':'')+'">נכון כמות שהוא</button>'
-   +'<button onclick="set('+f.id+',\'עיון\')" class="'+(st.s==='עיון'?'on':'')+'">להשאיר לעיון</button>'
+   +'<button onclick="set('+f.id+',\'אושר\')" class="'+(st.s==='אושר'?'on':'')+'">תקן</button>'
+   +'<button onclick="set('+f.id+',\'נדחה\')" class="'+(st.s==='נדחה'?'on':'')+'">דחה תיקון</button>'
+   +'<button onclick="set('+f.id+',\'עיון\')" class="'+(st.s==='עיון'?'on':'')+'">לעיון</button>'
    +'<a href="'+SLUG+'.html#u='+f.u+'" target="_blank">לראות בדף המסכת ↗</a>'
-   +'<textarea placeholder="הערה משלך" oninput="note('+f.id+',this.value)">'+esc(st.n||'')+'</textarea>'
+   +'<textarea placeholder="תיקון אחר, או הערה משלך" oninput="note('+f.id+',this.value)">'+esc(st.n||'')+'</textarea>'
    +'</div></div>'}
 function set(id,s){ST[id]=ST[id]||{};ST[id].s=(ST[id].s===s?'':s);save();draw()}
 function note(id,v){ST[id]=ST[id]||{};ST[id].n=v;save();counts()}
+function allSevere(){if(!confirm('לתקן את כל '+D.filter(f=>f.sev==='חמור').length+' הממצאים שבטעון תיקון?'))return;
+  D.filter(f=>f.sev==='חמור').forEach(f=>{ST[f.id]=ST[f.id]||{};ST[f.id].s='אושר'});save();draw()}
+function allFix(){const n=D.filter(f=>f.fix&&f.fix.indexOf('⟵')>-1);
+  if(!confirm('לתקן את כל '+n.length+' הממצאים שיש בהם הצעת החלפה ברורה?'))return;
+  n.forEach(f=>{ST[f.id]=ST[f.id]||{};ST[f.id].s='אושר'});save();draw()}
 let FILT='הכל';
 function filt(x){FILT=x;document.querySelectorAll('[data-filt]').forEach(b=>b.classList.toggle('on',b.dataset.filt===x));draw()}
 function draw(){
   const keep=D.filter(function(f){const st=(ST[f.id]||{}).s||'';
     if(FILT==='הכל')return true;
     if(FILT==='פתוח')return !st||st==='עיון';
-    if(FILT==='טופל')return st==='תוקן'||st==='נכון';
+    if(FILT==='אושר')return st==='אושר';
     return f.sev===FILT});
   let h='',last='';
   for(const f of keep){if(f.sev!==last){last=f.sev;
@@ -191,20 +205,37 @@ function draw(){
     h+=card(f)}
   document.getElementById('list').innerHTML=h||'<div class="gen">אין ממצאים בסינון הזה.</div>';
   counts()}
-function counts(){const n=D.filter(function(f){const s=(ST[f.id]||{}).s;return s==='תוקן'||s==='נכון'}).length;
-  document.getElementById('done').textContent=n;
-  document.getElementById('open').textContent=D.length-n}
-function out(){
-  let t='הגהת מסכת '+MAS+' — לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n\n';
-  for(const f of D){const st=ST[f.id]||{};
-    t+='['+(st.s||'טרם הוכרע')+'] דף '+f.daf+'  '+f.kind+'\n  '+f.note+'\n';
-    if(f.fix)t+='  הצעה: '+f.fix+'\n';
-    t+='  בקובץ: '+f.text.replace(/\t/g,'   ').trim()+'\n';
-    if(st.n)t+='  הערתך: '+st.n+'\n';
+function counts(){
+  const a=D.filter(f=>(ST[f.id]||{}).s==='אושר').length;
+  const r=D.filter(f=>(ST[f.id]||{}).s==='נדחה').length;
+  document.getElementById('nok').textContent=a;
+  document.getElementById('nno').textContent=r;
+  document.getElementById('open').textContent=D.length-a-r;}
+function text(){
+  const a=D.filter(f=>(ST[f.id]||{}).s==='אושר');
+  let t='הגהת מסכת '+MAS+' — לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n';
+  t+='לתיקון: '+a.length+' מתוך '+D.length+'\n\n';
+  t+='==== לתקן בקובץ הוורד ====\n\n';
+  for(const f of a){const st=ST[f.id]||{};
+    t+='דף '+f.daf+' | פסקה '+f.u+' | '+f.kind+'\n  '+f.note+'\n';
+    if(f.fix)t+='  התיקון: '+f.fix+'\n';
+    t+='  השורה: '+f.text.replace(/\t/g,'   ').trim()+'\n';
+    if(st.n)t+='  הוראה משלך: '+st.n+'\n';
     t+='\n'}
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([t],{type:'text/plain;charset=utf-8'}));
+  const rest=D.filter(f=>(ST[f.id]||{}).s!=='אושר');
+  t+='\n==== שלא אושרו ====\n\n';
+  for(const f of rest){const st=ST[f.id]||{};
+    t+='['+(st.s||'טרם הוכרע')+'] דף '+f.daf+' | פסקה '+f.u+' | '+f.note+'\n';
+    if(st.n)t+='  הערתך: '+st.n+'\n'}
+  return t}
+function out(){const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text()],{type:'text/plain;charset=utf-8'}));
   a.download='הגהת-'+MAS+'.txt';a.click()}
+function copy(){const t=text();
+  const done=()=>{const b=document.getElementById('cpb');b.textContent='הועתק ✓';setTimeout(()=>b.textContent='העתק ללוח',2200)};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fallback)}else fallback();
+  function fallback(){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);
+    ta.select();try{document.execCommand('copy');done()}catch(e){alert('לא הצלחתי להעתיק. השתמש בכפתור ההורדה.')}ta.remove()}}
 draw();
 '''
 
@@ -219,18 +250,24 @@ PAGE = '''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">
  <span class="sp"></span>
  <button data-filt="הכל" class="on" onclick="filt('הכל')">הכל</button>
  <button data-filt="פתוח" onclick="filt('פתוח')">שטרם הוכרע</button>
- <button data-filt="טופל" onclick="filt('טופל')">שהוכרע</button>
+ <button data-filt="אושר" onclick="filt('אושר')">שסומנו לתיקון</button>
  <button data-filt="חמור" onclick="filt('חמור')">טעון תיקון</button>
- <button onclick="out()">ייצוא לקובץ</button></div>
+ <button id="cpb" onclick="copy()">העתק ללוח</button>
+ <button onclick="out()">הורד לקובץ</button></div>
 <main>
 <div class="lead"><h1>הגהת מסכת __M__</h1>
 <p>לפניך מה שנמצא בקובץ בקריאה מלאה ובסריקה: טעויות כתיב, ציוני דף שאינם במקומם, סימני קיצור שאינם אחידים, ומקום שהתוכן בו נראה הפוך. כל ממצא מביא את השורה כלשונה בקובץ, את ההצעה, וקישור אל המקום עצמו בדף המסכת.</p>
-<p>סמן בכל ממצא מה עשית בו. הסימון נשמר בדפדפן שלך וימתין לך גם מחר, ובסוף אפשר להוריד את הכל לקובץ אחד.</p></div>
+<p><b>איך מאשרים:</b> בכל ממצא יש שלושה כפתורים. <b>"תקן"</b> אומר לי להכניס את התיקון לקובץ הוורד שלך; <b>"דחה תיקון"</b> סוגר את הממצא; <b>"לעיון"</b> משאיר אותו פתוח. אם התיקון הנכון שונה מהצעתי, כתוב אותו בשורת ההערה שלצד הכפתורים - היא גוברת על ההצעה.</p>
+<p>ממהר? <b>"תקן את כל טעוני התיקון"</b> שלמטה מאשר בלחיצה אחת את הממצאים החמורים. הסימון נשמר בדפדפן וימתין לך גם מחר.</p>
+<p><b>וכשתסיים:</b> לחץ <b>"הורד לקובץ"</b> שבסרגל העליון, ואמור לי "סיימתי להגיה" - אקרא את הקובץ מתיקיית ההורדות שלך ואכניס את התיקונים. לחלופין "העתק ללוח" והדבק אצלי בשיחה.</p>
+<div class="bulk"><button onclick="allSevere()">תקן את כל טעוני התיקון</button>
+<button onclick="allFix()">תקן את כל אלה שיש בהם הצעת החלפה ברורה</button></div></div>
 <div class="counts">
  <div class="cbox">טעון תיקון<b>__N0__</b></div>
  <div class="cbox">ראוי לתיקון<b>__N1__</b></div>
  <div class="cbox">קל<b>__N2__</b></div>
- <div class="cbox">הוכרע<b id="done">0</b></div>
+ <div class="cbox">לתיקון<b id="nok">0</b></div>
+ <div class="cbox">נדחו<b id="nno">0</b></div>
  <div class="cbox">ממתין<b id="open">0</b></div></div>
 <div id="list"></div>
 <h2>הערות כלליות על הקובץ</h2>

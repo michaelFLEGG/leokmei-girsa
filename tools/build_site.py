@@ -139,7 +139,9 @@ def build(json_path, out_path, masechet, hagaha=False):
      המכולה נשארת רב-טורית, ותוכן שאינו נכנס בגובה גולש לטורים נוספים לצדדים
      במקום לגלול למטה. רק 'auto' בשניהם מוציא אותה ממצב טורים. */
   .flow.vert{column-width:auto;column-count:auto;column-rule:0;column-fill:balance;
-             width:calc(var(--rail) + var(--measure) + var(--gut) * 2);max-width:100%;margin:0 auto}
+             /* ועוד רוחב פס-הגלילה, שאחרת הוא גוזל מן הטור ונוצרת גלילה אופקית */
+             width:calc(var(--rail) + var(--measure) + var(--gut) * 2 + 18px);
+             max-width:100%;margin:0 auto}
   .row{display:grid;grid-template-columns:var(--rail) var(--measure);break-inside:avoid-column}
   .rail{text-align:left;padding-left:.36em}
   .main{text-align:justify;text-align-last:right}

@@ -391,6 +391,39 @@ __GEN__
 <script>const MAS="__M__",SLUG="__SLUG__",D=__DATA__,LOST=__LOST__;</script><script>__JS__</script></body></html>'''
 
 
+def _gemara(blocks, slug, log=print):
+    """הגלאים שנשענים על הגמרא (ט4). נכנסים רק אלה שעמדו במדידה.
+
+    נמדד על גיבוי סוכה שלפני ההגהה, מול 49 התיקונים שאושרו:
+      מקום ציון הדף - 11 ממצאים ל-110 עמודים. נכנס בדרגה "קל" ומנוסח
+                      כשאלה, מפני שהספר מקצר וסטייה קטנה היא לגיטימית.
+      ייחוס          - 2 ממצאים בלבד. נכנס בדרגה "קל".
+      כתיב           - תפס 1 מתוך 9 שגיאות הכתיב שאושרו, והוציא 68
+                      ממצאי שווא. **אינו נכנס.** הקוד נשמר ב-
+                      gemara_checks.spelling, והמספרים בדוח. אין טעם
+                      להציף את המגיה ברעש כדי לתפוס שגיאה אחת.
+    """
+    import json as _json
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sp = os.path.join(root, 'data', 'sources', slug + '.json')
+    if not os.path.exists(sp):
+        return []
+    try:
+        import gemara_checks as GC
+        src = _json.load(open(sp, encoding='utf-8'))
+        names = _json.load(open(os.path.join(root, 'data', 'names.json'), encoding='utf-8'))
+        out = GC.daf_position(blocks, src, tol=3, severity='קל')
+        out += GC.attribution(blocks, src, names['expand'], severity='קל')
+        for r in out:
+            r.setdefault('context', ctx_of(
+                next((b['text'] for b in blocks if b['i'] == r['i']), ''), r.get('mark', '')))
+            r['src'] = 'auto'
+        return out
+    except Exception as e:
+        log('גלאי הגמרא נכשלו:', repr(e))
+        return []
+
+
 def build(blocks, out_path, masechet, slug, curated_path=None, source=''):
     loc = _locate(blocks)
     rows, banner, decisions = [], '', {}
@@ -404,7 +437,7 @@ def build(blocks, out_path, masechet, slug, curated_path=None, source=''):
             r = dict(r); r['src'] = 'cur'
             rows.append(r)
     seen = {(r.get('i'), r.get('mark', '')) for r in rows}
-    for r in _auto(blocks):
+    for r in _auto(blocks) + _gemara(blocks, slug):
         if (r['i'], r['mark']) in seen:
             continue
         rows.append(r)

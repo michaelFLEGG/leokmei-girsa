@@ -1,8 +1,9 @@
 import json, html, re, collections, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from styles_map import ROLE, CS, MISSING_FONTS
+import match_sources
 MISSING_FONTS_REV={v:k for k,v in MISSING_FONTS.items()}
-def build(json_path, out_path, masechet, hagaha=False):
+def build(json_path, out_path, masechet, hagaha=False, sources=None):
   blocks = json.load(open(json_path, encoding='utf-8'))
 
   # מפת הסגנונות יושבת בקובץ אחד, tools/styles_map.py, שגם מסך ההגהה קורא
@@ -165,7 +166,19 @@ def build(json_path, out_path, masechet, hagaha=False):
               n=r['t'].strip(" ,.:;!?-'’‘")
               if len(n)>=4: psk[n]+=1
 
-  data={'masechet':masechet,'pages':pages,'toc':toc,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values())}
+  # ---------- הצמדת הגמרא המנוקדת (ט2) ----------
+  # ההצמדה נעשית כאן, בבנייה, ולא בדפדפן. לדף נכתב רק המזהה; הטקסט
+  # עצמו יושב בקובץ נפרד ונטען רק בלחיצה הראשונה.
+  srcmeta=None
+  if sources:
+      st=match_sources.attach(pages,sources)
+      srcmeta={'slug':os.path.basename(out_path)[:-5],
+               'attribution':sources.get('attribution',''),
+               'matched':st['matched'],'eligible':st['eligible']}
+      qa.append(('מקור מן הגמרא',
+                 '%d יחידות מתוך %d הוצמדו למקטע בגמרא; %d לא עברו את הסף ואין להן כפתור "מקור"'
+                 % (st['matched'],st['eligible'],st['low'])))
+  data={'masechet':masechet,'pages':pages,'toc':toc,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 
   CSS=r'''
@@ -320,6 +333,31 @@ def build(json_path, out_path, masechet, hagaha=False):
   .sgrow{padding:7px 0;border-bottom:1px dotted #d9d1bd;line-height:1.5}
   .sgrow q{color:#5a5044} .sgrow b{display:block} .sgrow small{color:#8a7d66}
   .sgrow button{font:inherit;font-size:13px;background:#eeeae1;border:1px solid #e0d8c4;border-radius:4px;padding:2px 9px;cursor:pointer}
+  /* ---- מגירת "מקור": הגמרא המנוקדת ---- */
+  .srcb{font:inherit;font-size:.5em;line-height:1;background:none;border:1px solid #d9d1bd;color:#8a7d66;
+        border-radius:3px;padding:1px 5px;margin-right:.3em;cursor:pointer;opacity:.45;vertical-align:.15em}
+  .srcb:hover,.srcb:focus{opacity:1;background:var(--gold);color:#2b2620;border-color:#a8842f}
+  .src{position:fixed;z-index:9;background:var(--paper);box-shadow:0 -2px 18px rgba(0,0,0,.25);
+       display:flex;flex-direction:column;font-size:17px;line-height:1.75}
+  .src.peek{left:0;right:0;bottom:0;height:38vh}
+  .src.split{left:0;top:var(--barH,52px);bottom:0;width:50vw;box-shadow:2px 0 18px rgba(0,0,0,.22)}
+  .src.full{left:0;right:0;top:0;bottom:0}
+  body.splitsrc .flow{width:50vw;margin-left:auto}
+  .srchd{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 14px;background:#2b2620;color:#f1ead9;font-size:14px;flex:0 0 auto}
+  .srchd b{font-family:'VilnaG','Vilna',serif;font-size:17px;font-weight:400}
+  .srchd .sp{flex:1}
+  .srchd button{font:inherit;font-size:13px;background:#4a4137;color:#f1ead9;border:0;border-radius:4px;padding:3px 10px;cursor:pointer}
+  .srchd button.on{background:var(--gold);color:#2b2620}
+  .srcbody{flex:1 1 auto;overflow:auto;padding:12px 18px}
+  .srcbody h4{margin:14px 0 6px;font-size:14px;font-weight:500;color:#8a7d66;border-bottom:1px solid #e0d8c4;padding-bottom:3px}
+  .srcseg{background:#fdf6e3;border-right:3px solid var(--gold);border-radius:4px;padding:9px 12px}
+  .srcall p{margin:0 0 .5em;padding:2px 5px;border-radius:3px}
+  .srcall p.hit{background:#fdf1d8;box-shadow:inset 3px 0 0 var(--gold)}
+  .srcft{flex:0 0 auto;padding:6px 14px;font-size:12px;color:#8a7d66;background:#f3eee2;border-top:1px solid #e0d8c4}
+  .srcbody .ld{color:#8a7d66;font-size:15px}
+  @media(max-width:760px){.src.split{left:0;right:0;top:auto;bottom:0;width:auto;height:60vh}
+    body.splitsrc .flow{width:auto;margin-left:0}}
+  @media print{.src,.srcb{display:none!important}}
   /* ---- הדפסה: עמוד הספר עצמו ----
      עד היום הדפיס הדף טור אחד על גיליון של 90 מ"מ, וזה לא היה העמוד
      של בעל הפרויקט. מעתה הגיאומטריה היא זו שנמדדה מקובץ הוורד:
@@ -482,13 +520,15 @@ def build(json_path, out_path, masechet, hagaha=False):
     const mk=daf!=null?`<b class="dafmark" id="d${pi}">${esc(daf)}</b>`:'';
     /* ◄ פירושו "כך נפסק להלכה". הוא נשען על היחידה שאחריו, ולכן הוא
        נכתב כאן במסילה שלה ולא כשורה משלו. */
-    const H=u.h?' data-halacha="1"':'', hal=u.h?'<span class="hal" title="כך נפסק להלכה">\u25c4</span>':'';
-    if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}><div class="rail">${mk}${hal}<span class="anchor">${u.a}</span></div><div class="main">${u.l.map(l=>`<p class="${l[0]}">${l[1]}</p>`).join('')}</div></div>`;
-    if(u.k==='m')return `<div class="row" id="u${u.id}"${H}><div class="rail">${mk}${hal}<span class="mlabel">משנה</span></div><div class="main mishna">${u.l.map(l=>`<p>${l[1]}</p>`).join('')}</div></div>`;
+    const H=(u.h?' data-halacha="1"':'')+(u.ref?' data-ref="'+u.ref+'"':''),
+          hal=u.h?'<span class="hal" title="כך נפסק להלכה">\u25c4</span>':'',
+          sb=u.ref?`<button class="srcb" onclick="openSrc('${u.ref}')" title="הגמרא המנוקדת (מקש מ)">מקור</button>`:'';
+    if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}><div class="rail">${mk}${hal}<span class="anchor">${u.a}</span></div><div class="main">${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
+    if(u.k==='m')return `<div class="row" id="u${u.id}"${H}><div class="rail">${mk}${hal}<span class="mlabel">משנה</span></div><div class="main mishna">${u.l.map((l,n)=>`<p>${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
     /* הכוכביות מוצגות כלשונן בקובץ. מספרן אינו מנורמל: כל מספר נותן
        עיטור אחר בגופן, וזו כוונת המחבר. */
     if(u.k==='hatz')return `<div class="row" id="u${u.id}"${H}><div class="rail">${mk}${hal}</div><div class="main hatz">${u.a}</div></div>`;
-    return `<div class="row ${u.k}" id="u${u.id}"${H}><div class="rail">${mk}${hal}</div><div class="main ${u.k==='dh'||u.k==='nose'?u.k:''}">${u.a}</div></div>`;
+    return `<div class="row ${u.k}" id="u${u.id}"${H}><div class="rail">${mk}${hal}</div><div class="main ${u.k==='dh'||u.k==='nose'?u.k:''}">${u.a}${sb}</div></div>`;
   }
   /* ALL: מצב רצף - כל המסכת בטור אחד, מן הדף הראשון עד האחרון בגלילה אחת. */
   let ALL=false;
@@ -832,6 +872,74 @@ def build(json_path, out_path, masechet, hagaha=False):
     location.href='mailto:'+SUGGEST_MAIL+'?subject='+encodeURIComponent('הצעות תיקון · '+D.masechet)+
       '&body='+encodeURIComponent(sgText().slice(0,1800))}
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(PICK)setPick(false);closeSg()}});
+
+  /* =================== "מקור": הגמרא המנוקדת ===================
+     המזהה של המקטע נכתב לדף בזמן הבנייה; הטקסט עצמו יושב בקובץ נפרד
+     ונטען רק בלחיצה הראשונה, כדי שדף המסכת יישאר קל בטלפון.
+
+     שורת הייחוס בתחתית המגירה היא תנאי הרישיון (CC BY-NC), והיא לעולם
+     אינה נכנסת להדפסה - שם היא מוסתרת ב-@media print. */
+  let SRC=null, SRCLOAD=null, SRCMODE=localStorage.getItem('lg-srcmode')||'';
+  function srcDefault(){return innerWidth<900?'full':'split'}
+  function loadSrc(){
+    if(SRC)return Promise.resolve(SRC);
+    if(SRCLOAD)return SRCLOAD;
+    SRCLOAD=fetch('sources/'+SLUG+'.json').then(r=>{if(!r.ok)throw new Error(r.status);return r.json()})
+      .then(j=>{SRC=j;return j});
+    return SRCLOAD}
+  function barH(){const b=document.querySelector('.bar');
+    document.documentElement.style.setProperty('--barH',(b?b.getBoundingClientRect().height:52)+'px')}
+  function refDaf(ref){const m=/\.(\d+[ab])\.(\d+)$/.exec(ref||'');return m?[m[1],+m[2]]:null}
+  function openSrc(ref){
+    if(!ref)return;
+    barH();
+    let box=$('#srcx');
+    if(!box){box=document.createElement('div');box.id='srcx';document.body.appendChild(box)}
+    const mode=SRCMODE||srcDefault();
+    box.className='src '+mode;
+    document.body.classList.toggle('splitsrc',mode==='split');
+    box.innerHTML='<div class="srchd"><b>מקור</b><span class="sp"></span>'+
+      ['peek','split','full'].map(m=>'<button data-m="'+m+'" class="'+(m===mode?'on':'')+'">'+
+        ({peek:'הצצה',split:'מסך מפוצל',full:'מלא'})[m]+'</button>').join('')+
+      '<button onclick="closeSrc()" title="Esc">×</button></div>'+
+      '<div class="srcbody"><div class="ld">טוען את הגמרא…</div></div>';
+    box.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{
+      SRCMODE=b.dataset.m;localStorage.setItem('lg-srcmode',SRCMODE);openSrc(ref)});
+    loadSrc().then(j=>{
+      const d=refDaf(ref);if(!d)return;
+      const heb=Object.keys(j.pages).find(k=>j.pages[k].daf===d[0]);
+      const pg=j.pages[heb];if(!pg)return;
+      const i=pg.refs.indexOf(ref);
+      box.querySelector('.srchd b').textContent='מקור · דף '+heb;
+      box.querySelector('.srcbody').innerHTML=
+        '<div class="srcseg">'+(pg.gemara[i]||'')+'</div>'+
+        '<h4>הדף כולו</h4><div class="srcall">'+
+        pg.gemara.map((g,n)=>'<p class="'+(n===i?'hit':'')+'" id="sg'+n+'">'+g+'</p>').join('')+
+        '</div>';
+      if(!box.querySelector('.srcft')){const f=document.createElement('div');f.className='srcft';
+        f.textContent=j.attribution||'';box.appendChild(f)}
+      const h=box.querySelector('.hit');if(h)h.scrollIntoView({block:'center'});
+    }).catch(e=>{box.querySelector('.srcbody').innerHTML=
+      '<div class="ld">לא הצלחתי לטעון את הגמרא ('+esc(String(e.message||e))+').</div>'});
+  }
+  function closeSrc(){const b=$('#srcx');if(b)b.remove();document.body.classList.remove('splitsrc')}
+  /* מקש אחד פותח מקור ליחידה שבמוקד: זו שהעכבר עליה, ואם אין - הראשונה
+     הנראית בדף. */
+  let HOVER=null;
+  document.addEventListener('mouseover',e=>{const r=e.target.closest&&e.target.closest('.row[data-ref]');if(r)HOVER=r});
+  function focusedRef(){
+    if(HOVER&&document.contains(HOVER))return HOVER.dataset.ref;
+    const rows=[...$('#flow').querySelectorAll('.row[data-ref]')];
+    const f=$('#flow').getBoundingClientRect();
+    const vis=rows.find(r=>{const b=r.getBoundingClientRect();
+      return b.top<f.bottom&&b.bottom>f.top&&b.right<=f.right+2&&b.left>=f.left-2});
+    return (vis||rows[0]||{dataset:{}}).dataset.ref}
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.isContentEditable)return;
+    if(e.ctrlKey||e.altKey||e.metaKey)return;
+    if(e.key==='מ'||e.key==='m'||e.key==='M'){const r=focusedRef();if(r){openSrc(r);e.preventDefault()}}
+    if(e.key==='Escape')closeSrc()});
+  addEventListener('resize',barH);
 
   build();
   '''

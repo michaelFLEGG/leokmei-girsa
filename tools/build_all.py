@@ -194,7 +194,16 @@ def main():
             # למגיה מה לעשות שם, והגלאים לבדם רק היו מציפים אותו.
             cur = os.path.join(ROOT, 'data', 'hagaha-' + SLUG[m] + '.json')
             has_hagaha = os.path.exists(cur)
-            r = build(jp, os.path.join(SITE, SLUG[m] + '.html'), m, hagaha=has_hagaha)
+            # הגמרא המנוקדת נמשכת ביד ב-fetch_sources ונשמרת במאגר.
+            # השומר רק מעתיק אותה לאתר, ואינו פונה לספריא בכל בנייה.
+            sp = os.path.join(ROOT, 'data', 'sources', SLUG[m] + '.json')
+            sources = None
+            if os.path.exists(sp):
+                sources = json.load(open(sp, encoding='utf-8'))
+                os.makedirs(os.path.join(SITE, 'sources'), exist_ok=True)
+                shutil.copy(sp, os.path.join(SITE, 'sources', SLUG[m] + '.json'))
+            r = build(jp, os.path.join(SITE, SLUG[m] + '.html'), m, hagaha=has_hagaha,
+                      sources=sources)
             if has_hagaha:
                 h = hagaha.build(blocks, os.path.join(SITE, SLUG[m] + '-hagaha.html'), m, SLUG[m], cur, f)
                 print('   מסך הגהה:', h['findings'], 'ממצאים,', h['severe'], 'טעונים תיקון')

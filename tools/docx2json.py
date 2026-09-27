@@ -1,10 +1,38 @@
-import sys, json, zipfile, re, collections
+# -*- coding: utf-8 -*-
+"""docx2json.py - ממיר קובץ וורד לרשימת פסקאות.
+
+מחיקה במעקב-אחר-שינויים נקראת כאן כפי שוורד עצמו קורא אותה:
+- טקסט שבתוך w:del אינו קיים.
+- פסקה שגם תוכנה וגם סימן הפסקה שלה מחוקים - אינה קיימת כלל, ואינה
+  משאירה שורה ריקה בדף.
+- פסקה שרק סימן הפסקה שלה מחוק מתאחדת עם הפסקה שאחריה, כמו בוורד.
+- w:moveFrom הוא מחיקה, w:moveTo הוא טקסט חי.
+
+בלי הקריאה הזאת, מחיקת פסקה בוורד השאירה באתר שורה ריקה, ובעל הפרויקט
+נאלץ למחוק מחיקה ממשית - וזו אינה הפיכה.
+"""
+import sys, json, zipfile, collections
 from lxml import etree
+
+sys.path.insert(0, __file__.rsplit('\\', 1)[0].rsplit('/', 1)[0])
+from styles_map import ALIAS
+
 ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
 W = '{%s}' % ns['w']
 
-# שמות סגנון חלופיים שמשמעותם זהה. "דף בצד מעודכן" מופיע בקובץ סוכה בלבד.
-STYLE_ALIAS = {'דף בצד מעודכן': 'דף בצד'}
+# עטיפות שכל טקסט שבתוכן נחשב מחוק
+DEAD = (W + 'del', W + 'moveFrom')
+
+
+def _is_dead(run):
+    """האם ההרצה יושבת בתוך מחיקה במעקב (בכל עומק)."""
+    el = run.getparent()
+    while el is not None and el.tag != W + 'p':
+        if el.tag in DEAD:
+            return True
+        el = el.getparent()
+    return False
+
 
 def convert(path):
     z = zipfile.ZipFile(path)
@@ -16,23 +44,30 @@ def convert(path):
         if n is not None:
             names[s.get(W + 'styleId')] = n.get(W + 'val')
     blocks = []
-    cur_daf = None; cur_perek = None
+    cur_daf = None
+    cur_perek = None
+    carry = None      # פסקה שסימנה נמחק, וממתינה להתאחד עם הבאה
+    dropped = 0       # פסקאות שנמחקו כליל במעקב
+    joined = 0        # פסקאות שאוחו עם הבאה אחריהן
     for p in doc.find('w:body', ns).findall('w:p', ns):
         ps = p.find('w:pPr/w:pStyle', ns)
         style = names.get(ps.get(W + 'val'), ps.get(W + 'val')) if ps is not None else 'Normal'
-        style = STYLE_ALIAS.get(style, style)
+        style = ALIAS.get(style, style)
         if style.startswith('toc'):
             continue
+        # סימן הפסקה עצמו: מחוק, או מוכנס
+        mark_del = p.find('w:pPr/w:rPr/w:del', ns) is not None
         runs = []
         for r in p.iter(W + 'r'):
-            # skip deleted text
-            if r.getparent().tag == W + 'del':
+            if _is_dead(r):
                 continue
-            txt = ''.join((t.text or '') if t.tag == W + 't' else ('\t' if t.tag == W + 'tab' else '') for t in r if t.tag in (W + 't', W + 'tab'))
+            txt = ''.join((t.text or '') if t.tag == W + 't' else ('\t' if t.tag == W + 'tab' else '')
+                          for t in r if t.tag in (W + 't', W + 'tab'))
             if not txt:
                 continue
             rp = r.find('w:rPr', ns)
-            rs = None; b = False
+            rs = None
+            b = False
             if rp is not None:
                 st = rp.find('w:rStyle', ns)
                 if st is not None:
@@ -40,6 +75,19 @@ def convert(path):
                 if rp.find('w:b', ns) is not None and rp.find('w:b', ns).get(W + 'val') not in ('0', 'false'):
                     b = True
             runs.append({'t': txt, 'cs': rs, 'b': b})
+        # פסקה שגם תוכנה וגם סימנה מחוקים - אינה קיימת. אין שורה ריקה,
+        # ואין צורך במחיקה ממשית מן הקובץ.
+        if mark_del and not ''.join(r['t'] for r in runs).strip():
+            dropped += 1
+            continue
+        if carry is not None:
+            # הסגנון של הפסקה הקולטת גובר, כמו בוורד כשמוחקים סימן פסקה.
+            runs = carry + runs
+            carry = None
+        if mark_del:
+            carry = runs
+            joined += 1
+            continue
         # merge adjacent identical runs
         merged = []
         for r in runs:
@@ -54,11 +102,28 @@ def convert(path):
             cur_daf = text.strip()
         if style == 'פרק':
             cur_perek = text.strip()
-        blocks.append({'i': len(blocks), 'style': style, 'daf': cur_daf, 'perek': cur_perek, 'text': text, 'runs': merged})
+        blocks.append({'i': len(blocks), 'style': style, 'daf': cur_daf, 'perek': cur_perek,
+                       'text': text, 'runs': merged})
+    if carry:
+        # סימן הפסקה האחרונה בקובץ נמחק ואין למי להתאחד. אין דילוג שקט:
+        # התוכן נשמר בפסקה משלו.
+        merged = []
+        for r in carry:
+            if merged and merged[-1]['cs'] == r['cs'] and merged[-1]['b'] == r['b']:
+                merged[-1]['t'] += r['t']
+            else:
+                merged.append(dict(r))
+        blocks.append({'i': len(blocks), 'style': 'Normal', 'daf': cur_daf, 'perek': cur_perek,
+                       'text': ''.join(r['t'] for r in merged), 'runs': merged})
+    convert.last = {'dropped': dropped, 'joined': joined}
     return blocks
+
+
+convert.last = {'dropped': 0, 'joined': 0}
 
 if __name__ == '__main__':
     blocks = convert(sys.argv[1])
     json.dump(blocks, open(sys.argv[2], 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
     c = collections.Counter(b['style'] for b in blocks)
-    print(len(blocks), 'blocks'); print(c.most_common())
+    print(len(blocks), 'blocks', convert.last)
+    print(c.most_common())

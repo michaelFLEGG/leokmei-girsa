@@ -1,17 +1,11 @@
 import json, html, re, collections, sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from styles_map import ROLE, CS
 def build(json_path, out_path, masechet, hagaha=False):
   blocks = json.load(open(json_path, encoding='utf-8'))
 
-  # ---------- normalization of style names (canonical roles) ----------
-  ROLE = {
-   'Normal':'body','רגיל ללא רווח':'body','רווח לפני':'body-sp','נקודה':'body-nk','הסבר ורקע':'body-hr','הסבר':'body-hr','אמוראים':'body','פסוק':'body','פרנקיל מודגש':'body',
-   'חלון 3':'anchor','דף בצד':'daf','פרק':'perek-num','פרק שם':'perek-name','דפים בפרק ב':'perek-range','תחילת פרק':'perek-start','הדרן עלך':'hadran','סוף פרק':'hadran',
-   'משניות':'mishna','חלק משנה מודגש':'mishna','חלק משנה מודגשת':'mishna',"ד''ה משנה":'dh',"משנה ד''ה":'dh',"ד''ה משנה מודגש אפור":'dh','נושא':'nose','חציצה':'hatz'}
-  # סגנון תו שאינו כאן מאבד את עיצובו בשקט, ולכן כל שם שנמצא בקבצים נרשם - גם כשהוא נרדף לשם קיים.
-  CS = {'אמוראים תו':'am','אמוראי משנה תו':'am','פסוק תו':'ps','כותרת 3 תו':'kt','חלון 3 תו':'kt','פרנקיל מודגש תו':'kt',
-        'הסבר':'hs','הסבר תו':'hs','נושא תו':'ns','נושא משנה':'ns','אות בודדת תו':'ot','אות מוגדשת תו':'ot',
-        'תנאי משנה תו':'tn','חלק משנה מודגש תו':'tn','חלק משנה מודגשת תו':'tn',"ד''ה משנה תו":'tn',
-        'דף בצד תו':'df','דף בצד מעודכן תו':'df','רווח לפני תו':None}
+  # מפת הסגנונות יושבת בקובץ אחד, tools/styles_map.py, שגם מסך ההגהה קורא
+  # ממנו. עותק שני היה נפרד בשקט ושובר את העיגון שבין שני המסכים.
 
   def runs_html(runs):
       out=[]

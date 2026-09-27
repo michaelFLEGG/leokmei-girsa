@@ -10,7 +10,9 @@
 מילה שנחתכה בגרש כדרך הקיצור הרגילה ('ואפי, 'מתני) אינה ממצא, ולכן היא
 רשומה ברשימת ההיתר שלהלן.
 """
-import json, re, html, os, datetime, collections
+import json, re, html, os, sys, datetime, collections, hashlib
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from styles_map import ROLE
 
 HEB = 'א-ת'
 # הכרעת בעל הפרויקט 27.9.2026: בספר הזה גרש בודד משמש גם לסגור מילה
@@ -20,14 +22,8 @@ SKIP_TRUNC = {'אמרי', 'אפי', 'דאפי', 'ואפי', 'שאפי', 'גזר�
               'חיישי', 'מיירי', 'אמרינ', 'קמ', 'דמצי', 'מצי', 'סנהד', 'דתני', 'דאמרי',
               'בחצצרות', 'דאמרינ', 'ומתני', 'כדאמרי'}
 
-# זהה למפה שב-build_site. סגנון שאינו כאן נחשב גוף.
-ROLE = {'Normal': 'body', 'רגיל ללא רווח': 'body', 'רווח לפני': 'body-sp', 'נקודה': 'body-nk',
-        'הסבר ורקע': 'body-hr', 'הסבר': 'body-hr', 'אמוראים': 'body', 'פסוק': 'body',
-        'פרנקיל מודגש': 'body', 'חלון 3': 'anchor', 'דף בצד': 'daf', 'פרק': 'perek-num',
-        'פרק שם': 'perek-name', 'דפים בפרק ב': 'perek-range', 'תחילת פרק': 'perek-start',
-        'הדרן עלך': 'hadran', 'סוף פרק': 'hadran', 'משניות': 'mishna',
-        'חלק משנה מודגש': 'mishna', 'חלק משנה מודגשת': 'mishna', "ד''ה משנה": 'dh',
-        "משנה ד''ה": 'dh', "ד''ה משנה מודגש אפור": 'dh', 'נושא': 'nose', 'חציצה': 'hatz'}
+# המפה יושבת בקובץ אחד, styles_map.py, ששני המסכים קוראים ממנו.
+# כך פסקה נופלת לאותה יחידה בדיוק בשני הצדדים, והעיגון אינו נשבר.
 
 
 def _locate(blocks):
@@ -60,9 +56,90 @@ def _locate(blocks):
     return loc
 
 
+GEM = {'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,'ל':30,'מ':40,
+       'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400}
+
+
+def daf_key(d):
+    """מפתח מספרי לציון דף: גימטריה כפול שתיים, ועוד אחד לעמוד ב."""
+    if not d:
+        return None
+    t = d.strip()
+    amud = 1 if t.endswith(':') else 0
+    t = t.rstrip('.:').replace('"', '').replace("'", '').replace('״', '').replace('׳', '').strip()
+    n = sum(GEM.get(c, 0) for c in t)
+    return n * 2 + amud if n else None
+
+
+def ctx_of(text, mark, span=20):
+    """כ-40 תווים סביב הסימון, כלשונם בקובץ. זהו העוגן היציב של הממצא."""
+    if not mark:
+        return text.strip()[:60]
+    k = text.find(mark)
+    if k < 0:
+        return text.strip()[:60]
+    return text[max(0, k - span):k + len(mark) + span]
+
+
+def _norm(s):
+    """נרמול לצורך התאמה בלבד: רצף רווחים וטאבים נעשה רווח אחד."""
+    return re.sub(r'\s+', ' ', s).strip()
+
+
+def fid(slug, kind, mark, context):
+    """מזהה יציב לממצא. אינו תלוי במספר הפסקה, ולכן הוא שורד בנייה מחדש,
+    מחיקת פסקה, והוספת פסקה. הסימונים של בעל הפרויקט נצמדים אליו."""
+    raw = '|'.join((slug, kind or '', mark or '', _norm(context or '')))
+    return hashlib.blake2s(raw.encode('utf-8'), digest_size=5).hexdigest()
+
+
+def anchor(blocks, rec):
+    """מאתר את הפסקה שבה הממצא יושב, לפי ההקשר, בתוך אותו דף ועמוד אחד
+    לכל צד. לא נמצא - מוחזר None, והממצא עובר לחלק "שלא אותרו". לעולם
+    אינו נתלה בשורה אחרת: זו היתה התקלה של העיגון לפי מספר פסקה."""
+    ctx = rec.get('context') or ''
+    mark = rec.get('mark') or ''
+    k0 = daf_key(rec.get('daf'))
+    if k0 is None:
+        win = blocks
+    else:
+        win = [b for b in blocks
+               if daf_key(b.get('daf')) is not None and abs(daf_key(b['daf']) - k0) <= 1]
+        if not win:
+            win = blocks
+    hint = rec.get('i')
+
+    def pick(cands, how):
+        if not cands:
+            return None
+        if len(cands) > 1 and hint is not None:
+            cands = sorted(cands, key=lambda b: abs(b['i'] - hint))
+        return cands[0], how
+
+    if ctx:
+        r = pick([b for b in win if ctx in b['text']], 'ctx')
+        if r:
+            return r
+        nc = _norm(ctx)
+        r = pick([b for b in win if nc and nc in _norm(b['text'])], 'ctx~')
+        if r:
+            return r
+    if mark:
+        cands = [b for b in win if mark in b['text']]
+        if len(cands) == 1:
+            return cands[0], 'mark'
+    return None
+
+
 def _auto(blocks):
-    """הגלאים האוטומטיים. מחזיר רשימת (חומרה, סוג, i, הערה, הצעה, סימון)."""
+    """הגלאים האוטומטיים. מחזיר רשימת רשומות-ממצא."""
     out = []
+
+    def add(sev, kind, b, note, fix, mark):
+        out.append({'sev': sev, 'kind': kind, 'i': b['i'], 'note': note, 'fix': fix,
+                    'mark': mark, 'daf': b.get('daf') or '',
+                    'context': ctx_of(b['text'], mark), 'src': 'auto'})
+
     for b in blocks:
         t = b['text']
         # גרש יחיד בתוך ראשי-תיבות: הקב'ה, לת'ק, יד'ח
@@ -71,39 +148,39 @@ def _auto(blocks):
             # אות בודדת לפני הגרש היא דו-משמעית: או אות-שימוש הפותחת ציטוט
             # ("מ'פני הכפורת"), או ראשי תיבות. שם אין הכרעה, ורק מסמנים.
             if len(m.group(1)) == 1:
-                out.append(('קל', 'סימני קיצור', b['i'],
-                            'גרש יחיד אחרי אות בודדת ב"%s" - ראשי תיבות, או פתיחת ציטוט?' % tok,
-                            'אם ראשי תיבות - גרשיים; אם ציטוט - להשלים את הגרש הסוגר', tok))
+                add('קל', 'סימני קיצור', b,
+                    'גרש יחיד אחרי אות בודדת ב"%s" - ראשי תיבות, או פתיחת ציטוט?' % tok,
+                    'אם ראשי תיבות - גרשיים; אם ציטוט - להשלים את הגרש הסוגר', tok)
             else:
-                out.append(('בינוני', 'סימני קיצור', b['i'],
-                            'ראשי התיבות "%s" נכתבו בגרש יחיד ולא בגרשיים' % tok,
-                            tok + ' ⟵ ' + tok.replace("'", '"'), tok))
+                add('בינוני', 'סימני קיצור', b,
+                    'ראשי התיבות "%s" נכתבו בגרש יחיד ולא בגרשיים' % tok,
+                    tok + ' ⟵ ' + tok.replace("'", '"'), tok)
         # גרש סוגר בלא פותח על מילה מלאה
         for m in re.finditer(r"(?<![%s\"'])([%s]{4,})'(?![%s'])" % (HEB, HEB, HEB), t):
             w = m.group(1)
-            if w in SKIP_TRUNC: continue
-            if t[:m.start()].count("'") % 2: continue
-            out.append(('קל', 'סימני קיצור', b['i'],
-                        'גרש סוגר אחרי "%s" - קיצור של המילה, או ציטוט שחסר לו גרש פותח?' % w,
-                        'אם ציטוט - להוסיף גרש פותח בראשו', m.group(0)))
+            if w in SKIP_TRUNC:
+                continue
+            if t[:m.start()].count("'") % 2:
+                continue
+            add('קל', 'סימני קיצור', b,
+                'גרש סוגר אחרי "%s" - קיצור של המילה, או ציטוט שחסר לו גרש פותח?' % w,
+                'אם ציטוט - להוסיף גרש פותח בראשו', m.group(0))
         # יו"ד כפולה בראש ראשי-תיבות
         for m in re.finditer(r'(?<![%s])יי[%s]{0,3}["״]' % (HEB, HEB), t):
-            out.append(('בינוני', 'שגיאת כתיב', b['i'],
-                        'יו"ד כפולה בראש ראשי התיבות "%s"' % m.group(0),
-                        m.group(0) + ' ⟵ ' + m.group(0)[1:], m.group(0)))
+            add('בינוני', 'שגיאת כתיב', b,
+                'יו"ד כפולה בראש ראשי התיבות "%s"' % m.group(0),
+                m.group(0) + ' ⟵ ' + m.group(0)[1:], m.group(0))
         # קו נטוי בתוך מילה עברית
         for m in re.finditer(r'[%s]/' % HEB, t):
-            out.append(('בינוני', 'שגיאת כתיב', b['i'],
-                        'קו נטוי בתוך מילה עברית - כנראה במקום גרש',
-                        'להחליף בגרש', m.group(0)))
+            add('בינוני', 'שגיאת כתיב', b,
+                'קו נטוי בתוך מילה עברית - כנראה במקום גרש', 'להחליף בגרש', m.group(0))
         # פיסוק בלא רווח אחריו
         for m in re.finditer(r'[%s][:,][%s]' % (HEB, HEB), t):
-            out.append(('קל', 'פיסוק', b['i'], 'סימן פיסוק בלא רווח אחריו',
-                        'להוסיף רווח', m.group(0)))
+            add('קל', 'פיסוק', b, 'סימן פיסוק בלא רווח אחריו', 'להוסיף רווח', m.group(0))
         # פסקה ריקה
         if not t.strip() and b['style'] != 'חציצה':
-            out.append(('קל', 'פסקה ריקה', b['i'],
-                        'פסקה ריקה בסגנון "%s"' % b['style'], 'למחוק, או להשלים את התוכן', ''))
+            add('קל', 'פסקה ריקה', b, 'פסקה ריקה בסגנון "%s"' % b['style'],
+                'למחוק, או להשלים את התוכן', '')
     return out
 
 
@@ -136,6 +213,10 @@ main{max-width:940px;margin:0 auto;padding:16px 14px 70px}
    padding:12px 15px;margin:9px 0;line-height:1.6}
 .f.s0{border-right-color:var(--red)} .f.s1{border-right-color:var(--gold)} .f.s2{border-right-color:#b9b099}
 .f.done{opacity:.52}
+.f.lost{border-right-color:#8a5a2f;background:#fdf6ec}
+h2.warn{color:#8a5a2f}
+.tag.warn{background:#f2e3cf;color:#8a5a2f}
+.mig{display:none;background:#fdf1d8;border-right:4px solid var(--gold);border-radius:5px;padding:9px 13px;margin:9px 0;line-height:1.55}
 .f .hd{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;margin-bottom:5px}
 .daf{font-family:'VilnaG','Vilna',serif;color:var(--red);font-size:19px;min-width:44px}
 .tag{background:#eeeae1;border-radius:4px;padding:1px 9px;font-size:13px;color:#5a5044}
@@ -164,35 +245,38 @@ footer{text-align:center;color:var(--grey);font-size:13px;padding:24px}
 '''
 
 JS = r'''
-const K='lg-hagaha-'+SLUG;
+/* מפתח האחסון עבר לגרסה 2 בעקבות המעבר למזהה יציב. הסימונים הישנים
+   נשענו על מקום הממצא ברשימה, ואחרי שנמחקו ממצאים הם נצמדו לממצא אחר -
+   ולכן אינם מועברים, וזה נאמר במפורש פעם אחת. */
+const K='lg-hg2-'+SLUG, KOLD='lg-hagaha-'+SLUG;
 let ST={};try{ST=JSON.parse(localStorage.getItem(K)||'{}')}catch(e){ST={}}
-// סימונים משמות קודמים ממשיכים לחיות
-const MIG={'תוקן':'אושר','נכון':'נדחה'};
-for(const k in ST){if(ST[k]&&MIG[ST[k].s])ST[k].s=MIG[ST[k].s]}
+/* הכרעות ששמורות במאגר נזרעות פעם אחת, ואינן דורסות סימון טרי שבדפדפן */
+for(const f of D){if(f.seed&&!ST[f.id])ST[f.id]={s:f.seed,n:f.seedn||''}}
 function save(){try{localStorage.setItem(K,JSON.stringify(ST))}catch(e){}}
 function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
 const SEV=['חמור','בינוני','קל'];
 function mk(text,m){const t=esc(text);if(!m)return t;const e=esc(m);
   const k=t.indexOf(e);if(k<0)return t;return t.slice(0,k)+'<mark>'+e+'</mark>'+t.slice(k+e.length)}
-function card(f){const st=ST[f.id]||{};
-  return '<div class="f s'+SEV.indexOf(f.sev)+(st.s&&st.s!=='עיון'?' done':'')+'" id="f'+f.id+'">'
+function card(f,lost){const st=ST[f.id]||{};
+  return '<div class="f s'+SEV.indexOf(f.sev)+(lost?' lost':'')+(st.s&&st.s!=='עיון'?' done':'')+'" id="f'+f.id+'">'
    +'<div class="hd"><span class="daf">'+esc(f.daf)+'</span><span class="tag">'+esc(f.kind)+'</span>'
+   +(f.how==='mark'?'<span class="tag warn">אותר לפי הסימון בלבד</span>':'')
    +(st.s?'<span class="st '+(st.s==='אושר'?'ok':st.s==='נדחה'?'no':'wait')+'">'+(st.s==='אושר'?'לתיקון':st.s)+'</span>':'')+'</div>'
    +'<div class="note">'+esc(f.note)+'</div>'
    +'<div class="quote">'+mk(f.text.replace(/\t/g,'   ').trim(),f.mark)+'</div>'
    +(f.fix?'<div class="fix">הצעת התיקון: <b>'+esc(f.fix)+'</b></div>':'')
    +'<div class="act">'
-   +'<button onclick="set('+f.id+',\'אושר\')" class="'+(st.s==='אושר'?'on':'')+'">תקן</button>'
-   +'<button onclick="set('+f.id+',\'נדחה\')" class="'+(st.s==='נדחה'?'on':'')+'">דחה תיקון</button>'
-   +'<button onclick="set('+f.id+',\'עיון\')" class="'+(st.s==='עיון'?'on':'')+'">לעיון</button>'
-   +'<a href="'+SLUG+'.html#u='+f.u+'" target="_blank">לראות בדף המסכת ↗</a>'
-   +'<textarea placeholder="תיקון אחר, או הערה משלך" oninput="note('+f.id+',this.value)">'+esc(st.n||'')+'</textarea>'
+   +'<button onclick="set(&quot;'+f.id+'&quot;,&quot;אושר&quot;)" class="'+(st.s==='אושר'?'on':'')+'">תקן</button>'
+   +'<button onclick="set(&quot;'+f.id+'&quot;,&quot;נדחה&quot;)" class="'+(st.s==='נדחה'?'on':'')+'">דחה תיקון</button>'
+   +'<button onclick="set(&quot;'+f.id+'&quot;,&quot;עיון&quot;)" class="'+(st.s==='עיון'?'on':'')+'">לעיון</button>'
+   +(lost?'':'<a href="'+SLUG+'.html#u='+f.u+'" target="_blank">לראות בדף המסכת ↗</a>')
+   +'<textarea placeholder="תיקון אחר, או הערה משלך" oninput="note(&quot;'+f.id+'&quot;,this.value)">'+esc(st.n||'')+'</textarea>'
    +'</div></div>'}
 function set(id,s){ST[id]=ST[id]||{};ST[id].s=(ST[id].s===s?'':s);save();draw()}
 function note(id,v){ST[id]=ST[id]||{};ST[id].n=v;save();counts()}
 function allSevere(){if(!confirm('לתקן את כל '+D.filter(f=>f.sev==='חמור').length+' הממצאים שבטעון תיקון?'))return;
   D.filter(f=>f.sev==='חמור').forEach(f=>{ST[f.id]=ST[f.id]||{};ST[f.id].s='אושר'});save();draw()}
-function allFix(){const n=D.filter(f=>f.fix&&f.fix.indexOf('⟵')>-1);
+function allFix(){const n=D.filter(f=>f.fix&&f.fix.indexOf('\u27f5')>-1);
   if(!confirm('לתקן את כל '+n.length+' הממצאים שיש בהם הצעת החלפה ברורה?'))return;
   n.forEach(f=>{ST[f.id]=ST[f.id]||{};ST[f.id].s='אושר'});save();draw()}
 let FILT='הכל';
@@ -203,43 +287,66 @@ function draw(){
     if(FILT==='פתוח')return !st||st==='עיון';
     if(FILT==='אושר')return st==='אושר';
     return f.sev===FILT});
-  let h='',last='';
+  let h='';
+  if(LOST.length){h+='<h2 class="warn">ממצאים שלא אותרו בקובץ ('+LOST.length+')</h2>'
+    +'<div class="gen">השורה שעליה נרשם הממצא אינה עוד בקובץ, או שהשתנתה. הממצא מובא כאן '
+    +'כלשונו כשנרשם, ואינו נתלה בשורה אחרת.</div>';
+    for(const f of LOST)h+=card(f,true)}
+  let last='';
   for(const f of keep){if(f.sev!==last){last=f.sev;
-      h+='<h2>'+(f.sev==='חמור'?'טעון תיקון':f.sev==='בינוני'?'ראוי לתיקון':'קל — לשיקולך')+'</h2>'}
+      h+='<h2>'+(f.sev==='חמור'?'טעון תיקון':f.sev==='בינוני'?'ראוי לתיקון':'קל - לשיקולך')+'</h2>'}
     h+=card(f)}
   document.getElementById('list').innerHTML=h||'<div class="gen">אין ממצאים בסינון הזה.</div>';
   counts()}
 function counts(){
-  const a=D.filter(f=>(ST[f.id]||{}).s==='אושר').length;
-  const r=D.filter(f=>(ST[f.id]||{}).s==='נדחה').length;
+  const A=D.concat(LOST);
+  const a=A.filter(f=>(ST[f.id]||{}).s==='אושר').length;
+  const r=A.filter(f=>(ST[f.id]||{}).s==='נדחה').length;
   document.getElementById('nok').textContent=a;
   document.getElementById('nno').textContent=r;
-  document.getElementById('open').textContent=D.length-a-r;}
+  document.getElementById('open').textContent=A.length-a-r;}
 function text(){
-  const a=D.filter(f=>(ST[f.id]||{}).s==='אושר');
-  let t='הגהת מסכת '+MAS+' — לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n';
-  t+='לתיקון: '+a.length+' מתוך '+D.length+'\n\n';
+  const A=D.concat(LOST);
+  const a=A.filter(f=>(ST[f.id]||{}).s==='אושר');
+  let t='הגהת מסכת '+MAS+' - לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n';
+  t+='לתיקון: '+a.length+' מתוך '+A.length+'\n\n';
   t+='==== לתקן בקובץ הוורד ====\n\n';
   for(const f of a){const st=ST[f.id]||{};
-    t+='דף '+f.daf+' | פסקה '+f.u+' | '+f.kind+'\n  '+f.note+'\n';
+    t+='דף '+f.daf+' | '+f.kind+' | מזהה '+f.id+'\n  '+f.note+'\n';
     if(f.fix)t+='  התיקון: '+f.fix+'\n';
     t+='  השורה: '+f.text.replace(/\t/g,'   ').trim()+'\n';
     if(st.n)t+='  הוראה משלך: '+st.n+'\n';
     t+='\n'}
-  const rest=D.filter(f=>(ST[f.id]||{}).s!=='אושר');
+  const rest=A.filter(f=>(ST[f.id]||{}).s!=='אושר');
   t+='\n==== שלא אושרו ====\n\n';
   for(const f of rest){const st=ST[f.id]||{};
-    t+='['+(st.s||'טרם הוכרע')+'] דף '+f.daf+' | פסקה '+f.u+' | '+f.note+'\n';
+    t+='['+(st.s||'טרם הוכרע')+'] דף '+f.daf+' | מזהה '+f.id+' | '+f.note+'\n';
     if(st.n)t+='  הערתך: '+st.n+'\n'}
+  /* בלוק הנתונים נקרא בידי הכלי שמכניס את התיקונים לוורד. המזהה שבו
+     יציב, ולכן הוא מצביע תמיד על הממצא שאושר ולא על שכנו. */
+  t+='\n\n==== נתוני עיבוד (אין לערוך) ====\n';
+  const out={v:2,slug:SLUG,masechet:MAS,when:new Date().toISOString(),decisions:{}};
+  for(const f of A){const st=ST[f.id]||{};if(st.s||st.n)
+    out.decisions[f.id]={s:st.s||'',n:st.n||'',daf:f.daf,mark:f.mark,kind:f.kind,note:f.note,fix:f.fix}}
+  t+=JSON.stringify(out);
   return t}
 function out(){const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([text()],{type:'text/plain;charset=utf-8'}));
   a.download='הגהת-'+MAS+'.txt';a.click()}
 function copy(){const t=text();
-  const done=()=>{const b=document.getElementById('cpb');b.textContent='הועתק ✓';setTimeout(()=>b.textContent='העתק ללוח',2200)};
+  const done=()=>{const b=document.getElementById('cpb');b.textContent='הועתק \u2713';setTimeout(()=>b.textContent='העתק ללוח',2200)};
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fallback)}else fallback();
   function fallback(){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);
     ta.select();try{document.execCommand('copy');done()}catch(e){alert('לא הצלחתי להעתיק. השתמש בכפתור ההורדה.')}ta.remove()}}
+/* באנר חד-פעמי: הסימונים הישנים נשענו על מקום ברשימה ואינם ניתנים להעברה */
+(function(){try{
+  if(localStorage.getItem(KOLD)&&!localStorage.getItem(K+'-said')){
+    const d=document.getElementById('mig');
+    if(d){d.style.display='block';d.textContent='הסימונים שסימנת כאן לפני היום אינם מוצגים עוד. '+
+      'עד היום ממצא זוהה לפי מקומו ברשימה, וכשנמחקו ממצאים כל סימון ישן נצמד לממצא אחר. '+
+      'מעתה לכל ממצא מזהה קבוע משלו, והסימונים יעמדו גם אחרי כל בנייה מחדש.'}
+    localStorage.setItem(K+'-said','1')}
+}catch(e){}})();
 draw();
 '''
 
@@ -259,11 +366,11 @@ PAGE = '''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">
  <button id="cpb" onclick="copy()">העתק ללוח</button>
  <button onclick="out()">הורד לקובץ</button></div>
 <main>
-<div class="lead"><h1>הגהת מסכת __M__</h1>__BANNER__
+<div class="lead"><h1>הגהת מסכת __M__</h1>__BANNER__<div class="mig" id="mig"></div>
 <p>לפניך מה שנמצא בקובץ בקריאה מלאה ובסריקה: טעויות כתיב, ציוני דף שאינם במקומם, סימני קיצור שאינם אחידים, ומקום שהתוכן בו נראה הפוך. כל ממצא מביא את השורה כלשונה בקובץ, את ההצעה, וקישור אל המקום עצמו בדף המסכת.</p>
 <p><b>איך מאשרים:</b> בכל ממצא יש שלושה כפתורים. <b>"תקן"</b> אומר לי להכניס את התיקון לקובץ הוורד שלך; <b>"דחה תיקון"</b> סוגר את הממצא; <b>"לעיון"</b> משאיר אותו פתוח. אם התיקון הנכון שונה מהצעתי, כתוב אותו בשורת ההערה שלצד הכפתורים - היא גוברת על ההצעה.</p>
 <p>ממהר? <b>"תקן את כל טעוני התיקון"</b> שלמטה מאשר בלחיצה אחת את הממצאים החמורים. הסימון נשמר בדפדפן וימתין לך גם מחר.</p>
-<p><b>וכשתסיים:</b> לחץ <b>"הורד לקובץ"</b> שבסרגל העליון, ואמור לי "סיימתי להגיה" - אקרא את הקובץ מתיקיית ההורדות שלך ואכניס את התיקונים. לחלופין "העתק ללוח" והדבק אצלי בשיחה.</p>
+<p><b>וכשתסיים:</b> לחץ <b>"הורד לקובץ"</b> שבסרגל העליון, ואמור לי "סיימתי להגיה" - אקרא את הקובץ מתיקיית ההורדות שלך ואכניס את התיקונים. לחלופין "העתק ללוח" והדבק אצלי בשיחה. לכל ממצא מזהה קבוע משלו, ולכן התיקון שאישרת נכנס למקום שאישרת גם אם הקובץ השתנה בינתיים.</p>
 <div class="bulk"><button onclick="allSevere()">תקן את כל טעוני התיקון</button>
 <button onclick="allFix()">תקן את כל אלה שיש בהם הצעת החלפה ברורה</button></div></div>
 <div class="counts">
@@ -278,34 +385,58 @@ PAGE = '''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">
 __GEN__
 </main>
 <footer>__TOT__ ממצאים · נבנה מן הקובץ "__SRC__" · __DATE__</footer>
-<script>const MAS="__M__",SLUG="__SLUG__",D=__DATA__;</script><script>__JS__</script></body></html>'''
+<script>const MAS="__M__",SLUG="__SLUG__",D=__DATA__,LOST=__LOST__;</script><script>__JS__</script></body></html>'''
 
 
 def build(blocks, out_path, masechet, slug, curated_path=None, source=''):
     loc = _locate(blocks)
-    daf = {b['i']: (b.get('daf') or '') for b in blocks}
-    txt = {b['i']: b['text'] for b in blocks}
-    rows = []
-    banner = ''
-    seen = set()
+    rows, banner, decisions = [], '', {}
+    cur = {}
     if curated_path and os.path.exists(curated_path):
         cur = json.load(open(curated_path, encoding='utf-8'))
         source = source or cur.get('source', '')
         banner = cur.get('banner', '')
+        decisions = cur.get('decisions', {}) or {}
         for r in cur.get('findings', []):
-            rows.append((r['sev'], r['kind'], r['i'], r['note'], r.get('fix', ''), r.get('mark', '')))
-            seen.add((r['i'], r.get('mark', '')))
+            r = dict(r); r['src'] = 'cur'
+            rows.append(r)
+    seen = {(r.get('i'), r.get('mark', '')) for r in rows}
     for r in _auto(blocks):
-        if (r[2], r[5]) in seen: continue
+        if (r['i'], r['mark']) in seen:
+            continue
         rows.append(r)
 
+    # --- זהות יציבה ועיגון מחדש ---
+    F, lost, done = [], [], 0
+    for r in rows:
+        r.setdefault('context', '')
+        ident = fid(slug, r.get('kind', ''), r.get('mark', ''), r['context'])
+        d = decisions.get(ident) or {}
+        if d.get('s') in ('בוצע', 'נדחה') and r.get('src') == 'auto':
+            # ממצא אוטומטי שנדחה או שכבר תוקן אינו חוזר ומטריד
+            done += 1
+            continue
+        hit = anchor(blocks, r)
+        rec = {'id': ident, 'sev': r.get('sev', 'קל'), 'kind': r.get('kind', ''),
+               'note': r.get('note', ''), 'fix': r.get('fix', ''), 'mark': r.get('mark', ''),
+               'daf': r.get('daf', ''), 'seed': d.get('s', ''), 'seedn': d.get('n', '')}
+        if hit is None:
+            # לעולם לא נתלה בשורה אחרת. מוצג בקול בראש המסך, עם השורה שנרשמה.
+            rec['text'] = r.get('context') or r.get('note', '')
+            rec['u'] = None
+            rec['how'] = ''
+            lost.append(rec)
+        else:
+            b, how = hit
+            p_, u = loc.get(b['i'], (0, b['i']))
+            rec['text'] = b['text']
+            rec['daf'] = b.get('daf') or rec['daf']
+            rec['u'] = u
+            rec['how'] = how
+            F.append(rec)
+
     order = {'חמור': 0, 'בינוני': 1, 'קל': 2}
-    rows.sort(key=lambda r: (order.get(r[0], 3), r[2]))
-    F = []
-    for n, (sev, kind, i, note, fix, m) in enumerate(rows):
-        p, u = loc.get(i, (0, i))
-        F.append({'id': n, 'sev': sev, 'kind': kind, 'daf': daf.get(i, ''), 'note': note,
-                  'fix': fix, 'mark': m, 'text': txt.get(i, ''), 'u': u})
+    F.sort(key=lambda r: (order.get(r['sev'], 3), r['u']))
     stat = collections.Counter(f['sev'] for f in F)
 
     empty = sum(1 for b in blocks if b['style'] == 'חלון 3' and b['text'].strip() in ('', '◄', '-'))
@@ -316,11 +447,15 @@ def build(blocks, out_path, masechet, slug, curated_path=None, source=''):
          'היישור הזה אינו נראה באתר. אף מילה אינה משתנה בשל כך, אבל מי שרגיל לוורד יחוש בחסר.'),
         ('חלון צד ריק', empty,
          'בחלון הצד נכתב רק הסימן ◄ בלא מילה, ולכן הרצועה שליד הטקסט נשארת ריקה בכל המקומות האלה.'),
+        ('הכרעות שכבר נסגרו', done,
+         'ממצאים שכבר תוקנו בוורד, או שדחית אותם, ואינם חוזרים להטריד.'),
     ]
     gen = ''.join('<div class="gen"><b>%s</b> <span class="n">%d</span><br>%s</div>'
                   % (t, n, html.escape(d)) for t, n, d in notes if n)
     data = json.dumps(F, ensure_ascii=False).replace('</', '<\\/')
+    lostd = json.dumps(lost, ensure_ascii=False).replace('</', '<\\/')
     page = (PAGE.replace('__CSS__', CSS).replace('__JS__', JS).replace('__DATA__', data)
+            .replace('__LOST__', lostd)
             .replace('__M__', masechet).replace('__SLUG__', slug).replace('__GEN__', gen)
             .replace('__SRC__', html.escape(source or masechet))
             .replace('__BANNER__', '<div class="ban">' + html.escape(banner) + '</div>' if banner else '')
@@ -328,4 +463,4 @@ def build(blocks, out_path, masechet, slug, curated_path=None, source=''):
             .replace('__N2__', str(stat.get('קל', 0))).replace('__TOT__', str(len(F)))
             .replace('__DATE__', datetime.datetime.now().strftime('%d.%m.%Y')))
     open(out_path, 'w', encoding='utf-8').write(page)
-    return {'findings': len(F), 'severe': stat.get('חמור', 0)}
+    return {'findings': len(F), 'severe': stat.get('חמור', 0), 'lost': len(lost), 'closed': done}

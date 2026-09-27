@@ -287,16 +287,47 @@ def build(json_path, out_path, masechet, hagaha=False):
   .panel .n{color:#8a7d66;font-size:12px} .res{padding:5px 0;border-bottom:1px dotted #d9d1bd} .res small{color:#8a7d66}
   .tag{display:inline-block;background:#eeeae1;border-radius:3px;padding:0 6px;margin:2px;font-size:13px}
   .chips{display:flex;flex-wrap:wrap}
-  /* בהדפסה: טור אחד רציף, וכל פרק פותח עמוד חדש. המידות נשארות ב-em,
-     ולכן שבירת השורות זהה למסך. */
-  @media print{.bar,.panel{display:none} html,body{overflow:visible;background:#fff;height:auto}
-    .flow{height:auto;overflow:visible;column-width:auto;column-count:1;column-rule:0;
-          width:auto;padding:0;font-size:11pt}
-    .row{break-inside:avoid}
-    .row.perek-num{break-before:page}
+  /* ---- הדפסה: עמוד הספר עצמו ----
+     עד היום הדפיס הדף טור אחד על גיליון של 90 מ"מ, וזה לא היה העמוד
+     של בעל הפרויקט. מעתה הגיאומטריה היא זו שנמדדה מקובץ הוורד:
+
+       גיליון 170x260 מ"מ, שוליים עליון 10 ותחתון 5.
+       שולי ימין 0 - מפני שהמסילה עצמה היא 20 המ"מ שוורד קורא להם
+       שוליים ימניים - ושולי שמאל 10. רוחב התוכן: 160 מ"מ.
+       שני טורים של 80 מ"מ בלי רווח ביניהם, וכל טור הוא מסילה של
+       20 ומידה של 60, בדיוק כבוורד.
+
+     גודל האות בהדפסה נגזר מן היחס הנעול ולא נקבע לחוד: המידה היא
+     60 מ"מ, והיחס 20.75, ולכן האות היא 60/20.75 מ"מ (כ-8.2 נקודות).
+     בוורד האות היא 9 נקודות, וההפרש הוא אותו הפרש שנמדד בשלב ח0 -
+     frank.ttf שבדפדפן רחב בכעשרה אחוזים ל-em מ-FrankRuehl. לו נקבעה
+     האות ל-9 נקודות היו השורות נשברות מוקדם מבוורד, וזה בדיוק מה
+     שהכלל הנעול בא למנוע. כך השורות מתלכדות עם הספר, ורשת השורות
+     נשארת 11 נקודות כבוורד. */
+  @media print{
+    .bar,.panel{display:none}
+    html,body{overflow:visible;background:#fff;height:auto}
+    body{display:block}
+    :root{--measure:60mm;--rail:20mm;--gut:0;--fs:calc(60mm / 20.75)}
+    .flow{width:160mm;height:auto;overflow:visible;padding:0;
+          font-size:var(--fs);line-height:11pt;
+          columns:80mm 2;column-gap:0;column-rule:0;column-fill:auto}
+    /* מצב הרצף שעל המסך אינו נגרר להדפסה: העמוד המודפס הוא תמיד
+       עמוד הספר, בשני טורים. */
+    .flow.vert{width:160mm;columns:80mm 2;column-gap:0;column-fill:auto;padding:0}
+    .flow.vert .row{width:auto;margin:0}
+    .row{grid-template-columns:20mm 60mm;break-inside:avoid}
+    .anchor{max-width:17mm}
+    /* פרק חדש פותח טור חדש, כמו sectPr type=nextColumn בוורד */
+    .row.perek-num{break-before:column}
     .flow > .row.perek-num:first-child{break-before:auto}
-    @page{size:90mm 260mm;margin:6mm 5mm}}
-  @media(max-width:760px){:root{--fs:20px}
+    @page{size:170mm 260mm;margin:10mm 0 5mm 10mm}
+  }
+  /* שאילתת הטלפון מוגבלת למסך במפורש. בלעדי זה היא תפסה גם בהדפסה:
+     עמוד של 170 מ"מ הוא כ-643 פיקסל, כלומר פחות מ-760, והיא באה אחרי
+     גוש ההדפסה - ולכן היא ביטלה את שני הטורים ואת רוחב המסילה, והעמוד
+     המודפס יצא טור אחד רחב. */
+  @media screen and (max-width:760px){:root{--fs:20px}
     .flow{column-width:auto;column-count:1;column-rule:0;width:auto;padding:.7em .8em}
     .row{grid-template-columns:1fr} .rail{text-align:right;padding:0}
     .anchor{max-width:none;display:inline;margin-top:.2em;font-size:.82em;color:#4a4137}

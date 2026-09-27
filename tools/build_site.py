@@ -225,7 +225,11 @@ def build(json_path, out_path, masechet, hagaha=False):
      מילישניות רבות לכל מדידה, ומאות פסקאות היו מקפיאות את הדף לשניות.
      לכן נבנה "סרגל" - עותק מבודד ברוחב זהה, מחוץ למסך - וכל הניסיונות
      נעשים בו. אל הדף עצמו נכתב רק הערך שנבחר. */
-  const STEPS=[[-0.012,0],[-0.026,0],[-0.045,0],[-0.045,-0.008],[-0.065,-0.013],[-0.085,-0.019],[-0.105,-0.026]];
+  /* הסולם נשען קודם כל על הרווח שבין האותיות ולא על זה שבין המילים:
+     צמצום של מאית em באות אינו נראה כלל, ועל פני ארבעים אותיות הוא חוסך
+     כשלוש אותיות שלמות - ואילו צמצום הרווח שבין המילים ניכר מיד, והמילים
+     נראות נדבקות. לכן הרווח בין המילים מצטמצם לכל היותר בארבע מאיות. */
+  const STEPS=[[0,-0.006],[-0.010,-0.010],[-0.020,-0.014],[-0.030,-0.018],[-0.040,-0.022]];
   let SQ=localStorage.getItem('lg-sq')!=='0', GEN=0, GAUGE=null, GP=null, GM=null;
   function gauge(){
     if(GAUGE)return;
@@ -279,9 +283,9 @@ def build(json_path, out_path, masechet, hagaha=False):
         if(h0>=GP.__lh*1.5||true){
           if(lastLineIsLone(GP)){
             for(const [ws,ls] of STEPS){
-              GP.style.wordSpacing=ws+'em';GP.style.letterSpacing=ls?ls+'em':'';
-              if(GP.offsetHeight<h0){p.style.wordSpacing=ws+'em';
-                if(ls)p.style.letterSpacing=ls+'em';fixed++;break}
+              GP.style.wordSpacing=ws?ws+'em':'';GP.style.letterSpacing=ls?ls+'em':'';
+              if(GP.offsetHeight<h0){if(ws)p.style.wordSpacing=ws+'em';
+                if(ls)p.style.letterSpacing=ls+'em';p.dataset.sq='1';fixed++;break}
             }
           }
         }

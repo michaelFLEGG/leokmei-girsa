@@ -402,10 +402,10 @@ def build(json_path, out_path, masechet, hagaha=False):
   <button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>{hgbtn}
   <button id="vbtn" onclick="vert()" title="כל המסכת בטור אחד, בגלילה מלמעלה למטה">טור רצוף</button>
   <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
-  <button onclick="toPdf()" title="הדפסה או שמירה כקובץ PDF, פרק בכל עמוד">PDF</button>
+  <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button>
   <button data-fs="18" onclick="setFs(18)">קטן</button><button data-fs="24" onclick="setFs(24)">רגיל</button><button data-fs="32" onclick="setFs(32)">גדול</button>
   <button onclick="fs(2)" title="Ctrl+=">א+</button><button onclick="fs(-2)" title="Ctrl+-">א-</button>
-  <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="window.print()">הדפסה</button></div>
+  <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="window.print()" title="הדפסת הפרק הנוכחי בלבד">הדפס פרק</button></div>
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
   <div class="panel" id="toc"><button class="x" onclick="panel('toc')">×</button><h3>תוכן העניינים - נושאי הסוגיות</h3><div id="tocb"></div></div>
   <div class="panel" id="am"><button class="x" onclick="panel('am')">×</button><h3>אמוראים ותנאים - לפי הסימון בקובץ</h3><div id="amb"></div></div>

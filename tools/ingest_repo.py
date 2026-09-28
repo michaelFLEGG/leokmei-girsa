@@ -162,13 +162,17 @@ def main():
 def install_task(repo):
     """מקים משימה מתוזמנת של חלונות, כל עשר דקות. בעל הפרויקט אינו
     מריץ דבר: הכלי מקים אותה בעצמו."""
-    bat = os.path.join(repo, 'tools', 'ingest_repo.cmd')
+    # הקובץ יושב ב-_שומר, שאינו נשמר במאגר. בתוך tools הוא היה מופיע
+    # בכל `git status` של כל שיחה שעובדת כאן.
+    keep = os.path.join(repo, '_שומר')
+    os.makedirs(keep, exist_ok=True)
+    bat = os.path.join(keep, 'קליטת-תיקונים.cmd')
     io.open(bat, 'w', encoding='utf-8-sig', newline='\r\n').write(
         '@echo off\r\n'
+        'chcp 65001 > nul\r\n'
         'cd /d "%s"\r\n' % repo +
         'uv run --with lxml python tools\\ingest_repo.py >> "%s" 2>&1\r\n'
-        % os.path.join(repo, '_שומר', 'קליטת-תיקונים.log'))
-    os.makedirs(os.path.join(repo, '_שומר'), exist_ok=True)
+        % os.path.join(keep, 'קליטת-תיקונים.log'))
     cmd = ['schtasks', '/Create', '/F', '/TN', TASK, '/SC', 'MINUTE', '/MO', '10',
            '/TR', '"%s"' % bat]
     r = subprocess.run(cmd, capture_output=True)

@@ -1844,6 +1844,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   document.addEventListener('mousedown',e=>{
     if($('#stybar')&&e.target.closest&&!e.target.closest('#stybar')&&!e.target.closest('[contenteditable="true"]'))hideSty()});
   if(location.hash.indexOf('admin')>-1){try{localStorage.setItem(AKEY,'1')}catch(e){}}
+  /* דף שמוגש מן הגשר רץ במחשב של בעל הפרויקט עצמו, ואין שום טעם
+     לשאול בו מילת מנהל: מי שהגיע לכאן כבר עבר את כל מה שמילה כזאת
+     אמורה לבדוק. */
+  if(ONGESHER){try{localStorage.setItem(AKEY,'1')}catch(e){}}
   if(!ED.some(e=>!e.pub))PUBLAST=pubBody().replace(/"when":"[^"]*",?/,'');
   else setTimeout(()=>pubNow(0),3000);
 

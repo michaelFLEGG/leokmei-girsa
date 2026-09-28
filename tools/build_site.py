@@ -1337,7 +1337,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
    $('#flow').addEventListener('wheel',e=>{const f=$('#flow');if(f.classList.contains('vert'))return;
      if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){f.scrollLeft-=e.deltaY;e.preventDefault()}},{passive:false});
    document.addEventListener('keydown',e=>{
-     if(e.target.tagName==='INPUT')return;
+     if(e.target.tagName==='INPUT'||e.target.isContentEditable)return;
      if(e.key==='PageDown'||e.key===' '){goScreen(1);e.preventDefault()}
      if(e.key==='PageUp'){goScreen(-1);e.preventDefault()}
      if(e.ctrlKey&&e.key==='ArrowLeft'){goDaf(1);e.preventDefault()}

@@ -1704,13 +1704,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      ממשק גיטהאב, ומשם רצה בנייה קצרה שמחילה אותם על נתוני הדף
      ומפרסמת. מפתח הכתיבה נשמר רק בדפדפן של המנהל, לעולם לא בקוד
      ולא במאגר. */
-  const GESHER='http://127.0.0.1:8760';
+  /* כשהדף מוגש מן הגשר עצמו - הפנייה אליו היא באותו מקור, ואין שום
+     חסימה. מדף שנטען מן הכתובת הציבורית אי אפשר לפנות אליו כלל:
+     הדפדפן חוסם פנייה מ-https אל 127.0.0.1. נמדד. */
+  const ONGESHER=(location.hostname==='127.0.0.1'&&location.port==='8760');
+  const GESHER=ONGESHER?'':(location.protocol==='http:'?'http://127.0.0.1:8760':null);
   let PUBT=null, PUBBUSY=false, PUBMSG='', GOK=null;
   /* הגשר הוא תוכנית קטנה שרצה ברקע במחשב של בעל הפרויקט, וכותבת
      למאגר בהרשאה שכבר קיימת שם. כשהוא עונה - אין צורך בשום מפתח,
      ובעל הפרויקט אינו עושה דבר. במכשיר אחר (טאבלט) הוא אינו עונה,
      ואז נדרש מפתח כתיבה שנשמר באותו מכשיר. */
   async function gesher(path,opt){
+    if(GESHER===null)return {ok:false,why:'אין גשר'};
     const c=new AbortController(), t=setTimeout(()=>c.abort(),opt&&opt.body?8000:1200);
     try{const r=await fetch(GESHER+path,Object.assign({signal:c.signal,cache:'no-store'},opt||{}));
       clearTimeout(t);
@@ -1750,7 +1755,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!t){
       PUBBUSY=false;
       PUBMSG=(g.why==='אין גשר')
-        ? 'לא פורסם: המחשב הראשי אינו פועל. התיקון שמור כאן, ויעלה מעצמו כשיידלק'
+        ? (GESHER===null
+           ? 'לא פורסם: התיקון שמור כאן. לפרסום מיידי פתח את הקיצור "לאוקמי גירסא - עריכה" שבשולחן העבודה'
+           : 'לא פורסם: המחשב הראשי אינו פועל. התיקון שמור כאן, ויעלה מעצמו כשיידלק')
         : 'לא פורסם: '+g.why+' · התיקון שמור כאן וינוסה שוב';
       pubDraw();drawEd();
       if(loud&&g.why==='אין גשר')edKey();

@@ -19,13 +19,15 @@
     uv run python tools/gesher.py --install       (מקים משימה שמריצה אותו ברקע)
     uv run python tools/gesher.py --status        (בודק אם הוא חי)
 """
-import os, sys, io, re, json, base64, argparse, subprocess, socket, urllib.request
+import os, sys, io, re, json, time, base64, argparse, subprocess, socket, urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = 8760
 REPO = 'michaelFLEGG/leokmei-girsa'
 ORIGINS = ('https://michaelflegg.github.io',)
 SLUG_OK = re.compile(r'^[a-z][a-z0-9-]{1,40}$')
+SITE = 'https://michaelflegg.github.io/leokmei-girsa'
+CACHE, CACHE_TTL = {}, 600
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TASK = 'לאוקמי גירסא - גשר הפרסום'
 LOG = None
@@ -123,8 +125,54 @@ class H(BaseHTTPRequestHandler):
         o = self._ok_origin() or '*'
         if self.path.startswith('/shalom'):
             self._send(200, {'ok': True, 'v': 1, 'repo': REPO}, o)
+            return
+        self._proxy()
+
+    def _proxy(self):
+        """מגיש את האתר החי עצמו, דרך הכתובת המקומית.
+
+        זה הלב של הפתרון. דפדפן חוסם פנייה מדף https אל 127.0.0.1
+        (נמדד: ERR_BLOCKED_BY_CLIENT), ולכן דף שנטען מן הכתובת
+        הציבורית אינו יכול לדבר עם הגשר. כשהדף עצמו מוגש מכאן, שניהם
+        באותו מקור בדיוק, והפרסום עובד בלי מפתח ובלי שום הכנה.
+        התוכן הוא התוכן החי - אין כאן עותק שמתיישן."""
+        path = self.path.split('?')[0]
+        if path in ('/', ''):
+            path = '/index.html'
+        now = time.time()
+        hit = CACHE.get(path)
+        if hit and now - hit[0] < CACHE_TTL:
+            body, ctype = hit[1], hit[2]
         else:
-            self._send(404, {'ok': False}, o)
+            try:
+                req = urllib.request.Request(
+                    SITE + path, headers={'User-Agent': 'leokmei-gesher'})
+                with urllib.request.urlopen(req, timeout=20) as r:
+                    body = r.read()
+                    ctype = r.headers.get('Content-Type') or 'application/octet-stream'
+            except Exception as e:
+                msg = ('<!DOCTYPE html><html lang="he" dir="rtl"><meta charset="utf-8">'
+                       '<body style="font-family:sans-serif;padding:40px;text-align:center">'
+                       '<h2>אין כרגע חיבור לאתר</h2><p>נסה שוב בעוד רגע.</p></body></html>')
+                body, ctype = msg.encode('utf-8'), 'text/html; charset=utf-8'
+                self.send_response(502)
+                self.send_header('Content-Type', ctype)
+                self.send_header('Content-Length', str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            CACHE[path] = (now, body, ctype)
+            if len(CACHE) > 80:
+                for k in sorted(CACHE, key=lambda k: CACHE[k][0])[:20]:
+                    CACHE.pop(k, None)
+        self.send_response(200)
+        self.send_header('Content-Type', ctype)
+        self.send_header('Content-Length', str(len(body)))
+        self.send_header('Cache-Control', 'no-store')
+        self.end_headers()
+        for i in range(0, len(body), 65536):
+            self.wfile.write(body[i:i + 65536])
+            self.wfile.flush()
 
     def do_POST(self):
         o = self._ok_origin()

@@ -19,7 +19,7 @@
     uv run python tools/gesher.py --install       (מקים משימה שמריצה אותו ברקע)
     uv run python tools/gesher.py --status        (בודק אם הוא חי)
 """
-import os, sys, io, re, json, time, base64, argparse, subprocess, socket, urllib.request
+import os, sys, io, re, json, time, base64, shutil, argparse, subprocess, socket, urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = 8760
@@ -226,27 +226,53 @@ def taken():
         s.close()
 
 
-def install(repo):
-    """מקים את המשימות שמריצות את הגשר ברקע, בלי חלון.
+HOME_DIR = os.path.join(os.path.expanduser('~'), 'leokmei-gesher')
 
-    שתי משימות: אחת בכניסה למחשב, ואחת כל חמש דקות שמוודאת שהוא חי
-    ומרימה אותו אם נפל. שתיהן מריצות קובץ VBS, מפני שמשימה שמריצה
-    cmd מהבהבת חלון שחור על המסך בכל הרצה."""
-    keep = os.path.join(repo, '_שומר')
+
+def install(repo=None):
+    """מקים את המשימה שמריצה את הגשר ברקע, בלי חלון.
+
+    הגשר יושב בתיקייה משלו ואינו תלוי בשום עותק-עבודה: הוא מגיש את
+    האתר החי וכותב דרך gh, ואינו קורא מן המאגר דבר. כך אין סכנה
+    שיישבר כששיחה אחרת עובדת בעותק המשותף.
+
+    הקבצים באנגלית בכוונה: נתיב עברי שבר כאן פעמיים - פעם ב-VBScript
+    שאינו קורא UTF-8, ופעם בקידוד שורת הפקודה של המשימה."""
+    keep = HOME_DIR
     os.makedirs(keep, exist_ok=True)
-    cmd = os.path.join(keep, 'גשר-הפרסום.cmd')
-    vbs = os.path.join(keep, 'גשר-הפרסום.vbs')
-    io.open(cmd, 'w', encoding='utf-8-sig', newline='\r\n').write(
+    me = os.path.join(keep, 'gesher.py')
+    if os.path.abspath(__file__) != os.path.abspath(me):
+        shutil.copy(os.path.abspath(__file__), me)
+    cmd = os.path.join(keep, 'run.cmd')
+    vbs = os.path.join(keep, 'run.vbs')
+    logf = os.path.join(keep, 'gesher.log')
+    # נתיב מלא ל-uv. במשימה מתוזמנת ה-PATH אינו זה שבחלון רגיל, והקריאה
+    # ל-"uv" נכשלה בשקט: המשימה סיימה בלי לכתוב אף שורה ללוג.
+    uv = shutil.which('uv') or os.path.join(
+        os.path.expanduser('~'), '.local', 'bin', 'uv.exe')
+    io.open(cmd, 'w', encoding='ascii', errors='replace', newline='').write(
         '@echo off\r\n'
         'chcp 65001 > nul\r\n'
-        'cd /d "%s"\r\n' % repo +
-        'uv run python tools\\gesher.py --once >> "%s" 2>&1\r\n'
-        % os.path.join(keep, 'גשר-הפרסום.log'))
-    io.open(vbs, 'w', encoding='utf-8-sig', newline='\r\n').write(
+        '"%s" run python "%s" --once >> "%s" 2>&1\r\n' % (uv, me, logf))
+    # ‏VBScript אינו קורא UTF-8. הקובץ נכתב ב-UTF-16, אחרת הנתיב מתעוות
+    # ו-wscript מפעיל כלום - בלי שום הודעת שגיאה, והמשימה מדווחת הצלחה.
+    io.open(vbs, 'w', encoding='utf-16', newline='').write(
         'CreateObject("Wscript.Shell").Run """%s""", 0, False\r\n' % cmd)
     # משימה אחת בלבד, כל חמש דקות. משימת ONLOGON דורשת הרשאת מנהל
     # ונדחתה כאן ב-Access denied; ממילא המשימה הזאת מרימה את הגשר
     # תוך חמש דקות מכל הדלקה, וזה די והותר.
+    # קיצור דרך על שולחן העבודה. זו הדרך שבה בעל הפרויקט פותח את
+    # האתר לעריכה: אותו אתר בדיוק, אלא שהוא מוגש מן הגשר ולכן
+    # הפרסום עובד בלי שום הכנה.
+    try:
+        desk = os.path.join(os.path.expanduser('~'), 'Desktop')
+        if os.path.isdir(desk):
+            lnk = os.path.join(desk, 'לאוקמי גירסא - עריכה.url')
+            io.open(lnk, 'w', encoding='utf-8', newline='').write(
+                '[InternetShortcut]\nURL=http://127.0.0.1:%d/index.html\n' % PORT)
+            log('קיצור הדרך נוצר על שולחן העבודה')
+    except Exception as e:
+        log('אזהרה: קיצור הדרך לא נוצר -', e)
     run = 'wscript.exe "%s"' % vbs
     r = subprocess.run(['schtasks', '/Create', '/F', '/TN', TASK,
                         '/SC', 'MINUTE', '/MO', '5', '/TR', run],
@@ -266,9 +292,9 @@ def main():
                     help='יוצא מיד אם הגשר כבר רץ. לשימוש המשימה המתוזמנת')
     ap.add_argument('--repo', default=HERE)
     a = ap.parse_args()
-    LOG = os.path.join(a.repo, '_שומר', 'גשר-הפרסום.log')
+    LOG = os.path.join(HOME_DIR, 'gesher.log') if os.path.isdir(HOME_DIR) else None
     if a.install:
-        install(a.repo)
+        install()
         return
     if a.status:
         print('הגשר חי' if alive() else 'הגשר אינו רץ')

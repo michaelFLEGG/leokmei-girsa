@@ -1709,7 +1709,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      הדפדפן חוסם פנייה מ-https אל 127.0.0.1. נמדד. */
   const ONGESHER=(location.hostname==='127.0.0.1'&&location.port==='8760');
   const GESHER=ONGESHER?'':(location.protocol==='http:'?'http://127.0.0.1:8760':null);
-  let PUBT=null, PUBBUSY=false, PUBMSG='', GOK=null;
+  let PUBT=null, PUBBUSY=false, PUBMSG='', GOK=null, PUBLAST=null;
   /* הגשר הוא תוכנית קטנה שרצה ברקע במחשב של בעל הפרויקט, וכותבת
      למאגר בהרשאה שכבר קיימת שם. כשהוא עונה - אין צורך בשום מפתח,
      ובעל הפרויקט אינו עושה דבר. במכשיר אחר (טאבלט) הוא אינו עונה,
@@ -1745,13 +1745,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   async function pubNow(loud){
     clearTimeout(PUBT);
     if(PUBBUSY)return;
-    PUBBUSY=true;PUBMSG='מפרסם…';pubDraw();
     const body=pubBody();
+    /* אותה רשימה בדיוק אינה נדחפת פעמיים. בלי השער הזה נרשמה עשירייה
+       של הפניות ריקות למאגר בתוך דקות, וכל אחת מהן הפעילה בנייה. */
+    const sig=body.replace(/"when":"[^"]*",?/,'');
+    if(!loud&&sig===PUBLAST)return;
+    PUBBUSY=true;PUBMSG='מפרסם…';pubDraw();
     /* הדרך הראשונה: הגשר שבמחשב. אין בה מפתח ואין בה הכנה. */
     const g=await gesher('/edits',{method:'POST',
       headers:{'Content-Type':'application/json'},body:body});
     GOK=g.ok||g.why!=='אין גשר';
-    if(g.ok){ED.forEach(e=>e.pub=1);saveED();
+    if(g.ok){ED.forEach(e=>e.pub=1);saveED();PUBLAST=sig;
       PUBMSG='· פורסם '+new Date().toLocaleTimeString('he-IL').slice(0,5)+
              ' · יופיע לכל הלומדים בתוך כשתי דקות';
       PUBBUSY=false;pubDraw();drawEd();return}
@@ -1787,7 +1791,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         else {why='שגיאה '+r.status;break}
       }
     }catch(e){why='אין חיבור'}
-    if(ok){ED.forEach(e=>e.pub=1);saveED();
+    if(ok){ED.forEach(e=>e.pub=1);saveED();PUBLAST=sig;
       PUBMSG='· פורסם '+new Date().toLocaleTimeString('he-IL').slice(0,5)+
              ' · יופיע לכל הלומדים בתוך כשתי דקות';}
     else PUBMSG='לא פורסם: '+why+' · העריכות שמורות במכשיר וינוסו שוב';
@@ -1840,7 +1844,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   document.addEventListener('mousedown',e=>{
     if($('#stybar')&&e.target.closest&&!e.target.closest('#stybar')&&!e.target.closest('[contenteditable="true"]'))hideSty()});
   if(location.hash.indexOf('admin')>-1){try{localStorage.setItem(AKEY,'1')}catch(e){}}
-  if(ED.some(e=>!e.pub))setTimeout(()=>pubNow(0),3000);
+  if(!ED.some(e=>!e.pub))PUBLAST=pubBody().replace(/"when":"[^"]*",?/,'');
+  else setTimeout(()=>pubNow(0),3000);
 
   /* =================== הצע תיקון ===================
      פתוח לכל לומד, בלי שרת ובלי הרשמה. ההצעה נשמרת במכשיר עוד לפני

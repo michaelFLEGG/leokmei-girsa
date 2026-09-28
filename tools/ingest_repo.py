@@ -174,7 +174,7 @@ def install_task(repo):
     keep = os.path.join(repo, '_שומר')
     os.makedirs(keep, exist_ok=True)
     bat = os.path.join(keep, 'קליטת-תיקונים.cmd')
-    io.open(bat, 'w', encoding='utf-8-sig', newline='\r\n').write(
+    io.open(bat, 'w', encoding='utf-8-sig', newline='').write(
         '@echo off\r\n'
         'chcp 65001 > nul\r\n'
         'cd /d "%s"\r\n' % repo +

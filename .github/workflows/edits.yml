@@ -1,8 +1,9 @@
 name: פרסום תיקונים שנעשו באתר
-# מצב העריכה שבדף דוחף את התיקונים לקובץ data/edits/<מסכת>.json דרך
-# ממשק גיטהאב. הבנייה הזאת קצרה בכוונה: היא בונה מקובצי הוורד שכבר
-# שמורים במאגר, בלי לרדת לדרייב ובלי סריקת תצוגה, כדי שהתיקון יגיע
-# ללומד בדקות ולא ברבע שעה.
+# מצב העריכה שבדף דוחף כל תיקון ל-data/edits/<מסכת>.json דרך ממשק
+# גיטהאב. העבודה הזאת קצרה בכוונה: היא בונה מקובצי הוורד שכבר שמורים
+# במאגר, בלי לרדת לדרייב ובלי סריקת תצוגה, ובונה רק את המסכתות שיש
+# להן תיקון ממתין. בנייה מלאה של 26 מסכתות נמדדה 14 דקות ו-24 שניות;
+# מסכת אחת - 32 שניות.
 on:
   push:
     branches: [main]
@@ -20,14 +21,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
       - run: pip install lxml fonttools
-      - name: בנייה מקובצי הוורד שבמאגר
-        run: python tools/build_all.py
+      # האתר שנבנה בפעם הקודמת. המפתח כולל את טביעת קובצי הוורד, ולכן
+      # עותק שנבנה ממקור אחר לעולם אינו משוחזר - ואי אפשר שהפרסום הזה
+      # יחזיר לאחור מסכת שהשומר בנה מחדש.
+      - name: שחזור האתר שנבנה קודם
+        uses: actions/cache/restore@v4
+        with:
+          path: site
+          key: site-${{ hashFiles('input/docx/**', 'tools/**', 'data/sources/**') }}-
+          restore-keys: site-${{ hashFiles('input/docx/**', 'tools/**', 'data/sources/**') }}-
+      # מה לבנות: המסכתות שהשתנו בדחיפה הזאת, ובנוסף כל מסכת שיש לה
+      # תיקון ממתין - שמא העותק המשוחזר קדם לתיקון שלה.
+      - name: אילו מסכתות לבנות
+        id: which
+        run: |
+          set -e
+          ls data/edits/*.json 2>/dev/null | sed 's#data/edits/##;s#\.json##' > /tmp/all.txt || true
+          slugs=$(sort -u /tmp/all.txt | paste -sd, -)
+          echo "slugs=$slugs" >> $GITHUB_OUTPUT
+          echo "יבנו: $slugs"
+      - name: בנייה
+        run: |
+          if [ -f site/index.html ] && [ -n "${{ steps.which.outputs.slugs }}" ]; then
+            python tools/build_all.py --only "${{ steps.which.outputs.slugs }}" \
+              || { echo "הבנייה החלקית לא התאפשרה, עוברים לבנייה מלאה"; python tools/build_all.py; }
+          else
+            python tools/build_all.py
+          fi
+      - name: שמירת האתר לפעם הבאה
+        uses: actions/cache/save@v4
+        with:
+          path: site
+          key: site-${{ hashFiles('input/docx/**', 'tools/**', 'data/sources/**') }}-${{ github.run_id }}
       # תיקון שכבר הגיע מן הוורד יוצא מקובץ התיקונים בבנייה עצמה.
-      # הסימון [skip ci] הכרחי: בלעדיו הדחיפה הזאת היתה מפעילה שוב
-      # את אותה עבודה, ללא סוף.
+      # הסימון [skip ci] הכרחי: בלעדיו הדחיפה הזאת היתה מפעילה שוב את
+      # אותה עבודה, ללא סוף.
       - name: הוצאת תיקונים שכבר נקלטו בוורד
         run: |
           git config user.name "leokmei-watcher"

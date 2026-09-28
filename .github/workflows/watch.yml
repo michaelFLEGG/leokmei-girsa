@@ -40,6 +40,14 @@ jobs:
         run: |
           git config user.name "leokmei-watcher"; git config user.email "watcher@users.noreply.github.com"
           git add -A input && (git commit -m "עדכון אוטומטי $(date -u +'%d.%m.%Y %H:%M')" && git push) || echo "אין שינוי"
+      # האתר שנבנה כאן נשמר, כדי שפרסום של תיקון בודד יוכל לבנות מסכת
+      # אחת בלבד במקום עשרים ושש. המפתח כולל את טביעת המקורות, ולכן
+      # עותק שנבנה ממקור אחר לעולם אינו משוחזר.
+      - name: שמירת האתר לפרסום תיקונים
+        uses: actions/cache/save@v4
+        with:
+          path: site
+          key: site-${{ hashFiles('input/docx/**', 'tools/**', 'data/sources/**') }}-${{ github.run_id }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with: { path: site }

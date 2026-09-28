@@ -1716,12 +1716,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      ואז נדרש מפתח כתיבה שנשמר באותו מכשיר. */
   async function gesher(path,opt){
     if(GESHER===null)return {ok:false,why:'אין גשר'};
-    const c=new AbortController(), t=setTimeout(()=>c.abort(),opt&&opt.body?8000:1200);
+    /* הכתיבה עצמה עוברת שתי פניות לגיטהאב, ובחיבור אטי היא נמשכת.
+       פסק זמן קצר מדי נראה בדיוק כמו "אין גשר", והמשתמש היה נשלח
+       להזין מפתח בלי סיבה. */
+    const c=new AbortController(), t=setTimeout(()=>c.abort(),opt&&opt.body?30000:1500);
     try{const r=await fetch(GESHER+path,Object.assign({signal:c.signal,cache:'no-store'},opt||{}));
       clearTimeout(t);
       if(!r.ok)return {ok:false,why:'הגשר השיב '+r.status};
       return await r.json();
-    }catch(e){clearTimeout(t);return {ok:false,why:'אין גשר'}}}
+    }catch(e){clearTimeout(t);
+      return {ok:false,why:(e&&e.name==='AbortError'&&opt&&opt.body)?'הפרסום לא הספיק':'אין גשר'}}}
   async function gesherAlive(){const r=await gesher('/shalom');GOK=!!r.ok;return GOK}
   function pubDraw(){const e=$('#edpub');if(!e)return;
     const np=ED.filter(x=>!x.pub).length;

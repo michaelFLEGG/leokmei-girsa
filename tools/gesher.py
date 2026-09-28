@@ -310,9 +310,9 @@ def install(repo=None):
         '@echo off\r\n'
         'chcp 65001 > nul\r\n'
         '"%s" "%s" --once >> "%s" 2>&1\r\n' % (sys.executable, me, logf))
-    # משימה אחת בלבד, כל חמש דקות. משימת ONLOGON דורשת הרשאת מנהל
-    # ונדחתה כאן ב-Access denied; ממילא המשימה הזאת מרימה את הגשר
-    # תוך חמש דקות מכל הדלקה, וזה די והותר.
+    # משימה אחת בלבד, כל שתי דקות. משימת ONLOGON דורשת הרשאת מנהל
+    # ונדחתה כאן ב-Access denied; המשימה הזאת מרימה את הגשר תוך שתי
+    # דקות מכל הדלקה, וכשהוא כבר עונה היא יוצאת מיד ואינה עולה דבר.
     # קיצור דרך על שולחן העבודה. זו הדרך שבה בעל הפרויקט פותח את
     # האתר לעריכה: אותו אתר בדיוק, אלא שהוא מוגש מן הגשר ולכן
     # הפרסום עובד בלי שום הכנה.
@@ -327,7 +327,7 @@ def install(repo=None):
         log('אזהרה: קיצור הדרך לא נוצר -', e)
     run = '"%s" "%s" --once' % (pyw, me)
     r = subprocess.run(['schtasks', '/Create', '/F', '/TN', TASK,
-                        '/SC', 'MINUTE', '/MO', '5', '/TR', run],
+                        '/SC', 'MINUTE', '/MO', '2', '/TR', run],
                        capture_output=True)
     out = (r.stdout + r.stderr).decode('cp862', 'replace').strip()
     log(TASK + ':', out or 'הוקמה')

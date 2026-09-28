@@ -193,6 +193,128 @@ def _rezip(src, dst, replace):
     zin.close()
 
 
+# ------------------------------------------------------ סגנונות (ו3ד)
+
+def _style_ids(styles_xml):
+    """מפה משם הסגנון כפי שבעל הפרויקט רואה אותו בוורד אל ה-styleId.
+
+    הסגנונות נבחרים באתר לפי השם השכיח בקובץ הזה עצמו, ולכן שם שאינו
+    כאן פירושו שמשהו זז - ואין להמציא סגנון חדש. מדווחים ומדלגים."""
+    root = etree.fromstring(styles_xml)
+    out = {}
+    for st in root.findall('w:style', ns):
+        nm = st.find('w:name', ns)
+        sid = st.get(W + 'styleId')
+        if nm is not None and sid:
+            out[nm.get(W + 'val')] = (sid, st.get(W + 'type') or 'paragraph')
+        if sid:
+            out.setdefault(sid, (sid, st.get(W + 'type') or 'paragraph'))
+    return out
+
+
+def _copy_no_change(el, tag):
+    """עותק של pPr/rPr בלי רישום שינוי קודם שבתוכו."""
+    c = etree.fromstring(etree.tostring(el))
+    for ch in c.findall('w:' + tag, ns):
+        c.remove(ch)
+    return c
+
+
+def _mark(el, author, when, nextid):
+    el.set(W + 'id', str(nextid()))
+    el.set(W + 'author', author)
+    el.set(W + 'date', when)
+    return el
+
+
+def _set_pstyle(p, sid, author, when, nextid):
+    """מחליף את סגנון הפסקה ורושם את הקודם ב-w:pPrChange."""
+    pPr = p.find('w:pPr', ns)
+    if pPr is None:
+        pPr = etree.Element(W + 'pPr')
+        p.insert(0, pPr)
+    old = _copy_no_change(pPr, 'pPrChange')
+    cur = pPr.find('w:pStyle', ns)
+    if cur is not None and cur.get(W + 'val') == sid:
+        return False
+    for ch in pPr.findall('w:pPrChange', ns):
+        pPr.remove(ch)
+    if cur is None:
+        cur = etree.Element(W + 'pStyle')
+        pPr.insert(0, cur)
+    cur.set(W + 'val', sid)
+    ch = _mark(etree.Element(W + 'pPrChange'), author, when, nextid)
+    ch.append(old)
+    pPr.append(ch)
+    return True
+
+
+def _set_cstyle(p, find, sid, author, when, nextid):
+    """מחיל סגנון תו על קטע טקסט, ורושם את העיצוב הקודם ב-w:rPrChange.
+
+    sid ריק פירושו הסרת הסגנון. הטקסט עצמו אינו נוגע כלל."""
+    runs = _runs_of(p)
+    full = ''.join(t for _, t, _ in runs)
+    k = full.find(find)
+    if k < 0 or full.count(find) > 1:
+        return False
+    lo, hi = k, k + len(find)
+    touched = [(pos, txt, r) for pos, txt, r in runs if pos < hi and pos + len(txt) > lo]
+    if not touched:
+        return False
+    for _, _, r in touched:
+        if r.getparent().tag != W + 'p':
+            return False
+    for pos, txt, r in touched:
+        a = max(lo - pos, 0)
+        b = min(hi - pos, len(txt))
+        rpr = _rpr(r)
+        parent = r.getparent()
+        idx = list(parent).index(r)
+        new = []
+        if txt[:a]:
+            new.append(_mkrun(txt[:a], rpr))
+        mid = _mkrun(txt[a:b], rpr)
+        mp = mid.find('w:rPr', ns)
+        if mp is None:
+            mp = etree.Element(W + 'rPr')
+            mid.insert(0, mp)
+        old = _copy_no_change(mp, 'rPrChange')
+        for ch in mp.findall('w:rPrChange', ns):
+            mp.remove(ch)
+        cur = mp.find('w:rStyle', ns)
+        if sid:
+            if cur is None:
+                cur = etree.Element(W + 'rStyle')
+                mp.insert(0, cur)
+            cur.set(W + 'val', sid)
+        elif cur is not None:
+            mp.remove(cur)
+        ch = _mark(etree.Element(W + 'rPrChange'), author, when, nextid)
+        ch.append(old)
+        mp.append(ch)
+        new.append(mid)
+        if txt[b:]:
+            new.append(_mkrun(txt[b:], rpr))
+        parent.remove(r)
+        for n, el in enumerate(new):
+            parent.insert(idx + n, el)
+    return True
+
+
+def _anchor_one(blocks, op):
+    """עוגן לשינוי סגנון: התאמה אחת ויחידה של הפסקה כולה. שינוי סגנון
+    אינו משנה טקסט, ולכן אין לו "מה להחליף" שיאמת אותו - והדרך היחידה
+    שלא ליפול על פסקה זרה היא לדרוש ייחוד."""
+    ctx = op.get('context') or ''
+    if not ctx:
+        return None
+    hits = [b for b in blocks if b['text'] == ctx]
+    if len(hits) != 1:
+        hits = [b for b in blocks if ctx in b['text']]
+    return hits[0] if len(hits) == 1 else None
+
+
 # ---------------------------------------------------------------- הראשי
 
 def apply(path, ops, author, masechet, log=print, dry=False):
@@ -206,8 +328,19 @@ def apply(path, ops, author, masechet, log=print, dry=False):
     before = convert(path)
 
     # איתור כל תיקון בפסקה שלו, לפי ההקשר ולא לפי מספר פסקה
-    plan, missed = [], []
+    plan, splan, missed = [], [], []
     for op in ops:
+        kind = op.get('kind') or 'text'
+        if kind in ('pstyle', 'cstyle'):
+            b = _anchor_one(before, op)
+            if b is None:
+                missed.append((op, 'לא אותרה פסקה יחידה לשינוי הסגנון'))
+                continue
+            if kind == 'cstyle' and (op.get('find') or '') not in b['text']:
+                missed.append((op, 'הטקסט לסגנון אינו בפסקה שאותרה'))
+                continue
+            splan.append((b['i'], op))
+            continue
         hit = hagaha.anchor(before, op)
         if hit is None:
             missed.append((op, 'לא אותרה הפסקה'))
@@ -217,11 +350,13 @@ def apply(path, ops, author, masechet, log=print, dry=False):
             missed.append((op, 'הטקסט להחלפה אינו בפסקה שאותרה'))
             continue
         plan.append((b['i'], op, how))
-    if not plan:
+    if not plan and not splan:
         return {'applied': 0, 'missed': missed, 'backup': None, 'verified': True}
     if dry:
-        return {'applied': len(plan), 'missed': missed, 'backup': None, 'verified': None,
-                'plan': [(i, o['find'], o['replace']) for i, o, _ in plan]}
+        return {'applied': len(plan) + len(splan), 'missed': missed, 'backup': None,
+                'verified': None,
+                'plan': [(i, o['find'], o['replace']) for i, o, _ in plan]
+                        + [(i, o.get('kind'), o.get('style')) for i, o in splan]}
 
     if os.path.getmtime(path) != mtime:
         log('הקובץ השתנה על הדיסק בזמן התכנון. קורא מחדש')
@@ -233,7 +368,9 @@ def apply(path, ops, author, masechet, log=print, dry=False):
     z = zipfile.ZipFile(path)
     doc = etree.fromstring(z.read('word/document.xml'))
     settings = z.read('word/settings.xml')
+    styles = z.read('word/styles.xml')
     z.close()
+    sids = _style_ids(styles)
 
     counter = [9000]
 
@@ -257,6 +394,35 @@ def apply(path, ops, author, masechet, log=print, dry=False):
         else:
             missed.append((op, 'הסימון פרוש על כמה קטעי-תו ולא הוחלף'))
 
+    # --- שינויי סגנון ---
+    want_style = {}
+    for i, op in splan:
+        p = xml_ps.get(i)
+        if p is None:
+            missed.append((op, 'הפסקה לא נמצאה ב-XML'))
+            continue
+        name = op.get('style') or ''
+        sid = ''
+        if name:
+            if name not in sids:
+                missed.append((op, 'הסגנון %r אינו קיים בקובץ הזה' % name))
+                continue
+            sid = sids[name][0]
+        if op['kind'] == 'pstyle':
+            if not name:
+                missed.append((op, 'סגנון פסקה ריק - אין לאן להחזיר'))
+                continue
+            if _set_pstyle(p, sid, author, when, nextid):
+                want_style[i] = name
+                done += 1
+            else:
+                missed.append((op, 'הפסקה כבר בסגנון הזה'))
+        else:
+            if _set_cstyle(p, op.get('find') or '', sid, author, when, nextid):
+                done += 1
+            else:
+                missed.append((op, 'הקטע אינו יחיד בפסקה, או שהוא בתוך שינוי-מעקב'))
+
     tmp = path + '.new'
     _rezip(path, tmp, {'word/document.xml':
                        etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
@@ -264,7 +430,7 @@ def apply(path, ops, author, masechet, log=print, dry=False):
 
     # --- אימות: להמיר מחדש ולהשוות ---
     after = convert(tmp)
-    bad = _diff_check(before, after, expect)
+    bad = _diff_check(before, after, expect, want_style)
     if bad:
         os.remove(tmp)
         log('האימות נכשל. הקובץ לא נגע:')
@@ -290,8 +456,9 @@ def _paragraph_map(doc, blocks):
     return {i: ps[n] for i, n in pmap.items() if n < len(ps)}
 
 
-def _diff_check(before, after, expect):
+def _diff_check(before, after, expect, want_style=None):
     """כל הבדל שאינו אחד התיקונים שאושרו הוא כישלון."""
+    want_style = want_style or {}
     bad = []
     if len(before) != len(after):
         bad.append('מספר הפסקאות השתנה: %d ⟵ %d' % (len(before), len(after)))
@@ -306,8 +473,12 @@ def _diff_check(before, after, expect):
         if a['text'] != want:
             bad.append('פסקה %d שונה ממה שאושר:\n     ציפינו: %r\n     קיבלנו: %r'
                        % (b['i'], want[:90], a['text'][:90]))
-        if b['style'] != a['style']:
-            bad.append('פסקה %d: הסגנון השתנה' % b['i'])
+        if b['style'] != a['style'] and want_style.get(b['i']) != a['style']:
+            bad.append('פסקה %d: הסגנון השתנה ולא אושר (%s ⟵ %s)'
+                       % (b['i'], b['style'], a['style']))
+        if b['i'] in want_style and a['style'] != want_style[b['i']]:
+            bad.append('פסקה %d: הסגנון לא הוחל (ציפינו %s, יש %s)'
+                       % (b['i'], want_style[b['i']], a['style']))
     n_changed = sum(1 for b, a in zip(before, after) if b['text'] != a['text'])
     if n_changed != len(expect):
         bad.append('מספר הפסקאות ששונו (%d) אינו כמספר הפסקאות שאושרו (%d)'

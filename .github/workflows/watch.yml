@@ -7,6 +7,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    # דחיפת תיקון מן האתר מטופלת בעבודה הקצרה שב-edits.yml. בלי
+    # ההחרגה הזאת רצו שתי בנייה על אותה דחיפה, והתור נחנק.
+    paths-ignore: ['data/edits/**', 'docs/**']
 permissions:
   contents: write
   pages: write

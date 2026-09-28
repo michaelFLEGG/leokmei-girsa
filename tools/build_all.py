@@ -1,5 +1,5 @@
 """build_all.py - ממיר כל קובץ וורד ב-input/docx לעמוד מסכת, בונה שער ומעתיק גופנים ל-site/"""
-import os, sys, json, shutil, re, html, datetime
+import os, sys, json, shutil, re, html, datetime, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from docx2json import convert
 from build_site import build
@@ -142,10 +142,26 @@ def merge_masechet(m, files, ddir):
     return out, ' + '.join(used)
 
 def main():
+    # בנייה חלקית. בנייה מלאה של 26 מסכתות נמדדה ב-14 דקות, וזה זמן
+    # שאי אפשר להמתין לו כשמתפרסם תיקון בודד מן האתר. עם --only נבנות
+    # רק המסכתות שנמסרו, ושאר הרשומות לשער נקראות מ-status.json שכבר
+    # יש באתר. אם אין שם, הבנייה החלקית עוצרת בקול: שער חסר מסכתות
+    # גרוע מהמתנה.
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--only', action='append', default=[],
+                    help='מזהה מסכת (slug) לבנייה. אפשר לחזור על הדגל')
+    args = ap.parse_args()
+    only = set()
+    for v in args.only:
+        only |= {x.strip() for x in v.split(',') if x.strip()}
     preconv = {}
     # fonts
     fdir = os.path.join(IN, 'fonts')
-    if os.path.isdir(fdir):
+    # בבנייה חלקית אין טעם להטליא שוב את הגופנים: הם כבר באתר, והטלאה
+    # חוזרת לקחה ארבעים שניות מתוך שבעים וחמש.
+    if only and all(os.path.exists(os.path.join(SITE, 'fonts', t)) for t in FONT_MAP):
+        fdir = None
+    if fdir and os.path.isdir(fdir):
         for f in sorted(os.listdir(fdir)):
             if f.startswith('._'): continue
             best = None
@@ -170,6 +186,18 @@ def main():
         if absent: print('אזהרה: גופן חסר באתר:', ', '.join(absent))
     # masechtot
     built = {}
+    if only:
+        st = os.path.join(SITE, 'status.json')
+        if not os.path.exists(st) or not os.path.exists(os.path.join(SITE, 'index.html')):
+            raise SystemExit('עצירה: בנייה חלקית בלי אתר קיים. הרץ בנייה מלאה')
+        built = json.load(open(st, encoding='utf-8')).get('built') or {}
+        missing = [m for m in built if not os.path.exists(os.path.join(SITE, SLUG[m] + '.html'))]
+        if missing:
+            raise SystemExit('עצירה: חסרים דפים באתר הקיים (%s). הרץ בנייה מלאה'
+                             % ', '.join(missing[:5]))
+        for m in list(built):
+            if SLUG.get(m) in only:
+                built.pop(m)
     # בהרצה מקומית אפשר להצביע על תיקיית הדרייב עצמה, כדי לבנות מן
     # הקובץ החי בלי להמתין לשומר ובלי לגעת בעותק שבמאגר.
     ddir = os.environ.get('LG_DOCX') or os.path.join(IN, 'docx')
@@ -201,6 +229,8 @@ def main():
         groups.setdefault(m, []).append(f)
     for m in sorted(set(groups) | set(preconv), key=ALL.index):
         files = groups.get(m, [])
+        if only and SLUG.get(m) not in only:
+            continue
         try:
             if m in preconv:
                 blocks, f = preconv[m]

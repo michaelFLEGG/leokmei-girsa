@@ -1,0 +1,41 @@
+name: פרסום תיקונים שנעשו באתר
+# מצב העריכה שבדף דוחף את התיקונים לקובץ data/edits/<מסכת>.json דרך
+# ממשק גיטהאב. הבנייה הזאת קצרה בכוונה: היא בונה מקובצי הוורד שכבר
+# שמורים במאגר, בלי לרדת לדרייב ובלי סריקת תצוגה, כדי שהתיקון יגיע
+# ללומד בדקות ולא ברבע שעה.
+on:
+  push:
+    branches: [main]
+    paths: ['data/edits/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install lxml fonttools
+      - name: בנייה מקובצי הוורד שבמאגר
+        run: python tools/build_all.py
+      # תיקון שכבר הגיע מן הוורד יוצא מקובץ התיקונים בבנייה עצמה.
+      # הסימון [skip ci] הכרחי: בלעדיו הדחיפה הזאת היתה מפעילה שוב
+      # את אותה עבודה, ללא סוף.
+      - name: הוצאת תיקונים שכבר נקלטו בוורד
+        run: |
+          git config user.name "leokmei-watcher"
+          git config user.email "watcher@users.noreply.github.com"
+          git add -A data/edits
+          git diff --cached --quiet || (git commit -m "תיקונים שנקלטו בוורד הוסרו מן הקובץ [skip ci]" && git push)
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+      - id: deployment
+        uses: actions/deploy-pages@v4

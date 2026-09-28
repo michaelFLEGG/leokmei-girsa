@@ -18,7 +18,7 @@
     uv run python tools/ingest_repo.py [--dry] [--repo <נתיב>]
     uv run python tools/ingest_repo.py --install-task   (מקים משימה מתוזמנת)
 """
-import os, sys, io, re, html, json, argparse, subprocess
+import os, sys, io, re, html, json, shutil, argparse, subprocess
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import word_apply
@@ -178,7 +178,11 @@ def install_task(repo):
         '@echo off\r\n'
         'chcp 65001 > nul\r\n'
         'cd /d "%s"\r\n' % repo +
-        'uv run --with lxml python tools\\ingest_repo.py >> "%s" 2>&1\r\n'
+        # נתיב מלא ל-uv: ב-PATH של משימה מתוזמנת הוא אינו מוכר, והמשימה
+        # היתה נכשלת בשקט ומדווחת הצלחה. נמדד בגשר.
+        '"' + (shutil.which('uv') or os.path.join(
+            os.path.expanduser('~'), '.local', 'bin', 'uv.exe')) +
+        '" run --with lxml python tools\\ingest_repo.py >> "%s" 2>&1\r\n'
         % os.path.join(keep, 'קליטת-תיקונים.log'))
     cmd = ['schtasks', '/Create', '/F', '/TN', TASK, '/SC', 'MINUTE', '/MO', '10',
            '/TR', '"%s"' % bat]

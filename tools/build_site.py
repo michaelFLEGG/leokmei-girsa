@@ -1150,6 +1150,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     d.querySelectorAll('mark').forEach(m=>m.replaceWith(...m.childNodes));
     return d}
   function txtOf(el){return edClone(el).textContent}
+  /* השוואה בלי ניקוד. במשנה, הטקסט שעל המסך מגיע משכבת הניקוד ואילו
+     התיקון נרשם על נוסח הוורד; בלי הנרמול הזה תיקון של משנה פשוט לא
+     היה נראה אחרי היציאה ממצב עריכה - ובשקט. */
+  function nonik(t){return (t||'').replace(/[֑-ׇ]/g,'')}
   function edSan(root){
     /* רק סגנונות התו שבמפה נשארים. כל תגית אחרת מוסרת והטקסט נשמר.
        כפתור "מקור" ותווית "משנה" אינם טקסט של הספר אלא ריהוט של הדף,
@@ -1230,8 +1234,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       e.lost=0;if(k!==e.k)e.k=k;
       const el=f.querySelector('[data-ek="'+k+'"]');
       const cur=el?txtOf(el):(SLOTS.find(s=>s.k===k)||{}).t;
-      if(cur===e.now&&e.ps===undefined){taken++;continue}
-      if(el&&cur===e.was)setHTML(el,e.nowH!==undefined?e.nowH:esc(e.now));
+      const same=x=>cur===x||nonik(cur)===nonik(x);
+      if(same(e.now)&&e.ps===undefined){taken++;continue}
+      /* פסקה שתוקנה מוצגת בנוסח הוורד עד לפרסום: שכבת הניקוד נבנית
+         מן המקור בבנייה, ואינה יודעת על התיקון שנעשה זה עתה. */
+      if(el&&same(e.was))setHTML(el,e.nowH!==undefined?e.nowH:esc(e.now));
       if(el&&e.ps!==undefined&&el.tagName==='P'){
         PCLS.forEach(c=>el.classList.remove(c));
         if(e.ps)e.ps.split(' ').filter(Boolean).forEach(c=>el.classList.add(c));

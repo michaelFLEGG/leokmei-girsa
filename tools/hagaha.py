@@ -12,7 +12,7 @@
 """
 import json, re, html, os, sys, datetime, collections, hashlib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from styles_map import ROLE
+from styles_map import ROLE, role_of
 
 HEB = 'א-ת'
 # הכרעת בעל הפרויקט 27.9.2026: בספר הזה גרש בודד משמש גם לסגור מילה
@@ -32,7 +32,7 @@ def _locate(blocks):
     pi, unit, uid = -1, None, 0
     pend = []          # פסקאות שאין להן עדיין יחידה (ציון דף, ופתיח שלפני הדף הראשון)
     for b in blocks:
-        r = ROLE.get(b['style'], 'body')
+        r = role_of(b)          # מפת הסגנונות ומעליה כלל החציצה, כמו בבנייה
         if r == 'daf':
             pi += 1; unit = None; pend.append(b['i']); continue
         if r == 'skip':

@@ -269,7 +269,8 @@ def main():
                 print('   מסך הגהה:', h['findings'], 'ממצאים,', h['severe'], 'טעונים תיקון')
             os.remove(jp)
             built[m] = {'file': f, 'pages': r['pages'], 'toc': r['toc'], 'qa': len(r['qa']),
-                        'hagaha': has_hagaha, 'heavy': r.get('heavy', [])}
+                        'hagaha': has_hagaha, 'heavy': r.get('heavy', []),
+                        'hatz': r.get('hatz'), 'joined': r.get('joined')}
             if r.get('heavy'):
                 print('   טעון תשומת לב:', '; '.join(r['heavy'][:6]))
             print('נבנה', m, r['pages'], 'עמודים', len(r['qa']), 'חריגות')

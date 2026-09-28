@@ -1,8 +1,21 @@
 import json, html, re, collections, sys, os, io
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from styles_map import ROLE, CS, MISSING_FONTS
+from styles_map import ROLE, CS, MISSING_FONTS, hatz_kind, role_of, STAR_CHARS
 # סמן החץ שוורד מציב במסגרת צפה ליד שורה. אינו תוכן.
 ARROW = chr(0x25c4)
+# העיטור האחיד של החציצה: שלוש כוכביות, שגופן וילנא הופך בליגטורת rlig
+# לעיטור האמצעי - בדיוק כפי שנראה בסוכה. כל חציצה מוצגת כך, בכל מספר
+# כוכביות שנכתב בוורד (הכרעת בעל הפרויקט, 28.9.2026: אחידות). הנתונים
+# עצמם אינם משתנים: זו תצוגה בלבד.
+HATZ_HTML = '***'
+# עד כמה חלונות כותרת שאין תחתיהם טקסט נערמים בחלון אחד. מעבר לזה זהו
+# אינדקס ולא חלון (בכתובות: 106 מסגרות "ב:1", "ג:3" בסוף הקובץ), והוא
+# מדווח ואינו מוצג.
+STACK_MAX = 4
+# עד כמה ציוני דף ריקים רצופים מצטרפים כטווח לציון שאחריהם. שרשרת ארוכה
+# מזה היא אינדקס דפים שכתוב בקובץ (ביבמות: מאה ציונים רצופים), ואינה
+# עמודים ריקים.
+DAF_RANGE_MAX = 3
 import match_sources
 import font_ink
 import nikud_mishna
@@ -281,14 +294,35 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   if heavy: qa.insert(0,('טעון תשומת לב','סגנון שאינו ממופה ומופיע הרבה: '+', '.join(heavy[:8])))
   long_anchor=[b for b in blocks if b['style']=='חלון 3' and len(b['text'])>25]
   for b in long_anchor: qa.append(('חלון ארוך',b['text'][:40]))
-  # פסקת כוכביות שאינה בסגנון החציצה: העיטור אינו נוצר, והלומד רואה
-  # כוכביות. זהו תוכן הוורד ולא פגם בתצוגה, ולכן מדווח ואינו מתוקן.
-  stars=[b for b in blocks if ROLE.get(b['style'],'body').startswith('body')
-         and b['text'].strip() and set(b['text'].strip())<=set('* ')]
-  if stars:
-      qa.append(('כוכביות בסגנון רגיל',
-                 '%d פסקאות כוכביות אינן בסגנון החציצה, ולכן אינן הופכות '
-                 'לעיטור. הפסקאות: %s' % (len(stars), ', '.join(str(b['i']) for b in stars[:8]))))
+  # ---------- א: החציצה אחידה בכל המסכתות ----------
+  # פסקה שכל תוכנה כוכביות היא חציצה, יהא סגנונה אשר יהא, ומוצגת בעיטור
+  # של סוכה. זו אינה משימה של בעל הפרויקט ולכן אינה משימה בבקרה: היא
+  # מידע בלבד, באפור. המונים נמדדים כאן ונכתבים גם לדוח.
+  hz_all=[(b,hatz_kind(b['text'])) for b in blocks]
+  hz_all=[(b,k) for b,k in hz_all if k]
+  hz_restyled=[b for b,k in hz_all if k=='star' and ROLE.get(b['style'],'body')!='hatz']
+  hz_orn=[b for b,k in hz_all if k=='orn']
+  hz_counts=collections.Counter(sum(1 for ch in b['text'] if ch in STAR_CHARS) for b,k in hz_all if k=='star')
+  hz_inline=sum(1 for b in blocks if not hatz_kind(b['text']) and any(ch in STAR_CHARS for ch in b['text']))
+  hz_stat={'total':len(hz_all),'restyled':len(hz_restyled),'orn':len(hz_orn),
+           'byCount':{str(k):v for k,v in sorted(hz_counts.items())},'inline':hz_inline}
+  if hz_restyled:
+      qa.append(('טופל בתצוגה: כוכביות שסגנונן אינו חציצה',
+                 '%d פסקאות כוכביות יושבות בוורד בסגנון אחר (%s) ומוצגות בעיטור החציצה. הוורד לא נגע'
+                 % (len(hz_restyled), ', '.join('%s %d'%(s,n) for s,n in
+                    collections.Counter(b['style'] for b in hz_restyled).most_common(4)))))
+  odd=[(k,v) for k,v in sorted(hz_counts.items()) if k!=3]
+  if odd:
+      qa.append(('טופל בתצוגה: מספר כוכביות שונה משלוש',
+                 'בוורד: '+', '.join('%d פסקאות של %d כוכביות'%(v,k) for k,v in odd)+
+                 '. כולן מוצגות בעיטור האחיד של סוכה'))
+  if hz_orn:
+      qa.append(('טופל בתצוגה: עיטור בגופן שאינו באתר',
+                 '%d פסקאות חציצה כתובות בסימני העיטור של גופן BA שאינו באתר, ומוצגות בעיטור האחיד'
+                 % len(hz_orn)))
+  if hz_inline:
+      qa.append(('כוכבית בתוך שורת טקסט',
+                 '%d פסקאות שיש בהן כוכבית בתוך הטקסט. אינן חציצה ולא נגעו - לבקרה בלבד' % hz_inline))
   empty_anchor=[b for b in blocks if b['style']=='חלון 3' and not b['text'].strip()]
   if empty_anchor: qa.append(('חלון ריק',f'{len(empty_anchor)} חלונות ריקים'))
 
@@ -304,8 +338,28 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # ריקות בדף) ואף אינו מדליק סימון תצוגה. הנתונים נשארים כמות שהם,
   # והמונה מוצג בבקרה כדי שההשמטה לא תהיה שקטה.
   n_hal=0
-  pend=None      # חלון הממתין למה שיבוא אחריו
-  n_lone=0       # חלון שאין אחריו דבר - תוכן הוורד, לא פגם בקוד
+  pend=None      # חלון הממתין למה שיבוא אחריו: (html, id, כמה חלונות נערמו)
+  n_stack=0      # חלון שאין תחתיו טקסט ונערם מעל החלון הבא (ב2)
+  n_stack_drop=0 # חלון שנערם מעבר לתקרה ואינו מוצג
+  n_tail_win=0   # חלון בסוף המסכת שאין אחריו דבר
+  n_hatz_dup=0   # חציצה מיד אחרי חציצה (עיטור ואחריו כוכביות) - מוצגת פעם אחת
+  def take_pend():
+      """החלון הממתין נמסר ליחידה. מונה כמה חלונות נערמו בו."""
+      nonlocal pend, n_stack
+      p=pend; pend=None
+      if p[2]>1: n_stack+=p[2]-1
+      return p
+  # ב: פסקת חציצה שיושבת בתוך משנה - בין פסקת משנה לפסקת משנה - נשארת
+  # בתוך יחידת המשנה, על הרקע שלה, באותו עיטור.
+  nb=[i for i,b in enumerate(blocks)]
+  def next_role(i):
+      """תפקיד הפסקה הבאה שיש בה טקסט, מדלג על ריהוט וציוני דף."""
+      for j in range(i+1,len(blocks)):
+          r=role_of(blocks[j])
+          if r in ('skip','daf'): continue
+          if not blocks[j]['text'].strip(): continue
+          return r
+      return None
   def toc_text(raw):
       """כותרת לתוכן העניינים, מן הטקסט הגולמי ולפני כל בריחה.
       כך אין ישויות HTML, ואין חץ ואין טאבים."""
@@ -314,8 +368,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       t=toc_text(b['text'])
       if t: toc.append([len(pages)-1,b['i'],t,kind])
   n_skip=collections.Counter()
-  for b in blocks:
-      r=ROLE.get(b['style'],'body'); h=runs_html(b['runs']); t=b['text'].strip()
+  for bi,b in enumerate(blocks):
+      r=role_of(b); h=runs_html(b['runs']); t=b['text'].strip()
+      # א: חציצה - העיטור האחיד, בלי תלות במספר הכוכביות שבוורד
+      if r=='hatz': h=HATZ_HTML
       # ריהוט עמוד (כותרת רצה, שם המסכת, תווית המסילה) אינו תוכן ואינו
       # נכתב לדף. הוא נספר ומדווח, כדי שההשמטה לא תהיה שקטה.
       if r=='skip':
@@ -327,8 +383,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if r=='perek-num': perek=t
       if r=='perek-name': perekName=t
       if r=='daf':
-          if pend is not None and cur is not None:
-              cur['units'].append({'k':'u','a':pend[0],'l':[],'id':pend[1]}); n_lone+=1; pend=None
+          # ב2: חלון שאין תחתיו טקסט אינו נעצר בציון הדף. הוא ממשיך
+          # להמתין ליחידה הבאה, שתקבל אותו במסילתה יחד עם ציון הדף.
           cur={'daf':t,'perek':perek,'perekName':perekName,'units':[]}; pages.append(cur); unit=None
           continue
       if cur is None: continue
@@ -337,15 +393,24 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       # הוא פתח מיד יחידה משלו, וכשאחריו באה כותרת "נושא" נשארה בדף שורה
       # שכל תוכנה חלון - שורה לבנה לכל דבר. מעתה הוא ממתין: אם אחריו גוף,
       # הוא פותח את היחידה כמקודם; ואם אחריו כותרת, הוא יושב במסילה שלה.
+      # ב2: ואם אחריו חלון נוסף - הוא נערם מעליו, באותה מסילה. לעולם אין
+      # יחידה ריקה בדף. ערימה מעבר לתקרה היא אינדקס ולא חלון, ומדווחת.
       if r=='anchor':
           if t and set(t) <= {ARROW}:
               n_hal+=1; continue            # סמן פריסה של וורד, אינו יחידה
           if pend is not None:
-              cur['units'].append({'k':'u','a':pend[0],'l':[],'id':pend[1]}); n_lone+=1
-          pend=(h,b['i']); unit=None
+              if pend[2]>=STACK_MAX:
+                  n_stack_drop+=1
+                  parts=pend[0].split('<br>')[1:]
+                  pend=('<br>'.join(parts+[h]),b['i'],pend[2])
+              else:
+                  pend=(pend[0]+'<br>'+h,b['i'],pend[2]+1)
+          else:
+              pend=(h,b['i'],1)
+          unit=None
       elif r.startswith('body'):
           if pend is not None:
-              unit={'k':'u','a':pend[0],'l':[],'id':pend[1]}; cur['units'].append(unit); pend=None
+              w=take_pend(); unit={'k':'u','a':w[0],'l':[],'id':w[1]}; cur['units'].append(unit)
           elif unit is None or unit['k']!='u':
               unit={'k':'u','a':'','l':[],'id':b['i']}; cur['units'].append(unit)
           unit['l'].append([((r[5:] if len(r)>4 else '')+' '+sp_cls(b['style'])).strip(),h])
@@ -354,16 +419,26 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
               cur['units'][-1]['l'].append([sp_cls(b['style']),h])
           else:
               u={'k':'m','a':'','l':[[sp_cls(b['style']),h]],'id':b['i']}
-              if pend is not None: u['w']=pend[0]; pend=None
+              if pend is not None: u['w']=take_pend()[0]
               cur['units'].append(u); add_toc('m',b)
           unit=None
+      elif r=='hatz' and pend is None and cur['units'] and cur['units'][-1]['k']=='m' \
+           and unit is None and next_role(bi)=='mishna':
+          # א5: חציצה בתוך משנה - אותו עיטור, על רקע המשנה. פעם אחת.
+          if cur['units'][-1]['l'] and cur['units'][-1]['l'][-1][0]=='hatz': n_hatz_dup+=1
+          else: cur['units'][-1]['l'].append(['hatz',HATZ_HTML])
+      elif r=='hatz' and pend is None and cur['units'] and cur['units'][-1]['k']=='hatz':
+          # א3: עיטור ואחריו כוכביות (בקידושין: 212 זוגות) - חציצה אחת
+          n_hatz_dup+=1
       elif r in ('dh','nose','hatz','perek-num','perek-name','perek-range','perek-start','hadran'):
           u={'k':r,'a':h,'l':[],'id':b['i'],'s':sp_cls(b['style'])}
-          if pend is not None: u['w']=pend[0]; pend=None
+          if pend is not None: u['w']=take_pend()[0]
           cur['units'].append(u); unit=None
           if r in ('dh','nose'): add_toc(r,b)
-  if pend is not None and cur is not None:
-      cur['units'].append({'k':'u','a':pend[0],'l':[],'id':pend[1]}); n_lone+=1; pend=None
+  if pend is not None:
+      # ב4: חלון בסוף המסכת שאין אחריו דבר - אין למה לצרפו. אינו מוצג
+      # כריק, ונרשם.
+      n_tail_win+=pend[2]; pend=None
 
   # יחידה בלי חלון ובלי פסקת גוף שיש בה טקסט אינה נכתבת לדף: בדף היא
   # נראית כשורה ריקה, ולומד אינו יודע שחסר כאן דבר. המונה מוצג בבקרה.
@@ -379,10 +454,58 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       p['units']=keep
   if n_empty:
       qa.append(('יחידות ריקות',f'{n_empty} יחידות ריקות הושמטו מן הדף'))
-  if n_lone:
-      qa.append(('חלון שאין תחתיו טקסט',
-                 f'{n_lone} חלונות כותרת אין אחריהם לא פסקת גוף ולא כותרת. '
-                 'זהו תוכן הוורד ולא פגם בתצוגה, והם מוצגים בשורה משלהם'))
+  # ---------- ב1: ציון דף שאין אחריו טקסט ----------
+  # אינו יוצר שורה ריקה: הוא מצטרף לציון שאחריו במסילה, כטווח עם מקף
+  # רגיל ("יד:-טו."). ציון הדף האמיתי של העמוד נשאר בנתונים (daf), כדי
+  # שהעיגון, ההצמדה והניקוד ימשיכו לעבוד; רק התווית (label) היא הטווח.
+  # ציון בסוף המסכת שאין אחריו דבר - אין למה לצרפו, ואינו מוצג.
+  n_range=0; n_tail_daf=0; n_index_daf=0; n_dup_daf=0; carry=[]; kept=[]; newpi={}
+  for oldpi,p in enumerate(pages):
+      if not p['units']:
+          carry.append(p['daf']); newpi[oldpi]=len(kept); continue
+      if carry:
+          # ציון כפול (אותו דף פעמיים, הראשון ריק) אינו טווח
+          carry2=[d for d in carry if d!=p['daf']]
+          n_dup_daf+=len(carry)-len(carry2)
+          if len(carry2)>DAF_RANGE_MAX:
+              # שרשרת ארוכה של ציונים ריקים היא אינדקס דפים שבקובץ, לא
+              # עמודים ריקים (ביבמות: מאה ציונים רצופים). אינה מוצגת.
+              n_index_daf+=len(carry2)
+          elif carry2:
+              p['label']=carry2[0]+'-'+p['daf']; p['dafs']=carry2+[p['daf']]
+              n_range+=len(carry2)
+          carry=[]
+      newpi[oldpi]=len(kept); kept.append(p)
+  n_tail_daf=len(carry)
+  pages=kept
+  # תוכן העניינים נרשם לפי מקום העמוד ברשימה המקורית
+  toc=[[min(newpi.get(e[0],0),max(0,len(pages)-1))]+e[1:] for e in toc]
+  if n_range:
+      qa.append(('טופל בתצוגה: ציון דף שאין תחתיו טקסט',
+                 f'{n_range} ציוני דף אין אחריהם טקסט עד הציון הבא, והם מוצגים כטווח '
+                 'יחד עם הציון שאחריהם. הוורד לא נגע'))
+  if n_tail_daf:
+      qa.append(('לא ניתן לצרף',
+                 f'{n_tail_daf} ציוני דף בסוף המסכת אין אחריהם טקסט ואין ציון לצרפם אליו. אינם מוצגים'))
+  if n_index_daf:
+      qa.append(('לא ניתן לצרף',
+                 f'{n_index_daf} ציוני דף ריקים ברצף של יותר מ-{DAF_RANGE_MAX} - זהו אינדקס דפים שבקובץ ולא עמודים - ואינם מוצגים'))
+  if n_dup_daf:
+      qa.append(('טופל בתצוגה: ציון דף כפול',
+                 f'{n_dup_daf} ציוני דף ריקים כפולים לציון שאחריהם, ואינם מוצגים פעמיים'))
+  if n_hatz_dup:
+      qa.append(('טופל בתצוגה: חציצה כפולה',
+                 f'{n_hatz_dup} פסקאות חציצה באות מיד אחרי חציצה אחרת (עיטור וכוכביות זה אחר זה) ומוצגות פעם אחת'))
+  if n_stack:
+      qa.append(('טופל בתצוגה: חלון שאין תחתיו טקסט',
+                 f'{n_stack} חלונות כותרת אין אחריהם טקסט עד החלון הבא, והם מוצגים מעל '
+                 'החלון הבא באותה מסילה. הוורד לא נגע'))
+  if n_stack_drop:
+      qa.append(('לא ניתן לצרף',
+                 f'{n_stack_drop} חלונות נערמו מעבר ל-{STACK_MAX} זה על זה - זהו אינדקס ולא חלון - ואינם מוצגים'))
+  if n_tail_win:
+      qa.append(('לא ניתן לצרף',
+                 f'{n_tail_win} חלונות כותרת בסוף המסכת אין אחריהם דבר. אינם מוצגים'))
   if n_hal:
       qa.append(('סמני חץ של וורד',
                  f'{n_hal} סמני חץ הושמטו מן התצוגה. בוורד זו מסגרת צפה '
@@ -612,9 +735,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* ב. הכוכביות אינן כוכביות: בגופני וילנא יש שרשרת ליגטורות ב-rlig,
      וכל מספר כוכביות נותן עיטור אחר. letter-spacing ביטל אותה, ולכן
      הוא חוזר ל-normal והליגטורות נדלקות במפורש. */
-  .main.hatz{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
-        font-size:1.1em;letter-spacing:normal;color:#8a7d66;margin:0;
+  .main.hatz,.main.mishna p.hatz{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
+        font-size:1.1em;letter-spacing:normal;word-spacing:normal;color:#8a7d66;margin:0;
         font-variant-ligatures:common-ligatures;font-feature-settings:"rlig" 1,"liga" 1}
+  /* א8: חציצה אינה נשארת לבדה בתחתית טור. בעמוד המודפס מנוע הגיליונות
+     מצמיד אותה לפסקה שאחריה. */
+  .row.hatz{break-after:avoid-column}
+  /* ב2: חלונות שנערמו זה מעל זה במסילה אחת. line-height:0 של המסילה
+     היה מניח אותם זה על זה, ולכן ערימה מקבלת את רשת הגוף. */
+  .win.stk{line-height:var(--lhpx)}
+  /* ב1: ציון דף שהוא טווח ("יד:-טו.") - קטן יותר, כדי שלא ירחיב את נתיב
+     הדף של כל המסכת. רוחבו נמדד ומוגדר לשורה שלו בלבד. */
+  .dafmark.rng{font-size:.95em;letter-spacing:-.02em}
   .perek-num .main{font-family:'Franknatan','Vilna',serif;color:var(--red);font-size:1.45em;line-height:1.1}
   .perek-name .main{font-family:'Franknatan','Vilna',serif;color:#8a7d66;font-size:1.09em}
   .perek-range .main{color:var(--red);font-size:.73em}
@@ -647,6 +779,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .tl.tlm{background:#f4e9cd;color:#8a6d2f}
   .panel .x{float:left;background:none;border:0;font-size:22px;cursor:pointer;color:#5a5044}
   .panel .n{color:#8a7d66;font-size:12px} .res{padding:5px 0;border-bottom:1px dotted #d9d1bd} .res small{color:#8a7d66}
+  /* ב3: מקרה שטופל בתצוגה הוא מידע בלבד, באפור - לא משימה */
+  .res.qgrey{color:#8a7d66} .res.qgrey b{color:#8a7d66;font-weight:400}
   .tag{display:inline-block;background:#eeeae1;border-radius:3px;padding:0 6px;margin:2px;font-size:13px}
   .chips{display:flex;flex-wrap:wrap}
   /* ---- מצב עריכה (מנהל) ---- */
@@ -698,7 +832,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .modal button.go{background:#4a6b3f;color:#fff}
   .sgrow{padding:7px 0;border-bottom:1px dotted #d9d1bd;line-height:1.5}
   .sgrow q{color:#5a5044} .sgrow b{display:block} .sgrow small{color:#8a7d66}
-  .sgrow button{font:inherit;font-size:13px;background:#eeeae1;border:1px solid #e0d8c4;border-radius:4px;padding:2px 9px;cursor:pointer}
+  .sgrow button{font:inherit;font-size:13px;background:#eeeae1;border:1px solid #e0d8c4;border-radius:4px;padding:2px 9px;cursor:pointer;margin-left:5px;margin-top:4px}
+  .sqctx{background:#fff;border:1px dashed #d9d1bd;border-radius:4px;padding:5px 8px;margin:4px 0;font-size:14px;line-height:1.5}
+  /* ד4: שורה שיש עליה הצעה ממתינה - צהוב עדין, רק במצב מנהל */
+  .sgp{background:rgba(255,226,122,.38);border-radius:2px}
+  #sqbtn.on{background:#a83c2f;color:#fff}
   /* ---- מגירת "מקור": הגמרא המנוקדת ---- */
   .srcb{font:inherit;font-size:.5em;line-height:1;background:none;border:1px solid #d9d1bd;color:#8a7d66;
         border-radius:3px;padding:1px 5px;margin-right:.3em;cursor:pointer;opacity:.45;vertical-align:.15em}
@@ -953,11 +1091,25 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* ---- ב1: רוחב נתיב הדף, והתאמת החלון לנתיב שלו ----
      רוחב נתיב ציון הדף אינו מספר שנבחר: הוא נמדד מציון הדף הרחב ביותר
      במסכת, בגופן שבפועל, ונמדד מחדש אחרי שהגופנים נטענו. */
+  /* גובה שורת הגוף בפיקסלים. --lhpx כתוב ביחידות שונות במצבים שונים
+     (calc בזרימה ובספר, 11pt בהדפסה), ו-parseFloat על "11pt" נתן 11 -
+     כלומר ספירת שורות מוגזמת בשליש בהדפסה, וממנה כותרות יתומות
+     ורצועות שלא נפרשו. נמדד. */
+  function lhOf(el){
+    const v=(getComputedStyle(el).getPropertyValue('--lhpx')||'').trim();
+    if(/^-?[\d.]+px$/.test(v))return parseFloat(v);
+    if(/^-?[\d.]+pt$/.test(v))return parseFloat(v)*96/72;
+    const lh=parseFloat(getComputedStyle(el).lineHeight);
+    if(lh&&!isNaN(lh))return lh;
+    const fs=parseFloat(getComputedStyle(el).fontSize)||18;
+    return fs*1.06}
   let DAFW=0;
   function setDafW(){
     const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
     const cv=document.createElement('canvas'),cx=cv.getContext('2d');
     cx.font='400 '+(1.3*fs)+"px 'VilnaG','Vilna',serif";
+    /* תווית טווח ("יד:-טו.") אינה קובעת את רוחב נתיב הדף של כל המסכת;
+       היא מקבלת רוחב לשורה שלה בלבד (fitAnchors). */
     let w=0;for(const p of D.pages){const x=cx.measureText(p.daf||'').width;if(x>w)w=x}
     DAFW=Math.max(w+2,fs*1.1);
     document.documentElement.style.setProperty('--dafw',(DAFW/fs).toFixed(3)+'em');
@@ -980,15 +1132,21 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function fitAnchors(){
     const f=$('#flow');if(!f)return;
     const items=[];
+    /* ב1: תווית טווח רחבה מנתיב הדף - הנתיב מורחב לשורה שלה בלבד */
+    for(const d of f.querySelectorAll('.dafmark.rng')){
+      const r=d.closest('.row');if(!r)continue;
+      const w=dafWidth(d.textContent.trim())*0.95;
+      r.style.setProperty('--dafw',Math.max(w,DAFW).toFixed(1)+'px');
+    }
     for(const r of f.querySelectorAll('.row')){
       const a=r.querySelector(':scope > .rail > .win');
       if(!a||!a.textContent.trim())continue;
-      a.classList.remove('w2');a.style.fontSize='';r.style.removeProperty('--dafw');
+      a.classList.remove('w2');a.style.fontSize='';
+      if(!r.querySelector('.dafmark.rng'))r.style.removeProperty('--dafw');
       items.push({r,a,rail:a.parentElement});
     }
     if(!items.length)return;
-    const lhpx=parseFloat(getComputedStyle(f).getPropertyValue('--lhpx'))||
-               parseFloat(getComputedStyle(f).lineHeight)||18;
+    const lhpx=lhOf(f);
     /* קריאה */
     for(const o of items){
       o.aw=o.a.getBoundingClientRect().width;
@@ -1004,12 +1162,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           ln=Math.max(1,Math.round((bt-t)/lhpx))}}
       o.lines=ln;
       o.dm=o.r.querySelector('.dafmark');
+      /* ב2: ערימת חלונות גבוהה מן הטקסט שלה - נפרשת לשורה אחת, עם מפריד,
+         כדי שהמסילה לא תגבה על היחידה. */
+      if(o.a.classList.contains('stk')){
+        const an=o.a.querySelector('.anchor');
+        const n=an?an.querySelectorAll('br').length+1:1;
+        if(n>ln&&an){an.innerHTML=an.innerHTML.replace(/<br\s*\/?>/g,' · ');o.a.classList.remove('stk');
+          o.aw=o.a.getBoundingClientRect().width}
+      }
     }
     /* כתיבה ראשונה: צמצום נתיב הדף ליחידה שצריכה זאת */
     const still=[];
     for(const o of items){
       if(o.aw<=o.tw+.5)continue;
-      if(o.dm){const w=dafWidth(o.dm.textContent.trim());
+      if(o.dm&&!o.dm.classList.contains('rng')){const w=dafWidth(o.dm.textContent.trim());
         if(w<DAFW-.5){o.r.style.setProperty('--dafw',w.toFixed(1)+'px');still.push(o);continue}}
       still.push(o);
     }
@@ -1019,7 +1185,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const wrapped=[];
     for(const o of still){
       if(o.aw<=o.tw+.5)continue;
-      if(o.lines>=2){o.a.classList.add('w2');wrapped.push(o);continue}
+      if(o.lines>=2&&!o.a.classList.contains('stk')){o.a.classList.add('w2');wrapped.push(o);continue}
       const need=o.tw/o.aw;
       let sc=ASCALE[ASCALE.length-1];
       for(const c of ASCALE)if(c<=need){sc=c;break}
@@ -1050,14 +1216,19 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function printPerek(){printNow(false)}
   addEventListener('beforeprint',()=>{if(!PRINTING&&!BOOK){PREBOOK=1;BOOK=true;render(cur)}});
   addEventListener('afterprint',()=>{if(PREBOOK){PREBOOK=0;BOOK=false;render(cur)}});
+  /* ב1: ציון הדף שמוצג הוא התווית - טווח כשציון קודם נשאר בלי טקסט -
+     וציון הדף האמיתי נשמר ב-data-daf, שממנו קוראים העריכה וההצעות. */
+  function dafMark(pi){const p=D.pages[pi];const lab=p.label||p.daf;
+    return `<b class="dafmark${p.label?' rng':''}" id="d${pi}" data-daf="${esc(p.daf)}">${esc(lab)}</b>`}
   function unitHTML(u,daf,pi){
-    const mk=daf!=null?`<b class="dafmark" id="d${pi}">${esc(daf)}</b>`:'';
+    const mk=daf!=null?dafMark(pi):'';
     const H=(u.ref?' data-ref="'+u.ref+'"':''),
           sb=u.ref?`<button class="srcb" onclick="openSrc('${u.ref}')" title="הגמרא המנוקדת (מקש מ)">מקור</button>`:'';
     /* המסילה היא גריד בן שני נתיבים: ציון הדף בחיצוני, וכל סמני הצד
        הפנימיים בתוך .win אחד - כדי שחלון ותווית "משנה" יישבו זה לצד זה
-       באותה שורה, ולא ידחפו זה את זה לשורה שנייה. */
-    const win=(w,lab)=>`<div class="rail">${mk}<span class="win">`+
+       באותה שורה, ולא ידחפו זה את זה לשורה שנייה.
+       ב2: חלון שנערם על חלון (אין תחתיו טקסט) מסומן stk ומקבל רשת שורות. */
+    const win=(w,lab)=>`<div class="rail">${mk}<span class="win${w&&w.indexOf('<br>')>-1?' stk':''}">`+
       (w?`<span class="anchor">${w}</span>`:'')+(lab?'<span class="mlabel">משנה</span>':'')+
       `</span></div>`;
     if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}>${win(u.a,0)}<div class="main">${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
@@ -1071,16 +1242,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const L=(NK&&!EDIT&&u.lv&&u.lv.length===u.l.length)?u.lv:u.l;
       return `<div class="row" id="u${u.id}"${H}>${win(u.w,1)}<div class="main mishna">${L.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===L.length-1?sb:''}</p>`).join('')}</div></div>`;
     }
-    /* הכוכביות מוצגות כלשונן בקובץ. מספרן אינו מנורמל: כל מספר נותן
-       עיטור אחר בגופן, וזו כוונת המחבר. */
-    if(u.k==='hatz')return `<div class="row" id="u${u.id}"${H}>${win(u.w,0)}<div class="main hatz ${u.s||''}">${u.a}</div></div>`;
+    /* א: החציצה אחידה - העיטור של סוכה בכל מקום. הנוסח שבוורד לא נגע. */
+    if(u.k==='hatz')return `<div class="row hatz" id="u${u.id}"${H}>${win(u.w,0)}<div class="main hatz ${u.s||''}">${u.a}</div></div>`;
     return `<div class="row ${u.k}" id="u${u.id}"${H}>${win(u.w,0)}<div class="main ${u.k==='dh'||u.k==='nose'?u.k:''} ${u.s||''}">${u.a}${sb}</div></div>`;
   }
   /* ALL: מצב רצף - כל המסכת בטור אחד, מן הדף הראשון עד האחרון בגלילה אחת. */
   let ALL=false;
   function pagesHTML(from,to){let h='';
     for(let pi=from;pi<=to;pi++){const p=D.pages[pi];
-      if(!p.units.length){h+=`<div class="row"><div class="rail"><b class="dafmark" id="d${pi}">${esc(p.daf)}</b></div><div class="main"></div></div>`;continue}
+      if(!p.units.length)continue;   /* ב1: עמוד בלי טקסט אינו נכתב (הבנייה כבר צירפה אותו לטווח) */
       let first=true;
       for(const u of p.units){h+=unitHTML(u,first?p.daf:null,first?pi:null);first=false}}
     return h}
@@ -1094,17 +1264,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     f.innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;
     if(!ALL&&!BOOK){f.scrollTop=0;f.scrollLeft=SGN>0?f.scrollWidth:0}
     if(BOOK){f.scrollTop=0;f.scrollLeft=0}
-    $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].daf;$('#dafsel').value=s.from;
+    $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].label||D.pages[s.from].daf;$('#dafsel').value=s.from;
     document.title=`לאוקמי גירסא · ${D.masechet} · ${ALL?'רצף':(s.perekName||s.perek||D.pages[s.from].daf)}`;
     location.hash=`p=${cur}`;
     fitAnchors();
     markEditable();applyEdits();
+    if(typeof sqMark==='function')sqMark();
     if(EDIT)setEdit(true);
     if(!BOOK)squeezeRun();
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){const si=secOf(pi);if(si!==cur)render(si);
-    setTimeout(()=>{const e=$('#d'+pi);if(e)toEl(e);$('#curdaf').textContent=D.pages[pi].daf;$('#dafsel').value=pi},20)}
+    setTimeout(()=>{const e=$('#d'+pi);if(e)toEl(e);$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi},20)}
   function goDaf(d){const now=+$('#dafsel').value||0;toDaf(Math.max(0,Math.min(D.pages.length-1,now+d)))}
   function goScreen(d){const f=$('#flow');
     if(f.classList.contains('vert'))f.scrollBy({top:d*f.clientHeight*.9,behavior:'smooth'});
@@ -1132,7 +1303,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
    setDafW();
    if(document.fonts&&document.fonts.ready)
      document.fonts.ready.then(()=>{setDafW();fitAnchors()});
-   const ds=$('#dafsel');D.pages.forEach((p,i)=>ds.add(new Option(p.daf,i)));ds.onchange=()=>toDaf(+ds.value);
+   const ds=$('#dafsel');D.pages.forEach((p,i)=>ds.add(new Option(p.label||p.daf,i)));ds.onchange=()=>toDaf(+ds.value);
    const ps=$('#peresel');SEC.forEach((s,i)=>ps.add(new Option((s.perek||'רצף')+(s.perekName?' · '+s.perekName:''),i)));ps.onchange=()=>render(+ps.value);
    let t='',lp=-1;const TL={dh:'ד\u05f4ה',m:'משנה'};
    for(const [pi,id,s,kind] of D.toc){const si=secOf(pi);
@@ -1141,7 +1312,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      t+=`<a class="t-${kind}" onclick="jump(${pi},${id})"><small class="n">${esc(D.pages[pi].daf)}</small> ${lab}${esc(s)}</a>`}
    $('#tocb').innerHTML=t;
    $('#amb').innerHTML=`<div class="n">${D.nAm} אזכורי אמוראים מסומנים בקובץ; ${D.nPsk} ציטוטי פסוקים שונים</div><div class="chips">`+D.am.map((a,i)=>`<a class="tag" onclick="amq(${i})">${esc(a[0])} <span class="n">${a[1]}</span></a>`).join('')+'</div>';
-   $('#qab').innerHTML=D.qa.length?D.qa.map(q=>`<div class="res"><b>${q[0]}</b>: ${esc(q[1])}</div>`).join(''):'לא נמצאו חריגות';
+   /* ב3: מה שטופל בתצוגה הוא מידע בלבד, באפור - לא משימה של בעל הפרויקט */
+   $('#qab').innerHTML=D.qa.length?D.qa.map(q=>`<div class="res${q[0].indexOf('טופל בתצוגה')===0?' qgrey':''}"><b>${q[0]}</b>: ${esc(q[1])}</div>`).join(''):'לא נמצאו חריגות';
    /* מונֵי סוכן סריקת התצוגה, מן הסריקה האחרונה. הקריאה עצלה ואינה
       חוסמת דבר: בפתיחת קובץ מקומי היא נכשלת, והבקרה נשארת כשהיתה. */
    const MDNM={flow:'זרימה',book:'תצוגת ספר',print:'הדפסה'};
@@ -1180,6 +1352,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
    const u0=params.get('u');
    if(u0){let pi=0;D.pages.forEach((p,i)=>{if(p.units.some(x=>x.id==u0))pi=i});jump(pi,+u0)}
    else render(+(params.get('p')||0));
+   sqBadge();netInit();
   }
   /* =================== מצב עריכה למנהל ===================
      האתר סטטי ונבנה מחדש מן הוורד. עריכה כאן אינה נוגעת במקור: היא
@@ -1204,7 +1377,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   let EDIT=false, EDSTAT={taken:0,lost:0};
   function isAdmin(){try{return localStorage.getItem(AKEY)==='1'}catch(e){return false}}
   function ghTok(){try{return localStorage.getItem(TKEY)||''}catch(e){return ''}}
-  function saveED(){try{localStorage.setItem(EKEY,JSON.stringify(ED))}catch(e){}}
+  /* אצל לומד שאינו מנהל ED הוא שכבת התיקונים שהתקבלו (מנקודת הקליטה),
+     והיא אינה נשמרת במכשיר */
+  function saveED(){if(typeof EDRO!=='undefined'&&EDRO)return;try{localStorage.setItem(EKEY,JSON.stringify(ED))}catch(e){}}
   function plain(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent}
 
   /* ---- קריאה נקייה של אלמנט ניתן לעריכה ---- */
@@ -1281,7 +1456,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const m=row.querySelector('.main');
       if(!m)return;
       const ps=m.querySelectorAll('p');
-      if(ps.length)ps.forEach((x,i)=>x.dataset.ek=id+'.'+(i+1));
+      /* חציצה שבתוך משנה אינה טקסט לעריכה */
+      if(ps.length)ps.forEach((x,i)=>{if(!x.classList.contains('hatz'))x.dataset.ek=id+'.'+(i+1)});
       else if(m.classList.contains('dh')||m.classList.contains('nose'))m.dataset.ek=id+'.0';
     });
     /* הכפתור יושב בתוך הפסקה הנערכת. בלי הסימון הזה מחיקה אחת אחורה
@@ -1343,7 +1519,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const was=el.__was, wasH=el.__wasH, wasP=el.__wasP;
     const same=(now===was&&nowH===wasH&&nowP===wasP);
     const k=el.dataset.ek;const row=el.closest('.row');
-    const daf=(()=>{let r=row;while(r){const d=r.querySelector('.dafmark');if(d)return d.textContent;r=r.previousElementSibling}return ''})();
+    const daf=(()=>{let r=row;while(r){const d=r.querySelector('.dafmark');if(d)return d.dataset.daf||d.textContent;r=r.previousElementSibling}return ''})();
     const old=ED.find(x=>x.k===k);
     if(same){
       if(old){ED=ED.filter(x=>x!==old);delete el.dataset.edited}
@@ -1359,7 +1535,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(nowP!==wasP){e.ps=nowP;e.psw=wsty(nowP)}
       ED.push(e);el.dataset.edited='1';
     }
-    saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon()}
+    saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon();syncSoon()}
   let CAPT=null;
   function captureSoon(el){clearTimeout(CAPT);CAPT=setTimeout(()=>capture(el),700)}
 
@@ -1420,7 +1596,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       return {u:o.u,i:n,daf:o.daf,pi:o.pi};
     return null}
   function dafOf(el){let r=el.closest('.row');
-    while(r){const d=r.querySelector('.dafmark');if(d)return d.textContent;r=r.previousElementSibling}
+    while(r){const d=r.querySelector('.dafmark');if(d)return d.dataset.daf||d.textContent;r=r.previousElementSibling}
     return ''}
   function splitAtCaret(el){
     const info=pInfo(el);if(!info)return false;
@@ -1556,7 +1732,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(isAdmin()){setEdit(!EDIT);return}
     const a=prompt('מילת המנהל:');
     if(a===null)return;
-    if(a.trim()===ADMIN_WORD){try{localStorage.setItem(AKEY,'1')}catch(e){}setEdit(true)}
+    if(a.trim()===ADMIN_WORD){try{localStorage.setItem(AKEY,'1')}catch(e){}setEdit(true);
+      sqBadge();if(!admKey())admKeyAsk();else netInit()}
     else alert('המילה אינה נכונה.')}
 
   /* =================== סרגל הסגנונות הצף ===================
@@ -1657,8 +1834,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!ED.length)h='<div class="edsum">אין עדיין תיקונים.</div>';
     h+='<div style="margin-top:12px;display:flex;gap:7px;flex-wrap:wrap">'+
        '<button onclick="pubNow(1)">פרסם עכשיו</button>'+
-       '<button onclick="edDownload()">הורד את כל התיקונים</button>'+
-       '<button id="edcp" onclick="edCopy()">העתק ללוח</button>'+
+       '<button onclick="edDownload()" title="גיבוי בלבד; הקליטה לוורד קוראת מנקודת הקליטה">הורד לקובץ (גיבוי)</button>'+
+       '<button onclick="admKeyAsk()">מפתח המנהל</button>'+
        '<button onclick="edKey()">מפתח הפרסום</button>'+
        '<button onclick="edClear()">נקה הכל</button></div>';
     box.innerHTML=h}
@@ -1675,9 +1852,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       delete el.__was;
       if(e.ps!==undefined&&el.tagName==='P'){PCLS.forEach(c=>el.classList.remove(c));
         (e.wasP||'').split(' ').filter(Boolean).forEach(c=>el.classList.add(c))}}
-    ED.splice(i,1);saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon()}
-  function edClear(){if(!confirm('למחוק את כל '+ED.length+' התיקונים? הם יימחקו גם מן הפרסום.'))return;
-    ED=[];saveED();render(cur);drawEd();pubSoon()}
+    ED.splice(i,1);tomb(e.k);saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon();syncSoon()}
+  function edClear(){if(!confirm('למחוק את כל '+ED.length+' התיקונים? הם יימחקו גם מן הפרסום ומכל המכשירים.'))return;
+    ED.forEach(e=>tomb(e.k));ED=[];saveED();render(cur);drawEd();pubSoon();syncSoon()}
   function edText(){
     let t='תיקוני '+D.masechet+' - לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n';
     t+=ED.length+' תיקונים\n\n';
@@ -1851,28 +2028,53 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   if(!ED.some(e=>!e.pub))PUBLAST=pubBody().replace(/"when":"[^"]*",?/,'');
   else setTimeout(()=>pubNow(0),3000);
 
-  /* =================== הצע תיקון ===================
-     פתוח לכל לומד, בלי שרת ובלי הרשמה. ההצעה נשמרת במכשיר עוד לפני
-     שנעשה בה דבר, כדי שלא תאבד אם משהו ייכשל אחר כך. היציאה היא
-     העתקה ללוח או הורדה לקובץ - שתיהן עובדות תמיד.
+  /* =================== נקודת הקליטה: הצעות, תור המנהל, סנכרון ===================
+     האתר סטטי, ולכן עד כאן הצעת תיקון נשמרה רק בדפדפן של המציע ואיש לא
+     ראה אותה. מעתה יש נקודת קליטה אחת, קטנה וחינמית (Cloudflare Worker,
+     worker/leokmei-suggest), נפרדת לגמרי מממלכת הזוהר:
+       - כל לומד: "הצע תיקון" שולח לשם. אין רשת - נשמר במכשיר ונשלח
+         בטעינה הבאה. אין מייל, אין העתקה, אין הורדה.
+       - המנהל: תג "הצעות ממתינות (N)" בסרגל, פאנל שבו כל הצעה על
+         השורה שלה, ושלושה כפתורים: קבל / ערוך וקבל / דחה. "קבל" הופך
+         את ההצעה לעריכת מנהל רגילה - מוחלת מיד, ונקלטת לוורד בלילה
+         בשם "הצעה מהאתר - <שם המציע>".
+       - עריכות המנהר נשמרות גם בנקודת הקליטה, ולכן מה שנערך בטאבלט
+         נראה במחשב. הקליטה הלילית לוורד קוראת משם.
+       - כל לומד מקבל את העריכות שהתקבלו ישר משם בטעינת הדף (בלי
+         שמות), עוד לפני שהבנייה מן הוורד הגיעה.
+     קריאת התור ושינוי סטטוס דורשים מפתח סודי שנשמר ב-Worker בלבד;
+     המנהל מזין אותו פעם אחת בכל מכשיר. מילת המנהל נשארת שער נוחות
+     להצגת כפתור העריכה בלבד. */
+  const SUGGEST_API='https://leokmei-suggest.m7654301.workers.dev';
+  const ADMKEY='lg-adm', SGOUT='lg-sgout-'+SLUG, TKEY2='lg-tomb-'+SLUG;
+  function admKey(){try{return localStorage.getItem(ADMKEY)||''}catch(e){return ''}}
+  async function api(path,opt){
+    const o=Object.assign({headers:{}},opt||{});
+    o.headers['content-type']='application/json; charset=utf-8';
+    const k=admKey();if(k)o.headers['x-admin-key']=k;
+    const r=await fetch(SUGGEST_API+path,o);
+    let j=null;try{j=await r.json()}catch(e){}
+    if(!r.ok||!j||!j.ok)throw new Error((j&&j.error)||('שגיאה '+r.status));
+    return j}
+  function toast(msg,ms){let h=$('#toast');
+    if(!h){h=document.createElement('div');h.className='hint';h.id='toast';document.body.appendChild(h)}
+    h.textContent=msg;clearTimeout(h.__t);h.__t=setTimeout(()=>h.remove(),ms||3200)}
 
-     SUGGEST_MAIL ריק בכוונה. כתובת דואר תיכנס לכאן רק כשבעל הפרויקט
-     ימסור אותה; עד אז כפתור הדואר אינו מוצג כלל, ואין להמציא כתובת. */
-  const SUGGEST_MAIL='';
-  const SKEY='lg-sg-'+SLUG;
-  let SG=[]; try{SG=JSON.parse(localStorage.getItem(SKEY)||'[]')}catch(e){SG=[]}
-  let PICK=false;
-  function saveSG(){try{localStorage.setItem(SKEY,JSON.stringify(SG))}catch(e){}}
+  /* ---- המבקר: הצע תיקון ---- */
+  let SG=[]; try{SG=JSON.parse(localStorage.getItem(SGOUT)||'[]')}catch(e){SG=[]}
+  let PICK=false, SGBUSY=false;
+  function saveSG(){try{localStorage.setItem(SGOUT,JSON.stringify(SG))}catch(e){}}
   function unitOf(el){const r=el.closest('.row');if(!r)return{daf:'',uid:''};
-    let x=r,daf='';while(x){const d=x.querySelector('.dafmark');if(d){daf=d.textContent;break}x=x.previousElementSibling}
+    let x=r,daf='';while(x){const d=x.querySelector('.dafmark');if(d){daf=d.dataset.daf||d.textContent;break}x=x.previousElementSibling}
     return {daf,uid:(r.id||'').replace(/^u/,'')}}
   function suggest(){
     const s=window.getSelection();
     const t=s&&String(s).trim();
     if(t&&s.rangeCount&&$('#flow').contains(s.getRangeAt(0).commonAncestorContainer)){
-      const el=(s.getRangeAt(0).commonAncestorContainer.nodeType===1
+      let el=(s.getRangeAt(0).commonAncestorContainer.nodeType===1
                 ?s.getRangeAt(0).commonAncestorContainer
                 :s.getRangeAt(0).commonAncestorContainer.parentElement);
+      el=(el.closest&&el.closest('[data-ek]'))||el;
       openSg(t,el);return}
     setPick(true)}
   function setPick(on){PICK=on;document.body.classList.toggle('pick',on);
@@ -1884,16 +2086,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!PICK)return;
     const el=e.target.closest('.main p, .anchor, .main.dh, .main.nose');
     if(!el)return;
-    e.preventDefault();setPick(false);openSg(el.textContent.trim(),el)});
+    e.preventDefault();setPick(false);openSg(txtOf(el).trim(),el)});
   function openSg(text,el){
     const u=unitOf(el);
     const m=document.createElement('div');m.className='modal';m.id='sgm';
     m.innerHTML='<div class="box"><h3>הצעת תיקון</h3>'+
-      '<div class="ref">'+esc(D.masechet)+(u.daf?' · דף '+esc(u.daf):'')+(u.uid?' · יחידה '+esc(u.uid):'')+'</div>'+
+      '<div class="ref">'+esc(D.masechet)+(u.daf?' · דף '+esc(u.daf):'')+'</div>'+
       '<div class="sel">'+esc(text)+'</div>'+
-      '<label for="sgn">מה להציע?</label><textarea id="sgn" placeholder="כתוב כאן את ההערה או את הנוסח המוצע"></textarea>'+
-      '<label for="sgw">שמך (לא חובה)</label><input id="sgw" value="'+esc(localStorage.getItem('lg-sg-name')||'')+'">'+
-      '<div class="btns"><button class="go" id="sgok">שמור את ההצעה</button>'+
+      '<label for="sgn">הנוסח המוצע, או ההערה</label><textarea id="sgn" maxlength="1900" placeholder="כתוב כאן את הנוסח המוצע במקום הקטע, או הערה"></textarea>'+
+      '<label for="sgw">שמך (לא חובה)</label><input id="sgw" maxlength="80" value="'+esc(localStorage.getItem('lg-sg-name')||'')+'">'+
+      '<input id="sgh" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0" aria-hidden="true">'+
+      '<div class="btns"><button class="go" id="sgok">שלח לעורך</button>'+
       '<button onclick="closeSg()">ביטול</button></div></div>';
     document.body.appendChild(m);
     m.addEventListener('click',e=>{if(e.target===m)closeSg()});
@@ -1901,40 +2104,189 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     $('#sgok').onclick=()=>{
       const note=$('#sgn').value.trim();
       if(!note){alert('כתוב מה להציע.');return}
+      if(/(https?:\/\/|www\.)/i.test(note)){alert('הצעה שיש בה קישור אינה מתקבלת.');return}
       const name=$('#sgw').value.trim();
       try{localStorage.setItem('lg-sg-name',name)}catch(e){}
-      SG.push({sel:text,note,name,daf:u.daf,uid:u.uid,t:Date.now()});
-      saveSG();closeSg();panel('sg');drawSg()};
+      const rec={slug:SLUG,masechet:D.masechet,daf:u.daf,uid:u.uid,k:(el&&el.dataset&&el.dataset.ek)||'',
+                 ctx:ctxOf(el),was:text,note,name,hp:$('#sgh').value,t:Date.now(),sent:0};
+      SG.push(rec);saveSG();closeSg();sgSend()};
   }
   function closeSg(){const m=$('#sgm');if(m)m.remove()}
+  async function sgSend(){
+    if(SGBUSY)return;SGBUSY=true;let ok=0,fail=0,why='';
+    for(const g of SG){
+      if(g.sent)continue;
+      try{const j=await api('/suggest',{method:'POST',body:JSON.stringify(g)});g.sent=1;g.id=j.id;ok++}
+      catch(e){why=e.message||'';if(/קישור|נדחה|מדי/.test(why)){g.sent=1;g.bad=why}else fail++}
+    }
+    saveSG();SGBUSY=false;
+    if(ok)toast('ההצעה נשלחה לעורך. תודה רבה.');
+    else if(fail)toast('אין חיבור כרגע. ההצעה נשמרה במכשיר ותישלח בטעינה הבאה.',4500);
+    else if(why)toast(why,4500);
+    drawSg()}
   function drawSg(){const box=$('#sgb');if(!box)return;
-    let h='<div class="edsum">'+SG.length+' הצעות שמורות במכשיר הזה.</div>';
-    SG.forEach((g,i)=>{h+='<div class="sgrow"><small>'+esc(g.daf||'')+'</small> <q>'+esc(g.sel.slice(0,80))+'</q>'+
-      '<b>'+esc(g.note)+'</b><button onclick="delSg('+i+')">מחק</button></div>'});
+    let h='';
+    SG.forEach((g,i)=>{h+='<div class="sgrow"><small>'+esc(g.daf||'')+' · '+new Date(g.t).toLocaleDateString('he-IL')+
+      ' · '+(g.bad?'<span style="color:#a83c2f">לא התקבלה: '+esc(g.bad)+'</span>':(g.sent?'נשלחה לעורך':'ממתינה לשליחה'))+'</small> <q>'+esc((g.was||'').slice(0,80))+'</q>'+
+      '<b>'+esc(g.note)+'</b></div>'});
     if(!SG.length)h='<div class="edsum">עדיין לא הצעת דבר. סמן טקסט בדף, ולחץ "הצע תיקון".</div>';
-    h+='<div style="margin-top:12px;display:flex;gap:7px;flex-wrap:wrap">'+
-       '<button id="sgcp" onclick="sgCopy()">העתק ללוח</button>'+
-       '<button onclick="sgDownload()">הורד לקובץ</button>'+
-       (SUGGEST_MAIL?'<button onclick="sgMail()">שלח בדואר</button>':'')+
-       '<button onclick="sgClear()">נקה הכל</button></div>';
+    else h+='<div style="margin-top:12px"><button onclick="sgClear()">נקה את הרשימה במכשיר</button></div>';
     box.innerHTML=h}
-  function delSg(i){SG.splice(i,1);saveSG();drawSg()}
-  function sgClear(){if(!confirm('למחוק את כל '+SG.length+' ההצעות?'))return;SG=[];saveSG();drawSg()}
-  function sgText(){let t='הצעות תיקון · '+D.masechet+' · לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n\n';
-    SG.forEach(g=>{t+='דף '+(g.daf||'-')+(g.uid?' · יחידה '+g.uid:'')+(g.name?' · '+g.name:'')+'\n';
-      t+='  הקטע: '+g.sel+'\n  ההצעה: '+g.note+'\n\n'});
-    return t}
-  function sgDownload(){const a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([sgText()],{type:'text/plain;charset=utf-8'}));
-    a.download='הצעות-'+D.masechet+'.txt';a.click()}
-  function sgCopy(){const t=sgText();const done=()=>{const b=$('#sgcp');b.textContent='הועתק ✓';setTimeout(()=>b.textContent='העתק ללוח',2200)};
-    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,fb);else fb();
-    function fb(){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
-      try{document.execCommand('copy');done()}catch(e){alert('לא הצלחתי להעתיק. השתמש בכפתור ההורדה.')}ta.remove()}}
-  function sgMail(){if(!SUGGEST_MAIL)return;
-    location.href='mailto:'+SUGGEST_MAIL+'?subject='+encodeURIComponent('הצעות תיקון · '+D.masechet)+
-      '&body='+encodeURIComponent(sgText().slice(0,1800))}
+  function sgClear(){if(SG.some(g=>!g.sent)&&!confirm('יש הצעה שטרם נשלחה. למחוק בכל זאת?'))return;SG=[];saveSG();drawSg()}
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(PICK)setPick(false);closeSg()}});
+  if(SG.some(g=>!g.sent))setTimeout(sgSend,2500);
+
+  /* ---- החלפת קטע בתוך HTML, בלי לאבד את סגנונות התו ---- */
+  function replaceInHTML(h,was,now){
+    const d=document.createElement('div');d.innerHTML=h;
+    const w=document.createTreeWalker(d,NodeFilter.SHOW_TEXT);const ns=[];let n;
+    while(n=w.nextNode())ns.push(n);
+    const full=ns.map(x=>x.nodeValue).join('');
+    const k=full.indexOf(was);if(k<0)return null;
+    let pos=0,first=true;
+    for(const x of ns){const L=x.nodeValue.length,a=pos,b=pos+L;pos=b;
+      if(b<=k||a>=k+was.length)continue;
+      const lo=Math.max(k-a,0),hi=Math.min(k+was.length-a,L);
+      x.nodeValue=x.nodeValue.slice(0,lo)+(first?now:'')+x.nodeValue.slice(hi);first=false}
+    d.normalize();return d.innerHTML}
+
+  /* ---- המנהל: תור ההצעות ---- */
+  let QQ=[],QQTOT=0,QQERR='',QQTIMER=null;
+  function slotsFull(){const out=[];
+    D.pages.forEach((p,pi)=>p.units.forEach(u=>{
+      const add=(kk,h,c)=>out.push({pi,daf:p.daf,id:u.id,k:'u'+u.id+kk,h,c:c||'',t:plain(h)});
+      if(u.k==='u'){ if(u.a)add('.0',u.a);
+        u.l.forEach((l,i)=>add('.'+(i+1),l[1],l[0])); }
+      else if(u.k==='m'){ u.l.forEach((l,i)=>add('.'+(i+1),l[1],l[0])); }
+      else if(u.k==='dh'||u.k==='nose'){ add('.0',u.a); }
+      if(u.k!=='u'&&u.w)add('.w',u.w);
+    }));
+    return out}
+  /* מאתר את השורה של הצעה: מפתח המקום תחילה, אחר כך היחידה, ולבסוף
+     ההקשר - ורק התאמה אחת ויחידה. לא אותרה - לעולם אינה נתלית בשורה
+     אחרת; היא עולה ל"הצעות שלא אותרו". */
+  function sqLocate(g,S){
+    const has=s=>s.t.indexOf(g.was)>-1||nonik(s.t).indexOf(nonik(g.was))>-1;
+    if(g.k){const s=S.find(x=>x.k===g.k);if(s&&has(s))return s}
+    if(g.uid){const c=S.filter(x=>String(x.id)===String(g.uid)&&has(x));if(c.length===1)return c[0]}
+    const k0=dafKey(g.daf);
+    let c=S.filter(x=>{const k=dafKey(x.daf);return (k0===null||k===null||Math.abs(k-k0)<=1)&&has(x)});
+    if(c.length>1&&g.ctx){const i=x=>S.indexOf(x);
+      c=c.filter(x=>{const p=S[i(x)-1],n=S[i(x)+1];
+        return (!g.ctx.b||(p&&p.t.slice(-40)===g.ctx.b))&&(!g.ctx.a||(n&&n.t.slice(0,40)===g.ctx.a))})}
+    return c.length===1?c[0]:null}
+  async function queueLoad(){
+    if(!isAdmin()||!admKey()){sqBadge();return}
+    try{const j=await api('/queue?slug='+SLUG);QQ=j.items||[];QQTOT=j.total||0;QQERR=''}
+    catch(e){QQERR=e.message||'שגיאה'}
+    sqBadge();sqMark();
+    if($('#sgq')&&$('#sgq').classList.contains('open'))drawSq()}
+  function sqBadge(){const b=$('#sqbtn');if(!b)return;
+    if(!isAdmin()){b.style.display='none';return}
+    b.style.display='';
+    b.textContent=admKey()?('הצעות ממתינות ('+QQ.length+(QQTOT>QQ.length?' · '+QQTOT+' בכל המסכתות':'')+')'):'הצעות ממתינות - הזן מפתח';
+    b.classList.toggle('on',QQ.length>0)}
+  function sqMark(){const f=$('#flow');if(!f)return;
+    f.querySelectorAll('.sgp').forEach(x=>x.classList.remove('sgp'));
+    if(!isAdmin()||!QQ.length)return;
+    const S=slotsFull();
+    for(const g of QQ){const s=sqLocate(g,S);if(!s)continue;
+      const el=f.querySelector('[data-ek="'+s.k+'"]');if(el)el.classList.add('sgp')}}
+  function sqOpen(){if(!admKey()){admKeyAsk();return}panel('sgq');drawSq();queueLoad()}
+  function drawSq(){const box=$('#sgqb');if(!box)return;
+    const S=slotsFull();let h='';
+    if(QQERR)h+='<div class="edsum" style="color:#a83c2f">לא ניתן לקרוא את התור: '+esc(QQERR)+'</div>';
+    const lost=[],ok=[];
+    QQ.forEach(g=>{const s=sqLocate(g,S);(s?ok:lost).push([g,s])});
+    if(lost.length){h+='<h3>הצעות שלא אותרו</h3>';
+      lost.forEach(([g])=>{h+=sqRow(g,null)})}
+    h+='<h3>'+ok.length+' הצעות ממתינות ב'+esc(D.masechet)+'</h3>';
+    if(!ok.length&&!lost.length)h+='<div class="edsum">אין הצעות ממתינות.</div>';
+    ok.forEach(([g,s])=>{h+=sqRow(g,s)});
+    box.innerHTML=h}
+  function sqRow(g,s){
+    const when=new Date(g.t).toLocaleString('he-IL');
+    const ctxH=s?esc(s.t).replace(esc(g.was),'<mark>'+esc(g.was)+'</mark>'):'';
+    return '<div class="sgrow'+(s?'':' edlost')+'" data-id="'+esc(g.id)+'">'+
+      '<small>'+esc(g.daf||'')+(g.name?' · '+esc(g.name):' · בלי שם')+' · '+when+'</small>'+
+      (s?'<div class="sqctx">'+ctxH+'</div>':'<q>'+esc(g.was.slice(0,120))+'</q><small>לא אותר בקובץ הנוכחי</small>')+
+      '<b>'+esc(g.note)+'</b>'+
+      (s?'<button onclick="sqDecide(\''+esc(g.id)+'\',\'accepted\')">קבל</button>'+
+         '<button onclick="sqDecide(\''+esc(g.id)+'\',\'edited\')">ערוך וקבל</button>'+
+         '<button onclick="sqJump(\''+esc(g.id)+'\')">הצג</button>':'')+
+      '<button onclick="sqDecide(\''+esc(g.id)+'\',\'rejected\')">דחה</button></div>'}
+  function sqJump(id){const g=QQ.find(x=>x.id===id);if(!g)return;const s=sqLocate(g,slotsFull());if(s)jump(s.pi,s.id)}
+  async function sqDecide(id,st){
+    const g=QQ.find(x=>x.id===id);if(!g)return;
+    let edit=null,now='';
+    if(st!=='rejected'){
+      const s=sqLocate(g,slotsFull());
+      if(!s){alert('ההצעה לא אותרה בקובץ הנוכחי ואי אפשר להחיל אותה.');return}
+      now=g.note;
+      if(st==='edited'){const v=prompt('הנוסח שייכנס במקום הקטע המסומן:',g.note);if(v===null)return;now=v.trim();if(!now)return}
+      /* נקודת המוצא היא הנוסח שעל המסך: אם השורה כבר נערכה, ההצעה
+         חלה על הנוסח המתוקן, ו"הנוסח שהיה" נשאר זה שבוורד. */
+      const old=ED.find(x=>x.k===s.k);
+      const curT=old?old.now:s.t, curH=old?(old.nowH!==undefined?old.nowH:esc(old.now)):s.h;
+      const wasT=old?old.was:s.t, wasH=old?(old.wasH!==undefined?old.wasH:s.h):s.h;
+      if(curT.indexOf(g.was)<0){alert('הקטע שהוצע עליו התיקון כבר אינו בשורה הזאת.');return}
+      const nowH=replaceInHTML(curH,g.was,now);
+      const nowT=curT.replace(g.was,now);
+      const cls=(s.c||'').split(' ').filter(c=>PCLS.indexOf(c)>-1).join(' ');
+      edit={k:s.k,was:wasT,now:nowT,wasH,nowH:nowH!==null?nowH:esc(nowT),wasP:old?old.wasP:cls,
+            daf:s.daf,ctx:{b:'',a:''},t:Date.now(),pub:0,by:'הצעה מהאתר'+(g.name?' - '+g.name:''),sg:g.id};
+      if(old&&old.ps!==undefined){edit.ps=old.ps;edit.psw=old.psw}
+      if(old)ED=ED.filter(x=>x!==old);
+      ED.push(edit);saveED();
+    }
+    try{await api('/decide',{method:'POST',body:JSON.stringify({id,st,now,edit,sty:D.sty})})}
+    catch(e){alert('ההכרעה לא נרשמה: '+e.message);return}
+    QQ=QQ.filter(x=>x.id!==id);QQTOT=Math.max(0,QQTOT-1);
+    if(edit){render(cur);drawEd();pubSoon();syncSoon();toast('התיקון הוחל.')}
+    else toast('ההצעה נדחתה ועברה לארכיון.');
+    sqBadge();drawSq()}
+  function admKeyAsk(){
+    const v=prompt('מפתח המנהל של לאוקמי גירסא.\n\nהדבק כאן את המפתח. הוא נשמר רק בדפדפן הזה.\nלהסרה - מחק את התוכן ולחץ אישור.',admKey());
+    if(v===null)return;
+    try{if(v.trim())localStorage.setItem(ADMKEY,v.trim());else localStorage.removeItem(ADMKEY)}catch(e){}
+    if(v.trim()){try{localStorage.setItem(AKEY,'1')}catch(e){}netInit(true)}
+    sqBadge()}
+
+  /* ---- סנכרון עריכות המנהל בין מכשירים ---- */
+  let TOMB=[]; try{TOMB=JSON.parse(localStorage.getItem(TKEY2)||'[]')}catch(e){TOMB=[]}
+  let SYNCT=null,SYNCBUSY=false,EDRO=false;
+  function tomb(k){TOMB.push({k,del:1,t:Date.now()});TOMB=TOMB.slice(-300);try{localStorage.setItem(TKEY2,JSON.stringify(TOMB))}catch(e){}}
+  /* שינוי מבנה (פיצול/איחוי) אין לו מפתח מקום, ומפתחו לסנכרון נגזר מזמנו */
+  function edKeys(){ED.forEach(e=>{if(e.op==='struct'&&!e.k)e.k='s'+e.t})}
+  function edOut(){edKeys();return ED.filter(e=>!e.lost).map(e=>e.op==='struct'
+      ? {k:e.k,op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,daf:e.daf,t:e.t,by:e.by}
+      : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
+         ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t,by:e.by,sg:e.sg}).concat(TOMB)}
+  function mergeIn(list){edKeys();let changed=false;const by={};ED.forEach(e=>by[e.k]=e);
+    for(const e of list||[]){const o=by[e.k];
+      if(e.del){if(o&&(o.t||0)<=(e.t||0)){ED=ED.filter(x=>x!==o);delete by[e.k];changed=true}continue}
+      if(!o||(o.t||0)<(e.t||0)){const n=Object.assign({pub:o?o.pub:1},e);if(o)ED[ED.indexOf(o)]=n;else ED.push(n);by[e.k]=n;changed=true}
+      else if(e.ing&&!o.ing){o.ing=e.ing}}
+    if(changed)saveED();return changed}
+  function syncSoon(){clearTimeout(SYNCT);SYNCT=setTimeout(syncNow,1500)}
+  async function syncNow(){
+    if(!isAdmin()||!admKey()||SYNCBUSY)return;SYNCBUSY=true;
+    try{const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty})});
+      if(mergeIn(j.doc&&j.doc.edits)){if(typeof applyStruct==='function')applyStruct();render(cur)}}
+    catch(e){}
+    SYNCBUSY=false}
+  /* ---- בטעינה: המנהל מושך את התור ואת העריכות; הלומד מקבל את מה
+     שהתקבל ---- */
+  async function netInit(force){
+    if(isAdmin()&&admKey()){
+      await syncNow();queueLoad();
+      clearInterval(QQTIMER);QQTIMER=setInterval(queueLoad,60000);
+      return}
+    if(isAdmin())return;
+    try{const j=await api('/live?slug='+SLUG);const L=(j.doc&&j.doc.edits)||[];
+      if(L.length){EDRO=true;ED=L.map(e=>Object.assign({pub:1},e));
+        if(typeof applyStruct==='function')applyStruct();render(cur)}}
+    catch(e){}}
 
   /* =================== "מקור": הגמרא המנוקדת ===================
      המזהה של המקטע נכתב לדף בזמן הבנייה; הטקסט עצמו יושב בקובץ נפרד
@@ -2047,15 +2399,65 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
          השורות, שכולל את המרווח שביניהן. */
       const main=r.querySelector(':scope > .main');
       const ps=main?[...main.querySelectorAll(':scope > p')]:[];
-      const lh=parseFloat(getComputedStyle(r).getPropertyValue('--lhpx'))||
-               parseFloat(getComputedStyle(r).lineHeight)||18;
+      const lh=lhOf(r);
       return {h:b.height, top:b.top-box.top,
               lines:main?Math.max(main.textContent.trim()?1:0,Math.round(main.getBoundingClientRect().height/lh)):0,
               pt:ps.map(x=>x.getBoundingClientRect().top-b.top)};});
-    for(let i=0;i<out.length;i++)
+    for(let i=0;i<out.length;i++){
       out[i].h=(i+1<out.length?out[i+1].top:box.height)-out[i].top;
-    g.innerHTML='';
+      out[i].el=rows[i];out[i].box=box.top;}
+    /* הסרגל אינו מתרוקן כאן: החיתוך בין שורות (ג) זקוק לאלמנטים
+       המדודים. הוא מתרוקן בסוף העימוד. */
     return out}
+  function gaugeClear(){const g=$('#gauge');if(g)g.innerHTML=''}
+  /* ---- ג: חיתוך פסקה בין שורות ----
+     הכרעת בעל הפרויקט: כמו בוורד. פסקה ארוכה רשאית להישבר בין עמודים,
+     רק בין שורות, ולפחות שתי שורות בכל צד; והכותרת נשארת עם שתי
+     השורות הראשונות של הפסקה. מקומן של השורות נמדד בסרגל, ונקודת
+     החיתוך היא תחילת השורה הראשונה שאינה נכנסת - נמצאת בחיפוש בינארי
+     על היסט התו, ולא בניחוש. שני החלקים נבנים ב-Range.cloneContents,
+     ולכן סגנון תו שנחצה נסגר ונפתח מחדש כדין. */
+  function lineTops(p){
+    const w=document.createTreeWalker(p,NodeFilter.SHOW_TEXT);const ns=[];let n;
+    while(n=w.nextNode())if(n.nodeValue.trim())ns.push(n);
+    const r=document.createRange();const raw=[];
+    for(const x of ns){r.selectNodeContents(x);for(const b of r.getClientRects())if(b.height>0.5&&b.width>0.05)raw.push(b)}
+    raw.sort((a,b)=>a.top-b.top);
+    const L=[];for(const b of raw){const last=L[L.length-1];
+      if(last&&Math.abs(b.top-last.top)<=Math.max(2,last.h*0.4)){last.top=Math.min(last.top,b.top);last.bottom=Math.max(last.bottom,b.bottom);last.h=last.bottom-last.top}
+      else L.push({top:b.top,bottom:b.bottom,h:b.bottom-b.top})}
+    return {ns,L}}
+  function lineSplit(pEl,rowTop,room){
+    if(!pEl||pEl.classList.contains('hatz'))return null;
+    const {ns,L}=lineTops(pEl);
+    if(L.length<4)return null;
+    let nfit=0;for(const l of L){if(l.bottom-rowTop<=room+0.5)nfit++;else break}
+    if(nfit<2||L.length-nfit<2)return null;
+    const lineTop=L[nfit].top;
+    /* היסט התו הראשון שראשו בשורה שאינה נכנסת */
+    const lens=ns.map(x=>x.nodeValue.length);const total=lens.reduce((a,b)=>a+b,0);
+    const r=document.createRange();
+    function at(off){let o=off;for(let i=0;i<ns.length;i++){if(o<lens[i]){return [ns[i],o]}o-=lens[i]}return [ns[ns.length-1],lens[lens.length-1]]}
+    function topAt(off){const [nd,o]=at(off);if(o>=nd.nodeValue.length)return Infinity;
+      r.setStart(nd,o);r.setEnd(nd,o+1);const b=r.getBoundingClientRect();return b.height?b.top:null}
+    let lo=0,hi=total-1;
+    while(lo<hi){const mid=(lo+hi)>>1;const t=topAt(mid);
+      if(t===null||t<lineTop-1)lo=mid+1;else hi=mid}
+    let off=lo;
+    /* רווח בתפר אינו נשאר בראש החלק השני */
+    const [nd0,o0]=at(off);
+    const first=nd0.nodeValue.charAt(o0);
+    if(!first.trim()){off++}
+    if(off<=0||off>=total)return null;
+    const [na,oa]=at(off);
+    const ra=document.createRange();ra.setStart(pEl,0);ra.setEnd(na,oa);
+    const rb=document.createRange();rb.setStart(na,oa);rb.setEnd(pEl,pEl.childNodes.length);
+    const da=document.createElement('div');da.appendChild(ra.cloneContents());
+    const db=document.createElement('div');db.appendChild(rb.cloneContents());
+    da.querySelectorAll('.srcb').forEach(x=>x.remove());db.querySelectorAll('.srcb').forEach(x=>x.remove());
+    const aH=lineTop-rowTop;
+    return {a:da.innerHTML.replace(/\s+$/,''),b:db.innerHTML.replace(/^\s+/,''),aH,aLines:nfit,bLines:L.length-nfit}}
+  function noMargin(cls,which){return (cls||'').split(' ').filter(c=>!(c.length===2&&c[0]===which&&/\d/.test(c[1]))).join(' ')}
 
   /* ---- ד4: עימוד זהיר ----
      כותרת לעולם אינה הפריט האחרון בעמוד, ציון דף אינו עומד לבדו
@@ -2065,14 +2467,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* כותרת שהתוכן שלה בא אחריה. 'הדרן' אינו כאן: הוא סיום פרק ואין
      אחריו דבר. 'פרק שם' ו'דפים בפרק' שייכים לגוש פתיחת הפרק, וגוש זה
      נשמר יחד ממילא מפני ש'פרק' פותח עמוד חדש. */
-  const HEADK=['nose','dh','perek-num'];
+  /* א8: גם החציצה נצמדת לפסקה שאחריה ואינה נשארת לבדה בתחתית העמוד */
+  const HEADK=['nose','dh','perek-num','hatz'];
   const isHead=u=>HEADK.indexOf(u.k)>-1||(!u.lines&&u.daf);
   function paginate(units){
     const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
     /* גובה הטקסט נטו בעמוד: 115 מ"מ, והכותרת הרצה כבר מחוץ לו */
     const H=39.79*fs;
     const m=measureRows(units.map(u=>u.html).join(''));
-    units.forEach((u,i)=>{u.h=m[i]?m[i].h:0;u.lines=m[i]?m[i].lines:0;u.pt=m[i]?m[i].pt:[]});
+    units.forEach((u,i)=>{u.h=m[i]?m[i].h:0;u.lines=m[i]?m[i].lines:0;u.pt=m[i]?m[i].pt:[];u.el=m[i]?m[i].el:null});
 
     const sheets=[];let cur=[],h=0;
     const push=()=>{if(cur.length){sheets.push(cur);cur=[];h=0}};
@@ -2118,24 +2521,65 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       cur.push(u);h+=u.h;
     }
     push();
+    gaugeClear();
     return sheets;
   }
   /* חותך יחידה בגובה 'room': מחזיר שתי יחידות, או null אם אין חיתוך
-     חוקי. הפסקאות נמדדו מראש, ולכן אין כאן פריסה נוספת. סמני הצד
-     נשארים עם החלק הראשון. */
+     חוקי. סמני הצד נשארים עם החלק הראשון.
+     ג: קודם ניסיון לחתוך בתוך הפסקה שנחצית, בין שורות, עם שתי שורות
+     לפחות בכל צד (כמו בוורד); ואם אי אפשר - בין פסקאות, כמקודם.
+     חלק שנחתך פעם ומצריך חיתוך נוסף (יחידה ארוכה משני עמודים) נמדד
+     מחדש בסרגל נפרד, ולא מנוחש. */
+  function remeasure(u){
+    let g=$('#gauge2');
+    if(!g){g=document.createElement('div');g.id='gauge2';g.className='flow book';
+      g.style.cssText=$('#gauge').style.cssText+';display:block;height:auto;width:auto;padding:0;position:fixed;top:0;left:0;visibility:hidden;pointer-events:none;z-index:-1';
+      document.body.appendChild(g)}
+    g.innerHTML='<div class="sheet" style="height:auto;box-shadow:none;border:0;padding:0"><div class="shbody">'+u.html+'</div></div>';
+    const body=g.querySelector('.shbody');const r=body.firstElementChild;if(!r)return;
+    const b=r.getBoundingClientRect();const main=r.querySelector(':scope > .main');
+    const ps=main?[...main.querySelectorAll(':scope > p')]:[];
+    const lh=lhOf(r);
+    u.el=r;u.box=b.top;u.h=body.getBoundingClientRect().height;
+    u.lines=main?Math.max(main.textContent.trim()?1:0,Math.round(main.getBoundingClientRect().height/lh)):0;
+    u.pt=ps.map(x=>x.getBoundingClientRect().top-b.top)}
   function splitAt(u,room){
-    if(!u.u||!u.u.l||u.u.l.length<2||!u.pt||u.pt.length<2)return null;
+    if(!u.u||!u.u.l||!u.pt||!u.pt.length)return null;
+    if(!u.el||!u.el.isConnected)remeasure(u);
     const lh=u.h/Math.max(1,u.lines);
-    let k=0;
-    for(let n=1;n<u.pt.length;n++){if(u.pt[n]<=room)k=n;else break}
-    if(!k)return null;
-    if(u.pt[k]<2*lh||u.h-u.pt[k]<2*lh)return null;
-    const A=Object.assign({},u,{u:Object.assign({},u.u,{l:u.u.l.slice(0,k)})});
-    const B=Object.assign({},u,{u:Object.assign({},u.u,{l:u.u.l.slice(k),a:'',w:''})});
+    const NKL=(NK&&!EDIT&&u.u.lv)?u.u.lv:u.u.l;
+    /* הפסקה שנחצית בגבול העמוד */
+    let k=-1;for(let n=0;n<u.pt.length;n++){if(u.pt[n]<room-0.5)k=n;else break}
+    if(k<0)return null;
+    const rowTop=u.el?u.el.getBoundingClientRect().top:null;
+    const ps=u.el?u.el.querySelectorAll(':scope > .main > p'):[];
+    const ls=(u.el&&ps[k]&&u.k!=='hatz')?lineSplit(ps[k],rowTop,room):null;
+    if(ls){
+      const cls=NKL[k][0]||'';
+      const la=NKL.slice(0,k).concat([[noMargin(cls,'a'),ls.a]]);
+      const lb=[[noMargin(cls,'b'),ls.b]].concat(NKL.slice(k+1));
+      const A=Object.assign({},u,{u:Object.assign({},u.u,{l:la,lv:la,ref:undefined})});
+      const B=Object.assign({},u,{u:Object.assign({},u.u,{l:lb,lv:lb,a:'',w:''})});
+      A.html=unitHTML(A.u,A.daf0,A.pi0); A.h=ls.aH; A.lines=(k?Math.round(u.pt[k]/lh):0)+ls.aLines;
+      A.pt=u.pt.slice(0,k+1); A.el=null;
+      B.html=unitHTML(B.u,null,null); B.h=u.h-ls.aH; B.lines=Math.max(1,Math.round(B.h/lh));
+      B.daf0=null;B.pi0=null;B.split=1;B.el=null;
+      B.pt=[0].concat(u.pt.slice(k+1).map(x=>x-ls.aH));
+      return [A,B];
+    }
+    /* חיתוך בין פסקאות: לפני הפסקה k, אם משני צדדיה שתי שורות לפחות.
+       אם החלק שאחרי k קצר משתי שורות - מקדימים את החיתוך לפסקה
+       קודמת, ולא מוותרים: ויתור השאיר יחידה ארוכה מעמוד שלם כמות
+       שהיא, והיא גלשה מן הגיליון (נמדד בהוריות). */
+    if(u.u.l.length<2)return null;
+    while(k>=1&&(u.pt[k]<2*lh||u.h-u.pt[k]<2*lh))k--;
+    if(k<1)return null;
+    const A=Object.assign({},u,{u:Object.assign({},u.u,{l:NKL.slice(0,k),lv:NKL.slice(0,k),ref:undefined})});
+    const B=Object.assign({},u,{u:Object.assign({},u.u,{l:NKL.slice(k),lv:NKL.slice(k),a:'',w:''})});
     A.html=unitHTML(A.u,A.daf0,A.pi0); A.h=u.pt[k];
-    A.lines=Math.max(1,Math.round(A.h/lh)); A.pt=u.pt.slice(0,k);
+    A.lines=Math.max(1,Math.round(A.h/lh)); A.pt=u.pt.slice(0,k); A.el=null;
     B.html=unitHTML(B.u,null,null);    B.h=u.h-u.pt[k];
-    B.lines=Math.max(1,Math.round(B.h/lh)); B.daf0=null; B.pi0=null; B.split=1;
+    B.lines=Math.max(1,Math.round(B.h/lh)); B.daf0=null; B.pi0=null; B.split=1; B.el=null;
     B.pt=u.pt.slice(k).map(x=>x-u.pt[k]);
     return [A,B];
   }
@@ -2143,17 +2587,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* אוספים את היחידות עם ההקשר שלהן: דף נוכחי ונושא נוכחי */
     const units=[];let nose='';
     for(let pi=from;pi<=to;pi++){const p=D.pages[pi];
-      if(!p.units.length){units.push({html:`<div class="row"><div class="rail"><b class="dafmark" id="d${pi}">${esc(p.daf)}</b></div><div class="main"></div></div>`,daf:p.daf,nose,k:'daf'});continue}
+      if(!p.units.length)continue;   /* ב1: עמוד בלי טקסט כבר צורף לטווח בבנייה */
       let first=true;
       for(const u of p.units){
         if(u.k==='nose')nose=dec(u.a.replace(/<[^>]+>/g,''));
-        units.push({html:unitHTML(u,first?p.daf:null,first?pi:null),daf:p.daf,nose,
+        units.push({html:unitHTML(u,first?p.daf:null,first?pi:null),daf:p.daf,label:p.label||'',nose,
                     k:u.k,u:u,daf0:first?p.daf:null,pi0:first?pi:null});
         first=false}}
     if(!units.length)return '';
     const sheets=paginate(units);
     return sheets.map(sh=>{
-      const d=sh[0].daf||'', n=sh[0].nose||'';
+      const d=sh[0].label||sh[0].daf||'', n=sh[0].nose||'';
       return '<div class="sheet"><div class="shhd"><span class="nm">'+esc(D.masechet)+'</span>'+
         (n?'<span>· '+esc(n.slice(0,42))+'</span>':'')+
         '<span class="sp"></span><span class="df">'+esc(d)+'</span></div>'+
@@ -2196,18 +2640,23 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר">הדפס פרק</button>
   <button id="edbtn" onclick="askAdmin()" title="עריכה תוך כדי לימוד (Ctrl+Alt+E)">עריכה</button>
   <button onclick="suggest()" title="סמן טקסט בדף, או לחץ כאן ובחר קטע">הצע תיקון</button>
-  <button onclick="panel('sg');drawSg()">ההצעות שלי</button></div>
+  <button onclick="panel('sg');drawSg()">ההצעות שלי</button>
+  <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך">הצעות ממתינות</button></div>
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
   <div class="panel" id="toc"><button class="x" onclick="panel('toc')">×</button><h3>תוכן העניינים - נושאי הסוגיות</h3><div id="tocb"></div></div>
   <div class="panel" id="am"><button class="x" onclick="panel('am')">×</button><h3>אמוראים ותנאים - לפי הסימון בקובץ</h3><div id="amb"></div></div>
   <div class="panel" id="qa"><button class="x" onclick="panel('qa')">×</button><h3>בקרת הקובץ - חריגות שנמצאו בהמרה</h3><div id="qab"></div></div>
   <div class="panel" id="ed"><button class="x" onclick="panel('ed')">×</button><h3>העריכות שלי</h3><div id="edb"></div></div>
   <div class="panel" id="sg"><button class="x" onclick="panel('sg')">×</button><h3>ההצעות שלי</h3><div id="sgb"></div></div>
+  <div class="panel" id="sgq"><button class="x" onclick="panel('sgq')">×</button><h3>הצעות תיקון ממתינות</h3><div id="sgqb"></div></div>
   <div class="flow" id="flow"></div>
   <script>const DATA={J},SLUG="{slug}";</script><script>{JS}</script></body></html>'''
 
   open(out_path,'w',encoding='utf-8').write(page)
-  return {'pages':len(pages),'toc':n_nose,'qa':qa,'empty':n_empty,'heavy':heavy}
+  return {'pages':len(pages),'toc':n_nose,'qa':qa,'empty':n_empty,'heavy':heavy,
+          'hatz':hz_stat,
+          'joined':{'dafRange':n_range,'dafTail':n_tail_daf,'dafIndex':n_index_daf,'dafDup':n_dup_daf,
+                    'winStack':n_stack,'winDrop':n_stack_drop,'winTail':n_tail_win,'hatzDup':n_hatz_dup}}
 
 if __name__=='__main__':
   r=build(sys.argv[1],sys.argv[2],sys.argv[3]); print(r['pages'],'pages',len(r['qa']),'qa')

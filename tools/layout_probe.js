@@ -364,26 +364,45 @@
       for (j = 0; j < mlines.length; j++) { /* noop - נבדק על הפסקה עצמה */ }
       var paras = main.querySelectorAll('p');
       var plist = paras.length ? paras : [main];
+      /* יחידה בלי טקסט כלל היא שורה ריקה בדף (ב: ציון דף או חלון שאין
+         תחתיהם טקסט). אחרי המנה אין כאלה. */
+      if (!main.textContent.replace(/‏/g, '').trim())
+        add(2, row, 'יחידה ריקה - אין בה טקסט' +
+            (row.querySelector('.dafmark') ? ' (ציון דף: ' + row.querySelector('.dafmark').textContent.trim() + ')' : '') +
+            (row.querySelector('.anchor') ? ' (חלון: ' + row.querySelector('.anchor').textContent.trim().slice(0, 20) + ')' : ''));
       for (j = 0; j < plist.length; j++) {
+        var isHz = kind === 'hatz' || plist[j].classList.contains('hatz');
         var pt = plist[j].textContent.replace(/‏/g, '').trim();
-        if (pt && PUNCT_ONLY.test(pt) && kind !== 'hatz')
+        if (pt && PUNCT_ONLY.test(pt) && !isHz)
           add(6, row, 'שורה שכל תוכנה פיסוק: [' + pt.slice(0, 20) + ']');
-        if (kind !== 'hatz' && /\*\s*\*\s*\*/.test(pt))
-          add(6, row, 'כוכביות בתוך טקסט רגיל, שלא הפכו לעיטור');
-      }
-      /* עיטור הכוכביות: אם שרשרת הליגטורות לא פעלה, רוחב הטקסט שווה
-         לרוחב כוכבית אחת כפול מספרן. */
-      if (kind === 'hatz') {
-        var ht = main.textContent.trim();
-        if (ht && /^[*\s]+$/.test(ht)) {
-          var nst = (ht.match(/\*/g) || []).length;
-          var ms = getComputedStyle(main);
+        /* פסקה שכולה כוכביות ואינה חציצה - פגם; כוכבית בתוך טקסט - מידע
+           לבקרה בלבד (א6), ולכן סוג נפרד. */
+        if (!isHz && /^[*\s∗⁎٭✱＊ ]+$/.test(pt))
+          add(6, row, 'פסקה שכולה כוכביות מוצגת ככוכביות ולא כעיטור');
+        else if (!isHz && /[*∗⁎٭✱＊]/.test(pt))
+          add(11, row, 'כוכבית בתוך שורת טקסט (לא נגעה, לבקרה בלבד)');
+        /* עיטור החציצה: חייב להיות העיטור של סוכה - שלוש כוכביות שגופן
+           וילנא הופך לעיטור האמצעי. הרוחב נמדד מול רוחב העיטור בגופן
+           שבפועל; כוכביות גולמיות רחבות ממנו בהרבה, ותו חסר צר ממנו. */
+        if (isHz) {
+          var hz = plist[j];
+          var ms = getComputedStyle(hz);
           ctx.font = ms.fontStyle + ' ' + ms.fontWeight + ' ' + ms.fontSize + ' ' + ms.fontFamily;
-          var one = ctx.measureText('*').width;
-          var got = main.getBoundingClientRect().width;
-          if (nst > 1 && one > 0 && Math.abs(got - one * nst) < one * 0.25)
-            add(6, row, nst + ' כוכביות מוצגות ככוכביות ולא כעיטור (רוחב ' +
-                        got.toFixed(1) + ' מול ' + (one * nst).toFixed(1) + ')');
+          var ref = ctx.measureText('***').width;
+          var raw = ctx.measureText('*').width * 3;
+          var rg = document.createRange(); rg.selectNodeContents(hz);
+          var hb = rg.getBoundingClientRect();
+          var got = hb.width;
+          var fam0 = fam(ms);
+          if (pt !== '***')
+            add(6, row, 'חציצה שאינה שלוש כוכביות: [' + pt.slice(0, 12) + ']');
+          else if (fam0 !== 'Vilna' || ms.fontWeight !== '900')
+            add(6, row, 'חציצה בגופן ' + fam0 + ' משקל ' + ms.fontWeight + ' ולא וילנא 900');
+          else if (Math.abs(ref - raw) < 0.5)
+            add(6, row, 'ליגטורת העיטור אינה פעילה בגופן: רוחב *** ' + ref.toFixed(1) + ' = שלוש כוכביות');
+          else if (Math.abs(got - ref) > ref * 0.15)
+            add(6, row, 'החציצה אינה ברוחב העיטור: ' + got.toFixed(1) + ' מול ' + ref.toFixed(1),
+                { got: got, ref: ref });
         }
       }
 
@@ -471,6 +490,32 @@
 
     /* --- 9. ניתוק בעמוד (רק כשיש גיליונות) --- */
     var sheets = flow.querySelectorAll('.sheet');
+    /* כותרת שאין אחריה תוכן כלל עד סוף הפרק (למשל "הדרן עלך" בסגנון
+       נושא או ד"ה, וחציצה שלפניו) אינה כותרת יתומה: אין לה מה להיצמד
+       אליו. נמדד: אלה היו רוב ממצאי סוג 9 אחרי המנה. */
+    var flatRows = [];
+    for (i = 0; i < sheets.length; i++) {
+      var sb0 = sheets[i].querySelector('.shbody');
+      if (!sb0) continue;
+      for (j = 0; j < sb0.children.length; j++) flatRows.push({ el: sb0.children[j], sheet: i });
+    }
+    function hasContentAfter(el) {
+      var f = -1;
+      for (var q = 0; q < flatRows.length; q++) if (flatRows[q].el === el) { f = q; break; }
+      if (f < 0) return true;
+      var HEADS0 = ['nose', 'dh', 'perek-num', 'hatz'];
+      for (var q2 = f + 1; q2 < flatRows.length; q2++) {
+        var kq = kindOf(flatRows[q2].el);
+        if (kq === 'perek-num' || PEREK.indexOf(kq) > -1) return false;   /* פרק חדש - הקודם נגמר */
+        if (HEADS0.indexOf(kq) > -1) continue;
+        var mq = flatRows[q2].el.querySelector(':scope > .main');
+        var tq = mq ? mq.textContent.replace(/‏/g, '').trim() : '';
+        /* "הדרן עלך" בסגנון גוף הוא סיום הפרק, לא תוכן שהכותרת מבטיחה */
+        if (/^הדרן\s+עלך/.test(tq)) return false;
+        if (tq) return true;
+      }
+      return false;
+    }
     for (i = 0; i < sheets.length; i++) {
       var body = sheets[i].querySelector('.shbody');
       if (!body) continue;
@@ -489,11 +534,11 @@
         var lk = kindOf(last);
         /* 'הדרן' הוא סיום פרק ואין אחריו דבר; 'פרק שם' ו'דפים בפרק'
            שייכים לגוש פתיחת הפרק, שנשמר יחד ממילא. */
-        var HEADS = ['nose', 'dh', 'perek-num'];
+        var HEADS = ['nose', 'dh', 'perek-num', 'hatz'];
         var isHead = HEADS.indexOf(lk) > -1;
         var lm = last.querySelector(':scope > .main');
         var nLines = lm ? lineBoxes(lm).length : 0;
-        if (isHead && lk !== 'mishna')
+        if (isHead && lk !== 'mishna' && hasContentAfter(last))
           add(9, last, 'כותרת (' + lk + ') היא הפריט האחרון בגיליון ' + (i + 1) +
                        ', והתוכן שלה בגיליון הבא');
         if (lm && !lm.textContent.trim() && last.querySelector('.dafmark'))
@@ -502,13 +547,31 @@
         for (j = 0; j < srows.length; j++) {
           var kk = kindOf(srows[j]);
           if (HEADS.indexOf(kk) === -1) continue;
-          var after = 0;
+          /* סופרים את שורות התוכן שאחרי הכותרת באותו גיליון. אם לפני
+             שנמצאו שתי שורות באה כותרת אחרת - התוכן של הכותרת הזאת
+             קצר משתי שורות וכולו כאן, ואין ממצא. */
+          var after = 0, closed = false;
           for (k = j + 1; k <= lastIdx; k++) {
+            var kk2 = kindOf(srows[k]);
+            if (HEADS.indexOf(kk2) > -1 || PEREK.indexOf(kk2) > -1) { closed = true; break; }
             var am = srows[k].querySelector(':scope > .main');
             if (am) after += lineBoxes(am).length;
             if (after >= 2) break;
           }
-          if (after < 2)
+          /* הגיליון נגמר לפני שתי שורות: ממצא רק אם התוכן של הכותרת
+             ממשיך בראש הגיליון הבא (השורה הראשונה שם אינה כותרת). */
+          var contNext = false;
+          if (after < 2 && !closed) {
+            var nb = sheets[i + 1] ? sheets[i + 1].querySelector('.shbody') : null;
+            var first = nb && nb.children.length ? nb.children[0] : null;
+            if (first) {
+              var kf = kindOf(first);
+              var mf = first.querySelector(':scope > .main');
+              var tf = mf ? mf.textContent.replace(/‏/g, '').trim() : '';
+              contNext = HEADS.indexOf(kf) < 0 && PEREK.indexOf(kf) < 0 && !!tf && !/^הדרן\s+עלך/.test(tf);
+            }
+          }
+          if (after < 2 && !closed && contNext)
             add(9, srows[j], 'לכותרת (' + kk + ') אין שתי שורות טקסט אחריה בגיליון ' + (i + 1));
         }
       }

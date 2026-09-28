@@ -37,12 +37,16 @@ CODES = {
     8: 'יחס-כותרת',
     9: 'ניתוק-בעמוד',
     10: 'ניקוד-חופף',
+    11: 'כוכבית-בשורה',      # מידע לבקרה בלבד (א6): כוכבית בתוך טקסט, לא נגעה
 }
 MODES = {'flow': 'זרימה', 'book': 'תצוגת ספר', 'print': 'הדפסה', 'phone': 'טלפון'}
 # בטלפון המסילה יושבת מעל הטקסט ולא לצדו, ורשת השורות היא אחרת מטבעה
 # (כל יחידה פותחת בשורת מסילה). לכן רק שני הסוגים שאינם תלויים בפריסה
 # נבדקים שם: סימן בלי טעם, וגלישה - שהיא הפגם שהלומד מרגיש ראשון בטלפון.
 PHONE_SKIP = {1, 2, 3, 4, 5, 8, 9}
+# יחידה ריקה (ב) היא פגם בכל מצב, גם בטלפון, ולכן אינה מסוננת שם
+def phone_keep(f):
+    return f['code'] not in PHONE_SKIP or (f['code'] == 2 and str(f.get('msg', '')).startswith('יחידה ריקה'))
 
 # שם משפחת הגופן ב-CSS ומשקלו, אל קובץ הגופן שבאתר. ההתאמה נדרשת
 # לבדיקת הגליפים: אות שאינה ב-cmap של הגופן הראשון נופלת לגופן חלופי,
@@ -234,16 +238,19 @@ def run(args):
                     info = pg.evaluate('(i)=>__lgSecInfo(i)', si)
                     pg.evaluate('(i)=>__lgRender(i)', si)
                     pg.wait_for_timeout(250)
-                    for _ in range(24):
+                    # האיחוי רץ במסגרות-ציור, ובמקטע של 700 פסקאות הוא
+                    # נמשך שניות רבות בדפדפן ללא ראש. מדידה באמצעו תפסה
+                    # פסקה שכבר אוחתה לפני שהמסילה שלה הותאמה (נמדד
+                    # בפסחים קט.), ולכן ממתינים עד שיסתיים - עד 40 שניות.
+                    for _ in range(320):
                         if pg.evaluate('__lgSqDone()'):
                             break
-                        pg.wait_for_timeout(120)
+                        pg.wait_for_timeout(125)
                     pg.wait_for_timeout(150)
                     r = pg.evaluate('(c)=>__lgAudit(c)',
                                     {'roleSpacing': spacing, 'bodyPt': 9})
                     if mode == 'phone':
-                        r['findings'] = [f for f in r['findings']
-                                         if f['code'] not in PHONE_SKIP]
+                        r['findings'] = [f for f in r['findings'] if phone_keep(f)]
                     if heads is None:
                         heads, lh = r.get('heads'), r.get('lh')
                     for f, chs in (r.get('fonts') or {}).items():

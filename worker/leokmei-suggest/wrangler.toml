@@ -1,0 +1,15 @@
+# leokmei-suggest - נקודת הקליטה של הצעות התיקון ושל עריכות המנהל.
+# נפרד לגמרי מממלכת הזוהר: בלי קוד משותף ובלי נתונים משותפים.
+# התוכנית החינמית. המפתח הסודי של המנהל (ADMIN_KEY) הוא secret ב-Worker
+# בלבד, ולעולם אינו בקובץ הזה ולא במאגר.
+name = "leokmei-suggest"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "STORE"
+id = "94cebf3b2d294c3d903ee0be904f041c"
+
+[observability]
+enabled = false

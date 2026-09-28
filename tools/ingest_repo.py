@@ -22,7 +22,7 @@ import os, sys, io, re, html, json, argparse, subprocess
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import word_apply
-from word_apply import apply, DRIVE, Refused
+from word_apply import apply, apply_struct, DRIVE, Refused
 from ingest_edits import minimal_span, docx_for
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -77,8 +77,13 @@ def ops_of(doc):
     הסדר חשוב: הנוסח נכתב תחילה, והסגנון אחריו - מפני שסגנון עשוי
     לחול על מילה שנוספה זה עתה, ובקובץ שלפני התיקון היא עדיין אינה."""
     wmap = {c[0]: c[2] for c in ((doc.get('sty') or {}).get('c') or [])}
-    ops, sops, skipped = [], [], []
+    ops, sops, mops, skipped = [], [], [], []
     for e in doc.get('edits') or []:
+        # ---- שינוי מבנה: פיצול פסקה או איחוי שתיים ----
+        if e.get('op') == 'struct':
+            mops.append({'kind': 'psplit' if e.get('kind') == 'split' else 'pmerge',
+                         'texts': e.get('texts') or [], 'res': e.get('resT') or []})
+            continue
         was, now = e.get('was', ''), e.get('now', '')
         if was != now:
             find, repl = minimal_span(was, now)
@@ -113,7 +118,7 @@ def ops_of(doc):
             if (cls, t) not in new_sp and not any(t == x[1] for x in new_sp):
                 sops.append({'kind': 'cstyle', 'daf': e.get('daf', ''), 'context': now,
                              'find': t, 'style': ''})
-    return ops, sops, skipped
+    return ops, sops, mops, skipped
 
 
 def main():
@@ -131,11 +136,12 @@ def main():
         return
     for fname, doc in docs:
         masechet = doc.get('masechet') or ''
-        ops, sops, skipped = ops_of(doc)
-        print('--- %s: %d תיקוני נוסח, %d שינויי סגנון' % (masechet, len(ops), len(sops)))
+        ops, sops, mops, skipped = ops_of(doc)
+        print('--- %s: %d תיקוני נוסח, %d שינויי סגנון, %d שינויי מבנה'
+              % (masechet, len(ops), len(sops), len(mops)))
         for e, why in skipped:
             print('   דולג:', why, '|', (e.get('was') or '')[:50])
-        if not ops and not sops:
+        if not ops and not sops and not mops:
             continue
         try:
             path = docx_for(masechet)
@@ -147,16 +153,17 @@ def main():
             continue
         # שני מעברים: הנוסח תחילה, ואחריו הסגנון - שכן הסגנון עשוי לחול
         # על מילה שנוספה במעבר הראשון.
-        for label, batch in (('נוסח', ops), ('סגנון', sops)):
+        for label, batch, fn in (('נוסח', ops, apply), ('סגנון', sops, apply),
+                                 ('מבנה', mops, apply_struct)):
             if not batch:
                 continue
-            r = apply(path, batch, 'עריכה מהאתר', masechet, dry=a.dry)
+            r = fn(path, batch, 'עריכה מהאתר', masechet, dry=a.dry)
             print('   %s:' % label,
                   json.dumps({k: v for k, v in r.items() if k != 'missed'},
                              ensure_ascii=False))
             for op, why in r['missed']:
                 print('    לא הוחל (הוורד גובר):', why, '|',
-                      op.get('find') or op.get('style'))
+                      op.get('find') or op.get('style') or op.get('kind'))
 
 
 def install_task(repo):

@@ -443,6 +443,200 @@ def apply(path, ops, author, masechet, log=print, dry=False):
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
 
+# ------------------------------------------- מבנה: פיצול פסקה ואיחויה (ו2ו)
+
+def _mark_para(p, tag, author, when, nextid):
+    """מסמן את סימן-הפסקה עצמו כמוסף (ins) או כנמחק (del).
+
+    זו הדרך שבה וורד עצמו רושם פיצול ואיחוי במעקב-שינויים: הסימן יושב
+    ב-pPr/rPr של הפסקה הראשונה, ובעל הפרויקט יכול לקבל או לדחות אותו
+    ככל שינוי אחר."""
+    pPr = p.find('w:pPr', ns)
+    if pPr is None:
+        pPr = etree.Element(W + 'pPr')
+        p.insert(0, pPr)
+    rPr = pPr.find('w:rPr', ns)
+    if rPr is None:
+        rPr = etree.Element(W + 'rPr')
+        # בסכימה rPr בא אחרי pStyle ולפני שאר המאפיינים
+        after = pPr.find('w:pStyle', ns)
+        pPr.insert(list(pPr).index(after) + 1 if after is not None else 0, rPr)
+    for t in ('ins', 'del'):
+        for old in rPr.findall('w:' + t, ns):
+            rPr.remove(old)
+    el = _mark(etree.Element(W + tag), author, when, nextid)
+    rPr.insert(0, el)
+
+
+def _split_paragraph(p, at, author, when, nextid):
+    """מפצל פסקה בנקודה at (מספר תווים מתחילתה) לשתי פסקאות.
+
+    הפסקה הראשונה מקבלת סימן-פסקה חדש המסומן כמוסף; השנייה יורשת את
+    הסימן המקורי ואת כל מאפייני הפסקה."""
+    runs = _runs_of(p)
+    full = ''.join(t for _, t, _ in runs)
+    if at <= 0 or at >= len(full):
+        return None
+    parent = p.getparent()
+    idx = list(parent).index(p)
+    p2 = etree.Element(W + 'p')
+    pPr = p.find('w:pPr', ns)
+    if pPr is not None:
+        p2.append(etree.fromstring(etree.tostring(pPr)))
+    moved = False
+    for pos, txt, r in runs:
+        if r.getparent().tag != W + 'p':
+            return None                  # יושב בתוך שינוי-מעקב קיים
+        if pos >= at:
+            p.remove(r)
+            p2.append(r)
+            moved = True
+        elif pos < at < pos + len(txt):
+            k = at - pos
+            rpr = _rpr(r)
+            head = _mkrun(txt[:k], rpr)
+            tail = _mkrun(txt[k:], rpr)
+            i = list(p).index(r)
+            p.remove(r)
+            p.insert(i, head)
+            p2.append(tail)
+            moved = True
+    if not moved:
+        return None
+    _mark_para(p, 'ins', author, when, nextid)
+    parent.insert(idx + 1, p2)
+    return p2
+
+
+def _norm_map(raw):
+    """הטקסט המנורמל, ולצדו מיקומו של כל תו בטקסט הגולמי.
+
+    האתר מציג את הטקסט אחרי שרווחים כפולים וטאבים כווצו לרווח אחד,
+    והוורד שומר אותם כמות שהם. בלי הנרמול הזה שום פסקה לא היתה
+    מאותרת - נמדד: "פסולה,    לר\"י" בוורד מול "פסולה,  לר\"י" באתר."""
+    out, idx, prev = [], [], ' '
+    for i, ch in enumerate(raw or ''):
+        if ch == '‏':
+            continue
+        c = ' ' if ch.isspace() else ch
+        if c == ' ' and prev == ' ':
+            continue
+        out.append(c)
+        idx.append(i)
+        prev = c
+    s = ''.join(out)
+    t = s.rstrip()
+    return t, idx[:len(t)]
+
+
+def _nw(t):
+    return _norm_map(t)[0]
+
+
+def apply_struct(path, ops, author, masechet, log=print, dry=False):
+    """מחיל פיצול פסקה ואיחויה. נפרד מ-apply מפני שכאן מספר הפסקאות
+    משתנה, והאימות הוא השוואה מלאה של רשימת הנוסחים לרשימה הצפויה.
+
+    כל אופ: {kind: psplit|pmerge, texts: [...], res: [...]}"""
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    before = convert(path)
+    texts_before = [b['text'] for b in before]
+    norm_before = [_nw(t) for t in texts_before]
+
+    plan, missed = [], []
+    for op in ops:
+        want = [_nw(x) for x in (op.get('texts') or [])]
+        res = op.get('res') or []
+        hits = [i for i in range(len(before) - len(want) + 1)
+                if norm_before[i:i + len(want)] == want]
+        if len(hits) != 1:
+            # מקרה שכיח ומובן: באתר שתי הפסקאות סמוכות, ובוורד יושבת
+            # ביניהן פסקה שהאתר אינו מציג - חלון צד או סמן פריסה.
+            # איחוי כזה היה מוחק תוכן של בעל הפרויקט, ולכן אינו נכתב.
+            why = 'לא אותר רצף פסקאות יחיד (%d מועמדים)' % len(hits)
+            if len(want) == 2 and not hits:
+                at = [n for n, t in enumerate(norm_before) if t == want[0]]
+                for n in at:
+                    nxt = [m for m in range(n + 1, min(n + 4, len(before)))
+                           if norm_before[m] == want[1]]
+                    if nxt:
+                        mid = [before[m]['style'] for m in range(n + 1, nxt[0])]
+                        why = ('בוורד יושבת בין שתי הפסקאות פסקה שאינה מוצגת '
+                               'באתר (%s). האיחוי מוצג באתר ואינו נכתב לוורד, '
+                               'כדי שלא יימחק תוכן' % ', '.join(mid))
+                        break
+            missed.append((op, why))
+            continue
+        plan.append((hits[0], op, res))
+    if not plan:
+        return {'applied': 0, 'missed': missed, 'backup': None, 'verified': True}
+
+    # הנוסחים הצפויים אחרי הפעולה. ההמרה מכבדת סימן-פסקה שנמחק במעקב
+    # ומאחדת את שתי הפסקאות כבר עתה - נמדד. לכן איחוי גורע פסקה בדיוק
+    # כשם שפיצול מוסיף אחת, והאתר יראה את השינוי מיד.
+    want_after = list(norm_before)
+    for i, op, res in sorted(plan, key=lambda x: -x[0]):
+        want_after[i:i + len(op.get('texts') or [])] = [_nw(x) for x in res]
+    if dry:
+        return {'applied': len(plan), 'missed': missed, 'backup': None,
+                'verified': None,
+                'plan': [(i, o['kind']) for i, o, _ in plan]}
+
+    bk = backup(path, masechet)
+    log('גיבוי: ' + bk)
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    settings = z.read('word/settings.xml')
+    z.close()
+    counter = [9500]
+
+    def nextid():
+        counter[0] += 1
+        return counter[0]
+
+    when = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    xml_ps = _paragraph_map(doc, before)
+    done = 0
+    # מן הסוף להתחלה: פיצול מוסיף פסקה ומזיז את כל מה שאחריה.
+    for i, op, res in sorted(plan, key=lambda x: -x[0]):
+        p = xml_ps.get(before[i]['i'])
+        if p is None:
+            missed.append((op, 'הפסקה לא נמצאה ב-XML'))
+            continue
+        if op['kind'] == 'psplit':
+            # נקודת החיתוך נמדדת על הטקסט המנורמל, ומתורגמת למקומה
+            # בטקסט הגולמי שבוורד.
+            nm, idx = _norm_map(before[i]['text'])
+            k = len(_nw(res[0]))
+            at = idx[k] if k < len(idx) else len(before[i]['text'])
+            if _split_paragraph(p, at, author, when, nextid) is None:
+                missed.append((op, 'לא ניתן לפצל כאן'))
+                continue
+        else:
+            _mark_para(p, 'del', author, when, nextid)
+        done += 1
+
+    tmp = path + '.new'
+    _rezip(path, tmp, {'word/document.xml':
+                       etree.tostring(doc, xml_declaration=True, encoding='UTF-8',
+                                      standalone=True),
+                       'word/settings.xml': _ensure_track(settings)[0]})
+    after = convert(tmp)
+    got = [_nw(b['text']) for b in after]
+    if got != want_after:
+        os.remove(tmp)
+        bad = next((n for n in range(min(len(got), len(want_after)))
+                    if got[n] != want_after[n]), min(len(got), len(want_after)))
+        log('האימות נכשל. הקובץ לא נגע.')
+        log('   ציפינו: %r' % (want_after[bad:bad + 1],))
+        log('   קיבלנו: %r' % (got[bad:bad + 1],))
+        return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
+    os.replace(tmp, path)
+    log('נכתבו %d שינויי מבנה, ואומתו' % done)
+    return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
+
+
 def _paragraph_map(doc, blocks):
     """מקשר בין מספר הפסקה שבהמרה ובין אלמנט w:p שבמסמך.
 

@@ -45,6 +45,31 @@ def _daf_key(d):
     return n * 2 + am if n else None
 
 
+def _find_run(pages, texts, daf):
+    """רצף פסקאות סמוכות ביחידה אחת שנוסחן הוא texts. דורש ייחוד, ובריבוי
+    מופעים מצומצם לדף אחד לכל צד. לא נמצא יחיד - מוחזר None, ולעולם לא
+    ניחוש: פיצול או איחוי שנופל על פסקה זרה הורס שתי פסקאות בבת אחת."""
+    hits = []
+    for p in pages:
+        for u in p['units']:
+            if u['k'] not in ('u', 'm'):
+                continue
+            L = u['l']
+            for i in range(len(L) - len(texts) + 1):
+                if all(_bare(L[i + j][1]) == texts[j] for j in range(len(texts))):
+                    hits.append((u, i, p['daf']))
+    if len(hits) == 1:
+        return hits[0]
+    if len(hits) > 1 and daf:
+        k0 = _daf_key(daf)
+        near = [h for h in hits
+                if k0 is not None and _daf_key(h[2]) is not None
+                and abs(_daf_key(h[2]) - k0) <= 1]
+        if len(near) == 1:
+            return near[0]
+    return None
+
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
@@ -60,12 +85,40 @@ def _apply_site_edits(pages, slug, qa):
     if not edits:
         return {'n': 0, 'taken': 0, 'lost': 0, 'done': 0}
     slots = _slots(pages)
-    by_key = {s['k']: s for s in slots}
+    by_key = {}
     for s in slots:
         s['t'] = _bare(s['holder'][s['key']] if isinstance(s['key'], int)
                        else s['holder'].get(s['key'], ''))
+        by_key[s['k']] = s
     keep, done, taken, lost = [], 0, 0, []
+
+    def reslot():
+        del slots[:]
+        slots.extend(_slots(pages))
+        by_key.clear()
+        for s in slots:
+            s['t'] = _bare(s['holder'][s['key']] if isinstance(s['key'], int)
+                           else s['holder'].get(s['key'], ''))
+            by_key[s['k']] = s
+
     for e in edits:
+        # --- שינוי מבנה: פיצול פסקה או איחוי שתיים ---
+        if e.get('op') == 'struct':
+            texts = e.get('texts') or []
+            res = e.get('res') or []
+            hit = _find_run(pages, texts, e.get('daf'))
+            if hit is not None:
+                u, i, _ = hit
+                u['l'][i:i + len(texts)] = [list(x) for x in res]
+                done += 1
+                keep.append(e)
+                reslot()
+            elif _find_run(pages, e.get('resT') or [], e.get('daf')) is not None:
+                taken += 1                  # כבר בקובץ הוורד
+            else:
+                lost.append(e)
+                keep.append(e)
+            continue
         was, now = e.get('was', ''), e.get('now', '')
         s = by_key.get(e.get('k'))
         if s is None or (s['t'] != was and s['t'] != now):
@@ -101,7 +154,8 @@ def _apply_site_edits(pages, slug, qa):
         qa.append(('תיקון תלוש',
                    '%d תיקונים שנעשו באתר לא אותרו בקובץ הוורד ואינם מוחלים. '
                    'הפסקה שלהם השתנתה מאז. הראשון: %r'
-                   % (len(lost), (lost[0].get('was') or '')[:60])))
+                   % (len(lost), (lost[0].get('was')
+                                  or ' | '.join(lost[0].get('texts') or []))[:60])))
     if taken:
         qa.append(('תיקון שנקלט',
                    '%d תיקונים כבר נמצאים בקובץ הוורד והוסרו מקובץ התיקונים' % taken))
@@ -609,6 +663,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .edlost{background:#fdf1d8;border-right:3px solid #a83c2f;padding-right:8px}
   .edsum{background:#eeeae1;border-radius:5px;padding:7px 11px;margin-bottom:8px;font-size:14px;line-height:1.6}
   .edbar .edpub{font-size:13px;color:#cfe0c8}
+  .edflash{position:fixed;z-index:14;left:50%;transform:translateX(-50%);bottom:64px;display:none;
+     background:#a83c2f;color:#fff;border-radius:6px;padding:7px 16px;font-size:15px;
+     box-shadow:0 3px 14px rgba(0,0,0,.3)}
   .edbar .edpub.bad{color:#ffd9d2;font-weight:700}
   /* הסרגל הצף של הסגנונות. הוא נפתח מעל הבחירה, ולעולם אינו מכסה
      את הטקסט הנערך: אם אין מקום מעליו הוא יורד מתחתיו. */
@@ -1008,7 +1065,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       /* ז3 - הניקוד הוא שכבה נפרדת. במצב עריכה חוזרים לנוסח הוורד,
          כדי שהעיגון (הנוסח שהיה) יעבוד על הטקסט האמיתי ושלא ייכנס
          ניקוד לוורד בלי כוונה. */
-      const L=(NK&&!EDIT&&u.lv)?u.lv:u.l;
+      /* שכבת הניקוד תקפה רק כשהיא מקבילה לנוסח הוורד פסקה בפסקה.
+         פיצול או איחוי משנים את אורך u.l, ואילו lv נבנה בבנייה הקודמת -
+         ואז היה מספר הפסקאות המוצג שונה מזה שהמפתחות נגזרו ממנו. */
+      const L=(NK&&!EDIT&&u.lv&&u.lv.length===u.l.length)?u.lv:u.l;
       return `<div class="row" id="u${u.id}"${H}>${win(u.w,1)}<div class="main mishna">${L.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===L.length-1?sb:''}</p>`).join('')}</div></div>`;
     }
     /* הכוכביות מוצגות כלשונן בקובץ. מספרן אינו מנורמל: כל מספר נותן
@@ -1114,6 +1174,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      if(e.ctrlKey&&e.key==='-'){fs(-2);e.preventDefault()}
      if(e.key==='Escape')document.querySelectorAll('.panel').forEach(x=>x.classList.remove('open'))});
    /* קישור עמוק מדף ההגהה: p=מקטע, u=מזהה היחידה. היחידה מודגשת ונגללת אליה. */
+   /* שינויי המבנה מוחלים על הנתונים לפני הרנדור הראשון, כדי שמפתחות
+      הפסקאות שייקבעו בדף יהיו אלה שאחרי הפיצול. */
+   applyStruct();
    const u0=params.get('u');
    if(u0){let pi=0;D.pages.forEach((p,i)=>{if(p.units.some(x=>x.id==u0))pi=i});jump(pi,+u0)}
    else render(+(params.get('p')||0));
@@ -1229,6 +1292,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     SLOTS=slots();
     const f=$('#flow');let taken=0,lost=0,keep=[];
     for(const e of ED){
+      if(e.op==='struct'){
+        if(e.done)  {taken++;continue}       /* כבר בוורד - יוצא מן הרשימה */
+        if(e.lost)  lost++;
+        keep.push(e);continue}
       const k=locate(e);
       if(k===null){lost++;e.lost=1;keep.push(e);continue}
       e.lost=0;if(k!==e.k)e.k=k;
@@ -1295,6 +1362,170 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon()}
   let CAPT=null;
   function captureSoon(el){clearTimeout(CAPT);CAPT=setTimeout(()=>capture(el),700)}
+
+  /* =================== ו2 ג-ד: פיצול פסקה ואיחויה ===================
+     Enter מפצל פסקה לשתיים באותו סגנון; מחיקה אחורה בראש פסקה מאחדת
+     אותה עם הקודמת. שתי הפעולות אינן עריכת טקסט אלא שינוי מבנה, ולכן
+     הן נרשמות ברשומה משלהן ומוחלות על הנתונים עצמם (D) ולא על ה-DOM:
+     בלעדי זה היו מפתחות הפסקאות שאחרי הפיצול זזים באחד, וכל תיקון
+     שנרשם עליהן היה נופל על פסקה שכנה.
+
+     העיגון אינו מספר הפסקה אלא הטקסט עצמו: הרשומה נושאת את נוסח
+     הפסקאות לפני הפעולה ואת נוסחן אחריה, והאיתור דורש התאמה אחת
+     ויחידה ברצף פסקאות סמוכות באותה יחידה. אם הנוסח זז בוורד -
+     הפעולה אינה מוחלת, ונאמרת בקול כ"תלושה". */
+  function unitsAll(){const out=[];
+    D.pages.forEach((p,pi)=>p.units.forEach(u=>{if(u.k==='u'||u.k==='m')out.push({u,pi,daf:p.daf})}));
+    return out}
+  /* מאתר רצף פסקאות סמוכות ביחידה אחת שנוסחן הוא texts. דורש ייחוד. */
+  function findRun(texts,daf){
+    const hits=[];
+    for(const o of unitsAll()){
+      const L=o.u.l;
+      for(let i=0;i+texts.length<=L.length;i++){
+        let ok=true;
+        for(let j=0;j<texts.length;j++)if(plain(L[i+j][1])!==texts[j]){ok=false;break}
+        if(ok)hits.push({u:o.u,i,daf:o.daf});
+      }
+    }
+    if(hits.length===1)return hits[0];
+    if(hits.length>1&&daf){
+      const k0=dafKey(daf);
+      const near=hits.filter(h=>{const k=dafKey(h.daf);return k0===null||k===null?false:Math.abs(k-k0)<=1});
+      if(near.length===1)return near[0];
+    }
+    return null}
+  /* מחיל את שינויי המבנה על D. חייב לרוץ לפני הרנדור הראשון. */
+  function applyStruct(){
+    let any=false;
+    for(const e of ED){
+      if(e.op!=='struct')continue;
+      const hit=findRun(e.texts,e.daf);
+      if(hit){hit.u.l.splice(hit.i,e.texts.length,...e.res.map(x=>x.slice()));
+        delete hit.u.lv;        /* שכבת הניקוד אינה תואמת עוד */
+        e.lost=0;any=true;continue}
+      if(findRun(e.resT,e.daf)){e.lost=0;e.done=1;continue}   /* כבר בוורד */
+      e.lost=1;
+    }
+    if(any)SLOTS=null;
+    return any}
+
+  /* --- הפעולות עצמן, מן הדף --- */
+  function pInfo(el){
+    /* היחידה והמקום של פסקה שנערכת, מתוך המפתח שסומן עליה */
+    const k=el.dataset.ek||'';const m=k.match(/^u(\d+)\.(\d+)$/);
+    if(!m)return null;
+    const id=+m[1], n=+m[2]-1;
+    for(const o of unitsAll())if(o.u.id===id&&n>=0&&n<o.u.l.length)
+      return {u:o.u,i:n,daf:o.daf,pi:o.pi};
+    return null}
+  function dafOf(el){let r=el.closest('.row');
+    while(r){const d=r.querySelector('.dafmark');if(d)return d.textContent;r=r.previousElementSibling}
+    return ''}
+  function splitAtCaret(el){
+    const info=pInfo(el);if(!info)return false;
+    const s=getSelection();if(!s.rangeCount)return false;
+    const r=s.getRangeAt(0);
+    if(!el.contains(r.startContainer))return false;
+    /* שני חצאי הפסקה, כל אחד עם סגנונות התו שבו */
+    const a=r.cloneRange();a.selectNodeContents(el);a.setEnd(r.startContainer,r.startOffset);
+    const b=r.cloneRange();b.selectNodeContents(el);b.setStart(r.endContainer,r.endOffset);
+    const box=x=>{const d=document.createElement('div');d.appendChild(x.cloneContents());
+      d.querySelectorAll('.srcb,.mlabel').forEach(n=>n.remove());return edSan(d)};
+    const da=box(a), db=box(b);
+    const ha=da.innerHTML, hb=db.innerHTML;
+    if(!da.textContent.trim()||!db.textContent.trim()){
+      flash('אין לפצל כאן: אחד משני החלקים יוצא ריק');return false}
+    const cls=info.u.l[info.i][0];
+    const was=plain(info.u.l[info.i][1]);
+    ED.push({op:'struct',kind:'split',texts:[was],
+             res:[[cls,ha],[cls,hb]],resT:[da.textContent,db.textContent],
+             daf:dafOf(el),t:Date.now(),pub:0});
+    info.u.l.splice(info.i,1,[cls,ha],[cls,hb]);
+    delete info.u.lv;
+    SLOTS=null;saveED();
+    reflow('u'+info.u.id+'.'+(info.i+2),0);
+    return true}
+  /* איחוי שמבטל בדיוק פיצול שנעשה זה עתה - מוחק את הפיצול במקום
+     לרשום פעולה נגדית. בלעדי זה היו נשמרות שתי פעולות שמבטלות זו את
+     זו, והן היו נשלחות לוורד ומסמנות שם שני שינויים לחינם. */
+  function cancelSplit(texts){
+    for(let i=ED.length-1;i>=0;i--){
+      const e=ED[i];
+      if(e.op!=='struct')continue;
+      if(e.kind==='split'&&e.resT.length===2&&
+         e.resT[0]===texts[0]&&e.resT[1]===texts[1]){ED.splice(i,1);return true}
+      break}
+    return false}
+  function mergeBack(el){
+    const info=pInfo(el);if(!info)return false;
+    let u=info.u, i=info.i;
+    if(i===0){
+      /* פסקה ראשונה ביחידה: אפשר לאחד רק אם אין ליחידה חלון משלה,
+         שאם יש - החלון מצביע עליה, ואיחוי היה מנתק אותו ממנה. */
+      const all=unitsAll();const n=all.findIndex(o=>o.u===u);
+      const prev=n>0?all[n-1]:null;
+      if(!prev||prev.u.k!==u.k||plain(u.a||'')||!prev.u.l.length){
+        flash('אי אפשר לאחד כאן: הפסקה פותחת קטע משלה');return false}
+      /* מעבירים את פסקאות היחידה אל הקודמת */
+      const texts=[plain(prev.u.l[prev.u.l.length-1][1]),plain(u.l[0][1])];
+      const cls=prev.u.l[prev.u.l.length-1][0];
+      const h=prev.u.l[prev.u.l.length-1][1]+u.l[0][1];
+      const d=document.createElement('div');d.innerHTML=h;
+      if(!cancelSplit(texts))
+        ED.push({op:'struct',kind:'merge',texts:texts,res:[[cls,h]],
+                 resT:[d.textContent],daf:dafOf(el),t:Date.now(),pub:0});
+      prev.u.l[prev.u.l.length-1]=[cls,h];delete prev.u.lv;
+      u.l.shift();delete u.lv;
+      if(!u.l.length&&!plain(u.a||'')){
+        for(const p of D.pages){const k=p.units.indexOf(u);if(k>-1){p.units.splice(k,1);break}}}
+      SLOTS=null;saveED();
+      reflow('u'+prev.u.id+'.'+prev.u.l.length,texts[0].length);
+      return true}
+    const texts=[plain(u.l[i-1][1]),plain(u.l[i][1])];
+    const cls=u.l[i-1][0];
+    const h=u.l[i-1][1]+u.l[i][1];
+    const d=document.createElement('div');d.innerHTML=h;
+    if(!cancelSplit(texts))
+      ED.push({op:'struct',kind:'merge',texts:texts,res:[[cls,h]],
+               resT:[d.textContent],daf:dafOf(el),t:Date.now(),pub:0});
+    u.l.splice(i-1,2,[cls,h]);
+    delete u.lv;
+    SLOTS=null;saveED();
+    reflow('u'+u.id+'.'+i,texts[0].length);
+    return true}
+  /* בונה את הדף מחדש אחרי שינוי מבנה, ומחזיר את הסמן למקומו */
+  function reflow(key,off){
+    render(cur);
+    if(EDIT)setEdit(true);
+    setTimeout(()=>{
+      const el=$('#flow').querySelector('[data-ek="'+key+'"]');
+      if(!el)return;
+      el.focus();
+      try{
+        const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+        let n,left=off,node=null,pos=0;
+        while((n=w.nextNode())){const L=n.textContent.length;
+          if(left<=L){node=n;pos=left;break}left-=L}
+        const r=document.createRange();
+        if(node)r.setStart(node,pos); else r.selectNodeContents(el),r.collapse(false);
+        r.collapse(true);
+        const s=getSelection();s.removeAllRanges();s.addRange(r);
+        el.scrollIntoView({block:'nearest'});
+      }catch(e){}
+      drawEd();pubSoon();
+    },0)}
+  function flash(msg){
+    let b=$('#edflash');
+    if(!b){b=document.createElement('div');b.id='edflash';b.className='edflash';document.body.appendChild(b)}
+    b.textContent=msg;b.style.display='block';
+    clearTimeout(b.__t);b.__t=setTimeout(()=>{b.style.display='none'},3200)}
+  /* מחיקה אחורה בראש פסקה: רק כשהסמן באמת בתו הראשון ואין בחירה */
+  function atStart(el){
+    const s=getSelection();if(!s.rangeCount)return false;
+    const r=s.getRangeAt(0);if(!r.collapsed)return false;
+    const q=document.createRange();q.selectNodeContents(el);q.setEnd(r.startContainer,r.startOffset);
+    return q.toString().length===0}
 
   function setEdit(on){
     const was=EDIT;
@@ -1410,9 +1641,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(const d of Object.keys(by)){
       h+='<h3>'+esc(d||'בלא ציון דף')+'</h3>';
       by[d].forEach(e=>{const i=ED.indexOf(e);
-        h+='<div class="edrow'+(e.lost?' edlost':'')+'">'+
-          (e.lost?'<small>תלוש - לא הוחל</small><br>':'')+
-          (e.pub?'':'<small>ממתין לפרסום</small><br>')+
+        const head=(e.lost?'<small>תלוש - לא הוחל</small><br>':'')+
+          (e.pub?'':'<small>ממתין לפרסום</small><br>');
+        if(e.op==='struct'){
+          h+='<div class="edrow'+(e.lost?' edlost':'')+'">'+head+
+            '<small>'+(e.kind==='split'?'פיצול פסקה':'איחוי שתי פסקאות')+'</small><br>'+
+            '<span class="now">'+esc((e.kind==='split'?e.resT:e.texts).join(' ⟂ ').slice(0,110))+'</span><br>'+
+            '<button onclick="undoEd('+i+')">ביטול</button></div>';
+          return}
+        h+='<div class="edrow'+(e.lost?' edlost':'')+'">'+head+
           (e.ps!==undefined?'<small>סגנון פסקה: '+esc(psName(e.ps))+'</small><br>':'')+
           '<span class="was">'+esc(e.was.slice(0,90))+'</span><br>'+
           '<span class="now">'+esc(e.now.slice(0,90))+'</span><br>'+
@@ -1430,6 +1667,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      לא תצטרך לנחש, ולא תמציא סגנון שאינו קיים. */
   function wsty(c){const f=PSTY.find(p=>p[0]===(c||''));return f?f[2]:''}
   function undoEd(i){const e=ED[i];if(!e)return;
+    /* ביטול שינוי מבנה מחזיר את הנתונים למקורם, והדרך הבטוחה לכך
+       היא לטעון את הדף מחדש: הוא נבנה מן הנתונים שבקובץ. */
+    if(e.op==='struct'){ED.splice(i,1);saveED();location.reload();return}
     const el=$('#flow').querySelector('[data-ek="'+e.k+'"]');
     if(el){setHTML(el,e.wasH!==undefined?e.wasH:esc(e.was));delete el.dataset.edited;
       delete el.__was;
@@ -1442,6 +1682,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     let t='תיקוני '+D.masechet+' - לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n';
     t+=ED.length+' תיקונים\n\n';
     for(const e of ED){t+='דף '+(e.daf||'-')+(e.lost?'  [תלוש - הפסקה השתנתה בוורד]':'')+'\n';
+      if(e.op==='struct'){
+        t+='  '+(e.kind==='split'?'פיצול פסקה':'איחוי שתי פסקאות')+'\n';
+        t+='  היה: '+e.texts.join(' | ')+'\n  יהיה: '+e.resT.join(' | ')+'\n\n';
+        continue}
       if(e.ps!==undefined)t+='  סגנון פסקה: '+psName(e.ps)+'\n';
       t+='  היה: '+e.was+'\n  יהיה: '+e.now+'\n\n'}
     t+='\n==== נתוני עיבוד (אין לערוך) ====\n';
@@ -1460,25 +1704,58 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      ממשק גיטהאב, ומשם רצה בנייה קצרה שמחילה אותם על נתוני הדף
      ומפרסמת. מפתח הכתיבה נשמר רק בדפדפן של המנהל, לעולם לא בקוד
      ולא במאגר. */
-  let PUBT=null, PUBBUSY=false, PUBMSG='';
+  const GESHER='http://127.0.0.1:8760';
+  let PUBT=null, PUBBUSY=false, PUBMSG='', GOK=null;
+  /* הגשר הוא תוכנית קטנה שרצה ברקע במחשב של בעל הפרויקט, וכותבת
+     למאגר בהרשאה שכבר קיימת שם. כשהוא עונה - אין צורך בשום מפתח,
+     ובעל הפרויקט אינו עושה דבר. במכשיר אחר (טאבלט) הוא אינו עונה,
+     ואז נדרש מפתח כתיבה שנשמר באותו מכשיר. */
+  async function gesher(path,opt){
+    const c=new AbortController(), t=setTimeout(()=>c.abort(),opt&&opt.body?8000:1200);
+    try{const r=await fetch(GESHER+path,Object.assign({signal:c.signal,cache:'no-store'},opt||{}));
+      clearTimeout(t);
+      if(!r.ok)return {ok:false,why:'הגשר השיב '+r.status};
+      return await r.json();
+    }catch(e){clearTimeout(t);return {ok:false,why:'אין גשר'}}}
+  async function gesherAlive(){const r=await gesher('/shalom');GOK=!!r.ok;return GOK}
   function pubDraw(){const e=$('#edpub');if(!e)return;
     const np=ED.filter(x=>!x.pub).length;
-    e.textContent=PUBMSG||(np?'· '+np+' ממתינים לפרסום':(ED.length?'· פורסם':''));
+    e.textContent=PUBMSG||(np?'· '+np+' ממתינים לפרסום':(ED.length?'· פורסם':''))
+      +(GOK===false&&!ghTok()?' · מפרסם כשהמחשב הראשי יידלק':'');
     e.className='edpub'+(PUBMSG.indexOf('לא פורסם')===0?' bad':'')}
   function pubSoon(){clearTimeout(PUBT);PUBT=setTimeout(()=>pubNow(0),2500)}
   function b64(s){return btoa(unescape(encodeURIComponent(s)))}
   function pubBody(){
     return JSON.stringify({v:1,slug:SLUG,masechet:D.masechet,
       when:new Date().toISOString(),sty:D.sty,
-      edits:ED.filter(e=>!e.lost).map(e=>({k:e.k,was:e.was,now:e.now,
-        wasH:e.wasH,nowH:e.nowH,ps:e.ps,psw:e.psw,wasP:e.wasP,
-        daf:e.daf,ctx:e.ctx,t:e.t}))},null,1)}
+      edits:ED.filter(e=>!e.lost).map(e=>e.op==='struct'
+        ? {op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,
+           daf:e.daf,t:e.t}
+        : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
+           ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t})},null,1)}
   async function pubNow(loud){
     clearTimeout(PUBT);
     if(PUBBUSY)return;
-    const t=ghTok();
-    if(!t){if(loud)edKey();else{PUBMSG='לא פורסם: חסר מפתח הפרסום';pubDraw()}return}
     PUBBUSY=true;PUBMSG='מפרסם…';pubDraw();
+    const body=pubBody();
+    /* הדרך הראשונה: הגשר שבמחשב. אין בה מפתח ואין בה הכנה. */
+    const g=await gesher('/edits',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:body});
+    GOK=g.ok||g.why!=='אין גשר';
+    if(g.ok){ED.forEach(e=>e.pub=1);saveED();
+      PUBMSG='· פורסם '+new Date().toLocaleTimeString('he-IL').slice(0,5)+
+             ' · יופיע לכל הלומדים בתוך כשתי דקות';
+      PUBBUSY=false;pubDraw();drawEd();return}
+    const t=ghTok();
+    if(!t){
+      PUBBUSY=false;
+      PUBMSG=(g.why==='אין גשר')
+        ? 'לא פורסם: המחשב הראשי אינו פועל. התיקון שמור כאן, ויעלה מעצמו כשיידלק'
+        : 'לא פורסם: '+g.why+' · התיקון שמור כאן וינוסה שוב';
+      pubDraw();drawEd();
+      if(loud&&g.why==='אין גשר')edKey();
+      PUBT=setTimeout(()=>pubNow(0),45000);
+      return}
     const url='https://api.github.com/repos/'+REPO+'/contents/'+EDPATH;
     const H={Authorization:'Bearer '+t,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
     let ok=false, why='';
@@ -1490,9 +1767,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         else if(g.status===404)sha=null;
         else if(g.status===401||g.status===403){why='המפתח נדחה';break}
         else {why='שגיאה '+g.status;break}
-        const body={message:'תיקוני '+D.masechet+' מן האתר',content:b64(pubBody()),branch:'main'};
-        if(sha)body.sha=sha;
-        const r=await fetch(url,{method:'PUT',headers:H,body:JSON.stringify(body)});
+        const pl={message:'תיקוני '+D.masechet+' מן האתר',content:b64(body),branch:'main'};
+        if(sha)pl.sha=sha;
+        const r=await fetch(url,{method:'PUT',headers:H,body:JSON.stringify(pl)});
         if(r.ok)ok=true;
         else if(r.status===409||r.status===422)why='התנגשות - מנסה שוב';
         else if(r.status===401||r.status===403){why='למפתח אין הרשאת כתיבה';break}
@@ -1501,16 +1778,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     }catch(e){why='אין חיבור'}
     if(ok){ED.forEach(e=>e.pub=1);saveED();
       PUBMSG='· פורסם '+new Date().toLocaleTimeString('he-IL').slice(0,5)+
-             ' · יופיע לכל הלומדים בתוך כשלוש דקות';}
+             ' · יופיע לכל הלומדים בתוך כשתי דקות';}
     else PUBMSG='לא פורסם: '+why+' · העריכות שמורות במכשיר וינוסו שוב';
     PUBBUSY=false;pubDraw();drawEd();
     if(!ok&&ED.some(e=>!e.pub))PUBT=setTimeout(()=>pubNow(0),45000)}
   function edKey(){
     const cur=ghTok();
-    const msg='מפתח הפרסום.\n\n'+
-      'הדבק כאן את המפתח שנוצר עבורך. הוא נשמר רק בדפדפן הזה,\n'+
-      'ואינו נשלח לשום מקום חוץ מגיטהאב עצמו.\n\n'+
-      'להסרת המפתח - מחק את התוכן ולחץ אישור.';
+    const msg='מפתח פרסום למכשיר הזה.\n\n'+
+      'במחשב הראשי אין צורך במפתח: התיקונים עולים מאליהם.\n'+
+      'המפתח נחוץ רק במכשיר אחר, כשהמחשב הראשי כבוי.\n\n'+
+      'אם יש לך מפתח - הדבק אותו כאן. אם לא, אפשר להשאיר ריק:\n'+
+      'התיקון נשמר במכשיר ויעלה מעצמו כשהמחשב יידלק.';
     const v=prompt(msg,cur);
     if(v===null)return;
     try{if(v.trim())localStorage.setItem(TKEY,v.trim());else localStorage.removeItem(TKEY)}catch(e){}
@@ -1520,7 +1798,24 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* הקלדה: Enter חסום כדי שלא תיווצר פסקה חדשה, והדבקה נכנסת כטקסט נקי */
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.altKey&&(e.key==='e'||e.key==='E'||e.key==='ק')){askAdmin();e.preventDefault();return}
-    if(EDIT&&e.key==='Enter'&&e.target.isContentEditable)e.preventDefault()});
+    if(!EDIT||!e.target.isContentEditable)return;
+    const el=e.target.closest('[contenteditable="true"]');
+    if(!el)return;
+    /* Enter מפצל פסקה לשתיים באותו סגנון. בכותרת ובחלון אין פיצול:
+       הם פסקה אחת בוורד מעצם טיבם. */
+    if(e.key==='Enter'&&!e.shiftKey){
+      e.preventDefault();
+      capture(el);
+      if(el.tagName!=='P'){flash('כאן אין פיצול: זו כותרת, והיא פסקה אחת');return}
+      splitAtCaret(el);
+      return}
+    /* מחיקה אחורה בתו הראשון של פסקה מאחדת אותה עם הקודמת */
+    if(e.key==='Backspace'&&el.tagName==='P'&&atStart(el)){
+      e.preventDefault();
+      capture(el);
+      mergeBack(el);
+      return}
+  });
   document.addEventListener('paste',e=>{
     if(!EDIT||!e.target.isContentEditable)return;
     e.preventDefault();
@@ -1534,7 +1829,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   document.addEventListener('mousedown',e=>{
     if($('#stybar')&&e.target.closest&&!e.target.closest('#stybar')&&!e.target.closest('[contenteditable="true"]'))hideSty()});
   if(location.hash.indexOf('admin')>-1){try{localStorage.setItem(AKEY,'1')}catch(e){}}
-  if(ghTok()&&ED.some(e=>!e.pub))setTimeout(()=>pubNow(0),3000);
+  if(ED.some(e=>!e.pub))setTimeout(()=>pubNow(0),3000);
 
   /* =================== הצע תיקון ===================
      פתוח לכל לומד, בלי שרת ובלי הרשמה. ההצעה נשמרת במכשיר עוד לפני

@@ -19,7 +19,8 @@
     uv run python tools/gesher.py --install       (מקים משימה שמריצה אותו ברקע)
     uv run python tools/gesher.py --status        (בודק אם הוא חי)
 """
-import os, sys, io, re, json, time, base64, shutil, argparse, subprocess, socket, urllib.request
+import os, sys, io, re, json, time, base64, shutil, argparse, subprocess, socket
+import urllib.request, urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = 8760
@@ -35,8 +36,14 @@ LOG = None
 
 def log(*a):
     msg = ' '.join(str(x) for x in a)
-    print(msg)
-    sys.stdout.flush()
+    # ‏pythonw אינו מחזיק פלט סטנדרטי כלל, ו-print נכשל בו. הגשר קרס
+    # בשקט בכל הרצה של המשימה, והמשימה דיווחה קוד יציאה 0.
+    try:
+        if sys.stdout is not None:
+            sys.stdout.write(msg + '\n')
+            sys.stdout.flush()
+    except Exception:
+        pass
     if LOG:
         try:
             io.open(LOG, 'a', encoding='utf-8').write(msg + '\n')
@@ -46,32 +53,65 @@ def log(*a):
 
 # ---------------------------------------------------------------- גיטהאב
 
-def gh(args, data=None):
-    """קריאה ל-gh. ההרשאה כבר במחשב, ואין כאן שום מפתח."""
-    p = subprocess.run(['gh'] + args, input=data, capture_output=True)
-    return p.returncode, p.stdout.decode('utf-8', 'replace'), p.stderr.decode('utf-8', 'replace')
+def token_path():
+    return os.path.join(HOME_DIR, 'token')
+
+
+def token():
+    """מפתח הכתיבה. נקרא מקובץ בתיקיית הגשר.
+
+    הגשר קרא בתחילה להרשאה ש-gh מחזיק במחשב, אך במשימה מתוזמנת
+    הוא לא מצא אותה כלל ("please run gh auth login") - וכל פרסום
+    נכשל. נוסף על כך, כל קריאה ל-gh לוקחת כארבע שניות של הפעלת
+    תהליך, ושתיים כאלה חרגו מפסק הזמן. מעתה הפנייה היא ישירה
+    לממשק, עם מפתח שנכתב פעם אחת בהתקנה."""
+    try:
+        return io.open(token_path(), encoding='utf-8').read().strip()
+    except Exception:
+        return ''
+
+
+def api(method, path, payload=None):
+    t = token()
+    if not t:
+        return 0, 'אין מפתח בתיקיית הגשר'
+    req = urllib.request.Request(
+        'https://api.github.com/' + path.lstrip('/'),
+        data=json.dumps(payload).encode('utf-8') if payload is not None else None,
+        method=method,
+        headers={'Authorization': 'Bearer ' + t,
+                 'Accept': 'application/vnd.github+json',
+                 'X-GitHub-Api-Version': '2022-11-28',
+                 'Content-Type': 'application/json',
+                 'User-Agent': 'leokmei-gesher'})
+    try:
+        with urllib.request.urlopen(req, timeout=25) as r:
+            return r.status, r.read().decode('utf-8')
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode('utf-8', 'replace')
+    except Exception as e:
+        return 0, str(e)
 
 
 def put_edits(slug, body):
-    path = 'data/edits/%s.json' % slug
-    code, out, _ = gh(['api', 'repos/%s/contents/%s?ref=main' % (REPO, path)])
+    path = 'repos/%s/contents/data/edits/%s.json' % (REPO, slug)
+    code, out = api('GET', path + '?ref=main')
     sha = None
-    if code == 0:
+    if code == 200:
         try:
             sha = json.loads(out)['sha']
         except Exception:
             pass
+    elif code not in (404,):
+        return False, 'קריאה נכשלה (%s): %s' % (code, out[:160])
     payload = {'message': 'תיקונים מן האתר - %s' % slug,
                'content': base64.b64encode(body.encode('utf-8')).decode('ascii'),
                'branch': 'main'}
     if sha:
         payload['sha'] = sha
-    code, out, err = gh(['api', '--method', 'PUT',
-                         'repos/%s/contents/%s' % (REPO, path),
-                         '--input', '-'],
-                        data=json.dumps(payload).encode('utf-8'))
-    if code != 0:
-        return False, (err or out).strip()[:300]
+    code, out = api('PUT', path, payload)
+    if code not in (200, 201):
+        return False, 'כתיבה נכשלה (%s): %s' % (code, out[:160])
     try:
         return True, json.loads(out)['commit']['sha'][:7]
     except Exception:
@@ -243,21 +283,33 @@ def install(repo=None):
     me = os.path.join(keep, 'gesher.py')
     if os.path.abspath(__file__) != os.path.abspath(me):
         shutil.copy(os.path.abspath(__file__), me)
+    # המפתח נכתב פעם אחת, מן ההרשאה שכבר במחשב. הקובץ מוגבל למשתמש
+    # הזה בלבד, ואפשר למחוק אותו בכל רגע - אז הפרסום פשוט מפסיק.
+    if not token():
+        p = subprocess.run(['gh', 'auth', 'token'], capture_output=True)
+        tok = p.stdout.decode('utf-8', 'replace').strip()
+        if p.returncode == 0 and tok:
+            tp = token_path()
+            io.open(tp, 'w', encoding='utf-8', newline='').write(tok + '\n')
+            subprocess.run(['icacls', tp, '/inheritance:r',
+                            '/grant:r', '%s:F' % os.environ.get('USERNAME', 'Owner')],
+                           capture_output=True)
+            log('מפתח הכתיבה נשמר בתיקיית הגשר, ומוגבל למשתמש הזה')
+        else:
+            log('אזהרה: לא ניתן היה לקרוא מפתח כתיבה מן המחשב')
     cmd = os.path.join(keep, 'run.cmd')
-    vbs = os.path.join(keep, 'run.vbs')
     logf = os.path.join(keep, 'gesher.log')
-    # נתיב מלא ל-uv. במשימה מתוזמנת ה-PATH אינו זה שבחלון רגיל, והקריאה
-    # ל-"uv" נכשלה בשקט: המשימה סיימה בלי לכתוב אף שורה ללוג.
-    uv = shutil.which('uv') or os.path.join(
-        os.path.expanduser('~'), '.local', 'bin', 'uv.exe')
+    # המשימה מריצה pythonw ישירות. כל שכבת ביניים שניסינו כאן נכשלה:
+    # ‏uv אינו ב-PATH של משימה מתוזמנת; cmd מהבהב חלון שחור כל חמש
+    # דקות; ו-wscript הפעיל כלום ברוב הפעמים, בלי שום הודעת שגיאה.
+    # ‏pythonw אינו פותח חלון כלל, והגשר אינו זקוק לשום ספרייה חיצונית.
+    pyw = os.path.join(os.path.dirname(sys.executable), 'pythonw.exe')
+    if not os.path.exists(pyw):
+        pyw = shutil.which('pythonw') or sys.executable
     io.open(cmd, 'w', encoding='ascii', errors='replace', newline='').write(
         '@echo off\r\n'
         'chcp 65001 > nul\r\n'
-        '"%s" run python "%s" --once >> "%s" 2>&1\r\n' % (uv, me, logf))
-    # ‏VBScript אינו קורא UTF-8. הקובץ נכתב ב-UTF-16, אחרת הנתיב מתעוות
-    # ו-wscript מפעיל כלום - בלי שום הודעת שגיאה, והמשימה מדווחת הצלחה.
-    io.open(vbs, 'w', encoding='utf-16', newline='').write(
-        'CreateObject("Wscript.Shell").Run """%s""", 0, False\r\n' % cmd)
+        '"%s" "%s" --once >> "%s" 2>&1\r\n' % (sys.executable, me, logf))
     # משימה אחת בלבד, כל חמש דקות. משימת ONLOGON דורשת הרשאת מנהל
     # ונדחתה כאן ב-Access denied; ממילא המשימה הזאת מרימה את הגשר
     # תוך חמש דקות מכל הדלקה, וזה די והותר.
@@ -273,7 +325,7 @@ def install(repo=None):
             log('קיצור הדרך נוצר על שולחן העבודה')
     except Exception as e:
         log('אזהרה: קיצור הדרך לא נוצר -', e)
-    run = 'wscript.exe "%s"' % vbs
+    run = '"%s" "%s" --once' % (pyw, me)
     r = subprocess.run(['schtasks', '/Create', '/F', '/TN', TASK,
                         '/SC', 'MINUTE', '/MO', '5', '/TR', run],
                        capture_output=True)
@@ -299,10 +351,17 @@ def main():
     if a.status:
         print('הגשר חי' if alive() else 'הגשר אינו רץ')
         return
-    if a.once and taken():
+    # הבדיקה היא "האם גשר כבר עונה", ולא "האם היציאה תפוסה": יציאה
+    # שנסגרה זה עתה נשארת תפוסה לרגע בחלונות, והגשר היה יוצא בשקט
+    # והמשימה מדווחת הצלחה. נמדד שלוש פעמים.
+    if a.once and alive():
         return
+    if not token():
+        log('אזהרה: אין מפתח בתיקיית הגשר. הרץ --install')
     log('הגשר עלה על 127.0.0.1:%d, מאגר %s' % (PORT, REPO))
-    ThreadingHTTPServer(('127.0.0.1', PORT), H).serve_forever()
+    srv = ThreadingHTTPServer(('127.0.0.1', PORT), H)
+    srv.daemon_threads = True
+    srv.serve_forever()
 
 
 if __name__ == '__main__':

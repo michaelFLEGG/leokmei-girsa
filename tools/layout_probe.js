@@ -9,6 +9,8 @@
   'use strict';
 
   var SAMPLE = 'אבגדהוזחטיכךלמםנןסעפףצץקרשת';
+  /* מחרוזת מנוקדת מייצגת: חולם וחיריק למעלה, קובוץ ושווא למטה, ודגש */
+  var SAMPLE_NK = 'סוּכָּה שֶׁהִיא גְּבוֹהָה לְמַעְלָה מֵעֶשְׂרִים אַמָּה פְּסוּלָה';
   /* חצים וידיים מצביעות: סמני פריסה של וורד שאין להם טעם בדף */
   var ARROWS = ['◄', '►', '▶', '◀', '←', '→',
                 '☚', '☛', '☜', '☝', '☞', '☟',
@@ -415,7 +417,9 @@
       /* המרחק הצפוי בין שני קווי בסיס הוא ממוצע שתי תיבות השורה, ולכן
          שורה שמרווח השורה שלה גדול משלה (פתיחת פרק) אינה פגם. */
       var expect = Math.max(0, (A.lh + B.lh) / 2 - LH);
-      var allow = (0.15 + (A.ah + B.bh) * 0.5) * LH + expect;
+      /* סובלנות של רבע שורה: קטע מודגש או מנוקד בתוך שורה משנה את
+         גובה התיבה בשבריר, וזה אינו רווח שהעין רואה. */
+      var allow = (0.25 + (A.ah + B.bh) * 0.5) * LH + expect;
       if (gap > allow) {
         /* רווח שנובע מציון דף שאין תחתיו טקסט אינו פגם בקוד אלא בתוכן
            הוורד, והוא מדווח ככזה כדי שיעבור לרשימת ההגהה. */
@@ -434,6 +438,34 @@
         add(2, B.row, 'רווח לבן של ' + (gap / LH).toFixed(2) + ' שורה בין ' + A.role +
                       ' ל' + B.role + ', והמותר ' + (allow / LH).toFixed(2) + why,
             { gap: gap / LH, allow: allow / LH, from: A.role, to: B.role, why: why });
+      }
+    }
+
+    /* --- 10. ניקוד חתוך או חופף ---
+       הניקוד מוסיף לגובה האותיות מלמעלה ומלמטה. אם גובה הדיו של שורה
+       מנוקדת עולה על תיבת השורה, הניקוד של שורה אחת נוגע באותיות
+       שמעליה. נמדד ב-canvas על מחרוזת מנוקדת, בגופן ובגודל שבפועל. */
+    var mm = flow.querySelector('.main.mishna');
+    if (mm) {
+      var mcs = getComputedStyle(mm);
+      var mfs = parseFloat(mcs.fontSize) || bodyFs;
+      var mlh = parseFloat(mcs.lineHeight) || LH;
+      ctx.font = mcs.fontStyle + ' ' + mcs.fontWeight + ' ' + REF + 'px ' + mcs.fontFamily;
+      var mk = ctx.measureText(SAMPLE_NK);
+      var inkNk = ((mk.actualBoundingBoxAscent || 0) + (mk.actualBoundingBoxDescent || 0)) / REF * mfs;
+      heads.mishnaNikud = { ink: inkNk, lh: mlh, fs: mfs };
+      if (inkNk > mlh + 0.5)
+        F.push({ code: 10, unit: '', daf: '', kind: 'mishna',
+                 msg: 'הניקוד של המשנה חופף: גובה הדיו ' + inkNk.toFixed(1) +
+                      ' מול תיבת השורה ' + mlh.toFixed(1),
+                 num: { ink: inkNk, lh: mlh }, rect: null });
+      /* ניקוד שנחתך בגיליון: שורה מנוקדת שיוצאת מגבול גוף הגיליון */
+      var sh0 = mm.closest('.sheet');
+      if (sh0) {
+        var sb0 = sh0.querySelector('.shbody');
+        if (sb0 && mm.getBoundingClientRect().bottom > sb0.getBoundingClientRect().bottom + 0.5)
+          F.push({ code: 10, unit: unitOf(mm), daf: '', kind: 'mishna',
+                   msg: 'משנה מנוקדת נחתכת בתחתית הגיליון', num: null, rect: null });
       }
     }
 

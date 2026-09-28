@@ -5,6 +5,7 @@ from styles_map import ROLE, CS, MISSING_FONTS
 ARROW = chr(0x25c4)
 import match_sources
 import font_ink
+import nikud_mishna
 MISSING_FONTS_REV={v:k for k,v in MISSING_FONTS.items()}
 def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=None):
   blocks = json.load(open(json_path, encoding='utf-8'))
@@ -23,11 +24,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       try: return font_ink.ink_per_em(pth) if os.path.exists(pth) else dflt
       except Exception: return dflt
   I_body = _ink('frank.ttf', 0.9331)       # גוף: FrankRuehl
+  I_fb   = _ink('frank-b.ttf', 1.1960)     # מודגש: PFT_Frank Bold
   I_v700 = _ink('vilna-b.otf', 1.0173)     # משנה ונושא: BA Vilna Bold
   I_v900 = _ink('vilna-xb.otf', 1.0173)    # דיבור המתחיל: BA Vilna Extra-Bold
   K_MISHNA = I_body / I_v700
   K_NOSE   = I_body / I_v700 * 10.0 / 9.0
   K_DH     = I_body / I_v900 * 8.0 / 9.0
+  # ההדגשה שהדפדפן מייצר מפרנקריהל קיצונית ומכוערת, ולכן ההדגשה היא
+  # גופן ממש: PFT_Frank Bold. הוא גדול בהרבה ליחידת em (1.196 מול
+  # 0.933), ו-size-adjust מקטין אותו בדיוק כך שגובה האותיות יהיה כשל
+  # הגוף. בלי זה כל מילה מודגשת היתה קופצת בגודל. המספר נמדד ואינו
+  # נבחר: זהו בדיוק ה"שתיים פחות" שבעל הפרויקט ראה בעין (7 מול 9).
+  K_BOLD   = I_body / I_fb
 
   # ---------- ג3: רשת השורות ----------
   # כל מרווח אנכי בדף נגזר מ-w:spacing של הסגנון בוורד, ולא ממספר
@@ -250,15 +258,27 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # ההצמדה נעשית כאן, בבנייה, ולא בדפדפן. לדף נכתב רק המזהה; הטקסט
   # עצמו יושב בקובץ נפרד ונטען רק בלחיצה הראשונה.
   srcmeta=None
+  nk=None
   if sources:
       st=match_sources.attach(pages,sources)
+      # ז - הניקוד מועתק מן הגמרא המנוקדת לפי מקום, ויושב בשכבה נפרדת
+      # (u['lv']). נוסח הוורד נשאר כשהיה: הוא שמשמש לחיפוש, לתוכן
+      # העניינים ולעריכה, ואליו חוזרים במצב עריכה.
+      nk=nikud_mishna.apply(pages,sources)
+      if nk['mishnayot']:
+          qa.append(('ניקוד המשניות',
+                     '%d משניות מתוך %d נוקדו מן הגמרא המנוקדת (%.0f אחוזים), '
+                     'ובהן %d מילים מתוך %d (%.0f אחוזים). מילה שכתיבה שונה '
+                     'מן המקור נשארת בלי ניקוד במתכוון'
+                     % (nk['voc'],nk['mishnayot'],100.0*nk['voc']/nk['mishnayot'],
+                        nk['wdone'],nk['words'],100.0*nk['wdone']/max(1,nk['words']))))
       srcmeta={'slug':os.path.basename(out_path)[:-5],
                'attribution':sources.get('attribution',''),
                'matched':st['matched'],'eligible':st['eligible']}
       qa.append(('מקור מן הגמרא',
                  '%d יחידות מתוך %d הוצמדו למקטע בגמרא; %d לא עברו את הסף ואין להן כפתור "מקור"'
                  % (st['matched'],st['eligible'],st['low'])))
-  data={'masechet':masechet,'pages':pages,'toc':toc,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta}
+  data={'masechet':masechet,'pages':pages,'toc':toc,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 
   CSS=r'''
@@ -588,10 +608,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # שנכתב למעלה. מרווח השורה של כותרות פרק אינו נוגע כאן במתכוון:
   # פתיחת פרק תופסת מקום גם בספר.
   CSS = CSS + ('''
+  @font-face{font-family:'Frank';src:url(fonts/frank-b.ttf);font-weight:700;
+             font-display:swap;size-adjust:%.2f%%}
+  @font-face{font-family:'Frank';src:url(fonts/frank-b.ttf);font-weight:900;
+             font-display:swap;size-adjust:%.2f%%}
   :root{--k-nose:%.4f;--k-dh:%.4f;--k-mishna:%.4f}
   .main.nose,.main.dh,.main.mishna{line-height:var(--lhpx)}
   .main.hatz{line-height:calc(var(--lhpx) * %.4f)}
-  ''' % (K_NOSE, K_DH, K_MISHNA, line_ratio('hatz')))
+  ''' % (K_BOLD * 100, K_BOLD * 100, K_NOSE, K_DH, K_MISHNA, line_ratio('hatz')))
 
   JS=r'''
   const D=DATA;const $=s=>document.querySelector(s);
@@ -817,7 +841,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       (w?`<span class="anchor">${w}</span>`:'')+(lab?'<span class="mlabel">משנה</span>':'')+
       `</span></div>`;
     if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}>${win(u.a,0)}<div class="main">${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
-    if(u.k==='m')return `<div class="row" id="u${u.id}"${H}>${win(u.w,1)}<div class="main mishna">${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
+    if(u.k==='m'){
+      /* ז3 - הניקוד הוא שכבה נפרדת. במצב עריכה חוזרים לנוסח הוורד,
+         כדי שהעיגון (הנוסח שהיה) יעבוד על הטקסט האמיתי ושלא ייכנס
+         ניקוד לוורד בלי כוונה. */
+      const L=(NK&&!EDIT&&u.lv)?u.lv:u.l;
+      return `<div class="row" id="u${u.id}"${H}>${win(u.w,1)}<div class="main mishna">${L.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===L.length-1?sb:''}</p>`).join('')}</div></div>`;
+    }
     /* הכוכביות מוצגות כלשונן בקובץ. מספרן אינו מנורמל: כל מספר נותן
        עיטור אחר בגופן, וזו כוונת המחבר. */
     if(u.k==='hatz')return `<div class="row" id="u${u.id}"${H}>${win(u.w,0)}<div class="main hatz ${u.s||''}">${u.a}</div></div>`;
@@ -903,6 +933,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
    }).catch(()=>{});
    const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(18);
    if(localStorage.getItem('lg-vert')){$('#flow').classList.add('vert');$('#vbtn').classList.add('on');ALL=true}
+   if(D.nk&&D.nk.voc){$('#nkbtn').style.display='';$('#nkbtn').classList.toggle('on',NK)}
    if(BOOK){$('#bkbtn').classList.add('on');$('#shsel').style.display=''}
    $('#shsel').value=SHEETS;
    addEventListener('resize',()=>{if(BOOK){$('#flow').style.setProperty('--sheets',sheetsNow())}});
@@ -1031,7 +1062,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd()}
 
   function setEdit(on){
+    const was=EDIT;
     EDIT=on;document.body.classList.toggle('ed',on);
+    /* המשניות מוצגות מנוקדות, ובמצב עריכה הן חייבות לחזור לנוסח
+       הוורד. הבנייה מחדש נעשית לפני סימון המקומות הניתנים לעריכה. */
+    if(was!==on&&NK&&D.nk&&D.nk.voc)render(cur);
     const f=$('#flow');
     f.querySelectorAll('[data-ek]').forEach(el=>{
       if(on){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false')}
@@ -1277,6 +1312,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      left:-99999px, שמתח בעבר את רוחב המסמך למאה אלף פיקסלים. */
   /* #book בכתובת מדליק את תצוגת הספר, כדי שאפשר יהיה לשלוח קישור
      ישיר אליה וגם להדפיס אותה בלא לגעת בהעדפה שבמכשיר. */
+  /* ז - הניקוד של המשניות. ברירת המחדל: מנוקד. */
+  let NK=localStorage.getItem('lg-nk')!=='0';
+  function nikud(){NK=!NK;localStorage.setItem('lg-nk',NK?'1':'0');
+    const b=$('#nkbtn');if(b)b.classList.toggle('on',NK);render(cur)}
   let BOOK=localStorage.getItem('lg-book')==='1'||location.hash.indexOf('book')>-1;
   let SHEETS=+localStorage.getItem('lg-sheets')||2;
   function sheetsNow(){return innerWidth<900?1:SHEETS}
@@ -1438,6 +1477,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)">
   <span class="sp"></span>
   <button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>{hgbtn}
+  <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
   <button id="bkbtn" onclick="book()" title="גיליונות זה לצד זה, בגיאומטריה של עמוד הספר">תצוגת ספר</button>
   <select id="shsel" style="display:none" onchange="setSheets(this.value)" title="כמה גיליונות זה לצד זה">
     <option value="1">גיליון אחד</option><option value="2">שני גיליונות</option><option value="3">שלושה גיליונות</option></select>

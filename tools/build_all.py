@@ -27,7 +27,14 @@ SLUG = dict(zip(ALL, LATIN))
 # ההתאמה נעשית לפי המפתח הארוך ביותר שנמצא בשם הקובץ, כדי ש"Franknatan" לא ייחשב "frank".
 FONT_MAP = {'vilna-xb.otf': ['ExtraBold'], 'vilna-b.otf': ['Vilna-Bold', 'Vilna Bold'], 'vilna-m.ttf': ['Medium'],
             'vilna-r.otf': ['Vilna Regular', 'vilna-regular'], 'vilna-g.ttf': ['DBSVILNA'],
-            'frank.ttf': ['frank.ttf', 'FrankRuehl'], 'franknatan.otf': ['Franknatan'], 'leukmey.otf': ['Leukmey']}
+            'frank.ttf': ['frank.ttf', 'FrankRuehl'], 'franknatan.otf': ['Franknatan'], 'leukmey.otf': ['Leukmey'],
+            # ההדגשה של פרנקריהל נעשית עד כה בידי הדפדפן, והיא קיצונית
+            # ומכוערת. הגופן המודגש של PFT (ברישיון שבידי בעל הפרויקט)
+            # בא במקומה. הוא גדול בהרבה ליחידת em, וגיליון הסגנונות
+            # מקטין אותו ב-size-adjust לפי גובה האותיות שנמדד.
+            # ‏PFT_Frank Regular אינו ממופה במתכוון: גוף הטקסט נשאר
+            # פרנקריהל, שעליו כויל היחס הנעול של רוחב השורה.
+            'frank-b.ttf': ['PFT_Frank Bold']}
 
 GEM = {'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,'ל':30,'מ':40,
        'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400}
@@ -148,18 +155,16 @@ def main():
                         best = (target, len(k))
             if best:
                 src = os.path.join(fdir, f); dst = os.path.join(SITE, 'fonts', best[0])
-                # גופן עברי מן הדור הישן אינו יודע יוניקוד: אותיותיו יושבות
-                # במשבצות לטיניות. סוכן סריקת התצוגה גילה שכל ציוני הדף
-                # נצבעו בגופן חלופי בלי שאיש ידע. מוסיפים לגופן טבלת יוניקוד
-                # שמכוונת אל אותם גליפים; הטקסט באתר אינו משתנה.
+                # כל גופן נכנס דרך תיקון: (א) גופן עברי מן הדור הישן אינו
+                # יודע יוניקוד ואותיותיו יושבות במשבצות לטיניות, ולכן
+                # נוספת לו טבלת יוניקוד; (ב) רוחב פסיעה מופרך נחתך.
+                # שני הדברים התגלו בסוכן סריקת התצוגה, ולא בעין.
                 try:
-                    if font_unicode.needs_patch(src):
-                        n = font_unicode.add_hebrew_cmap(src, dst)
-                        print('הגופן', best[0], 'קיבל טבלת יוניקוד ל-%d אותיות' % n)
-                    else:
-                        shutil.copy(src, dst)
+                    note = font_unicode.repair(src, dst)
+                    if note:
+                        print('הגופן', best[0] + ':', note)
                 except Exception as e:
-                    print('אזהרה: לא נוספה טבלת יוניקוד ל', best[0], '-', e)
+                    print('אזהרה: תיקון הגופן', best[0], 'נכשל -', e)
                     shutil.copy(src, dst)
         absent = [t for t in FONT_MAP if not os.path.exists(os.path.join(SITE, 'fonts', t))]
         if absent: print('אזהרה: גופן חסר באתר:', ', '.join(absent))

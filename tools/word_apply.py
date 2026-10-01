@@ -114,7 +114,7 @@ def _runs_of(p):
     return out
 
 
-def _replace_in_paragraph(p, find, repl, author, when, nextid):
+def _replace_in_paragraph(p, find, repl, author, when, nextid, at=None):
     """מחליף מופע אחד של find ב-repl, במעקב. מחזיר True אם הצליח.
 
     הסימון עשוי להתפרש על כמה קטעי-תו, מפני שוורד מפצל הרצות גם בלא
@@ -123,8 +123,8 @@ def _replace_in_paragraph(p, find, repl, author, when, nextid):
     קטע שכבר יושב בתוך שינוי-מעקב קיים אינו נוגע, ומדווח."""
     runs = _runs_of(p)
     full = ''.join(t for _, t, _ in runs)
-    k = full.find(find)
-    if k < 0:
+    k = full.find(find) if at is None else at
+    if k < 0 or full[k:k + len(find)] != find:
         return False
     lo, hi = k, k + len(find)
     touched = [(pos, txt, r) for pos, txt, r in runs if pos < hi and pos + len(txt) > lo]
@@ -533,7 +533,7 @@ def _nw(t):
     return _norm_map(t)[0]
 
 
-def apply_struct(path, ops, author, masechet, log=print, dry=False):
+def _apply_split_merge(path, ops, author, masechet, log=print, dry=False):
     """מחיל פיצול פסקה ואיחויה. נפרד מ-apply מפני שכאן מספר הפסקאות
     משתנה, והאימות הוא השוואה מלאה של רשימת הנוסחים לרשימה הצפויה.
 
@@ -634,6 +634,185 @@ def apply_struct(path, ops, author, masechet, log=print, dry=False):
         return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
     os.replace(tmp, path)
     log('נכתבו %d שינויי מבנה, ואומתו' % done)
+    return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
+
+
+# ------------------------------------- כותרת צד: Ctrl+נקודה (pside / punside)
+
+def apply_struct(path, ops, author, masechet, log=print, dry=False):
+    """מפצל לפי סוג: פיצול ואיחוי בפונקציה הישנה, כותרת צד בחדשה.
+    סוג לא מוכר אינו נופל לאיחוי - הוא נספר כלא-הוחל."""
+    old = [o for o in ops if o.get('kind') in ('psplit', 'pmerge')]
+    side = [o for o in ops if o.get('kind') in ('pside', 'punside')]
+    rest = [o for o in ops if o not in old and o not in side]
+    out = {'applied': 0, 'missed': [(o, 'סוג שינוי מבנה לא מוכר') for o in rest],
+           'backup': None, 'verified': True}
+    for fn, batch in ((_apply_split_merge, old), (_apply_side, side)):
+        if not batch:
+            continue
+        r = fn(path, batch, author, masechet, log=log, dry=dry)
+        out['applied'] += r.get('applied') or 0
+        out['missed'] += r.get('missed') or []
+        out['backup'] = out['backup'] or r.get('backup')
+        if r.get('verified') is False:
+            out['verified'] = False
+        if 'plan' in r:
+            out.setdefault('plan', []).extend(r['plan'])
+    return out
+
+
+def _common_style(blocks, pred):
+    from collections import Counter
+    c = Counter(b['style'] for b in blocks if pred(b['style']))
+    return c.most_common(1)[0][0] if c else None
+
+
+def _apply_side(path, ops, author, masechet, log=print, dry=False):
+    """כותרת צד. pside: res=[נוסח הגוף, נוסח החלון], cut=[היסט, אורך] בתוך
+    הנוסח שהיה. פסקה שכולה הופכת לחלון בשינוי סגנון; אחרת נוספת פסקת חלון
+    לפניה, והמילה נמחקת מן הגוף - הכול במעקב. punside: חלון חוזר לגוף
+    בשינוי סגנון."""
+    from styles_map import ROLE
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    before = convert(path)
+    norm_before = [_nw(b['text']) for b in before]
+    win_style = _common_style(before, lambda s: ROLE.get(s) == 'anchor' and s == 'חלון 3') \
+        or _common_style(before, lambda s: ROLE.get(s) == 'anchor')
+    body_default = _common_style(before, lambda s: ROLE.get(s, 'body') == 'body') or 'Normal'
+    plan, missed = [], []
+    for op in ops:
+        want = [_nw(x) for x in (op.get('texts') or [])]
+        res = op.get('res') or []
+        if not want or not res:
+            missed.append((op, 'רשומה חסרה'))
+            continue
+        if op['kind'] == 'pside':
+            hits = [i for i in range(len(before)) if norm_before[i] == want[0]
+                    and ROLE.get(before[i]['style'], 'body').startswith('body')]
+            if len(hits) != 1:
+                missed.append((op, 'לא אותרה פסקה יחידה (%d מועמדים)' % len(hits)))
+                continue
+            if not win_style:
+                missed.append((op, 'אין בקובץ סגנון חלון'))
+                continue
+            plan.append((hits[0], op))
+        else:
+            nxt = want[1] if len(want) > 1 else ''
+            hits = [i for i in range(len(before) - 1)
+                    if norm_before[i] == want[0] and ROLE.get(before[i]['style']) == 'anchor'
+                    and (not nxt or norm_before[i + 1] == nxt)]
+            if len(hits) != 1:
+                missed.append((op, 'לא אותר חלון יחיד (%d מועמדים)' % len(hits)))
+                continue
+            plan.append((hits[0], op))
+    if not plan:
+        return {'applied': 0, 'missed': missed, 'backup': None, 'verified': True}
+
+    want_after = list(norm_before)
+    want_style = {}
+    for i, op in sorted(plan, key=lambda x: -x[0]):
+        res = op.get('res') or []
+        if op['kind'] == 'pside':
+            body_t, win_t = _nw(res[0]), _nw(res[1])
+            if body_t:
+                want_after[i:i + 1] = [win_t, body_t]
+            else:
+                want_style[i] = win_style
+        else:
+            nxt_i = i + 1
+            want_style[i] = (before[nxt_i]['style']
+                             if ROLE.get(before[nxt_i]['style'], 'body').startswith('body')
+                             else body_default)
+    if dry:
+        return {'applied': len(plan), 'missed': missed, 'backup': None, 'verified': None,
+                'plan': [(i, o['kind']) for i, o in plan]}
+
+    bk = backup(path, masechet)
+    log('גיבוי: ' + bk)
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    settings = z.read('word/settings.xml')
+    sids = _style_ids(z.read('word/styles.xml'))
+    z.close()
+    counter = [9800]
+
+    def nextid():
+        counter[0] += 1
+        return counter[0]
+
+    when = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    xml_ps = _paragraph_map(doc, before)
+    done = 0
+    for i, op in sorted(plan, key=lambda x: -x[0]):
+        p = xml_ps.get(before[i]['i'])
+        if p is None:
+            missed.append((op, 'הפסקה לא נמצאה ב-XML'))
+            continue
+        res = op.get('res') or []
+        if op['kind'] == 'punside':
+            sid = sids.get(want_style[i])
+            if not sid or not _set_pstyle(p, sid[0], author, when, nextid):
+                missed.append((op, 'לא ניתן להחליף סגנון'))
+                continue
+            done += 1
+            continue
+        sid = sids.get(win_style)
+        if not sid:
+            missed.append((op, 'סגנון החלון חסר בקובץ'))
+            continue
+        if not _nw(res[0]):
+            if not _set_pstyle(p, sid[0], author, when, nextid):
+                missed.append((op, 'לא ניתן להחליף סגנון'))
+                continue
+            done += 1
+            continue
+        cut = op.get('cut') or [0, 0]
+        if cut[1]:
+            nm, idx = _norm_map(before[i]['text'])
+            if cut[0] + cut[1] > len(idx):
+                missed.append((op, 'חיתוך מחוץ לפסקה'))
+                continue
+            lo, hi = idx[cut[0]], idx[cut[0] + cut[1] - 1] + 1
+            runs = _runs_of(p)
+            full = ''.join(t for _, t, _ in runs)
+            if full != before[i]['text'] or not _replace_in_paragraph(
+                    p, full[lo:hi], '', author, when, nextid, at=lo):
+                missed.append((op, 'לא ניתן למחוק את המילה במעקב'))
+                continue
+        np_ = etree.Element(W + 'p')
+        ppr = etree.SubElement(np_, W + 'pPr')
+        ps_ = etree.SubElement(ppr, W + 'pStyle')
+        ps_.set(W + 'val', sid[0])
+        _mark_para(np_, 'ins', author, when, nextid)
+        ins = _mark(etree.Element(W + 'ins'), author, when, nextid)
+        ins.append(_mkrun(op['res'][1], None))
+        np_.append(ins)
+        p.addprevious(np_)
+        done += 1
+
+    tmp = path + '.new'
+    _rezip(path, tmp, {'word/document.xml':
+                       etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
+                       'word/settings.xml': _ensure_track(settings)[0]})
+    after = convert(tmp)
+    got = [_nw(b['text']) for b in after]
+    bad = None
+    if got != want_after:
+        bad = 'נוסח'
+    else:
+        for i, st in want_style.items():
+            # אינדקס הפסקה בקובץ החדש: זז רק בפסקאות שנוספו לפניה
+            shift = sum(1 for j, o in plan if j < i and o['kind'] == 'pside' and _nw((o.get('res') or [''])[0]))
+            if after[i + shift]['style'] != st:
+                bad = 'סגנון'
+                break
+    if bad:
+        os.remove(tmp)
+        log('האימות נכשל (%s). הקובץ לא נגע.' % bad)
+        return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
+    os.replace(tmp, path)
+    log('נכתבו %d שינויי כותרת-צד, ואומתו' % done)
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
 

@@ -81,8 +81,19 @@ def ops_of(doc):
     for e in doc.get('edits') or []:
         # ---- שינוי מבנה: פיצול פסקה או איחוי שתיים ----
         if e.get('op') == 'struct':
-            mops.append({'kind': 'psplit' if e.get('kind') == 'split' else 'pmerge',
-                         'texts': e.get('texts') or [], 'res': e.get('resT') or []})
+            kind = e.get('kind')
+            if kind in ('split', 'merge'):
+                mops.append({'kind': 'psplit' if kind == 'split' else 'pmerge',
+                             'texts': e.get('texts') or [], 'res': e.get('resT') or []})
+            elif kind in ('side', 'unside'):
+                # כותרת צד (Ctrl+נקודה): res[0]=[סגנון, גוף], res[1]=[חלון],
+                # res[2]=[היסט החיתוך, אורכו] בתוך הנוסח שהיה.
+                mops.append({'kind': 'pside' if kind == 'side' else 'punside',
+                             'texts': e.get('texts') or [], 'res': e.get('resT') or [],
+                             'cut': (e.get('res') or [None, None, None])[2] if kind == 'side' else None})
+            else:
+                # סוג מבנה לא מוכר: לעולם לא נופל לאיחוי. נאמר ומדולג.
+                skipped.append((e, 'סוג שינוי מבנה לא מוכר: %r' % kind))
             continue
         was, now = e.get('was', ''), e.get('now', '')
         if was != now:

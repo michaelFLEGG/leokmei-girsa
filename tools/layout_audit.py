@@ -39,7 +39,36 @@ CODES = {
     10: 'ניקוד-חופף',
     11: 'כוכבית-בשורה',      # מידע לבקרה בלבד (א6): כוכבית בתוך טקסט, לא נגעה
     15: 'משנה-לא-מנוקדת',
+    16: 'כותרת-צד-בעריכה',   # Ctrl+נקודה במצב עריכה: נוצר חלון, ירד מהגוף, ו-Ctrl+Z מחזיר
 }
+SIDE_CHECK = '''() => {
+  try {
+    if (typeof setEdit !== 'function') return {ok: false, msg: 'אין מצב עריכה בדף'};
+    setEdit(true);
+    const ps = [...document.querySelectorAll('#flow .row.u .main p[data-ek]')]
+      .filter(p => txtOf(p).split(' ').length > 6 && !p.querySelector('i,b'));
+    if (!ps.length) { setEdit(false); return {ok: true, msg: 'אין פסקה מתאימה בקטע'}; }
+    const p = ps[0], ek = p.dataset.ek, before = txtOf(p);
+    const n = document.createTreeWalker(p, NodeFilter.SHOW_TEXT).nextNode();
+    const word = n.textContent.split(' ')[2].replace(/[^\u05d0-\u05ea]/g, '');
+    if (!word) { setEdit(false); return {ok: true, msg: 'אין מילה'}; }
+    p.focus();
+    const r = document.createRange(); r.setStart(n, n.textContent.indexOf(word) + 1); r.collapse(true);
+    getSelection().removeAllRanges(); getSelection().addRange(r);
+    p.dispatchEvent(new KeyboardEvent('keydown', {key: '.', code: 'Period', ctrlKey: true, bubbles: true, cancelable: true}));
+    const made = ED.length === 1 && ED[0].kind === 'side' &&
+      [...document.querySelectorAll('.anchor')].some(a => a.textContent.indexOf(word) > -1);
+    const gone = !(document.querySelector('[data-ek="' + ek + '"]') || {textContent: ''}).textContent.includes(before);
+    const el = document.querySelector('[data-ek]'); el.focus();
+    el.dispatchEvent(new KeyboardEvent('keydown', {key: 'z', code: 'KeyZ', ctrlKey: true, bubbles: true, cancelable: true}));
+    const undone = ED.length === 0 && (document.querySelector('[data-ek="' + ek + '"]') || {textContent: ''}).textContent.includes(before);
+    setEdit(false);
+    try { localStorage.removeItem(EKEY); } catch (e) {}
+    ED.length = 0;
+    return {ok: made && gone && undone, msg: 'חלון נוצר=' + made + ' ירד מהגוף=' + gone + ' בוטל=' + undone};
+  } catch (e) { return {ok: false, msg: String(e)}; }
+}'''
+
 MODES = {'flow': 'זרימה', 'book': 'תצוגת ספר', 'print': 'הדפסה', 'phone': 'טלפון'}
 # בטלפון המסילה יושבת מעל הטקסט ולא לצדו, ורשת השורות היא אחרת מטבעה
 # (כל יחידה פותחת בשורת מסילה). לכן רק שני הסוגים שאינם תלויים בפריסה
@@ -159,7 +188,7 @@ def run(args):
     rev = {v: k for k, v in SLUG.items()}
 
     pages = sorted(f for f in os.listdir(site)
-                   if f.endswith('.html') and f not in ('index.html',) and '-hagaha' not in f)
+                   if f.endswith('.html') and f not in ('index.html', 'mekorot.html') and '-hagaha' not in f)
     slugs = [f[:-5] for f in pages]
     if args.masechtot and args.masechtot != 'all':
         want = [s.strip() for s in args.masechtot.split(',')]
@@ -268,6 +297,14 @@ def run(args):
                             if args.shots and f.get('unit'):
                                 f['shot'] = shot(pg, shot_dir, slug, mode, f)
                             ex.append(f)
+
+                if mode == 'flow':
+                    sc = pg.evaluate(SIDE_CHECK)
+                    if not sc.get('ok'):
+                        counts[16] += 1
+                        examples[16].append({'code': 16, 'unit': '', 'daf': '', 'kind': 'edit',
+                                             'msg': 'Ctrl+נקודה במצב עריכה נכשל: ' + sc.get('msg', ''),
+                                             'num': None, 'rect': None})
 
                 gf = glyph_findings(fonts_all, fdir)
                 for f in gf:

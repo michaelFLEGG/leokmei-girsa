@@ -744,7 +744,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # באתר היתה נשארת עם שכבת ניקוד ישנה, והלומד היה רואה את הנוסח
   # הישן כל עוד הניקוד דלוק.
   if sources:
-      nk=nikud_mishna.apply(pages,sources)
+      _est={}
+      _ep=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'data','nikud-nakdan',os.path.basename(out_path)[:-5]+'.json')
+      if os.path.exists(_ep):
+          _est=json.load(io.open(_ep,encoding='utf-8'))
+      nk=nikud_mishna.apply(pages,sources,_est)
       if nk['mishnayot']:
           qa.append(('ניקוד המשניות',
                      '%d משניות מתוך %d נוקדו מן הגמרא המנוקדת (%.0f אחוזים), '
@@ -752,6 +756,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
                      'מן המקור נשארת בלי ניקוד במתכוון'
                      % (nk['voc'],nk['mishnayot'],100.0*nk['voc']/nk['mishnayot'],
                         nk['wdone'],nk['words'],100.0*nk['wdone']/max(1,nk['words']))))
+          qa.append(('ניקוד משוער',
+                     '%d מילים במשנה מנוקדות בניקוד משוער (nikud_generate), ו-%d מילים '
+                     'נשארו בלי ניקוד (ראשי תיבות, קיצורים או מילה שלא נמצאה לה התאמה בטוחה)'
+                     % (nk.get('est',0),nk.get('left',0))))
 
   data={'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
@@ -946,6 +954,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .edlost{background:#fdf1d8;border-right:3px solid #a83c2f;padding-right:8px}
   .edsum{background:#eeeae1;border-radius:5px;padding:7px 11px;margin-bottom:8px;font-size:14px;line-height:1.6}
   .edbar .edpub{font-size:13px;color:#cfe0c8}
+  body.adm .nks{text-decoration:underline;text-decoration-color:#b9b2a2;text-decoration-thickness:1px;text-underline-offset:3px}
+  @media print{body.adm .nks{text-decoration:none}}
   .sideask{position:fixed;z-index:15;display:flex;gap:6px;align-items:center;direction:rtl;
     background:#2f2a23;color:#f2ede1;border-radius:6px;padding:6px 10px;box-shadow:0 3px 14px rgba(0,0,0,.35)}
   .sideask input{font:inherit;font-size:15px;width:9em;border:1px solid #6b6154;border-radius:4px;padding:3px 6px;background:#fff;color:#222}
@@ -1008,8 +1018,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .srcbody{flex:1 1 auto;overflow:auto;padding:12px 18px}
   .srcbody h4{margin:14px 0 6px;font-size:14px;font-weight:500;color:#8a7d66;border-bottom:1px solid #e0d8c4;padding-bottom:3px}
   .srcseg{background:#fdf6e3;border-right:3px solid var(--gold);border-radius:4px;padding:9px 12px}
-  .srcall p{margin:0 0 .5em;padding:2px 5px;border-radius:3px}
-  .srcall p.hit{background:#fdf1d8;box-shadow:inset 3px 0 0 var(--gold)}
+  .srcall p,.srcseg p{margin:0 0 .5em;padding:2px 5px;border-radius:3px}
+  .srcall .sgx{margin:0 0 .5em;padding:2px 0;border-radius:3px}
+  .srcall .sgx.hit{background:#fdf1d8;box-shadow:inset 3px 0 0 var(--gold)}
+  .prs{font-size:.84em;line-height:1.5;color:#4a4137;background:#f2ede0;border-right:2px solid #cdc3a8;
+       border-radius:3px;margin:2px 5px 6px;padding:5px 9px}
+  .srchd .srcsep{width:1px;align-self:stretch;background:#5a5147;margin:0 4px}
   .srcft{flex:0 0 auto;padding:6px 14px;font-size:12px;color:#8a7d66;background:#f3eee2;border-top:1px solid #e0d8c4}
   .srcbody .ld{color:#8a7d66;font-size:15px}
   @media screen and (max-width:760px){.src.split{left:0;right:0;top:auto;bottom:0;width:auto;height:60vh}
@@ -2417,6 +2431,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   document.addEventListener('mousedown',e=>{
     if($('#stybar')&&e.target.closest&&!e.target.closest('#stybar')&&!e.target.closest('[contenteditable="true"]'))hideSty()});
   if(location.hash.indexOf('admin')>-1){try{localStorage.setItem(AKEY,'1')}catch(e){}}
+  if(isAdmin())document.body.classList.add('adm');
   /* דף שמוגש מן הגשר רץ במחשב של בעל הפרויקט עצמו, ואין שום טעם
      לשאול בו מילת מנהל: מי שהגיע לכאן כבר עבר את כל מה שמילה כזאת
      אמורה לבדוק. */
@@ -2691,6 +2706,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      שורת הייחוס בתחתית המגירה היא תנאי הרישיון (CC BY-NC), והיא לעולם
      אינה נכנסת להדפסה - שם היא מוסתרת ב-@media print. */
   let SRC=null, SRCLOAD=null, SRCMODE=localStorage.getItem('lg-srcmode')||'';
+  /* מה מוצג במגירה: גמרא, גמרא ופירוש (ברירת מחדל), או פירוש בלבד.
+     הבחירה נשמרת במכשיר. */
+  let SRCVIEW=localStorage.getItem('lg-srcview')||'both';
+  if(['gem','both','per'].indexOf(SRCVIEW)<0)SRCVIEW='both';
   function srcDefault(){return innerWidth<900?'full':'split'}
   function loadSrc(){
     if(SRC)return Promise.resolve(SRC);
@@ -2710,22 +2729,31 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     box.className='src '+mode;
     document.body.classList.toggle('splitsrc',mode==='split');
     box.innerHTML='<div class="srchd"><b>מקור</b><span class="sp"></span>'+
+      ['gem','both','per'].map(v=>'<button data-v="'+v+'" class="'+(v===SRCVIEW?'on':'')+'">'+
+        ({gem:'גמרא',both:'גמרא ופירוש',per:'פירוש'})[v]+'</button>').join('')+
+      '<span class="srcsep"></span>'+
       ['peek','split','full'].map(m=>'<button data-m="'+m+'" class="'+(m===mode?'on':'')+'">'+
         ({peek:'הצצה',split:'מסך מפוצל',full:'מלא'})[m]+'</button>').join('')+
       '<button onclick="closeSrc()" title="Esc">×</button></div>'+
       '<div class="srcbody"><div class="ld">טוען את הגמרא…</div></div>';
     box.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{
       SRCMODE=b.dataset.m;localStorage.setItem('lg-srcmode',SRCMODE);openSrc(ref)});
+    box.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{
+      SRCVIEW=b.dataset.v;try{localStorage.setItem('lg-srcview',SRCVIEW)}catch(e){}openSrc(ref)});
     loadSrc().then(j=>{
       const d=refDaf(ref);if(!d)return;
       const heb=Object.keys(j.pages).find(k=>j.pages[k].daf===d[0]);
       const pg=j.pages[heb];if(!pg)return;
       const i=pg.refs.indexOf(ref);
       box.querySelector('.srchd b').textContent='מקור · דף '+heb;
+      const per=pg.perush||null, wantP=SRCVIEW!=='gem', wantG=SRCVIEW!=='per';
+      const one=n=>(wantG?'<p class="g">'+(pg.gemara[n]||'')+'</p>':'')+
+        (wantP&&per&&per[n]?'<div class="prs">'+per[n]+'</div>':'');
+      const note=wantP&&!per?'<div class="ld">אין פירוש לדף הזה.</div>':'';
       box.querySelector('.srcbody').innerHTML=
-        '<div class="srcseg">'+(pg.gemara[i]||'')+'</div>'+
+        '<div class="srcseg">'+(one(i)||('<p class="g">'+(pg.gemara[i]||'')+'</p>'))+'</div>'+note+
         '<h4>הדף כולו</h4><div class="srcall">'+
-        pg.gemara.map((g,n)=>'<p class="'+(n===i?'hit':'')+'" id="sg'+n+'">'+g+'</p>').join('')+
+        pg.gemara.map((g,n)=>'<div class="sgx'+(n===i?' hit':'')+'" id="sg'+n+'">'+(one(n)||('<p class="g">'+g+'</p>'))+'</div>').join('')+
         '</div>';
       if(!box.querySelector('.srcft')){const f=document.createElement('div');f.className='srcft';
         f.textContent=j.attribution||'';box.appendChild(f)}

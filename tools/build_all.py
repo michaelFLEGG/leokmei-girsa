@@ -310,8 +310,20 @@ main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500
 .hg:hover{{background:#b8912f}}
 footer{{text-align:center;color:#8a7d66;font-size:13px;padding:20px}}</style></head><body>
 <header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p></header>
-<main>{rows}</main><footer>עודכן {now} · האתר נבנה אוטומטית מקובצי הוורד</footer></body></html>'''
+<main>{rows}</main><footer>עודכן {now} · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a></footer></body></html>'''
     open(os.path.join(SITE, 'index.html'), 'w', encoding='utf-8').write(idx)
+    # עמוד "מקורות": הייחוס הנדרש ברישיון, פעם אחת, בשורה שקטה. השם המקורי
+    # של הפירוש מופיע רק כאן; בממשק עצמו הוא "פירוש הגמרא".
+    open(os.path.join(SITE, 'mekorot.html'), 'w', encoding='utf-8').write(
+        '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1"><title>מקורות · לאוקמי גירסא</title>'
+        '<style>body{margin:0;background:#e9e4d8;color:#1d1a16;font-family:serif;line-height:1.7}'
+        'main{max-width:640px;margin:0 auto;padding:30px 18px}h1{font-size:26px}a{color:#5a4a2a}</style></head><body><main>'
+        '<h1>מקורות</h1>'
+        '<p>הגמרא המנוקדת והפירוש המוצגים במגירת "מקור" נלקחו מספריא (Sefaria), '
+        'ממהדורת William Davidson של התלמוד הבבלי בעריכת הרב עדין אבן־ישראל שטיינזלץ, '
+        'ברישיון CC BY-NC 4.0. האתר חינמי ואינו מוכר דבר.</p>'
+        '<p><a href="index.html">חזרה לשער</a></p></main></body></html>')
     json.dump({'built': built, 'time': now}, open(os.path.join(SITE, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print(len(built), 'מסכתות נבנו')
 

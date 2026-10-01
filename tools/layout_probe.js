@@ -488,6 +488,26 @@
       }
     }
 
+    /* --- 15. משנה לא מנוקדת: מילה עברית בפסקת משנה בלי שום ניקוד.
+       לא נחשבים: ראשי תיבות וקיצורים (גרש או גרשיים בצמוד), מספרים,
+       וציוני מקור בסוגריים. --- */
+    (function () {
+      var mp = flow.querySelectorAll('.main.mishna p'), WRE = /[א-ת֑-ׇ]+/g;
+      for (var a = 0; a < mp.length; a++) {
+        var tx = mp[a].cloneNode(true);
+        var junk = tx.querySelectorAll('.srcb,.mlabel');
+        for (var z = 0; z < junk.length; z++) junk[z].remove();
+        var t = tx.textContent.replace(/\([^)]*\)/g, ' ').replace(/\[[^\]]*\]/g, ' '), m, bare = [];
+        while ((m = WRE.exec(t))) {
+          var w = m[0], pre = t.charAt(m.index - 1), post = t.charAt(m.index + w.length);
+          if (/["'׳״]/.test(pre) || /["'׳״]/.test(post)) continue;
+          if (!/[א-ת]/.test(w.replace(/[֑-ׇ]/g, '')) || /[֑-ׇ]/.test(w) || w.length < 2) continue;
+          bare.push(w);
+        }
+        if (bare.length) add(15, mp[a].closest('.row'), 'משנה לא מנוקדת: ' + bare.slice(0, 4).join(' '), { n: bare.length });
+      }
+    })();
+
     /* --- 9. ניתוק בעמוד (רק כשיש גיליונות) --- */
     var sheets = flow.querySelectorAll('.sheet');
     /* כותרת שאין אחריה תוכן כלל עד סוף הפרק (למשל "הדרן עלך" בסגנון

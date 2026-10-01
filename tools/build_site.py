@@ -706,7 +706,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # באותו תפקיד בקובץ הזה עצמו, כדי שכתיבה לוורד תשתמש בסגנון שכבר
   # קיים בו ולא תמציא חדש. סגנון שאין לו שם בקובץ הזה אינו מוצע כלל:
   # עדיף שלא יופיע מלהציע דבר שלא ניתן לכתוב אותו חזרה.
-  CSLAB=[('am','אמוראים'),('ps','פסוק'),('tn','משנה'),('ns','נושא'),
+  CSLAB=[('am','אמוראים'),('ps','פסוק'),('tn','משנה'),('dm','ד"ה משנה'),('ns','נושא משנה'),
          ('kt','כותרת בשורה'),('hs','רקע והסבר'),('ot','אות פותחת')]
   PSLAB=[('','גוף'),('hr','רקע והסבר'),('in','פיסקת תשובה'),
          ('sp','רווח לפני'),('nk','נקודה')]
@@ -722,7 +722,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   def top(cnt):
       return cnt.most_common(1)[0][0] if cnt else ''
   sty={'c':[[c,lab,top(cs_cnt[c])] for c,lab in CSLAB if cs_cnt[c]]+
-           [['b','מודגש','']],          # הדגשה ישירה, אינה סגנון בוורד
+           [['mf','מפרשים',''],['b','מודגש','']],          # הדגשה ישירה, אינה סגנון בוורד
        'p':[[c,lab,top(ps_cnt[c])] for c,lab in PSLAB if ps_cnt[c]]}
   absent=[lab for c,lab in CSLAB if not cs_cnt[c]]
   if absent:
@@ -914,7 +914,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .am{font-family:'Vilna',serif;font-weight:400;font-size:.88em}
   .ps{font-family:'Vilna',serif;font-weight:700;font-size:.9em;color:#2e3f6b} body.hc .ps{color:#000;text-decoration:underline}
   .df{font-family:'VilnaG','Vilna',serif;color:var(--red)} body.hc .df{color:#000}
-  .kt{font-weight:700} .hs{font-size:.82em;color:#4a4137} .ot{font-weight:700;font-size:.8em} .tn{font-weight:900} .ns{font-weight:700} .b{font-weight:700}
+  .kt{font-weight:700} .hs{font-size:.82em;color:#4a4137} .ot{font-weight:700;font-size:.8em} .tn{font-weight:900} .dm{font-weight:900} .mf{color:#6a4a1f} .ns{font-weight:700} .b{font-weight:700}
   .u .main:hover{background:rgba(201,162,74,.14)} .hit{background:rgba(201,162,74,.3)}
   mark{background:#ffe27a;color:inherit}
   .panel{position:fixed;top:var(--bar);right:0;bottom:0;width:min(420px,100vw);background:#fbf8f1;box-shadow:-2px 0 16px rgba(0,0,0,.25);overflow:auto;padding:14px 18px;z-index:6;display:none;font-size:15px;line-height:1.6}
@@ -2039,6 +2039,43 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const e={op:'struct',kind:'unside',texts:[winT,nextT],res:[[cls,winH]],
              resT:[winT],daf:hit.daf,t:Date.now(),pub:0};
     sideCommit(e,hit.pi,hit,(e,h)=>{unsideApply(e,h);return 'u'+h.u.id+'.1'})}
+  /* =================== מקשי עריכה: סגנונות תו, הדגשה, שמירה ===================
+     נתפסים לפי event.code ולא לפי התו, כי בפריסה העברית Z הוא ז. */
+  const CK={Digit1:'mf',Digit2:'ps',Digit3:'ns',Digit4:'hs'};
+  function csToggle(c){
+    const el=edEl();
+    if(!el||el.tagName!=='P'){flash('הסגנונות חלים על פסקת טקסט. העמד את הסמן בתוכה');return}
+    if(c&&OKCLS.indexOf(c)<0){flash('אין סגנון כזה בקובץ הזה');return}
+    const s=getSelection();if(!s.rangeCount)return;
+    let r=s.getRangeAt(0);
+    let probe=r.collapsed?r.startContainer:r.commonAncestorContainer;
+    if(r.collapsed){
+      const text=txtOf(el);let a=cutOff(el,r.startContainer,r.startOffset),b=a;
+      while(a>0&&WCH.test(text[a-1]))a--;
+      while(b<text.length&&WCH.test(text[b]))b++;
+      if(b<=a){flash('העמד את הסמן בתוך מילה, או סמן טקסט');return}
+      const pa=posAt(el,a),pb=posAt(el,b);
+      r=document.createRange();r.setStart(pa[0],pa[1]);r.setEnd(pb[0],pb[1]);
+      s.removeAllRanges();s.addRange(r)}
+    const host=probe.nodeType===3?probe.parentElement:probe;
+    const on=c&&host.closest&&host.closest('i.'+c);
+    if(on){on.replaceWith(...on.childNodes);el.normalize();s.removeAllRanges();capture(el);hideSty();return}
+    setCs(c)}
+  function keysCard(){
+    const old=$('#keyscard');if(old){old.remove();return}
+    const m=document.createElement('div');m.className='modal';m.id='keyscard';
+    const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
+      ['Ctrl+1','סגנון תו: מפרשים'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון תו: נושא'],
+      ['Ctrl+4','סגנון תו: רקע והסבר'],['Ctrl+B','מודגש'],['Ctrl+רווח','הסרת סגנון תו מהבחירה'],
+      ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
+      ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
+      ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl'],
+      ['Enter / Backspace בתחילת פסקה','פיצול פסקה / איחוי עם הקודמת']];
+    m.innerHTML='<div class="box"><h3>קיצורי מקשים בעריכה</h3><table style="width:100%;border-collapse:collapse">'+
+      rows.map(r=>'<tr><td style="padding:3px 8px;font-weight:700;white-space:nowrap">'+esc(r[0])+'</td><td style="padding:3px 8px">'+esc(r[1])+'</td></tr>').join('')+
+      '</table><div class="btns"><button onclick="keysCard()">סגירה</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',e=>{if(e.target===m)m.remove()})}
   function structName(e){
     return e.kind==='split'?'פיצול פסקה':e.kind==='merge'?'איחוי שתי פסקאות':
            e.kind==='side'?'כותרת צד':e.kind==='unside'?'החזרת כותרת צד לגוף':'שינוי מבנה'}
@@ -2065,6 +2102,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       bar.innerHTML='<b>מצב עריכה</b><span>· <span id="edn">'+ED.length+'</span> תיקונים</span>'+
         '<span id="edpub" class="edpub"></span>'+
         '<button onmousedown="event.preventDefault()" onpointerdown="event.preventDefault()" onclick="sideCmd()" title="הופך את המילה שהסמן בה לכותרת בצד ימין (Ctrl+נקודה)">כותרת צד</button>'+
+        '<button onclick="keysCard()" title="Ctrl+/">קיצורי מקשים</button>'+
         '<button onclick="panel(\'ed\')">העריכות שלי</button>'+
         '<button onclick="pubNow(1)">פרסם עכשיו</button><span class="sp"></span>'+
         '<button onclick="setEdit(false)">סיום</button>';
@@ -2342,6 +2380,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
        ובפריסה העברית גם לפי התו, מפני שהנקודה שם יושבת על מקש אחר. */
     if(((e.ctrlKey&&!e.altKey)||(e.altKey&&!e.ctrlKey))&&!e.shiftKey&&!e.metaKey&&
        (e.code==='Period'||e.key==='.')){e.preventDefault();sideCmd();return}
+    if(!e.shiftKey&&!e.metaKey&&((e.ctrlKey&&!e.altKey)||(e.altKey&&!e.ctrlKey))&&CK[e.code]){
+      e.preventDefault();csToggle(CK[e.code]);return}
+    if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyB'){e.preventDefault();csToggle('b');return}
+    if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='Space'){e.preventDefault();setCs('');return}
+    if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyS'){e.preventDefault();capture(el);pubNow(1);flash('נשמר');return}
+    if(e.ctrlKey&&!e.altKey&&e.key==='/'){e.preventDefault();keysCard();return}
     /* Ctrl+Z מבטל כותרת צד שנעשתה זה עתה, כל עוד לא הוקלד דבר אחריה */
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyZ'&&UNDO.length&&
        UNDO[UNDO.length-1].t>LASTIN){e.preventDefault();undoLast();return}

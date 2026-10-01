@@ -22,7 +22,7 @@
 
 אין כאן שום מחיקה ממשית, ואין קבלה או דחייה של שינוי קיים.
 """
-import os, sys, json, shutil, time, zipfile, datetime, argparse, io
+import os, sys, json, shutil, time, zipfile, datetime, argparse, io, re
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lxml import etree
@@ -814,6 +814,364 @@ def _apply_side(path, ops, author, masechet, log=print, dry=False):
     os.replace(tmp, path)
     log('נכתבו %d שינויי כותרת-צד, ואומתו' % done)
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
+
+
+# ------------------------------------------------ השתלת הגהה ממסמך אחר
+
+def _anc_marks(r):
+    """מחבר ההוספה ומחבר המחיקה העוטפים קטע-תו (או None)."""
+    ins = dele = None
+    e = r.getparent()
+    while e is not None and e.tag != W + 'p':
+        if e.tag == W + 'ins':
+            ins = e.get(W + 'author')
+        elif e.tag == W + 'del':
+            dele = e.get(W + 'author')
+        e = e.getparent()
+    return ins, dele
+
+
+def _ptext(p, author, mode):
+    """mode X: הנוסח אחרי קבלת כל השינויים. mode A: הנוסח שלפני שינוייו של
+    author (שלו נדחים, של אחרים מתקבלים)."""
+    out = []
+    for r in p.iter(W + 'r'):
+        ins, dele = _anc_marks(r)
+        if mode == 'X':
+            if dele:
+                continue
+        else:
+            if ins == author or (dele and dele != author):
+                continue
+        for x in r:
+            if x.tag in (W + 't', W + 'delText'):
+                out.append(x.text or '')
+            elif x.tag == W + 'tab':
+                out.append('\t')
+    return ''.join(out)
+
+
+def _pmark(p):
+    rp = p.find('w:pPr/w:rPr', ns)
+    if rp is None:
+        return None, None
+    i, d = rp.find('w:ins', ns), rp.find('w:del', ns)
+    return (i.get(W + 'author') if i is not None else None,
+            d.get(W + 'author') if d is not None else None)
+
+
+def _touched(p, author):
+    for r in p.iter(W + 'r'):
+        ins, dele = _anc_marks(r)
+        if ins == author or dele == author:
+            return True
+    mi, md = _pmark(p)
+    return mi == author or md == author
+
+
+def _others_sig(ps, author):
+    sig = []
+    for p in ps:
+        for el in p.iter(W + 'ins', W + 'del'):
+            if el.get(W + 'author') != author and el.getparent().tag != W + 'rPr':
+                sig.append((etree.QName(el).localname, el.get(W + 'author'),
+                            ''.join(el.itertext())))
+    return sig
+
+
+def _clean_ins_text(t):
+    t = t.replace('\u00a0', ' ')
+    t = re.sub(r' {2,}', ' ', t)
+    t = re.sub(r' +([,.:;)\]])', r'\1', t)
+    return t
+
+
+def _normalize_ins(p, author):
+    """טקסט שנוסף: רווחים מתוקנים, ועיצוב הסביבה במקום העיצוב של הכותב."""
+    for ins in list(p.iter(W + 'ins')):
+        if ins.get(W + 'author') != author or ins.getparent().tag == W + 'rPr':
+            continue
+        runs = ins.findall('w:r', ns)
+        # סביבה: הקטע החי הקרוב ביותר שאינו בתוך שינוי של הכותב
+        base = None
+        prev = ins.getprevious()
+        while prev is not None and base is None:
+            if prev.tag == W + 'r':
+                base = prev
+            prev = prev.getprevious()
+        if base is None:
+            nxt = ins.getnext()
+            while nxt is not None and base is None:
+                if nxt.tag == W + 'r':
+                    base = nxt
+                nxt = nxt.getnext()
+        for r in runs:
+            for t in r.findall('w:t', ns):
+                t.text = _clean_ins_text(t.text or '')
+                t.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+            old = r.find('w:rPr', ns)
+            if old is not None:
+                r.remove(old)
+            if base is not None and base.find('w:rPr', ns) is not None:
+                rp = etree.fromstring(etree.tostring(base.find('w:rPr', ns)))
+                for ch in rp.findall('w:rPrChange', ns):
+                    rp.remove(ch)
+                r.insert(0, rp)
+
+
+def _strip_map(t):
+    """הטקסט בלי רווחים, ולכל תו בו מיקומו בטקסט המקורי."""
+    out, idx = [], []
+    for i, ch in enumerate(t):
+        if not ch.isspace() and ch != '\u00a0':
+            out.append(ch)
+            idx.append(i)
+    return ''.join(out), idx
+
+
+def _fuzzy_spans(A, B, main_full):
+    """שינוייו של הכותב (A -> B) כהחלפות על הטקסט הגולמי של הפסקה בקובץ
+    הראשי, בהשוואה שאינה רגישה לרווחים. מחזיר [(lo, hi, repl)] או None."""
+    import difflib
+    As, Ai = _strip_map(A)
+    Bs, Bi = _strip_map(B)
+    Ms, Mi = _strip_map(main_full)
+    if not As or difflib.SequenceMatcher(None, As, Ms, autojunk=False).ratio() < 0.85:
+        return None
+    # מיפוי מיקום ב-As למיקום ב-Ms
+    amap = {}
+    for blk in difflib.SequenceMatcher(None, As, Ms, autojunk=False).get_matching_blocks():
+        for k in range(blk.size):
+            amap[blk.a + k] = blk.b + k
+    spans = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, As, Bs, autojunk=False).get_opcodes():
+        if tag == 'equal':
+            continue
+        # הטקסט החדש כפי שנכתב (כולל רווחים פנימיים)
+        if j2 > j1:
+            repl = B[Bi[j1]:Bi[j2 - 1] + 1]
+        else:
+            repl = ''
+        if i2 > i1:
+            if any(k not in amap for k in range(i1, i2)):
+                return None
+            ms, me = amap[i1], amap[i2 - 1]
+            if me - ms != i2 - i1 - 1:
+                return None
+            lo, hi = Mi[ms], Mi[me] + 1
+        else:
+            k = i1
+            if k not in amap and k > 0 and (k - 1) in amap:
+                lo = hi = Mi[amap[k - 1]] + 1
+            elif k in amap:
+                lo = hi = Mi[amap[k]]
+            else:
+                return None
+        spans.append((lo, hi, repl))
+    return spans
+
+
+def apply_transplant(path, src, author, masechet, log=print, dry=False):
+    """משתיל את שינויי המעקב של author ממסמך src אל path, ברמת ה-XML.
+
+    פסקה (או קבוצת פסקאות שפוצלו) ש-author נגע בה, ושנוסחה הבסיסי זהה
+    לפסקה בקובץ הראשי, מוחלפת בעותק שלה עם סימוני המעקב. פסקה בודדת
+    שהקובץ הראשי השתנה בה מאז (רווחים, סימון של מחבר אחר) מקבלת את
+    שינוייו כהחלפות מינימליות במעקב. שינוי עיצוב בלבד אינו עובר, וכל מה
+    שלא אותר בוודאות אינו מוחל ומדווח."""
+    import difflib
+    from copy import deepcopy
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    zs = zipfile.ZipFile(src)
+    sdoc = etree.fromstring(zs.read('word/document.xml'))
+    zs.close()
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    settings = z.read('word/settings.xml')
+    z.close()
+    HP = list(sdoc.find('w:body', ns).iter(W + 'p'))
+    MP = list(doc.find('w:body', ns).iter(W + 'p'))
+    groups, i = [], 0
+    while i < len(HP):
+        j = i
+        while j + 1 < len(HP) and _pmark(HP[j])[0] == author:
+            j += 1
+        groups.append((i, j))
+        i = j + 1
+    key = lambda t: re.sub(r'\s+', '', (t or '').replace('\u00a0', ''))
+    norm = lambda t: re.sub(r'\s+', ' ', (t or '').replace('\u00a0', ' ')).strip()
+    her = [key(''.join(_ptext(HP[k], author, 'A') for k in range(a, b + 1))) for a, b in groups]
+    mine = [key(_ptext(p, author, 'X')) for p in MP]
+    sm = difflib.SequenceMatcher(None, her, mine, autojunk=False)
+    gmap = {}
+    for blk in sm.get_matching_blocks():
+        for k in range(blk.size):
+            gmap[blk.a + k] = blk.b + k
+    mine_set = {}
+    for n, t in enumerate(mine):
+        mine_set.setdefault(t, []).append(n)
+    rep = {'touched': 0, 'applied': 0, 'fuzzy_applied': 0, 'already': 0, 'conflicts': [],
+           'ws_only': 0, 'unfound': [], 'fuzzy_skipped': [], 'ins': 0, 'del': 0}
+    plan, fuzzy = [], []
+    for gi, (a, b) in enumerate(groups):
+        ps = HP[a:b + 1]
+        if not any(_touched(p, author) for p in ps):
+            continue
+        rep['touched'] += 1
+        A = her[gi]
+        Bfull = ''.join(_ptext(p, author, 'X') for p in ps)
+        B = key(Bfull)
+        if A == B and len(ps) == 1 and _pmark(ps[0]) == (None, None):
+            rep['ws_only'] += 1
+            continue
+        m = gmap.get(gi)
+        lo = max((x for x in gmap if x < gi), default=None)
+        hi = min((x for x in gmap if x > gi), default=None)
+        if m is None and lo is not None and hi is not None:
+            cand = gmap[lo] + (gi - lo)
+            if gmap[hi] - cand == hi - gi and cand < len(mine) and mine[cand] == A:
+                m = cand
+        if m is None and A and len(mine_set.get(A, [])) == 1:
+            m = mine_set[A][0]
+        if m is not None:
+            if _others_sig(ps, author) == _others_sig([MP[m]], author):
+                plan.append((gi, a, b, m))
+                continue
+        if a == b and _pmark(ps[0]) == (None, None):
+            cand = m
+            if cand is None and lo is not None and hi is not None:
+                c2 = gmap[lo] + (gi - lo)
+                if gmap[hi] - c2 == hi - gi and c2 < len(mine):
+                    cand = c2
+            if cand is not None:
+                fuzzy.append((gi, cand, _ptext(ps[0], author, 'A'), Bfull))
+                continue
+        if m is not None:
+            rep['conflicts'].append((A, B, 'סימון מחבר אחר שונה'))
+        elif B and B in mine_set:
+            rep['already'] += 1
+        else:
+            rep['unfound'].append((A, B))
+    expect = [norm(_ptext(p, author, 'X')) for p in MP]
+    if dry:
+        rep['plan'] = len(plan)
+        rep['fuzzy'] = len(fuzzy)
+        return rep
+    if not plan and not fuzzy:
+        rep['backup'] = None
+        return rep
+    bk = backup(path, masechet)
+    log('גיבוי: ' + bk)
+    mx = [int(x) for x in re.findall(r'w:id="(\d+)"', etree.tostring(doc).decode('utf8'))]
+    counter = [max(mx + [9000]) + 1000]
+
+    def nextid():
+        counter[0] += 1
+        return counter[0]
+
+    when = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    new_texts = {}
+    for gi, cand, A, B in fuzzy:
+        M = MP[cand]
+        full = ''.join(t for _, t, _ in _runs_of(M))
+        spans = _fuzzy_spans(A, _clean_ins_text(B), full)
+        if not spans:
+            rep['fuzzy_skipped'].append((A, B))
+            continue
+        ok = True
+        snap = deepcopy(M)
+        for lo, hi, repl in sorted(spans, reverse=True):
+            if lo == hi:
+                if lo > 0:
+                    find, r2, at = full[lo - 1:lo], full[lo - 1:lo] + repl, lo - 1
+                else:
+                    find, r2, at = full[:1], repl + full[:1], 0
+            else:
+                find, r2, at = full[lo:hi], repl, lo
+            if not find or not _replace_in_paragraph(M, find, r2, author, when, nextid, at=at):
+                ok = False
+                break
+        if not ok:
+            M.getparent().replace(M, snap)
+            MP[cand] = snap
+            rep['fuzzy_skipped'].append((A, B))
+            continue
+        new_texts[cand] = [norm(_ptext(M, author, 'X'))]
+        rep['fuzzy_applied'] += 1
+    for gi, a, b, m in sorted(plan, key=lambda x: -x[3]):
+        M = MP[m]
+        parent = M.getparent()
+        pos = list(parent).index(M)
+        news = []
+        for k in range(a, b + 1):
+            c = deepcopy(HP[k])
+            ppr = c.find('w:pPr', ns)
+            if k == b:
+                mi, md = _pmark(HP[k])
+                newppr = deepcopy(M.find('w:pPr', ns)) if M.find('w:pPr', ns) is not None \
+                    else etree.Element(W + 'pPr')
+                if ppr is not None:
+                    c.remove(ppr)
+                c.insert(0, newppr)
+                if md == author:
+                    _mark_para(c, 'del', author, HP[k].find('w:pPr/w:rPr/w:del', ns).get(W + 'date'), nextid)
+            else:
+                if ppr is not None:
+                    for ch in ppr.findall('w:pPrChange', ns):
+                        ppr.remove(ch)
+            _normalize_ins(c, author)
+            for el in c.iter(W + 'ins', W + 'del', W + 'rPrChange', W + 'pPrChange'):
+                el.set(W + 'id', str(nextid()))
+            for el in list(c.iter(W + 'bookmarkStart', W + 'bookmarkEnd')):
+                el.getparent().remove(el)
+            news.append(c)
+        for n, c in enumerate(news):
+            parent.insert(pos + n, c)
+        parent.remove(M)
+        new_texts[m] = [norm(_ptext(c, author, 'X')) for c in news]
+        rep['applied'] += 1
+        rep['ins'] += sum(1 for c in news for e in c.iter(W + 'ins') if e.get(W + 'author') == author and e.getparent().tag != W + 'rPr')
+        rep['del'] += sum(1 for c in news for e in c.iter(W + 'del') if e.get(W + 'author') == author and e.getparent().tag != W + 'rPr')
+    for m in sorted(new_texts, reverse=True):
+        if new_texts[m] is not None:
+            expect[m:m + 1] = new_texts[m]
+    if any(v is None for v in new_texts.values()):
+        # החלפה חלקית בפסקה שנכשלה: אי אפשר להבטיח מה נשאר בה
+        rep['verified'] = False
+        rep['backup'] = bk
+        log('החלפה חלקית נכשלה בפסקה. הקובץ לא נגע.')
+        return rep
+    tmp = path + '.new'
+    _rezip(path, tmp, {'word/document.xml':
+                       etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
+                       'word/settings.xml': _ensure_track(settings)[0]})
+    z2 = zipfile.ZipFile(tmp)
+    d2 = etree.fromstring(z2.read('word/document.xml'))
+    z2.close()
+    got = [norm(_ptext(p, author, 'X')) for p in d2.find('w:body', ns).iter(W + 'p')]
+    ok = got == expect
+    if not ok:
+        bad = next((n for n in range(min(len(got), len(expect))) if got[n] != expect[n]), None)
+        log('סטייה בפסקה %s: ציפינו %r קיבלנו %r' % (
+            bad, (expect[bad] if bad is not None else '')[:70], (got[bad] if bad is not None else '')[:70]))
+        log('אורכים: %d מול %d' % (len(got), len(expect)))
+    try:
+        convert(tmp)
+    except Exception as e:
+        ok = False
+        log('ההמרה נכשלה: %s' % e)
+    if not ok:
+        os.remove(tmp)
+        log('האימות נכשל. הקובץ לא נגע.')
+        rep['verified'] = False
+        rep['backup'] = bk
+        return rep
+    os.replace(tmp, path)
+    rep['verified'] = True
+    rep['backup'] = bk
+    log('הושתלו %d קבוצות פסקאות ו-%d החלפות מינימליות, ואומתו' % (rep['applied'], rep['fuzzy_applied']))
+    return rep
 
 
 def _paragraph_map(doc, blocks):

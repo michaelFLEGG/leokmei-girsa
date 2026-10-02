@@ -305,6 +305,19 @@ def _apply_site_edits(pages, slug, qa):
         if isinstance(s['key'], int): s['holder'][s['key']] = h
         else: s['holder'][s['key']] = h
         ps = e.get('ps')
+        if ps is not None and s['key'] == 'a' and s['holder'].get('k') in ('dh', 'nose'):
+            # נושא משנה / ד"ה משנה שהוחזר לגוף: היחידה הופכת ליחידת גוף רגילה,
+            # והחלון שלה (אם יש) עובר למקום של יחידת גוף.
+            u = s['holder']
+            u['l'] = [[(ps or '').strip(), h]]
+            u['a'] = u.pop('w', '')
+            u['k'] = 'u'
+            u.pop('s', None)
+            e['k'] = 'u%s.1' % u['id']
+            done += 1
+            keep.append(e)
+            reslot()
+            continue
         if ps is not None and isinstance(s['key'], int):
             keepsp = ' '.join(c for c in (s['holder'][0] or '').split()
                               if c[:1] in 'ba' and c[1:].isdigit())
@@ -1576,7 +1589,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function setHTML(el,h){const b=el.querySelector('.srcb');
     el.innerHTML=h; if(b)el.appendChild(b)}
   /* מחלקת הפסקה, בלי מחלקות המרווח שנגזרו מוורד (b0-b4 / a0-a4) */
-  function pcls(el){return [...el.classList].filter(c=>PCLS.indexOf(c)>-1).join(' ')}
+  /* נושא משנה וד"ה משנה הם סגנון פסקה בוורד ומוצגים כ-div. הם נספרים כסגנון
+     הפסקה ('nose'/'dh'), כדי שהחזרתם לגוף תירשם כשינוי סגנון פסקה. */
+  function pcls(el){const c=[...el.classList].filter(c=>PCLS.indexOf(c)>-1);
+    if(el.tagName==='DIV')['nose','dh'].forEach(k=>{if(el.classList.contains(k))c.push(k)});
+    return c.join(' ')}
+  function isHeadEl(el){return !!el&&el.tagName==='DIV'&&(el.classList.contains('nose')||el.classList.contains('dh'))}
+  function isTxt(el){return !!el&&(el.tagName==='P'||(el.tagName==='DIV'&&el.classList.contains('main')))}
+  function headTo(el,kinds){const row=el.closest('.row');
+    ['nose','dh'].forEach(k=>{const on=kinds.indexOf(k)>-1;el.classList.toggle(k,on);if(row)row.classList.toggle(k,on)})}
 
   /* כל המקומות הניתנים לעריכה, בכל המסכת, באותו סדר שבו הם מסומנים בדף */
   function slots(){const out=[];
@@ -1653,6 +1674,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         PCLS.forEach(c=>el.classList.remove(c));
         if(e.ps)e.ps.split(' ').filter(Boolean).forEach(c=>el.classList.add(c));
       }
+      if(el&&e.ps!==undefined&&isHeadEl(el))headTo(el,[]);
       if(el)el.dataset.edited='1';
       keep.push(e)}
     EDSTAT={taken,lost};
@@ -2058,7 +2080,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const CK={Digit1:'mf',Digit2:'ps',Digit3:'ns',Digit4:'hs'};
   function csToggle(c){
     const el=edEl();
-    if(!el||el.tagName!=='P'){flash('הסגנונות חלים על פסקת טקסט. העמד את הסמן בתוכה');return}
+    if(!isTxt(el)){flash('הסגנונות חלים על פסקת טקסט. העמד את הסמן בתוכה');return}
     if(c&&OKCLS.indexOf(c)<0){flash('אין סגנון כזה בקובץ הזה');return}
     const s=getSelection();if(!s.rangeCount)return;
     let r=s.getRangeAt(0);
@@ -2165,6 +2187,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(sel)h+='<span class="ttl">סגנון תו</span>'+
       CSTY.map(c=>'<button onmousedown="event.preventDefault()" onclick="setCs(\''+c[0]+'\')">'+esc(c[1])+'</button>').join('')+
       '<button onmousedown="event.preventDefault()" onclick="setCs(\'\')">ללא סגנון</button>';
+    if(isHeadEl(el))h+=(sel?'<span class="sep"></span>':'')+'<span class="ttl">'+(el.classList.contains('nose')?'נושא משנה':'ד"ה משנה')+'</span>'+
+      '<button onmousedown="event.preventDefault()" onclick="headBody()" title="הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים">הפוך לגוף</button>'+
+      '<button onmousedown="event.preventDefault()" onclick="clearFmt()" title="מסיר כל סגנון תו והדגשה ומחזיר לגוף">נקה עיצוב לכל הפסקה</button>';
     if(el.tagName==='P'){
       const now=pcls(el);
       h+=(sel?'<span class="sep"></span>':'')+'<span class="ttl">סגנון פסקה</span>'+
@@ -2202,15 +2227,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      אחר כך אפשר להחיל סגנון תו על מילים מסוימות. */
   function clearFmt(){
     const el=edEl();
-    if(!el||el.tagName!=='P'){flash('העמד את הסמן בתוך פסקת טקסט');return}
+    if(!isTxt(el)){flash('העמד את הסמן בתוך פסקת טקסט');return}
     [...el.querySelectorAll('i,b')].forEach(n=>{
       if((n.tagName==='I'&&OKCLS.indexOf(n.className)>-1)||n.tagName==='B')
         n.replaceWith(...n.childNodes)});
     PCLS.forEach(x=>el.classList.remove(x));
+    if(isHeadEl(el))headTo(el,[]);
     el.normalize();
     capture(el);STYSIG='';hideSty();flash('העיצוב נוקה: הפסקה חזרה לגוף')}
+  function headBody(){setPs('')}
   function setPs(c){
-    const el=edEl();if(!el||el.tagName!=='P')return;
+    const el=edEl();if(!isTxt(el))return;
+    if(el.tagName==='DIV'){if(!c&&isHeadEl(el)){headTo(el,[]);capture(el);STYSIG='';styLater()}return}
     PCLS.forEach(x=>el.classList.remove(x));
     if(c)c.split(' ').filter(Boolean).forEach(x=>el.classList.add(x));
     capture(el);STYSIG='';styLater()}
@@ -2260,7 +2288,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(el){setHTML(el,e.wasH!==undefined?e.wasH:esc(e.was));delete el.dataset.edited;
       delete el.__was;
       if(e.ps!==undefined&&el.tagName==='P'){PCLS.forEach(c=>el.classList.remove(c));
-        (e.wasP||'').split(' ').filter(Boolean).forEach(c=>el.classList.add(c))}}
+        (e.wasP||'').split(' ').filter(Boolean).forEach(c=>el.classList.add(c))}
+      if(e.ps!==undefined&&el.tagName==='DIV'&&/(nose|dh)/.test(e.wasP||''))headTo(el,(e.wasP||'').split(' ').filter(Boolean))}
     ED.splice(i,1);tomb(e.k);saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon();syncSoon()}
   function edClear(){if(!confirm('למחוק את כל '+ED.length+' התיקונים? הם יימחקו גם מן הפרסום ומכל המכשירים.'))return;
     ED.forEach(e=>tomb(e.k));ED=[];saveED();render(cur);drawEd();pubSoon();syncSoon()}

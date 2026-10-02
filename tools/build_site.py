@@ -2080,7 +2080,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const m=document.createElement('div');m.className='modal';m.id='keyscard';
     const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
       ['Ctrl+1','סגנון תו: מפרשים'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון תו: נושא'],
-      ['Ctrl+4','סגנון תו: רקע והסבר'],['Ctrl+B','מודגש'],['Ctrl+רווח','הסרת סגנון תו מהבחירה'],
+      ['Ctrl+4','סגנון תו: רקע והסבר'],['Ctrl+B','מודגש'],['Ctrl+רווח','הסרת סגנון תו מהבחירה'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl'],
@@ -2168,7 +2168,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(el.tagName==='P'){
       const now=pcls(el);
       h+=(sel?'<span class="sep"></span>':'')+'<span class="ttl">סגנון פסקה</span>'+
-        PSTY.map(p=>'<button class="'+(now===p[0]?'on':'')+'" onmousedown="event.preventDefault()" onclick="setPs(\''+p[0]+'\')">'+esc(p[1])+'</button>').join('')}
+        PSTY.map(p=>'<button class="'+(now===p[0]?'on':'')+'" onmousedown="event.preventDefault()" onclick="setPs(\''+p[0]+'\')">'+esc(p[1])+'</button>').join('')+
+        '<button onmousedown="event.preventDefault()" onclick="clearFmt()" title="מסיר כל סגנון תו והדגשה מכל הפסקה, ומחזיר אותה לגוף">נקה עיצוב לכל הפסקה</button>'}
     if(!h){hideSty();return}
     bar.innerHTML=h;bar.style.display='flex';
     let rc=r.getBoundingClientRect();
@@ -2197,6 +2198,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     el.normalize();
     getSelection().removeAllRanges();
     capture(el);hideSty()}
+  /* ניקוי עיצוב לכל הפסקה: כל סגנונות התו וההדגשה מוסרים, והפסקה חוזרת לגוף.
+     אחר כך אפשר להחיל סגנון תו על מילים מסוימות. */
+  function clearFmt(){
+    const el=edEl();
+    if(!el||el.tagName!=='P'){flash('העמד את הסמן בתוך פסקת טקסט');return}
+    [...el.querySelectorAll('i,b')].forEach(n=>{
+      if((n.tagName==='I'&&OKCLS.indexOf(n.className)>-1)||n.tagName==='B')
+        n.replaceWith(...n.childNodes)});
+    PCLS.forEach(x=>el.classList.remove(x));
+    el.normalize();
+    capture(el);STYSIG='';hideSty();flash('העיצוב נוקה: הפסקה חזרה לגוף')}
   function setPs(c){
     const el=edEl();if(!el||el.tagName!=='P')return;
     PCLS.forEach(x=>el.classList.remove(x));
@@ -2397,6 +2409,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!e.shiftKey&&!e.metaKey&&((e.ctrlKey&&!e.altKey)||(e.altKey&&!e.ctrlKey))&&CK[e.code]){
       e.preventDefault();csToggle(CK[e.code]);return}
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyB'){e.preventDefault();csToggle('b');return}
+    if(e.ctrlKey&&!e.altKey&&e.shiftKey&&e.code==='Space'){e.preventDefault();clearFmt();return}
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='Space'){e.preventDefault();setCs('');return}
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyS'){e.preventDefault();capture(el);pubNow(1);flash('נשמר');return}
     if(e.ctrlKey&&!e.altKey&&e.key==='/'){e.preventDefault();keysCard();return}

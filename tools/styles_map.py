@@ -162,6 +162,8 @@ MISSING_FONTS = {'BA Or Tzadikim Regular': 'חציצת משנה'}
 # הגופן אינו באתר, והלומד ראה במקומה ריבוע. אחידות גוברת.
 STAR_CHARS = frozenset(chr(c) for c in (0x002a, 0x2217, 0x204e, 0x066d, 0x2731, 0xff0a))
 ORNAMENT_CHARS = frozenset(chr(c) for c in range(0x05f5, 0x0600))
+# נקודות-תבליט בלבד ("• • •") חוצצות כמו כוכביות: U+2022, U+00B7, U+2219, U+25E6, U+30FB
+BULLET_CHARS = frozenset(chr(c) for c in (0x2022, 0x00b7, 0x2219, 0x25e6, 0x30fb))
 # רווח רגיל, רווח קשיח, טאב, סימני כיוון, ושבירות שורה
 _HATZ_STRIP = str.maketrans('', '', ''.join(chr(c) for c in (0x20, 0xa0, 0x09, 0x200f, 0x200e, 0x0d, 0x0a)))
 
@@ -172,7 +174,7 @@ def hatz_kind(text):
     if not s:
         return None
     cs = set(s)
-    if cs <= STAR_CHARS:
+    if cs <= STAR_CHARS or cs <= (STAR_CHARS | BULLET_CHARS) or (cs & BULLET_CHARS and cs <= (BULLET_CHARS | {'.'})):
         return 'star'
     if cs <= ORNAMENT_CHARS:
         return 'orn'

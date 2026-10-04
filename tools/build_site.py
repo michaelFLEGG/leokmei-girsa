@@ -1456,6 +1456,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){const si=secOf(pi);if(si!==cur)render(si);
     setTimeout(()=>{const e=$('#d'+pi);if(e)toEl(e);$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi},20)}
+  function dafYomi(){const t=window.LGDaf&&LGDaf.today();if(!t)return;
+    if(t.slug===SLUG){const pi=D.pages.findIndex(p=>p.daf===t.daf);
+      if(pi<0){alert('הדף '+t.daf+' אינו במסכת '+D.masechet);return}
+      render(secOf(pi));toDaf(pi);return}
+    fetch(t.slug+'.html',{method:'HEAD'}).then(r=>{if(r.ok)location.href=t.slug+'.html#daf='+encodeURIComponent(t.daf);
+      else alert('מסכת '+t.name+' עדיין אינה באתר')}).catch(()=>alert('מסכת '+t.name+' עדיין אינה באתר'))}
   function goDaf(d){const now=+$('#dafsel').value||0;toDaf(Math.max(0,Math.min(D.pages.length-1,now+d)))}
   function goScreen(d){const f=$('#flow');
     if(f.classList.contains('vert'))f.scrollBy({top:d*f.clientHeight*.9,behavior:'smooth'});
@@ -1531,6 +1537,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
    applyStruct();
    const u0=params.get('u');
    if(u0){let pi=0;D.pages.forEach((p,i)=>{if(p.units.some(x=>x.id==u0))pi=i});jump(pi,+u0)}
+   else if(params.get('daf')){let pi=0;D.pages.forEach((p,i)=>{if(p.daf===params.get('daf')&&!pi)pi=i});render(secOf(pi));toDaf(pi)}
    else render(+(params.get('p')||0));
    sqBadge();netInit();
   }
@@ -3086,14 +3093,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <style>{CSS}</style></head><body>
+  <style>{CSS}</style><script src="daf-yomi.js"></script></head><body>
   <div class="bar"><a href="index.html" style="color:inherit;text-decoration:none"><span class="nm">לאוקמי גירסא</span></a> <span>{masechet}</span>
   <select id="peresel" title="פרק"></select>
   <div class="nav"><button onclick="goDaf(-1)" title="דף קודם (Ctrl+חץ ימין)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="goDaf(1)" title="דף הבא (Ctrl+חץ שמאל)">‹ הבא</button></div>
   <select id="dafsel" title="דף"></select>
   <input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)">
   <span class="sp"></span>
-  <button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>{hgbtn}
+  <button id="dybtn" onclick="dafYomi()" title="פותח את הדף של היום לפי לוח הדף היומי">הדף היומי</button><button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>{hgbtn}
   <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
   <button id="bkbtn" onclick="book()" title="גיליונות זה לצד זה, בגיאומטריה של עמוד הספר">תצוגת ספר</button>
   <select id="shsel" style="display:none" onchange="setSheets(this.value)" title="כמה גיליונות זה לצד זה">

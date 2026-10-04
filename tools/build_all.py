@@ -300,6 +300,9 @@ def main():
 <style>@font-face{{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900}}@font-face{{font-family:'Frank';src:url(fonts/frank.ttf)}}@font-face{{font-family:'Leukmey';src:url(fonts/leukmey.otf)}}
 body{{margin:0;background:#e9e4d8;color:#1d1a16;font-family:'Frank','Frank Ruhl Libre',serif}}
 header{{background:#2b2620;color:#f1ead9;padding:34px 20px 26px;text-align:center}} header h1{{font-family:'Leukmey','Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#cfc4ad;font-size:18px}}
+#dy{{display:inline-block;margin-top:14px;background:#c9a24a;color:#2b2620;border:0;border-radius:6px;padding:9px 22px;font:700 18px 'Frank','Frank Ruhl Libre',serif;cursor:pointer}} #dy:hover{{background:#b8912f}}
+.m.now{{border-color:#a83c2f;box-shadow:0 0 0 2px #c9a24a}} .now-tag{{display:block;color:#a83c2f;font-size:12px;font-weight:700;margin-bottom:2px}}
+#nowrow{{margin:18px 0 0}} #nowrow .grid{{grid-template-columns:minmax(180px,260px)}}
 main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500;font-size:20px;color:#5a5044;border-bottom:1px solid #c9bfa8;margin:26px 0 10px;padding-bottom:4px}}
 .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}}
 .m{{display:block;background:#f3eee2;border-radius:6px;padding:12px 14px;text-decoration:none;color:#8a7d66;border:1px solid #e0d8c4}} .m.on{{background:#fbf8f1;color:#1d1a16;border-color:#c9a24a;box-shadow:0 1px 4px rgba(0,0,0,.08)}} .m.on:hover{{background:#fff}}
@@ -309,9 +312,19 @@ main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500
 .hg{{position:absolute;bottom:7px;right:14px;font-size:12px;background:#c9a24a;color:#2b2620;border-radius:4px;padding:1px 9px;text-decoration:none;font-weight:700}}
 .hg:hover{{background:#b8912f}}
 footer{{text-align:center;color:#8a7d66;font-size:13px;padding:20px}}</style></head><body>
-<header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p></header>
-<main>{rows}</main><footer>עודכן {now} · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a></footer></body></html>'''
+<header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p><button id="dy" type="button" style="display:none">הדף היומי</button></header>
+<main>{rows}</main><script src="daf-yomi.js"></script><script>
+(function(){{var BUILT={json.dumps([SLUG[m] for m in built])};var b=document.getElementById('dy');if(!window.LGDaf)return;var t=LGDaf.today();if(!t)return;
+b.style.display='';
+b.onclick=function(){{if(BUILT.indexOf(t.slug)>-1)location.href=t.slug+'.html#daf='+encodeURIComponent(t.daf);else alert('מסכת '+t.name+' עדיין אינה באתר')}};
+var a=document.querySelector('a.m[href="'+t.slug+'.html"]');
+if(a){{a.classList.add('now');var tag=document.createElement('span');tag.className='now-tag';tag.textContent='נלמדת עכשיו בדף היומי: '+t.daf;a.insertBefore(tag,a.firstChild);
+ var row=document.createElement('section');row.id='nowrow';var h=document.createElement('h2');h.textContent='נלמדת עכשיו בדף היומי';var g=document.createElement('div');g.className='grid';
+ var c=a.cloneNode(true);c.classList.remove('now');c.querySelector('.now-tag').textContent='הדף היום: '+t.daf;g.appendChild(c);row.appendChild(h);row.appendChild(g);var m=document.querySelector('main');m.insertBefore(row,m.firstChild)}}
+}})();
+</script><footer>עודכן {now} · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a></footer></body></html>'''
     open(os.path.join(SITE, 'index.html'), 'w', encoding='utf-8').write(idx)
+    shutil.copy(os.path.join(ROOT, 'tools', 'daf_yomi.js'), os.path.join(SITE, 'daf-yomi.js'))
     # עמוד "מקורות": הייחוס הנדרש ברישיון, פעם אחת, בשורה שקטה. השם המקורי
     # של הפירוש מופיע רק כאן; בממשק עצמו הוא "פירוש הגמרא".
     open(os.path.join(SITE, 'mekorot.html'), 'w', encoding='utf-8').write(

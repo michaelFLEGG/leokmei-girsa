@@ -132,6 +132,26 @@ async function revoke(req, env) {
   }
   return bad('המכשיר לא נמצא', 404);
 }
+/* ------------------------------------------------------------ מסכת בעיבוד
+   דגל חד-סבבי: בזמן שמנועי העריכה רצים על קובץ הוורד של מסכת, האתר אומר
+   ללומד-העורך שאפשר להמשיך לערוך (העריכות נשמרות בתור ומוחלות אחרי
+   העיבוד). הדגל פג מעצמו אחרי שש שעות, כדי שלא יישאר דלוק בטעות. */
+async function procGet(req, env, url) {
+  const slug = url.searchParams.get('slug') || '';
+  if (!slugOk(slug)) return bad('מסכת לא תקינה');
+  const v = await env.STORE.get('proc:' + slug, 'json');
+  return json({ ok: true, on: !!(v && v.on), since: v ? v.since : 0 });
+}
+async function procSet(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const slug = str(b.slug, 30);
+  if (!slugOk(slug)) return bad('מסכת לא תקינה');
+  if (b.on) await env.STORE.put('proc:' + slug, JSON.stringify({ on: 1, since: Date.now() }), { expirationTtl: 21600 });
+  else await env.STORE.delete('proc:' + slug);
+  return json({ ok: true });
+}
 async function whoami(req, env) {
   return json({ ok: true, admin: await isAdmin(req, env) });
 }
@@ -316,6 +336,8 @@ export default {
       if (p === '/' || p === '/health') return json({ ok: true, service: 'leokmei-suggest' });
       if (p === '/suggest' && req.method === 'POST') return await suggest(req, env);
       if (p === '/auth' && req.method === 'POST') return await auth(req, env);
+      if (p === '/proc' && req.method === 'GET') return await procGet(req, env, url);
+      if (p === '/proc' && req.method === 'POST') return await procSet(req, env);
       if (p === '/whoami' && req.method === 'GET') return await whoami(req, env);
       if (p === '/devices' && req.method === 'GET') return await devices(req, env);
       if (p === '/devices/revoke' && req.method === 'POST') return await revoke(req, env);

@@ -23,7 +23,7 @@ from laukmi_rules import *
 from laukmi_aramaic import LEXICON, PHRASES, MIGZAR
 import laukmi_anchors, laukmi_aramaic
 
-laukmi_mech.AUTHOR = "Claude - מנוע מכני"
+laukmi_mech.AUTHOR = "מנוע מכני"
 
 if len(sys.argv) < 3:
     print(__doc__); sys.exit(1)

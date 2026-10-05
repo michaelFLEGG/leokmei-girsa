@@ -236,7 +236,8 @@ def _apply_site_edits(pages, slug, qa):
     except Exception as e:
         qa.append(('קובץ התיקונים', 'לא ניתן לקרוא את קובץ התיקונים של האתר: %s' % e))
         return None
-    edits = doc.get('edits') or []
+    # סדר הזמן: שינוי מבנה נשען על הנוסח שאחרי התיקון שקדם לו (כמו בדפדפן)
+    edits = sorted(doc.get('edits') or [], key=lambda e: e.get('t') or 0)
     if not edits:
         return {'n': 0, 'taken': 0, 'lost': 0, 'done': 0}
     slots = _slots(pages)
@@ -532,6 +533,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           if not blocks[j]['text'].strip(): continue
           return r
       return None
+  HEADR=('perek-num','perek-name','perek-range','perek-start','hadran','nose','dh')
+  def prev_role(i):
+      """תפקיד הפסקה הקודמת שיש בה טקסט, מדלג על ריהוט וציוני דף."""
+      for j in range(i-1,-1,-1):
+          r=role_of(blocks[j])
+          if r in ('skip','daf'): continue
+          if not blocks[j]['text'].strip(): continue
+          return r
+      return None
+  n_hatz_head=0  # חציצה צמודה לכותרת - אינה מוצגת (הכותרת עצמה היא ההפרדה)
   def toc_text(raw):
       """כותרת לתוכן העניינים, מן הטקסט הגולמי ולפני כל בריחה.
       כך אין ישויות HTML, ואין חץ ואין טאבים."""
@@ -561,6 +572,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           continue
       if cur is None: continue
       cur['perek']=perek; cur['perekName']=perekName
+      # חציצה צמודה לכותרת (לפניה או אחריה) אינה מוצגת. זהו כלל תצוגה לכל
+      # המסכתות; קובץ הוורד לא נגע.
+      if r=='hatz' and t and (prev_role(bi) in HEADR or next_role(bi) in HEADR):
+          n_hatz_head+=1; continue
       # חלון הכותרת הוא מסגרת צפה בוורד, והוא מצביע על מה שאחריו. עד כאן
       # הוא פתח מיד יחידה משלו, וכשאחריו באה כותרת "נושא" נשארה בדף שורה
       # שכל תוכנה חלון - שורה לבנה לכל דבר. מעתה הוא ממתין: אם אחריו גוף,
@@ -665,6 +680,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   if n_dup_daf:
       qa.append(('טופל בתצוגה: ציון דף כפול',
                  f'{n_dup_daf} ציוני דף ריקים כפולים לציון שאחריהם, ואינם מוצגים פעמיים'))
+  if n_hatz_head:
+      qa.append(('טופל בתצוגה: חציצה צמודה לכותרת',
+                 f'{n_hatz_head} פסקאות חציצה צמודות לכותרת אינן מוצגות (הכותרת עצמה היא ההפרדה). הוורד לא נגע'))
   if n_hatz_dup:
       qa.append(('טופל בתצוגה: חציצה כפולה',
                  f'{n_hatz_dup} פסקאות חציצה באות מיד אחרי חציצה אחרת (עיטור וכוכביות זה אחר זה) ומוצגות פעם אחת'))
@@ -2357,18 +2375,29 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     let bar=$('#edbar');
     if(on&&!bar){bar=document.createElement('div');bar.className='edbar';bar.id='edbar';
       bar.innerHTML='<b>מצב עריכה</b><span>· <span id="edn">'+ED.length+'</span> תיקונים</span>'+
-        '<span id="edpub" class="edpub"></span><span class="sp"></span>'+
+        '<span id="edpub" class="edpub"></span><span id="procnote" class="edpub"></span><span class="sp"></span>'+
         '<button onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>';
       document.body.appendChild(bar);pubDraw()}
     else if(!on&&bar)bar.remove();
     if(!on)hideSty();
     edToolsDraw(on);
+    if(on)procCheck();
     if($('#edbtn'))$('#edbtn').classList.toggle('on',on);
     if(on)drawEd()}
   /* כניסה למצב עריכה. מכשיר מוכר נכנס מיד. מכשיר חדש מקליד את מילת
      המנהל פעם אחת, ונקודת הקליטה מנפיקה לו אסימון ארוך-טווח: מאז הוא
      מזוהה תמיד. הדף שמוגש מן הגשר שבמחשב הראשי מזוהה מעצמו. */
 
+
+  /* "המסכת בעיבוד": דגל מנקודת הקליטה. בעריכה בלבד, ובמסכת שהמנוע רץ עליה */
+  let PROCT=null;
+  async function procCheck(){
+    clearTimeout(PROCT);
+    const n=$('#procnote');if(!EDIT||!n)return;
+    try{const j=await api('/proc?slug='+SLUG);
+      n.textContent=j.on?' · המסכת בעיבוד - אפשר להמשיך לערוך, העריכות יוחלו מיד אחרי העיבוד':''}
+    catch(e){}
+    PROCT=setTimeout(procCheck,60000)}
   /* סרגל העריכה: בזמן עריכה השורה העליונה מתחלפת בכלי העריכה (ולא
      נוספת שורה שנייה); הרצועה שבתחתית נשארת לסטטוס ולפרסום */
   function edToolsDraw(on){
@@ -3352,15 +3381,60 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   document.addEventListener('keydown',e=>{
     if(!EDIT||!e.target.isContentEditable)return;
     if(/^(Arrow|Home$|End$|Page|Enter$|Backspace$|Delete$)/.test(e.key)||(e.key.length===1&&!e.ctrlKey&&!e.altKey))KEYNAV=Date.now();
-    /* חץ בקצה הפרק: אם הסמן לא זז - עוברים לפרק הסמוך */
-    if((e.key==='ArrowDown'||e.key==='ArrowUp')&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&!ALL){
-      const s=getSelection(),a=s.anchorNode,o=s.anchorOffset,d=e.key==='ArrowDown'?1:-1;
+    /* כל פסקה היא מארח עריכה נפרד, והדפדפן אינו חוצה בין מארחים. לכן חץ
+       שהסמן לא זז בעקבותיו עובר ידנית לפסקה הסמוכה (ובקצה הפרק - לפרק
+       הסמוך), באותו מקום אופקי. */
+    const dirs={ArrowDown:'d',ArrowUp:'u',ArrowLeft:'l',ArrowRight:'r',PageDown:'pd',PageUp:'pu'};
+    if(dirs[e.key]&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey){
+      const s=getSelection(),a=s.anchorNode,o=s.anchorOffset,k=dirs[e.key];
+      const before=caretRect(),host=e.target.closest('[contenteditable="true"]');
+      if(k==='pd'||k==='pu'){e.preventDefault();pageMove(k==='pd'?1:-1,before,host);return}
       setTimeout(()=>{const s2=getSelection();
-        if(s2.anchorNode===a&&s2.anchorOffset===o)edgeChapter(d)},50)}
+        if(s2.anchorNode===a&&s2.anchorOffset===o)crossHost(k,before,host)},40)}
   },true);
   document.addEventListener('selectionchange',()=>{
-    if(EDIT&&Date.now()-KEYNAV<700)requestAnimationFrame(()=>followCaret());
+    if(EDIT&&Date.now()-KEYNAV<700)setTimeout(()=>followCaret(),0);
     if(SX)srcSyncSoon()});
+  function editHosts(){return [...$('#flow').querySelectorAll('[data-ek][contenteditable="true"]')]}
+  /* ממקם את הסמן בפסקה, בנקודה שקרובה ל-x,y (או בקצה הפסקה אם אין התאמה) */
+  function caretNear(el,x,y,atEnd){
+    el.focus({preventScroll:true});
+    let r=null;
+    try{
+      if(document.caretPositionFromPoint){const c=document.caretPositionFromPoint(x,y);
+        if(c&&el.contains(c.offsetNode)){r=document.createRange();r.setStart(c.offsetNode,c.offset)}}
+      else if(document.caretRangeFromPoint){const c=document.caretRangeFromPoint(x,y);
+        if(c&&el.contains(c.startContainer))r=c}
+    }catch(err){}
+    if(!r){r=document.createRange();r.selectNodeContents(el);r.collapse(!atEnd)}
+    r.collapse(true);
+    const s=getSelection();s.removeAllRanges();s.addRange(r);
+    followCaret()}
+  function crossHost(k,before,host){
+    if(!host)return;
+    const els=editHosts(),i=els.indexOf(host);if(i<0)return;
+    const x=before?before.left:host.getBoundingClientRect().left;
+    if(k==='d'||k==='l'){
+      const nx=els[i+1];
+      if(!nx){edgeChapter(1);return}
+      const rc=nx.getBoundingClientRect();
+      caretNear(nx,k==='d'?x:rc.right-2,rc.top+4,false);
+      if(k==='l'){const r=document.createRange();r.selectNodeContents(nx);r.collapse(true);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+    }else{
+      const pv=els[i-1];
+      if(!pv){edgeChapter(-1);return}
+      const rc=pv.getBoundingClientRect();
+      if(k==='u')caretNear(pv,x,rc.bottom-4,true);
+      else{const r=document.createRange();r.selectNodeContents(pv);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r);pv.focus({preventScroll:true});followCaret()}}}
+  /* PageDown/PageUp בעריכה: גלילת מסך, והסמן עובר לפסקה שבאותה נקודה */
+  function pageMove(d,before,host){
+    const f=$('#flow'),vert=f.classList.contains('vert');
+    const x=before?before.left:f.getBoundingClientRect().left+f.clientWidth/2,y=before?before.top:f.getBoundingClientRect().top+f.clientHeight/2;
+    if(vert)f.scrollBy({top:d*f.clientHeight*.9,behavior:'auto'});
+    else f.scrollBy({left:-d*f.clientWidth*.92,behavior:'auto'});
+    setTimeout(()=>{
+      const e2=document.elementFromPoint(x,y),t=e2&&e2.closest?e2.closest('[data-ek][contenteditable="true"]'):null;
+      if(t)caretNear(t,x,y,false)},30)}
   function edgeChapter(d){
     const to=cur+d;if(to<0||to>=SEC.length)return;
     render(to);                       /* מעבר פרק: מותר לבנות מחדש */

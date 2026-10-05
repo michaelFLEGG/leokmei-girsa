@@ -3361,10 +3361,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const n=r.startContainer.nodeType===1?r.startContainer:r.startContainer.parentElement;
       b=n&&n.getBoundingClientRect?n.getBoundingClientRect():null}
     return b||null}
+  let LASTF=0;
   function followCaret(smooth){
     const f=$('#flow');if(!f||!EDIT)return;
     const b=caretRect();if(!b||(!b.width&&!b.height&&!b.top&&!b.left))return;
-    const fr=f.getBoundingClientRect(),lh=lhOf(f)||24,beh=smooth===false?'auto':'smooth';
+    const fr=f.getBoundingClientRect(),lh=lhOf(f)||24;
+    /* רכה כשהקפיצה קצרה; מיידית כשהיא ארוכה או כשגלילה רכה כבר רצה (מקשים לחוצים ברצף) */
+    let beh=smooth===false?'auto':'smooth';
+    if(performance.now()-LASTF<350)beh='auto';
+    LASTF=performance.now();
     if(f.classList.contains('vert')){
       const m=lh*3;
       if(b.top<fr.top+m)f.scrollBy({top:b.top-fr.top-m,behavior:beh});
@@ -3376,6 +3381,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       let d=0;
       if(b.left<fr.left+m)d=b.left-(fr.left+m);
       else if(b.right>fr.right-m)d=b.right-(fr.right-m);
+      if(Math.abs(d)>f.clientWidth*1.2)beh='auto';
       if(Math.abs(d)>1)f.scrollTo({left:f.scrollLeft+d,behavior:beh})}}
   let KEYNAV=0;
   document.addEventListener('keydown',e=>{

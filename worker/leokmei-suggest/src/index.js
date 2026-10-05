@@ -29,8 +29,22 @@
    כמידע בלבד.
    דחייה אינה מחיקה: הצעה שנדחתה נשארת במחסן בסטטוס 'rejected'. */
 
-const MAX_LEN = 2000;
-const RATE_PER_DAY = 20;
+/* אין מכסה: לא ליום, לא בסך הכל, ולא למספר הצעות ממתינות. המנהל רוצה שיגיהו
+   כמה שיותר. התקרה לאורך הצעה בודדת קיימת רק כדי שמחסן הנתונים לא יתפוצץ
+   (עשרים אלף תווים, הרבה מעבר לכל הצעה אמיתית). ההגנה היחידה מבוטים היא
+   שדה מלכודת נסתר וקצב שאדם אינו יכול להגיע אליו: יותר משלושים שליחות
+   בעשר שניות מאותה כתובת (בזיכרון הנקודה, בלי כתיבה למחסן). */
+const MAX_LEN = 20000;
+const BURST_N = 30, BURST_MS = 10000;
+const burst = new Map();
+function burstHit(ip) {
+  const now = Date.now();
+  const a = (burst.get(ip) || []).filter((t) => now - t < BURST_MS);
+  a.push(now);
+  burst.set(ip, a);
+  if (burst.size > 500) for (const [k, v] of burst) if (!v.length || now - v[v.length - 1] > BURST_MS) burst.delete(k);
+  return a.length > BURST_N;
+}
 const TYPES = ['nusach', 'style', 'question', 'note', 'source'];
 const LINK = /(https?:\/\/|www\.|\.(com|net|org|il|co|info|ru|xyz|top|io)\b)/i;
 
@@ -177,21 +191,54 @@ async function proposerOk(env, pid, pt) {
   const v = await env.STORE.get('pr:' + pid, 'json');
   return !!(v && sameKey(v.h, await sha256hex(String(pt))));
 }
-async function putSg(env, rec) {
-  await env.STORE.put('sg:' + rec.id, JSON.stringify(rec),
-    { metadata: { st: rec.st, slug: rec.slug, pid: rec.pid || '', tr: rec.tr ? 1 : 0 } });
+/* המטא-נתונים של המפתח נושאים תקציר של ההצעה: כך אפשר לרשום, לסנן ולמיין
+   אלפי הצעות בקריאת רשימה אחת, בלי לקרוא כל הצעה בנפרד (בתוכנית החינמית
+   מספר הקריאות לבקשה מוגבל). הגבול של KV הוא 1024 בתים. */
+function sgMeta(rec) {
+  const m = {
+    st: rec.st, slug: rec.slug, pid: rec.pid || '', tr: rec.tr ? 1 : 0,
+    d: rec.daf || '', ty: rec.type || 'nusach', up: rec.up ? 1 : 0, un: rec.seen === 0 ? 1 : 0,
+    v: (rec.ver = (rec.ver || 0) + 1), nm: (rec.name || '').slice(0, 24),
+    n: (rec.note || '').slice(0, 90), w: (rec.was || '').slice(0, 50), mn: rec.mnew ? 1 : 0,
+  };
+  const size = () => new TextEncoder().encode(JSON.stringify(m)).length;
+  while (size() > 950 && m.n.length > 10) { m.n = m.n.slice(0, Math.floor(m.n.length * 0.8)); m.w = m.w.slice(0, Math.floor(m.w.length * 0.8)); }
+  while (size() > 950 && m.nm.length > 0) m.nm = m.nm.slice(0, -4);
+  return m;
 }
+async function putSg(env, rec) {
+  const meta = sgMeta(rec);
+  await env.STORE.put('sg:' + rec.id, JSON.stringify(rec), { metadata: meta });
+}
+/* זמן ההצעה נלקח משם המפתח (sg:<מסכת>:<זמן>:<מזהה>) */
+function keyT(name) { const p = name.split(':'); return +p[2] || 0; }
+/* "ההצעות שלי": שורות תקציר מן המטא-נתונים (קריאת רשימה בלבד). את ההצעה
+   המלאה הדפדפן מביא בצרורות (mine/batch) ושומר אצלו לפי הגרסה, כך שגם מציע
+   עם מאות הצעות לא עובר את מגבלות הבקשה. */
 async function mine(req, env, url) {
   const pid = url.searchParams.get('pid') || '', pt = req.headers.get('x-proposer') || '';
   if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
-  const out = [];
+  const rows = [];
   for (const k of await listAll(env, 'sg:')) {
-    if (!k.metadata || k.metadata.pid !== pid) continue;
-    const v = await env.STORE.get(k.name, 'json');
-    if (v) out.push(v);
+    const m = k.metadata;
+    if (!m || m.pid !== pid) continue;
+    rows.push({ id: k.name.slice(3), t: keyT(k.name), st: m.st, slug: m.slug, daf: m.d || '', type: m.ty || '',
+                up: m.up || 0, un: m.un || 0, v: m.v || 0, n: m.n || '', w: m.w || '', mn: m.mn || 0 });
   }
-  out.sort((a, b) => b.t - a.t);
-  return json({ ok: true, items: out, unseen: out.filter((x) => x.seen === 0).length });
+  rows.sort((a, b) => b.t - a.t);
+  return json({ ok: true, rows, unseen: rows.filter((x) => x.un).length });
+}
+async function mineBatch(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const pid = str(b.pid, 20), pt = req.headers.get('x-proposer') || '';
+  if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
+  const out = [];
+  for (const id of (Array.isArray(b.ids) ? b.ids : []).slice(0, 40)) {
+    const rec = await env.STORE.get('sg:' + str(id, 80), 'json');
+    if (rec && rec.pid === pid) out.push(rec);
+  }
+  return json({ ok: true, items: out });
 }
 async function mineAct(req, env, what) {
   let b;
@@ -199,10 +246,12 @@ async function mineAct(req, env, what) {
   const pid = str(b.pid, 20), pt = req.headers.get('x-proposer') || '';
   if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
   if (what === 'seen') {
+    let n = 0;
     for (const k of await listAll(env, 'sg:')) {
-      if (!k.metadata || k.metadata.pid !== pid) continue;
+      if (!k.metadata || k.metadata.pid !== pid || !k.metadata.un) continue;
+      if (n >= 30) break;                 /* עד שלושים בבקשה; הבקשה הבאה תמשיך */
       const v = await env.STORE.get(k.name, 'json');
-      if (v && v.seen === 0) { v.seen = 1; await putSg(env, v); }
+      if (v && v.seen === 0) { v.seen = 1; await putSg(env, v); n++; }
     }
     return json({ ok: true });
   }
@@ -222,9 +271,15 @@ async function mineAct(req, env, what) {
     const note = str(b.note).trim();
     if (!note) return bad('אין הצעה');
     if (LINK.test(note)) return bad('הצעה שיש בה קישור נדחית', 422);
+    if (note.length >= MAX_LEN) return bad('ההצעה ארוכה מדי');
+    if (note === rec.note && (TYPES.indexOf(b.type) < 0 || b.type === rec.type)) return json({ ok: true, rec });
+    /* הגרסה הקודמת נשמרת: המציע והמנהל רואים את ההיסטוריה. העדכון הוא אותו
+       פריט בתור (לא כפילות), מסומן "עודכנה". */
+    rec.vers = (rec.vers || []).concat([{ note: rec.note, type: rec.type, t: rec.edited || rec.t }]).slice(-30);
     rec.note = note;
     if (TYPES.indexOf(b.type) > -1) rec.type = b.type;
     rec.edited = Date.now();
+    rec.up = 1;
     await putSg(env, rec);
     return json({ ok: true, rec });
   }
@@ -322,7 +377,7 @@ async function bulk(req, env) {
   const st = str(b.st, 12);
   if (['rejected', 'stale', 'pending'].indexOf(st) < 0) return bad('הכרעה לא תקינה');
   let n = 0;
-  for (const id of (Array.isArray(b.ids) ? b.ids : []).slice(0, 200)) {
+  for (const id of (Array.isArray(b.ids) ? b.ids : []).slice(0, 25)) {
     const rec = await env.STORE.get('sg:' + str(id, 80), 'json');
     if (!rec) continue;
     rec.st = st; rec.decided = Date.now(); rec.reason = str(b.reason, 200); rec.seen = 0;
@@ -341,48 +396,75 @@ async function suggest(req, env) {
   if (!slugOk(slug)) return bad('מסכת לא תקינה');
   const note = str(b.note).trim();
   if (!note) return bad('אין הצעה');
-  if (note.length >= MAX_LEN || str(b.was).length >= MAX_LEN) return bad('ההצעה ארוכה מדי (עד 2,000 תווים)');
+  if (note.length >= MAX_LEN || str(b.was).length >= MAX_LEN) return bad('ההצעה ארוכה מדי');
   if (LINK.test(note) || LINK.test(str(b.name, 80))) return bad('הצעה שיש בה קישור נדחית', 422);
   const ip = req.headers.get('cf-connecting-ip') || '0';
-  const day = new Date().toISOString().slice(0, 10);
-  const rk = 'rl:' + ip + ':' + day;
-  const n = parseInt((await env.STORE.get(rk)) || '0', 10);
-  if (n >= RATE_PER_DAY) return bad('יותר מדי הצעות מכתובת אחת ביום אחד. נסה מחר', 429);
-  await env.STORE.put(rk, String(n + 1), { expirationTtl: 90000 });
+  if (burstHit(ip)) return bad('השליחה מהירה מדי. נסה שוב בעוד רגע', 429);
   const t = Date.now();
   const id = slug + ':' + t + ':' + rid();
   const pid = /^[a-z0-9]{8,20}$/.test(b.pid || '') ? b.pid : '';
   const type = TYPES.indexOf(b.type) > -1 ? b.type : 'nusach';
-  if (pid && b.pt) await ensureProposer(env, pid, str(b.pt, 80), str(b.name, 80).trim());
+  if (pid && b.pt && !(await ensureProposer(env, pid, str(b.pt, 80), str(b.name, 80).trim()))) return bad('הזהות במכשיר אינה תואמת', 401);
+  /* הצעה שנולדה מהצעה קודמת (חידוד אחרי דחייה, או ליטוש אחרי אישור) */
+  let from = '';
+  if (pid && b.from) {
+    const old = await env.STORE.get('sg:' + str(b.from, 80), 'json');
+    if (old && old.pid === pid) {
+      from = old.id;
+      old.next = (old.next || []).concat([id]).slice(-10);
+      await putSg(env, old);
+    }
+  }
   const rec = {
     id, slug, masechet: str(b.masechet, 40), daf: str(b.daf, 12), uid: str(b.uid, 12),
     k: str(b.k, 24), ctx: { b: str(b.ctx && b.ctx.b, 60), a: str(b.ctx && b.ctx.a, 60) },
     was: str(b.was), note, name: str(b.name, 80).trim(), t, st: 'pending',
     type, pid, thread: [], seen: 1, tr: (await isTrusted(env, pid)) ? 1 : 0,
   };
+  if (from) rec.from = from;
   await putSg(env, rec);
   return json({ ok: true, id });
 }
 
+/* תור המנהל: דף אחד בכל פעם, עם סינון לפי מציע / דף / סוג / "עודכנה". הספירות
+   והמיון נעשים מן המטא-נתונים, וההצעות המלאות נקראות רק לדף המבוקש.
+   הצעות ישנות שאין להן תקציר במטא-נתונים משודרגות בדרך (עד שלושים בבקשה). */
 async function queue(req, env, url) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
-  const slug = url.searchParams.get('slug') || '';
+  const q = url.searchParams;
+  const slug = q.get('slug') || '', pidF = q.get('pid') || '', dafF = q.get('daf') || '', tyF = q.get('ty') || '';
+  const upF = q.get('up') === '1', page = Math.max(0, parseInt(q.get('page') || '0', 10) || 0);
+  const size = Math.min(40, Math.max(5, parseInt(q.get('size') || '30', 10) || 30));
   const keys = await listAll(env, 'sg:');
-  const counts = {};
-  const want = [];
+  const counts = {}, props = {};
+  const want = [], legacy = [];
   for (const k of keys) {
     const m = k.metadata || {};
     if (m.st !== 'pending') continue;
     counts[m.slug] = (counts[m.slug] || 0) + 1;
-    if (!slug || m.slug === slug) want.push(k.name);
+    if (slug && m.slug !== slug) continue;
+    if (m.v === undefined) { legacy.push(k.name); continue; }
+    if (m.pid) { const p = props[m.pid] || (props[m.pid] = { pid: m.pid, name: '', n: 0 }); p.n++; if (m.nm) p.name = m.nm; }
+    if (pidF && m.pid !== pidF) continue;
+    if (dafF && m.d !== dafF) continue;
+    if (tyF && m.ty !== tyF) continue;
+    if (upF && !m.up) continue;
+    want.push({ name: k.name, tr: m.tr ? 1 : 0, t: keyT(k.name) });
   }
+  for (const name of legacy.slice(0, 30)) {
+    const rec = await env.STORE.get(name, 'json');
+    if (rec) await putSg(env, rec);
+  }
+  for (const name of legacy) want.push({ name, tr: 0, t: keyT(name) });
+  want.sort((a, b) => (b.tr - a.tr) || (a.t - b.t));
+  const slice = want.slice(page * size, page * size + size);
   const items = [];
-  for (const name of want) {
-    const v = await env.STORE.get(name, 'json');
+  for (const w of slice) {
+    const v = await env.STORE.get(w.name, 'json');
     if (v) items.push(v);
   }
-  items.sort((a, b) => ((b.tr ? 1 : 0) - (a.tr ? 1 : 0)) || (a.t - b.t));
-  return json({ ok: true, items, counts, total: Object.values(counts).reduce((a, b) => a + b, 0) });
+  return json({ ok: true, items, counts, total: Object.values(counts).reduce((a, b) => a + b, 0),
+                matched: want.length, page, size, proposers: Object.values(props).sort((a, b) => b.n - a.n).slice(0, 60) });
 }
 
 async function decide(req, env) {
@@ -394,7 +476,7 @@ async function decide(req, env) {
   if (!id || ['accepted', 'edited', 'rejected', 'stale', 'pending'].indexOf(st) < 0) return bad('הכרעה לא תקינה');
   const rec = await env.STORE.get('sg:' + id, 'json');
   if (!rec) return bad('ההצעה לא נמצאה', 404);
-  rec.st = st; rec.decided = Date.now();
+  rec.st = st; rec.decided = Date.now(); rec.up = 0;
   rec.reason = (st === 'rejected' || st === 'stale') ? str(b.reason, 200) : '';
   rec.seen = st === 'pending' ? 1 : 0;      /* התראה למציע: ההצעה טופלה */
   if (st === 'accepted' || st === 'edited') rec.now = str(b.now);
@@ -544,6 +626,7 @@ export default {
       if (p === '/devices' && req.method === 'GET') return await devices(req, env);
       if (p === '/devices/revoke' && req.method === 'POST') return await revoke(req, env);
       if (p === '/mine' && req.method === 'GET') return await mine(req, env, url);
+      if (p === '/mine/batch' && req.method === 'POST') return await mineBatch(req, env);
       if (p === '/mine/edit' && req.method === 'POST') return await mineAct(req, env, 'edit');
       if (p === '/mine/delete' && req.method === 'POST') return await mineAct(req, env, 'delete');
       if (p === '/mine/reply' && req.method === 'POST') return await mineAct(req, env, 'reply');

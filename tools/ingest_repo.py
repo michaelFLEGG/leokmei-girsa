@@ -85,6 +85,14 @@ def ops_of(doc):
             if kind in ('split', 'merge'):
                 mops.append({'kind': 'psplit' if kind == 'split' else 'pmerge',
                              'texts': e.get('texts') or [], 'res': e.get('resT') or []})
+            elif kind == 'hsplit':
+                # כותרת בשתיים: פיצול הפסקה, ואחריו הפסקה השנייה מקבלת את סגנון הגוף
+                mops.append({'kind': 'phsplit', 'texts': e.get('texts') or [],
+                             'res': e.get('resT') or [], 'style': e.get('psw') or '',
+                             'daf': e.get('daf', '')})
+            elif kind == 'hmerge':
+                mops.append({'kind': 'pmerge', 'texts': e.get('texts') or [],
+                             'res': e.get('resT') or []})
             elif kind in ('side', 'unside'):
                 # כותרת צד (Ctrl+נקודה): res[0]=[סגנון, גוף], res[1]=[חלון],
                 # res[2]=[היסט החיתוך, אורכו] בתוך הנוסח שהיה.

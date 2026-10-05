@@ -59,7 +59,7 @@
       '<div class="sgtypes" id="sgty"></div>'+
       '<div class="sgchips" id="sgch" style="display:none"></div>'+
       '<label for="sgn" id="sgnl">הנוסח המוצע במקום הקטע המסומן</label>'+
-      '<textarea id="sgn" maxlength="1900"></textarea>'+
+      '<textarea id="sgn"></textarea>'+
       '<label for="sgw">שמך (לא חובה)</label><input type="text" id="sgw" maxlength="80" value="'+esc(localStorage.getItem('lg-sg-name')||'')+'">'+
       '<input id="sgh" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0" aria-hidden="true">'+
       '<div class="btns"><button class="go" id="sgok">שלח</button><button id="sgx">ביטול</button><span class="dr" id="sgdr"></span></div>';
@@ -109,7 +109,7 @@
       if(g.sent)continue;
       if(!g.pid){const i=pident();g.pid=i.pid;g.pt=i.pt}
       try{const j=await api('/suggest',{method:'POST',body:JSON.stringify(g)});g.sent=1;g.id=j.id;ok++}
-      catch(e){why=e.message||'';if(/קישור|נדחה|מדי/.test(why)){g.sent=1;g.bad=why}else fail++}
+      catch(e){why=e.message||'';if(/קישור|נדחה|ארוכה|תואמת/.test(why)){g.sent=1;g.bad=why}else{fail++;if(/מהירה/.test(why))setTimeout(sgSend,4000)}}
     }
     saveSG();SGBUSY=false;
     if(ok)toast('ההצעה נשלחה לעורך. תודה רבה. אפשר לעקוב אחריה ב"ההצעות שלי".');
@@ -117,67 +117,279 @@
     else if(why)toast(why,4500);
     drawSg()}
 
-  /* ---- ההצעות שלי ---- */
-  let MINE=[],MINEERR='',MFIL={mas:'',st:''};
+  /* ---- ההצעות שלי: מסך מלא (5.10.2026) ----
+     רשימה של כל הצעותיו של המציע, עם סינון, מיון וחיפוש חופשי, עריכה במקום
+     (נשמרת גרסה קודמת), חידוד והגשה מחדש של הצעה שנדחתה, ליטוש נוסף להצעה
+     שאושרה, משיכה של הצעה ממתינה, וקפיצה למקום בדף. ההצעה המלאה נשמרת
+     במכשיר לפי גרסה, ולכן גם מציע עם מאות הצעות טוען רק מה שהשתנה. */
+  const MCK='lg-mine-cache';
+  let MINE=[],MROWS=[],MINEERR='',MFIL={q:'',mas:'',st:'',daf:'',sort:'new'},MSHOW=60,MED=null,MCACHE={},MLOAD=0,MLOADING=false;
+  try{MCACHE=JSON.parse(localStorage.getItem(MCK)||'{}')}catch(e){MCACHE={}}
+  function mcSave(){try{localStorage.setItem(MCK,JSON.stringify(MCACHE))}catch(e){try{localStorage.removeItem(MCK)}catch(e2){}}}
   async function mineLoad(markSeen){
-    try{const j=await papi('/mine');MINE=j.items||[];MINEERR='';mineBell(j.unseen||0);
+    if(MLOADING)return;MLOADING=true;
+    try{
+      const j=await papi('/mine');MROWS=j.rows||[];MINEERR='';mineBell(j.unseen||0);
+      const idn=pident().pid;
+      if(MCACHE.pid!==idn)MCACHE={pid:idn,items:{}};
+      const have=new Set(MROWS.map(r=>r.id));
+      for(const k in MCACHE.items)if(!have.has(k))delete MCACHE.items[k];
+      const need=MROWS.filter(r=>{const c=MCACHE.items[r.id];return !c||!r.v||c.v!==r.v}).map(r=>r.id);
+      for(let i=0;i<need.length;i+=40){
+        MLOAD=Math.min(need.length,i+40);if(myOpen())mineList();
+        const b=await papi('/mine/batch',{ids:need.slice(i,i+40)});
+        (b.items||[]).forEach(rec=>{MCACHE.items[rec.id]={v:rec.ver||0,rec}})}
+      MLOAD=0;mcSave();
+      MINE=MROWS.map(r=>(MCACHE.items[r.id]||{}).rec).filter(Boolean);
       if(markSeen&&j.unseen)papi('/mine/seen',{}).then(()=>mineBell(0)).catch(()=>{})}
-    catch(e){MINEERR=/הרשאה/.test(e.message)?'':(e.message||'')}
-    }
-  function mineBell(n){const b=document.querySelector('button[onclick^="panel(\'sg\')"]');if(!b)return;
+    catch(e){MLOAD=0;MINEERR=/הרשאה/.test(e.message)?'':(e.message||'')}
+    MLOADING=false}
+  function mineBell(n){const b=document.querySelector('button[onclick^="mineOpen"]');if(!b)return;
     b.innerHTML='ההצעות שלי'+(n?'<span class="sgbell">'+n+'</span>':'')}
   function stChip(st){const s=SSTAT[st]||SSTAT.pending;return '<span class="stchip" style="background:'+s[1]+'">'+s[0]+'</span>'}
   function tyChip(t){const s=STYPES[t]||STYPES.nusach;return '<span class="tychip" style="color:'+s[2]+';border-color:'+s[2]+'">'+s[1]+' '+s[0]+'</span>'}
   function thrHTML(g,admin){return (g.thread||[]).map(x=>'<div class="sgthr"><span class="'+x.from+'">'+(x.from==='m'?'העורך':'המציע')+':</span> '+esc(x.txt)+'</div>').join('')}
-  function drawSg(){const box=$('#sgb');if(!box)return;
-    mineLoad(true).then(()=>drawSg2());
-    drawSg2()}
-  function drawSg2(){const box=$('#sgb');if(!box)return;
-    const offline=SG.filter(g=>!g.sent);
+  (function(){const st=document.createElement('style');st.textContent=
+    '.mys{position:fixed;inset:0;z-index:40;background:#fbf8ef;overflow:auto;display:none;direction:rtl;font-size:16px;line-height:1.55}'+
+    '.mys .in{max-width:920px;margin:0 auto;padding:0 14px 60px}'+
+    '.mysh{position:sticky;top:0;background:#fbf8ef;z-index:2;padding:10px 0 6px;border-bottom:1px solid #d9d1bd}'+
+    '.mysh h2{margin:0;font-size:21px;display:inline}.mysh .l{float:left;display:flex;gap:6px}'+
+    '.mysbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.mysbar input,.mysbar select{font:inherit;font-size:15px;padding:3px 6px;border:1px solid #c9b98f;border-radius:4px;background:#fff}'+
+    '.mysbar input[type=search]{flex:1 1 220px;min-width:140px}.mysbar #myd{width:80px}'+
+    '.mycard{background:#fff;border:1px solid #d9d1bd;border-radius:8px;padding:9px 12px;margin:9px 0}.mycard.new{outline:2px solid #c9a24a}'+
+    '.mycard .mym{font-size:14px;color:#6b5f4a;margin-bottom:3px}.mycard q{display:block;color:#6b5f4a;font-size:15px;margin:2px 0}'+
+    '.mycard .myn{font-size:17px;font-weight:600;white-space:pre-wrap}.mycard .why{color:#a83c2f;font-size:15px}'+
+    '.mycard button,.mys button.b{font:inherit;font-size:14px;margin:6px 0 0 6px;padding:2px 11px;border:1px solid #b9a97c;border-radius:5px;background:#f6f1e2;cursor:pointer}'+
+    '.mycard button.go,.mys button.go{background:#2e6b3f;color:#fff;border-color:#2e6b3f}'+
+    '.mycard textarea{width:100%;box-sizing:border-box;min-height:96px;font:inherit;font-size:17px;direction:rtl;padding:6px;border:1px solid #c9b98f;border-radius:5px}'+
+    '.mycard details{margin-top:5px;font-size:14px}.mycard details div{padding:2px 8px;border-right:3px solid #d9d1bd;margin:3px 0;white-space:pre-wrap}'+
+    '.mycard a.mygo{color:#2e5b8a;cursor:pointer;font-size:14px;margin-right:10px;text-decoration:underline}'+
+    '.mymore{text-align:center;margin:14px 0}.mydim{color:#8a7d66;font-size:14px}'+
+    'body.mysopen{overflow:hidden}'+
+    '@media (max-width:600px){.mys .in{padding:0 8px 60px}.mycard .myn{font-size:16px}}';
+    document.head.appendChild(st)})();
+  const myOpen=()=>{const o=$('#mys');return !!o&&o.style.display!=='none'};
+  function mineOpen(){
+    let o=$('#mys');
+    if(!o){o=document.createElement('div');o.id='mys';o.className='mys';o.setAttribute('role','dialog');o.setAttribute('aria-label','ההצעות שלי');
+      o.innerHTML='<div class="in"><div class="mysh"><h2>ההצעות שלי</h2> <span class="mydim" id="myc"></span>'+
+        '<span class="l"><button class="b" onclick="mineMe()" title="השם שלך וקישור אישי להיכנס ממכשיר אחר">הזהות שלי</button><button class="b" onclick="mineClose()">סגירה ✕</button></span></div>'+
+        '<div class="mysbar"><input type="search" id="myq" placeholder="חיפוש חופשי בהצעות" aria-label="חיפוש חופשי בהצעות">'+
+        '<select id="mym" aria-label="מסכת"></select>'+
+        '<select id="myst" aria-label="מצב"><option value="">כל המצבים</option><option value="pending">ממתינה</option><option value="upd">עודכנה</option><option value="accepted">אושרה</option><option value="edited">אושרה בשינוי</option><option value="rejected">נדחתה</option><option value="stale">התיישנה</option></select>'+
+        '<input type="text" id="myd" placeholder="דף" aria-label="דף"><select id="myso" aria-label="סדר"><option value="new">החדשות תחילה</option><option value="old">הישנות תחילה</option><option value="loc">לפי מסכת ודף</option></select></div>'+
+        '<div id="myl"></div></div>';
+      document.body.appendChild(o);
+      const upd=()=>{MFIL.q=$('#myq').value;MFIL.mas=$('#mym').value;MFIL.st=$('#myst').value;MFIL.daf=$('#myd').value.trim();MFIL.sort=$('#myso').value;MSHOW=60;mineList()};
+      ['myq','myd'].forEach(i=>$('#'+i).addEventListener('input',()=>{clearTimeout(o.__t);o.__t=setTimeout(upd,200)}));
+      ['mym','myst','myso'].forEach(i=>$('#'+i).addEventListener('change',upd))}
+    o.style.display='block';document.body.classList.add('mysopen');
+    mineList();
+    mineLoad(true).then(()=>{if(myOpen())mineList()})}
+  function mineClose(){const o=$('#mys');if(o)o.style.display='none';document.body.classList.remove('mysopen')}
+  /* תאימות: קריאות ישנות לציור הרשימה */
+  function drawSg(){if(myOpen())mineLoad(false).then(()=>{if(myOpen())mineList()})}
+  function drawSg2(){if(myOpen())mineList()}
+  function dafSortKey(d){const k=dafKey(d);return k===null?0:k}
+  function mineList(){
+    const box=$('#myl');if(!box)return;
     const mas=[...new Set(MINE.map(x=>x.masechet).filter(Boolean))];
-    const items=MINE.filter(x=>(!MFIL.mas||x.masechet===MFIL.mas)&&(!MFIL.st||x.st===MFIL.st));
-    let h='<div class="sgbar"><select id="mfm" onchange="MFIL.mas=this.value;drawSg2()"><option value="">כל המסכתות</option>'+
-      mas.map(m=>'<option'+(MFIL.mas===m?' selected':'')+'>'+esc(m)+'</option>').join('')+'</select>'+
-      '<select id="mfs" onchange="MFIL.st=this.value;drawSg2()"><option value="">כל המצבים</option>'+
-      Object.keys(SSTAT).map(s=>'<option value="'+s+'"'+(MFIL.st===s?' selected':'')+'>'+SSTAT[s][0]+'</option>').join('')+'</select></div>';
-    if(MINEERR)h+='<div class="edsum" style="color:#a83c2f">לא ניתן לקרוא את ההצעות כרגע: '+esc(MINEERR)+'</div>';
-    offline.forEach(g=>{h+='<div class="sgrow"><small>'+esc(g.daf||'')+' · ממתינה לשליחה (אין חיבור)</small> <q>'+esc((g.was||'').slice(0,80))+'</q><b>'+esc(g.note)+'</b></div>'});
-    let lastGrp='';
-    items.forEach(g=>{
-      if(g.grp&&g.grp!==lastGrp){const n=items.filter(x=>x.grp===g.grp).length;if(n>1)h+='<small class="dr">שליחה אחת, '+n+' שינויים - לכל שינוי החלטה משלו</small>'}
-      lastGrp=g.grp||'';
-      h+='<div class="sgrow" data-id="'+esc(g.id)+'"><small>'+esc(g.daf||'')+' · '+esc(g.masechet||'')+' · '+new Date(g.t).toLocaleDateString('he-IL')+'</small> '+
-        stChip(g.st)+tyChip(g.type)+(g.edited?'<small>(נערכה)</small>':'')+
-        '<q>'+esc((g.was||'').slice(0,120))+'</q><b id="mn'+esc(g.id).replace(/[^\w]/g,'_')+'">'+esc(g.note)+'</b>'+
-        ((g.st==='rejected'||g.st==='stale')&&g.reason?'<div class="why">סיבה: '+esc(g.reason)+'</div>':'')+
-        (g.st==='edited'&&g.now?'<div class="why" style="color:#5f7f2e">נכנס בנוסח: '+esc(g.now)+'</div>':'')+
-        thrHTML(g)+
-        (g.st==='pending'?'<button onclick="mineEdit(\''+esc(g.id)+'\')">ערוך</button><button onclick="mineDel(\''+esc(g.id)+'\')">מחק</button>':'')+
-        '<div class="sgrep"><input type="text" maxlength="500" placeholder="תשובה או שאלה לעורך" onkeydown="if(event.key===\'Enter\')mineReply(\''+esc(g.id)+'\',this)">'+
-        '<button onclick="mineReply(\''+esc(g.id)+'\',this.previousElementSibling)">שלח</button></div></div>'});
-    if(!items.length&&!offline.length&&!MINEERR)h+='<div class="edsum">אין הצעות להצגה. סמן טקסט בדף, ולחץ "הצע תיקון".</div>';
-    h+='<div class="dr" style="margin-top:10px">ההצעות שלך נראות רק לך ולעורך עד שיאושרו.</div>';
-    box.innerHTML=h}
-  async function mineEdit(id){const g=MINE.find(x=>x.id===id);if(!g)return;
-    const v=prompt('ערוך את ההצעה:',g.note);if(v===null||!v.trim())return;
-    try{await papi('/mine/edit',{id,note:v.trim(),type:g.type});await mineLoad();drawSg2();toast('ההצעה עודכנה.')}
-    catch(e){alert(e.message)}}
-  async function mineDel(id){if(!confirm('למחוק את ההצעה? אפשר רק כל עוד לא טופלה.'))return;
-    try{await papi('/mine/delete',{id});MINE=MINE.filter(x=>x.id!==id);drawSg2();toast('ההצעה נמחקה.')}
+    const sel=$('#mym');if(sel){const keep=MFIL.mas;
+      sel.innerHTML='<option value="">כל המסכתות</option>'+mas.map(m=>'<option'+(keep===m?' selected':'')+'>'+esc(m)+'</option>').join('')}
+    const q=nonik((MFIL.q||'').trim()),df=(MFIL.daf||'').replace(/[.:\s]/g,'');
+    let items=MINE.filter(g=>(!MFIL.mas||g.masechet===MFIL.mas)&&
+      (!MFIL.st||(MFIL.st==='upd'?(g.st==='pending'&&g.up):g.st===MFIL.st))&&
+      (!df||String(g.daf||'').replace(/[.:\s]/g,'')===df)&&
+      (!q||nonik([g.note,g.was,g.reason||'',g.now||'',(g.thread||[]).map(x=>x.txt).join(' '),(g.vers||[]).map(v=>v.note).join(' ')].join(' ')).indexOf(q)>-1));
+    if(MFIL.sort==='old')items.sort((a,b)=>a.t-b.t);
+    else if(MFIL.sort==='loc')items.sort((a,b)=>String(a.masechet).localeCompare(String(b.masechet),'he')||dafSortKey(a.daf)-dafSortKey(b.daf)||a.t-b.t);
+    else items.sort((a,b)=>b.t-a.t);
+    const c=$('#myc');if(c)c.textContent=MINE.length+' הצעות'+(items.length!==MINE.length?' · מוצגות '+items.length:'')+(MLOAD?' · טוען '+MLOAD+' מתוך '+MROWS.length+'…':'');
+    const offline=SG.filter(g=>!g.sent);
+    let h='';
+    if(MINEERR)h+='<div class="mycard why">לא ניתן לקרוא את ההצעות כרגע: '+esc(MINEERR)+'</div>';
+    offline.forEach(g=>{h+='<div class="mycard"><div class="mym">'+esc(g.daf||'')+' · ממתינה לשליחה (אין חיבור)</div><q>'+esc((g.was||'').slice(0,120))+'</q><div class="myn">'+esc(g.note)+'</div></div>'});
+    items.slice(0,MSHOW).forEach(g=>{h+=mineCard(g)});
+    if(items.length>MSHOW)h+='<div class="mymore"><button class="b" onclick="MSHOW+=60;mineList()">הצג עוד ('+(items.length-MSHOW)+')</button></div>';
+    if(!items.length&&!offline.length&&!MINEERR&&!MLOAD)h+='<div class="mycard mydim">'+(MINE.length?'אין הצעות שמתאימות לסינון.':'עדיין אין הצעות. סמן טקסט בדף, ולחץ "הצע תיקון".')+'</div>';
+    h+='<div class="mydim" style="margin-top:12px">ההצעות שלך נראות רק לך ולעורך עד שיאושרו. אין הגבלה על מספר ההצעות.</div>';
+    const keepScroll=box.parentElement.parentElement.scrollTop;
+    box.innerHTML=h;box.parentElement.parentElement.scrollTop=keepScroll;
+    if(MED){const ta=$('#mye');if(ta&&!ta.__f){ta.__f=1;ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length)}}}
+  function mineCard(g){
+    const id=esc(g.id),ed=MED&&MED.id===g.id;
+    const idq="'"+id+"'";
+    let h='<div class="mycard'+(g.mnew||ed?' new':'')+'" id="mc-'+id.replace(/[^\w]/g,'_')+'"><div class="mym"><b>'+esc(g.masechet||'')+(g.daf?' · דף '+esc(g.daf):'')+'</b> · '+new Date(g.t).toLocaleDateString('he-IL')+' '+stChip(g.st)+
+      (g.st==='pending'&&g.up?'<span class="stchip" style="background:#b0721a">עודכנה</span>':'')+tyChip(g.type)+
+      (g.from?'<span class="mydim"> · חידוד של הצעה קודמת</span>':'')+
+      (g.next&&g.next.length?'<span class="mydim"> · הוגשה ממנה הצעה חדשה</span>':'')+'</div>'+
+      '<q>'+esc((g.was||'').slice(0,300))+'</q>';
+    if(ed){
+      h+='<label class="mydim" for="mye">'+(MED.mode==='edit'?'עריכת ההצעה (הגרסה הקודמת נשמרת)':MED.mode==='again'?'חידוד והגשה מחדש (תיווצר הצעה חדשה, מקושרת לקודמת)':'ליטוש נוסף (תיווצר הצעה חדשה על הנוסח שאושר)')+'</label>'+
+        '<textarea id="mye" dir="rtl" oninput="MED.text=this.value;mineDraftSave()">'+esc(MED.text)+'</textarea>'+
+        '<div><button class="go" onclick="mineSubmit()">'+(MED.mode==='edit'?'שמור':'הגש')+'</button><button onclick="mineCancel()">ביטול</button><span class="mydim" id="myds"></span></div>';
+    }else{
+      h+='<div class="myn">'+esc(g.note)+'</div>';
+      if((g.st==='rejected'||g.st==='stale')&&g.reason)h+='<div class="why">סיבה: '+esc(g.reason)+'</div>';
+      if(g.st==='edited'&&g.now)h+='<div class="why" style="color:#5f7f2e">נכנס בנוסח: '+esc(g.now)+'</div>';
+      if(g.vers&&g.vers.length)h+='<details><summary>גרסאות קודמות ('+g.vers.length+')</summary>'+g.vers.slice().reverse().map(v=>'<div><span class="mydim">'+new Date(v.t).toLocaleString('he-IL')+'</span><br>'+esc(v.note)+'</div>').join('')+'</details>';
+      h+=thrHTML(g);
+      if(g.st==='pending')h+='<button onclick="mineStart('+idq+',\'edit\')">ערוך</button><button onclick="mineDel('+idq+')">משוך את ההצעה</button>';
+      if(g.st==='rejected'||g.st==='stale')h+='<button class="go" onclick="mineStart('+idq+',\'again\')">חדד והגש מחדש</button>';
+      if(g.st==='accepted'||g.st==='edited')h+='<button onclick="mineStart('+idq+',\'polish\')">הצע ליטוש נוסף</button>';
+      h+='<button onclick="mineGo('+idq+')">קפוץ למקום</button>';
+      h+='<div class="sgrep"><input type="text" maxlength="500" placeholder="תשובה או שאלה לעורך" onkeydown="if(event.key===\'Enter\')mineReply('+idq+',this)">'+
+        '<button onclick="mineReply('+idq+',this.previousElementSibling)">שלח</button></div>';
+    }
+    return h+'</div>'}
+  /* ---- עריכה במקום, חידוד וליטוש ---- */
+  function mineDraftKey(id,mode){return 'lg-my-draft-'+id+'-'+mode}
+  function mineDraftSave(){if(!MED)return;try{localStorage.setItem(mineDraftKey(MED.id,MED.mode),MED.text);const s=$('#myds');if(s)s.textContent='הטיוטה נשמרה'}catch(e){}}
+  function mineStart(id,mode){
+    const g=MINE.find(x=>x.id===id);if(!g)return;
+    let dr=null;try{dr=localStorage.getItem(mineDraftKey(id,mode))}catch(e){}
+    MED={id,mode,text:dr!==null&&dr!==undefined?dr:(mode==='polish'?(g.now||g.note):g.note)};
+    mineList()}
+  function mineCancel(){if(MED){try{localStorage.removeItem(mineDraftKey(MED.id,MED.mode))}catch(e){}}MED=null;mineList()}
+  async function mineSubmit(){
+    if(!MED)return;const g=MINE.find(x=>x.id===MED.id);if(!g)return;
+    const note=(MED.text||'').trim();
+    if(!note){alert('כתוב את ההצעה.');return}
+    if(/(https?:\/\/|www\.)/i.test(note)){alert('הצעה שיש בה קישור אינה מתקבלת.');return}
+    try{
+      if(MED.mode==='edit'){
+        await papi('/mine/edit',{id:g.id,note,type:g.type});
+        toast('ההצעה עודכנה. הגרסה הקודמת נשמרה.')}
+      else{
+        const i=pident();
+        const was=MED.mode==='polish'?(g.now||g.note):g.was;
+        await api('/suggest',{method:'POST',body:JSON.stringify({slug:g.slug,masechet:g.masechet,daf:g.daf,uid:g.uid,k:g.k,ctx:g.ctx,
+          was,note,name:localStorage.getItem('lg-sg-name')||g.name||'',type:g.type,pid:i.pid,pt:i.pt,from:g.id,hp:'',grp:sgGrp()})});
+        toast(MED.mode==='again'?'ההצעה המחודדת נשלחה והיא מקושרת לקודמת.':'הצעת הליטוש נשלחה.')}
+      try{localStorage.removeItem(mineDraftKey(MED.id,MED.mode))}catch(e){}
+      MED=null;await mineLoad();mineList()}
+    catch(e){alert(e.message||'השליחה נכשלה. הטקסט נשמר כטיוטה, נסה שוב.')}}
+  async function mineDel(id){if(!confirm('למשוך את ההצעה? אפשר רק כל עוד לא טופלה.'))return;
+    try{await papi('/mine/delete',{id});await mineLoad();mineList();toast('ההצעה נמשכה.')}
     catch(e){alert(e.message)}}
   async function mineReply(id,inp){const t=(inp.value||'').trim();if(!t)return;
-    try{await papi('/mine/reply',{id,text:t});inp.value='';await mineLoad();drawSg2()}catch(e){alert(e.message)}}
-  function sgClear(){if(SG.some(g=>!g.sent)&&!confirm('יש הצעה שטרם נשלחה. למחוק בכל זאת?'))return;SG=SG.filter(g=>!g.sent&&false);saveSG();drawSg2()}
-  setTimeout(()=>{mineLoad(false)},3000);setInterval(()=>{if(!document.hidden)mineLoad(false)},180000);
+    try{await papi('/mine/reply',{id,text:t});inp.value='';await mineLoad();mineList()}catch(e){alert(e.message)}}
+  function sgClear(){if(SG.some(g=>!g.sent)&&!confirm('יש הצעה שטרם נשלחה. למחוק בכל זאת?'))return;SG=SG.filter(g=>!g.sent&&false);saveSG();mineList()}
+  /* ---- קפיצה למקום ---- */
+  function mineFlashK(k){
+    const el=k&&$('#flow').querySelector('[data-ek="'+k+'"]');if(!el)return false;
+    toEl(el);el.classList.add('sgpulse');setTimeout(()=>el.classList.remove('sgpulse'),4000);return true}
+  function mineGo(id){
+    const g=MINE.find(x=>x.id===id);if(!g)return;
+    if(g.slug!==SLUG){try{sessionStorage.setItem('lg-jumpk',g.k||'')}catch(e){}
+      location.href=g.slug+'.html#'+(g.uid?'u='+encodeURIComponent(g.uid):'daf='+encodeURIComponent(g.daf||''));return}
+    mineClose();
+    let pi=-1;D.pages.forEach((p,i)=>{if(pi<0&&p.units.some(x=>String(x.id)===String(g.uid)))pi=i});
+    if(pi>=0)jump(pi,g.uid);
+    else{D.pages.forEach((p,i)=>{if(pi<0&&p.daf===g.daf)pi=i});if(pi<0){toast('המקום לא נמצא: הדף השתנה מאז ההצעה.');return}render(secOf(pi));toDaf(pi)}
+    setTimeout(()=>{if(!mineFlashK(g.k)){const e=$('#u'+g.uid);if(e)e.classList.add('hit')}},400)}
+  try{const jk=sessionStorage.getItem('lg-jumpk');if(jk!==null){sessionStorage.removeItem('lg-jumpk');setTimeout(()=>mineFlashK(jk),1800)}}catch(e){}
+  (function(){const st=document.createElement('style');st.textContent='.sgpulse{outline:3px solid #c9a24a;background:rgba(201,162,74,.22);transition:background 1s}';document.head.appendChild(st)})();
+  /* ---- זהות: שם וקישור אישי לכניסה ממכשיר אחר ---- */
+  function mineLink(){const i=pident();return location.origin+location.pathname.replace(/[^\/]*$/,'')+SLUG+'.html#me='+i.pid+'.'+i.pt}
+  function mineMe(){
+    const old=$('#mymod');if(old){old.remove();return}
+    const m=document.createElement('div');m.className='modal';m.id='mymod';m.style.zIndex=60;
+    m.innerHTML='<div class="box"><h3>הזהות שלי</h3>'+
+      '<label for="myname">השם שיופיע בהצעות שלך (לא חובה)</label><input type="text" id="myname" maxlength="80" value="'+esc(localStorage.getItem('lg-sg-name')||'')+'" style="width:100%;box-sizing:border-box;font:inherit">'+
+      '<p style="margin:10px 0 4px"><b>קישור אישי</b></p>'+
+      '<div class="dr" style="font-size:14px">פתיחת הקישור במכשיר אחר מחברת אותו להצעות שלך, בלי הרשמה ובלי סיסמה. שמור אותו במקום פרטי, ואל תשלח אותו לאחרים: מי שמחזיק בו יכול לראות ולערוך את ההצעות שלך.</div>'+
+      '<input type="text" id="mylink" readonly value="'+esc(mineLink())+'" style="width:100%;box-sizing:border-box;font:inherit;font-size:13px;direction:ltr;margin-top:6px" onfocus="this.select()">'+
+      '<div class="btns"><button class="go" onclick="mineMeSave()">שמור שם</button><button onclick="mineLinkCopy()" id="mycp">העתק את הקישור</button><button onclick="mineMe()">סגירה</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',e=>{if(e.target===m)m.remove()})}
+  function mineMeSave(){try{localStorage.setItem('lg-sg-name',$('#myname').value.trim())}catch(e){}toast('השם נשמר.');$('#mymod').remove()}
+  function mineLinkCopy(){const v=$('#mylink').value,done=()=>{const b=$('#mycp');b.textContent='הועתק ✓'};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v).then(done,()=>{$('#mylink').select();document.execCommand('copy');done()});
+    else{$('#mylink').select();try{document.execCommand('copy');done()}catch(e){}}}
+  /* כניסה בקישור אישי: מאמץ את הזהות שבקישור (באישור), ופותח את המסך */
+  (function(){
+    const m=(ME_HASH||'').match(/me=([a-z0-9]{8,20})\.([a-z0-9]{8,80})/);if(!m)return;
+    const me0=pident();
+    setTimeout(()=>{
+      if(me0.pid!==m[1]){
+        const unsent=SG.some(g=>!g.sent);
+        if(!confirm('הקישור מחבר את המכשיר הזה להצעות של מציע קיים.'+(unsent?'\nיש במכשיר הצעה שטרם נשלחה, והיא תישלח בשם המציע החדש.':'')+'\nלחבר?'))return;
+        try{localStorage.setItem('lg-pid',m[1]);localStorage.setItem('lg-pt',m[2]);MCACHE={};localStorage.removeItem(MCK)}catch(e){}
+        SG.forEach(g=>{if(!g.sent){g.pid=m[1];g.pt=m[2]}});saveSG()}
+      try{history.replaceState(null,'',location.pathname+location.search+'#p='+cur)}catch(e){}
+      mineOpen()},1200)})();
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&myOpen()&&!$('#mymod')){mineClose()}});
+  setTimeout(()=>{mineLoad(false)},3000);setInterval(()=>{if(!document.hidden)mineLoad(false).then(()=>{if(myOpen()&&!MED)mineList()})},180000);
 
   /* ---- המנהל: תור ההצעות ---- */
   let SQCUR=0,SQUNDO=null,SQSKIP=new Set();
+  /* תור גדול: דף אחד בכל פעם מן הנקודה, עם סינון (מציע / דף / סוג / עודכנה) */
+  let SQF={pid:'',daf:'',ty:'',up:0},SQPAGE=0,SQMATCH=0,SQPROPS=[],SQSIZE=25,SQCNT={},SQBULK=false,SQMSG=[];
+  function sqAlert(m){if(SQBULK)SQMSG.push(m);else alert(m)}
+  async function queueLoad(){
+    if(!isAdmin()||!admKey()){sqBadge();return}
+    try{const p=['slug='+SLUG,'page='+SQPAGE,'size='+SQSIZE];
+      if(SQF.pid)p.push('pid='+encodeURIComponent(SQF.pid));
+      if(SQF.daf)p.push('daf='+encodeURIComponent(SQF.daf));
+      if(SQF.ty)p.push('ty='+SQF.ty);
+      if(SQF.up)p.push('up=1');
+      const j=await api('/queue?'+p.join('&'));
+      QQ=j.items||[];QQTOT=j.total||0;SQMATCH=j.matched||0;SQPROPS=j.proposers||[];SQCNT=j.counts||{};QQERR='';
+      if(SQPAGE>0&&!QQ.length&&SQMATCH>0){SQPAGE=Math.max(0,Math.ceil(SQMATCH/SQSIZE)-1);return queueLoad()}}
+    catch(e){QQERR=e.message||'שגיאה'}
+    sqBadge();sqMark();
+    if($('#sgq')&&$('#sgq').classList.contains('open'))drawSq()}
+  function sqBadge(){const b=$('#sqbtn');if(!b)return;
+    if(!isAdmin()){b.style.display='none';return}
+    b.style.display='';const n=SQCNT[SLUG]||0;
+    b.textContent=admKey()?('הצעות ממתינות ('+n+(QQTOT>n?' · '+QQTOT+' בכל המסכתות':'')+')'):'הצעות ממתינות - הזן מפתח';
+    b.classList.toggle('on',n>0)}
+  function sqFilterBar(){
+    const sel=(id,opts,cur,fn)=>'<select id="'+id+'" onchange="'+fn+'">'+opts.map(o=>'<option value="'+esc(o[0])+'"'+(cur===o[0]?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select>';
+    return '<div class="sgbar">'+
+      sel('sqfp',[['','כל המציעים']].concat(SQPROPS.map(x=>[x.pid,(x.name||'בלי שם')+' ('+x.n+')'])),SQF.pid,"SQF.pid=this.value;SQPAGE=0;queueLoad()")+
+      sel('sqft',[['','כל הסוגים']].concat(Object.keys(STYPES).map(t=>[t,STYPES[t][0]])),SQF.ty,"SQF.ty=this.value;SQPAGE=0;queueLoad()")+
+      '<input type="text" id="sqfd" placeholder="דף" size="5" value="'+esc(SQF.daf)+'" onchange="SQF.daf=this.value.trim();SQPAGE=0;queueLoad()" aria-label="דף">'+
+      '<label><input type="checkbox" '+(SQF.up?'checked ':'')+'onchange="SQF.up=this.checked?1:0;SQPAGE=0;queueLoad()"> עודכנו בלבד</label></div>'}
+  function sqPager(){
+    const pages=Math.max(1,Math.ceil(SQMATCH/SQSIZE));
+    return '<div class="sgbar"><button '+(SQPAGE>0?'':'disabled ')+'onclick="SQPAGE--;queueLoad()">הקודם</button>'+
+      '<span class="dr">עמוד '+(SQPAGE+1)+' מתוך '+pages+' · '+SQMATCH+' הצעות</span>'+
+      '<button '+(SQPAGE+1<pages?'':'disabled ')+'onclick="SQPAGE++;queueLoad()">הבא</button></div>'}
+  function sqBulkBar(){
+    return '<div class="sgbar"><button onclick="sqSelAll()">סמן את כל הדף</button>'+
+      '<button onclick="sqBulkAcceptSel()">אשר מסומנות</button><button onclick="sqBulkRejectSel()">דחה מסומנות</button></div>'}
+  function sqSelIds(){return [...document.querySelectorAll('#sgqb .sqsel:checked')].map(x=>x.dataset.id)}
+  function sqSelAll(){const a=[...document.querySelectorAll('#sgqb .sqsel')];const on=a.some(x=>!x.checked);a.forEach(x=>x.checked=on)}
+  async function sqBulkAcceptSel(){
+    const ids=sqSelIds();if(!ids.length){toast('לא סומנו הצעות.');return}
+    if(!confirm('לאשר '+ids.length+' הצעות מסומנות? הצעת נוסח תוחל על הטקסט; הצעה שלא אותרה תדולג ותדווח.'))return;
+    SQBULK=true;SQMSG=[];let n=0;
+    for(const id of ids){const before=QQ.length;await sqDecide(id,'accepted');if(QQ.length<before)n++}
+    SQBULK=false;
+    toast('אושרו '+n+' מתוך '+ids.length+(SQMSG.length?'. '+(ids.length-n)+' דולגו (לא אותרו או השתנו).':'.'),6000);
+    queueLoad()}
+  async function sqBulkRejectSel(){
+    const ids=sqSelIds();if(!ids.length){toast('לא סומנו הצעות.');return}
+    const reason=prompt('סיבת הדחייה לכל '+ids.length+' ההצעות (לא חובה, המציעים יראו אותה):','');if(reason===null)return;
+    for(let i=0;i<ids.length;i+=25){
+      const part=ids.slice(i,i+25);
+      try{await api('/bulk',{method:'POST',body:JSON.stringify({ids:part,st:'rejected',reason})})}catch(e){alert('הדחייה נעצרה: '+e.message);break}
+      jrLog(QQ.filter(g=>part.indexOf(g.id)>-1).map(g=>({id:'sg-'+g.id,t:Date.now(),slug:SLUG,daf:g.daf,k:g.k,src:'suggest',was:g.was,now:g.note,neg:1,why:reason,ctx:g.ctx})))}
+    toast('נדחו '+ids.length+' הצעות.');queueLoad()}
+  /* הצעה שהמציע עדכן: הגרסה הקודמת מול הנוכחית */
+  function sqUpd(g){
+    if(!g.up||!(g.vers&&g.vers.length))return '';
+    const prev=g.vers[g.vers.length-1];
+    return '<span class="stchip" style="background:#b0721a">עודכנה</span><div class="sqctx"><small>הגרסה הקודמת ('+new Date(prev.t).toLocaleString('he-IL')+'):</small> <del style="color:#a83c2f;background:#fbe5e1">'+esc(prev.note)+'</del><br><small>עכשיו:</small> <ins style="color:#2e6b3f;background:#e3f3e6;text-decoration:none">'+esc(g.note)+'</ins></div>'}
   function sqOrdered(){const S=slotsFull(),ok=[],lost=[];
     QQ.forEach(g=>{if(SQSKIP.has(g.id))return;const s=sqLocate(g,S);(s?ok:lost).push([g,s])});
     return {S,ok,lost}}
   function drawSq(){const box=$('#sgqb');if(!box)return;
     const {ok,lost}=sqOrdered();let h='';
     if(QQERR)h+='<div class="edsum" style="color:#a83c2f">לא ניתן לקרוא את התור: '+esc(QQERR)+'</div>';
+    h+=sqFilterBar()+sqBulkBar();
     h+='<div class="sgbar"><button onclick="sqBulkPage()">אשר/דחה לפי דף</button><button onclick="sqBulkWho()">דחה את כל הצעות מציע</button>'+
        '<button onclick="sqUndo()" title="Ctrl+Z">בטל פעולה אחרונה</button><small class="dr">חצים: מעבר · A אשר · D דחה · S דלג · E ערוך · R השב</small></div>';
     if(SQSKIP.size)h+='<div class="dr">'+SQSKIP.size+' הצעות נדחו לאחר כך <button onclick="SQSKIP.clear();drawSq()">הצג שוב</button></div>';
@@ -185,12 +397,13 @@
       lost.forEach(([g])=>{h+=sqRow(g,null)})}
     /* הצעות סותרות: כמה הצעות על אותו מקום, זו לצד זו */
     const by={};ok.forEach(([g,s])=>{(by[s.k]=by[s.k]||[]).push([g,s])});
-    h+='<h3>'+ok.length+' הצעות ממתינות ב'+esc(D.masechet)+'</h3>';
+    h+='<h3>'+SQMATCH+' הצעות ממתינות ב'+esc(D.masechet)+' · מוצגות '+ok.length+'</h3>';
     if(!ok.length&&!lost.length)h+='<div class="edsum">אין הצעות ממתינות.</div>';
     let n=0;
     for(const k in by){const grp=by[k];
       if(grp.length>1){h+='<div class="dr">הצעות סותרות על אותו מקום:</div><div class="sgconf">'+grp.map(([g,s])=>sqRow(g,s,n++)).join('')+'</div>'}
       else h+=sqRow(grp[0][0],grp[0][1],n++)}
+    h+=sqPager();
     box.innerHTML=h;sqCurPaint()}
   function sqCurPaint(){const rows=[...document.querySelectorAll('#sgqb .sgrow[data-id]')];
     rows.forEach((r,i)=>r.classList.toggle('cur',i===SQCUR));
@@ -207,8 +420,8 @@
     else ctx='<q>'+esc((g.was||'').slice(0,120))+'</q><small>לא אותר בקובץ הנוכחי</small>';
     const known=g.pid?true:false;
     return '<div class="sgrow'+(g.tr?' trust':'')+(s?'':' edlost')+'" data-id="'+id+'" data-n="'+(n===undefined?-1:n)+'" style="border-right:4px solid '+st[2]+'">'+
-      '<small>'+esc(g.daf||'')+(g.name?' · '+esc(g.name):' · בלי שם')+' · '+when+'</small> '+tyChip(g.type)+(g.tr?'<span class="stchip" style="background:#c9a24a">מהימן</span>':'')+
-      (g.mnew?'<span class="stchip" style="background:#a83c2f">הודעה חדשה</span>':'')+ctx+
+      '<label class="sqck"><input type="checkbox" class="sqsel" data-id="'+id+'" aria-label="סמן הצעה"> </label><small>'+esc(g.daf||'')+(g.name?' · '+esc(g.name):' · בלי שם')+' · '+when+'</small> '+tyChip(g.type)+(g.tr?'<span class="stchip" style="background:#c9a24a">מהימן</span>':'')+
+      (g.mnew?'<span class="stchip" style="background:#a83c2f">הודעה חדשה</span>':'')+sqUpd(g)+ctx+
       (g.type==='nusach'?'':'<b>'+esc(g.note)+'</b>')+thrHTML(g,true)+
       (s?'<button onclick="sqDecide(\''+id+'\',\'accepted\')">אשר</button>'+
          (g.type==='nusach'?'<button onclick="sqDecide(\''+id+'\',\'edited\')">ערוך ואשר</button>':'')+
@@ -230,13 +443,13 @@
     const accept=(st==='accepted'||st==='edited');
     if(accept&&g.type==='nusach'){
       const s=sqLocate(g,slotsFull());
-      if(!s){alert('ההצעה לא אותרה בקובץ הנוכחי ואי אפשר להחיל אותה.');return}
+      if(!s){sqAlert('ההצעה לא אותרה בקובץ הנוכחי ואי אפשר להחיל אותה.');return}
       now=g.note;
       if(st==='edited'){const v=prompt('הנוסח שייכנס במקום הקטע המסומן:',g.note);if(v===null)return;now=v.trim();if(!now)return}
       const old=ED.find(x=>x.k===s.k);
       const curT=old?old.now:s.t, curH=old?(old.nowH!==undefined?old.nowH:esc(old.now)):s.h;
       const wasT=old?old.was:s.t, wasH=old?(old.wasH!==undefined?old.wasH:s.h):s.h;
-      if(curT.indexOf(g.was)<0){alert('הקטע שהוצע עליו התיקון כבר אינו בשורה הזאת.');return}
+      if(curT.indexOf(g.was)<0){sqAlert('הקטע שהוצע עליו התיקון כבר אינו בשורה הזאת.');return}
       const nowH=replaceInHTML(curH,g.was,now);
       const nowT=curT.replace(g.was,now);
       const cls=(s.c||'').split(' ').filter(c=>PCLS.indexOf(c)>-1).join(' ');
@@ -252,7 +465,7 @@
       SQUNDO={id,g,prev:null,k:'',wasH:''};
     }
     try{await api('/decide',{method:'POST',body:JSON.stringify({id,st,now,reason,edit,sty:D.sty})})}
-    catch(e){if(edit){ED=ED.filter(x=>x!==edit);saveED();if(SQUNDO&&SQUNDO.prev)ED.push(SQUNDO.prev)}alert('ההכרעה לא נרשמה: '+e.message);return}
+    catch(e){if(edit){ED=ED.filter(x=>x!==edit);saveED();if(SQUNDO&&SQUNDO.prev)ED.push(SQUNDO.prev)}sqAlert('ההכרעה לא נרשמה: '+e.message);return}
     if(!accept)jrLog([{id:'sg-'+id,t:Date.now(),slug:SLUG,daf:g.daf,k:g.k,src:'suggest',was:g.was,now:g.note,neg:1,why:reason,ctx:g.ctx}]);   /* הדחייה היא דוגמה שלילית; האישור נרשם בצד השרת מן העריכה עצמה */
     QQ=QQ.filter(x=>x.id!==id);QQTOT=Math.max(0,QQTOT-1);
     if(edit){applyTextNow(edit);drawEd();pubSoon();syncSoon();toast('התיקון הוחל. Ctrl+Z מבטל.')}

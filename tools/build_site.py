@@ -225,6 +225,126 @@ def _unside_done(pages, e):
                                  e.get('daf')) is not None
 
 
+# ------------------------------------------------ כותרות: פיצול ואיחוי (5.10.2026)
+# hsplit: כותרת (nose/dh) לשתיים. res=[[סוג הכותרת, HTML הראשון],
+#   [מחלקת גוף, HTML השני]], texts=[נוסח הכותרת שהיה], resT=[שני הנוסחים].
+#   החלק השני נעשה יחידת גוף חדשה, מזהה = זמן הרשומה (כמו בדפדפן).
+# hmerge: כותרת עם שכנה (פסקה או כותרת): texts=[עליון, תחתון], res=[[סגנון, HTML מאוחד]].
+def _is_head(u):
+    return u['k'] in ('dh', 'nose')
+
+
+def _pick_h(hits, daf):
+    if len(hits) == 1:
+        return hits[0]
+    if len(hits) > 1 and daf:
+        k0 = _daf_key(daf)
+        near = [h for h in hits if k0 is not None and _daf_key(h[0]['daf']) is not None
+                and abs(_daf_key(h[0]['daf']) - k0) <= 1]
+        if len(near) == 1:
+            return near[0]
+    return None
+
+
+def _hsplit_apply(pages, e):
+    texts, res = e.get('texts') or [], e.get('res') or []
+    if len(texts) != 1 or len(res) < 2:
+        return False
+    hits = [(p, u) for p in pages for u in p['units']
+            if _is_head(u) and _bare(u['a']) == texts[0]]
+    hit = _pick_h(hits, e.get('daf'))
+    if hit is None:
+        return False
+    p, u = hit
+    u['a'] = res[0][1]
+    u.pop('lv', None)
+    nu = {'k': 'u', 'a': '', 'l': [[res[1][0], res[1][1]]], 'id': e['t']}
+    if u.get('ref'):
+        nu['ref'] = u['ref']
+    p['units'].insert(p['units'].index(u) + 1, nu)
+    return True
+
+
+def _hsplit_done(pages, e):
+    rt = e.get('resT') or []
+    if len(rt) < 2:
+        return False
+    for p in pages:
+        us = p['units']
+        for i, u in enumerate(us[:-1]):
+            if _is_head(u) and _bare(u['a']) == rt[0]:
+                nx = us[i + 1]
+                if nx['k'] in ('u', 'm') and nx['l'] and _bare(nx['l'][0][1]) == rt[1]:
+                    return True
+    return False
+
+
+def _h_hosts(u, last):
+    """המארחים של יחידה בקצה אחד: כותרת, או הפסקה האחרונה/הראשונה בגוף."""
+    out = []
+    if _is_head(u):
+        out.append(('head', None))
+    if u['k'] in ('u', 'm') and u['l']:
+        out.append(('p', len(u['l']) - 1 if last else 0))
+    return out
+
+
+def _h_html(u, kind, i):
+    return u['a'] if kind == 'head' else u['l'][i][1]
+
+
+def _hmerge_apply(pages, e):
+    texts, res = e.get('texts') or [], e.get('res') or []
+    if len(texts) != 2 or not res:
+        return False
+    hits = []
+    for p in pages:
+        us = p['units']
+        for n in range(len(us) - 1):
+            x, y = us[n], us[n + 1]
+            for uk, ui in _h_hosts(x, True):
+                for lk, li in _h_hosts(y, False):
+                    if uk == 'p' and lk == 'p':
+                        continue
+                    if _bare(_h_html(x, uk, ui)) != texts[0] or _bare(_h_html(y, lk, li)) != texts[1]:
+                        continue
+                    if _bare(y.get('a') if y['k'] == 'u' else y.get('w') or '').strip():
+                        continue
+                    hits.append((p, x, uk, ui, y, lk, li))
+    cand = [(h[0], h) for h in hits]
+    hit = _pick_h([(c[0], c[1]) for c in cand], e.get('daf'))
+    if hit is None:
+        return False
+    p, x, uk, ui, y, lk, li = hit[1]
+    merged = _h_html(x, uk, ui) + _h_html(y, lk, li)
+    if uk == 'head':
+        x['a'] = merged
+    else:
+        x['l'][ui][1] = merged
+    x.pop('lv', None)
+    if lk == 'head':
+        p['units'].remove(y)
+    else:
+        y['l'].pop(li)
+        y.pop('lv', None)
+        if not y['l']:
+            p['units'].remove(y)
+    return True
+
+
+def _hmerge_done(pages, e):
+    rt = e.get('resT') or []
+    if not rt:
+        return False
+    for p in pages:
+        for u in p['units']:
+            if _is_head(u) and _bare(u['a']) == rt[0]:
+                return True
+            if u['k'] in ('u', 'm') and any(_bare(l[1]) == rt[0] for l in u['l']):
+                return True
+    return False
+
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
@@ -263,6 +383,18 @@ def _apply_site_edits(pages, slug, qa):
             kind = e.get('kind')
             if kind in ('side', 'unside'):
                 ap, dn = (_side_apply, _side_done) if kind == 'side' else (_unside_apply, _unside_done)
+                if ap(pages, e):
+                    done += 1
+                    keep.append(e)
+                    reslot()
+                elif dn(pages, e):
+                    taken += 1                  # כבר בקובץ הוורד
+                else:
+                    lost.append(e)
+                    keep.append(e)
+                continue
+            if kind in ('hsplit', 'hmerge'):
+                ap, dn = (_hsplit_apply, _hsplit_done) if kind == 'hsplit' else (_hmerge_apply, _hmerge_done)
                 if ap(pages, e):
                     done += 1
                     keep.append(e)
@@ -1236,6 +1368,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   JS=r'''
   const D=DATA;const $=s=>document.querySelector(s);
   const params=new URLSearchParams(location.hash.slice(1));
+  const ME_HASH=location.hash;
   function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
 
   /* מקטע = פרק. מעבר עמוד קיים רק בין מקטעים, ובתוך המקטע הטקסט רץ ברצף. */
@@ -1986,6 +2119,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         dataSet(k,e.nowH!==undefined?e.nowH:esc(e.now));
         if(e.ps!==undefined)dataCls(k,e.ps);
         e._ap=1;e._cur=e.now;any=true;continue}
+      if(e.kind==='hsplit'||e.kind==='hmerge'){
+        const sp=e.kind==='hsplit';
+        const hit=sp?hFindSplit(e):hFindMerge(e);
+        if(hit){
+          if(sp)hSplitData(hit.u,hit.pi,e); else hMergeData(hit.up,hit.lo);
+          e.lost=0;e._ap=1;any=true;SLOTS=null}
+        else if(sp?hSplitDone(e):hMergeDone(e)){e.lost=0;e.done=1;EDTAKEN++,e.ing&&EDWORD++}
+        else e.lost=1;
+        continue}
       if(e.kind==='side'||e.kind==='unside'){
         const sd=e.kind==='side';
         const h=sd?findRun(e.texts,e.daf):findWinUnit(e.texts[0],e.texts[1],e.daf);
@@ -2052,7 +2194,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(let i=ED.length-1;i>=0;i--){
       const e=ED[i];
       if(e.op!=='struct')continue;
-      if(e.kind==='split'&&e.resT.length===2&&
+      if((e.kind==='split'||e.kind==='hsplit')&&e.resT.length===2&&
          e.resT[0]===texts[0]&&e.resT[1]===texts[1]){const g=ED.splice(i,1)[0];return g}
       break}
     return false}
@@ -2103,6 +2245,149 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     SLOTS=null;saveED();
     reflow('u'+u.id+'.'+i,texts[0].length,snp);
     return true}
+
+  /* =================== חופש עריכה מלא: כותרות (5.10.2026) ===================
+     נושא משנה וד"ה משנה הם יחידות משלהן (u.k = nose / dh), ולא פסקאות בתוך
+     יחידת גוף. לכן פיצול כותרת ואיחוי כותרת עם שכנתה הם שינוי מבנה משלהם:
+       hsplit  כותרת בשתיים: החלק הראשון נשאר כותרת, השני נעשה פסקת גוף רגילה
+               (יחידת גוף חדשה, מזהה = זמן הרשומה), כמו בוורד אחרי כותרת.
+       hmerge  כותרת עם הפסקה שלפניה או שאחריה (או עם כותרת שכנה): הפסקה
+               העליונה קובעת את הסגנון.
+     כמו כל שינוי מבנה, הם מוחלים על הנתונים (D) ולא על ה-DOM, והעיגון הוא
+     הנוסח ולא המספר. */
+  const isHeadU=u=>u.k==='dh'||u.k==='nose';
+  const winOf=u=>(u.k==='u'?u.a:u.w)||'';
+  function flatU(){const out=[];D.pages.forEach((p,pi)=>p.units.forEach((u,n)=>out.push({u,pi,n})));return out}
+  /* מארח עריכה מן המפתח שלו: כותרת, פסקה או חלון צד */
+  function hostOf(el){
+    const m=/^u(\d+)\.(\d+|w)$/.exec((el&&el.dataset&&el.dataset.ek)||'');if(!m)return null;
+    const id=+m[1];
+    for(let pi=0;pi<D.pages.length;pi++){const us=D.pages[pi].units;
+      for(let n=0;n<us.length;n++){const u=us[n];if(u.id!==id)continue;
+        if(m[2]==='w')return {kind:'win',u,pi,n};
+        const i=+m[2];
+        if(i===0)return {kind:isHeadU(u)?'head':'win',u,pi,n};
+        if(u.l&&u.l[i-1])return {kind:'p',u,pi,n,i:i-1}}}
+    return null}
+  /* השכן הקודם (dir=-1) או הבא (dir=1) של מארח, בסדר הדף */
+  function neighbor(h,dir){
+    if(h.kind==='p'){const j=h.i+dir;if(j>=0&&j<h.u.l.length)return {kind:'p',u:h.u,pi:h.pi,n:h.n,i:j}}
+    const F=flatU(),at=F.findIndex(x=>x.u===h.u),o=F[at+dir];if(!o)return null;
+    if(isHeadU(o.u))return {kind:'head',u:o.u,pi:o.pi,n:o.n};
+    if((o.u.k==='u'||o.u.k==='m')&&o.u.l.length)return {kind:'p',u:o.u,pi:o.pi,n:o.n,i:dir<0?o.u.l.length-1:0};
+    return null}
+  const hHtml=h=>h.kind==='head'?h.u.a:h.u.l[h.i][1];
+  function hKey(h,sub){return h.kind==='head'?'u'+h.u.id+'.0':'u'+h.u.id+'.'+(h.i+1)}
+  /* הניתוח הנתוני של איחוי: עליון + תחתון נעשים אחד. מחזיר false אם אי אפשר. */
+  function hMergeData(up,lo){
+    const mergedH=hHtml(up)+hHtml(lo);
+    if(up.kind==='head')up.u.a=mergedH; else up.u.l[up.i][1]=mergedH;
+    delete up.u.lv;
+    const us=D.pages[lo.pi].units;
+    if(lo.kind==='head')us.splice(us.indexOf(lo.u),1);
+    else{lo.u.l.splice(lo.i,1);delete lo.u.lv;
+      if(!lo.u.l.length)us.splice(us.indexOf(lo.u),1)}
+    SLOTS=null;return mergedH}
+  function hMerge(up,lo,el){
+    if(!up||!lo)return false;
+    if(up.pi!==lo.pi){flash('אי אפשר לאחד מעבר לגבול דף');return false}
+    if((lo.kind==='head'||lo.i===0)&&plain(winOf(lo.u)).trim()){
+      flash('אי אפשר לאחד כאן: לשורה התחתונה יש כותרת צד משלה, והאיחוד היה מנתק אותה');return false}
+    if(up.kind==='p'&&up.u.k==='m'&&lo.kind==='head'){flash('אי אפשר לאחד כותרת לתוך משנה');return false}
+    const texts=[plain(hHtml(up)),plain(hHtml(lo))];
+    const cls=up.kind==='head'?up.u.k:up.u.l[up.i][0];
+    const snp=[snapOf(up.pi)];
+    const pre=[{pi:up.pi,snap:JSON.stringify(D.pages[up.pi].units)}];
+    freezeEdits(texts);
+    const ce=cancelSplit(texts);
+    UNDO.length=0;
+    const h=hMergeData(up,lo);
+    let me=null;
+    if(!ce){me={op:'struct',kind:'hmerge',texts,res:[[cls,h]],resT:[plain(h)],
+                daf:dafOf(el),t:Date.now(),pub:0,_ap:1};ED.push(me)}
+    UNDO.push({e:me,re:ce||null,snaps:pre,key:hKey(up),t:Date.now()});
+    saveED();
+    reflow(hKey(up),texts[0].length,snp);
+    return true}
+  /* Enter בתוך כותרת: החלק הראשון נשאר כותרת, השני נעשה פסקת גוף רגילה */
+  function splitHead(el){
+    const h=hostOf(el);if(!h||h.kind!=='head')return false;
+    const s=getSelection();if(!s.rangeCount)return false;
+    const r=s.getRangeAt(0);if(!el.contains(r.startContainer))return false;
+    const a=r.cloneRange();a.selectNodeContents(el);a.setEnd(r.startContainer,r.startOffset);
+    const b=r.cloneRange();b.selectNodeContents(el);b.setStart(r.endContainer,r.endOffset);
+    const box=x=>{const d=document.createElement('div');d.appendChild(x.cloneContents());
+      d.querySelectorAll('.srcb,.mlabel').forEach(n=>n.remove());return edSan(d)};
+    const da=box(a),db=box(b);
+    if(!da.textContent.trim()||!db.textContent.trim()){
+      flash('אין לפצל כאן: אחד משני החלקים יוצא ריק. כדי לפצל כותרת, העמד את הסמן בין שתי מילים שלה');return false}
+    const was=plain(h.u.a);
+    const snp=[snapOf(h.pi)];const usnap=JSON.stringify(D.pages[h.pi].units);
+    freezeEdits([was]);
+    const t=Date.now();
+    const body='b0 a0';
+    const se={op:'struct',kind:'hsplit',texts:[was],res:[[h.u.k,da.innerHTML],[body,db.innerHTML]],
+              resT:[da.textContent,db.textContent],psw:wsty(''),daf:dafOf(el),t,pub:0,_ap:1};
+    ED.push(se);
+    hSplitData(h.u,h.pi,se);
+    UNDO.length=0;UNDO.push({e:se,snaps:[{pi:h.pi,snap:usnap}],key:'u'+t+'.1',t});
+    saveED();
+    reflow('u'+t+'.1',0,snp);
+    return true}
+  function hSplitData(u,pi,e){
+    u.a=e.res[0][1];delete u.lv;
+    const nu={k:'u',a:'',l:[[e.res[1][0],e.res[1][1]]],id:e.t};
+    if(u.ref)nu.ref=u.ref;
+    const us=D.pages[pi].units;us.splice(us.indexOf(u)+1,0,nu);
+    SLOTS=null}
+  /* איתור כותרת שנוסחה הוא texts[0], בייחוד (ובריבוי: דף אחד לכל צד) */
+  function hPick(hits,daf){
+    if(hits.length===1)return hits[0];
+    if(hits.length>1&&daf){const k0=dafKey(daf);
+      const near=hits.filter(h=>{const k=dafKey(D.pages[h.pi].daf);return k0===null||k===null?false:Math.abs(k-k0)<=1});
+      if(near.length===1)return near[0]}
+    return null}
+  function hFindSplit(e){
+    const hits=flatU().filter(x=>isHeadU(x.u)&&plain(x.u.a)===e.texts[0]);
+    return hPick(hits,e.daf)}
+  function hSplitDone(e){
+    const F=flatU();
+    return F.some((x,i)=>isHeadU(x.u)&&plain(x.u.a)===e.resT[0]&&F[i+1]&&F[i+1].pi===x.pi&&
+      F[i+1].u.l&&F[i+1].u.l.length&&plain(F[i+1].u.l[0][1])===e.resT[1])}
+  /* איחוי: כל צירוף של שני שכנים שלפחות אחד מהם כותרת, שנוסחם texts */
+  function hFindMerge(e){
+    const F=flatU(),hits=[];
+    F.forEach((x,i)=>{const y=F[i+1];if(!y||y.pi!==x.pi)return;
+      const ups=[];
+      if(isHeadU(x.u))ups.push({kind:'head',u:x.u,pi:x.pi,n:x.n});
+      if((x.u.k==='u'||x.u.k==='m')&&x.u.l.length)ups.push({kind:'p',u:x.u,pi:x.pi,n:x.n,i:x.u.l.length-1});
+      const los=[];
+      if(isHeadU(y.u))los.push({kind:'head',u:y.u,pi:y.pi,n:y.n});
+      if((y.u.k==='u'||y.u.k==='m')&&y.u.l.length)los.push({kind:'p',u:y.u,pi:y.pi,n:y.n,i:0});
+      for(const up of ups)for(const lo of los){
+        if(up.kind==='p'&&lo.kind==='p')continue;
+        if(plain(hHtml(up))!==e.texts[0]||plain(hHtml(lo))!==e.texts[1])continue;
+        if(plain(winOf(lo.u)).trim())continue;
+        hits.push({up,lo,pi:x.pi})}});
+    return hPick(hits,e.daf)}
+  function hMergeDone(e){
+    return flatU().some(x=>isHeadU(x.u)?plain(x.u.a)===e.resT[0]:
+      ((x.u.k==='u'||x.u.k==='m')&&x.u.l.some(l=>plain(l[1])===e.resT[0])))}
+  /* Ctrl+Q: הפסקה חוזרת לסגנון רגיל (כמו בוורד). בכותרת צד - חוזרת לגוף. */
+  function plainPara(){
+    const el=edEl();
+    if(!el){flash('העמד את הסמן בתוך שורה');return}
+    if(el.classList.contains('anchor')){unsideCmd(el);return}
+    if(isHeadEl(el)){headBody();flash('הסגנון הוסר: השורה חזרה לגוף');return}
+    if(el.tagName==='P'){
+      if(!pcls(el)){flash('השורה כבר בסגנון רגיל');return}
+      setPs('');flash('הסגנון הוסר: השורה חזרה לגוף');return}
+    flash('בשורה מסוג זה אין סגנון פסקה להסיר')}
+  /* "נקה עיצוב": סגנון הפסקה וסגנונות התו יחד */
+  function clearAll(){
+    const el=edEl();
+    if(el&&el.classList.contains('anchor')){unsideCmd(el);return}
+    clearFmt()}
 
   /* =================== עדכון מקומי של השורות (בלי בנייה מחדש) ===================
      פעולת עריכה לעולם אינה כותבת מחדש את כל הפרק: היא מחליפה רק את השורות
@@ -2414,11 +2699,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const m=document.createElement('div');m.className='modal';m.id='keyscard';
     const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
       ['Ctrl+1','סגנון תו: אמוראים (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון תו: נושא'],
-      ['Ctrl+4','סגנון תו: רקע והסבר'],['Ctrl+B','מודגש'],['Ctrl+רווח','הסרת סגנון תו מהבחירה'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
+      ['Ctrl+4','סגנון תו: רקע והסבר'],['Ctrl+B','מודגש'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl'],
-      ['Enter / Backspace בתחילת פסקה / Delete בסופה','פיצול פסקה / איחוי עם הקודמת / איחוי עם הבאה'],
+      ['Enter / Backspace בתחילת פסקה / Delete בסופה','פיצול פסקה / איחוי עם הקודמת / איחוי עם הבאה. עובד גם בכותרת: החלק השני בפיצול נעשה גוף רגיל'],
       ['חצים, Home, End, PageUp, PageDown (עריכה)','הסמן זז, והדף נגלל אחריו; חץ בקצה הפרק עובר לפרק הסמוך'],
       ['חצים, Home, End, PageUp, PageDown (קריאה)','גלילת שורה / תחילת הפרק וסופו / גלילת מסך'],
       ['Alt+חץ ימינה / שמאלה (במגירת המקור)','הדף הקודם / הבא בגמרא'],
@@ -2431,11 +2716,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     m.addEventListener('click',e=>{if(e.target===m)m.remove()})}
   function structName(e){
     return e.kind==='split'?'פיצול פסקה':e.kind==='merge'?'איחוי שתי פסקאות':
-           e.kind==='side'?'כותרת צד':e.kind==='unside'?'החזרת כותרת צד לגוף':'שינוי מבנה'}
+           e.kind==='side'?'כותרת צד':e.kind==='unside'?'החזרת כותרת צד לגוף':
+           e.kind==='hsplit'?'פיצול כותרת':e.kind==='hmerge'?'איחוי כותרת עם שורה סמוכה':'שינוי מבנה'}
   function structShow(e){
     if(e.kind==='side')return (e.resT&&e.resT[1]||'')+' ⟵ כותרת צד';
     if(e.kind==='unside')return (e.resT&&e.resT[0]||'')+' ⟵ גוף';
-    return (e.kind==='split'?e.resT:e.texts).join(' ⟂ ')}
+    return ((e.kind==='split'||e.kind==='hsplit')?e.resT:e.texts).join(' ⟂ ')}
 
   function setEdit(on){
     const was=EDIT;
@@ -2453,6 +2739,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     let bar=$('#edbar');
     if(on&&!bar){bar=document.createElement('div');bar.className='edbar';bar.id='edbar';
       bar.innerHTML='<b>מצב עריכה</b><span>· <span id="edn">'+ED.length+'</span> תיקונים</span>'+
+        '<select id="pstsel" title="סגנון הפסקה שהסמן בה" onmousedown="event.stopPropagation()" onchange="if(this.value!==\'#\'){setPs(this.value)}this.value=\'#\'"><option value="#">סגנון…</option>'+
+          PSTY.map(p=>'<option value="'+esc(p[0])+'">'+esc(p[1])+'</option>').join('')+'</select>'+
+        '<button onmousedown="event.preventDefault()" onclick="clearAll()" title="מסיר סגנון פסקה וסגנונות תו ומחזיר לרגיל (Ctrl+Q לפסקה)">נקה עיצוב</button>'+
         '<span id="edpub" class="edpub"></span><span id="procnote" class="edpub"></span><span class="sp"></span>'+
         '<button onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>';
       document.body.appendChild(bar);pubDraw()}
@@ -2596,7 +2885,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     bar.style.top=top+'px';bar.style.left=left+'px'}
   function setCs(c){
     const el=edEl();if(!el)return;
-    const s=getSelection();if(!s.rangeCount||s.getRangeAt(0).collapsed)return;
+    const s=getSelection();if(!s.rangeCount)return;
+    if(s.getRangeAt(0).collapsed){
+      /* בלי בחירה: הפעולה חלה על המילה שהסמן בה, כמו בוורד. אין מילה - נאמר. */
+      if(!isTxt(el)){flash('העמד את הסמן בתוך פסקת טקסט');return}
+      const rr=s.getRangeAt(0),text=txtOf(el);
+      let a=cutOff(el,rr.startContainer,rr.startOffset),b=a;
+      while(a>0&&WCH.test(text[a-1]))a--;
+      while(b<text.length&&WCH.test(text[b]))b++;
+      if(b<=a){flash('העמד את הסמן בתוך מילה, או סמן טקסט');return}
+      const pa=posAt(el,a),pb=posAt(el,b),nr=document.createRange();
+      nr.setStart(pa[0],pa[1]);nr.setEnd(pb[0],pb[1]);
+      s.removeAllRanges();s.addRange(nr)}
     sPush(el);
     const r=s.getRangeAt(0);
     /* בחירה שהיא כל תוכנו של סגנון תו קיים: מחליפים את האלמנט כולו, כדי
@@ -2640,7 +2940,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function headBody(){setPs('')}
   function setPs(c){
     const el=edEl();if(!isTxt(el))return;
-    if(el.tagName==='DIV'){if(!c&&isHeadEl(el)){headTo(el,[]);capture(el);STYSIG='';styLater()}return}
+    if(el.tagName==='DIV'){
+      /* כותרת שנבחר לה סגנון אחר: היא חוזרת לגוף ומקבלת אותו (במחלקת הפסקה).
+         הנתונים והשורה מתעדכנים מיד בבנייה/בטעינה הבאה, כמו החזרה לגוף. */
+      if(isHeadEl(el)){sPush(el);headTo(el,[]);
+        if(c)c.split(' ').filter(Boolean).forEach(x=>el.classList.add(x));
+        capture(el);STYSIG='';styLater()}
+      return}
     sPush(el);
     PCLS.forEach(x=>el.classList.remove(x));
     if(c)c.split(' ').filter(Boolean).forEach(x=>el.classList.add(x));
@@ -2881,23 +3187,37 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(e.key==='Enter'&&!e.shiftKey){
       e.preventDefault();
       clearTimeout(CAPT);capture(el);
-      if(el.tagName!=='P'){flash('כאן אין פיצול: זו כותרת, והיא פסקה אחת');return}
+      if(isHeadEl(el)){splitHead(el);return}
+      if(el.classList.contains('anchor')){
+        flash('זו כותרת צד, שורה אחת בשוליים. Ctrl+Q מחזיר אותה לגוף, ואז אפשר לפצל');return}
+      if(el.tagName!=='P'){flash('בשורה מסוג זה אין פיצול');return}
       splitAtCaret(el);
       return}
+    /* Ctrl+Q: מסיר את סגנון הפסקה ומחזיר לרגיל, כמו בוורד */
+    if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey&&e.code==='KeyQ'){e.preventDefault();plainPara();return}
     /* Delete בסוף פסקה מעלה את הפסקה הבאה ומצרפת אותה לנוכחית, כמו בוורד.
        הפסקה המאוחדת נושאת את סגנון העליונה (mergeBack), וסגנונות התו של
        המילים שעלו נשמרים כי האיחוי הוא איחוי של ה-HTML של שתיהן. */
-    if(e.key==='Delete'&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&el.tagName==='P'&&atEnd(el)){
+    if(e.key==='Delete'&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&(el.tagName==='P'||isHeadEl(el))&&atEnd(el)){
       e.preventDefault();
+      const h=hostOf(el),lo=h&&neighbor(h,1);
+      /* כותרת בצד אחד של האיחוי: שינוי מבנה של כותרות */
+      if(h&&lo&&(isHeadEl(el)||lo.kind==='head')){
+        clearTimeout(CAPT);capture(el);hMerge(h,lo,el);return}
+      if(el.tagName!=='P'){flash('אין שורה אחריה לצרף');return}
       const hs=editHosts(),nx=hs[hs.indexOf(el)+1];
       if(!nx||nx.tagName!=='P'){flash('אין פסקה אחריה לצרף');return}
       clearTimeout(CAPT);capture(el);capture(nx);
       mergeBack(nx);
       return}
     /* מחיקה אחורה בתו הראשון של פסקה מאחדת אותה עם הקודמת */
-    if(e.key==='Backspace'&&el.tagName==='P'&&atStart(el)){
+    if(e.key==='Backspace'&&(el.tagName==='P'||isHeadEl(el))&&atStart(el)){
       e.preventDefault();
       clearTimeout(CAPT);capture(el);
+      const h=hostOf(el),up=h&&neighbor(h,-1);
+      if(h&&(isHeadEl(el)||(up&&up.kind==='head'))){
+        if(!up){flash('אין שורה לפניה לאחד איתה');return}
+        hMerge(up,h,el);return}
       mergeBack(el);
       return}
   });
@@ -3178,7 +3498,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* שינוי מבנה (פיצול/איחוי) אין לו מפתח מקום, ומפתחו לסנכרון נגזר מזמנו */
   function edKeys(){ED.forEach(e=>{if(e.op==='struct'&&!e.k)e.k='s'+e.t})}
   function edOut(){edKeys();return ED.filter(e=>!e.lost).map(e=>e.op==='struct'
-      ? {k:e.k,op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,daf:e.daf,t:e.t,by:e.by}
+      ? {k:e.k,op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,daf:e.daf,t:e.t,by:e.by}
       : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
          ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t,by:e.by,sg:e.sg}).concat(TOMB)}
   function mergeIn(list){edKeys();let changed=false;const by={};ED.forEach(e=>by[e.k]=e);
@@ -3908,7 +4228,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button></div></div>
   <div class="bg" data-pri="4"><button id="edbtn" onclick="askAdmin()" title="עריכה תוך כדי לימוד (Ctrl+Alt+E, או Ctrl+Alt+ק)">עריכה</button>
   <button onclick="suggest()" title="סמן טקסט בדף, או לחץ כאן ובחר קטע">הצע תיקון</button>
-  <button onclick="panel('sg');drawSg()" title="ההצעות ששלחת">ההצעות שלי</button>
+  <button onclick="mineOpen()" title="כל ההצעות ששלחת: סינון, עריכה, חידוד">ההצעות שלי</button>
   <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך">הצעות ממתינות</button><button id="lnbtn" style="display:none" onclick="lnOpen()" title="מה למד המערכת מהתיקונים שלך">הלמידה היומית</button></div>
   <div class="bg adm-only" data-pri="5"><button onclick="panel('qa')" title="חריגות שנמצאו בהמרת הקובץ (למנהל)">בקרה</button>{hgbtn}</div>
   <div class="bg edtools" id="edtools" data-pri="9"></div>

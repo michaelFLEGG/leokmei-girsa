@@ -649,11 +649,34 @@ def _apply_split_merge(path, ops, author, masechet, log=print, dry=False):
 def apply_struct(path, ops, author, masechet, log=print, dry=False):
     """מפצל לפי סוג: פיצול ואיחוי בפונקציה הישנה, כותרת צד בחדשה.
     סוג לא מוכר אינו נופל לאיחוי - הוא נספר כלא-הוחל."""
+    hs = [o for o in ops if o.get('kind') == 'phsplit']
     old = [o for o in ops if o.get('kind') in ('psplit', 'pmerge')]
     side = [o for o in ops if o.get('kind') in ('pside', 'punside')]
-    rest = [o for o in ops if o not in old and o not in side]
+    rest = [o for o in ops if o not in old and o not in side and o not in hs]
     out = {'applied': 0, 'missed': [(o, 'סוג שינוי מבנה לא מוכר') for o in rest],
            'backup': None, 'verified': True}
+    # כותרת בשתיים: קודם הפיצול (הפסקה השנייה יורשת את סגנון הכותרת), ואחריו
+    # שינוי סגנון הפסקה השנייה לגוף. הכול במעקב, ואומת בכל שלב.
+    for o in hs:
+        r = _apply_split_merge(path, [dict(o, kind='psplit')], author, masechet, log=log, dry=dry)
+        out['applied'] += r.get('applied') or 0
+        out['missed'] += r.get('missed') or []
+        out['backup'] = out['backup'] or r.get('backup')
+        if r.get('verified') is False:
+            out['verified'] = False
+        if 'plan' in r:
+            out.setdefault('plan', []).extend(r['plan'])
+        if dry or not r.get('applied') or not (o.get('res') or [''])[1:]:
+            continue
+        if not o.get('style'):
+            out['missed'].append(({'kind': 'pstyle', 'style': ''},
+                                  'הפסקה השנייה נשארה בסגנון הכותרת: אין שם סגנון גוף בקובץ'))
+            continue
+        r2 = apply(path, [{'kind': 'pstyle', 'daf': o.get('daf', ''), 'context': o['res'][1],
+                           'style': o['style']}], author, masechet, log=log)
+        out['missed'] += r2.get('missed') or []
+        if r2.get('verified') is False:
+            out['verified'] = False
     for fn, batch in ((_apply_split_merge, old), (_apply_side, side)):
         if not batch:
             continue

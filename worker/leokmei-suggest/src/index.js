@@ -15,7 +15,18 @@
      POST /ingested      סימון עריכות שכבר נכנסו לוורד (הקליטה הלילית)
      GET  /export        יצוא מלא לגיבוי (מנהל)
 
+     POST /auth          מילת המנהל -> אסימון מכשיר ארוך-טווח (ראה למטה)
+     GET  /devices       רשימת המכשירים המוכרים (מנהל)
+     POST /devices/revoke ביטול מכשיר (מנהל)
+
    המפתח הסודי של המנהל יושב ב-secret בשם ADMIN_KEY בלבד. הקוד ציבורי.
+
+   זיהוי המנהל הוא "מכשיר מוכר", ולא כתובת IP (כתובת ביתית מתחלפת אצל
+   הספקית ומשותפת לכל בני הבית). מילת המנהל (secret בשם ADMIN_WORD,
+   לעולם לא בקוד הציבורי) מוקלדת פעם אחת בכל מכשיר, והנקודה מנפיקה
+   אסימון אקראי; במחסן נשמרת רק טביעת ה-SHA-256 שלו. מאז המכשיר מזוהה
+   תמיד, בלי שאלה נוספת, ואפשר לבטל אותו. כתובת ה-IP נרשמת ביומן המכשיר
+   כמידע בלבד.
    דחייה אינה מחיקה: הצעה שנדחתה נשארת במחסן בסטטוס 'rejected'. */
 
 const MAX_LEN = 2000;
@@ -47,9 +58,20 @@ function sameKey(a, b) {
   for (let i = 0; i < x.length; i++) d |= x[i] ^ y[i];
   return d === 0;
 }
-function isAdmin(req, env) {
-  return sameKey(req.headers.get('x-admin-key') || '', env.ADMIN_KEY || '');
+async function sha256hex(t) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
+/* מנהל = המפתח הסודי (הקליטה הלילית), או אסימון של מכשיר מוכר */
+async function isAdmin(req, env) {
+  const k = req.headers.get('x-admin-key') || '';
+  if (sameKey(k, env.ADMIN_KEY || '')) return true;
+  if (k.length < 32 || k.length > 100) return false;
+  const h = await sha256hex(k);
+  return !!(await env.STORE.get('dev:' + h));
+}
+const normWord = (w) => String(w || '').normalize('NFC')
+  .replace(/[֑-ׇ]/g, '').replace(/[\s"'׳״“”‘’.\-]/g, '');
 
 const str = (v, n = MAX_LEN) => (typeof v === 'string' ? v : '').slice(0, n);
 const slugOk = (s) => /^[a-z-]{2,30}$/.test(s || '');
@@ -64,6 +86,54 @@ async function listAll(env, prefix) {
     cursor = r.list_complete ? null : r.cursor;
   } while (cursor);
   return out;
+}
+
+
+/* ------------------------------------------------------------ מכשירים */
+async function auth(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  const hour = new Date().toISOString().slice(0, 13);
+  const rk = 'arl:' + ip + ':' + hour;
+  const n = parseInt((await env.STORE.get(rk)) || '0', 10);
+  if (n >= 8) return bad('יותר מדי ניסיונות. נסה שוב בעוד שעה', 429);
+  const w = normWord(b.word), want = normWord(env.ADMIN_WORD || '');
+  if (!want || !w || !sameKey(w, want)) {
+    await env.STORE.put(rk, String(n + 1), { expirationTtl: 4000 });
+    return bad('המילה אינה נכונה', 401);
+  }
+  const raw = crypto.getRandomValues(new Uint8Array(32));
+  const token = [...raw].map((x) => x.toString(16).padStart(2, '0')).join('');
+  const h = await sha256hex(token);
+  const rec = { id: h.slice(0, 10), label: str(b.label, 60), ua: str(req.headers.get('user-agent'), 160),
+                ip, created: Date.now() };
+  await env.STORE.put('dev:' + h, JSON.stringify(rec), { metadata: { id: rec.id, label: rec.label, created: rec.created } });
+  return json({ ok: true, token, id: rec.id });
+}
+async function devices(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  const out = [];
+  for (const k of await listAll(env, 'dev:')) {
+    const v = await env.STORE.get(k.name, 'json');
+    if (v) out.push(v);
+  }
+  out.sort((a, c) => c.created - a.created);
+  return json({ ok: true, devices: out });
+}
+async function revoke(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const id = str(b.id, 20);
+  if (!id) return bad('חסר מזהה');
+  for (const k of await listAll(env, 'dev:')) {
+    if (k.metadata && k.metadata.id === id) { await env.STORE.delete(k.name); return json({ ok: true }); }
+  }
+  return bad('המכשיר לא נמצא', 404);
+}
+async function whoami(req, env) {
+  return json({ ok: true, admin: await isAdmin(req, env) });
 }
 
 /* ------------------------------------------------------------ הצעות */
@@ -96,7 +166,7 @@ async function suggest(req, env) {
 }
 
 async function queue(req, env, url) {
-  if (!isAdmin(req, env)) return bad('אין הרשאה', 401);
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   const slug = url.searchParams.get('slug') || '';
   const keys = await listAll(env, 'sg:');
   const counts = {};
@@ -117,7 +187,7 @@ async function queue(req, env, url) {
 }
 
 async function decide(req, env) {
-  if (!isAdmin(req, env)) return bad('אין הרשאה', 401);
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   let b;
   try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
   const id = str(b.id, 80);
@@ -142,7 +212,7 @@ async function decide(req, env) {
 /* ------------------------------------------------------------ עריכות */
 function cleanEdit(e) {
   /* שינוי מבנה (פיצול או איחוי פסקה) אין לו מפתח מקום; מפתחו נגזר מזמנו */
-  const k = str(e.k, 24) || (e.op === 'struct' ? 's' + (+e.t || 0) : '');
+  const k = str(e.k, 48) || (e.op === 'struct' ? 's' + (+e.t || 0) : '');
   const out = { k, t: +e.t || Date.now() };
   if (e.del) { out.del = 1; return out; }
   for (const f of ['was', 'now', 'wasH', 'nowH', 'daf', 'ps', 'psw', 'wasP', 'by', 'sg', 'op', 'kind']) {
@@ -183,7 +253,7 @@ async function mergeEdits(env, slug, edits, sty) {
 }
 
 async function getEdits(req, env, url, pub) {
-  if (!pub && !isAdmin(req, env)) return bad('אין הרשאה', 401);
+  if (!pub && !(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   const slug = url.searchParams.get('slug') || '';
   if (!slugOk(slug)) return bad('מסכת לא תקינה');
   const doc = (await env.STORE.get('ed:' + slug, 'json')) || { slug, edits: [], sty: null };
@@ -197,7 +267,7 @@ async function getEdits(req, env, url, pub) {
 }
 
 async function putEdits(req, env) {
-  if (!isAdmin(req, env)) return bad('אין הרשאה', 401);
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   let b;
   try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
   const slug = str(b.slug, 30);
@@ -207,7 +277,7 @@ async function putEdits(req, env) {
 }
 
 async function ingested(req, env) {
-  if (!isAdmin(req, env)) return bad('אין הרשאה', 401);
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   let b;
   try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
   const slug = str(b.slug, 30);
@@ -224,7 +294,7 @@ async function ingested(req, env) {
 }
 
 async function exportAll(req, env) {
-  if (!isAdmin(req, env)) return bad('אין הרשאה', 401);
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   const out = { when: new Date().toISOString(), suggestions: [], edits: {} };
   for (const k of await listAll(env, 'sg:')) {
     const v = await env.STORE.get(k.name, 'json');
@@ -245,6 +315,10 @@ export default {
     try {
       if (p === '/' || p === '/health') return json({ ok: true, service: 'leokmei-suggest' });
       if (p === '/suggest' && req.method === 'POST') return await suggest(req, env);
+      if (p === '/auth' && req.method === 'POST') return await auth(req, env);
+      if (p === '/whoami' && req.method === 'GET') return await whoami(req, env);
+      if (p === '/devices' && req.method === 'GET') return await devices(req, env);
+      if (p === '/devices/revoke' && req.method === 'POST') return await revoke(req, env);
       if (p === '/queue' && req.method === 'GET') return await queue(req, env, url);
       if (p === '/decide' && req.method === 'POST') return await decide(req, env);
       if (p === '/edits' && req.method === 'GET') return await getEdits(req, env, url, false);

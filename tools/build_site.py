@@ -49,6 +49,12 @@ def _bare(h):
     return html.unescape(re.sub('<[^>]+>', '', h or ''))
 
 
+def _norm_h(h):
+    """צורה קנונית של HTML להשוואה: ללא ישויות, ציטוט אחיד ורווחים מכווצים."""
+    h = html.unescape(h or '').replace("'", '"')
+    return re.sub(r'\s+', ' ', h).strip()
+
+
 def _daf_key(d):
     V = {'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,
          'ל':30,'מ':40,'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400}
@@ -296,8 +302,12 @@ def _apply_site_edits(pages, slug, qa):
         if s is None:
             lost.append(e); keep.append(e); continue
         if s['t'] == now and e.get('ps') is None:
-            taken += 1                      # כבר הגיע מן הוורד - יוצא מן הקובץ
-            continue
+            # הטקסט זהה גם כשרק סגנון התו השתנה (הדגשה, מפרשים וכד'), ולכן
+            # "כבר בוורד" נקבע רק כשגם ה-HTML זהה. אחרת התיקון מוחל.
+            raw = s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')
+            if e.get('nowH') is None or _norm_h(raw) == _norm_h(e['nowH']):
+                taken += 1                  # כבר הגיע מן הוורד - יוצא מן הקובץ
+                continue
         if s['t'] != was:
             lost.append(e); keep.append(e); continue
         h = e.get('nowH')
@@ -831,6 +841,29 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .bar button,.bar select,.bar input{font:inherit;background:#4a4137;color:#f1ead9;border:0;border-radius:4px;padding:3px 9px;cursor:pointer}
   .bar input{cursor:text;width:150px} .bar button.on{background:var(--gold);color:#2b2620}
   .nav{display:flex;gap:4px;align-items:center}
+  /* סרגל אחד: שורה אחת בכל רוחב. מה שאינו נכנס עובר ל"עוד". */
+  .bar{flex-wrap:nowrap;gap:8px;overflow:visible}
+  .bar .bg{display:flex;align-items:center;gap:6px;flex:0 0 auto;padding-inline-start:8px;border-inline-start:1px solid #4a4137}
+  .bar .bg:first-child{border:0;padding:0}
+  .bar button,.bar select,.bar input{min-height:32px;white-space:nowrap}
+  .bar input{width:140px;transition:width .15s} .bar input:focus{width:230px}
+  .bar .mn{color:#cfc5ad}
+  .bar .bg.adm-only{display:none} body.adm .bar .bg.adm-only{display:flex}
+  .bar .dd,.bar .more{position:relative}
+  .bar .ddp{display:none;position:absolute;top:calc(100% + 4px);inset-inline-start:0;z-index:30;background:#2b2620;border:1px solid #4a4137;border-radius:6px;padding:8px;min-width:190px;box-shadow:0 8px 24px rgba(0,0,0,.4);flex-direction:column;gap:4px}
+  .bar .dd.open>.ddp,.bar .more.open>.ddp{display:flex}
+  .bar .ddp button,.bar .ddp select{width:100%;text-align:right}
+  .bar .ddp .row3{display:flex;gap:4px} .bar .ddp .row3 button{flex:1;text-align:center}
+  .bar .sml{font-size:12px;color:#c9bfa8;margin:4px 2px 0}
+  .bar .more .ddp .bg{flex-direction:column;align-items:stretch;border:0;padding:0;margin-bottom:6px}
+  .bar .more .ddp .dd>.ddb{display:none}
+  .bar .more .ddp .dd .ddp{display:flex;position:static;border:0;padding:0;box-shadow:none;min-width:0;background:none}
+  .bar .more .ddp .dd::before{content:attr(data-label);font-size:12px;color:#c9bfa8}
+  body.ed .bar .bg:not(.edtools):not(.more):not(:first-child){display:none!important}
+  body.ed .bar .bg:first-child .nav,body.ed .bar .bg:first-child select,body.ed .bar .bg:first-child #dybtn{display:none}
+  .bar .edtools{display:none;border:0} body.ed .bar .edtools{display:flex;flex:1 1 auto;flex-wrap:nowrap}
+  .bar .edtools .sp{flex:1}
+  .bar .edtools .ttl{color:var(--gold);font-size:12px}
   .nav .daf{min-width:52px;text-align:center;font-family:'VilnaG','Vilna',serif;font-size:17px}
   /* --lhpx הוא גובה שורת הגוף במידה מוחלטת. פריטי המסילה זקוקים לו:
      line-height שהוא מספר מתייחס לגודל האות של האלמנט עצמו, ולכן ציון דף
@@ -1020,9 +1053,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .src{position:fixed;z-index:9;background:var(--paper);box-shadow:0 -2px 18px rgba(0,0,0,.25);
        display:flex;flex-direction:column;font-size:17px;line-height:1.75}
   .src.peek{left:0;right:0;bottom:0;height:38vh}
-  .src.split{left:0;top:var(--barH,52px);bottom:0;width:50vw;box-shadow:2px 0 18px rgba(0,0,0,.22)}
+  .src.split{left:0;top:var(--barH,52px);bottom:0;width:var(--srcw,50vw);box-shadow:2px 0 18px rgba(0,0,0,.22)}
   .src.full{left:0;right:0;top:0;bottom:0}
-  body.splitsrc .flow{width:50vw;margin-left:auto}
+  body.splitsrc .flow{width:calc(100vw - var(--srcw,50vw));margin-left:auto}
   .srchd{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 14px;background:#2b2620;color:#f1ead9;font-size:14px;flex:0 0 auto}
   .srchd b{font-family:'VilnaG','Vilna',serif;font-size:17px;font-weight:400}
   .srchd .sp{flex:1}
@@ -1039,6 +1072,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .srchd .srcsep{width:1px;align-self:stretch;background:#5a5147;margin:0 4px}
   .srcft{flex:0 0 auto;padding:6px 14px;font-size:12px;color:#8a7d66;background:#f3eee2;border-top:1px solid #e0d8c4}
   .srcbody .ld{color:#8a7d66;font-size:15px}
+  .spg .sgx{margin:0 0 .5em;padding:2px 0;border-radius:3px}
+  .spg p{margin:0 0 .5em;padding:2px 5px}
+  .spg h4{position:sticky;top:-12px;background:var(--paper);z-index:1;margin:14px 0 6px}
+  .spg .sgx.cov{background:#fdf7e8;box-shadow:inset 3px 0 0 #e3d3a6}
+  .spg .sgx.hit{background:#f8e6b8;box-shadow:inset 4px 0 0 var(--gold)}
+  .sdaf{font-family:'VilnaG','Vilna',serif;font-size:17px;min-width:2.4em;text-align:center}
+  .smenu{position:relative}
+  .smpop{display:none;position:absolute;top:100%;left:0;z-index:20;background:#2b2620;border-radius:6px;padding:8px;min-width:190px;box-shadow:0 6px 22px rgba(0,0,0,.35)}
+  .smpop.open{display:block}
+  .smpop button{display:block;width:100%;margin:2px 0;text-align:right}
+  .sml{font-size:12px;color:#c9bfa8;margin:6px 4px 2px}
+  .srcdrag{position:absolute;top:0;bottom:0;right:-5px;width:10px;cursor:col-resize;z-index:12;touch-action:none}
+  .srcdrag:hover{background:rgba(201,162,74,.35)}
+  .src:focus{outline:none}
   @media screen and (max-width:760px){.src.split{left:0;right:0;top:auto;bottom:0;width:auto;height:60vh}
     body.splitsrc .flow{width:auto;margin-left:0}}
   @media print{.src,.srcb{display:none!important}}
@@ -1264,6 +1311,29 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     }
     requestAnimationFrame(chunk);
   }
+  /* איחוי שורות מקומי: רק בפסקאות של השורות שנערכו, ובזמן מנוחה של
+     הדפדפן. לא מבטל ריצה כללית ואינו נוגע בשאר הפרק. */
+  function squeezeRows(rows){
+    if(!SQ||!rows||!rows.length)return;
+    const ps=[];
+    for(const r of rows)for(const p of r.querySelectorAll('.main p'))if(p.textContent.trim().length>30)ps.push(p);
+    if(!ps.length)return;
+    const idle=window.requestIdleCallback||(fn=>setTimeout(fn,60));
+    idle(()=>{
+      gauge();
+      for(const p of ps){
+        if(!p.isConnected)continue;
+        p.style.wordSpacing='';p.style.letterSpacing='';delete p.dataset.sq;
+        GM.className=p.parentElement.className;GP.className=p.className;
+        GP.style.wordSpacing='';GP.style.letterSpacing='';
+        GP.innerHTML=p.innerHTML;
+        const h0=GP.offsetHeight;
+        if(lastLineIsLone(GP)){
+          for(const [ws,ls] of STEPS){
+            GP.style.wordSpacing=ws?ws+'em':'';GP.style.letterSpacing=ls?ls+'em':'';
+            if(GP.offsetHeight<h0){if(ws)p.style.wordSpacing=ws+'em';
+              if(ls)p.style.letterSpacing=ls+'em';p.dataset.sq='1';break}}}}
+    },{timeout:1500})}
   function squeeze(){SQ=!SQ;localStorage.setItem('lg-sq',SQ?'1':'0');
     GEN++;
     $('#flow').querySelectorAll('.main p').forEach(p=>{p.style.wordSpacing='';p.style.letterSpacing=''});
@@ -1309,16 +1379,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const g=getComputedStyle(rail).gridTemplateColumns.split(' ');
     return parseFloat(g[g.length-1])||0;
   }
-  function fitAnchors(){
+  function fitAnchors(only){
     const f=$('#flow');if(!f)return;
     const items=[];
+    /* only: רשימת שורות בלבד (אחרי עריכה מקומית); בלעדיה - כל הפרק */
+    const rowsList=only?[...only]:[...f.querySelectorAll('.row')];
     /* ב1: תווית טווח רחבה מנתיב הדף - הנתיב מורחב לשורה שלה בלבד */
-    for(const d of f.querySelectorAll('.dafmark.rng')){
+    for(const r0 of rowsList)for(const d of r0.querySelectorAll('.dafmark.rng')){
       const r=d.closest('.row');if(!r)continue;
       const w=dafWidth(d.textContent.trim())*0.95;
       r.style.setProperty('--dafw',Math.max(w,DAFW).toFixed(1)+'px');
     }
-    for(const r of f.querySelectorAll('.row')){
+    for(const r of rowsList){
       const a=r.querySelector(':scope > .rail > .win');
       if(!a||!a.textContent.trim())continue;
       a.classList.remove('w2');a.style.fontSize='';
@@ -1452,6 +1524,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(typeof sqMark==='function')sqMark();
     if(EDIT)setEdit(true);
     if(!BOOK)squeezeRun();
+    REFS=null;if(typeof srcSyncSoon==='function')srcSyncSoon();
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){const si=secOf(pi);if(si!==cur)render(si);
@@ -1470,10 +1543,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const v=Math.max(12,Math.min(60,parseFloat(getComputedStyle(r).getPropertyValue('--fs'))+d));setFs(v)}
   function setFs(v){document.documentElement.style.setProperty('--fs',v+'px');localStorage.setItem('lg-fs',v);sizeBtns(v);setDafW();fitAnchors()}
   function sizeBtns(v){document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',+b.dataset.fs===+v))}
-  function vert(){const v=$('#flow').classList.toggle('vert');
+  function vert_(){const v=$('#flow').classList.toggle('vert');
     ALL=v;localStorage.setItem('lg-vert',v?'1':'');$('#vbtn').classList.toggle('on',v);
     const keep=+$('#dafsel').value||0;render(cur);
     if(v)setTimeout(()=>{const e=$('#d'+keep);if(e)e.scrollIntoView({block:'start'})},30)}
+  function vert(){vert_();viewUi()}
   function panel(id){const p=$('#'+id),o=p.classList.contains('open');document.querySelectorAll('.panel').forEach(x=>x.classList.remove('open'));if(!o)p.classList.add('open')}
   function dec(s){return s.replace(/&quot;/g,'"').replace(/&#x27;/g,"'").replace(/&amp;/g,'&')}
   function txt(u){return dec(u.a.replace(/<[^>]+>/g,'')+' '+u.l.map(l=>l[1].replace(/<[^>]+>/g,'')).join(' '))}
@@ -1539,7 +1613,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
    if(u0){let pi=0;D.pages.forEach((p,i)=>{if(p.units.some(x=>x.id==u0))pi=i});jump(pi,+u0)}
    else if(params.get('daf')){let pi=0;D.pages.forEach((p,i)=>{if(p.daf===params.get('daf')&&!pi)pi=i});render(secOf(pi));toDaf(pi)}
    else render(+(params.get('p')||0));
-   sqBadge();netInit();
+   sqBadge();netInit();viewUi();
+   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{barFit();barH()});barFit();barH();setTimeout(barFit,500);setTimeout(barFit,2000);addEventListener('load',()=>setTimeout(barFit,100));
   }
   /* =================== מצב עריכה למנהל ===================
      האתר סטטי ונבנה מחדש מן הוורד. עריכה כאן אינה נוגעת במקור: היא
@@ -1555,13 +1630,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      כל ההשוואות נעשות על הטקסט הנקי - בלי כפתור "מקור", בלי תווית
      "משנה" ובלי סימון החיפוש. בלעדי זה נכנסה המילה "מקור" אל תוך
      הנוסח שנשלח לוורד. */
-  const AKEY='lg-admin', EKEY='lg-ed-'+SLUG, TKEY='lg-gh', ADMIN_WORD='לאוקמי';
+  /* מילת המנהל אינה בקוד הציבורי. היא נבדקת בנקודת הקליטה בלבד, והמכשיר
+     שהקליד אותה מקבל אסימון מכשיר מוכר. */
+  const AKEY='lg-admin', EKEY='lg-ed-'+SLUG, TKEY='lg-gh';
   const REPO='michaelFLEGG/leokmei-girsa', EDPATH='data/edits/'+SLUG+'.json';
   const CSTY=(D.sty&&D.sty.c)||[], PSTY=(D.sty&&D.sty.p)||[];
   const OKCLS=CSTY.map(x=>x[0]);
   const PCLS=PSTY.map(x=>x[0]).filter(Boolean);
   let ED=[]; try{ED=JSON.parse(localStorage.getItem(EKEY)||'[]')}catch(e){ED=[]}
-  let EDIT=false, EDSTAT={taken:0,lost:0};
+  /* _ap = "הוחל על הנתונים בטעינה הזאת"; הסימון זמני ואינו נשמר בין טעינות */
+  ED.forEach(e=>{delete e._ap;delete e._cur});
+  let EDIT=false, EDSTAT={taken:0,lost:0}, EDTAKEN=0, EDWORD=0;
   function isAdmin(){try{return localStorage.getItem(AKEY)==='1'}catch(e){return false}}
   function ghTok(){try{return localStorage.getItem(TKEY)||''}catch(e){return ''}}
   /* אצל לומד שאינו מנהל ED הוא שכבת התיקונים שהתקבלו (מנקודת הקליטה),
@@ -1625,15 +1704,63 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* מאתר את המקום של עריכה. מחזיר מפתח, או null אם היא תלושה. */
   function locate(e){
     if(!SLOTS)SLOTS=slots();
+    const wants=[e.was,e.now].concat(e._cur!==undefined?[e._cur]:[]);
     const byKey=SLOTS.find(s=>s.k===e.k);
-    if(byKey&&(byKey.t===e.now||byKey.t===e.was))return byKey.k;
+    if(byKey&&wants.indexOf(byKey.t)>-1)return byKey.k;
     const k0=dafKey(e.daf);
     const win=SLOTS.filter(s=>{const k=dafKey(s.daf);return k0===null||k===null?true:Math.abs(k-k0)<=1});
-    for(const want of [e.was,e.now]){
+    for(const want of wants){
       const hits=win.filter(s=>s.t===want);
       if(hits.length===1)return hits[0].k;
     }
     return null}
+
+  /* ---- מודל הנתונים ----
+     הדף נבנה מ-D, וכל עריכה מוחלת עליו - לא רק על ה-DOM. כך פעולה חדשה
+     (פיצול, איחוי, כותרת צד) נשענת על הנוסח שאחרי התיקון הממתין, ולא על
+     הנוסח שבוורד: אין עוד "תיקון שטרם נקלט חוסם את הפעולה". */
+  function dataSet(k,h){
+    const m=/^u(\d+)\.(\d+|w)$/.exec(k||'');if(!m)return false;
+    const id=+m[1];
+    for(const p of D.pages)for(const u of p.units){
+      if(u.id!==id)continue;
+      if(m[2]==='w'){u.w=h;delete u.lv;return true}
+      const n=+m[2];
+      if(n===0){if(u.k==='u'||u.k==='dh'||u.k==='nose'){u.a=h;delete u.lv;return true}return false}
+      if(u.l&&u.l[n-1]){u.l[n-1][1]=h;delete u.lv;return true}
+      return false}
+    return false}
+  /* ה-HTML של מקום בנתונים (לבדיקה אם עריכת סגנון תו כבר בוורד: הטקסט
+     זהה גם כשרק הסגנון השתנה) */
+  function dataHtml(k){
+    const m=/^u(\d+)\.(\d+|w)$/.exec(k||'');if(!m)return null;
+    const id=+m[1];
+    for(const p of D.pages)for(const u of p.units){
+      if(u.id!==id)continue;
+      if(m[2]==='w')return u.w||'';
+      const n=+m[2];
+      if(n===0)return u.a||'';
+      return u.l&&u.l[n-1]?u.l[n-1][1]:null}
+    return null}
+  function normH(h){const d=document.createElement('div');d.innerHTML=h||'';return d.innerHTML}
+  /* סגנון פסקה בנתונים: מחליף את מחלקות הסגנון, ושומר את מחלקות המרווח
+     (b0-b4 / a0-a4) - כמו הבנייה בצד השרת */
+  function dataCls(k,ps){
+    const m=/^u(\d+)\.(\d+)$/.exec(k||'');if(!m||+m[2]<1)return false;
+    const id=+m[1];
+    for(const p of D.pages)for(const u of p.units){
+      if(u.id!==id||!u.l||!u.l[+m[2]-1])continue;
+      const keep=(u.l[+m[2]-1][0]||'').split(' ').filter(c=>c.length===2&&'ba'.indexOf(c[0])>-1&&/\d/.test(c[1])).join(' ');
+      u.l[+m[2]-1][0]=((ps||'')+' '+keep).trim();delete u.lv;return true}
+    return false}
+  /* תיקון טקסט שקיים כבר, ואחריו נעשה שינוי מבנה באותה פסקה: הוא
+     "קופא". מפתחו משתנה כדי שהקלדה נוספת בפסקה תיצור תיקון חדש (שנקודת
+     המוצא שלו היא הנוסח המתוקן), והסדר בין התיקונים נשמר בשחזור. */
+  function freezeEdits(texts){
+    for(const x of ED){
+      if(x.op==='struct'||x.fz||x.lost||String(x.k).indexOf('~')>-1)continue;
+      if(texts.indexOf(x.now)<0)continue;
+      tomb(x.k);x.k=x.k+'~'+x.t;x.fz=1}}
 
   /* מסמן כל מקום שניתן לעריכה, ומחיל את מה שנשמר.
      בתצוגת ספר לא מסמנים: שם יחידה ארוכה מתחלקת בין גיליונות, ושני
@@ -1658,34 +1785,21 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* הכפתור יושב בתוך הפסקה הנערכת. בלי הסימון הזה מחיקה אחת אחורה
        בסוף הפסקה היתה מוחקת אותו. */
     f.querySelectorAll('.srcb,.mlabel').forEach(x=>x.setAttribute('contenteditable','false'))}
-  function applyEdits(){
+  /* שלב ה-DOM: הנתונים כבר נושאים את העריכות (applyStruct), ובשלב הזה
+     רק מסמנים את הפסקאות שנערכו ומחילים מה שאינו שמור בנתונים (כותרת
+     שהוחזרה לגוף). לא נכתב כאן טקסט. */
+  function applyEdits(root){
     if(!ED.length)return;
-    SLOTS=slots();
-    const f=$('#flow');let taken=0,lost=0,keep=[];
+    const f=root||$('#flow');
+    let lost=0;
     for(const e of ED){
-      if(e.op==='struct'){
-        if(e.done)  {taken++;continue}       /* כבר בוורד - יוצא מן הרשימה */
-        if(e.lost)  lost++;
-        keep.push(e);continue}
-      const k=locate(e);
-      if(k===null){lost++;e.lost=1;keep.push(e);continue}
-      e.lost=0;if(k!==e.k)e.k=k;
-      const el=f.querySelector('[data-ek="'+k+'"]');
-      const cur=el?txtOf(el):(SLOTS.find(s=>s.k===k)||{}).t;
-      const same=x=>cur===x||nonik(cur)===nonik(x);
-      if(same(e.now)&&e.ps===undefined){taken++;continue}
-      /* פסקה שתוקנה מוצגת בנוסח הוורד עד לפרסום: שכבת הניקוד נבנית
-         מן המקור בבנייה, ואינה יודעת על התיקון שנעשה זה עתה. */
-      if(el&&same(e.was))setHTML(el,e.nowH!==undefined?e.nowH:esc(e.now));
-      if(el&&e.ps!==undefined&&el.tagName==='P'){
-        PCLS.forEach(c=>el.classList.remove(c));
-        if(e.ps)e.ps.split(' ').filter(Boolean).forEach(c=>el.classList.add(c));
-      }
-      if(el&&e.ps!==undefined&&isHeadEl(el))headTo(el,[]);
-      if(el)el.dataset.edited='1';
-      keep.push(e)}
-    EDSTAT={taken,lost};
-    if(keep.length!==ED.length){ED=keep;saveED()}
+      if(e.lost)lost++;
+      if(e.op==='struct'||e.lost||!e._ap)continue;
+      const el=f.querySelector('[data-ek="'+e.k+'"]');
+      if(!el)continue;
+      if(e.ps!==undefined&&isHeadEl(el))headTo(el,[]);
+      el.dataset.edited='1'}
+    EDSTAT={taken:EDTAKEN,lost};
     if($('#edn'))$('#edn').textContent=ED.length}
 
   function ctxOf(el){
@@ -1709,6 +1823,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(el&&el.__was===undefined)edBase(el)}
   function edBlur(ev){const el=ev.target.closest&&ev.target.closest('[contenteditable]');if(el)capture(el)}
   function capture(el){
+    if(!el.isConnected)return;      /* שורה שהוחלפה בינתיים (פיצול, איחוי) - אין מה ללכוד */
     if(el.__was===undefined)edBase(el);
     edSan(el);
     const now=txtOf(el), nowH=htmlOf(el), nowP=pcls(el);
@@ -1731,9 +1846,22 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(nowP!==wasP){e.ps=nowP;e.psw=wsty(nowP)}
       ED.push(e);el.dataset.edited='1';
     }
+    /* הנתונים עוקבים אחרי המסך: שינוי המבנה הבא (פיצול, כותרת צד) נשען
+       על הנוסח שאחרי התיקון, גם כשהוא טרם נקלט בוורד */
+    if(!same||old){
+      dataSet(k,nowH);
+      if(el.tagName==='P'&&(nowP!==wasP||(old&&old.ps!==undefined)))dataCls(k,nowP);
+      SLOTS=null;
+      const cu=ED.find(x=>x.k===k);if(cu){cu._ap=1;cu._cur=cu.now}
+    }
     saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon();syncSoon()}
   let CAPT=null;
-  function captureSoon(el){clearTimeout(CAPT);CAPT=setTimeout(()=>capture(el),700)}
+  /* אחרי הקלדה, ובזמן מנוחה בלבד: הקליטה, ואיחוי השורות של הפסקה
+     ושל שכנתה - לא של כל הפרק */
+  function captureSoon(el){clearTimeout(CAPT);CAPT=setTimeout(()=>{
+    capture(el);
+    const r=el.closest&&el.closest('.row');
+    if(r)squeezeRows([r,r.previousElementSibling,r.nextElementSibling].filter(x=>x&&x.classList&&x.classList.contains('row')))},700)}
 
   /* =================== ו2 ג-ד: פיצול פסקה ואיחויה ===================
      Enter מפצל פסקה לשתיים באותו סגנון; מחיקה אחורה בראש פסקה מאחדת
@@ -1768,24 +1896,40 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     }
     return null}
   /* מחיל את שינויי המבנה על D. חייב לרוץ לפני הרנדור הראשון. */
+  /* מחיל על הנתונים את כל העריכות שטרם הוחלו, בסדר הזמן שנעשו: תיקון טקסט
+     ושינוי מבנה גם יחד. הסדר חיוני - פיצול נשען על הנוסח שאחרי התיקון.
+     מה שכבר נמצא בקובץ הוורד (נקלט) יוצא מן הרשימה; מה שלא אותר מסומן
+     "תלוש" ואינו מוחל. */
   function applyStruct(){
     let any=false;
-    for(const e of ED){
-      if(e.op!=='struct')continue;
+    const todo=ED.filter(e=>!e._ap&&!e.done).sort((a,b)=>(a.t||0)-(b.t||0));
+    for(const e of todo){
+      if(e.op!=='struct'){
+        SLOTS=null;
+        const k=locate(e);
+        if(k===null){e.lost=1;continue}
+        e.lost=0;if(k!==e.k&&String(e.k).indexOf('~')<0)e.k=k;     /* מפתח קפוא אינו מוחלף במקום הנוכחי */
+        const cur=(SLOTS.find(s=>s.k===k)||{}).t;
+        const htmlSame=e.nowH===undefined||normH(dataHtml(k))===normH(e.nowH);
+        if((cur===e.now||nonik(cur)===nonik(e.now))&&e.ps===undefined&&htmlSame){e.done=1;EDTAKEN++,e.ing&&EDWORD++;continue}   /* כבר בוורד */
+        dataSet(k,e.nowH!==undefined?e.nowH:esc(e.now));
+        if(e.ps!==undefined)dataCls(k,e.ps);
+        e._ap=1;e._cur=e.now;any=true;continue}
       if(e.kind==='side'||e.kind==='unside'){
         const sd=e.kind==='side';
         const h=sd?findRun(e.texts,e.daf):findWinUnit(e.texts[0],e.texts[1],e.daf);
-        if(h){if(sd)sideApply(e,h); else unsideApply(e,h);e.lost=0;any=true}
-        else if(sd?sideDone(e):unsideDone(e)){e.lost=0;e.done=1}
+        if(h){if(sd)sideApply(e,h); else unsideApply(e,h);e.lost=0;e._ap=1;any=true;SLOTS=null}
+        else if(sd?sideDone(e):unsideDone(e)){e.lost=0;e.done=1;EDTAKEN++,e.ing&&EDWORD++}
         else e.lost=1;
         continue}
       const hit=findRun(e.texts,e.daf);
       if(hit){hit.u.l.splice(hit.i,e.texts.length,...e.res.map(x=>x.slice()));
         delete hit.u.lv;        /* שכבת הניקוד אינה תואמת עוד */
-        e.lost=0;any=true;continue}
-      if(findRun(e.resT,e.daf)){e.lost=0;e.done=1;continue}   /* כבר בוורד */
+        e.lost=0;e._ap=1;any=true;SLOTS=null;continue}
+      if(findRun(e.resT,e.daf)){e.lost=0;e.done=1;EDTAKEN++,e.ing&&EDWORD++;continue}   /* כבר בוורד */
       e.lost=1;
     }
+    if(ED.some(e=>e.done)){ED=ED.filter(e=>!e.done);saveED()}
     if(any)SLOTS=null;
     return any}
 
@@ -1817,14 +1961,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       flash('אין לפצל כאן: אחד משני החלקים יוצא ריק');return false}
     const cls=info.u.l[info.i][0];
     const was=plain(info.u.l[info.i][1]);
-    ED.push({op:'struct',kind:'split',texts:[was],
+    const snp=[snapOf(info.pi)];
+    freezeEdits([was]);
+    const se={op:'struct',kind:'split',texts:[was],
              res:[[cls,ha],[cls,hb]],resT:[da.textContent,db.textContent],
-             daf:dafOf(el),t:Date.now(),pub:0});
+             daf:dafOf(el),t:Date.now(),pub:0,_ap:1};
+    ED.push(se);
     info.u.l.splice(info.i,1,[cls,ha],[cls,hb]);
     UNDO.length=0;
     delete info.u.lv;
     SLOTS=null;saveED();
-    reflow('u'+info.u.id+'.'+(info.i+2),0);
+    reflow('u'+info.u.id+'.'+(info.i+2),0,snp);
     return true}
   /* איחוי שמבטל בדיוק פיצול שנעשה זה עתה - מוחק את הפיצול במקום
      לרשום פעולה נגדית. בלעדי זה היו נשמרות שתי פעולות שמבטלות זו את
@@ -1853,49 +2000,106 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const cls=prev.u.l[prev.u.l.length-1][0];
       const h=prev.u.l[prev.u.l.length-1][1]+u.l[0][1];
       const d=document.createElement('div');d.innerHTML=h;
+      const snp=[snapOf(info.pi)];if(prev.pi!==info.pi)snp.push(snapOf(prev.pi));
+      freezeEdits(texts);
       if(!cancelSplit(texts))
         ED.push({op:'struct',kind:'merge',texts:texts,res:[[cls,h]],
-                 resT:[d.textContent],daf:dafOf(el),t:Date.now(),pub:0});
+                 resT:[d.textContent],daf:dafOf(el),t:Date.now(),pub:0,_ap:1});
       prev.u.l[prev.u.l.length-1]=[cls,h];delete prev.u.lv;
       u.l.shift();delete u.lv;
       if(!u.l.length&&!plain(u.a||'')){
         for(const p of D.pages){const k=p.units.indexOf(u);if(k>-1){p.units.splice(k,1);break}}}
       SLOTS=null;saveED();
-      reflow('u'+prev.u.id+'.'+prev.u.l.length,texts[0].length);
+      reflow('u'+prev.u.id+'.'+prev.u.l.length,texts[0].length,snp);
       return true}
     const texts=[plain(u.l[i-1][1]),plain(u.l[i][1])];
     const cls=u.l[i-1][0];
     const h=u.l[i-1][1]+u.l[i][1];
     const d=document.createElement('div');d.innerHTML=h;
+    const snp=[snapOf(info.pi)];
+    freezeEdits(texts);
     if(!cancelSplit(texts))
       ED.push({op:'struct',kind:'merge',texts:texts,res:[[cls,h]],
-               resT:[d.textContent],daf:dafOf(el),t:Date.now(),pub:0});
+               resT:[d.textContent],daf:dafOf(el),t:Date.now(),pub:0,_ap:1});
     u.l.splice(i-1,2,[cls,h]);
     delete u.lv;
     SLOTS=null;saveED();
-    reflow('u'+u.id+'.'+i,texts[0].length);
+    reflow('u'+u.id+'.'+i,texts[0].length,snp);
     return true}
-  /* בונה את הדף מחדש אחרי שינוי מבנה, ומחזיר את הסמן למקומו */
-  function reflow(key,off){
-    render(cur);
-    if(EDIT)setEdit(true);
-    setTimeout(()=>{
-      const el=$('#flow').querySelector('[data-ek="'+key+'"]');
-      if(!el)return;
-      el.focus();
-      try{
-        const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
-        let n,left=off,node=null,pos=0;
-        while((n=w.nextNode())){const L=n.textContent.length;
-          if(left<=L){node=n;pos=left;break}left-=L}
-        const r=document.createRange();
-        if(node)r.setStart(node,pos); else r.selectNodeContents(el),r.collapse(false);
-        r.collapse(true);
-        const s=getSelection();s.removeAllRanges();s.addRange(r);
-        el.scrollIntoView({block:'nearest'});
-      }catch(e){}
-      drawEd();pubSoon();
-    },0)}
+
+  /* =================== עדכון מקומי של השורות (בלי בנייה מחדש) ===================
+     פעולת עריכה לעולם אינה כותבת מחדש את כל הפרק: היא מחליפה רק את השורות
+     (יחידות) שנגעה בהן. כתיבה של כל הפרק מחדש היא שגרמה לריצוד, לאובדן
+     הסמן ולמיקום הגלילה. */
+  /* תצלום של יחידות העמוד לפני הפעולה, להשוואה אחריה */
+  function snapOf(pi){
+    const us=D.pages[pi].units,js={};
+    us.forEach((u,i)=>js[u.id]=JSON.stringify([u,i===0]));
+    return {pi,ids:us.map(u=>u.id),js}}
+  function rowFromHTML(h){const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstElementChild}
+  function caretIn(el){const s=getSelection();return !!(s&&s.rangeCount&&el&&el.contains(s.anchorNode))}
+  /* מחיל על ה-DOM את ההפרש שבין תצלום "לפני" ובין הנתונים עכשיו.
+     keepCaret: שורה שהסמן בתוכה אינה נכתבת מחדש (סנכרון שהגיע מבחוץ). */
+  function patchPage(snap,keepCaret){
+    const f=$('#flow'),pi=snap.pi,pg=D.pages[pi],us=pg.units,rows=[];
+    const nowJ={};us.forEach((u,i)=>nowJ[u.id]=JSON.stringify([u,i===0]));
+    for(const id of snap.ids)if(!(id in nowJ)){const r=f.querySelector('#u'+id);if(r)r.remove()}
+    us.forEach((u,i)=>{
+      if(snap.js[u.id]===nowJ[u.id])return;
+      const old=f.querySelector('#u'+u.id);
+      if(old&&keepCaret&&caretIn(old))return;
+      const nr=rowFromHTML(unitHTML(u,i===0?pg.daf:null,i===0?pi:null));
+      if(!nr)return;
+      if(old)old.replaceWith(nr);
+      else{
+        let prev=null;for(let j=i-1;j>=0&&!prev;j--)prev=f.querySelector('#u'+us[j].id);
+        if(prev)prev.after(nr);
+        else{let nx=null;for(let j=i+1;j<us.length&&!nx;j++)nx=f.querySelector('#u'+us[j].id);
+          if(nx)nx.before(nr);else return}
+      }
+      rows.push(nr)});
+    postRows(rows);
+    return rows}
+  /* הכנת שורות חדשות: מפתחות עיגון, סימון עריכות, מצב עריכה, התאמת
+     חלונות ואיחוי שורות - הכול רק עליהן */
+  function postRows(rows){
+    if(!rows.length)return;
+    for(const r of rows){
+      const a=r.querySelector('.anchor');
+      if(a)a.dataset.ek=r.id+(r.classList.contains('u')?'.0':'.w');
+      const m=r.querySelector('.main');
+      if(m){const ps=m.querySelectorAll('p');
+        if(ps.length)ps.forEach((x,i)=>{if(!x.classList.contains('hatz'))x.dataset.ek=r.id+'.'+(i+1)});
+        else if(m.classList.contains('dh')||m.classList.contains('nose'))m.dataset.ek=r.id+'.0'}
+      r.querySelectorAll('.srcb,.mlabel').forEach(x=>x.setAttribute('contenteditable','false'));
+      r.querySelectorAll('[data-ek]').forEach(el=>{
+        if(ED.some(e=>e.op!=='struct'&&e._ap&&!e.lost&&e.k===el.dataset.ek))el.dataset.edited='1';
+        if(EDIT){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');edBase(el)}})}
+    fitAnchors(rows);
+    squeezeRows(rows)}
+  /* מחזיר את הסמן לפסקה לפי מפתח ולאחר מכן מוודא שהוא בשטח הנראה */
+  function placeCaret(key,off){
+    const el=$('#flow').querySelector('[data-ek="'+key+'"]');
+    if(!el)return;
+    el.focus({preventScroll:true});
+    try{
+      const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+      let n,left=off,node=null,pos=0;
+      while((n=w.nextNode())){
+        if(n.parentElement&&n.parentElement.closest('.srcb,.mlabel'))continue;
+        const L=n.textContent.length;
+        if(left<=L){node=n;pos=left;break}left-=L}
+      const r=document.createRange();
+      if(node)r.setStart(node,pos); else r.selectNodeContents(el),r.collapse(false);
+      r.collapse(true);
+      const s=getSelection();s.removeAllRanges();s.addRange(r);
+      followCaret();
+    }catch(e){}}
+  /* אחרי פיצול או איחוי: עדכון השורות שנגעו בהן, והחזרת הסמן */
+  function reflow(key,off,snaps){
+    for(const s of snaps||[])patchPage(s);
+    placeCaret(key,off);
+    drawEd();pubSoon()}
   function flash(msg){
     let b=$('#edflash');
     if(!b){b=document.createElement('div');b.id='edflash';b.className='edflash';document.body.appendChild(b)}
@@ -1991,19 +2195,24 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
 
   /* הפעולה מן הדף: לוכדת מצב לביטול, מחילה, רושמת ומציירת מחדש */
   function sideCommit(e,pi,hit,keyOf){
-    const snap=JSON.stringify(D.pages[pi].units);
+    const snap=JSON.stringify(D.pages[pi].units), before=snapOf(pi);
+    freezeEdits(e.texts||[]);
     const key=keyOf(e,hit);
+    e._ap=1;
     ED.push(e);UNDO.push({e,pi,snap,t:Date.now()});
     saveED();
-    render(cur);
-    if(key)reflow(key,0); else {drawEd();pubSoon()}
-    syncSoon()}
+    patchPage(before);
+    if(key)placeCaret(key,0);
+    drawEd();pubSoon();syncSoon()}
   function undoLast(){
     const x=UNDO.pop();if(!x)return false;
+    const before=snapOf(x.pi);
     D.pages[x.pi].units=JSON.parse(x.snap);
     const i=ED.indexOf(x.e);
     if(i>-1){edKeys();tomb(x.e.k);ED.splice(i,1)}
-    SLOTS=null;saveED();render(cur);drawEd();pubSoon();syncSoon();
+    SLOTS=null;saveED();
+    patchPage(before);
+    drawEd();pubSoon();syncSoon();
     flash('בוטל');return true}
   function sideAsk(el,info){
     const old=$('#sideask');if(old)old.remove();
@@ -2044,9 +2253,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!el){flash('העמד את הסמן בתוך מילה, ואז כותרת צד');return}
     if(el.classList.contains('anchor'))return unsideCmd(el);
     if(el.tagName!=='P'){flash('כאן אין כותרת צד: זו כותרת ולא פסקת גוף');return}
+    /* תיקון טקסט שעוד לא נשמר (ההקלדה נקלטת אחרי רגע של מנוחה) נקלט
+       עכשיו, והפעולה נשענת על הנוסח שאחריו - גם אם הוא טרם בוורד */
+    clearTimeout(CAPT);capture(el);
     const info=pInfo(el);if(!info){flash('לא ניתן לזהות את הפסקה');return}
-    if(ED.some(x=>x.op!=='struct'&&x.k===el.dataset.ek&&!x.lost)){
-      flash('בפסקה הזאת יש תיקון טקסט שטרם נקלט בוורד. כותרת הצד תיעשה לאחר הקליטה');return}
     const s=getSelection();if(!s.rangeCount)return;
     const r=s.getRangeAt(0);
     if(!el.contains(r.startContainer)||!el.contains(r.endContainer)){flash('סמן מילה בתוך פסקה אחת');return}
@@ -2066,8 +2276,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     let hit=null;
     if(m)for(const o of unitsAll())if(o.u.id===+m[1])hit=o;
     if(!hit){flash('כותרת של מקטע מסוג זה אינה חוזרת לגוף');return}
-    if(ED.some(x=>x.op!=='struct'&&x.k===el.dataset.ek&&!x.lost)){
-      flash('בכותרת הזאת יש תיקון טקסט שטרם נקלט בוורד');return}
+    clearTimeout(CAPT);capture(el);
     const u=hit.u,k=wkey(u),lines=(u[k]||'').split('<br>');
     if(lines.length>1&&el.querySelectorAll('br').length===lines.length-1){
       const s=getSelection(),r=document.createRange();r.selectNodeContents(el);
@@ -2113,7 +2322,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl'],
-      ['Enter / Backspace בתחילת פסקה','פיצול פסקה / איחוי עם הקודמת']];
+      ['Enter / Backspace בתחילת פסקה','פיצול פסקה / איחוי עם הקודמת'],
+      ['חצים, Home, End, PageUp, PageDown (עריכה)','הסמן זז, והדף נגלל אחריו; חץ בקצה הפרק עובר לפרק הסמוך'],
+      ['חצים, Home, End, PageUp, PageDown (קריאה)','גלילת שורה / תחילת הפרק וסופו / גלילת מסך'],
+      ['Alt+חץ ימינה / שמאלה (במגירת המקור)','הדף הקודם / הבא בגמרא'],
+      ['חץ למעלה / למטה, PageUp, PageDown (במגירת המקור)','גלילה בגמרא ובפירוש'],
+      ['Esc (במגירת המקור)','סגירת המגירה']];
     m.innerHTML='<div class="box"><h3>קיצורי מקשים בעריכה</h3><table style="width:100%;border-collapse:collapse">'+
       rows.map(r=>'<tr><td style="padding:3px 8px;font-weight:700;white-space:nowrap">'+esc(r[0])+'</td><td style="padding:3px 8px">'+esc(r[1])+'</td></tr>').join('')+
       '</table><div class="btns"><button onclick="keysCard()">סגירה</button></div></div>';
@@ -2143,24 +2357,85 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     let bar=$('#edbar');
     if(on&&!bar){bar=document.createElement('div');bar.className='edbar';bar.id='edbar';
       bar.innerHTML='<b>מצב עריכה</b><span>· <span id="edn">'+ED.length+'</span> תיקונים</span>'+
-        '<span id="edpub" class="edpub"></span>'+
-        '<button onmousedown="event.preventDefault()" onpointerdown="event.preventDefault()" onclick="sideCmd()" title="הופך את המילה שהסמן בה לכותרת בצד ימין (Ctrl+נקודה)">כותרת צד</button>'+
-        '<button onclick="keysCard()" title="Ctrl+/">קיצורי מקשים</button>'+
-        '<button onclick="panel(\'ed\')">העריכות שלי</button>'+
-        '<button onclick="pubNow(1)">פרסם עכשיו</button><span class="sp"></span>'+
-        '<button onclick="setEdit(false)">סיום</button>';
+        '<span id="edpub" class="edpub"></span><span class="sp"></span>'+
+        '<button onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>';
       document.body.appendChild(bar);pubDraw()}
     else if(!on&&bar)bar.remove();
     if(!on)hideSty();
+    edToolsDraw(on);
     if($('#edbtn'))$('#edbtn').classList.toggle('on',on);
     if(on)drawEd()}
-  function askAdmin(){
-    if(isAdmin()){setEdit(!EDIT);return}
-    const a=prompt('מילת המנהל:');
-    if(a===null)return;
-    if(a.trim()===ADMIN_WORD){try{localStorage.setItem(AKEY,'1')}catch(e){}setEdit(true);
-      sqBadge();if(!admKey())admKeyAsk();else netInit()}
-    else alert('המילה אינה נכונה.')}
+  /* כניסה למצב עריכה. מכשיר מוכר נכנס מיד. מכשיר חדש מקליד את מילת
+     המנהל פעם אחת, ונקודת הקליטה מנפיקה לו אסימון ארוך-טווח: מאז הוא
+     מזוהה תמיד. הדף שמוגש מן הגשר שבמחשב הראשי מזוהה מעצמו. */
+
+  /* סרגל העריכה: בזמן עריכה השורה העליונה מתחלפת בכלי העריכה (ולא
+     נוספת שורה שנייה); הרצועה שבתחתית נשארת לסטטוס ולפרסום */
+  function edToolsDraw(on){
+    const et=$('#edtools');if(!et)return;
+    if(!on){et.innerHTML='';barFit();return}
+    et.innerHTML='<span class="ttl">סגנון תו</span>'+
+      CSTY.map((c,i)=>'<button onmousedown="event.preventDefault()" onclick="csToggle(\''+c[0]+'\')" title="'+esc(c[1])+' (Ctrl+'+(i+1)+')">'+esc(c[1])+'</button>').join('')+
+      '<button onmousedown="event.preventDefault()" onclick="csToggle(\'b\')" title="מודגש (Ctrl+B)"><b>מודגש</b></button>'+
+      '<button onmousedown="event.preventDefault()" onclick="sideCmd()" title="הופך את המילה לכותרת בצד ימין (Ctrl+נקודה, או Ctrl+Alt+ק)">כותרת צד</button>'+
+      '<button onclick="keysCard()" title="קיצורי מקשים (Ctrl+/)">קיצורי מקשים</button>'+
+      '<button onclick="panel(\'ed\')" title="רשימת העריכות שלי">העריכות שלי</button>'+
+      '<span class="sp"></span><button onclick="setEdit(false)" title="יציאה ממצב עריכה">סיום</button>';
+    barFit()}
+  /* ---- סרגל: תפריטים וגלישה ל"עוד" ---- */
+  function ddToggle(b){
+    const g=b.parentElement,o=g.classList.contains('open');
+    document.querySelectorAll('.bar .dd.open,.bar .more.open').forEach(x=>x.classList.remove('open'));
+    if(!o)g.classList.add('open')}
+  document.addEventListener('click',e=>{if(!e.target.closest||!e.target.closest('.bar .dd,.bar .more'))
+    document.querySelectorAll('.bar .dd.open,.bar .more.open').forEach(x=>x.classList.remove('open'))});
+  /* אופן תצוגה: אחד משלושה */
+  function setView(m){
+    const vert=$('#flow').classList.contains('vert');
+    if(m==='col'){if(vert)vert_();if(BOOK)book()}
+    else if(m==='vert'){if(BOOK)book();if(!$('#flow').classList.contains('vert'))vert_()}
+    else if(m==='book'){if($('#flow').classList.contains('vert'))vert_();if(!BOOK)book()}
+    viewUi()}
+  function viewUi(){
+    const v=$('#flow').classList.contains('vert');
+    $('#cbtn').classList.toggle('on',!v&&!BOOK);
+    $('#vbtn').classList.toggle('on',v);
+    $('#bkbtn').classList.toggle('on',BOOK)}
+  /* שורה אחת בכל רוחב: קבוצות בעדיפות נמוכה עוברות ל"עוד", ולעולם אינן יורדות לשורה שנייה */
+  function barFit(){
+    const bar=$('#bar'),more=$('#morebg'),mp=$('#morep');if(!bar||!more)return;
+    const all=[...bar.querySelectorAll(':scope > .bg:not(#morebg)')];
+    /* מחזירים הכול למקומו, ואז מודדים */
+    for(const g of [...mp.children]){const at=+g.dataset.at;bar.insertBefore(g,bar.children[at]||more)}
+    all.forEach((g,i)=>g.dataset.at=i);
+    more.style.display='none';
+    /* בכיוון RTL גלישה שמאלה אינה נספרת ב-scrollWidth, ולכן נמדד הקצה
+       השמאלי של הפריט האחרון הנראה */
+    const room=()=>{const br=bar.getBoundingClientRect();
+      const vis=[...bar.children].filter(c=>c.offsetParent!==null||getComputedStyle(c).display!=='none');
+      let left=Infinity;for(const c of vis)left=Math.min(left,c.getBoundingClientRect().left);
+      return left>=br.left+6};
+    if(room())return;
+    more.style.display='';
+    const cand=all.filter(g=>+g.dataset.pri>0&&!g.classList.contains('edtools'))
+      .sort((a,b)=>+b.dataset.pri-+a.dataset.pri);
+    for(const g of cand){
+      if(room())break;
+      g.dataset.at=all.indexOf(g);mp.appendChild(g)}}
+  let BFT=null;addEventListener('resize',()=>{clearTimeout(BFT);BFT=setTimeout(()=>{barFit();barH()},120)});
+  async function askAdmin(){
+    if(isAdmin()&&(admKey()||ONGESHER)){setEdit(!EDIT);return}
+    const a=prompt('מילת המנהל (מוקלדת פעם אחת בלבד בכל מכשיר):');
+    if(a===null||!a.trim())return;
+    try{
+      const dev=(/iPad|Tablet|Android|Mobile/i.test(navigator.userAgent)?'טאבלט או טלפון':'מחשב')+' · '+new Date().toLocaleDateString('he-IL');
+      const j=await api('/auth',{method:'POST',body:JSON.stringify({word:a.trim(),label:dev})});
+      try{localStorage.setItem(ADMKEY,j.token);localStorage.setItem(AKEY,'1')}catch(e){}
+      document.body.classList.add('adm');
+      toast('המכשיר הזה זוהה. אין צורך להקליד שוב את המילה.',4500);
+      setEdit(true);sqBadge();netInit(true)
+    }catch(e){
+      alert(/נכונה/.test(e.message||'')?'המילה אינה נכונה.':'לא ניתן להתחבר כרגע: '+(e.message||'שגיאה'))}}
 
   /* =================== סרגל הסגנונות הצף ===================
      נפתח מעל הבחירה ואינו מכסה את הטקסט הנערך. שמות הסגנונות הם
@@ -2279,8 +2554,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     h+='<div style="margin-top:12px;display:flex;gap:7px;flex-wrap:wrap">'+
        '<button onclick="pubNow(1)">פרסם עכשיו</button>'+
        '<button onclick="edDownload()" title="גיבוי בלבד; הקליטה לוורד קוראת מנקודת הקליטה">הורד לקובץ (גיבוי)</button>'+
-       '<button onclick="admKeyAsk()">מפתח המנהל</button>'+
-       '<button onclick="edKey()">מפתח הפרסום</button>'+
+       '<button onclick="devModal()" title="המכשירים שהקלידו את מילת המנהל. אפשר לבטל מכשיר שאבד">המכשירים המוכרים</button>'+
        '<button onclick="edClear()">נקה הכל</button></div>';
     box.innerHTML=h}
   function psName(c){const f=PSTY.find(p=>p[0]===(c||''));return f?f[1]:(c||'גוף')}
@@ -2291,6 +2565,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* ביטול שינוי מבנה מחזיר את הנתונים למקורם, והדרך הבטוחה לכך
        היא לטעון את הדף מחדש: הוא נבנה מן הנתונים שבקובץ. */
     if(e.op==='struct'){edKeys();tomb(e.k);ED.splice(i,1);saveED();location.reload();return}
+    dataSet(e.k,e.wasH!==undefined?e.wasH:esc(e.was));
+    if(e.ps!==undefined)dataCls(e.k,e.wasP||'');
+    SLOTS=null;
     const el=$('#flow').querySelector('[data-ek="'+e.k+'"]');
     if(el){setHTML(el,e.wasH!==undefined?e.wasH:esc(e.was));delete el.dataset.edited;
       delete el.__was;
@@ -2299,7 +2576,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(e.ps!==undefined&&el.tagName==='DIV'&&/(nose|dh)/.test(e.wasP||''))headTo(el,(e.wasP||'').split(' ').filter(Boolean))}
     ED.splice(i,1);tomb(e.k);saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon();syncSoon()}
   function edClear(){if(!confirm('למחוק את כל '+ED.length+' התיקונים? הם יימחקו גם מן הפרסום ומכל המכשירים.'))return;
-    ED.forEach(e=>tomb(e.k));ED=[];saveED();render(cur);drawEd();pubSoon();syncSoon()}
+    /* הנתונים נושאים את העריכות, והדרך הבטוחה להחזיר אותם למקורם היא
+       לטעון את הדף מחדש. המחיקה כבר נרשמה והיא נשלחת בטעינה. */
+    edKeys();ED.forEach(e=>tomb(e.k));ED=[];saveED();
+    api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:TOMB,sty:D.sty})}).catch(()=>{}).then(()=>location.reload())}
   function edText(){
     let t='תיקוני '+D.masechet+' - לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n';
     t+=ED.length+' תיקונים\n\n';
@@ -2351,8 +2631,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   async function gesherAlive(){const r=await gesher('/shalom');GOK=!!r.ok;return GOK}
   function pubDraw(){const e=$('#edpub');if(!e)return;
     const np=ED.filter(x=>!x.pub).length;
-    e.textContent=PUBMSG||(np?'· '+np+' ממתינים לפרסום':(ED.length?'· פורסם':''))
-      +(GOK===false&&!ghTok()?' · מפרסם כשהמחשב הראשי יידלק':'');
+    let t=PUBMSG||(np?'· '+np+' ממתינים לפרסום':(ED.length?'· נשמר ומוצג לכל הלומדים':''));
+    /* שלושת השלבים: נשמר ומוצג לכולם, נכלל בבניית האתר, נקלט בוורד */
+    if(!PUBBUSY&&!np&&ED.length&&PUBMSG.indexOf('לא פורסם')!==0){
+      const inWord=EDWORD+ED.filter(x=>x.ing).length, inBuild=Math.max(0,EDTAKEN-EDWORD);
+      if(inBuild)t+=' · '+inBuild+' נכללו בבניית האתר';
+      if(inWord)t+=' · '+inWord+' נקלטו בוורד'}
+    e.textContent=t+(GOK===false&&!ghTok()&&!admKey()?' · מפרסם כשהמחשב הראשי יידלק':'');
     e.className='edpub'+(PUBMSG.indexOf('לא פורסם')===0?' bad':'')}
   function pubSoon(){clearTimeout(PUBT);PUBT=setTimeout(()=>pubNow(0),2500)}
   function b64(s){return btoa(unescape(encodeURIComponent(s)))}
@@ -2373,7 +2658,22 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const sig=body.replace(/"when":"[^"]*",?/,'');
     if(!loud&&sig===PUBLAST)return;
     PUBBUSY=true;PUBMSG='מפרסם…';pubDraw();
-    /* הדרך הראשונה: הגשר שבמחשב. אין בה מפתח ואין בה הכנה. */
+    /* הדרך הראשונה: נקודת הקליטה, ממכשיר מוכר. אין בה מפתח להזין, אין
+       תלות במחשב הראשי, והתיקון מוצג לכל הלומדים מיד בטעינת הדף. משם
+       נאפה לנתוני האתר ונקלט לוורד. */
+    if(admKey()){
+      try{
+        const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty})});
+        ED.forEach(e=>e.pub=1);saveED();PUBLAST=sig;PUBMSG='';
+        PUBBUSY=false;
+        if(mergeIn(j.doc&&j.doc.edits))applyIncoming();
+        pubDraw();drawEd();return}
+      catch(err){
+        if(/אין הרשאה/.test(err.message||'')){PUBBUSY=false;PUBMSG='';devRevoked();return}
+        /* אין חיבור לנקודת הקליטה: ממשיכים לדרכים האחרות, והעריכות שמורות */
+      }
+    }
+    /* הדרך השנייה: הגשר שבמחשב. אין בה מפתח ואין בה הכנה. */
     const g=await gesher('/edits',{method:'POST',
       headers:{'Content-Type':'application/json'},body:body});
     GOK=g.ok||g.why!=='אין גשר';
@@ -2456,14 +2756,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
        הם פסקה אחת בוורד מעצם טיבם. */
     if(e.key==='Enter'&&!e.shiftKey){
       e.preventDefault();
-      capture(el);
+      clearTimeout(CAPT);capture(el);
       if(el.tagName!=='P'){flash('כאן אין פיצול: זו כותרת, והיא פסקה אחת');return}
       splitAtCaret(el);
       return}
     /* מחיקה אחורה בתו הראשון של פסקה מאחדת אותה עם הקודמת */
     if(e.key==='Backspace'&&el.tagName==='P'&&atStart(el)){
       e.preventDefault();
-      capture(el);
+      clearTimeout(CAPT);capture(el);
       mergeBack(el);
       return}
   });
@@ -2675,6 +2975,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
          '<button onclick="sqDecide(\''+esc(g.id)+'\',\'edited\')">ערוך וקבל</button>'+
          '<button onclick="sqJump(\''+esc(g.id)+'\')">הצג</button>':'')+
       '<button onclick="sqDecide(\''+esc(g.id)+'\',\'rejected\')">דחה</button></div>'}
+  /* תיקון טקסט שהתקבל עכשיו: הנתונים והשורה שלו בלבד */
+  function applyTextNow(e){
+    const h=e.nowH!==undefined?e.nowH:esc(e.now);
+    dataSet(e.k,h);
+    if(e.ps!==undefined)dataCls(e.k,e.ps);
+    e._ap=1;e._cur=e.now;SLOTS=null;
+    const el=$('#flow').querySelector('[data-ek="'+e.k+'"]');
+    if(el){setHTML(el,h);el.dataset.edited='1'}}
   function sqJump(id){const g=QQ.find(x=>x.id===id);if(!g)return;const s=sqLocate(g,slotsFull());if(s)jump(s.pi,s.id)}
   async function sqDecide(id,st){
     const g=QQ.find(x=>x.id===id);if(!g)return;
@@ -2702,7 +3010,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     try{await api('/decide',{method:'POST',body:JSON.stringify({id,st,now,edit,sty:D.sty})})}
     catch(e){alert('ההכרעה לא נרשמה: '+e.message);return}
     QQ=QQ.filter(x=>x.id!==id);QQTOT=Math.max(0,QQTOT-1);
-    if(edit){render(cur);drawEd();pubSoon();syncSoon();toast('התיקון הוחל.')}
+    if(edit){applyTextNow(edit);drawEd();pubSoon();syncSoon();toast('התיקון הוחל.')}
     else toast('ההצעה נדחתה ועברה לארכיון.');
     sqBadge();drawSq()}
   function admKeyAsk(){
@@ -2712,6 +3020,23 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(v.trim()){try{localStorage.setItem(AKEY,'1')}catch(e){}netInit(true)}
     sqBadge()}
 
+  /* רשימת המכשירים המוכרים, וביטול של מכשיר */
+  async function devModal(){
+    const old=$('#devm');if(old){old.remove();return}
+    const m=document.createElement('div');m.className='modal';m.id='devm';
+    m.innerHTML='<div class="box"><h3>המכשירים המוכרים</h3><div id="devl">טוען…</div><div class="btns"><button onclick="devModal()">סגירה</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',e=>{if(e.target===m)m.remove()});
+    try{
+      const j=await api('/devices');
+      $('#devl').innerHTML=j.devices.length?j.devices.map(d=>'<div class="sgrow"><b>'+esc(d.label||'מכשיר')+'</b> <small>הוכר ב-'+
+        new Date(d.created).toLocaleDateString('he-IL')+'</small> <button data-id="'+esc(d.id)+'" onclick="devRevoke(this.dataset.id)">ביטול המכשיר</button></div>').join('')
+        :'<div class="edsum">אין מכשירים מוכרים בנקודת הקליטה.</div>';
+    }catch(e){$('#devl').textContent='לא ניתן לקרוא את הרשימה: '+(e.message||'')}}
+  async function devRevoke(id){
+    if(!confirm('לבטל את המכשיר הזה? הוא יתבקש להקליד שוב את מילת המנהל.'))return;
+    try{await api('/devices/revoke',{method:'POST',body:JSON.stringify({id})});toast('המכשיר בוטל.');devModal();devModal()}
+    catch(e){alert('הביטול לא נרשם: '+(e.message||''))}}
   /* ---- סנכרון עריכות המנהל בין מכשירים ---- */
   let TOMB=[]; try{TOMB=JSON.parse(localStorage.getItem(TKEY2)||'[]')}catch(e){TOMB=[]}
   let SYNCT=null,SYNCBUSY=false,EDRO=false;
@@ -2725,16 +3050,32 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function mergeIn(list){edKeys();let changed=false;const by={};ED.forEach(e=>by[e.k]=e);
     for(const e of list||[]){const o=by[e.k];
       if(e.del){if(o&&(o.t||0)<=(e.t||0)){ED=ED.filter(x=>x!==o);delete by[e.k];changed=true}continue}
-      if(!o||(o.t||0)<(e.t||0)){const n=Object.assign({pub:o?o.pub:1},e);if(o)ED[ED.indexOf(o)]=n;else ED.push(n);by[e.k]=n;changed=true}
+      if(!o||(o.t||0)<(e.t||0)){const n=Object.assign({pub:o?o.pub:1},e);
+        if(o&&o._ap&&o.op!=='struct')n._cur=o.now;    /* הנתונים כבר נושאים את הנוסח הישן שלה */
+        if(o&&o._ap&&o.op==='struct')n._ap=1;           /* מבנה שכבר הוחל - אינו מוחל פעמיים */
+        if(o)ED[ED.indexOf(o)]=n;else ED.push(n);by[e.k]=n;changed=true}
       else if(e.ing&&!o.ing){o.ing=e.ing}}
     if(changed)saveED();return changed}
   function syncSoon(){clearTimeout(SYNCT);SYNCT=setTimeout(syncNow,1500)}
   async function syncNow(){
     if(!isAdmin()||!admKey()||SYNCBUSY)return;SYNCBUSY=true;
     try{const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty})});
-      if(mergeIn(j.doc&&j.doc.edits)){if(typeof applyStruct==='function')applyStruct();render(cur)}}
-    catch(e){}
+      if(mergeIn(j.doc&&j.doc.edits))applyIncoming()}
+    catch(e){if(/אין הרשאה/.test(e.message||''))devRevoked()}
     SYNCBUSY=false}
+  /* עריכות שהגיעו ממכשיר אחר: מוחלות על הנתונים, ועל המסך רק בשורות
+     שהשתנו - ולעולם לא בשורה שהסמן בתוכה */
+  function applyIncoming(){
+    const snaps=D.pages.map((p,i)=>snapOf(i));
+    applyStruct();
+    snaps.forEach(s=>patchPage(s,true));
+    applyEdits();drawEd()}
+  /* המכשיר הזה כבר אינו מוכר (בוטל מרשימת המכשירים) */
+  function devRevoked(){
+    try{localStorage.removeItem(ADMKEY);localStorage.removeItem(AKEY)}catch(e){}
+    document.body.classList.remove('adm');
+    toast('המכשיר הזה כבר אינו מוכר כמכשיר מנהל. להפעלת העריכה מחדש הקלד את מילת המנהל.',6000);
+    sqBadge()}
   /* ---- בטעינה: המנהל מושך את התור ואת העריכות; הלומד מקבל את מה
      שהתקבל ---- */
   async function netInit(force){
@@ -2759,6 +3100,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      הבחירה נשמרת במכשיר. */
   let SRCVIEW=localStorage.getItem('lg-srcview')||'both';
   if(['gem','both','per'].indexOf(SRCVIEW)<0)SRCVIEW='both';
+  /* צמוד לטקסט (ברירת מחדל) או דפדוף חופשי */
+  let SRCSYNC=localStorage.getItem('lg-srcsync')!=='0';
+  let SX=null, REFS=null, SRCT=null;
   function srcDefault(){return innerWidth<900?'full':'split'}
   function loadSrc(){
     if(SRC)return Promise.resolve(SRC);
@@ -2769,48 +3113,291 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function barH(){const b=document.querySelector('.bar');
     document.documentElement.style.setProperty('--barH',(b?b.getBoundingClientRect().height:52)+'px')}
   function refDaf(ref){const m=/\.(\d+[ab])\.(\d+)$/.exec(ref||'');return m?[m[1],+m[2]]:null}
+  /* מפתח סדר של קטע: דף (2a=4, 2b=5) ומספר הקטע בו */
+  function refKey(ref){const m=/\.(\d+)([ab])\.(\d+)$/.exec(ref||'');return m?(+m[1]*2+(m[2]==='b'?1:0))*1000+(+m[3]):null}
+  function refList(){
+    if(REFS)return REFS;
+    REFS=[];D.pages.forEach(p=>p.units.forEach(u=>{if(u.ref)REFS.push(u.ref)}));
+    return REFS}
+  /* היקף הסוגיה: כל קטעי הגמרא שהיחידה מכסה - מן הקטע שלה ועד הקטע
+     שלפני ההפניה של היחידה הבאה */
+  function coverOf(ref){
+    const out=new Set([ref]),k=refKey(ref);
+    if(k===null||!SX)return out;
+    const L=refList(),at=L.indexOf(ref);let nk=null;
+    for(let i=at+1;i<L.length&&at>-1;i++){const x=refKey(L[i]);if(x!==null&&x>k){nk=x;break}}
+    if(nk===null)nk=(Math.floor(k/1000)+1)*1000;
+    for(const heb of SX.keys){
+      const pg=SRC.pages[heb];
+      for(const r of pg.refs){const x=refKey(r);if(x!==null&&x>=k&&x<nk)out.add(r)}}
+    return out}
+  function srcPageHTML(i){
+    const heb=SX.keys[i],pg=SRC.pages[heb];
+    const per=pg.perush||null,wantP=SRCVIEW!=='gem',wantG=SRCVIEW!=='per';
+    const one=n=>(wantG?'<p class="g">'+(pg.gemara[n]||'')+'</p>':'')+
+      (wantP&&per&&per[n]?'<div class="prs">'+per[n]+'</div>':'');
+    return '<section class="spg" data-i="'+i+'"><h4>דף '+esc(heb)+'</h4>'+
+      pg.gemara.map((g,n)=>'<div class="sgx" data-n="'+n+'" data-ref="'+esc(pg.refs[n]||'')+'">'+
+        (one(n)||('<p class="g">'+g+'</p>'))+'</div>').join('')+
+      (wantP&&!per?'<div class="ld">אין פירוש לדף הזה.</div>':'')+'</section>'}
+  function srcBody(){return document.querySelector('#srcx .srcbody')}
+  /* הדף שנראה בראש המגירה */
+  function srcTopPage(){
+    const b=srcBody();if(!b)return null;
+    const bt=b.getBoundingClientRect().top+4;
+    let hit=null;
+    for(const s of b.querySelectorAll('.spg')){hit=s;if(s.getBoundingClientRect().bottom>bt)break}
+    return hit}
+  function srcTitle(){
+    const t=srcTopPage(),el=$('#sdaf');
+    const heb=t?SX.keys[+t.dataset.i]:'';
+    if(el)el.textContent=heb;
+    const h=document.querySelector('#srcx .srchd b');if(h)h.textContent='מקור · דף '+heb}
+  /* סימון: כל ההיקף ברקע עדין, והקטע המדויק חזק יותר */
+  function srcMark(scroll,smooth){
+    const box=$('#srcx');if(!box||!SX)return;
+    const cov=coverOf(SX.ref);
+    box.querySelectorAll('.sgx').forEach(s=>{
+      const r=s.dataset.ref;
+      s.classList.toggle('cov',cov.has(r));
+      s.classList.toggle('hit',r===SX.ref)});
+    const h=box.querySelector('.sgx.hit');
+    if(h&&scroll)h.scrollIntoView({block:'center',behavior:smooth?'smooth':'auto'});
+    srcTitle()}
+  function srcGo(ref,smooth){
+    if(!SX||!SRC)return;
+    SX.ref=ref;
+    const d=refDaf(ref);
+    const i=SX.keys.findIndex(k=>SRC.pages[k].daf===d[0]);
+    if(i<0)return;
+    const b=srcBody();
+    if(i<SX.lo||i>SX.hi){SX.lo=SX.hi=i;b.innerHTML=srcPageHTML(i)}   /* דף אחר: נטען ברקע */
+    srcMark(true,smooth)}
+  /* הקטע שבו נמצא הסמן (בעריכה) או מרכז המסך (בקריאה) */
+  function curFlowRef(){
+    let row=null;
+    const s=getSelection(),f=$('#flow');
+    if(EDIT&&s&&s.rangeCount){let n=s.anchorNode;if(n&&n.nodeType===3)n=n.parentElement;
+      if(n&&n.closest&&f.contains(n))row=n.closest('.row')}
+    if(!row){
+      const fr=f.getBoundingClientRect(),cx=fr.left+fr.width/2,cy=fr.top+fr.height/2;
+      for(const dx of [0,-40,40,-90,90,-160,160]){
+        const e=document.elementFromPoint(cx+dx,cy);
+        row=e&&e.closest?e.closest('.row'):null;if(row)break}}
+    while(row&&!row.dataset.ref)row=row.previousElementSibling;
+    return row&&row.dataset.ref||''}
+  function srcSyncSoon(){
+    if(!SX||!SRCSYNC||!$('#srcx'))return;
+    clearTimeout(SRCT);SRCT=setTimeout(srcSyncNow,250)}
+  function srcSyncNow(){
+    if(!SX||!SRCSYNC)return;
+    const r=curFlowRef();
+    if(r&&r!==SX.ref)srcGo(r,true)}
+  /* גלילה רציפה: בהגעה לסוף הדף הבא נטען מתחתיו, ובהגעה לראשו - הקודם */
+  function srcScroll(){
+    const b=srcBody();if(!b||!SX)return;
+    if(b.scrollTop+b.clientHeight>b.scrollHeight-240&&SX.hi<SX.keys.length-1){
+      SX.hi++;b.insertAdjacentHTML('beforeend',srcPageHTML(SX.hi));srcMark(false)}
+    else if(b.scrollTop<140&&SX.lo>0){
+      SX.lo--;const h0=b.scrollHeight,t0=b.scrollTop;
+      b.insertAdjacentHTML('afterbegin',srcPageHTML(SX.lo));
+      b.scrollTop=t0+(b.scrollHeight-h0);srcMark(false)}
+    srcTitle()}
+  function srcFree(){            /* פעולת דפדוף ידנית מפסיקה את הצמידות */
+    if(SRCSYNC){SRCSYNC=false;try{localStorage.setItem('lg-srcsync','0')}catch(e){}srcSyncUi()}}
+  function srcSyncUi(){
+    const a=$('#ssync'),b=$('#sback');
+    if(a){a.textContent=SRCSYNC?'צמוד לטקסט':'דפדוף חופשי';a.classList.toggle('on',SRCSYNC)}
+    if(b)b.style.display=SRCSYNC?'none':''}
+  function srcPage(d){
+    const b=srcBody();if(!b||!SX)return;
+    const t=srcTopPage();if(!t)return;
+    const i=+t.dataset.i+d;
+    if(i<0||i>=SX.keys.length)return;
+    srcFree();
+    while(i>SX.hi){SX.hi++;b.insertAdjacentHTML('beforeend',srcPageHTML(SX.hi))}
+    while(i<SX.lo){SX.lo--;const h0=b.scrollHeight,t0=b.scrollTop;
+      b.insertAdjacentHTML('afterbegin',srcPageHTML(SX.lo));b.scrollTop=t0+(b.scrollHeight-h0)}
+    srcMark(false);
+    const el=b.querySelector('.spg[data-i="'+i+'"]');
+    if(el)b.scrollTo({top:el.offsetTop-b.offsetTop,behavior:'smooth'})}
+  function srcSeg(d){
+    const b=srcBody();if(!b||!SX)return;
+    const all=[...b.querySelectorAll('.sgx')];
+    let i=all.findIndex(s=>s.dataset.ref===SX.ref);
+    if(i<0)i=0;
+    const n=all[i+d];if(!n)return;
+    srcFree();SX.ref=n.dataset.ref;srcMark(true,true)}
+  function srcApplyW(){
+    let w=+localStorage.getItem('lg-srcw');
+    if(!(w>=25&&w<=75))w=50;
+    document.documentElement.style.setProperty('--srcw',w+'vw')}
+  function srcMenuHTML(mode){
+    const g=(grp,list,cur)=>list.map(x=>'<button data-'+grp+'="'+x[0]+'" class="'+(x[0]===cur?'on':'')+'">'+x[1]+'</button>').join('');
+    return '<div class="smpop" id="smpop"><div class="sml">מה מוצג</div>'+
+      g('v',[['gem','גמרא'],['both','גמרא ופירוש'],['per','פירוש']],SRCVIEW)+
+      '<div class="sml">גודל המגירה</div>'+
+      g('m',[['peek','הצצה'],['split','מסך מפוצל'],['full','מלא']],mode)+'</div>'}
   function openSrc(ref){
     if(!ref)return;
-    barH();
+    barH();srcApplyW();
     let box=$('#srcx');
-    if(!box){box=document.createElement('div');box.id='srcx';document.body.appendChild(box)}
+    if(!box){box=document.createElement('div');box.id='srcx';box.tabIndex=0;document.body.appendChild(box)}
     const mode=SRCMODE||srcDefault();
     box.className='src '+mode;
     document.body.classList.toggle('splitsrc',mode==='split');
-    box.innerHTML='<div class="srchd"><b>מקור</b><span class="sp"></span>'+
-      ['gem','both','per'].map(v=>'<button data-v="'+v+'" class="'+(v===SRCVIEW?'on':'')+'">'+
-        ({gem:'גמרא',both:'גמרא ופירוש',per:'פירוש'})[v]+'</button>').join('')+
-      '<span class="srcsep"></span>'+
-      ['peek','split','full'].map(m=>'<button data-m="'+m+'" class="'+(m===mode?'on':'')+'">'+
-        ({peek:'הצצה',split:'מסך מפוצל',full:'מלא'})[m]+'</button>').join('')+
-      '<button onclick="closeSrc()" title="Esc">×</button></div>'+
-      '<div class="srcbody"><div class="ld">טוען את הגמרא…</div></div>';
-    box.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{
-      SRCMODE=b.dataset.m;localStorage.setItem('lg-srcmode',SRCMODE);openSrc(ref)});
-    box.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{
-      SRCVIEW=b.dataset.v;try{localStorage.setItem('lg-srcview',SRCVIEW)}catch(e){}openSrc(ref)});
+    SX={ref,lo:0,hi:-1,keys:[]};REFS=null;
+    box.innerHTML='<div class="srchd"><b>מקור</b>'+
+      '<button id="sp-prev" title="הדף הקודם בגמרא (Alt+חץ ימינה)">› דף קודם</button>'+
+      '<span class="sdaf" id="sdaf"></span>'+
+      '<button id="sp-next" title="הדף הבא בגמרא (Alt+חץ שמאלה)">דף הבא ‹</button>'+
+      '<button id="ss-prev" title="הקטע הקודם בגמרא">קטע קודם</button>'+
+      '<button id="ss-next" title="הקטע הבא בגמרא">קטע הבא</button>'+
+      '<span class="sp"></span>'+
+      '<button id="ssync" title="צמוד לטקסט: המגירה עוקבת אחרי הסמן. דפדוף חופשי: אפשר לגלול בה בלי שתזוז">צמוד לטקסט</button>'+
+      '<button id="sback" style="display:none" title="מחזיר את המגירה לקטע של הסמן ומחזיר את הצמידות">חזור למקום</button>'+
+      '<span class="smenu"><button id="smb" title="מה מוצג, וגודל המגירה">תצוגה ▾</button>'+srcMenuHTML(mode)+'</span>'+
+      '<button onclick="closeSrc()" title="סגירה (Esc)">×</button></div>'+
+      '<div class="srcbody" tabindex="-1"><div class="ld">טוען את הגמרא…</div></div>'+
+      (mode==='split'?'<div class="srcdrag" id="srcdrag" title="גרור לשינוי היחס בין הטקסט והמקור"></div>':'');
+    srcSyncUi();
+    $('#sp-prev').onclick=()=>srcPage(-1);$('#sp-next').onclick=()=>srcPage(1);
+    $('#ss-prev').onclick=()=>srcSeg(-1);$('#ss-next').onclick=()=>srcSeg(1);
+    $('#ssync').onclick=()=>{SRCSYNC=!SRCSYNC;try{localStorage.setItem('lg-srcsync',SRCSYNC?'1':'0')}catch(e){}
+      srcSyncUi();if(SRCSYNC)srcSyncNow()};
+    $('#sback').onclick=()=>{SRCSYNC=true;try{localStorage.setItem('lg-srcsync','1')}catch(e){}
+      srcSyncUi();const r=curFlowRef();if(r)srcGo(r,true)};
+    const pop=$('#smpop');
+    $('#smb').onclick=ev=>{ev.stopPropagation();pop.classList.toggle('open')};
+    pop.addEventListener('click',ev=>{
+      const b=ev.target.closest('button');if(!b)return;ev.stopPropagation();
+      if(b.dataset.m){SRCMODE=b.dataset.m;try{localStorage.setItem('lg-srcmode',SRCMODE)}catch(e){}openSrc(SX.ref);return}
+      if(b.dataset.v){SRCVIEW=b.dataset.v;try{localStorage.setItem('lg-srcview',SRCVIEW)}catch(e){}
+        const bd=srcBody();let h='';for(let i=SX.lo;i<=SX.hi;i++)h+=srcPageHTML(i);bd.innerHTML=h;
+        pop.querySelectorAll('[data-v]').forEach(x=>x.classList.toggle('on',x.dataset.v===SRCVIEW));
+        srcMark(true,false)}});
+    box.addEventListener('click',ev=>{if(!ev.target.closest('.smenu'))pop.classList.remove('open')});
+    /* מקשים כשהמיקוד במגירה: לא מגיעים לטקסט הראשי */
+    box.addEventListener('keydown',ev=>{
+      if(ev.key==='Escape'){closeSrc();ev.stopPropagation();ev.preventDefault();return}
+      if(ev.altKey&&ev.key==='ArrowRight'){srcPage(-1);ev.preventDefault();ev.stopPropagation();return}
+      if(ev.altKey&&ev.key==='ArrowLeft'){srcPage(1);ev.preventDefault();ev.stopPropagation();return}
+      const bd=srcBody();
+      if(ev.key==='ArrowDown'){srcFree();bd.scrollBy({top:70});ev.preventDefault()}
+      else if(ev.key==='ArrowUp'){srcFree();bd.scrollBy({top:-70});ev.preventDefault()}
+      else if(ev.key==='PageDown'){srcFree();bd.scrollBy({top:bd.clientHeight*.9,behavior:'smooth'});ev.preventDefault()}
+      else if(ev.key==='PageUp'){srcFree();bd.scrollBy({top:-bd.clientHeight*.9,behavior:'smooth'});ev.preventDefault()}
+      ev.stopPropagation()});
+    /* גלילה ידנית בגלגלת או במגע מפסיקה את הצמידות */
+    const body0=srcBody();
+    body0.addEventListener('wheel',()=>srcFree(),{passive:true});
+    body0.addEventListener('touchmove',()=>srcFree(),{passive:true});
+    const dr=$('#srcdrag');
+    if(dr)dr.addEventListener('pointerdown',ev=>{
+      ev.preventDefault();dr.setPointerCapture(ev.pointerId);
+      const mv=e2=>{const pct=Math.max(25,Math.min(75,e2.clientX/innerWidth*100));
+        document.documentElement.style.setProperty('--srcw',pct.toFixed(1)+'vw')};
+      const up=e2=>{dr.removeEventListener('pointermove',mv);dr.removeEventListener('pointerup',up);
+        const pct=Math.max(25,Math.min(75,e2.clientX/innerWidth*100));
+        try{localStorage.setItem('lg-srcw',pct.toFixed(1))}catch(e){}
+        fitAnchors();squeezeRun()};
+      dr.addEventListener('pointermove',mv);dr.addEventListener('pointerup',up)});
     loadSrc().then(j=>{
+      SX.keys=Object.keys(j.pages);
       const d=refDaf(ref);if(!d)return;
-      const heb=Object.keys(j.pages).find(k=>j.pages[k].daf===d[0]);
-      const pg=j.pages[heb];if(!pg)return;
-      const i=pg.refs.indexOf(ref);
-      box.querySelector('.srchd b').textContent='מקור · דף '+heb;
-      const per=pg.perush||null, wantP=SRCVIEW!=='gem', wantG=SRCVIEW!=='per';
-      const one=n=>(wantG?'<p class="g">'+(pg.gemara[n]||'')+'</p>':'')+
-        (wantP&&per&&per[n]?'<div class="prs">'+per[n]+'</div>':'');
-      const note=wantP&&!per?'<div class="ld">אין פירוש לדף הזה.</div>':'';
-      box.querySelector('.srcbody').innerHTML=
-        '<div class="srcseg">'+(one(i)||('<p class="g">'+(pg.gemara[i]||'')+'</p>'))+'</div>'+note+
-        '<h4>הדף כולו</h4><div class="srcall">'+
-        pg.gemara.map((g,n)=>'<div class="sgx'+(n===i?' hit':'')+'" id="sg'+n+'">'+(one(n)||('<p class="g">'+g+'</p>'))+'</div>').join('')+
-        '</div>';
+      const i=SX.keys.findIndex(k=>j.pages[k].daf===d[0]);
+      if(i<0){srcBody().innerHTML='<div class="ld">הקטע אינו בגמרא שנטענה.</div>';return}
+      SX.lo=SX.hi=i;
+      srcBody().innerHTML=srcPageHTML(i);
       if(!box.querySelector('.srcft')){const f=document.createElement('div');f.className='srcft';
         f.textContent=j.attribution||'';box.appendChild(f)}
-      const h=box.querySelector('.hit');if(h)h.scrollIntoView({block:'center'});
-    }).catch(e=>{box.querySelector('.srcbody').innerHTML=
+      srcMark(true,false);
+      srcBody().addEventListener('scroll',srcScroll,{passive:true});
+    }).catch(e=>{srcBody().innerHTML=
       '<div class="ld">לא הצלחתי לטעון את הגמרא ('+esc(String(e.message||e))+').</div>'});
   }
-  function closeSrc(){const b=$('#srcx');if(b)b.remove();document.body.classList.remove('splitsrc')}
+  function closeSrc(){const b=$('#srcx');if(b)b.remove();SX=null;document.body.classList.remove('splitsrc')}
+
+  /* =================== הסמן והמסך: כמו בוורד ===================
+     א. אחרי כל תזוזת סמן (חצים, Home, End, PageUp, PageDown, הקלדה, Enter)
+        נמדד מלבן הסמן. אם הוא קרוב לשולי המסגרת - המסגרת נגללת, ברכות,
+        והסמן חוזר לשטח הנוח. בטורים: אופקית. בטור רצוף: אנכית.
+     ב. חץ למטה/למעלה בקצה הפרק עובר לפרק הבא/הקודם, בלי עכבר.
+     ג. במצב קריאה: חצים גוללים, PageUp/PageDown מסך, Home/End קצה הפרק. */
+  function caretRect(){
+    const s=getSelection();if(!s||!s.rangeCount)return null;
+    const r=s.getRangeAt(0).cloneRange();r.collapse(true);
+    let b=r.getClientRects()[0];
+    if(!b||(!b.width&&!b.height)){
+      const n=r.startContainer.nodeType===1?r.startContainer:r.startContainer.parentElement;
+      b=n&&n.getBoundingClientRect?n.getBoundingClientRect():null}
+    return b||null}
+  function followCaret(smooth){
+    const f=$('#flow');if(!f||!EDIT)return;
+    const b=caretRect();if(!b||(!b.width&&!b.height&&!b.top&&!b.left))return;
+    const fr=f.getBoundingClientRect(),lh=lhOf(f)||24,beh=smooth===false?'auto':'smooth';
+    if(f.classList.contains('vert')){
+      const m=lh*3;
+      if(b.top<fr.top+m)f.scrollBy({top:b.top-fr.top-m,behavior:beh});
+      else if(b.bottom>fr.bottom-m)f.scrollBy({top:b.bottom-fr.bottom+m,behavior:beh});
+    }else{
+      /* בטורים הסמן עובר לטור הבא בשמאל. אותה נוסחה כמו toEl, שנכונה בשתי
+         מוסכמות ה-RTL: הפרש בין קצה הסמן לקצה המסגרת, נוסף לגלילה */
+      const m=Math.max(48,lh*3);
+      let d=0;
+      if(b.left<fr.left+m)d=b.left-(fr.left+m);
+      else if(b.right>fr.right-m)d=b.right-(fr.right-m);
+      if(Math.abs(d)>1)f.scrollTo({left:f.scrollLeft+d,behavior:beh})}}
+  let KEYNAV=0;
+  document.addEventListener('keydown',e=>{
+    if(!EDIT||!e.target.isContentEditable)return;
+    if(/^(Arrow|Home$|End$|Page|Enter$|Backspace$|Delete$)/.test(e.key)||(e.key.length===1&&!e.ctrlKey&&!e.altKey))KEYNAV=Date.now();
+    /* חץ בקצה הפרק: אם הסמן לא זז - עוברים לפרק הסמוך */
+    if((e.key==='ArrowDown'||e.key==='ArrowUp')&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&!ALL){
+      const s=getSelection(),a=s.anchorNode,o=s.anchorOffset,d=e.key==='ArrowDown'?1:-1;
+      setTimeout(()=>{const s2=getSelection();
+        if(s2.anchorNode===a&&s2.anchorOffset===o)edgeChapter(d)},50)}
+  },true);
+  document.addEventListener('selectionchange',()=>{
+    if(EDIT&&Date.now()-KEYNAV<700)requestAnimationFrame(()=>followCaret());
+    if(SX)srcSyncSoon()});
+  function edgeChapter(d){
+    const to=cur+d;if(to<0||to>=SEC.length)return;
+    render(to);                       /* מעבר פרק: מותר לבנות מחדש */
+    const els=[...$('#flow').querySelectorAll('[data-ek]')].filter(x=>!x.classList.contains('anchor'));
+    const el=d>0?els[0]:els[els.length-1];if(!el)return;
+    placeCaret(el.dataset.ek,d>0?0:txtOf(el).length)}
+  /* ---- מצב קריאה ---- */
+  function chapterEdge(end){
+    const f=$('#flow'),s=SEC[cur];
+    if(f.classList.contains('vert')){
+      if(end){
+        if(cur<SEC.length-1){const u=D.pages[SEC[cur+1].from].units[0];const r=u&&$('#u'+u.id);
+          if(r){f.scrollTo({top:f.scrollTop+r.getBoundingClientRect().top-f.getBoundingClientRect().top-lhOf(f)*2,behavior:'smooth'});return}}
+        f.scrollTo({top:f.scrollHeight,behavior:'smooth'})
+      }else{
+        const u=D.pages[s.from].units[0];const r=u&&$('#u'+u.id);
+        if(r)f.scrollTo({top:f.scrollTop+r.getBoundingClientRect().top-f.getBoundingClientRect().top-lhOf(f),behavior:'smooth'});
+        else f.scrollTo({top:0,behavior:'smooth'})}
+      return}
+    const span=f.scrollWidth-f.clientWidth;
+    /* תחילת הפרק בקצה הימני: scrollWidth-clientWidth כשהדפדפן מדווח חיובי, ו-0 כשמדווח שלילי */
+    const startL=SGN>0?span:0, endL=SGN>0?0:-span;
+    f.scrollTo({left:end?endL:startL,behavior:'smooth'})}
+  document.addEventListener('keydown',e=>{
+    if(EDIT||e.ctrlKey||e.altKey||e.metaKey||e.defaultPrevented)return;
+    const t=e.target;
+    if(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable||(t.closest&&t.closest('.modal,.panel,#srcx,.stybar,.sideask')))return;
+    const f=$('#flow');if(!f)return;
+    const vert=f.classList.contains('vert');
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      const d=e.key==='ArrowDown'?1:-1;
+      if(vert)f.scrollBy({top:d*lhOf(f),behavior:'smooth'});
+      else f.scrollBy({left:-d*f.clientWidth/6,behavior:'smooth'});
+      e.preventDefault()}
+    else if(e.key==='Home'){chapterEdge(false);e.preventDefault()}
+    else if(e.key==='End'){chapterEdge(true);e.preventDefault()}});
+  $('#flow').addEventListener('scroll',()=>{if(SX&&!EDIT)srcSyncSoon()},{passive:true});
   /* מקש אחד פותח מקור ליחידה שבמוקד: זו שהעכבר עליה, ואם אין - הראשונה
      הנראית בדף. */
   let HOVER=null;
@@ -3079,7 +3666,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     BOOK=!BOOK;localStorage.setItem('lg-book',BOOK?'1':'');
     $('#bkbtn').classList.toggle('on',BOOK);
     $('#shsel').style.display=BOOK?'':'none';
-    render(cur)}
+    render(cur);viewUi()}
   function setSheets(n){SHEETS=+n;localStorage.setItem('lg-sheets',SHEETS);
     $('#flow').style.setProperty('--sheets',sheetsNow());render(cur)}
 
@@ -3094,27 +3681,38 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <title>לאוקמי גירסא · {masechet}</title>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>{CSS}</style><script src="daf-yomi.js"></script></head><body>
-  <div class="bar"><a href="index.html" style="color:inherit;text-decoration:none"><span class="nm">לאוקמי גירסא</span></a> <span>{masechet}</span>
+  <div class="bar" id="bar">
+  <div class="bg" data-pri="0"><a href="index.html" style="color:inherit;text-decoration:none"><span class="nm">לאוקמי גירסא</span></a> <span class="mn">{masechet}</span>
   <select id="peresel" title="פרק"></select>
-  <div class="nav"><button onclick="goDaf(-1)" title="דף קודם (Ctrl+חץ ימין)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="goDaf(1)" title="דף הבא (Ctrl+חץ שמאל)">‹ הבא</button></div>
+  <div class="nav"><button onclick="goDaf(-1)" title="דף קודם (Ctrl+חץ ימינה)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="goDaf(1)" title="דף הבא (Ctrl+חץ שמאלה)">הבא ‹</button></div>
   <select id="dafsel" title="דף"></select>
-  <input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)">
-  <span class="sp"></span>
-  <button id="dybtn" onclick="dafYomi()" title="פותח את הדף של היום לפי לוח הדף היומי">הדף היומי</button><button onclick="panel('toc')">תוכן העניינים</button><button onclick="panel('am')">אמוראים</button><button onclick="panel('qa')">בקרה</button>{hgbtn}
-  <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
-  <button id="bkbtn" onclick="book()" title="גיליונות זה לצד זה, בגיאומטריה של עמוד הספר">תצוגת ספר</button>
-  <select id="shsel" style="display:none" onchange="setSheets(this.value)" title="כמה גיליונות זה לצד זה">
-    <option value="1">גיליון אחד</option><option value="2">שני גיליונות</option><option value="3">שלושה גיליונות</option></select>
-  <button id="vbtn" onclick="vert()" title="כל המסכת בטור אחד, בגלילה מלמעלה למטה">טור רצוף</button>
-  <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
-  <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button>
-  <button data-fs="15" onclick="setFs(15)">קטן</button><button data-fs="18" onclick="setFs(18)">רגיל</button><button data-fs="24" onclick="setFs(24)">גדול</button>
-  <button onclick="fs(2)" title="Ctrl+=">א+</button><button onclick="fs(-2)" title="Ctrl+-">א-</button>
-  <button onclick="document.body.classList.toggle('hc')">ניגודיות</button><button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר">הדפס פרק</button>
-  <button id="edbtn" onclick="askAdmin()" title="עריכה תוך כדי לימוד (Ctrl+Alt+E)">עריכה</button>
+  <button id="dybtn" onclick="dafYomi()" title="פותח את הדף של היום לפי לוח הדף היומי">הדף היומי</button></div>
+  <div class="bg" data-pri="0"><input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)" title="חיפוש בכל המסכת"></div>
+  <div class="bg" data-pri="2"><button onclick="panel('toc')" title="נושאי הסוגיות">תוכן העניינים</button><button onclick="panel('am')" title="אמוראים ותנאים לפי הסימון בקובץ">אמוראים</button></div>
+  <div class="bg dd" data-pri="1" data-label="תצוגה"><button class="ddb" onclick="ddToggle(this)" title="אופן התצוגה, גודל הגופן והניקוד">תצוגה ▾</button>
+    <div class="ddp"><div class="sml">אופן התצוגה</div>
+    <button id="cbtn" onclick="setView('col')" title="טורים, כמו בעמוד הספר">טורים</button>
+    <button id="vbtn" onclick="setView('vert')" title="כל המסכת בטור אחד, בגלילה מלמעלה למטה">טור רצוף</button>
+    <button id="bkbtn" onclick="setView('book')" title="גיליונות זה לצד זה, בגיאומטריה של עמוד הספר">תצוגת ספר</button>
+    <select id="shsel" style="display:none" onchange="setSheets(this.value)" title="כמה גיליונות זה לצד זה">
+      <option value="1">גיליון אחד</option><option value="2">שני גיליונות</option><option value="3">שלושה גיליונות</option></select>
+    <div class="sml">גודל הגופן</div>
+    <div class="row3"><button onclick="fs(-2)" title="הקטנה (Ctrl+מינוס)">א-</button><button data-fs="18" onclick="setFs(18)">רגיל</button><button onclick="fs(2)" title="הגדלה (Ctrl+פלוס)">א+</button></div>
+    <div class="row3"><button data-fs="15" onclick="setFs(15)">קטן</button><button data-fs="24" onclick="setFs(24)">גדול</button></div>
+    <div class="sml">התאמות</div>
+    <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
+    <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
+    <button onclick="document.body.classList.toggle('hc');this.classList.toggle('on')" title="ניגודיות גבוהה">ניגודיות</button></div></div>
+  <div class="bg dd" data-pri="3" data-label="הדפסה"><button class="ddb" onclick="ddToggle(this)" title="הדפסה ושמירה כ-PDF">הדפסה ▾</button>
+    <div class="ddp"><button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר">הדפס פרק</button>
+    <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button></div></div>
+  <div class="bg" data-pri="4"><button id="edbtn" onclick="askAdmin()" title="עריכה תוך כדי לימוד (Ctrl+Alt+E, או Ctrl+Alt+ק)">עריכה</button>
   <button onclick="suggest()" title="סמן טקסט בדף, או לחץ כאן ובחר קטע">הצע תיקון</button>
-  <button onclick="panel('sg');drawSg()">ההצעות שלי</button>
+  <button onclick="panel('sg');drawSg()" title="ההצעות ששלחת">ההצעות שלי</button>
   <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך">הצעות ממתינות</button></div>
+  <div class="bg adm-only" data-pri="5"><button onclick="panel('qa')" title="חריגות שנמצאו בהמרת הקובץ (למנהל)">בקרה</button>{hgbtn}</div>
+  <div class="bg edtools" id="edtools" data-pri="9"></div>
+  <div class="bg more" id="morebg" style="display:none"><button class="ddb" onclick="ddToggle(this)" title="עוד פעולות">עוד ▾</button><div class="ddp" id="morep"></div></div></div>
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
   <div class="panel" id="toc"><button class="x" onclick="panel('toc')">×</button><h3>תוכן העניינים - נושאי הסוגיות</h3><div id="tocb"></div></div>
   <div class="panel" id="am"><button class="x" onclick="panel('am')">×</button><h3>אמוראים ותנאים - לפי הסימון בקובץ</h3><div id="amb"></div></div>

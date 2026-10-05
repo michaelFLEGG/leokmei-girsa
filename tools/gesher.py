@@ -28,7 +28,7 @@ REPO = 'michaelFLEGG/leokmei-girsa'
 ORIGINS = ('https://michaelflegg.github.io',)
 SLUG_OK = re.compile(r'^[a-z][a-z0-9-]{1,40}$')
 SITE = 'https://michaelflegg.github.io/leokmei-girsa'
-CACHE, CACHE_TTL = {}, 600
+CACHE, CACHE_TTL = {}, 60
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TASK = 'לאוקמי גירסא - גשר הפרסום'
 LOG = None
@@ -319,9 +319,18 @@ def install(repo=None):
     try:
         desk = os.path.join(os.path.expanduser('~'), 'Desktop')
         if os.path.isdir(desk):
-            lnk = os.path.join(desk, 'לאוקמי גירסא - עריכה.url')
-            io.open(lnk, 'w', encoding='utf-8', newline='').write(
-                '[InternetShortcut]\nURL=http://127.0.0.1:%d/index.html\n' % PORT)
+            # הקיצור פותח את המשגר (open_edit.pyw) ולא את הכתובת ישירות:
+            # המשגר מרים את הגשר אם הוא כבוי, ורק אז פותח את הדפדפן.
+            shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'open_edit.pyw'),
+                        os.path.join(keep, 'open_edit.pyw'))
+            pyw0 = os.path.join(os.path.dirname(sys.executable), 'pythonw.exe')
+            ps = ("$s=(New-Object -ComObject WScript.Shell).CreateShortcut('%s');"
+                  "$s.TargetPath='%s';$s.Arguments='\"%s\"';$s.WorkingDirectory='%s';"
+                  "$s.IconLocation='%s';$s.Save()") % (
+                os.path.join(desk, 'לאוקמי גירסא - עריכה.lnk'), pyw0,
+                os.path.join(keep, 'open_edit.pyw'), keep,
+                os.path.join(keep, 'leokmei-edit.ico'))
+            subprocess.run(['powershell', '-NoProfile', '-Command', ps], capture_output=True)
             log('קיצור הדרך נוצר על שולחן העבודה')
     except Exception as e:
         log('אזהרה: קיצור הדרך לא נוצר -', e)

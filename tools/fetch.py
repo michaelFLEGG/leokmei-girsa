@@ -4,6 +4,7 @@
 2. אם נכשל, משתמש ברשימת הגיבוי שב-sources.json.
 """
 import json, re, sys, os, hashlib, urllib.request, html
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = json.load(open(os.path.join(ROOT, 'sources.json'), encoding='utf-8'))
@@ -65,4 +66,10 @@ if __name__ == '__main__':
     c1 = sync(SRC['docx_folder'], SRC['fallback_files'], os.path.join(ROOT, 'input', 'docx'), ('.docx',),
               roster=os.path.join(ROOT, 'input', 'current-docx.json'))
     c2 = sync(SRC['fonts_folder'], SRC['fallback_fonts'], os.path.join(ROOT, 'input', 'fonts'), ('.otf', '.ttf'))
+    # עריכות המנהל מנקודת הקליטה: נאפות לנתוני האתר בכל בנייה של השומר
+    try:
+        import pull_edits
+        pull_edits.main(emit=False)
+    except BaseException as e:
+        print('משיכת העריכות נכשלה (הבנייה נמשכת):', e)
     print('CHANGED' if (c1 or c2) else 'NOCHANGE')

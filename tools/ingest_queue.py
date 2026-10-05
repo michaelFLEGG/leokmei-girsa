@@ -146,7 +146,7 @@ def main():
 
 
 def install_task():
-    """משימה מתוזמנת של חלונות, פעם בלילה ב-02:40. בעל הפרויקט אינו מריץ דבר."""
+    """משימה מתוזמנת של חלונות, כל עשר דקות (קובץ שפתוח בוורד מדולג ונקלט בסבב הבא). בעל הפרויקט אינו מריץ דבר."""
     keep = os.path.join(HERE, '_שומר')
     os.makedirs(keep, exist_ok=True)
     bat = os.path.join(keep, 'קליטה-לילית.cmd')
@@ -156,7 +156,7 @@ def install_task():
         'cd /d "%s"\r\n' % HERE +
         'uv run --with lxml python tools\\ingest_queue.py >> "%s" 2>&1\r\n'
         % os.path.join(keep, 'קליטה-לילית.log'))
-    cmd = ['schtasks', '/Create', '/F', '/TN', TASK, '/SC', 'DAILY', '/ST', '02:40',
+    cmd = ['schtasks', '/Create', '/F', '/TN', TASK, '/SC', 'MINUTE', '/MO', '10',
            '/TR', '"%s"' % bat]
     r = subprocess.run(cmd, capture_output=True)
     out = (r.stdout + r.stderr).decode('cp862', 'replace')

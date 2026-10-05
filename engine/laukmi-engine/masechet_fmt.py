@@ -128,7 +128,7 @@ def main(src, dst):
             return j
         return None
 
-    seps = [i for i in range(n) if st[i] in BODYISH and is_sep(ps[i])]
+    seps = [i for i in range(n) if (st[i] in BODYISH or st[i] == "חציצה") and is_sep(ps[i]) and not deleted(ps[i])]
     dels = set()
     for i in seps:
         a, b = neighbor(i, -1), neighbor(i, 1)

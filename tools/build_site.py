@@ -878,7 +878,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .bar .more .ddp .dd .ddp{display:flex;position:static;border:0;padding:0;box-shadow:none;min-width:0;background:none}
   .bar .more .ddp .dd::before{content:attr(data-label);font-size:12px;color:#c9bfa8}
   body.ed .bar .bg:not(.edtools):not(.more):not(:first-child){display:none!important}
-  body.ed .bar .bg:first-child .nav,body.ed .bar .bg:first-child select,body.ed .bar .bg:first-child #dybtn{display:none}
+  body.ed .bar .bg:first-child .nav{display:none}
   .bar .edtools{display:none;border:0} body.ed .bar .edtools{display:flex;flex:1 1 auto;flex-wrap:nowrap}
   .bar .edtools .sp{flex:1}
   .bar .edtools .ttl{color:var(--gold);font-size:12px}
@@ -2433,9 +2433,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* שורה אחת בכל רוחב: קבוצות בעדיפות נמוכה עוברות ל"עוד", ולעולם אינן יורדות לשורה שנייה */
   function barFit(){
     const bar=$('#bar'),more=$('#morebg'),mp=$('#morep');if(!bar||!more)return;
+    /* מחזירים הכול למקומו (לפי האינדקס המקורי), ורק אז מודדים */
+    for(const g of [...mp.children].sort((a,b)=>+a.dataset.at-+b.dataset.at)){
+      bar.insertBefore(g,bar.children[+g.dataset.at]||more)}
     const all=[...bar.querySelectorAll(':scope > .bg:not(#morebg)')];
-    /* מחזירים הכול למקומו, ואז מודדים */
-    for(const g of [...mp.children]){const at=+g.dataset.at;bar.insertBefore(g,bar.children[at]||more)}
     all.forEach((g,i)=>g.dataset.at=i);
     more.style.display='none';
     /* בכיוון RTL גלישה שמאלה אינה נספרת ב-scrollWidth, ולכן נמדד הקצה
@@ -3763,9 +3764,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <style>{CSS}</style><script src="daf-yomi.js"></script></head><body>
   <div class="bar" id="bar">
   <div class="bg" data-pri="0"><a href="index.html" style="color:inherit;text-decoration:none"><span class="nm">לאוקמי גירסא</span></a> <span class="mn">{masechet}</span>
-  <select id="peresel" title="פרק"></select>
-  <div class="nav"><button onclick="goDaf(-1)" title="דף קודם (Ctrl+חץ ימינה)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="goDaf(1)" title="דף הבא (Ctrl+חץ שמאלה)">הבא ‹</button></div>
-  <select id="dafsel" title="דף"></select>
+  <div class="nav"><button onclick="goDaf(-1)" title="דף קודם (Ctrl+חץ ימינה)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="goDaf(1)" title="דף הבא (Ctrl+חץ שמאלה)">הבא ‹</button></div></div>
+  <div class="bg" data-pri="0.5"><select id="peresel" title="פרק"></select><select id="dafsel" title="דף"></select>
   <button id="dybtn" onclick="dafYomi()" title="פותח את הדף של היום לפי לוח הדף היומי">הדף היומי</button></div>
   <div class="bg" data-pri="0"><input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)" title="חיפוש בכל המסכת"></div>
   <div class="bg" data-pri="2"><button onclick="panel('toc')" title="נושאי הסוגיות">תוכן העניינים</button><button onclick="panel('am')" title="אמוראים ותנאים לפי הסימון בקובץ">אמוראים</button></div>

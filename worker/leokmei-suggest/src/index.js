@@ -31,12 +31,13 @@
 
 const MAX_LEN = 2000;
 const RATE_PER_DAY = 20;
+const TYPES = ['nusach', 'style', 'question', 'note', 'source'];
 const LINK = /(https?:\/\/|www\.|\.(com|net|org|il|co|info|ru|xyz|top|io)\b)/i;
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET,POST,PUT,OPTIONS',
-  'Access-Control-Allow-Headers': 'content-type, x-admin-key',
+  'Access-Control-Allow-Headers': 'content-type, x-admin-key, x-proposer',
   'Access-Control-Max-Age': '86400',
 };
 
@@ -156,6 +157,157 @@ async function whoami(req, env) {
   return json({ ok: true, admin: await isAdmin(req, env) });
 }
 
+/* ------------------------------------------------------------ מציעים
+   כל מציע מזוהה במכשיר שלו: pid אקראי ואסימון סודי pt שנוצרים בדפדפן.
+   במחסן נשמרת רק טביעת ה-SHA-256 של האסימון. אין חשבון ואין סיסמה. */
+async function ensureProposer(env, pid, pt, name) {
+  const h = await sha256hex(pt);
+  const old = await env.STORE.get('pr:' + pid, 'json');
+  if (old) return sameKey(old.h, h);
+  await env.STORE.put('pr:' + pid, JSON.stringify({ pid, h, name, created: Date.now(), trusted: 0 }));
+  return true;
+}
+async function isTrusted(env, pid) {
+  if (!pid) return false;
+  const v = await env.STORE.get('pr:' + pid, 'json');
+  return !!(v && v.trusted);
+}
+async function proposerOk(env, pid, pt) {
+  if (!/^[a-z0-9]{8,20}$/.test(pid || '') || !pt) return false;
+  const v = await env.STORE.get('pr:' + pid, 'json');
+  return !!(v && sameKey(v.h, await sha256hex(String(pt))));
+}
+async function putSg(env, rec) {
+  await env.STORE.put('sg:' + rec.id, JSON.stringify(rec),
+    { metadata: { st: rec.st, slug: rec.slug, pid: rec.pid || '', tr: rec.tr ? 1 : 0 } });
+}
+async function mine(req, env, url) {
+  const pid = url.searchParams.get('pid') || '', pt = req.headers.get('x-proposer') || '';
+  if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
+  const out = [];
+  for (const k of await listAll(env, 'sg:')) {
+    if (!k.metadata || k.metadata.pid !== pid) continue;
+    const v = await env.STORE.get(k.name, 'json');
+    if (v) out.push(v);
+  }
+  out.sort((a, b) => b.t - a.t);
+  return json({ ok: true, items: out, unseen: out.filter((x) => x.seen === 0).length });
+}
+async function mineAct(req, env, what) {
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const pid = str(b.pid, 20), pt = req.headers.get('x-proposer') || '';
+  if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
+  if (what === 'seen') {
+    for (const k of await listAll(env, 'sg:')) {
+      if (!k.metadata || k.metadata.pid !== pid) continue;
+      const v = await env.STORE.get(k.name, 'json');
+      if (v && v.seen === 0) { v.seen = 1; await putSg(env, v); }
+    }
+    return json({ ok: true });
+  }
+  const rec = await env.STORE.get('sg:' + str(b.id, 80), 'json');
+  if (!rec || rec.pid !== pid) return bad('ההצעה לא נמצאה', 404);
+  if (what === 'reply') {
+    const text = str(b.text, 600).trim();
+    if (!text || LINK.test(text)) return bad('תשובה ריקה, או שיש בה קישור');
+    rec.thread = (rec.thread || []).concat([{ from: 'p', txt: text, t: Date.now() }]).slice(-30);
+    rec.mnew = 1;                      /* יש הודעה חדשה למנהל */
+    await putSg(env, rec);
+    return json({ ok: true, rec });
+  }
+  if (rec.st !== 'pending') return bad('אחרי שההצעה טופלה אי אפשר לשנות אותה. שלח הצעה חדשה');
+  if (what === 'delete') { await env.STORE.delete('sg:' + rec.id); return json({ ok: true }); }
+  if (what === 'edit') {
+    const note = str(b.note).trim();
+    if (!note) return bad('אין הצעה');
+    if (LINK.test(note)) return bad('הצעה שיש בה קישור נדחית', 422);
+    rec.note = note;
+    if (TYPES.indexOf(b.type) > -1) rec.type = b.type;
+    rec.edited = Date.now();
+    await putSg(env, rec);
+    return json({ ok: true, rec });
+  }
+  return bad('לא נמצא', 404);
+}
+/* תשובת המנהל בשרשור, בלי להכריע */
+async function adminReply(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const rec = await env.STORE.get('sg:' + str(b.id, 80), 'json');
+  if (!rec) return bad('ההצעה לא נמצאה', 404);
+  const text = str(b.text, 600).trim();
+  if (!text) return bad('תשובה ריקה');
+  rec.thread = (rec.thread || []).concat([{ from: 'm', txt: text, t: Date.now() }]).slice(-30);
+  rec.seen = 0; rec.mnew = 0;
+  await putSg(env, rec);
+  return json({ ok: true, rec });
+}
+/* מציע מהימן: הצעותיו ראשונות בתור. אין אישור אוטומטי - ההכרעה תמיד של המנהל. */
+async function trust(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const pid = str(b.pid, 20);
+  const v = await env.STORE.get('pr:' + pid, 'json');
+  if (!v) return bad('המציע לא נמצא', 404);
+  v.trusted = b.on ? 1 : 0;
+  await env.STORE.put('pr:' + pid, JSON.stringify(v));
+  for (const k of await listAll(env, 'sg:')) {
+    if (k.metadata && k.metadata.pid === pid && k.metadata.st === 'pending') {
+      const r = await env.STORE.get(k.name, 'json');
+      if (r) { r.tr = v.trusted; await putSg(env, r); }
+    }
+  }
+  return json({ ok: true, trusted: v.trusted });
+}
+/* יומן התיקונים (פרטי, למנהל בלבד): חומר הלמידה. נכתב מן הדף, ונקרא בידי הלומד. */
+async function journal(req, env, method) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (method === 'GET') {
+    const out = [];
+    for (const k of await listAll(env, 'jr:')) {
+      const v = await env.STORE.get(k.name, 'json');
+      if (v) out.push(v);
+    }
+    out.sort((a, b) => a.t - b.t);
+    return json({ ok: true, items: out });
+  }
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const list = Array.isArray(b.items) ? b.items.slice(0, 50) : [];
+  for (const it of list) {
+    const id = str(it.id, 80) || rid();
+    const rec = {
+      id, t: +it.t || Date.now(), slug: str(it.slug, 30), daf: str(it.daf, 12), k: str(it.k, 48),
+      src: str(it.src, 12),                       /* site / suggest / word */
+      was: str(it.was, 4000), now: str(it.now, 4000), wasP: str(it.wasP, 40), ps: str(it.ps, 40),
+      ctx: it.ctx ? { b: str(it.ctx.b, 200), a: str(it.ctx.a, 200) } : null,
+      neg: it.neg ? 1 : 0,                        /* הצעה שנדחתה: דוגמה שלילית */
+      why: str(it.why, 300),
+    };
+    await env.STORE.put('jr:' + id, JSON.stringify(rec));
+  }
+  return json({ ok: true, n: list.length });
+}
+/* הכרעה בצרור: דחייה או התיישנות של כמה הצעות (למשל כל הצעות מציע אחד) */
+async function bulk(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const st = str(b.st, 12);
+  if (['rejected', 'stale', 'pending'].indexOf(st) < 0) return bad('הכרעה לא תקינה');
+  let n = 0;
+  for (const id of (Array.isArray(b.ids) ? b.ids : []).slice(0, 200)) {
+    const rec = await env.STORE.get('sg:' + str(id, 80), 'json');
+    if (!rec) continue;
+    rec.st = st; rec.decided = Date.now(); rec.reason = str(b.reason, 200); rec.seen = 0;
+    await putSg(env, rec); n++;
+  }
+  return json({ ok: true, n });
+}
+
 /* ------------------------------------------------------------ הצעות */
 async function suggest(req, env) {
   let b;
@@ -176,12 +328,16 @@ async function suggest(req, env) {
   await env.STORE.put(rk, String(n + 1), { expirationTtl: 90000 });
   const t = Date.now();
   const id = slug + ':' + t + ':' + rid();
+  const pid = /^[a-z0-9]{8,20}$/.test(b.pid || '') ? b.pid : '';
+  const type = TYPES.indexOf(b.type) > -1 ? b.type : 'nusach';
+  if (pid && b.pt) await ensureProposer(env, pid, str(b.pt, 80), str(b.name, 80).trim());
   const rec = {
     id, slug, masechet: str(b.masechet, 40), daf: str(b.daf, 12), uid: str(b.uid, 12),
     k: str(b.k, 24), ctx: { b: str(b.ctx && b.ctx.b, 60), a: str(b.ctx && b.ctx.a, 60) },
     was: str(b.was), note, name: str(b.name, 80).trim(), t, st: 'pending',
+    type, pid, thread: [], seen: 1, tr: (await isTrusted(env, pid)) ? 1 : 0,
   };
-  await env.STORE.put('sg:' + id, JSON.stringify(rec), { metadata: { st: 'pending', slug } });
+  await putSg(env, rec);
   return json({ ok: true, id });
 }
 
@@ -202,7 +358,7 @@ async function queue(req, env, url) {
     const v = await env.STORE.get(name, 'json');
     if (v) items.push(v);
   }
-  items.sort((a, b) => a.t - b.t);
+  items.sort((a, b) => ((b.tr ? 1 : 0) - (a.tr ? 1 : 0)) || (a.t - b.t));
   return json({ ok: true, items, counts, total: Object.values(counts).reduce((a, b) => a + b, 0) });
 }
 
@@ -212,15 +368,17 @@ async function decide(req, env) {
   try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
   const id = str(b.id, 80);
   const st = str(b.st, 12);
-  if (!id || ['accepted', 'edited', 'rejected'].indexOf(st) < 0) return bad('הכרעה לא תקינה');
+  if (!id || ['accepted', 'edited', 'rejected', 'stale', 'pending'].indexOf(st) < 0) return bad('הכרעה לא תקינה');
   const rec = await env.STORE.get('sg:' + id, 'json');
   if (!rec) return bad('ההצעה לא נמצאה', 404);
   rec.st = st; rec.decided = Date.now();
-  if (st !== 'rejected') rec.now = str(b.now);
-  await env.STORE.put('sg:' + id, JSON.stringify(rec), { metadata: { st, slug: rec.slug } });
+  rec.reason = (st === 'rejected' || st === 'stale') ? str(b.reason, 200) : '';
+  rec.seen = st === 'pending' ? 1 : 0;      /* התראה למציע: ההצעה טופלה */
+  if (st === 'accepted' || st === 'edited') rec.now = str(b.now);
+  await putSg(env, rec);
   /* הצעה שהתקבלה נעשית עריכת מנהל רגילה, באותו תור שבו יושבות
      העריכות שלו - ומשם היא נקלטת לוורד בשם המציע. */
-  if (st !== 'rejected' && b.edit && b.edit.k) {
+  if ((st === 'accepted' || st === 'edited') && b.edit && b.edit.k) {
     const e = cleanEdit(b.edit);
     e.by = 'הצעה מהאתר' + (rec.name ? ' - ' + rec.name : '');
     e.sg = id;
@@ -246,6 +404,26 @@ function cleanEdit(e) {
   return out;
 }
 
+/* כל תיקון של המנהל נרשם ביומן התיקונים (פרטי), כחומר למידה. הרישום נעשה כאן,
+   בנקודת המיזוג, ולכן הוא שלם בלי לעצור את המנהל ובלי תלות בדפדפן. */
+async function jrFromEdit(env, slug, e) {
+  try {
+    const struct = e.op === 'struct';
+    const id = 'ed-' + slug + '-' + e.k + '-' + (e.t || 0);
+    const rec = {
+      id, t: e.t || Date.now(), slug, daf: str(e.daf, 12), k: e.k,
+      src: e.sg ? 'suggest' : (e.by ? 'word' : 'site'),
+      kind: struct ? str(e.kind, 12) : 'text',
+      was: struct ? str((e.texts || []).join(' | '), 4000) : str(e.was, 4000),
+      now: struct ? str((e.resT || []).join(' | '), 4000) : str(e.now, 4000),
+      wasH: struct ? '' : str(e.wasH, 6000), nowH: struct ? '' : str(e.nowH, 6000),
+      wasP: str(e.wasP, 40), ps: str(e.ps, 40),
+      ctx: e.ctx ? { b: str(e.ctx.b, 200), a: str(e.ctx.a, 200) } : null, neg: 0, why: '',
+    };
+    await env.STORE.put('jr:' + id, JSON.stringify(rec));
+  } catch (err) { /* היומן אינו עוצר את העריכה */ }
+}
+
 /* מיזוג לפי מפתח המקום: החדש ביותר (t) גובר; מחיקה היא רשומה עם del,
    כדי שמכשיר אחר לא יחזיר עריכה שבוטלה. סימון 'נקלט בוורד' (ing)
    נשמר גם כשמגיעה גרסה ישנה יותר מן המכשיר. */
@@ -263,6 +441,7 @@ async function mergeEdits(env, slug, edits, sty) {
       if (old && old.by && !e.by) e.by = old.by;
       if (old && old.sg && !e.sg) e.sg = old.sg;
       by[e.k] = e;
+      if (!old || (e.t || 0) > (old.t || 0)) await jrFromEdit(env, slug, e);
     }
   }
   doc.edits = Object.values(by).sort((a, b) => (a.t || 0) - (b.t || 0));
@@ -341,6 +520,15 @@ export default {
       if (p === '/whoami' && req.method === 'GET') return await whoami(req, env);
       if (p === '/devices' && req.method === 'GET') return await devices(req, env);
       if (p === '/devices/revoke' && req.method === 'POST') return await revoke(req, env);
+      if (p === '/mine' && req.method === 'GET') return await mine(req, env, url);
+      if (p === '/mine/edit' && req.method === 'POST') return await mineAct(req, env, 'edit');
+      if (p === '/mine/delete' && req.method === 'POST') return await mineAct(req, env, 'delete');
+      if (p === '/mine/reply' && req.method === 'POST') return await mineAct(req, env, 'reply');
+      if (p === '/mine/seen' && req.method === 'POST') return await mineAct(req, env, 'seen');
+      if (p === '/reply' && req.method === 'POST') return await adminReply(req, env);
+      if (p === '/trust' && req.method === 'POST') return await trust(req, env);
+      if (p === '/bulk' && req.method === 'POST') return await bulk(req, env);
+      if (p === '/journal') return await journal(req, env, req.method);
       if (p === '/queue' && req.method === 'GET') return await queue(req, env, url);
       if (p === '/decide' && req.method === 'POST') return await decide(req, env);
       if (p === '/edits' && req.method === 'GET') return await getEdits(req, env, url, false);

@@ -3877,6 +3877,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   slug=os.path.basename(out_path)[:-5]
   hgbtn=(f'<a href="{slug}-hagaha.html" style="background:var(--gold);color:#2b2620;border-radius:4px;'
          f'padding:3px 10px;text-decoration:none;font-weight:700">הגהה</a>') if hagaha else ''
+  JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"suggest_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">

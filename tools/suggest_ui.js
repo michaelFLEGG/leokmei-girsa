@@ -305,3 +305,26 @@
     else if(e.code==='KeyE'){e.preventDefault();sqDecide(id,'edited')}
     else if(e.code==='KeyR'){e.preventDefault();sqReply(id)}
   },true);
+
+  /* ---- הלמידה היומית: סיכום קצר פעם ביום, רק אם נלמד משהו. בלי בקשת אישור. ---- */
+  let LN=null;
+  async function lnLoad(){if(!isAdmin()||!admKey())return;
+    try{const j=await api('/learn');LN=j.summary;LN&&(LN.off=j.off||[]);lnBadge()}catch(e){}}
+  function lnBadge(){const b=$('#lnbtn');if(!b)return;
+    let seen=0;try{seen=+localStorage.getItem('lg-ln-seen')||0}catch(e){}
+    const w=LN?Date.parse(LN.when):0;
+    const any=LN&&(LN.newRules||LN.sem||LN.pending);
+    b.style.display=(isAdmin()&&any&&w>seen)?'':'none'}
+  function lnOpen(){panel('ln');lnDraw();try{localStorage.setItem('lg-ln-seen',String(Date.now()))}catch(e){}lnBadge()}
+  function lnDraw(){const box=$('#lnb');if(!box)return;
+    if(!LN){box.innerHTML='<div class="edsum">עדיין לא נלמד דבר.</div>';return}
+    let h='<div class="edsum">נלמדו '+(LN.newRules||0)+' כללים מכניים חדשים, '+LN.sem+' שיפורים סמנטיים, '+LN.pending+' ממתינים לחזרה נוספת. (גרסה '+LN.ver+')</div>';
+    h+='<div class="dr">הכללים חלים רק על ריצות עתידיות של המנועים, ולעולם לא על טקסט שכבר ליטשת.</div>';
+    (LN.rules||[]).forEach(r=>{const off=(LN.off||[]).indexOf(r.id)>-1;
+      h+='<div class="sgrow"><b>'+esc(r.find)+' ← '+esc(r.repl)+'</b> <small>('+r.n+' פעמים)</small>'+(off?' <span class="stchip" style="background:#7a7a7a">בוטל</span>':'')+
+         '<div class="sqctx">'+esc(r.ex)+'</div><button onclick="lnOff(\''+esc(r.id)+'\','+(off?1:0)+')">'+(off?'החזר כלל':'בטל כלל זה')+'</button></div>'});
+    if((LN.held||[]).length){h+='<h3>ממתינים לחזרה נוספת</h3>';
+      LN.held.forEach(r=>{h+='<div class="sgrow"><small>'+esc(r.find)+' ← '+esc(r.repl)+' · '+esc(r.why)+'</small></div>'})}
+    box.innerHTML=h}
+  async function lnOff(id,on){try{const j=await api('/learn',{method:'POST',body:JSON.stringify({off:id,on:!!on})});LN.off=j.off;lnDraw();toast(on?'הכלל הוחזר.':'הכלל בוטל. הוא לא ייכנס לריצות הבאות.')}catch(e){alert(e.message)}}
+  setTimeout(lnLoad,3500);

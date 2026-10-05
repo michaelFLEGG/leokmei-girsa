@@ -262,6 +262,29 @@ async function trust(req, env) {
   }
   return json({ ok: true, trusted: v.trusted });
 }
+/* סיכום הלמידה לדף הניהול, וכללים שהמנהל ביטל. הלומד (tools/learn_corrections.py) כותב
+   את הסיכום; המנהל קורא אותו ומבטל כלל בלחיצה. הביטול נקלט בריצה הבאה של הלומד. */
+async function learn(req, env, method) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (method === 'GET') {
+    const sum = await env.STORE.get('ln:last', 'json');
+    const off = (await env.STORE.get('ln:off', 'json')) || [];
+    return json({ ok: true, summary: sum, off });
+  }
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  if (b.off !== undefined) {                     /* ביטול או החזרה של כלל */
+    const id = str(b.off, 20);
+    let off = (await env.STORE.get('ln:off', 'json')) || [];
+    off = off.filter((x) => x !== id);
+    if (b.on === false || b.on === undefined) off.push(id);
+    await env.STORE.put('ln:off', JSON.stringify(off));
+    return json({ ok: true, off });
+  }
+  await env.STORE.put('ln:last', JSON.stringify(b).slice(0, 60000));
+  return json({ ok: true });
+}
+
 /* יומן התיקונים (פרטי, למנהל בלבד): חומר הלמידה. נכתב מן הדף, ונקרא בידי הלומד. */
 async function journal(req, env, method) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
@@ -529,6 +552,7 @@ export default {
       if (p === '/trust' && req.method === 'POST') return await trust(req, env);
       if (p === '/bulk' && req.method === 'POST') return await bulk(req, env);
       if (p === '/journal') return await journal(req, env, req.method);
+      if (p === '/learn') return await learn(req, env, req.method);
       if (p === '/queue' && req.method === 'GET') return await queue(req, env, url);
       if (p === '/decide' && req.method === 'POST') return await decide(req, env);
       if (p === '/edits' && req.method === 'GET') return await getEdits(req, env, url, false);

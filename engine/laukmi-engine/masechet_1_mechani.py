@@ -77,6 +77,8 @@ run("מילים שנלמדו", run_replacements_pfx, WORDS6)
 run("צירופים שנלמדו", run_raw, RAWS6)
 run("מילים שנלמדו", run_replacements_pfx, WORDS7)
 run("צירופים שנלמדו", run_raw, RAWS7)
+run("מילים שנלמדו מהמנהל", run_replacements_pfx, WORDS_LEARNED)
+run("צירופים שנלמדו מהמנהל", run_raw, RAWS_LEARNED)
 
 # ===== 3. הגוי נכרי, העבודה ע"ז =====
 run('עכו"ם נעשה ע"ז', run_raw, AKUM_EZ, ALL | HEADS)

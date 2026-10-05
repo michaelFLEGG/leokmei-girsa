@@ -242,3 +242,27 @@ AMAR_TAIL = re.compile(r'(?<!מכאן)(?<!ללמדך)(\s(?:אמר|אמרו|או�
 # י4. פתיחי עוגן מסבב ז
 YICHUS8 = ['דרש', 'כשבא', 'כהך', "ואפי' למ\"ד", 'ולר"ש', 'ור"ש', 'ור"מ', 'ור"י',
            'לב"ש', 'לב"ה', 'אף אנן תנינא', 'אנן תנינא']
+
+
+# ================= כללים שנלמדו מתיקוני המנהל (5.10.2026) =================
+# tools/learn_corrections.py לומד מכל תיקון שהמנהל מפרסם, ושומר את הכללים בדרייב
+# (current.json). כלל נכנס לכאן רק אחרי שנבדק מול כל יומן התיקונים (משחזר את תיקוני
+# המנהל, אינו משנה נוסח שאושר, ואינו מייצר הצעה שנדחתה). הכללים חלים על ריצות
+# עתידיות של המנוע המכני בלבד, ולעולם לא על טקסט שהמנהל כבר ליטש. כלל שהמנהל ביטל
+# (או שתיקן נגדו מאוחר יותר) מסומן off ואינו נטען.
+def _load_learned():
+    import os, json
+    p = os.environ.get('LAUKMI_LEARNED') or r'C:\Users\Owner\Desktop\שיננא לHTML\_שומר\למידה\current.json'
+    raws, words = {}, {}
+    try:
+        doc = json.load(open(p, encoding='utf-8'))
+    except Exception:
+        return raws, words
+    for r in doc.get('rules', []):
+        if r.get('status') != 'on' or not r.get('find'):
+            continue
+        (words if r.get('kind') == 'word' else raws)[r['find']] = r['repl']
+    return raws, words
+
+
+RAWS_LEARNED, WORDS_LEARNED = _load_learned()

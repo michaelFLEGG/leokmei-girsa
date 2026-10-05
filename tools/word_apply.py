@@ -249,21 +249,28 @@ def _set_pstyle(p, sid, author, when, nextid):
     return True
 
 
-def _set_cstyle(p, find, sid, author, when, nextid):
+def _set_cstyle(p, find, sid, author, when, nextid, at=None):
     """מחיל סגנון תו על קטע טקסט, ורושם את העיצוב הקודם ב-w:rPrChange.
 
     sid ריק פירושו הסרת הסגנון. הטקסט עצמו אינו נוגע כלל."""
     runs = _runs_of(p)
     full = ''.join(t for _, t, _ in runs)
-    k = full.find(find)
-    if k < 0 or full.count(find) > 1:
+    if at is not None:
+        # מופע מסוים (כשהקטע חוזר בפסקה): ההיסט בטקסט החי, ומאומת מול הטקסט
+        k = at if full[at:at + len(find)] == find else -1
+    else:
+        k = full.find(find)
+        if k >= 0 and full.count(find) > 1:
+            return False
+    if k < 0:
         return False
     lo, hi = k, k + len(find)
     touched = [(pos, txt, r) for pos, txt, r in runs if pos < hi and pos + len(txt) > lo]
     if not touched:
         return False
     for _, _, r in touched:
-        if r.getparent().tag != W + 'p':
+        # ריצה בתוך הוספה במעקב (w:ins) היא טקסט חי: מפצלים אותה במקומה
+        if r.getparent().tag not in (W + 'p', W + 'ins'):
             return False
     for pos, txt, r in touched:
         a = max(lo - pos, 0)
@@ -418,7 +425,7 @@ def apply(path, ops, author, masechet, log=print, dry=False):
             else:
                 missed.append((op, 'הפסקה כבר בסגנון הזה'))
         else:
-            if _set_cstyle(p, op.get('find') or '', sid, author, when, nextid):
+            if _set_cstyle(p, op.get('find') or '', sid, author, when, nextid, op.get('at')):
                 done += 1
             else:
                 missed.append((op, 'הקטע אינו יחיד בפסקה, או שהוא בתוך שינוי-מעקב'))

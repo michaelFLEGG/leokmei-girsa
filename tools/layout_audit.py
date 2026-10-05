@@ -39,8 +39,45 @@ CODES = {
     10: 'ניקוד-חופף',
     11: 'כוכבית-בשורה',      # מידע לבקרה בלבד (א6): כוכבית בתוך טקסט, לא נגעה
     15: 'משנה-לא-מנוקדת',
+    17: 'קיצור-סגנון-שבור',  # Ctrl+1..4 במצב עריכה: מחיל את הסגנון ו-Ctrl+Z מבטל
+    18: 'מקור-בזרימה',        # סימון "מקור" חייב לשבת בשכבה הצפה (#srcl) ולא בתוך הטקסט
     16: 'כותרת-צד-בעריכה',   # Ctrl+נקודה במצב עריכה: נוצר חלון, ירד מהגוף, ו-Ctrl+Z מחזיר
 }
+KEYS_CHECK = '''() => {
+  try {
+    if (typeof setEdit !== 'function') return {ok: false, msg: 'אין מצב עריכה בדף'};
+    setEdit(true);
+    const ps = [...document.querySelectorAll('#flow .row.u .main p[data-ek]')]
+      .filter(p => txtOf(p).split(' ').length > 8 && !p.querySelector('i,b'));
+    if (!ps.length) { setEdit(false); return {ok: true, msg: 'אין פסקה מתאימה בקטע'}; }
+    const ek = ps[0].dataset.ek, bad = [];
+    const get = () => document.querySelector('[data-ek="' + ek + '"]');
+    const key = (el, code, extra) => el.dispatchEvent(new KeyboardEvent('keydown',
+      Object.assign({code: code, key: code, ctrlKey: true, bubbles: true, cancelable: true}, extra || {})));
+    for (const [code, cls] of [['Digit1', 'am'], ['Digit2', 'ps'], ['Digit3', 'ns'], ['Digit4', 'hs']]) {
+      if (OKCLS.indexOf(cls) < 0) continue;
+      const p = get(); p.focus();
+      const n = document.createTreeWalker(p, NodeFilter.SHOW_TEXT).nextNode();
+      const r = document.createRange(); r.setStart(n, 1); r.collapse(true);
+      getSelection().removeAllRanges(); getSelection().addRange(r);
+      key(p, code);
+      const on = !!get().querySelector('i.' + cls);
+      key(get(), 'KeyZ');
+      const off = !get().querySelector('i.' + cls);
+      if (!on || !off) bad.push(code + '=' + cls + (on ? '' : ' לא הוחל') + (off ? '' : ' לא בוטל'));
+    }
+    setEdit(false);
+    try { localStorage.removeItem(EKEY); } catch (e) {}
+    ED.length = 0;
+    return {ok: !bad.length, msg: bad.join('; ')};
+  } catch (e) { return {ok: false, msg: String(e)}; }
+}'''
+SRC_CHECK = '''() => {
+  const inFlow = document.querySelectorAll('#flow .srcb').length;
+  const layer = document.querySelectorAll('#srcl .srcb').length;
+  const refs = document.querySelectorAll('#flow .row[data-ref]').length;
+  return {ok: inFlow === 0 && (refs === 0 || layer > 0), msg: 'בזרימה=' + inFlow + ' בשכבה=' + layer};
+}'''
 SIDE_CHECK = '''() => {
   try {
     if (typeof setEdit !== 'function') return {ok: false, msg: 'אין מצב עריכה בדף'};
@@ -48,6 +85,7 @@ SIDE_CHECK = '''() => {
     const ps = [...document.querySelectorAll('#flow .row.u .main p[data-ek]')]
       .filter(p => txtOf(p).split(' ').length > 6 && !p.querySelector('i,b'));
     if (!ps.length) { setEdit(false); return {ok: true, msg: 'אין פסקה מתאימה בקטע'}; }
+    const n0 = ED.length;
     const p = ps[0], ek = p.dataset.ek, before = txtOf(p);
     const n = document.createTreeWalker(p, NodeFilter.SHOW_TEXT).nextNode();
     const word = n.textContent.split(' ')[2].replace(/[^\u05d0-\u05ea]/g, '');
@@ -56,12 +94,12 @@ SIDE_CHECK = '''() => {
     const r = document.createRange(); r.setStart(n, n.textContent.indexOf(word) + 1); r.collapse(true);
     getSelection().removeAllRanges(); getSelection().addRange(r);
     p.dispatchEvent(new KeyboardEvent('keydown', {key: '.', code: 'Period', ctrlKey: true, bubbles: true, cancelable: true}));
-    const made = ED.length === 1 && ED[0].kind === 'side' &&
+    const made = ED.length === n0 + 1 && ED[ED.length - 1].kind === 'side' &&
       [...document.querySelectorAll('.anchor')].some(a => a.textContent.indexOf(word) > -1);
     const gone = !(document.querySelector('[data-ek="' + ek + '"]') || {textContent: ''}).textContent.includes(before);
-    const el = document.querySelector('[data-ek]'); el.focus();
+    const el = document.querySelector('[data-ek][contenteditable="true"]'); el.focus();
     el.dispatchEvent(new KeyboardEvent('keydown', {key: 'z', code: 'KeyZ', ctrlKey: true, bubbles: true, cancelable: true}));
-    const undone = ED.length === 0 && (document.querySelector('[data-ek="' + ek + '"]') || {textContent: ''}).textContent.includes(before);
+    const undone = ED.length === n0 && (document.querySelector('[data-ek="' + ek + '"]') || {textContent: ''}).textContent.includes(before);
     setEdit(false);
     try { localStorage.removeItem(EKEY); } catch (e) {}
     ED.length = 0;
@@ -305,6 +343,15 @@ def run(args):
                         examples[16].append({'code': 16, 'unit': '', 'daf': '', 'kind': 'edit',
                                              'msg': 'Ctrl+נקודה במצב עריכה נכשל: ' + sc.get('msg', ''),
                                              'num': None, 'rect': None})
+
+                if mode == 'flow':
+                    for code, js, what in ((17, KEYS_CHECK, 'קיצורי הסגנון'), (18, SRC_CHECK, 'סימון המקור')):
+                        sc = pg.evaluate(js)
+                        if not sc.get('ok'):
+                            counts[code] += 1
+                            examples[code].append({'code': code, 'unit': '', 'daf': '', 'kind': 'edit',
+                                                   'msg': what + ' נכשל: ' + sc.get('msg', ''),
+                                                   'num': None, 'rect': None})
 
                 gf = glyph_findings(fonts_all, fdir)
                 for f in gf:

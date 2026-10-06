@@ -464,9 +464,16 @@ def _absorbed(e, history):
     return False
 
 
+# תוכנית ההחלה האפקטיבית, לפי הסדר: מה הוחל בפועל על הנתונים. כל פריט: ('struct', e) או
+# ('text', e, {'was': נוסח הפסקה בפועל לפני התיקון, 'wasH': ה-HTML שלה}). הקולט לוורד
+# (ingest_repo) משתמש בה כדי לכתוב לוורד בדיוק את מה שהאתר מציג, ובאותו סדר.
+PLAN = []
+
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
+    del PLAN[:]
     path = os.path.join(EDITS_DIR, slug + '.json')
     if not os.path.exists(path):
         return None
@@ -507,6 +514,7 @@ def _apply_site_edits(pages, slug, qa):
                 if ap(pages, e):
                     done += 1
                     keep.append(e)
+                    PLAN.append(('struct', e))
                     history.append(('s', e))
                     reslot()
                 elif dn(pages, e):
@@ -521,6 +529,7 @@ def _apply_site_edits(pages, slug, qa):
                 if ap(pages, e):
                     done += 1
                     keep.append(e)
+                    PLAN.append(('struct', e))
                     history.append(('s', e))
                     reslot()
                 elif dn(pages, e):
@@ -538,6 +547,7 @@ def _apply_site_edits(pages, slug, qa):
                 u['l'][i:i + len(texts)] = [list(x) for x in res]
                 done += 1
                 keep.append(e)
+                PLAN.append(('struct', e))
                 history.append(('s', e))
                 reslot()
             elif _find_run(pages, e.get('resT') or [], e.get('daf')) is not None:
@@ -597,6 +607,8 @@ def _apply_site_edits(pages, slug, qa):
                 continue
         if s['t'] != was and s['t'] != now and not rebased:
             lost.append(e); keep.append(e); continue
+        _eff = {'was': _bare(s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')),
+                'wasH': s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')}
         h = e.get('nowH')
         if h is None: h = html.escape(now)
         if isinstance(s['key'], int): s['holder'][s['key']] = h
@@ -620,6 +632,7 @@ def _apply_site_edits(pages, slug, qa):
             e['k'] = 'u%s.1' % u['id']
             done += 1
             keep.append(e)
+            PLAN.append(('text', e, _eff))
             reslot()
             continue
         if ps is not None and isinstance(s['key'], int):
@@ -634,6 +647,7 @@ def _apply_site_edits(pages, slug, qa):
         done += 1
         e['k'] = s['k']
         keep.append(e)
+        PLAN.append(('text', e, _eff))
     lost.extend(virtual)
     if lost:
         qa.append(('תיקון תלוש',

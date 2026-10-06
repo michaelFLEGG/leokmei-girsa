@@ -2579,11 +2579,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const el=edEl();
     if(!el){flash('העמד את הסמן בתוך שורה');return}
     if(el.classList.contains('anchor')){unsideCmd(el);return}
-    if(isHeadEl(el)){headBody();flash('הסגנון הוסר: השורה חזרה לגוף');return}
+    if(isHeadEl(el)){headToBody(el);flash('הסגנון הוסר: השורה חזרה לגוף');return}
     if(el.tagName==='P'){
       if(!pcls(el)){flash('השורה כבר בסגנון רגיל');return}
       setPs('');flash('הסגנון הוסר: השורה חזרה לגוף');return}
-    flash('בשורה מסוג זה אין סגנון פסקה להסיר')}
+    /* שורה אחרת (חלון, משנה): הניקוי הקרוב ביותר - סגנונות התו */
+    clearFmt()}
   /* "נקה עיצוב": סגנון הפסקה וסגנונות התו יחד */
   function clearAll(){
     const el=edEl();
@@ -2702,10 +2703,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function sUndo(){
     const x=SUNDO.pop();if(!x)return false;
     const el=$('#flow').querySelector('[data-ek="'+x.k+'"]');if(!el)return false;
+    SREDO.push({k:x.k,h:el.innerHTML,c:el.className,t:Date.now()});if(SREDO.length>60)SREDO.shift();
     el.innerHTML=x.h;el.className=x.c;
     const s=getSelection();s.removeAllRanges();
     const r=document.createRange();r.selectNodeContents(el);r.collapse(false);s.addRange(r);
     capture(el);STYSIG='';hideSty();flash('בוטל');return true}
+  const SREDO=[];
+  function sRedo(){
+    const x=SREDO.pop();if(!x)return false;
+    const el=$('#flow').querySelector('[data-ek="'+x.k+'"]');if(!el)return false;
+    SUNDO.push({k:x.k,h:el.innerHTML,c:el.className,t:Date.now()});
+    el.innerHTML=x.h;el.className=x.c;
+    const s=getSelection();s.removeAllRanges();
+    const r=document.createRange();r.selectNodeContents(el);r.collapse(false);s.addRange(r);
+    capture(el);STYSIG='';hideSty();flash('הפעולה הוחזרה');return true}
   function cutOff(el,node,off){
     const r=document.createRange();r.setStart(el,0);r.setEnd(node,off);
     const d=document.createElement('div');d.appendChild(r.cloneContents());
@@ -2792,15 +2803,35 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const x=UNDO.pop();if(!x)return false;
     const snaps=x.snaps||[{pi:x.pi,snap:x.snap}];
     const befores=snaps.map(z=>snapOf(z.pi));
+    const nowSnaps=snaps.map(z=>({pi:z.pi,snap:JSON.stringify(D.pages[z.pi].units)}));
     snaps.forEach(z=>{D.pages[z.pi].units=JSON.parse(z.snap)});
     if(x.e){const i=ED.indexOf(x.e);
       if(i>-1){edKeys();tomb(x.e.k);ED.splice(i,1)}}
     if(x.re){ED.push(x.re);x.re.pub=0}      /* האיחוי ביטל פיצול שנמחק מן הרשימה - מחזירים אותו */
+    if(x.fn)x.fn();
+    /* חזרה נתמכת בפעולות הניקוי (fn2). פעולת מבנה נושאת זמן-רשומה שהוא גם
+       מזהה היחידה, ומחיקתה כבר נרשמה כמצבה בשרת, ולכן אינה חוזרת. */
+    if(x.fn2){REDO.push({x,nowSnaps,t:Date.now()});if(REDO.length>40)REDO.shift()}
     SLOTS=null;saveED();
     befores.forEach(b=>patchPage(b));
     if(x.key)placeCaret(x.key,0);
     drawEd();pubSoon();syncSoon();
     flash('בוטל');return true}
+  /* חזרה (Ctrl+Y) לפעולת מבנה או סגנון שבוטלה זה עתה, כל עוד לא נעשה דבר אחריה */
+  const REDO=[];
+  function redoLast(){
+    const r=REDO.pop();if(!r)return false;
+    const x=r.x;
+    const befores=r.nowSnaps.map(z=>snapOf(z.pi));
+    r.nowSnaps.forEach(z=>{D.pages[z.pi].units=JSON.parse(z.snap)});
+    if(x.re){const i=ED.indexOf(x.re);if(i>-1)ED.splice(i,1)}
+    if(x.e&&ED.indexOf(x.e)<0){x.e.pub=0;x.e.t=x.e.t||Date.now();ED.push(x.e)}
+    if(x.fn2)x.fn2();
+    UNDO.push(x);x.t=Date.now();
+    SLOTS=null;saveED();
+    befores.forEach(b=>patchPage(b));
+    drawEd();pubSoon();syncSoon();
+    flash('הפעולה הוחזרה');return true}
   function sideAsk(el,info){
     const old=$('#sideask');if(old)old.remove();
     const box=document.createElement('div');box.id='sideask';box.className='sideask';
@@ -2836,10 +2867,25 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* הכניסה: מקש, כפתור הסרגל או כל קריאה אחרת */
   function sideCmd(){
     if(!EDIT)return;
-    const el=edEl();
+    let el=edEl();
     if(!el){flash('העמד את הסמן בתוך מילה, ואז כותרת צד');return}
     if(el.classList.contains('anchor'))return unsideCmd(el);
-    if(el.tagName!=='P'){flash('כאן אין כותרת צד: זו כותרת ולא פסקת גוף');return}
+    let wasHead=false;
+    if(isHeadEl(el)){
+      /* מילה בתוך כותרת: קודם השורה חוזרת לגוף, ואז המילה יוצאת לכותרת צד.
+         אף פעם לא "לא": הפעולה מתבצעת, וההודעה היא מידע בלבד. */
+      const s0=getSelection(),r0=s0.rangeCount?s0.getRangeAt(0):null;
+      let a0=0,b0=0;
+      if(r0&&el.contains(r0.startContainer)){a0=cutOff(el,r0.startContainer,r0.startOffset);b0=cutOff(el,r0.endContainer,r0.endOffset)}
+      const nk=headToBody(el);
+      const nel=nk&&$('#flow').querySelector('[data-ek="'+nk+'"]');
+      if(!nel){flash('השורה נשארה כותרת: נסה שוב אחרי רענון');return}
+      el=nel;wasHead=true;
+      try{const pa=posAt(el,a0),pb=posAt(el,b0),rr=document.createRange();
+        rr.setStart(pa[0],pa[1]);rr.setEnd(pb[0],pb[1]);
+        const ss=getSelection();ss.removeAllRanges();ss.addRange(rr)}catch(e){}}
+    if(el.tagName!=='P'){flash('העמד את הסמן בתוך פסקת גוף');return}
+    if(wasHead)flash('הכותרת חזרה לגוף, והמילה יצאה לכותרת צד');
     /* תיקון טקסט שעוד לא נשמר (ההקלדה נקלטת אחרי רגע של מנוחה) נקלט
        עכשיו, והפעולה נשענת על הנוסח שאחריו - גם אם הוא טרם בוורד */
     clearTimeout(CAPT);capture(el);
@@ -2862,15 +2908,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const m=(el.dataset.ek||'').match(/^u(\d+)\.(0|w)$/);
     let hit=null;
     if(m)for(const o of unitsAll())if(o.u.id===+m[1])hit=o;
-    if(!hit){flash('כותרת של מקטע מסוג זה אינה חוזרת לגוף');return}
+    if(!hit){toast('כותרת צד של מקטע מסוג זה נשארת במקומה; נקה את הסגנון שלה בוורד.',3800);return}
     clearTimeout(CAPT);capture(el);
     const u=hit.u,k=wkey(u),lines=(u[k]||'').split('<br>');
-    if(lines.length>1&&el.querySelectorAll('br').length===lines.length-1){
-      const s=getSelection(),r=document.createRange();r.selectNodeContents(el);
-      if(s.rangeCount){r.setEnd(s.getRangeAt(0).startContainer,s.getRangeAt(0).startOffset);
-        const d=document.createElement('div');d.appendChild(r.cloneContents());
-        if(d.querySelectorAll('br').length!==lines.length-1){
-          flash('אפשר להחזיר לגוף רק את הכותרת האחרונה בערימה');return}}}
+    /* ערימת כותרות: מחזירים לגוף את האחרונה בערימה (הקרובה לפסקה), ואומרים זאת */
+    if(lines.length>1)toast('בערימת כותרות חוזרת לגוף האחרונה בערימה.',2600);
     const winH=lines[lines.length-1], winT=plain(winH);
     if(!winT.trim()){flash('הכותרת ריקה');return}
     const nextT=u.l.length?plain(u.l[0][1]):'';
@@ -3213,18 +3255,56 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if((n.tagName==='I'&&OKCLS.indexOf(n.className)>-1)||n.tagName==='B')
         n.replaceWith(...n.childNodes)});
     PCLS.forEach(x=>el.classList.remove(x));
-    if(isHeadEl(el))headTo(el,[]);
     el.normalize();
+    /* כותרת: הופכת מיד לפסקת גוף של ממש (בלי חסימה, וניתנת לביטול) */
+    if(isHeadEl(el)){headToBody(el);STYSIG='';hideSty();flash('העיצוב נוקה: הפסקה חזרה לגוף');return}
     capture(el);STYSIG='';hideSty();flash('העיצוב נוקה: הפסקה חזרה לגוף')}
   function headBody(){setPs('')}
+  /* כותרת (נושא משנה / ד"ה משנה) הופכת לפסקת גוף רגילה, מיד ובלי חסימה.
+     זה שינוי של הנתונים עצמם (D) ולא רק של מחלקה על ה-DOM: בלעדיו נשארה
+     השורה אלמנט של כותרת, וכל פעולה שדורשת פסקת גוף (כותרת צד, איחוי)
+     נחסמה בהודעה אדומה. השורה מצוירת מחדש כפסקת גוף, הסמן נשאר במקומו,
+     והפעולה ניתנת לביטול ב-Ctrl+Z ולחזרה ב-Ctrl+Y. מחזיר את מפתח הפסקה
+     החדשה, או '' אם אי אפשר. */
+  function headToBody(el,c){
+    const h=hostOf(el);
+    if(!h||h.kind!=='head')return '';
+    const k0=el.dataset.ek||'';
+    clearTimeout(CAPT);
+    const s=getSelection();
+    const off=(s&&s.rangeCount&&el.contains(s.anchorNode))?cutOff(el,s.anchorNode,s.anchorOffset):0;
+    const hadPrior=ED.some(x=>x.k===k0&&x.op!=='struct');
+    sPush(el);
+    headTo(el,[]);                      /* כך הלכידה רושמת שינוי סגנון פסקה: חזרה לגוף */
+    capture(el);
+    const ent=ED.find(x=>x.k===k0&&x.op!=='struct');
+    const snp=[snapOf(h.pi)], usnap=JSON.stringify(D.pages[h.pi].units);
+    const u=h.u, a=u.a||'', w=u.w||'';
+    const sp0=spaceCls(u.s||'')||'b0 a0';
+    u.k='u';u.a=w;delete u.w;delete u.s;u.l=[[sp0,a]];delete u.lv;
+    const nk='u'+u.id+'.1';
+    dataCls(nk,c||'');
+    if(ent){
+      edKeys();tomb(k0);ent.k=nk;ent.pub=0;ent.t=Date.now();ent._ap=1;ent._cur=ent.now;
+      if(c){ent.ps=c;ent.psw=wsty(c)}}
+    SLOTS=null;
+    for(let i=SUNDO.length-1;i>=0;i--)if(SUNDO[i].k===k0)SUNDO.splice(i,1);
+    UNDO.length=0;
+    UNDO.push({e:null,snaps:[{pi:h.pi,snap:usnap}],key:k0,t:Date.now(),
+      fn:()=>{if(!ent)return;edKeys();tomb(nk);
+        if(hadPrior){ent.k=k0;delete ent.ps;delete ent.psw;ent.pub=0;ent.t=Date.now()}
+        else{const i=ED.indexOf(ent);if(i>-1)ED.splice(i,1)}},
+      fn2:()=>{if(!ent)return;edKeys();tomb(k0);
+        if(ED.indexOf(ent)<0)ED.push(ent);
+        ent.k=nk;ent.ps=c||'';ent.psw=wsty(c||'');ent.pub=0;ent.t=Date.now()}});
+    saveED();
+    reflow(nk,off,snp);
+    return nk}
   function setPs(c){
     const el=edEl();if(!isTxt(el))return;
     if(el.tagName==='DIV'){
-      /* כותרת שנבחר לה סגנון אחר: היא חוזרת לגוף ומקבלת אותו (במחלקת הפסקה).
-         הנתונים והשורה מתעדכנים מיד בבנייה/בטעינה הבאה, כמו החזרה לגוף. */
-      if(isHeadEl(el)){sPush(el);headTo(el,[]);
-        if(c)c.split(' ').filter(Boolean).forEach(x=>el.classList.add(x));
-        capture(el);STYSIG='';styLater()}
+      /* כותרת שנבחר לה סגנון אחר: היא חוזרת לגוף ומקבלת אותו */
+      if(isHeadEl(el)){headToBody(el,c||'');STYSIG='';styLater()}
       return}
     sPush(el);
     const hadSp=el.classList.contains('sp'), wantSp=(c||'').split(' ').indexOf('sp')>-1;
@@ -3344,9 +3424,33 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     }catch(e){clearTimeout(t);
       return {ok:false,why:(e&&e.name==='AbortError'&&opt&&opt.body)?'הפרסום לא הספיק':'אין גשר'}}}
   async function gesherAlive(){const r=await gesher('/shalom');GOK=!!r.ok;return GOK}
+  /* פרסום מרוכז (6.10.2026): כל תיקון נשמר מיד במכשיר (saveED), אך אינו נשלח.
+     התיקונים נאספים לתור, והשליחה היחידה יוצאת לכל היותר פעם ב-5 דקות,
+     בספירה מן התיקון הראשון שבתור. ביציאה מהדף התור נשלח מיד (pubFlush),
+     ואם הדפדפן לא מאפשר - הוא נשמר ויישלח בכניסה הבאה. תיקון חוזר לאותה
+     שורה מתאחד מאליו: ED מחזיק רשומה אחת לכל מקום. */
+  const PUBWIN=5*60*1000;
+  let PUBNEXT=0, PUBDIRTY=false, PUBAT=0, PUBFAIL=0, PUBTK=null;
+  function agoText(ms){const m=Math.floor(ms/60000);
+    return m<1?'זה עתה':(m===1?'לפני דקה':'לפני '+m+' דקות')}
+  function inText(ms){const m=Math.max(1,Math.ceil(ms/60000));
+    return m===1?'בעוד דקה':'בעוד '+m+' דקות'}
+  function pubPending(){const np=ED.filter(x=>!x.pub).length;return np||(PUBDIRTY?1:0)}
+  const PDKEY='lg-pdirty-'+SLUG;
+  function pdSave(){try{if(PUBDIRTY)localStorage.setItem(PDKEY,'1');else localStorage.removeItem(PDKEY)}catch(e){}}
+  function queuePub(){
+    if(PUBMSG&&PUBMSG.indexOf('לא פורסם')!==0)PUBMSG='';
+    PUBDIRTY=true;pdSave();
+    if(!PUBNEXT)PUBNEXT=Date.now()+PUBWIN;
+    if(!PUBTK)PUBTK=setInterval(pubTick,5000);
+    pubDraw()}
+  function pubTick(){
+    if(PUBNEXT&&Date.now()>=PUBNEXT&&!PUBBUSY){pubNow(0);return}
+    pubDraw()}
   function pubDraw(){const e=$('#edpub');if(!e)return;
-    const np=ED.filter(x=>!x.pub).length;
-    let t=PUBMSG||(np?'· '+np+' ממתינים לפרסום':(ED.length?'· נשמר ומוצג לכל הלומדים':''));
+    const np=pubPending();
+    let t=PUBMSG||(PUBBUSY?'· מפרסם…':np?'· ממתינים: '+np+(np===1?' תיקון':' תיקונים')+(PUBNEXT?' · יפורסמו '+inText(PUBNEXT-Date.now()):''):
+      (ED.length?'· '+(PUBAT?'פורסם '+agoText(Date.now()-PUBAT):'נשמר ומוצג לכל הלומדים'):''));
     /* שלושת השלבים: נשמר ומוצג לכולם, נכלל בבניית האתר, נקלט בוורד */
     if(!PUBBUSY&&!np&&ED.length&&PUBMSG.indexOf('לא פורסם')!==0){
       const inWord=EDWORD+ED.filter(x=>x.ing).length, inBuild=Math.max(0,EDTAKEN-EDWORD);
@@ -3354,7 +3458,29 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(inWord)t+=' · '+inWord+' נקלטו בוורד'}
     e.textContent=t+(GOK===false&&!ghTok()&&!admKey()?' · מפרסם כשהמחשב הראשי יידלק':'');
     e.className='edpub'+(PUBMSG.indexOf('לא פורסם')===0?' bad':'')}
-  function pubSoon(){clearTimeout(PUBT);PUBT=setTimeout(()=>pubNow(0),2500)}
+  function pubSoon(){queuePub()}
+  /* יציאה מהדף (סגירה, מעבר מסכת, רענון): מה שבתור נשלח מיד. הבקשה נושאת
+     keepalive, שהדפדפן משלים גם אחרי שהדף נסגר. אם התור גדול מדי לכך, או
+     שאין מפתח במכשיר - הוא נשאר שמור ויישלח בכניסה הבאה. */
+  function pubFlush(){
+    if(!isAdmin()||PUBBUSY||!pubPending())return;
+    const k=admKey();if(!k)return;
+    try{
+      const body=JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty});
+      if(new Blob([body]).size>60000)return;
+      fetch(SUGGEST_API+'/edits',{method:'PUT',keepalive:true,
+        headers:{'content-type':'application/json; charset=utf-8','x-admin-key':k},body});
+    }catch(e){}}
+  addEventListener('pagehide',pubFlush);
+  addEventListener('beforeunload',pubFlush);
+  let HIDT=null;
+  document.addEventListener('visibilitychange',()=>{
+    clearTimeout(HIDT);
+    if(document.visibilityState!=='hidden')return;
+    /* במחשב: מעבר ללשונית אחרת אינו יציאה, ולכן ממתינים חצי דקה. בטלפון
+       הדף עלול להיסגר ברקע בלי התראה, ולכן שולחים מיד. */
+    const touch=window.matchMedia&&matchMedia('(pointer:coarse)').matches;
+    if(touch)pubFlush(); else HIDT=setTimeout(pubFlush,30000)});
   function b64(s){return btoa(unescape(encodeURIComponent(s)))}
   function pubBody(){
     return JSON.stringify({v:1,slug:SLUG,masechet:D.masechet,
@@ -3371,20 +3497,27 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* אותה רשימה בדיוק אינה נדחפת פעמיים. בלי השער הזה נרשמה עשירייה
        של הפניות ריקות למאגר בתוך דקות, וכל אחת מהן הפעילה בנייה. */
     const sig=body.replace(/"when":"[^"]*",?/,'');
-    if(!loud&&sig===PUBLAST)return;
-    PUBBUSY=true;PUBMSG='מפרסם…';pubDraw();
+    if(!loud&&sig===PUBLAST){PUBNEXT=0;PUBDIRTY=false;pdSave();pubDraw();return}
+    /* מה שנשלח עכשיו הוא מה שנרשם כמפורסם: תיקון שנעשה בזמן השליחה נשאר בתור */
+    const sent=ED.map(e=>[e,e.t]);
+    const markPub=()=>{for(const [e,t] of sent)if(e.t===t)e.pub=1;saveED()};
+    PUBDIRTY=false;PUBNEXT=0;pdSave();
+    const failed=()=>{PUBDIRTY=true;pdSave();PUBFAIL++;
+      if(!PUBNEXT||PUBNEXT>Date.now()+45000)PUBNEXT=Date.now()+45000;
+      if(!PUBTK)PUBTK=setInterval(pubTick,5000)};
+    PUBBUSY=true;PUBMSG='';pubDraw();
     /* הדרך הראשונה: נקודת הקליטה, ממכשיר מוכר. אין בה מפתח להזין, אין
        תלות במחשב הראשי, והתיקון מוצג לכל הלומדים מיד בטעינת הדף. משם
        נאפה לנתוני האתר ונקלט לוורד. */
     if(admKey()){
       try{
         const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty})});
-        ED.forEach(e=>e.pub=1);saveED();PUBLAST=sig;PUBMSG='';
+        markPub();PUBLAST=sig;PUBMSG='';PUBAT=Date.now();PUBFAIL=0;
         PUBBUSY=false;
         if(mergeIn(j.doc&&j.doc.edits))applyIncoming();
         pubDraw();drawEd();return}
       catch(err){
-        if(/אין הרשאה/.test(err.message||'')){PUBBUSY=false;PUBMSG='';devRevoked();return}
+        if(/אין הרשאה/.test(err.message||'')){PUBBUSY=false;PUBMSG='';PUBDIRTY=true;devRevoked();return}
         /* אין חיבור לנקודת הקליטה: ממשיכים לדרכים האחרות, והעריכות שמורות */
       }
     }
@@ -3392,14 +3525,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const g=await gesher('/edits',{method:'POST',
       headers:{'Content-Type':'application/json'},body:body});
     GOK=g.ok||g.why!=='אין גשר';
-    if(g.ok){ED.forEach(e=>e.pub=1);saveED();PUBLAST=sig;
+    if(g.ok){markPub();PUBLAST=sig;PUBAT=Date.now();PUBFAIL=0;
       PUBMSG='· פורסם '+new Date().toLocaleTimeString('he-IL').slice(0,5)+
              ' · יופיע לכל הלומדים בתוך כשתי דקות';
       PUBBUSY=false;pubDraw();drawEd();return}
     const t=ghTok();
     if(!t){
-      PUBBUSY=false;
-      PUBMSG=(g.why==='אין גשר')
+      PUBBUSY=false;failed();
+      /* כישלון ראשון אינו מטריד: הניסיון חוזר מאליו. רק כשנכשל שוב (או
+         בלחיצה על "פרסם עכשיו") מוצגת הודעה ברורה. */
+      PUBMSG=(PUBFAIL<2&&!loud)?'':(g.why==='אין גשר')
         ? (GESHER===null
            ? 'לא פורסם: התיקון שמור כאן. לפרסום מיידי פתח את הקיצור "לאוקמי גירסא - עריכה" שבשולחן העבודה'
            : 'לא פורסם: המחשב הראשי אינו פועל. התיקון שמור כאן, ויעלה מעצמו כשיידלק')
@@ -3428,10 +3563,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         else {why='שגיאה '+r.status;break}
       }
     }catch(e){why='אין חיבור'}
-    if(ok){ED.forEach(e=>e.pub=1);saveED();PUBLAST=sig;
+    if(ok){markPub();PUBLAST=sig;PUBAT=Date.now();PUBFAIL=0;
       PUBMSG='· פורסם '+new Date().toLocaleTimeString('he-IL').slice(0,5)+
              ' · יופיע לכל הלומדים בתוך כשתי דקות';}
-    else PUBMSG='לא פורסם: '+why+' · העריכות שמורות במכשיר וינוסו שוב';
+    else{failed();PUBMSG=(PUBFAIL<2&&!loud)?'':'לא פורסם: '+why+' · העריכות שמורות במכשיר וינוסו שוב'}
     PUBBUSY=false;pubDraw();drawEd();
     if(!ok&&ED.some(e=>!e.pub))PUBT=setTimeout(()=>pubNow(0),45000)}
   function edKey(){
@@ -3473,6 +3608,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       e.preventDefault();sUndo();return}
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyZ'&&UNDO.length&&
        UNDO[UNDO.length-1].t>LASTIN){e.preventDefault();undoLast();return}
+    /* Ctrl+Y (וגם Ctrl+Shift+Z): חזרה לפעולת ניקוי או סגנון שבוטלה זה עתה,
+       כל עוד לא נעשה דבר אחריה. בכל מקרה אחר - ההקלדה שייכת לדפדפן. */
+    if(e.ctrlKey&&!e.altKey&&!e.metaKey&&((!e.shiftKey&&e.code==='KeyY')||(e.shiftKey&&e.code==='KeyZ'))){
+      const ru=REDO.length?REDO[REDO.length-1]:null, rs=SREDO.length?SREDO[SREDO.length-1]:null;
+      const okU=ru&&ru.t>LASTIN&&(!UNDO.length||UNDO[UNDO.length-1].t<=ru.t);
+      const okS=rs&&rs.t>LASTIN&&(!SUNDO.length||SUNDO[SUNDO.length-1].t<=rs.t);
+      if(okU||okS){e.preventDefault();
+        if(okU&&(!okS||ru.t>=rs.t))redoLast(); else sRedo();
+        return}}
     /* Enter מפצל פסקה לשתיים באותו סגנון. בכותרת ובחלון אין פיצול:
        הם פסקה אחת בוורד מעצם טיבם. */
     if(e.key==='Enter'&&!e.shiftKey){
@@ -3544,8 +3688,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      לשאול בו מילת מנהל: מי שהגיע לכאן כבר עבר את כל מה שמילה כזאת
      אמורה לבדוק. */
   if(ONGESHER){try{localStorage.setItem(AKEY,'1')}catch(e){}}
-  if(!ED.some(e=>!e.pub))PUBLAST=pubBody().replace(/"when":"[^"]*",?/,'');
-  else setTimeout(()=>pubNow(0),3000);
+  /* כניסה אחרי יציאה שבה התור לא נשלח: התיקונים שמורים במכשיר, ונשלחים עכשיו */
+  {let pd=false;try{pd=localStorage.getItem(PDKEY)==='1'}catch(e){}
+   if(isAdmin()&&(pd||ED.some(e=>!e.pub))){
+     PUBDIRTY=true;
+     setTimeout(()=>{toast('תיקונים שהמתינו מהביקור הקודם נשלחים עכשיו.',3000);pubNow(0)},3000)}
+   else PUBLAST=pubBody().replace(/"when":"[^"]*",?/,'')}
 
   /* =================== נקודת הקליטה: הצעות, תור המנהל, סנכרון ===================
      האתר סטטי, ולכן עד כאן הצעת תיקון נשמרה רק בדפדפן של המציע ואיש לא
@@ -3815,7 +3963,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         if(o)ED[ED.indexOf(o)]=n;else ED.push(n);by[e.k]=n;changed=true}
       else if(e.ing&&!o.ing){o.ing=e.ing}}
     if(changed)saveED();return changed}
-  function syncSoon(){clearTimeout(SYNCT);SYNCT=setTimeout(syncNow,1500)}
+  /* הסנכרון בין מכשירים הוא חלק מאותו פרסום מרוכז (pubNow כותב את אותה
+     רשימה לאותה נקודת קליטה), ולכן אינו נשלח בנפרד על כל תיקון */
+  function syncSoon(){queuePub()}
   async function syncNow(){
     if(!isAdmin()||!admKey()||SYNCBUSY)return;SYNCBUSY=true;
     try{const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty})});

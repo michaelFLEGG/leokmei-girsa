@@ -212,6 +212,191 @@ def _style_ids(styles_xml):
     return out
 
 
+SPACE_STYLE = 'רווח לפני'
+NUMBER_STYLE = 'מספר קטע'
+
+
+def _add_number_style(styles_xml):
+    """מוסיף ל-styles.xml את סגנון התו "מספר קטע": וילנא מודגש, קטן ב-2 נקודות
+    מהטקסט הרץ (9), בחום-זהב עמוק. מחזיר (xml, האם נוסף)."""
+    root = etree.fromstring(styles_xml)
+    ids = {st.get(W + 'styleId') for st in root.findall('w:style', ns)}
+    sid = 'MisparKeta'
+    while sid in ids:
+        sid += '1'
+    st = etree.SubElement(root, W + 'style')
+    st.set(W + 'type', 'character')
+    st.set(W + 'customStyle', '1')
+    st.set(W + 'styleId', sid)
+    etree.SubElement(st, W + 'name').set(W + 'val', NUMBER_STYLE)
+    dflt = None
+    for s in root.findall('w:style', ns):
+        if s.get(W + 'type') == 'character' and s.get(W + 'default') == '1':
+            dflt = s.get(W + 'styleId')
+    if dflt:
+        etree.SubElement(st, W + 'basedOn').set(W + 'val', dflt)
+    etree.SubElement(st, W + 'uiPriority').set(W + 'val', '1')
+    etree.SubElement(st, W + 'qFormat')
+    rp = etree.SubElement(st, W + 'rPr')
+    rf = etree.SubElement(rp, W + 'rFonts')
+    rf.set(W + 'cs', 'BA Vilna Bold')
+    etree.SubElement(rp, W + 'bCs')
+    c = etree.SubElement(rp, W + 'color')
+    c.set(W + 'val', '7A5A14')
+    etree.SubElement(rp, W + 'szCs').set(W + 'val', '14')
+    return etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True), True
+
+
+def apply_numbers(path, ops, author, masechet, log=print, dry=False):
+    """מוסיף לפני פסקאות את מספר הקטע ("א. ") בסגנון התו "מספר קטע", כהוספה
+    במעקב. כל אופ: {daf, context (נוסח הפסקה כולה), letter}. אין נגיעה בשום
+    דבר אחר. פסקה שכבר נפתחת במספר מדולגת, ופסקה שאינה מאותרת בייחוד אינה
+    נכתבת ונרשמת בדוח."""
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    before = convert(path)
+    plan, missed, skipped = [], [], 0
+    used = set()
+    for op in ops:
+        ctx = op.get('context') or ''
+        k0 = hagaha.daf_key(op.get('daf')) if op.get('daf') else None
+        win = [b for b in before if k0 is None or hagaha.daf_key(b.get('daf')) is None
+               or abs(hagaha.daf_key(b['daf']) - k0) <= 1]
+        # אינדקס הפסקה מן הבנייה הוא העוגן הראשון: אם הנוסח באותו אינדקס זהה,
+        # זו הפסקה. פסקה כפולה בנוסחה (למשל "מתני'.") נקבעת כך ולא בניחוש.
+        ix = op.get('i')
+        if ix is not None and 0 <= ix < len(before):
+            at = before[ix]['text'].strip()
+            if at == ('%s. %s' % (op['letter'], ctx)).strip():
+                skipped += 1
+                continue
+            if at == ctx.strip() and ix not in used:
+                used.add(ix)
+                plan.append((before[ix], op))
+                continue
+        hits = [b for b in win if b['text'].strip() == ctx.strip() and b['i'] not in used]
+        nxt = (op.get('next') or '').strip()
+        if len(hits) > 1 and nxt:
+            hits = [b for b in hits if b['i'] + 1 < len(before) and before[b['i'] + 1]['text'].strip() == nxt] or hits
+        if len(hits) > 1 and op.get('i') is not None:
+            hits = sorted(hits, key=lambda b: abs(b['i'] - op['i']))
+            if len(hits) > 1 and abs(hits[0]['i'] - op['i']) == abs(hits[1]['i'] - op['i']):
+                hits = []
+            else:
+                hits = hits[:1]
+        if not hits:
+            done_before = [b for b in win if b['text'].strip() == ('%s. %s' % (op['letter'], ctx)).strip()]
+            if done_before:          # כבר ממוספרת (הרצה קודמת)
+                skipped += 1
+                continue
+        if len(hits) != 1:
+            missed.append((op, 'לא אותרה פסקה יחידה (%d מועמדות)' % len(hits)))
+            continue
+        b = hits[0]
+        first = (b.get('runs') or [{}])[0]
+        if (first.get('cs') or '') in (NUMBER_STYLE, NUMBER_STYLE + ' תו'):
+            skipped += 1
+            continue
+        used.add(b['i'])
+        plan.append((b, op))
+    if not plan or dry:
+        return {'applied': 0 if dry else 0, 'planned': len(plan), 'skipped': skipped,
+                'missed': missed, 'backup': None, 'verified': True if not dry else None}
+    bk = backup(path, masechet)
+    log('גיבוי: ' + bk)
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    settings = z.read('word/settings.xml')
+    styles = z.read('word/styles.xml')
+    z.close()
+    sids = _style_ids(styles)
+    extra = {}
+    if NUMBER_STYLE not in sids:
+        styles, ok = _add_number_style(styles)
+        if not ok:
+            raise Refused('לא ניתן להוסיף את סגנון התו "%s"' % NUMBER_STYLE)
+        extra['word/styles.xml'] = styles
+        sids = _style_ids(styles)
+        log('נוסף לקובץ סגנון התו "%s"' % NUMBER_STYLE)
+    sid = sids[NUMBER_STYLE][0]
+    counter = [9800]
+
+    def nextid():
+        counter[0] += 1
+        return counter[0]
+
+    when = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    xml_ps = _paragraph_map(doc, before)
+    done, expect = 0, {}
+    for b, op in plan:
+        p = xml_ps.get(b['i'])
+        if p is None:
+            missed.append((op, 'הפסקה לא נמצאה ב-XML'))
+            continue
+        label = op['letter'] + '. '
+        rp = etree.Element(W + 'rPr')
+        etree.SubElement(rp, W + 'rStyle').set(W + 'val', sid)
+        r = _mkrun(label, rp)
+        ins = _mark(etree.Element(W + 'ins'), author, when, nextid)
+        ins.append(r)
+        pos = 1 if p.find('w:pPr', ns) is not None else 0
+        p.insert(pos, ins)
+        expect[b['i']] = label + b['text']
+        done += 1
+    tmp = path + '.new'
+    _rezip(path, tmp, dict({'word/document.xml':
+                            etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
+                            'word/settings.xml': _ensure_track(settings)[0]}, **extra))
+    after = convert(tmp)
+    bad = []
+    if len(after) != len(before):
+        bad.append('מספר הפסקאות השתנה: %d ⟵ %d' % (len(before), len(after)))
+    else:
+        for bb, aa in zip(before, after):
+            want = expect.get(bb['i'], bb['text'])
+            if aa['text'] != want:
+                bad.append('פסקה %d: ציפינו %r, קיבלנו %r' % (bb['i'], want[:50], aa['text'][:50]))
+            if aa['style'] != bb['style']:
+                bad.append('פסקה %d: הסגנון השתנה' % bb['i'])
+    if bad:
+        os.remove(tmp)
+        log('האימות נכשל. הקובץ לא נגע:')
+        for line in bad[:8]:
+            log('   ' + line)
+        return {'applied': 0, 'planned': len(plan), 'skipped': skipped, 'missed': missed,
+                'backup': bk, 'verified': False, 'errors': bad}
+    os.replace(tmp, path)
+    log('נכתבו %d מספרי קטע, ואומתו' % done)
+    return {'applied': done, 'planned': len(plan), 'skipped': skipped, 'missed': missed,
+            'backup': bk, 'verified': True}
+
+
+def _add_space_style(styles_xml):
+    """מוסיף ל-styles.xml את הסגנון "רווח לפני": חצי שורה (5.5 נקודות,
+    כשהשורה 11) לפני הפסקה, על בסיס הסגנון הרגיל. מחזיר (xml, האם נוסף)."""
+    root = etree.fromstring(styles_xml)
+    base = None
+    for st in root.findall('w:style', ns):
+        if st.get(W + 'type') == 'paragraph' and st.get(W + 'default') == '1':
+            base = st.get(W + 'styleId')
+    if base is None:
+        return styles_xml, False
+    ids = {st.get(W + 'styleId') for st in root.findall('w:style', ns)}
+    sid = 'SpaceBefore'
+    while sid in ids:
+        sid += '1'
+    st = etree.SubElement(root, W + 'style')
+    st.set(W + 'type', 'paragraph')
+    st.set(W + 'customStyle', '1')
+    st.set(W + 'styleId', sid)
+    etree.SubElement(st, W + 'name').set(W + 'val', SPACE_STYLE)
+    etree.SubElement(st, W + 'basedOn').set(W + 'val', base)
+    etree.SubElement(st, W + 'qFormat')
+    pp = etree.SubElement(st, W + 'pPr')
+    etree.SubElement(pp, W + 'spacing').set(W + 'before', '110')
+    return etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True), True
+
+
 def _copy_no_change(el, tag):
     """עותק של pPr/rPr בלי רישום שינוי קודם שבתוכו."""
     c = etree.fromstring(etree.tostring(el))
@@ -378,6 +563,15 @@ def apply(path, ops, author, masechet, log=print, dry=False):
     styles = z.read('word/styles.xml')
     z.close()
     sids = _style_ids(styles)
+    extra = {}
+    # "רווח לפני" הוא סגנון אחיד בכל המסכתות. קובץ שאין בו אותו - הוא נוסף
+    # (תוספת בלבד, בלי נגיעה בסגנונות קיימים), ורק כשיש פסקה שמבקשת אותו.
+    if any(op.get('style') == SPACE_STYLE for _, op in splan) and SPACE_STYLE not in sids:
+        styles, ok = _add_space_style(styles)
+        if ok:
+            extra['word/styles.xml'] = styles
+            sids = _style_ids(styles)
+            log('נוסף לקובץ הסגנון "%s" (חצי שורה לפני הפסקה)' % SPACE_STYLE)
 
     counter = [9000]
 
@@ -431,9 +625,9 @@ def apply(path, ops, author, masechet, log=print, dry=False):
                 missed.append((op, 'הקטע אינו יחיד בפסקה, או שהוא בתוך שינוי-מעקב'))
 
     tmp = path + '.new'
-    _rezip(path, tmp, {'word/document.xml':
+    _rezip(path, tmp, dict({'word/document.xml':
                        etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
-                       'word/settings.xml': _ensure_track(settings)[0]})
+                       'word/settings.xml': _ensure_track(settings)[0]}, **extra))
 
     # --- אימות: להמיר מחדש ולהשוות ---
     after = convert(tmp)
@@ -512,6 +706,49 @@ def _split_paragraph(p, at, author, when, nextid):
         return None
     _mark_para(p, 'ins', author, when, nextid)
     parent.insert(idx + 1, p2)
+    return p2
+
+
+def _insert_paragraph(p, op, res, sty_ids, author, when, nextid):
+    """מוסיף פסקה חדשה לפני הפסקה p או אחריה (Enter בסוף או בתחילת פסקה).
+
+    כמו בוורד: ההוספה היא סימן-פסקה שסומן כמוסף, והטקסט החדש עטוף ב-w:ins,
+    כך שבעל הפרויקט מקבל או דוחה אותה. res הוא נוסח שתי הפסקאות לפי הסדר
+    שבהן הן יושבות, ו-where אומר איזו מהן חדשה."""
+    before = op.get('where') == 'before'
+    new_text = res[0] if before else res[1]
+    parent = p.getparent()
+    idx = list(parent).index(p)
+    p2 = etree.Element(W + 'p')
+    pPr = p.find('w:pPr', ns)
+    if pPr is not None:
+        c = _copy_no_change(pPr, 'pPrChange')
+        rp = c.find('w:rPr', ns)
+        if rp is not None:
+            for t in ('ins', 'del'):
+                for old in rp.findall('w:' + t, ns):
+                    rp.remove(old)
+        p2.append(c)
+    sid = (sty_ids.get(op.get('style') or '') or (None,))[0]
+    if sid:
+        pp = p2.find('w:pPr', ns)
+        if pp is None:
+            pp = etree.Element(W + 'pPr')
+            p2.insert(0, pp)
+        cur = pp.find('w:pStyle', ns)
+        if cur is None:
+            cur = etree.Element(W + 'pStyle')
+            pp.insert(0, cur)
+        cur.set(W + 'val', sid)
+    ins = _mark(etree.Element(W + 'ins'), author, when, nextid)
+    ins.append(_mkrun(new_text, None))
+    p2.append(ins)
+    if before:
+        _mark_para(p2, 'ins', author, when, nextid)
+        parent.insert(idx, p2)
+    else:
+        _mark_para(p, 'ins', author, when, nextid)
+        parent.insert(idx + 1, p2)
     return p2
 
 
@@ -595,6 +832,10 @@ def _apply_split_merge(path, ops, author, masechet, log=print, dry=False):
     z = zipfile.ZipFile(path)
     doc = etree.fromstring(z.read('word/document.xml'))
     settings = z.read('word/settings.xml')
+    try:
+        sty_ids = _style_ids(z.read('word/styles.xml'))
+    except KeyError:
+        sty_ids = {}
     z.close()
     counter = [9500]
 
@@ -611,7 +852,11 @@ def _apply_split_merge(path, ops, author, masechet, log=print, dry=False):
         if p is None:
             missed.append((op, 'הפסקה לא נמצאה ב-XML'))
             continue
-        if op['kind'] == 'psplit':
+        if op['kind'] == 'pins':
+            if _insert_paragraph(p, op, res, sty_ids, author, when, nextid) is None:
+                missed.append((op, 'לא ניתן להוסיף פסקה כאן'))
+                continue
+        elif op['kind'] == 'psplit':
             # נקודת החיתוך נמדדת על הטקסט המנורמל, ומתורגמת למקומה
             # בטקסט הגולמי שבוורד.
             nm, idx = _norm_map(before[i]['text'])
@@ -650,7 +895,7 @@ def apply_struct(path, ops, author, masechet, log=print, dry=False):
     """מפצל לפי סוג: פיצול ואיחוי בפונקציה הישנה, כותרת צד בחדשה.
     סוג לא מוכר אינו נופל לאיחוי - הוא נספר כלא-הוחל."""
     hs = [o for o in ops if o.get('kind') == 'phsplit']
-    old = [o for o in ops if o.get('kind') in ('psplit', 'pmerge')]
+    old = [o for o in ops if o.get('kind') in ('psplit', 'pmerge', 'pins')]
     side = [o for o in ops if o.get('kind') in ('pside', 'punside')]
     rest = [o for o in ops if o not in old and o not in side and o not in hs]
     out = {'applied': 0, 'missed': [(o, 'סוג שינוי מבנה לא מוכר') for o in rest],

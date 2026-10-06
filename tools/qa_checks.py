@@ -134,4 +134,78 @@ def run(pages, blocks, CS, role_of, masechet):
     if n_det:
         out.append(('כותרת מנותקת מן התוכן',
                     '%d כותרות נושא שאחריהן אין טקסט עד הכותרת או החציצה הבאה' % n_det, locs))
+
+    out.extend(_heading_checks(pages))
+    out.extend(_spacing_checks(pages))
+    return out
+
+
+def _bare_words(t):
+    return re.sub(r'\s+', ' ', re.sub(r'[^א-ת ]', '', _plain(t).replace('-', ' '))).strip().split()
+
+
+def _heading_checks(pages):
+    """כותרת נושא מול ד"ה משנה (6.10.2026): נושא אינו ציטוט מן המשנה, וד"ה
+    משנה הוא ציטוט מימנה. נושא שרוב מילותיו במשנה שלפניו, או ד"ה שאין בו
+    מילה מן המשנה, הם סימן למיפוי סגנונות שגוי בוורד."""
+    out = []
+    last_m = set()
+    nose_q, dh_far, locs1, locs2 = 0, 0, [], []
+    for pi, p in enumerate(pages):
+        for u in p['units']:
+            k = u['k']
+            if k == 'perek-num':
+                last_m = set()
+            elif k == 'm':
+                last_m = set(w for l in u.get('l', []) for w in _bare_words(l[1]))
+            elif k in ('dh', 'nose') and last_m:
+                w = _bare_words(u.get('a'))
+                if not w:
+                    continue
+                hit = sum(1 for x in w if x in last_m) / len(w)
+                if k == 'nose' and len(w) >= 4 and hit >= 0.8:
+                    nose_q += 1
+                    if len(locs1) < LIMIT:
+                        locs1.append([pi, u['id'], _plain(u.get('a'))[:30]])
+                if k == 'dh' and len(w) >= 5 and hit == 0 and 'וכו' not in _plain(u.get('a')):
+                    dh_far += 1
+                    if len(locs2) < LIMIT:
+                        locs2.append([pi, u['id'], _plain(u.get('a'))[:30]])
+    if nose_q:
+        out.append(('כותרת נושא שנראית כציטוט משנה',
+                    '%d כותרות בסגנון נושא שרוב מילותיהן במשנה שלפניהן - אולי ד"ה משנה במיפוי שגוי' % nose_q, locs1))
+    if dh_far:
+        out.append(('ד"ה משנה שאינו מן המשנה',
+                    '%d ד"ה משנה שאף מילה מהם אינה במשנה שלפניהם - אולי כותרת נושא במיפוי שגוי' % dh_far, locs2))
+    return out
+
+
+def _spacing_checks(pages):
+    """"רווח לפני" (6.10.2026): ספירה לכל מסכת, ואיתור רווח כפול - פסקה עם
+    "רווח לפני" שאחרי כותרת, ד"ה משנה או חציצה (הן עצמן ההפרדה), או שתי
+    פסקאות כאלה ברצף."""
+    n = dbl = 0
+    locs = []
+    prev_head = False
+    prev_sp = False
+    for pi, p in enumerate(pages):
+        for u in p['units']:
+            k = u['k']
+            if k in ('u', 'm'):
+                for i, l in enumerate(u.get('l', [])):
+                    sp = 'sp' in (l[0] or '').split()
+                    if sp:
+                        n += 1
+                        if (i == 0 and prev_head) or prev_sp:
+                            dbl += 1
+                            if len(locs) < LIMIT:
+                                locs.append([pi, u['id'], _plain(l[1])[:30]])
+                    prev_sp = sp
+                    prev_head = False
+            else:
+                prev_head = k in ('dh', 'nose', 'hatz')
+                prev_sp = False
+    out = [('רווח לפני', 'נספרו %d פסקאות עם "רווח לפני" במסכת' % n, [])]
+    if dbl:
+        out.append(('רווח לפני כפול', '%d פסקאות עם "רווח לפני" שאחרי כותרת, ד"ה משנה, חציצה או פסקה כזאת' % dbl, locs))
     return out

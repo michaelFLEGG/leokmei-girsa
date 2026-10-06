@@ -146,6 +146,8 @@ def _side_apply(pages, e):
     else:
         nu = dict(u)
         nu.pop('lv', None)
+        nu.pop('mn', None)
+        nu.pop('mnh', None)
         nu['id'] = e['t']
         nu['l'] = ([body] if body else []) + L[i + 1:]
         nu[k] = res[1][0]
@@ -464,6 +466,11 @@ def _apply_site_edits(pages, slug, qa):
         if ps is not None and isinstance(s['key'], int):
             keepsp = ' '.join(c for c in (s['holder'][0] or '').split()
                               if c[:1] in 'ba' and c[1:].isdigit())
+            # "רווח לפני" הוא חצי שורה; הסרתו מחזירה לאפס
+            if 'sp' in (ps or '').split():
+                keepsp = 'b1 a0'
+            elif 'sp' in (s['holder'][0] or '').split():
+                keepsp = 'b0 a0'
             s['holder'][0] = (ps + ' ' + keepsp).strip()
         done += 1
         e['k'] = s['k']
@@ -523,7 +530,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _bl = ((spacing.get('Normal') or {}).get('line')) or 11.0
   def _half(v):
       return max(0, min(4, int(round(((v or 0.0) / _bl) * 2))))
+  # "רווח לפני" (6.10.2026): הרווח שבין שתי סוגיות הוא חצי שורה בכל
+  # המסכתות, בתצוגה, בהדפסה ובעורך. בוורד הסגנון הזה נושא ערכים שונים
+  # מקובץ לקובץ (3 או 6 נקודות, ולעתים אפס), ולכן הערך אינו נגזר ממנו:
+  # הסגנון קובע רק שיש רווח, וגודלו אחיד.
+  SP_BEFORE = ('רווח לפני', 'מרווח 3')
   def sp_cls(style):
+      if style in SP_BEFORE:
+          return 'b1 a0'
       sp = spacing.get(style) or {}
       return 'b%d a%d' % (_half(sp.get('before')), _half(sp.get('after')))
   def line_ratio(role, dflt=1.0):
@@ -874,6 +888,55 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       qa.append(('מקור מן הגמרא',
                  '%d יחידות מתוך %d הוצמדו למקטע בגמרא; %d לא עברו את הסף ואין להן כפתור "מקור"'
                  % (st['matched'],st['eligible'],st['low'])))
+  # ---------- מספור קטעי המשנה באותיות (6.10.2026) ----------
+  # האותיות הן אלה שבפירוש הגמרא, והן מועתקות ולא מחושבות. הצמדה מכנית
+  # (ref ומילים); מה שלא הותאם נרשם בבקרה ואינו מנוחש.
+  mnseg={}
+  if sources:
+      import mishna_numbers
+      _mr=mishna_numbers.assign(pages,sources,masechet)
+      mnseg=_mr.get('seg_letters',{})
+      _nd=sum(1 for p in pages for u in p['units'] if u.get('mn') and u['k']=='dh')
+      _nm=sum(1 for p in pages for u in p['units'] if u.get('mn') and u['k']!='dh')
+      def _loc_of(daf):
+          for _pi,_p in enumerate(pages):
+              if (_p.get('daf') or '').strip()==daf and _p['units']:
+                  return [_pi,_p['units'][0]['id'],daf]
+          return None
+      qa.append(('מספור קטעי המשנה',
+                 'מוספרו %d ד"ה משנה (%d לפי מקטע הגמרא, %d לפי מילים; עוד %d כבר מוספרו בוורד) ו-%d יחידות משנה או פסקאות פתיחה '
+                 '(עוד %d כבר בוורד); %d ד"ה לא הותאמו, ו-%d קטעי משנה שבפירוש הגמרא לא נמצאה להם יחידה באתר'
+                 % (_nd,_mr['dh_ref'],_mr['dh_words'],_mr.get('dh_in_word',0),_nm,_mr.get('m_in_word',0),_mr['dh_none'],len(_mr['m_missing']))))
+      if _mr['m_missing']:
+          qa.append(('קטע משנה חסר',
+                     '%d קטעים שממוספרים בפירוש הגמרא כקטעי משנה, ואין להם יחידה באתר שאפשר לתלות בה את המספר'
+                     % len(_mr['m_missing']),
+                     [[_l[0],_l[1],'%s - קטע %s'%(x[0],x[2])] for x in _mr['m_missing'][:40] for _l in [_loc_of(x[0])] if _l]))
+      if _mr['dh_unmatched']:
+          qa.append(('ד"ה משנה בלי מספר קטע',
+                     '%d ד"ה משנה שלא נמצא להם מקטע בפירוש הגמרא' % len(_mr['dh_unmatched']),
+                     [[_pi,_id,_t] for _d,_id,_t in _mr['dh_unmatched'][:40]
+                      for _pi in [next((i for i,p in enumerate(pages) if (p.get('daf') or '').strip()==_d),0)]]))
+      _gaps=_mr['jumps']+_mr['dups']
+      if _gaps:
+          qa.append(('מספור לא רציף',
+                     '%d מקומות בפירוש הגמרא שבהם רצף האותיות קופץ או חוזר (למשל א ואז ג): %s'
+                     % (len(_gaps),', '.join('%s קטע %s'%(g[0],g[2]) for g in _gaps[:8])),
+                     [[_l[0],_l[1],'%s - %s'%(g[0],g[2])] for g in _gaps[:40] for _l in [_loc_of(g[0])] if _l]))
+      # הנתונים לכתיבה לוורד (tools/mishna_apply.py)
+      try:
+          _op=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'data','sections')
+          os.makedirs(_op,exist_ok=True)
+          io.open(os.path.join(_op,os.path.basename(out_path)[:-5]+'.json'),'w',encoding='utf-8').write(
+              json.dumps({'masechet':masechet,'report':{k:(v if not isinstance(v,list) else len(v)) for k,v in _mr.items() if k!='seg_letters'},
+                          'unmatched':_mr['dh_unmatched'],'missing':_mr['m_missing'],'jumps':_mr['jumps'],'dups':_mr['dups'],
+                          'ops':[{'daf':p.get('daf'),'k':u['k'],'letter':u['mn'],'how':u.get('mnh'),'i':u['id'],
+                                  'text':html.unescape(re.sub(r'<[^>]+>','',(u.get('a') if u['k']=='dh' else (u['l'][0][1] if u.get('l') else '')) or '')),
+                                  'next':html.unescape(re.sub(r'<[^>]+>','',(u['l'][1][1] if u['k']!='dh' and len(u.get('l') or [])>1 else '')))}
+                                 for p in pages for u in p['units'] if u.get('mn')]},
+                         ensure_ascii=False,indent=0))
+      except Exception as _e:
+          qa.append(('מספור קטעי המשנה','נתוני הכתיבה לוורד לא נשמרו: %s'%_e))
   # ---------- ו3: מפת הסגנונות לסרגל העריכה הצף ----------
   # שמות הסגנונות שונים מקובץ לקובץ. לכל תפקיד נבחר השם השכיח ביותר
   # באותו תפקיד בקובץ הזה עצמו, כדי שכתיבה לוורד תשתמש בסגנון שכבר
@@ -897,6 +960,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   sty={'c':[[c,lab,top(cs_cnt[c])] for c,lab in CSLAB if cs_cnt[c]]+
            [['mf','מפרשים',''],['b','מודגש','']],          # הדגשה ישירה, אינה סגנון בוורד
        'p':[[c,lab,top(ps_cnt[c])] for c,lab in PSLAB if ps_cnt[c]]}
+  # סגנון "רווח לפני" מוצע בעורך בכל קובץ שהוא מוגדר בו, גם כשאין בו עדיין
+  # אף פסקה כזאת: אחרת אי אפשר להפעיל אותו בקובץ שבו טרם נעשה בו שימוש.
+  if not any(p[0]=='sp' for p in sty['p']):
+      # בקובץ שאין בו הסגנון, הוא נוצר בוורד בעת הכתיבה הראשונה (word_apply)
+      _spn=next((n for n in SP_BEFORE if n in spacing),'רווח לפני')
+      sty['p'].append(['sp','רווח לפני',_spn])
   absent=[lab for c,lab in CSLAB if not cs_cnt[c]]
   if absent:
       qa.append(('סגנון תו שאינו בקובץ',
@@ -941,7 +1010,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
                      'נשארו בלי ניקוד (ראשי תיבות, קיצורים או מילה שלא נמצאה לה התאמה בטוחה)'
                      % (nk.get('est',0),nk.get('left',0))))
 
-  data={'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
+  data={'mnseg':mnseg,'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 
   CSS=r'''
@@ -1065,7 +1134,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      הזה היה ציון הדף נופל על השורה הבאה. */
   .row>.main:empty{min-height:var(--lhpx)}
   .main{text-align:justify;text-align-last:right}
-  .main p{margin:0} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
+  .main p{margin:0} .main p:empty::before{content:'\200b'} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
   /* פסקה מוזחת (פיסקת תשובה, וסעיפי רשימה): הזחה תלויה, כמו בוורד */
   .main p.in{padding-right:.9em;text-indent:-.9em}
   .dafmark{grid-column:1;justify-self:center;font-family:'VilnaG','Vilna',serif;
@@ -1088,7 +1157,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* ‏.dh ו-.nose יושבים גם על השורה וגם על הטקסט שבתוכה. כלל שאינו
      מוגבל ל-.main היה מוכפל פעמיים, וגודל הכותרת יצא בריבוע המקדם -
      שורש נוסף לכותרות הגדולות. סוכן סריקת התצוגה מדד זאת. */
-  .main.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
+  /* ד"ה משנה מיושר לימין (כפי שהוא), ונושא מודגש וממורכז: ההבדל ביניהם
+     חייב להיראות (6.10.2026) */
+  .main.dh{text-align:right;text-align-last:right;font-family:'Vilna',serif;font-weight:900;
       font-size:calc(var(--k-dh) * 1em);margin:0}
   .main.nose{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;
         font-size:calc(var(--k-nose) * 1em);margin:0;color:var(--ink)}
@@ -1115,7 +1186,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* מרווחי וורד, בחצאי שורה של רשת הגוף. b=לפני, a=אחרי.
      הכללים נכתבים כצאצא של .row כדי שמשקלם יגבר על '.main p{margin:0}'
      ועל כללי הכותרות. בלי זה הם לא חלו כלל, והמרווח שבוורד נעלם. */
+  /* מספר קטע משנה (6.10.2026): אות קטנה ועדינה לפני ד"ה משנה, יחידת משנה
+     או פסקה שמתחילה בה קטע. תוכן מדומה (::before) ולא טקסט: אי אפשר למחוק
+     אותו בטעות בעריכה, והוא אינו משנה את שבירת השורות של הד"ה. */
+  .main[data-mn].dh::before,.main[data-mn].mishna p:first-child::before,.row.u .main[data-mn]>p:first-child::before{
+     content:attr(data-mn) '.';font-family:'Vilna',serif;font-weight:700;font-size:.78em;color:#7a5a14;
+     margin-inline-end:.35em;letter-spacing:.02em;unicode-bidi:isolate;white-space:nowrap}
+  .mn{font-family:'Vilna',serif;font-weight:700;font-size:.78em;color:#7a5a14;letter-spacing:.02em}
+  body.dark .main[data-mn].dh::before,body.dark .main[data-mn].mishna p:first-child::before,body.dark .row.u .main[data-mn]>p:first-child::before,body.dark .mn{color:#d8b45a}
   .row .b0{margin-top:0}.row .b1{margin-top:calc(var(--lhpx) * .5)}
+  /* "רווח לפני": חצי שורה (b1). כותרת,
+     ד"ה משנה או חציצה שלפניה הן עצמן ההפרדה, ולכן הרווח אינו נוסף. */
+  .row.dh+.row .main>p.sp:first-child,.row.nose+.row .main>p.sp:first-child,.row.hatz+.row .main>p.sp:first-child{margin-top:0}
   .row .b2{margin-top:var(--lhpx)}.row .b3{margin-top:calc(var(--lhpx) * 1.5)}
   .row .b4{margin-top:calc(var(--lhpx) * 2)}
   .row .a0{margin-bottom:0}.row .a1{margin-bottom:calc(var(--lhpx) * .5)}
@@ -1169,15 +1251,33 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .edbar .edpub.bad{color:#ffd9d2;font-weight:700}
   /* הסרגל הצף של הסגנונות. הוא נפתח מעל הבחירה, ולעולם אינו מכסה
      את הטקסט הנערך: אם אין מקום מעליו הוא יורד מתחתיו. */
-  .stybar{position:fixed;z-index:12;display:none;align-items:center;gap:4px;flex-wrap:wrap;
-     max-width:min(92vw,560px);background:#2b2620;color:#f2ede1;border-radius:6px;
-     padding:5px 8px;box-shadow:0 4px 18px rgba(0,0,0,.35);font-size:13px}
-  .stybar .ttl{color:#c9a24a;font-size:12px;padding:0 3px}
-  .stybar .sep{width:1px;align-self:stretch;background:#5a5147;margin:2px 4px}
-  .stybar button{font:inherit;font-size:13px;background:#413a31;color:#f2ede1;border:0;
-     border-radius:4px;padding:3px 9px;cursor:pointer;white-space:nowrap}
+  .stybar{position:fixed;z-index:12;display:none;flex-direction:column;gap:0;
+     width:210px;max-height:calc(100vh - 110px);overflow:auto;background:#2b2620;color:#f2ede1;border-radius:8px;
+     padding:0 0 6px;box-shadow:0 4px 18px rgba(0,0,0,.35);font-size:13px;direction:rtl}
+  .stybar .sthd{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;background:#1f1b17;
+     border-radius:8px 8px 0 0;position:sticky;top:0}
+  .stybar .stgrip{cursor:grab;color:#c9a24a;font-size:12px;flex:1;user-select:none;touch-action:none}
+  .stybar .stbody{display:flex;flex-direction:column;gap:2px;padding:4px 6px}
+  .stybar .stgrp{display:flex;flex-direction:column;gap:2px;padding-bottom:5px;margin-bottom:3px;border-bottom:1px solid #4a4137}
+  .stybar .stgrp:last-child{border-bottom:0;margin-bottom:0}
+  .stybar .ttl{color:#c9a24a;font-size:11px;padding:2px 3px}
+  .stybar button{font:inherit;font-size:13px;background:#413a31;color:#f2ede1;border:0;display:flex;
+     justify-content:space-between;align-items:baseline;gap:8px;
+     border-radius:4px;padding:3px 9px;cursor:pointer;white-space:nowrap;text-align:right}
+  .stybar button small{color:#a89f90;font-size:11px;direction:ltr}
   .stybar button:hover{background:var(--gold);color:#2b2620}
+  .stybar button:hover small{color:#4a4137}
   .stybar button.on{background:var(--gold);color:#2b2620;font-weight:700}
+  .stybar button.on small{color:#4a4137}
+  .stybar .stmin{background:transparent;color:#a89f90;font-size:11px;padding:0 4px}
+  .stybar.col{width:auto;padding:0}
+  .stybar.col .stico{background:#2b2620;color:#c9a24a;border-radius:8px;padding:6px 12px}
+  .stybar.strip{width:100%;max-height:none;flex-direction:row;align-items:center;border-radius:0;padding:0;overflow-x:auto;overflow-y:hidden}
+  .stybar.strip .sthd{position:static;background:transparent;padding:2px 8px}
+  .stybar.strip .stbody{flex-direction:row;align-items:center;gap:4px;padding:2px 6px}
+  .stybar.strip .stgrp{flex-direction:row;align-items:center;border-bottom:0;border-inline-start:1px solid #4a4137;padding:0 0 0 6px;margin:0 0 0 4px}
+  .stybar.strip button{padding:2px 8px}
+  body.stystrip #flow{padding-bottom:var(--stypad,40px)}
   @media print{.stybar,.edbar{display:none!important}}
   /* ---- הצע תיקון (לכל הלומדים) ---- */
   .pick #flow .main p:hover,.pick #flow .anchor:hover,.pick #flow .main.dh:hover,.pick #flow .main.nose:hover{
@@ -1366,7 +1466,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   ''' % (K_BOLD * 100, K_BOLD * 100, K_NOSE, K_DH, K_MISHNA, line_ratio('hatz')))
 
   JS=r'''
-  const D=DATA;const $=s=>document.querySelector(s);
+  const D=DATA;const MNSEG=D.mnseg||{};const $=s=>document.querySelector(s);
   const params=new URLSearchParams(location.hash.slice(1));
   const ME_HASH=location.hash;
   function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
@@ -1648,7 +1748,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const win=(w,lab)=>`<div class="rail">${mk}<span class="win${w&&w.indexOf('<br>')>-1?' stk':''}">`+
       (w?`<span class="anchor">${w}</span>`:'')+(lab?'<span class="mlabel">משנה</span>':'')+
       `</span></div>`;
-    if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}>${win(u.a,0)}<div class="main">${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
+    const MN=u.mn?' data-mn="'+u.mn+'"':'';
+    if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}>${win(u.a,0)}<div class="main"${MN}>${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
     if(u.k==='m'){
       /* ז3 - הניקוד הוא שכבה נפרדת. במצב עריכה חוזרים לנוסח הוורד,
          כדי שהעיגון (הנוסח שהיה) יעבוד על הטקסט האמיתי ושלא ייכנס
@@ -1657,11 +1758,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
          פיצול או איחוי משנים את אורך u.l, ואילו lv נבנה בבנייה הקודמת -
          ואז היה מספר הפסקאות המוצג שונה מזה שהמפתחות נגזרו ממנו. */
       const L=(NK&&!EDIT&&u.lv&&u.lv.length===u.l.length)?u.lv:u.l;
-      return `<div class="row" id="u${u.id}"${H}>${win(u.w,1)}<div class="main mishna">${L.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===L.length-1?sb:''}</p>`).join('')}</div></div>`;
+      return `<div class="row" id="u${u.id}"${H}>${win(u.w,1)}<div class="main mishna"${MN}>${L.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===L.length-1?sb:''}</p>`).join('')}</div></div>`;
     }
     /* א: החציצה אחידה - העיטור של סוכה בכל מקום. הנוסח שבוורד לא נגע. */
     if(u.k==='hatz')return `<div class="row hatz" id="u${u.id}"${H}>${win(u.w,0)}<div class="main hatz ${u.s||''}">${u.a}</div></div>`;
-    return `<div class="row ${u.k}" id="u${u.id}"${H}>${win(u.w,0)}<div class="main ${u.k==='dh'||u.k==='nose'?u.k:''} ${u.s||''}">${u.a}${sb}</div></div>`;
+    return `<div class="row ${u.k}" id="u${u.id}"${H}>${win(u.w,0)}<div class="main ${u.k==='dh'||u.k==='nose'?u.k:''} ${u.s||''}"${u.k==='dh'?MN:''}>${u.a}${sb}</div></div>`;
   }
   /* ALL: מצב רצף - כל המסכת בטור אחד, מן הדף הראשון עד האחרון בגלילה אחת. */
   let ALL=false;
@@ -1839,7 +1940,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const AKEY='lg-admin', EKEY='lg-ed-'+SLUG, TKEY='lg-gh';
   const REPO='michaelFLEGG/leokmei-girsa', EDPATH='data/edits/'+SLUG+'.json';
   const CSTY=(D.sty&&D.sty.c)||[], PSTY=(D.sty&&D.sty.p)||[];
-  const OKCLS=CSTY.map(x=>x[0]);
+  const OKCLS=CSTY.map(x=>x[0]).concat(['mn']);     /* mn: מספר קטע, בא מן הוורד ואינו סגנון להחלה */
   const PCLS=PSTY.map(x=>x[0]).filter(Boolean);
   let ED=[]; try{ED=JSON.parse(localStorage.getItem(EKEY)||'[]')}catch(e){ED=[]}
   /* _ap = "הוחל על הנתונים בטעינה הזאת"; הסימון זמני ואינו נשמר בין טעינות */
@@ -1954,7 +2055,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const id=+m[1];
     for(const p of D.pages)for(const u of p.units){
       if(u.id!==id||!u.l||!u.l[+m[2]-1])continue;
-      const keep=(u.l[+m[2]-1][0]||'').split(' ').filter(c=>c.length===2&&'ba'.indexOf(c[0])>-1&&/\d/.test(c[1])).join(' ');
+      let keep=(u.l[+m[2]-1][0]||'').split(' ').filter(c=>c.length===2&&'ba'.indexOf(c[0])>-1&&/\d/.test(c[1])).join(' ');
+      /* "רווח לפני" הוא חצי שורה; הסרתו מחזירה לאפס */
+      if((ps||'').split(' ').indexOf('sp')>-1)keep='b1 a0';
+      else if((u.l[+m[2]-1][0]||'').split(' ').indexOf('sp')>-1)keep='b0 a0';
       u.l[+m[2]-1][0]=((ps||'')+' '+keep).trim();delete u.lv;return true}
     return false}
   /* תיקון טקסט שקיים כבר, ואחריו נעשה שינוי מבנה באותה פסקה: הוא
@@ -2025,11 +2129,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     el.__wasP=(e&&e.wasP!==undefined)?e.wasP:pcls(el)}
   function edFocus(ev){const el=ev.target.closest&&ev.target.closest('[contenteditable]');
     if(el&&el.__was===undefined)edBase(el)}
-  function edBlur(ev){const el=ev.target.closest&&ev.target.closest('[contenteditable]');if(el)capture(el)}
+  function edBlur(ev){if(typeof PBUSY!=='undefined'&&PBUSY)return;
+    const el=ev.target.closest&&ev.target.closest('[contenteditable]');if(el)capture(el)}
   function capture(el){
     if(!el.isConnected)return;      /* שורה שהוחלפה בינתיים (פיצול, איחוי) - אין מה ללכוד */
     if(el.__was===undefined)edBase(el);
     edSan(el);
+    if(pinCapture(el))return;       /* פסקה חדשה מ-Enter: נרשמת ברשומת הוספה, לא כתיקון טקסט */
     const now=txtOf(el), nowH=htmlOf(el), nowP=pcls(el);
     const was=el.__was, wasH=el.__wasH, wasP=el.__wasP;
     const same=(now===was&&nowH===wasH&&nowP===wasP);
@@ -2066,6 +2172,97 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     capture(el);
     const r=el.closest&&el.closest('.row');
     if(r)squeezeRows([r,r.previousElementSibling,r.nextElementSibling].filter(x=>x&&x.classList&&x.classList.contains('row')))},700)}
+
+  /* =================== Enter: פסקה חדשה (6.10.2026) ===================
+     Enter בסוף פסקה פותח פסקה ריקה מתחתיה, בתחילתה - מעליה, ובאמצעה
+     מפצל, בדיוק כמו בוורד. פסקה ריקה היא רק מצב עבודה (PH): היא אינה
+     נרשמת ואינה נשלחת לשום מקום, ואם נשארה ריקה היא נעלמת בשקט בטעינה
+     הבאה. ברגע שנכתב בה טקסט היא נרשמת ברשומת הוספה אחת (ins=1): הנוסח
+     של הפסקה הסמוכה לפני ולא את ההוספה, ואחריהן שתי הפסקאות. המשך
+     ההקלדה באותה פסקה מעדכן את אותה רשומה (PINS) ולא יוצר תיקון נפרד,
+     כדי שהוורד יקבל פסקה אחת עם הטקסט הסופי. */
+  const PH=new WeakMap(), PINS=new WeakMap();
+  const spaceCls=c=>(c||'').split(' ').filter(x=>x.length===2&&'ba'.indexOf(x[0])>-1&&/\d/.test(x[1])).join(' ');
+  function pinEntry(el){
+    const k=el&&el.dataset&&el.dataset.ek||'';const m=k.match(/^u(\d+)\.(\d+)$/);
+    if(!m||+m[2]<1)return null;
+    for(const o of unitsAll())if(o.u.id===+m[1]&&o.u.l[+m[2]-1])return {ent:o.u.l[+m[2]-1],u:o.u,i:+m[2]-1,pi:o.pi};
+    return null}
+  function pinCapture(el){
+    const h=pinEntry(el);if(!h)return false;
+    const ph=PH.get(h.ent), pn=PINS.get(h.ent);
+    if(!ph&&!pn)return false;
+    const nowH=htmlOf(el), nowT=txtOf(el), nowP=pcls(el);
+    h.ent[1]=nowH;
+    if(el.tagName==='P'&&!ph&&!pn.head||el.tagName==='P'&&ph&&!ph.head)h.ent[0]=((nowP||'')+' '+spaceCls(h.ent[0])).trim()||h.ent[0];
+    delete h.u.lv;SLOTS=null;
+    if(ph){
+      if(!nowT.trim())return true;                 /* עדיין ריקה: מצב עבודה בלבד */
+      const head=!!ph.head, before=ph.where==='before', A=ph.a;
+      const aT=head?plain(ph.head.a):plain(A[1]);
+      freezeEdits([aT]);
+      const aRow=head?[ph.head.k,ph.head.a]:[A[0],A[1]];
+      const nRow=[h.ent[0],nowH];
+      const se={op:'struct',kind:head?'hsplit':'split',ins:1,where:ph.where,texts:[aT],
+        res:before?[nRow,aRow]:[aRow,nRow],resT:before?[nowT,aT]:[aT,nowT],
+        psw:wsty(head?'':nowP),daf:ph.daf,t:head?h.u.id:Date.now(),pub:0,_ap:1};
+      ED.push(se);PH.delete(h.ent);PINS.set(h.ent,{se,a:A,head:ph.head});
+      saveED();drawEd();pubSoon();syncSoon();return true}
+    /* פסקה שכבר נרשמה: מעדכנים את הרשומה שלה */
+    const se=pn.se, idx=se.where==='before'?0:1;
+    if(!nowT.trim()){                              /* נמחק כל הטקסט: חוזרת להיות פסקה ריקה */
+      const i=ED.indexOf(se);if(i>-1){edKeys();tomb(se.k);ED.splice(i,1)}
+      PINS.delete(h.ent);
+      PH.set(h.ent,{a:pn.a,head:pn.head,where:se.where,daf:se.daf});
+      saveED();drawEd();pubSoon();return true}
+    se.res[idx]=[h.ent[0],nowH];se.resT[idx]=nowT;se.pub=0;
+    if(se.kind!=='hsplit')se.psw=wsty(nowP);
+    saveED();pubSoon();return true}
+  function phInfo(el){const h=pinEntry(el);return h?PH.get(h.ent):null}
+  /* פסקה ריקה שנמחקה (Backspace/Delete) - נעלמת, והסמן חוזר לסמוכה */
+  function phRemove(el){
+    const h=pinEntry(el);if(!h)return false;
+    const ph=PH.get(h.ent);if(!ph)return false;
+    const snp=[snapOf(h.pi)];
+    h.u.l.splice(h.i,1);PH.delete(h.ent);
+    let key,off=0;
+    if(ph.head){key='u'+ph.head.id+'.0';off=plain(ph.head.a).length}
+    else if(ph.where==='before'){key='u'+h.u.id+'.'+(h.i+1)}
+    else{key='u'+h.u.id+'.'+h.i;off=plain(ph.a[1]).length}
+    if(!h.u.l.length){const us=D.pages[h.pi].units;us.splice(us.indexOf(h.u),1)}
+    delete h.u.lv;SLOTS=null;
+    reflow(key,off,snp);return true}
+  function newParaP(el,where){
+    const h=pinEntry(el);if(!h)return false;
+    clearTimeout(CAPT);capture(el);
+    const A=h.u.l[h.i];
+    const snp=[snapOf(h.pi)];const usnap=JSON.stringify(D.pages[h.pi].units);
+    const N=[where==='after'?(spaceCls(A[0])||'b0 a0'):A[0],''];
+    h.u.l.splice(where==='after'?h.i+1:h.i,0,N);
+    PH.set(N,{a:A,head:null,where,daf:dafOf(el)});
+    delete h.u.lv;SLOTS=null;
+    UNDO.length=0;UNDO.push({e:null,snaps:[{pi:h.pi,snap:usnap}],key:'u'+h.u.id+'.'+(h.i+1),t:Date.now()});
+    reflow('u'+h.u.id+'.'+(where==='after'?h.i+2:h.i+1),0,snp);
+    return true}
+  function newParaHead(el,where){
+    const hd=hostOf(el);if(!hd||hd.kind!=='head')return false;
+    clearTimeout(CAPT);capture(el);
+    if(where==='before'){
+      /* מעל כותרת: פסקה חדשה בסוף מה שלפניה */
+      const up=neighbor(hd,-1);
+      if(up&&up.kind==='p'&&up.pi===hd.pi){
+        const pe=document.querySelector('[data-ek="'+hKey(up)+'"]');
+        if(pe)return newParaP(pe,'after')}
+      return false}
+    const snp=[snapOf(hd.pi)];const usnap=JSON.stringify(D.pages[hd.pi].units);
+    const nu={k:'u',a:'',l:[['b0 a0','']],id:Date.now()};
+    if(hd.u.ref)nu.ref=hd.u.ref;
+    const us=D.pages[hd.pi].units;us.splice(us.indexOf(hd.u)+1,0,nu);
+    PH.set(nu.l[0],{a:null,head:hd.u,where:'after',daf:dafOf(el)});
+    SLOTS=null;
+    UNDO.length=0;UNDO.push({e:null,snaps:[{pi:hd.pi,snap:usnap}],key:hKey(hd),t:Date.now()});
+    reflow('u'+nu.id+'.1',0,snp);
+    return true}
 
   /* =================== ו2 ג-ד: פיצול פסקה ואיחויה ===================
      Enter מפצל פסקה לשתיים באותו סגנון; מחיקה אחורה בראש פסקה מאחדת
@@ -2171,7 +2368,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const da=box(a), db=box(b);
     const ha=da.innerHTML, hb=db.innerHTML;
     if(!da.textContent.trim()||!db.textContent.trim()){
-      flash('אין לפצל כאן: אחד משני החלקים יוצא ריק');return false}
+      /* בקצה: אין מה לפצל, נפתחת פסקה חדשה (כמו בוורד), בלי הודעה */
+      if(!db.textContent.trim()){
+        if(da.innerHTML!==info.u.l[info.i][1]){setHTML(el,da.innerHTML);capture(el)}
+        return newParaP(el,'after')}
+      return newParaP(el,'before')}
     const cls=info.u.l[info.i][0];
     const was=plain(info.u.l[info.i][1]);
     const snp=[snapOf(info.pi)];
@@ -2194,7 +2395,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(let i=ED.length-1;i>=0;i--){
       const e=ED[i];
       if(e.op!=='struct')continue;
-      if((e.kind==='split'||e.kind==='hsplit')&&e.resT.length===2&&
+      if(!e.ins&&(e.kind==='split'||e.kind==='hsplit')&&e.resT.length===2&&
          e.resT[0]===texts[0]&&e.resT[1]===texts[1]){const g=ED.splice(i,1)[0];return g}
       break}
     return false}
@@ -2320,7 +2521,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       d.querySelectorAll('.srcb,.mlabel').forEach(n=>n.remove());return edSan(d)};
     const da=box(a),db=box(b);
     if(!da.textContent.trim()||!db.textContent.trim()){
-      flash('אין לפצל כאן: אחד משני החלקים יוצא ריק. כדי לפצל כותרת, העמד את הסמן בין שתי מילים שלה');return false}
+      return newParaHead(el,db.textContent.trim()?'before':'after')}
     const was=plain(h.u.a);
     const snp=[snapOf(h.pi)];const usnap=JSON.stringify(D.pages[h.pi].units);
     freezeEdits([was]);
@@ -2402,7 +2603,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function caretIn(el){const s=getSelection();return !!(s&&s.rangeCount&&el&&el.contains(s.anchorNode))}
   /* מחיל על ה-DOM את ההפרש שבין תצלום "לפני" ובין הנתונים עכשיו.
      keepCaret: שורה שהסמן בתוכה אינה נכתבת מחדש (סנכרון שהגיע מבחוץ). */
-  function patchPage(snap,keepCaret){
+  /* בזמן שהשורות מוחלפות, הדפדפן יורה "יציאה ממיקוד" על האלמנט הישן, שמפתחו
+     כבר מצביע על פסקה אחרת. לכידה כזאת היתה כותבת את נוסחו על הפסקה החדשה
+     (נמדד: פסקה ריקה שנפתחה ב-Enter קיבלה את נוסח הפסקה שלפניה). */
+  let PBUSY=0;
+  function patchPage(snap,keepCaret){PBUSY++;try{return patchPage0(snap,keepCaret)}finally{PBUSY--}}
+  function patchPage0(snap,keepCaret){
     const f=$('#flow'),pi=snap.pi,pg=D.pages[pi],us=pg.units,rows=[];
     const nowJ={};us.forEach((u,i)=>nowJ[u.id]=JSON.stringify([u,i===0]));
     for(const id of snap.ids)if(!(id in nowJ)){const r=f.querySelector('#u'+id);if(r)r.remove()}
@@ -2534,7 +2740,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       u[k]=(u[k]?u[k]+'<br>':'')+e.res[1][0];
       tgt=u;if(body)key='u'+u.id+'.1';
     }else{
-      const nu=Object.assign({},u);delete nu.lv;nu.id=e.t;
+      const nu=Object.assign({},u);delete nu.lv;delete nu.mn;delete nu.mnh;nu.id=e.t;
       nu.l=(body?[body]:[]).concat(L.slice(i+1));nu[k]=e.res[1][0];
       if(u.k==='m')nu.a='';
       u.l=L.slice(0,i);
@@ -2699,11 +2905,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const m=document.createElement('div');m.className='modal';m.id='keyscard';
     const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
       ['Ctrl+1','סגנון תו: אמוראים (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון תו: נושא'],
-      ['Ctrl+4','סגנון תו: רקע והסבר'],['Ctrl+B','מודגש'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
+      ['Ctrl+4','סגנון תו: רקע והסבר'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl'],
-      ['Enter / Backspace בתחילת פסקה / Delete בסופה','פיצול פסקה / איחוי עם הקודמת / איחוי עם הבאה. עובד גם בכותרת: החלק השני בפיצול נעשה גוף רגיל'],
+      ['Enter','בסוף פסקה - פסקה חדשה מתחתיה; בתחילתה - פסקה חדשה מעליה; באמצעה - פיצול. בכותרת: החלק החדש נעשה גוף רגיל'],
+      ['Backspace בתחילת פסקה / Delete בסופה','איחוי עם הקודמת / איחוי עם הבאה'],
       ['חצים, Home, End, PageUp, PageDown (עריכה)','הסמן זז, והדף נגלל אחריו; חץ בקצה הפרק עובר לפרק הסמוך'],
       ['חצים, Home, End, PageUp, PageDown (קריאה)','גלילת שורה / תחילת הפרק וסופו / גלילת מסך'],
       ['Alt+חץ ימינה / שמאלה (במגירת המקור)','הדף הקודם / הבא בגמרא'],
@@ -2715,12 +2922,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     document.body.appendChild(m);
     m.addEventListener('click',e=>{if(e.target===m)m.remove()})}
   function structName(e){
+    if(e.ins)return 'פסקה חדשה';
     return e.kind==='split'?'פיצול פסקה':e.kind==='merge'?'איחוי שתי פסקאות':
            e.kind==='side'?'כותרת צד':e.kind==='unside'?'החזרת כותרת צד לגוף':
            e.kind==='hsplit'?'פיצול כותרת':e.kind==='hmerge'?'איחוי כותרת עם שורה סמוכה':'שינוי מבנה'}
   function structShow(e){
     if(e.kind==='side')return (e.resT&&e.resT[1]||'')+' ⟵ כותרת צד';
     if(e.kind==='unside')return (e.resT&&e.resT[0]||'')+' ⟵ גוף';
+    if(e.ins)return e.resT[e.where==='before'?0:1];
     return ((e.kind==='split'||e.kind==='hsplit')?e.resT:e.texts).join(' ⟂ ')}
 
   function setEdit(on){
@@ -2847,42 +3056,112 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      האירוע מחדש - והדף נתקע בלולאה אינסופית. נמדד. */
   let STYSIG='', STYT=null;
   function styLater(){clearTimeout(STYT);STYT=setTimeout(showSty,60)}
-  function hideSty(){STYSIG='';const b=$('#stybar');if(b)b.style.display='none'}
+  function hideSty(){STYSIG='';const b=$('#stybar');if(b)b.style.display='none';document.body.classList.remove('stystrip')}
+  /* חלונית הסגנונות (6.10.2026): אינה צמודה לשורה ואינה מכסה טקסט.
+     מקומה המועדף: בשוליים השמאליים, כ-3 ס"מ (113 פיקסלים) משמאל לטקסט
+     הנראה הקרוב ביותר לשוליים - בצד שאין בו מסילת העוגנים, שהיא תמיד
+     מימין. כשאין שם מקום (תצוגת עמודות צפופה, חלון צר, טלפון) היא פס דק
+     בתחתית המסך. אפשר לגרור אותה, והמקום נשמר; אפשר לכווץ אותה. ליד כל
+     שם סגנון מופיע הקיצור שלו, והסגנון הפעיל במקום הסמן מסומן. */
+  const SPOS='lg-stypos', SCOL='lg-stycol';
+  function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function lsSet(k,v){try{if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
+  function shortOf(code){for(const k in CK)if(CK[k]===code)return 'Ctrl+'+k.slice(5);return code==='b'?'Ctrl+B':''}
+  function activeChar(el){
+    const s=getSelection();if(!s.rangeCount)return {};
+    const r=s.getRangeAt(0);let n=r.collapsed?r.startContainer:r.commonAncestorContainer;
+    if(n.nodeType===3)n=n.parentElement;
+    const out={};
+    for(let x=n;x&&x!==el&&x.nodeType===1;x=x.parentElement){
+      if(x.tagName==='I'&&OKCLS.indexOf(x.className)>-1)out[x.className]=1;
+      if(x.tagName==='B')out.b=1}
+    return out}
+  function styHtml(el,sel){
+    const ac=activeChar(el);
+    const btn=(on,fn,label,key,title)=>'<button class="'+(on?'on':'')+'" onmousedown="event.preventDefault()" onclick="'+fn+'"'+
+      (title?' title="'+esc(title)+'"':'')+'><span>'+esc(label)+'</span>'+(key?'<small>'+esc(key)+'</small>':'')+'</button>';
+    let h='<div class="sthd"><span class="stgrip" title="גרור להזזה; לחיצה כפולה מחזירה למקום הרגיל">סגנונות</span>'+
+      '<button class="stmin" onmousedown="event.preventDefault()" onclick="styCollapse(1)" title="כיווץ לסמל קטן">כיווץ</button></div><div class="stbody">';
+    if(isTxt(el)){
+      h+='<div class="stgrp"><span class="ttl">סגנון תו</span>'+
+        CSTY.map(c=>btn(!!ac[c[0]],"csToggle('"+c[0]+"')",c[1],shortOf(c[0]))).join('')+
+        btn(false,"setCs('')",'ללא סגנון','Ctrl+רווח')+'</div>'}
+    if(isHeadEl(el))h+='<div class="stgrp"><span class="ttl">'+(el.classList.contains('nose')?'נושא משנה':'ד"ה משנה')+'</span>'+
+      btn(false,'headBody()','הפוך לגוף','Ctrl+Q','הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים')+'</div>';
+    if(el.tagName==='P'){
+      const now=pcls(el);
+      h+='<div class="stgrp"><span class="ttl">סגנון פסקה</span>'+
+        PSTY.map(p=>btn(p[0]==='sp'?el.classList.contains('sp'):now===p[0],
+          p[0]==='sp'?'spToggle()':"setPs('"+p[0]+"')",p[1],p[0]==='sp'?'Ctrl+0':'')).join('')+
+        '</div>'}
+    if(isTxt(el)){
+      h+='<div class="stgrp">'+btn(false,'sideCmd()','כותרת צד','Ctrl+.')+
+        btn(false,'clearFmt()','נקה עיצוב','Ctrl+Shift+רווח','מסיר כל סגנון תו והדגשה מכל הפסקה, ומחזיר אותה לגוף')+
+        btn(false,'plainPara()','הסר סגנון פסקה','Ctrl+Q')+'</div>'}
+    return h+'</div>'}
+  function styCollapse(on){lsSet(SCOL,on?'1':null);STYSIG='';showSty()}
+  function stySavedPos(){try{const j=JSON.parse(lsGet(SPOS)||'null');return j&&isFinite(j.x)&&isFinite(j.y)?j:null}catch(e){return null}}
+  function styPlace(bar,el){
+    document.body.classList.remove('stystrip');bar.classList.remove('strip');
+    const bw=bar.offsetWidth,bh=bar.offsetHeight,sv=stySavedPos();
+    const topMin=(($('#bar')||{}).offsetHeight||44)+6;
+    if(sv){bar.style.left=Math.max(4,Math.min(innerWidth-bw-4,sv.x))+'px';
+      bar.style.top=Math.max(topMin,Math.min(innerHeight-bh-4,sv.y))+'px';bar.style.bottom='auto';return}
+    /* הקצה השמאלי של הטקסט הנראה, כדי שהחלונית לעולם לא תהיה מעל טקסט */
+    let L=Infinity;
+    for(const m of document.querySelectorAll('#flow .row .main')){
+      const r=m.getBoundingClientRect();
+      if(r.right>0&&r.left<innerWidth&&r.bottom>0&&r.top<innerHeight)L=Math.min(L,r.left)}
+    if(!isFinite(L))L=innerWidth;
+    let x=L-113-bw;
+    if(x<8)x=(L-24-bw>=8)?8:-1;
+    if(x>=0&&innerWidth>=700){
+      const rc=el.getBoundingClientRect();
+      let y=Math.max(topMin,Math.min(innerHeight-bh-40,rc.top));
+      bar.style.left=x+'px';bar.style.top=y+'px';bar.style.bottom='auto';return}
+    /* אין מקום בשוליים: פס דק בתחתית, מעל רצועת הסטטוס */
+    const eb=$('#edbar');
+    bar.classList.add('strip');bar.style.left='0';bar.style.top='auto';
+    bar.style.bottom=((eb&&eb.offsetHeight)||0)+'px';
+    document.body.style.setProperty('--stypad',bar.offsetHeight+'px');
+    document.body.classList.add('stystrip')}
+  function styDrag(ev){
+    const bar=$('#stybar');if(!bar)return;
+    if(!ev.target.closest('.stgrip'))return;
+    ev.preventDefault();
+    const r=bar.getBoundingClientRect(),dx=ev.clientX-r.left,dy=ev.clientY-r.top;
+    const mv=e=>{bar.classList.remove('strip');bar.style.bottom='auto';
+      bar.style.left=Math.max(4,Math.min(innerWidth-bar.offsetWidth-4,e.clientX-dx))+'px';
+      bar.style.top=Math.max(4,Math.min(innerHeight-bar.offsetHeight-4,e.clientY-dy))+'px'};
+    const up=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);
+      document.body.classList.remove('stystrip');
+      lsSet(SPOS,JSON.stringify({x:Math.round(bar.getBoundingClientRect().left),y:Math.round(bar.getBoundingClientRect().top)}))};
+    document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up)}
   function showSty(){
     if(!EDIT)return;
     const el=edEl();const s=getSelection();
-    if(!el||!s||!s.rangeCount){hideSty();return}
+    if(!el||!s||!s.rangeCount||el.classList.contains('anchor')){hideSty();return}
     const r=s.getRangeAt(0);
-    let rc0=r.getBoundingClientRect();
-    if(!rc0.width&&!rc0.height)rc0=el.getBoundingClientRect();
-    const sig=[el.dataset.ek||'',r.collapsed,pcls(el),Math.round(rc0.left),Math.round(rc0.top)].join('|');
+    const col=lsGet(SCOL)==='1';
+    const ac=activeChar(el);
+    const sig=[el.dataset.ek||'',r.collapsed,pcls(el),el.classList.contains('sp'),Object.keys(ac).join(','),col].join('|');
     if(sig===STYSIG)return;
     STYSIG=sig;
     let bar=$('#stybar');
     if(!bar){bar=document.createElement('div');bar.id='stybar';bar.className='stybar';
+      bar.addEventListener('pointerdown',styDrag);
+      bar.addEventListener('dblclick',e=>{if(e.target.closest('.stgrip')){lsSet(SPOS,null);STYSIG='';bar.__placed=0;showSty()}});
       document.body.appendChild(bar)}
-    const sel=!r.collapsed;
-    let h='';
-    if(sel)h+='<span class="ttl">סגנון תו</span>'+
-      CSTY.map(c=>'<button onmousedown="event.preventDefault()" onclick="setCs(\''+c[0]+'\')">'+esc(c[1])+'</button>').join('')+
-      '<button onmousedown="event.preventDefault()" onclick="setCs(\'\')">ללא סגנון</button>';
-    if(isHeadEl(el))h+=(sel?'<span class="sep"></span>':'')+'<span class="ttl">'+(el.classList.contains('nose')?'נושא משנה':'ד"ה משנה')+'</span>'+
-      '<button onmousedown="event.preventDefault()" onclick="headBody()" title="הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים">הפוך לגוף</button>'+
-      '<button onmousedown="event.preventDefault()" onclick="clearFmt()" title="מסיר כל סגנון תו והדגשה ומחזיר לגוף">נקה עיצוב לכל הפסקה</button>';
-    if(el.tagName==='P'){
-      const now=pcls(el);
-      h+=(sel?'<span class="sep"></span>':'')+'<span class="ttl">סגנון פסקה</span>'+
-        PSTY.map(p=>'<button class="'+(now===p[0]?'on':'')+'" onmousedown="event.preventDefault()" onclick="setPs(\''+p[0]+'\')">'+esc(p[1])+'</button>').join('')+
-        '<button onmousedown="event.preventDefault()" onclick="clearFmt()" title="מסיר כל סגנון תו והדגשה מכל הפסקה, ומחזיר אותה לגוף">נקה עיצוב לכל הפסקה</button>'}
-    if(!h){hideSty();return}
-    bar.innerHTML=h;bar.style.display='flex';
-    let rc=r.getBoundingClientRect();
-    if(!rc.width&&!rc.height)rc=el.getBoundingClientRect();
-    const bc=bar.getBoundingClientRect();
-    let top=rc.top-bc.height-8; if(top<6)top=rc.bottom+8;
-    let left=rc.left+rc.width/2-bc.width/2;
-    left=Math.max(6,Math.min(innerWidth-bc.width-6,left));
-    bar.style.top=top+'px';bar.style.left=left+'px'}
+    if(col){bar.classList.add('col');
+      bar.innerHTML='<button class="stico" onmousedown="event.preventDefault()" onclick="styCollapse(0)" title="פתיחת חלונית הסגנונות">סגנונות</button>'}
+    else{bar.classList.remove('col');
+      const h=styHtml(el,!r.collapsed);
+      if(!h){hideSty();return}
+      bar.innerHTML=h}
+    bar.style.display='flex';
+    if(bar.__ek!==(el.dataset.ek||'')||col!==bar.__col||!bar.__placed){styPlace(bar,el);bar.__placed=1}
+    bar.__ek=el.dataset.ek||'';bar.__col=col}
+  addEventListener('resize',()=>{const b=$('#stybar');if(b)b.__placed=0;STYSIG='';if(EDIT)styLater()});
   function setCs(c){
     const el=edEl();if(!el)return;
     const s=getSelection();if(!s.rangeCount)return;
@@ -2948,9 +3227,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         capture(el);STYSIG='';styLater()}
       return}
     sPush(el);
+    const hadSp=el.classList.contains('sp'), wantSp=(c||'').split(' ').indexOf('sp')>-1;
     PCLS.forEach(x=>el.classList.remove(x));
     if(c)c.split(' ').filter(Boolean).forEach(x=>el.classList.add(x));
+    if(wantSp!==hadSp){
+      [...el.classList].filter(x=>/^[ba]\d$/.test(x)).forEach(x=>el.classList.remove(x));
+      (wantSp?['b1','a0']:['b0','a0']).forEach(x=>el.classList.add(x))}
     capture(el);STYSIG='';styLater()}
+  /* Ctrl+0 (כמו בוורד): "רווח לפני" מופעל, ובלחיצה שנייה מוסר */
+  function spToggle(){
+    const el=edEl();
+    if(!el||el.tagName!=='P'||!PSTY.some(p=>p[0]==='sp'))return;
+    setPs(el.classList.contains('sp')?'':'sp')}
 
   function drawEd(){
     const box=$('#edb');if(!box)return;
@@ -3072,7 +3360,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     return JSON.stringify({v:1,slug:SLUG,masechet:D.masechet,
       when:new Date().toISOString(),sty:D.sty,
       edits:ED.filter(e=>!e.lost).map(e=>e.op==='struct'
-        ? {op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,
+        ? {op:'struct',kind:e.kind,ins:e.ins,where:e.where,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,
            daf:e.daf,t:e.t}
         : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
            ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t})},null,1)}
@@ -3162,6 +3450,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* הקלדה: Enter חסום כדי שלא תיווצר פסקה חדשה, והדבקה נכנסת כטקסט נקי */
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.altKey&&(e.key==='e'||e.key==='E'||e.key==='ק')){askAdmin();e.preventDefault();return}
+    /* Ctrl+0 (כמו בוורד): "רווח לפני". חוסם את איפוס הזום של הדפדפן */
+    if(EDIT&&e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey&&(e.code==='Digit0'||e.code==='Numpad0')){
+      e.preventDefault();spToggle();return}
     if(!EDIT||!e.target.isContentEditable)return;
     const el=e.target.closest('[contenteditable="true"]');
     if(!el)return;
@@ -3187,11 +3478,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(e.key==='Enter'&&!e.shiftKey){
       e.preventDefault();
       clearTimeout(CAPT);capture(el);
-      if(isHeadEl(el)){splitHead(el);return}
+      if(isHeadEl(el)){
+        if(atEnd(el))newParaHead(el,'after');
+        else if(atStart(el))newParaHead(el,'before');
+        else splitHead(el);
+        return}
       if(el.classList.contains('anchor')){
-        flash('זו כותרת צד, שורה אחת בשוליים. Ctrl+Q מחזיר אותה לגוף, ואז אפשר לפצל');return}
-      if(el.tagName!=='P'){flash('בשורה מסוג זה אין פיצול');return}
-      splitAtCaret(el);
+        /* כותרת צד היא שורה אחת בשוליים: Enter מעביר את הסמן לפסקה שלידה */
+        const nx=el.closest('.row')&&el.closest('.row').querySelector('.main p[data-ek]');
+        if(nx)placeCaret(nx.dataset.ek,0);
+        return}
+      if(el.tagName!=='P')return;
+      if(atEnd(el))newParaP(el,'after');
+      else if(atStart(el))newParaP(el,'before');
+      else splitAtCaret(el);
       return}
     /* Ctrl+Q: מסיר את סגנון הפסקה ומחזיר לרגיל, כמו בוורד */
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey&&e.code==='KeyQ'){e.preventDefault();plainPara();return}
@@ -3200,6 +3500,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
        המילים שעלו נשמרים כי האיחוי הוא איחוי של ה-HTML של שתיהן. */
     if(e.key==='Delete'&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&(el.tagName==='P'||isHeadEl(el))&&atEnd(el)){
       e.preventDefault();
+      { const hs0=editHosts(),nx0=hs0[hs0.indexOf(el)+1];
+        if(nx0&&phInfo(nx0)){phRemove(nx0);return} }
       const h=hostOf(el),lo=h&&neighbor(h,1);
       /* כותרת בצד אחד של האיחוי: שינוי מבנה של כותרות */
       if(h&&lo&&(isHeadEl(el)||lo.kind==='head')){
@@ -3213,6 +3515,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* מחיקה אחורה בתו הראשון של פסקה מאחדת אותה עם הקודמת */
     if(e.key==='Backspace'&&(el.tagName==='P'||isHeadEl(el))&&atStart(el)){
       e.preventDefault();
+      if(phInfo(el)){phRemove(el);return}
+      { const hs1=editHosts(),pv=hs1[hs1.indexOf(el)-1];
+        if(pv&&phInfo(pv)){phRemove(pv);return} }
       clearTimeout(CAPT);capture(el);
       const h=hostOf(el),up=h&&neighbor(h,-1);
       if(h&&(isHeadEl(el)||(up&&up.kind==='head'))){
@@ -3498,7 +3803,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* שינוי מבנה (פיצול/איחוי) אין לו מפתח מקום, ומפתחו לסנכרון נגזר מזמנו */
   function edKeys(){ED.forEach(e=>{if(e.op==='struct'&&!e.k)e.k='s'+e.t})}
   function edOut(){edKeys();return ED.filter(e=>!e.lost).map(e=>e.op==='struct'
-      ? {k:e.k,op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,daf:e.daf,t:e.t,by:e.by}
+      ? {k:e.k,op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,daf:e.daf,t:e.t,by:e.by,ins:e.ins,where:e.where}
       : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
          ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t,by:e.by,sg:e.sg}).concat(TOMB)}
   function mergeIn(list){edKeys();let changed=false;const by={};ED.forEach(e=>by[e.k]=e);
@@ -3588,11 +3893,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function srcPageHTML(i){
     const heb=SX.keys[i],pg=SRC.pages[heb];
     const per=pg.perush||null,wantP=SRCVIEW!=='gem',wantG=SRCVIEW!=='per';
-    const one=n=>(wantG?'<p class="g">'+(pg.gemara[n]||'')+'</p>':'')+
+    const mnl=n=>MNSEG[pg.refs[n]]?'<i class="mn">'+esc(MNSEG[pg.refs[n]])+'.</i> ':'';
+    const one=n=>(wantG?'<p class="g">'+mnl(n)+(pg.gemara[n]||'')+'</p>':'')+
       (wantP&&per&&per[n]?'<div class="prs">'+per[n]+'</div>':'');
     return '<section class="spg" data-i="'+i+'"><h4>דף '+esc(heb)+'</h4>'+
       pg.gemara.map((g,n)=>'<div class="sgx" data-n="'+n+'" data-ref="'+esc(pg.refs[n]||'')+'">'+
-        (one(n)||('<p class="g">'+g+'</p>'))+'</div>').join('')+
+        (one(n)||('<p class="g">'+mnl(n)+g+'</p>'))+'</div>').join('')+
       (wantP&&!per?'<div class="ld">אין פירוש לדף הזה.</div>':'')+'</section>'}
   function srcBody(){return document.querySelector('#srcx .srcbody')}
   /* הדף שנראה בראש המגירה */

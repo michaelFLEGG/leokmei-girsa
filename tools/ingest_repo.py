@@ -82,7 +82,12 @@ def ops_of(doc):
         # ---- שינוי מבנה: פיצול פסקה או איחוי שתיים ----
         if e.get('op') == 'struct':
             kind = e.get('kind')
-            if kind in ('split', 'merge'):
+            if e.get('ins'):
+                # פסקה חדשה מ-Enter: res = נוסח שתי הפסקאות לפי סדרן, where = איזו חדשה
+                mops.append({'kind': 'pins', 'texts': e.get('texts') or [],
+                             'res': e.get('resT') or [], 'where': e.get('where') or 'after',
+                             'style': e.get('psw') or '', 'daf': e.get('daf', '')})
+            elif kind in ('split', 'merge'):
                 mops.append({'kind': 'psplit' if kind == 'split' else 'pmerge',
                              'texts': e.get('texts') or [], 'res': e.get('resT') or []})
             elif kind == 'hsplit':

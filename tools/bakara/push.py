@@ -18,6 +18,11 @@ def push(path):
     if not m:
         return False
     d = json.load(open(path, encoding='utf-8'))
+    # הכללים שנלמדו והעלויות מוצגים באזור המנהל; הם נוסעים עם כל פרק (לא נכנסים לאתר הציבורי)
+    for k, fn in (('rules', 'rules.json'), ('costs', 'costs.json')):
+        q = os.path.join(ROOT, 'data', 'bakara', fn)
+        if os.path.exists(q):
+            d[k] = json.load(open(q, encoding='utf-8'))
     r = _api.call('/bakara/data', 'PUT', {'slug': m.group(1), 'perek': int(m.group(2)), 'data': d})
     print('הועלה', os.path.basename(path), '-', r.get('n'), 'ממצאים')
     return True

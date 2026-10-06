@@ -41,11 +41,13 @@ def main():
     ap.add_argument('slug')
     ap.add_argument('perek', type=int)
     ap.add_argument('--gemara-only', action='store_true')
-    ap.add_argument('--pages', type=int, default=5)
+    ap.add_argument('--pages', type=int, default=None)  # ברירת מחדל: 5, ו-10 במצב --gemara-only (עלות קבועה לסוכן)
     ap.add_argument('--no-sync', action='store_true')
     ap.add_argument('--no-push', action='store_true')
     ap.add_argument('--force-code-only', action='store_true')
     a = ap.parse_args()
+    if a.pages is None:
+        a.pages = 10 if a.gemara_only else 5
 
     import build_all
     rev = {v: k for k, v in build_all.SLUG.items()}

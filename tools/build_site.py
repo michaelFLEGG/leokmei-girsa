@@ -1299,7 +1299,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # קיים בו ולא תמציא חדש. סגנון שאין לו שם בקובץ הזה אינו מוצע כלל:
   # עדיף שלא יופיע מלהציע דבר שלא ניתן לכתוב אותו חזרה.
   CSLAB=[('am','אמוראים'),('ps','פסוק'),('tn','משנה'),('dm','ד"ה משנה'),('ns','נושא משנה'),
-         ('kt','כותרת בשורה'),('hs','רקע והסבר'),('ot','אות פותחת')]
+         ('kt','כותרת'),('hs','רקע והסבר'),('ot','אות פותחת')]
   PSLAB=[('','גוף'),('hr','רקע והסבר'),('in','פיסקת תשובה'),
          ('sp','רווח לפני'),('nk','נקודה')]
   cs_cnt=collections.defaultdict(collections.Counter)
@@ -3421,7 +3421,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     sideCommit(e,hit.pi,hit,(e,h)=>{unsideApply(e,h);return 'u'+h.u.id+'.1'})}
   /* =================== מקשי עריכה: סגנונות תו, הדגשה, שמירה ===================
      נתפסים לפי event.code ולא לפי התו, כי בפריסה העברית Z הוא ז. */
-  const CK={Digit1:'am',Digit2:'ps',Digit3:'ns',Digit4:'hs',Digit5:'ns'};   /* הכרעה 5.10.2026: Ctrl+1 = אמוראים (לא מפרשים) */
+  const CK={Digit1:'am',Digit2:'ps',Digit3:'kt',Digit4:'hs',Digit5:'dm',Digit6:'ns'};   /* הכרעה 5.10.2026: Ctrl+1 = אמוראים (לא מפרשים). 6.10.2026: Ctrl+3 = כותרת, Ctrl+5 = ד"ה משנה, נושא משנה עבר ל-Ctrl+6 */
   /* פסקה שכולה "נושא משנה" ממורכזת ככותרת; חלק משורה - נשארת במקומה (מיידי, בלי רענון) */
   function nscFix(el){if(el&&el.tagName==='P'&&el.closest&&el.closest('.main.mishna'))el.classList.toggle('nsc',nsAll(el.innerHTML))}
   function csToggle(c){
@@ -3447,8 +3447,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const old=$('#keyscard');if(old){old.remove();return}
     const m=document.createElement('div');m.className='modal';m.id='keyscard';
     const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
-      ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון תו: נושא'],
-      ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+H','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
+      ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון תו: כותרת'],
+      ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון תו: ד"ה משנה'],['Ctrl+6','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+H','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl (בזמן בקרה עם כרטיס ממצא פתוח, Alt+1/2/3 = אשר / דחה / ערוך)'],
@@ -3523,7 +3523,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const et=$('#edtools');if(!et)return;
     if(!on){et.innerHTML='';barFit();return}
     et.innerHTML='<span class="ttl">סגנון תו</span>'+
-      CSTY.map((c,i)=>'<button onmousedown="event.preventDefault()" onclick="csToggle(\''+c[0]+'\')" title="'+esc(c[1])+' (Ctrl+'+(i+1)+')">'+esc(c[1])+'</button>').join('')+
+      CSTY.map((c,i)=>'<button onmousedown="event.preventDefault()" onclick="csToggle(\''+c[0]+'\')" title="'+esc(c[1])+(shortOf(c[0])?' ('+shortOf(c[0])+')':'')+'">'+esc(c[1])+'</button>').join('')+
       '<button onmousedown="event.preventDefault()" onclick="csToggle(\'b\')" title="מודגש (Ctrl+B)"><b>מודגש</b></button>'+
       '<button onmousedown="event.preventDefault()" onclick="sideCmd()" title="הופך את המילה לכותרת בצד ימין (Ctrl+נקודה, או Ctrl+Alt+ק)">כותרת צד</button>'+
       '<button onclick="keysCard()" title="קיצורי מקשים (Ctrl+/)">קיצורי מקשים</button>'+
@@ -3609,7 +3609,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const SPOS='lg-stypos', SCOL='lg-stycol';
   function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
   function lsSet(k,v){try{if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
-  function shortOf(code){if(code==='ns')return 'Ctrl+5, במשנה Ctrl+B';for(const k in CK)if(CK[k]===code)return 'Ctrl+'+k.slice(5);return code==='b'?'Ctrl+B':''}
+  function shortOf(code){if(code==='ns')return 'Ctrl+6, במשנה Ctrl+B';for(const k in CK)if(CK[k]===code)return 'Ctrl+'+k.slice(5);return code==='b'?'Ctrl+B':''}
   function activeChar(el){
     const s=getSelection();if(!s.rangeCount)return {};
     const r=s.getRangeAt(0);let n=r.collapsed?r.startContainer:r.commonAncestorContainer;

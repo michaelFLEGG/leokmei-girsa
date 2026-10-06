@@ -54,7 +54,7 @@ KEYS_CHECK = '''() => {
     const get = () => document.querySelector('[data-ek="' + ek + '"]');
     const key = (el, code, extra) => el.dispatchEvent(new KeyboardEvent('keydown',
       Object.assign({code: code, key: code, ctrlKey: true, bubbles: true, cancelable: true}, extra || {})));
-    for (const [code, cls] of [['Digit1', 'am'], ['Digit2', 'ps'], ['Digit3', 'ns'], ['Digit4', 'hs']]) {
+    for (const [code, cls] of [['Digit1', 'am'], ['Digit2', 'ps'], ['Digit3', 'kt'], ['Digit4', 'hs']]) {
       if (OKCLS.indexOf(cls) < 0) continue;
       const p = get(); p.focus();
       const n = document.createTreeWalker(p, NodeFilter.SHOW_TEXT).nextNode();

@@ -135,9 +135,11 @@
       BK.CH=[];BK.F=[];BK.CAT={};BK.byId={};
       const pk=(d.doc&&d.doc.perakim)||{};
       for(const p of Object.keys(pk).sort((a,b)=>a-b)){
-        const ch=pk[p];BK.CH.push({perek:+p,range:ch.range,n:(ch.findings||[]).length});
+        const ch=pk[p];/* ד"ה משנה בתוך שורה אינו ממצא (הכרעה 6.10.2026): הוא נשאר בשורה, בסגנון ד"ה משנה לא ממורכז */
+        const fl=(ch.findings||[]).filter(f=>f.det!=='dh_inline');
+        BK.CH.push({perek:+p,range:ch.range,n:fl.length});
         (ch.catalog||[]).forEach(x=>{BK.CAT[x[0]]=x});
-        for(const f of ch.findings||[]){f.perek=+p;BK.F.push(f);BK.byId[f.id]=f}}
+        for(const f of fl){f.perek=+p;BK.F.push(f);BK.byId[f.id]=f}}
       BK.has=BK.F.length>0;
       BK.DEC=(c.doc&&c.doc.dec)||{};
       /* הכרעות שטרם נשלחו (אין חיבור): חדשות מן השרת גוברות רק אם מאוחרות */

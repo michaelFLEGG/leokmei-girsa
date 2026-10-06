@@ -57,6 +57,29 @@ SEMKIND = {'שגיאת הבנה': 'sem_hav', 'ייחוס שגוי': 'sem_yih', '
            'חסר מהלך': 'sem_hsr', 'לא מובן': 'sem_lo', 'סגנון שגוי': 'sem_sty'}
 
 
+_PACKS = {}
+
+
+def _auto_vocal(src, daf, text):
+    """האם הניקוד האוטומטי של האתר (nikud_mishna.apply_verses) מכסה את הפסוק:
+    רצף המילים נמצא זהה בגמרא המנוקדת של הדף או של הדפים שלצדו."""
+    import nikud_mishna as NM
+    sp = (src or {}).get('pages') or {}
+    ds = list(sp.keys())
+    d = (daf or '').strip()
+    if d not in sp:
+        return False
+    if d not in _PACKS:
+        i = ds.index(d)
+        sw = []
+        for x in (ds[i - 1] if i else None, d, ds[i + 1] if i + 1 < len(ds) else None):
+            sw.extend(NM.daf_words(sp, x))
+        _PACKS[d] = (sw,) + NM._verse_index(sw)
+    words = NM.WORD.findall(NIK.sub('', text))
+    res = NM.vocalize_verse_words(words, _PACKS[d])
+    return bool(res) and any(res)
+
+
 def main():
     docx, slug, perek, vocab_p, out_p = sys.argv[2:7]
     sem_files = sys.argv[7:]
@@ -205,9 +228,9 @@ def main():
                     add('amor_long', b, r['t'].strip()[:60],
                         '%d מילים רצופות בסגנון "אמוראים" המוקטן - זה תוכן ולא שם' % len(ws),
                         'להחזיר לסגנון רגיל, ולהשאיר בסגנון אמוראים רק את השם')
-            if r.get('cs') in dh and role_of(b).startswith('body'):
-                add('dh_inline', b, r['t'].strip()[:50], 'ציטוט משנה בסגנון ד"ה בתוך שורת גוף',
-                    'להוציא לפסקה משלו בסגנון ד\'\'ה משנה (חוקה 8.5)')
+            # ד"ה משנה בתוך שורה אינו ממצא (הכרעת בעל הפרויקט, 6.10.2026): הוא נשאר
+            # בתוך השורה, באותו גודל של ד"ה משנה אך לא ממורכז, ולא נפרד לפסקה
+            # משלו - כדי שלא יתפוס מקום. האתר מציג אותו כך (.dm).
             if r.get('cs') in ps:
                 ws = [VC.skel(w) for w in TOK.findall(NIK.sub('', r['t']).replace('"', ' '))]
                 ws = [w for w in ws if w]
@@ -216,7 +239,8 @@ def main():
                     if not any((ws[q], ws[q + 1]) in bi for q in range(len(ws) - 1)):
                         add('psuk_bad', b, r['t'].strip()[:50],
                             'המילים בסגנון "פסוק" אינן רצף שנמצא במקרא', 'להחזיר לסגנון רגיל, אם אינו פסוק')
-                    elif not NIK.search(r['t']):
+                    elif not NIK.search(r['t']) and not _auto_vocal(src, b.get('daf'), r['t']):
+                        # פסוק שהאתר מנקד אוטומטית (הכרעה 6.10.2026) אינו ממצא
                         add('psuk_nik', b, r['t'].strip()[:50], 'פסוק שאינו מנוקד (חוקה 9.1)', 'לנקד ניקוד מלא')
     # שמות בלי סגנון אמוראים
     rx = re.compile(r'(?<![א-ת"\'])((?:[ודלכמשבהוא]{0,3})?[א-ת]{0,4}ר[א-ת]{0,4}(?:"|\'\'|״)[א-ת]{1,3})(?![א-ת"\'])')

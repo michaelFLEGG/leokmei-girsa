@@ -1118,6 +1118,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if os.path.exists(_ep):
           _est=json.load(io.open(_ep,encoding='utf-8'))
       nk=nikud_mishna.apply(pages,sources,_est)
+      if nk.get('psk'):
+          qa.append(('ניקוד פסוקים',
+                     '%d קטעי פסוק בסגנון "פסוק": ב-%d נוספו ניקוד אוטומטי (%d מילים) מן הגמרא '
+                     'המנוקדת של הדף; %d נשארו בלי (אין להם רצף זהה בגמרא המנוקדת, או מילה בודדת)'
+                     % (nk['psk'],nk['psk_voc'],nk['psk_words'],nk['psk_left'])))
       if nk['mishnayot']:
           qa.append(('ניקוד המשניות',
                      '%d משניות מתוך %d נוקדו מן הגמרא המנוקדת (%.0f אחוזים), '
@@ -1356,7 +1361,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .am{font-family:'Vilna',serif;font-weight:400;font-size:.77em}   /* ג-א: נקודה אחת פחות מ-.88 (בסיס 9) - תמיד קטן מן הטקסט הרץ וגם מן .hs */
   .ps{font-family:'Vilna',serif;font-weight:700;font-size:.9em;color:#2e3f6b} body.hc .ps{color:#000;text-decoration:underline}
   .df{font-family:'VilnaG','Vilna',serif;color:var(--red)} body.hc .df{color:#000}
-  .kt{font-weight:700} .hs{font-size:.82em;color:#4a4137} .ot{font-weight:700;font-size:.8em} .tn{font-weight:900} .dm{font-weight:900} .mf{color:#6a4a1f} .ns{font-weight:700} .b{font-weight:700}
+  .kt{font-weight:700} .hs{font-size:.82em;color:#4a4137} .ot{font-weight:700;font-size:.8em} .tn{font-weight:900} .dm{font-family:'Vilna',serif;font-weight:900;font-size:calc(var(--k-dh) * 1em)}
+  /* ד"ה משנה בתוך שורה (הכרעה 6.10.2026): אותו גופן וגודל של פסקת ד"ה משנה, מיושר עם השורה ולא ממורכז, בלי פסקה משלו */
+  .main.mishna .dm,.main.dh .dm{font-size:calc(var(--k-dh) / var(--k-mishna) * 1em)} .mf{color:#6a4a1f} .ns{font-weight:700} .b{font-weight:700}
   .u .main:hover{background:rgba(201,162,74,.14)} .hit{background:rgba(201,162,74,.3)}
   mark{background:#ffe27a;color:inherit}
   .panel{position:fixed;top:var(--bar);right:0;bottom:0;width:min(420px,100vw);background:#fbf8f1;box-shadow:-2px 0 16px rgba(0,0,0,.25);overflow:auto;padding:14px 18px;z-index:6;display:none;font-size:15px;line-height:1.6}
@@ -1980,7 +1987,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       (w?`<span class="anchor">${w}</span>`:'')+(lab?mbBox(uu):'')+
       `</span></div>`;
     const MN=u.mn?' data-mn="'+u.mn+'"':'';
-    if(u.k==='u')return `<div class="row u" id="u${u.id}"${H}>${win(u.a,0)}<div class="main"${MN}>${u.l.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===u.l.length-1?sb:''}</p>`).join('')}</div></div>`;
+    if(u.k==='u'){
+      /* פסוקים מנוקדים (6.10.2026): שכבת הניקוד של יחידת גוף, באותו תנאי כמו במשנה */
+      const LU=(NK&&!EDIT&&u.lv&&u.lv.length===u.l.length)?u.lv:u.l;
+      return `<div class="row u" id="u${u.id}"${H}>${win(u.a,0)}<div class="main"${MN}>${LU.map((l,n)=>`<p class="${l[0]}">${l[1]}${n===LU.length-1?sb:''}</p>`).join('')}</div></div>`}
     if(u.k==='m'){
       /* ז3 - הניקוד הוא שכבה נפרדת. במצב עריכה חוזרים לנוסח הוורד,
          כדי שהעיגון (הנוסח שהיה) יעבוד על הטקסט האמיתי ושלא ייכנס

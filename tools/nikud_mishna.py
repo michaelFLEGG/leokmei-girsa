@@ -301,6 +301,7 @@ def apply(pages, src, est=None):
     """מנקד את כל המשניות. מחזיר סטטיסטיקה."""
     st = _apply(pages, src)
     st.update(complete(pages, est))
+    st.update(apply_verses(pages, src))
     return st
 
 
@@ -325,4 +326,174 @@ def _apply(pages, src):
                 u['lv'] = lv
                 st['wdone'] += done
                 st['voc'] += 1
+    return st
+
+# ---------------------------------------------------------------- פסוקים
+# הכרעת בעל הפרויקט (6.10.2026): כל פסוק שבסגנון "פסוק" מתנקד אוטומטית,
+# בלי שיבקש ובלי ממצא בבקרה. הניקוד מועתק מן הגמרא המנוקדת של הדף (ושל
+# הדפים שלצדו) לפי התאמת רצף מדויקת של המילים, ורק למילה שאותיותיה זהות
+# (או שונה רק בכתיב מלא מול חסר). הוא יושב בשכבה u['lv'], לא בוורד.
+PS_OPEN = re.compile(r'^<i\s[^>]*class="(?:[^"]*\s)?ps(?:\s[^"]*)?"')
+
+
+def _verse_index(sw):
+    idx = {}
+    keys = [skel(w) for w in sw]
+    for j, k in enumerate(keys):
+        idx.setdefault(k, []).append(j)
+    return keys, idx
+
+
+def _find_run(mine, keys, idx):
+    """מקום ראשון שבו רצף המפתחות mine מופיע ברצף keys; None אם אין."""
+    n = len(mine)
+    for j in idx.get(mine[0], []):
+        if keys[j:j + n] == mine:
+            return j
+    return None
+
+
+def vocalize_verse_words(words, sw_pack):
+    """words: מילות הפסוק כפי שבוורד (אולי בלי ניקוד). מחזיר רשימה באורך
+    words: המילה מנוקדת, או None כשאין מה להוסיף. None לכולה = אין התאמה."""
+    if len(words) < 2:
+        return None
+    sw, keys, idx = sw_pack
+    mine = [skel(w) for w in words]
+    j = _find_run(mine, keys, idx)
+    if j is None:
+        return None
+    out = []
+    for k, w in enumerate(words):
+        s = sw[j + k]
+        if has_nikud(w) or not has_nikud(s):
+            out.append(None)
+            continue
+        if letters(w) != letters(s):
+            t = transfer(w, s)
+            if t is None or letters(t) != letters(w):
+                out.append(None)
+                continue
+            s = t
+        out.append(s)
+    return out
+
+
+def span_words_of(tok):
+    """רשימת קטעים: כל קטע = רשימת (ti, a, b, word) של מילים בתוך <i class="ps">."""
+    spans, stack, cur = [], [], None
+    for ti, (kind, s) in enumerate(tok):
+        if kind == 'tag':
+            if s.startswith('</i'):
+                if stack and stack.pop() and not any(stack):
+                    spans.append(cur)
+                    cur = None
+            elif PS_OPEN.match(s):
+                if not any(stack):
+                    cur = []
+                stack.append(True)
+            elif s.startswith('<i'):
+                stack.append(False)
+        elif any(stack):
+            for m in WORD.finditer(s):
+                cur.append((ti, m.start(), m.end(), m.group(0)))
+    return [c for c in spans if c]
+
+
+def apply_verses(pages, src):
+    """מנקד פסוקים בכל היחידות. מחזיר סטטיסטיקה.
+
+    שני שלבים לכל יחידה. א: קטע פסוק של שתי מילים ומעלה שרצפו נמצא זהה
+    בגמרא המנוקדת. ב: מילה בסגנון "פסוק" שנשארה (קטעי פסוק שנחתכו בידי
+    סגנון אחר, או מילה בודדת) - לפי יישור כל היחידה אל הגמרא המנוקדת,
+    ורק בגוש מתאים של שלוש מילים לפחות סביבה, כדי שמילה נפוצה כמו "את"
+    לא תקבל ניקוד ממקום אחר."""
+    st = {'psk': 0, 'psk_voc': 0, 'psk_words': 0, 'psk_left': 0}
+    spages = (src or {}).get('pages') or {}
+    if not spages:
+        return st
+    order = [p.get('daf') for p in pages]
+    for idx_p, p in enumerate(pages):
+        pack = None
+        for u in p['units']:
+            if u.get('k') not in ('u', 'm') or not u.get('l'):
+                continue
+            n = len(u['l'])
+            base = u['lv'] if u.get('lv') and len(u['lv']) == n else u['l']
+            if not any('class="ps' in l[1] for l in base):
+                continue
+            toks = [_tokens(l[1]) for l in base]
+            spans = []            # [(li, [(ti,a,b,w)...])]
+            for li, tk in enumerate(toks):
+                for sp in span_words_of(tk):
+                    spans.append((li, sp))
+            if not spans:
+                continue
+            if pack is None:
+                sw = []
+                for d in (order[idx_p - 1] if idx_p else None, p.get('daf'),
+                          order[idx_p + 1] if idx_p + 1 < len(order) else None):
+                    sw.extend(daf_words(spages, d))
+                pack = (sw,) + _verse_index(sw)
+            sw = pack[0]
+            st['psk'] += len(spans)
+            put = {}              # (li, ti, a) -> (b, new)
+            for li, sp in spans:
+                words = [w[3] for w in sp]
+                if all(has_nikud(w) for w in words):
+                    continue
+                res = vocalize_verse_words(words, pack)
+                if res:
+                    for (ti, a, b, w), r in zip(sp, res):
+                        if r:
+                            put[(li, ti, a)] = (b, r)
+            # שלב ב: יישור כל היחידה
+            need = [(li, w) for li, sp in spans for w in sp
+                    if not has_nikud(w[3]) and (li, w[0], w[1]) not in put]
+            if need and sw:
+                uw = []           # כל מילות היחידה בסדר: (li, ti, a, b, w)
+                for li, tk in enumerate(toks):
+                    for ti, a, b, w in _para_words(tk):
+                        uw.append((li, ti, a, b, w))
+                sm = difflib.SequenceMatcher(None, [skel(x[4]) for x in uw], pack[1], autojunk=False)
+                pair = {}
+                for m in sm.get_matching_blocks():
+                    if m.size >= 3:
+                        for k in range(m.size):
+                            pair[m.a + k] = m.b + k
+                at = {(x[0], x[1], x[2]): i for i, x in enumerate(uw)}
+                for li, (ti, a, b, w) in need:
+                    i = at.get((li, ti, a))
+                    j = pair.get(i)
+                    if j is None:
+                        continue
+                    s = sw[j]
+                    if not has_nikud(s):
+                        continue
+                    if letters(w) != letters(s):
+                        t = transfer(w, s)
+                        if t is None or letters(t) != letters(w):
+                            continue
+                        s = t
+                    put[(li, ti, a)] = (b, s)
+            if not put:
+                st['psk_left'] += len(spans)
+                continue
+            voc = set()
+            by = {}
+            for (li, ti, a), (b, new) in put.items():
+                by.setdefault((li, ti), []).append((a, b, new))
+                st['psk_words'] += 1
+            for (li, ti), lst in by.items():
+                t = toks[li][ti][1]
+                for a, b, new in sorted(lst, reverse=True):
+                    t = t[:a] + new + t[b:]
+                toks[li][ti][1] = t
+            for li, sp in spans:
+                if any((li, w[0], w[1]) in put for w in sp):
+                    st['psk_voc'] += 1
+                elif not all(has_nikud(w[3]) for w in sp):
+                    st['psk_left'] += 1
+            lv = [[base[li][0], ''.join(x[1] for x in toks[li])] for li in range(n)]
+            u['lv'] = lv
     return st

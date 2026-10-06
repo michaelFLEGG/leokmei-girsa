@@ -4136,7 +4136,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   async function api(path,opt){
     const o=Object.assign({headers:{}},opt||{});
     o.headers['content-type']='application/json; charset=utf-8';
-    const k=admKey();if(k)o.headers['x-admin-key']=k;
+    const k=admKey();
+    /* המילה (בעברית) הוקלדה פעם כמפתח: אינה כותרת תקינה. מנקים, ומבקשים כניסה מחדש */
+    if(k&&/[^\x00-\xff]/.test(k)){try{localStorage.removeItem(ADMKEY)}catch(e){}
+      throw new Error('נשמרה כאן מילה במקום מפתח. לחץ שוב והקלד את מילת המנהל.')}
+    if(k)o.headers['x-admin-key']=k;
     const r=await fetch(SUGGEST_API+path,o);
     let j=null;try{j=await r.json()}catch(e){}
     if(!r.ok||!j||!j.ok)throw new Error((j&&j.error)||('שגיאה '+r.status));
@@ -4338,12 +4342,26 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(edit){applyTextNow(edit);drawEd();pubSoon();syncSoon();toast('התיקון הוחל.')}
     else toast('ההצעה נדחתה ועברה לארכיון.');
     sqBadge();drawSq()}
+  /* כניסה במילת המנהל: המילה נבדקת בנקודת הקליטה והמכשיר מקבל אסימון מכשיר */
+  async function admWordLogin(word){
+    try{
+      const dev=(/iPad|Tablet|Android|Mobile/i.test(navigator.userAgent)?'טאבלט או טלפון':'מחשב')+' · '+HD.date(Date.now());
+      const j=await api('/auth',{method:'POST',body:JSON.stringify({word:word.trim(),label:dev})});
+      try{localStorage.setItem(ADMKEY,j.token);localStorage.setItem(AKEY,'1')}catch(e){}
+      document.body.classList.add('adm');
+      toast('המכשיר הזה זוהה. אין צורך להקליד שוב את המילה.',4500);
+      sqBadge();netInit(true);return true
+    }catch(e){
+      alert(/נכונה/.test(e.message||'')?'המילה אינה נכונה.':'לא ניתן להתחבר כרגע: '+(e.message||'שגיאה'));return false}}
   function admKeyAsk(){
-    const v=prompt('מפתח המנהל של לאוקמי גירסא.\n\nהדבק כאן את המפתח. הוא נשמר רק בדפדפן הזה.\nלהסרה - מחק את התוכן ולחץ אישור.',admKey());
-    if(v===null)return;
-    try{if(v.trim())localStorage.setItem(ADMKEY,v.trim());else localStorage.removeItem(ADMKEY)}catch(e){}
-    if(v.trim()){try{localStorage.setItem(AKEY,'1')}catch(e){}netInit(true)}
-    sqBadge()}
+    const cur=admKey();
+    const v=prompt('מילת המנהל של לאוקמי גירסא (פעם אחת בכל מכשיר).\n\nאפשר גם להדביק את המפתח הארוך. נשמר רק בדפדפן הזה.\nלהסרה - מחק את התוכן ולחץ אישור.',/[^\x00-\xff]/.test(cur)?'':'');
+    if(v===null)return Promise.resolve(false);
+    const t=v.trim();
+    if(!t){try{localStorage.removeItem(ADMKEY)}catch(e){}sqBadge();return Promise.resolve(false)}
+    if(/[^\x00-\xff]/.test(t))return admWordLogin(t);
+    try{localStorage.setItem(ADMKEY,t);localStorage.setItem(AKEY,'1')}catch(e){}
+    netInit(true);sqBadge();return Promise.resolve(true)}
 
   /* רשימת המכשירים המוכרים, וביטול של מכשיר */
   async function devModal(){

@@ -17,7 +17,7 @@
     uv run --with lxml python tools/m7_word.py <חלק משם הקובץ> ... [--dry]
     uv run --with lxml python tools/m7_word.py --all [--dry]
 """
-import os, sys, io, re, json, zipfile, datetime, argparse, collections, difflib
+import os, sys, io, re, json, zipfile, datetime, argparse, collections, difflib, copy
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lxml import etree
 import word_apply
@@ -25,7 +25,8 @@ from word_apply import (ns, W, DRIVE, Refused, convert, _paragraph_map, _rezip, 
                         is_open_in_word, wait_free, _copy_no_change, _mark)
 from styles_map import ROLE, CS, TANAI_NAME, TANAI_LEGACY
 import mishna_sizes
-from m6_word import _live, new_paragraph_before, delete_paragraph
+from m6_word import _live, delete_paragraph, direct_runs_only
+from chapter_ord import chapter_ordinal
 
 AUTHOR = 'Claude'
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -117,35 +118,88 @@ def modify_run(r, new_sid, strip_size, author, when, nextid):
 
 
 def late_chapter_names(before):
-    """שמות פרק שיושבים אחרי המשנה הראשונה של הפרק: [(אינדקס השם, אינדקס הפסקה שלפניה יוכנס)]."""
+    """יחידות פתיחה של פרק שיושבות אחרי המשנה הראשונה שלו: [(אינדקס הפסקה, אינדקס המשנה הראשונה)].
+
+    זו אותה מכונת מצבים של הבנייה (build_site, "פתיחת פרק לפני המשנה"): שם פרק, ו"תחילת פרק" שמספרה
+    כמספר הפרק הפתוח, שיושבים אחרי המשנה הראשונה - עד ההדרן או הפתיחה של הפרק הבא. בוורד שם הפרק
+    הוא מסגרת צפה, וכתוב לעתים הרחק אחרי המשנה (בבא מציעא: תשעה פרקים)."""
     out = []
-    n = len(before)
-    for i, b in enumerate(before):
+    open_ = None
+    for j, b in enumerate(before):
         r = role_of_b(b)
-        if r not in ('perek-num', 'perek-start') or not b['text'].strip():
+        t = b['text'].strip()
+        if not t:
             continue
-        seen_m = None
-        last_head = i
-        for j in range(i + 1, min(n, i + 40)):
-            bj = before[j]
-            rj = role_of_b(bj)
-            if rj in ('skip', 'daf', 'anchor') or not bj['text'].strip():
-                continue
-            if rj == 'mishna':
-                if seen_m is None:
-                    seen_m = j
-                continue
-            if rj in ('perek-name', 'perek-range', 'perek-start', 'perek-num'):
-                if seen_m is None:
-                    last_head = j
-                    continue
-                if rj == 'perek-name':
-                    out.append((j, seen_m))
-                if rj in ('perek-num', 'perek-start'):
-                    break
-                continue
-            break
+        if r == 'hadran':
+            open_ = None
+            continue
+        if r in ('perek-num', 'perek-start'):
+            if open_ is None or open_['first_m'] is None:
+                if open_ is None:
+                    open_ = {'ord': chapter_ordinal(b['text']), 'first_m': None}
+                elif not open_['ord']:
+                    open_['ord'] = chapter_ordinal(b['text'])
+            elif r == 'perek-start' and open_['ord'] and chapter_ordinal(b['text']) == open_['ord']:
+                out.append((j, open_['first_m']))
+            else:
+                open_ = {'ord': chapter_ordinal(b['text']), 'first_m': None}
+            continue
+        if open_ is None:
+            continue
+        if r == 'mishna':
+            if open_['first_m'] is None:
+                open_['first_m'] = j
+        elif r == 'perek-name' and open_['first_m'] is not None:
+            out.append((j, open_['first_m']))
     return out
+
+
+def _mark_para_end(p, tag, author, when, nextid):
+    """סימן הפסקה (ins/del) בתוך pPr/rPr, במקומו בסכימה (אחרי כל המאפיינים, לפני sectPr ו-pPrChange)."""
+    pPr = p.find('w:pPr', ns)
+    if pPr is None:
+        pPr = etree.Element(W + 'pPr')
+        p.insert(0, pPr)
+    rPr = pPr.find('w:rPr', ns)
+    if rPr is None:
+        rPr = etree.Element(W + 'rPr')
+        pos = len(pPr)
+        for k, ch in enumerate(pPr):
+            if etree.QName(ch).localname in ('sectPr', 'pPrChange'):
+                pos = k
+                break
+        pPr.insert(pos, rPr)
+    for t in ('ins', 'del'):
+        for old in rPr.findall('w:' + t, ns):
+            rPr.remove(old)
+    rPr.insert(0, _mark(etree.Element(W + tag), author, when, nextid))
+
+
+def copy_paragraph_before(src, dst, author, when, nextid):
+    """עותק של פסקת src (אותם מאפייני פסקה, כולל מסגרת צפה, ואותן ריצות) לפני dst, כהוספה במעקב.
+    המקור נמחק בנפרד. מחזיר None אם בפסקה יש שינוי מעקב של אדם אחר."""
+    if not direct_runs_only(src):
+        return None
+    p2 = etree.Element(W + 'p')
+    pPr = src.find('w:pPr', ns)
+    if pPr is not None:
+        pp = copy.deepcopy(pPr)
+        for e in pp.findall('w:pPrChange', ns):
+            pp.remove(e)
+        rp = pp.find('w:rPr', ns)
+        if rp is not None:
+            for t in ('ins', 'del', 'moveFrom', 'moveTo'):
+                for e in rp.findall('w:' + t, ns):
+                    rp.remove(e)
+        p2.append(pp)
+    ins = _mark(etree.Element(W + 'ins'), author, when, nextid)
+    for r in src.findall('w:r', ns):
+        ins.append(copy.deepcopy(r))
+    p2.append(ins)
+    _mark_para_end(p2, 'ins', author, when, nextid)
+    parent = dst.getparent()
+    parent.insert(list(parent).index(dst), p2)
+    return p2
 
 
 def role_of_b(b):
@@ -232,23 +286,21 @@ def process(path, slug, dry=False, log=print, only=None):
                     and before[k - 1]['style'] != before[j]['style']:
                 k -= 1
             moved[j] = k
-        for j, k in moved.items():
+        for j, k in list(moved.items()):
             bj = before[j]
-            sid = {v: k2 for k2, v in sid2name.items() if sid2type.get(k2) == 'paragraph'}.get(bj['style'])
-            if sid is None:
-                rep['moved_names'].append(['לא הועבר: אין סגנון', bj['text'][:30]])
+            if copy_paragraph_before(xml_ps[j], xml_ps[k], AUTHOR, when, nextid) is None:
+                rep['moved_names'].append(['לא הועבר: שינוי מעקב של אחר', bj['text'][:30]])
+                del moved[j]
                 continue
-            new_paragraph_before(xml_ps[k], bj['text'].strip() + ' ' if bj['text'].endswith(' ') else bj['text'],
-                                 sid, AUTHOR, when, nextid)
             delete_paragraph(xml_ps[j], AUTHOR, when, nextid)
-            rep['moved_names'].append([bj['text'].strip(), 'לפני יחידה %d' % k])
+            rep['moved_names'].append([bj['text'].strip(), bj['style'], 'לפני יחידה %d' % k])
     # --- צפוי
     exp = []
     for b in before:
         i = b['i']
         for j, k in moved.items():
             if k == i:
-                exp.append((before[j]['style'], before[j]['text'].strip() + ' ' if before[j]['text'].endswith(' ') else before[j]['text']))
+                exp.append((before[j]['style'], before[j]['text']))
         if i in moved:
             continue
         exp.append((b['style'], b['text']))

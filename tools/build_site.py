@@ -356,6 +356,114 @@ def _hmerge_done(pages, e):
     return False
 
 
+def _parts_present(slots, parts, daf, kind):
+    """כל אחד מן ה-parts קיים בנתונים כפסקה יחידה (באותו דף או סמוך). משמש לזיהוי
+    שהתוצאה של פיצול כבר קיימת, גם כשהחלקים יושבים ביחידות שונות."""
+    parts = [_wn(t) for t in parts if _wn(t)]
+    if len(parts) < 2:
+        return False
+    k0 = _daf_key(daf)
+    win = [x for x in slots
+           if k0 is None or _daf_key(x['daf']) is None or abs(_daf_key(x['daf']) - k0) <= 1]
+    for t in parts:
+        if len([x for x in win if x['t'] == t]) != 1:
+            return False
+    return True
+
+
+def _lineage(was, history):
+    """הנוסחים שבהם יכולה להיות הפסקה שנוסחה המקורי הוא was, אחרי כל מה שקרה
+    עד עכשיו: שינוי מבנה מוסיף את חלקיו, ותיקון טקסט מוסיף את תוצאתו. הדפדפן
+    שומר בכל תיקון את נוסח המקור של הפסקה (ולא את הנוסח שאחרי הפיצול או חיתוך
+    החלון), ולכן שרשרת של פיצולים ותיקונים נשענת על "was" שאינו קיים עוד בנתונים."""
+    D = {was}
+    for ev in history:
+        if ev[0] == 's':
+            sx = ev[1]
+            texts = [_wn(t) for t in (sx.get('texts') or [])]
+            if D & set(texts):
+                hs = [x[-1] for x in (sx.get('res') or []) if x and isinstance(x[-1], str)]
+                parts = [_wn(t) for t in (sx.get('resT') or [])] or [_wn(_bare(h)) for h in hs]
+                D |= {x for x in parts if x}
+        else:
+            if ev[1] in D:
+                D.add(ev[2])
+    D.discard('')
+    return D
+
+
+def _rebase_slot(e, history, slots):
+    """תיקון טקסט שנקודת המוצא שלו אינה נמצאת עוד בנתונים: מחפשים את הפסקה לפי
+    שושלת הנוסחים שלה (_lineage), ובין החלקים הנוכחיים בוחרים את החלק שהתיקון
+    דומה לו. נבחר רק חלק יחיד שדומה בבירור (>=0.6) ובפער ברור מן האחרים; אחרת -
+    נשאר תלוש. ניחוש אסור: טעות כאן כותבת טקסט על פסקה זרה."""
+    import difflib
+    was, now = _wn(e.get('was', '')), _wn(e.get('now', ''))
+    if not was or not now:
+        return None
+    k0 = _daf_key(e.get('daf'))
+    win = [x for x in slots
+           if k0 is None or _daf_key(x['daf']) is None or abs(_daf_key(x['daf']) - k0) <= 1]
+    D = _lineage(was, history)
+    scored = []
+    for t in D:
+        c = [x for x in win if x['t'] == t]
+        if len(c) == 1:
+            scored.append((difflib.SequenceMatcher(None, t, now).ratio(), c[0]))
+    if not scored:
+        return None
+    scored.sort(key=lambda z: -z[0])
+    top = scored[0]
+    if top[0] < 0.6:
+        return None
+    others = [z for z in scored if z[1] is not top[1]]
+    if others and others[0][0] > top[0] - 0.15:
+        return None
+    return top[1]
+
+
+def _echo(e, history):
+    """רשומה שנכתבה אחרי שינוי מבנה ושתוצאתה היא נוסח הפסקה כפי שהיה לפניו (הדפדפן
+    רושם שוב את מצב הפסקה שלפני הפיצול או החיתוך). החלתה היתה מבטלת את השינוי
+    שכבר נעשה, ולכן היא מתייתרת. נבדק לפני חיפוש הפסקה: אחרת היא נתלית על אחד
+    מחלקי הפסקה ומשחזרת את מה שהשינוי הסיר."""
+    was, now = _wn(e.get('was', '')), _wn(e.get('now', ''))
+    if not now or now == was:
+        return False
+    D = _lineage(was, history)
+    for ev in history:
+        if ev[0] == 's':
+            texts = [_wn(t) for t in (ev[1].get('texts') or [])]
+            if (D & set(texts)) and now in texts:
+                return True
+    return False
+
+
+def _absorbed(e, history):
+    """תיקון שנרשם אחרי שינוי מבנה ומתאר בדיוק את תוצאתו (נוסח ו-HTML): השינוי כבר
+    נעשה בנתונים, ואין מה להחיל. כלל צר; אחרת התיקון נשאר תלוש."""
+    was, now = _wn(e.get('was', '')), _wn(e.get('now', ''))
+    nowh = _norm_h(e['nowH']) if e.get('nowH') is not None else None
+    D = _lineage(was, history)
+    for ev in history:
+        if ev[0] != 's':
+            continue
+        sx = ev[1]
+        texts = [_wn(t) for t in (sx.get('texts') or [])]
+        if not (D & set(texts)):
+            continue
+        res = sx.get('res') or []
+        hs = [x[-1] for x in res if x and isinstance(x[-1], str)]
+        parts = [_wn(t) for t in (sx.get('resT') or [])] or [_wn(_bare(h)) for h in hs]
+        cands = [(parts[i], hs[i] if i < len(hs) else None) for i in range(len(parts))]
+        cands.append((_wn(''.join(parts)), ''.join(hs)))
+        cands.append((_wn(' '.join(parts)), ''.join(hs)))
+        for t, h in cands:
+            if t and t == now and (nowh is None or h is None or _norm_h(h) == nowh):
+                return True
+    return False
+
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
@@ -378,6 +486,8 @@ def _apply_site_edits(pages, slug, qa):
                            else s['holder'].get(s['key'], '')))
         by_key[s['k']] = s
     keep, done, taken, lost = [], 0, 0, []
+    virtual = []              # איחויים בין יחידות שלא הוחלו (ראו למטה)
+    history = []              # אירועים שהוחלו או כבר בוורד, לפי הסדר: ('s', מבנה) / ('t', was, now)
 
     def reslot():
         del slots[:]
@@ -397,9 +507,11 @@ def _apply_site_edits(pages, slug, qa):
                 if ap(pages, e):
                     done += 1
                     keep.append(e)
+                    history.append(('s', e))
                     reslot()
                 elif dn(pages, e):
                     taken += 1                  # כבר בקובץ הוורד
+                    history.append(('s', e))
                 else:
                     lost.append(e)
                     keep.append(e)
@@ -409,9 +521,11 @@ def _apply_site_edits(pages, slug, qa):
                 if ap(pages, e):
                     done += 1
                     keep.append(e)
+                    history.append(('s', e))
                     reslot()
                 elif dn(pages, e):
                     taken += 1                  # כבר בקובץ הוורד
+                    history.append(('s', e))
                 else:
                     lost.append(e)
                     keep.append(e)
@@ -424,14 +538,34 @@ def _apply_site_edits(pages, slug, qa):
                 u['l'][i:i + len(texts)] = [list(x) for x in res]
                 done += 1
                 keep.append(e)
+                history.append(('s', e))
                 reslot()
             elif _find_run(pages, e.get('resT') or [], e.get('daf')) is not None:
                 taken += 1                  # כבר בקובץ הוורד
+                history.append(('s', e))
+            elif _parts_present(slots, e.get('resT') or [], e.get('daf'), e.get('kind')):
+                # פיצול שתוצאתו כבר קיימת כפסקאות נפרדות (בשתי יחידות סמוכות), כך
+                # שאיחוי קודם שלא היה אפשר להחיל בין יחידות מתבטל בו
+                taken += 1
+                history.append(('s', e))
+                for v in [x for x in virtual if _wn((x.get('resT') or [''])[0]) == _wn((texts or [''])[0])]:
+                    virtual.remove(v)
+                    keep.remove(v)
+                    taken += 1
+            elif e.get('kind') == 'merge' and _parts_present(slots, texts, e.get('daf'), 'split'):
+                # איחוי בין שתי פסקאות שיושבות ביחידות שונות: אי אפשר להחיל בנתוני האתר.
+                # נרשם כ"וירטואלי": אם פיצול מאוחר יותר מחזיר את החלקים, שניהם בטלים.
+                virtual.append(e)
+                history.append(('s', e))
+                keep.append(e)
             else:
                 lost.append(e)
                 keep.append(e)
             continue
         was, now = _wn(e.get('was', '')), _wn(e.get('now', ''))
+        if e.get('ps') is None and _echo(e, history):
+            taken += 1                  # הד של מצב שלפני שינוי מבנה
+            continue
         s = by_key.get(e.get('k'))
         if s is None or (s['t'] != was and s['t'] != now):
             k0 = _daf_key(e.get('daf'))
@@ -443,7 +577,15 @@ def _apply_site_edits(pages, slug, qa):
                 hits = [x for x in win if x['t'] == want]
                 if len(hits) == 1:
                     s = hits[0]; break
+        rebased = False
         if s is None:
+            s = _rebase_slot(e, history, slots)
+            rebased = s is not None
+        if s is None:
+            if _absorbed(e, history):
+                taken += 1              # התוצאה כבר נעשתה בידי שינוי המבנה
+                history.append(('t', was, now))
+                continue
             lost.append(e); keep.append(e); continue
         if s['t'] == now and e.get('ps') is None:
             # הטקסט זהה גם כשרק סגנון התו השתנה (הדגשה, מפרשים וכד'), ולכן
@@ -451,13 +593,16 @@ def _apply_site_edits(pages, slug, qa):
             raw = s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')
             if e.get('nowH') is None or _norm_h(raw) == _norm_h(e['nowH']):
                 taken += 1                  # כבר הגיע מן הוורד - יוצא מן הקובץ
+                history.append(('t', was, now))
                 continue
-        if s['t'] != was:
+        if s['t'] != was and s['t'] != now and not rebased:
             lost.append(e); keep.append(e); continue
         h = e.get('nowH')
         if h is None: h = html.escape(now)
         if isinstance(s['key'], int): s['holder'][s['key']] = h
         else: s['holder'][s['key']] = h
+        s['t'] = _wn(_bare(h))
+        history.append(('t', was, now))
         if s['key'] == 'mbw':
             _m = mishna_box.MBW.match(_bare(h))
             if _m and mishna_box.num(_m.group(1)):
@@ -489,6 +634,7 @@ def _apply_site_edits(pages, slug, qa):
         done += 1
         e['k'] = s['k']
         keep.append(e)
+    lost.extend(virtual)
     if lost:
         qa.append(('תיקון תלוש',
                    '%d תיקונים שנעשו באתר לא אותרו בקובץ הוורד ואינם מוחלים. '

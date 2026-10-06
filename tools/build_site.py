@@ -51,6 +51,13 @@ def _bare(h):
     return html.unescape(re.sub('<[^>]+>', '', h or ''))
 
 
+def _wn(t):
+    """השוואת טקסט של תיקון מול הוורד: רווח קשיח (nbsp) ורצפי רווחים נחשבים רווח אחד,
+    והשוליים נחתכים. הדפדפן רושם nbsp בסוף פסקה, והוורד רווח רגיל; בלי הנרמול הזה
+    התיקון נחשב תלוש ולא הוחל - בשקט, בכל בנייה."""
+    return re.sub(r'\s+', ' ', t or '').strip()
+
+
 def _norm_h(h):
     """צורה קנונית של HTML להשוואה: ללא ישויות, ציטוט אחיד ורווחים מכווצים."""
     h = html.unescape(h or '').replace("'", '"')
@@ -77,7 +84,7 @@ def _find_run(pages, texts, daf):
                 continue
             L = u['l']
             for i in range(len(L) - len(texts) + 1):
-                if all(_bare(L[i + j][1]) == texts[j] for j in range(len(texts))):
+                if all(_wn(_bare(L[i + j][1])) == _wn(texts[j]) for j in range(len(texts))):
                     hits.append((u, i, p['daf']))
     if len(hits) == 1:
         return hits[0]
@@ -171,8 +178,8 @@ def _side_done(pages, e):
         for u in p['units']:
             if u['k'] not in ('u', 'm'):
                 continue
-            if rt[1] in [_bare(x) for x in (u.get(_wkey(u)) or '').split('<br>')]:
-                if not rt[0] or (u['l'] and _bare(u['l'][0][1]) == rt[0]):
+            if _wn(rt[1]) in [_wn(_bare(x)) for x in (u.get(_wkey(u)) or '').split('<br>')]:
+                if not rt[0] or (u['l'] and _wn(_bare(u['l'][0][1])) == _wn(rt[0])):
                     return True
     return False
 
@@ -184,9 +191,9 @@ def _find_win_unit(pages, win_t, next_t, daf):
             if u['k'] not in ('u', 'm'):
                 continue
             w = u.get(_wkey(u)) or ''
-            if not w or _bare(w.split('<br>')[-1]) != win_t:
+            if not w or _wn(_bare(w.split('<br>')[-1])) != _wn(win_t):
                 continue
-            if (_bare(u['l'][0][1]) if u['l'] else '') != next_t:
+            if _wn(_bare(u['l'][0][1]) if u['l'] else '') != _wn(next_t):
                 continue
             hits.append((u, p['daf']))
     if len(hits) == 1:
@@ -255,7 +262,7 @@ def _hsplit_apply(pages, e):
     if len(texts) != 1 or len(res) < 2:
         return False
     hits = [(p, u) for p in pages for u in p['units']
-            if _is_head(u) and _bare(u['a']) == texts[0]]
+            if _is_head(u) and _wn(_bare(u['a'])) == _wn(texts[0])]
     hit = _pick_h(hits, e.get('daf'))
     if hit is None:
         return False
@@ -276,9 +283,9 @@ def _hsplit_done(pages, e):
     for p in pages:
         us = p['units']
         for i, u in enumerate(us[:-1]):
-            if _is_head(u) and _bare(u['a']) == rt[0]:
+            if _is_head(u) and _wn(_bare(u['a'])) == _wn(rt[0]):
                 nx = us[i + 1]
-                if nx['k'] in ('u', 'm') and nx['l'] and _bare(nx['l'][0][1]) == rt[1]:
+                if nx['k'] in ('u', 'm') and nx['l'] and _wn(_bare(nx['l'][0][1])) == _wn(rt[1]):
                     return True
     return False
 
@@ -310,7 +317,7 @@ def _hmerge_apply(pages, e):
                 for lk, li in _h_hosts(y, False):
                     if uk == 'p' and lk == 'p':
                         continue
-                    if _bare(_h_html(x, uk, ui)) != texts[0] or _bare(_h_html(y, lk, li)) != texts[1]:
+                    if _wn(_bare(_h_html(x, uk, ui))) != _wn(texts[0]) or _wn(_bare(_h_html(y, lk, li))) != _wn(texts[1]):
                         continue
                     if _bare(y.get('a') if y['k'] == 'u' else y.get('w') or '').strip():
                         continue
@@ -342,7 +349,7 @@ def _hmerge_done(pages, e):
         return False
     for p in pages:
         for u in p['units']:
-            if _is_head(u) and _bare(u['a']) == rt[0]:
+            if _is_head(u) and _wn(_bare(u['a'])) == _wn(rt[0]):
                 return True
             if u['k'] in ('u', 'm') and any(_bare(l[1]) == rt[0] for l in u['l']):
                 return True
@@ -367,8 +374,8 @@ def _apply_site_edits(pages, slug, qa):
     slots = _slots(pages)
     by_key = {}
     for s in slots:
-        s['t'] = _bare(s['holder'][s['key']] if isinstance(s['key'], int)
-                       else s['holder'].get(s['key'], ''))
+        s['t'] = _wn(_bare(s['holder'][s['key']] if isinstance(s['key'], int)
+                           else s['holder'].get(s['key'], '')))
         by_key[s['k']] = s
     keep, done, taken, lost = [], 0, 0, []
 
@@ -377,8 +384,8 @@ def _apply_site_edits(pages, slug, qa):
         slots.extend(_slots(pages))
         by_key.clear()
         for s in slots:
-            s['t'] = _bare(s['holder'][s['key']] if isinstance(s['key'], int)
-                           else s['holder'].get(s['key'], ''))
+            s['t'] = _wn(_bare(s['holder'][s['key']] if isinstance(s['key'], int)
+                               else s['holder'].get(s['key'], '')))
             by_key[s['k']] = s
 
     for e in edits:
@@ -424,7 +431,7 @@ def _apply_site_edits(pages, slug, qa):
                 lost.append(e)
                 keep.append(e)
             continue
-        was, now = e.get('was', ''), e.get('now', '')
+        was, now = _wn(e.get('was', '')), _wn(e.get('now', ''))
         s = by_key.get(e.get('k'))
         if s is None or (s['t'] != was and s['t'] != now):
             k0 = _daf_key(e.get('daf'))

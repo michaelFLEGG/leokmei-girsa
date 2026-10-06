@@ -1823,6 +1823,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     fitAnchors();
     markEditable();applyEdits();
     if(typeof sqMark==='function')sqMark();
+    if(typeof bkMark==='function')bkMark();
     if(EDIT)setEdit(true);
     if(!BOOK)squeezeRun();
     REFS=null;if(typeof srcSyncSoon==='function')srcSyncSoon();
@@ -4505,6 +4506,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   import build_lamed
   LAMED_READER_CSS=build_lamed.reader_css()
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"suggest_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
+  # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.
+  import glob as _glob
+  _root=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+  has_bakara=bool(_glob.glob(os.path.join(_root,'data','bakara',slug+'-*.json')))
+  if has_bakara:
+    JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"bakara_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="ממצאי הבקרה בתוך הדף (למנהל בלבד)">בקרה</button>' if has_bakara else ''
+  bkpanel=('<div class="panel" id="bkp"><button class="x" onclick="panel(&quot;bkp&quot;)">×</button><h3>בקרת תוכן - הממצאים לפי סוג</h3><div id="bkpb"></div></div>') if has_bakara else ''
+
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -4536,8 +4547,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <div class="bg" data-pri="4"><button id="edbtn" onclick="askAdmin()" title="עריכה תוך כדי לימוד (Ctrl+Alt+E, או Ctrl+Alt+ק)">עריכה</button>
   <button onclick="suggest()" title="סמן טקסט בדף, או לחץ כאן ובחר קטע">הצע תיקון</button>
   <button onclick="mineOpen()" title="כל ההצעות ששלחת: סינון, עריכה, חידוד">ההצעות שלי</button>
-  <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך">הצעות ממתינות</button><button id="lnbtn" style="display:none" onclick="lnOpen()" title="מה למד המערכת מהתיקונים שלך">הלמידה היומית</button></div>
-  <div class="bg adm-only" data-pri="5"><button onclick="panel('qa')" title="חריגות שנמצאו בהמרת הקובץ (למנהל)">בקרה</button>{hgbtn}</div>
+  {bkbtn}<button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך">הצעות ממתינות</button><button id="lnbtn" style="display:none" onclick="lnOpen()" title="מה למד המערכת מהתיקונים שלך">הלמידה היומית</button></div>
+  <div class="bg adm-only" data-pri="5"><button onclick="panel('qa')" title="חריגות שנמצאו בהמרת הקובץ (למנהל)">חריגות המרה</button>{hgbtn}</div>
   <div class="bg edtools" id="edtools" data-pri="9"></div>
   <div class="bg more" id="morebg" style="display:none"><button class="ddb" onclick="ddToggle(this)" title="עוד פעולות">עוד ▾</button><div class="ddp" id="morep"></div></div></div>
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
@@ -4548,6 +4559,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <div class="panel" id="ln"><button class="x" onclick="panel('ln')">×</button><h3>מה נלמד מהתיקונים שלך</h3><div id="lnb"></div></div>
   <div class="panel" id="sg"><button class="x" onclick="panel('sg')">×</button><h3>ההצעות שלי</h3><div id="sgb"></div></div>
   <div class="panel" id="sgq"><button class="x" onclick="panel('sgq')">×</button><h3>הצעות תיקון ממתינות</h3><div id="sgqb"></div></div>
+  {bkpanel}
   <div class="flow" id="flow"></div><div id="srcl" aria-hidden="true"></div>
   <script>const DATA={J},SLUG="{slug}";</script><script>{JS}</script>
   <script src="shas.js"></script><script src="lamed.js"></script></body></html>'''

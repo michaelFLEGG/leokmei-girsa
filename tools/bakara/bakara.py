@@ -269,7 +269,9 @@ def main():
         bb = next(x for x in P if x['i'] == r['i'])
         add('attr', bb, r['mark'], r['note'], r['fix'])
     for r in GC.daf_position(P, src, tol=3, severity='קל'):
-        bb = next(x for x in P if x['i'] == r['i'])
+        # daf_position מחזירה את מקום הפסקה ברשימה שקיבלה, ולא את מספר הפסקה;
+        # בפרק א' השניים זהים, ומפרק ב' ואילך לא (נמצא בהרצה על סוכה פרק ב)
+        bb = P[r['i']]
         add('dafpos', bb, r['mark'], r['note'], r['fix'])
 
     # ---------------- ה. ארמית שנשארה (מקובץ לפי מילה)
@@ -335,8 +337,32 @@ def main():
         f['u'] = loc.get(f['i'], (0, f['i']))[1]
     for f in ded:
         f['id'] = HG.fid(slug, f['det'], f['mark'], f['context'])
-    json.dump({'perek': perek, 'range': [lo, hi], 'n_blocks': len(P), 'catalog': CATALOG,
-               'findings': ded}, open(out_p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    # ---------------- הלמידה מהכרעות המחבר (stats.py)
+    # ממצא שהוכרע (אושר / נדחה / נערך) אינו חוזר. סוג שנדחה לרוב יורד ל"קל" ומוצג
+    # מקופל; סוג שאושר כמעט תמיד נרשם כמועמד למנוע המכני (אינו עובר מעצמו).
+    bdir = os.path.join(REPO, 'data', 'bakara')
+    dp = os.path.join(bdir, 'decisions-%s.json' % slug)
+    if os.path.exists(dp):
+        decided = json.load(open(dp, encoding='utf-8'))
+        before = len(ded)
+        ded = [f for f in ded if f['id'] not in decided]
+        print('הוכרעו בעבר ואינם חוזרים:', before - len(ded))
+    stp = os.path.join(bdir, 'stats.json')
+    st = json.load(open(stp, encoding='utf-8')) if os.path.exists(stp) else {}
+    demoted = set(st.get('demoted') or [])
+    cat = []
+    for c in CATALOG:
+        c = list(c)
+        if c[0] in demoted:
+            c[3] = 'קל'
+        c.append(c[0] in demoted)          # האיבר השישי: מקופל
+        cat.append(c)
+    for f in ded:
+        if f['det'] in demoted:
+            f['sev'] = 'קל'
+    json.dump({'perek': perek, 'range': [lo, hi], 'n_blocks': len(P), 'catalog': cat,
+               'candidates': st.get('candidates') or [], 'findings': ded},
+              open(out_p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     c = collections.Counter((f['layer'], f['kind']) for f in ded)
     for k_, v in sorted(c.items()):
         print(v, *k_)

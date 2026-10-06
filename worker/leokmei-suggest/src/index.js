@@ -599,6 +599,87 @@ async function ingested(req, env) {
   return json({ ok: true, marked: n });
 }
 
+/* ------------------------------------------------------------ בקרת תוכן (6.10.2026)
+   ממצאי הבקרה והכרעות המחבר. הכול למנהל בלבד: הממצאים אינם נשלחים ללומד
+   ואינם בקובצי האתר, אלא נטענים מכאן אחרי שהמכשיר הוכר.
+     PUT  /bakara/data   העלאת קובץ ממצאים של פרק (slug, perek, data)
+     GET  /bakara/data   כל הפרקים של מסכת (slug), או רשימת המסכתות (בלי slug)
+     GET  /bakara/dec    ההכרעות של מסכת (slug)
+     POST /bakara/dec    רישום הכרעות: {slug, items:[{id,d,txt,det,kind,t}]}
+     GET  /bakara/stats  סיכום לפי סוג גלאי: אושרו / נדחו / נערכו
+   ההכרעה: ok = אושר והוחל, todo = אושר לביצוע, no = נדחה, edit = נערך,
+   pending = ביטול ההכרעה (חוזר לתור). המאגר הוא מסמך אחד לכל מסכת, והחדש
+   ביותר (t) גובר, כמו בעריכות. */
+const BK_D = ['ok', 'todo', 'no', 'edit', 'pending'];
+async function bkData(req, env, url, method) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (method === 'GET') {
+    const slug = url.searchParams.get('slug') || '';
+    if (!slug) {
+      const out = [];
+      for (const k of await listAll(env, 'bk:d:')) out.push(k.name.slice(5));
+      return json({ ok: true, slugs: out });
+    }
+    if (!slugOk(slug)) return bad('מסכת לא תקינה');
+    const doc = (await env.STORE.get('bk:d:' + slug, 'json')) || { slug, perakim: {} };
+    return json({ ok: true, doc });
+  }
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const slug = str(b.slug, 30), perek = String(+b.perek || 0);
+  if (!slugOk(slug) || perek === '0') return bad('מסכת או פרק לא תקינים');
+  if (!b.data || !Array.isArray(b.data.findings)) return bad('אין ממצאים');
+  const doc = (await env.STORE.get('bk:d:' + slug, 'json')) || { slug, perakim: {} };
+  doc.perakim[perek] = b.data;
+  doc.t = Date.now();
+  await env.STORE.put('bk:d:' + slug, JSON.stringify(doc));
+  return json({ ok: true, perek, n: b.data.findings.length });
+}
+async function bkDec(req, env, url, method) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (method === 'GET') {
+    const slug = url.searchParams.get('slug') || '';
+    if (!slugOk(slug)) return bad('מסכת לא תקינה');
+    const doc = (await env.STORE.get('bk:c:' + slug, 'json')) || { slug, dec: {} };
+    return json({ ok: true, doc });
+  }
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const slug = str(b.slug, 30);
+  if (!slugOk(slug)) return bad('מסכת לא תקינה');
+  const doc = (await env.STORE.get('bk:c:' + slug, 'json')) || { slug, dec: {} };
+  let n = 0;
+  for (const it of (Array.isArray(b.items) ? b.items : []).slice(0, 300)) {
+    const id = str(it.id, 24);
+    if (!/^[0-9a-f]{6,24}$/.test(id) || BK_D.indexOf(it.d) < 0) continue;
+    const t = +it.t || Date.now();
+    const old = doc.dec[id];
+    if (old && (old.t || 0) > t) continue;
+    if (it.d === 'pending') { delete doc.dec[id]; n++; continue; }
+    doc.dec[id] = { d: it.d, txt: str(it.txt, 1000), det: str(it.det, 20), kind: str(it.kind, 40),
+                    now: str(it.now, 1000), t };
+    n++;
+  }
+  doc.t = Date.now();
+  await env.STORE.put('bk:c:' + slug, JSON.stringify(doc));
+  return json({ ok: true, n, doc });
+}
+async function bkStats(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  const by = {};
+  let total = 0;
+  for (const k of await listAll(env, 'bk:c:')) {
+    const doc = await env.STORE.get(k.name, 'json');
+    for (const id in ((doc && doc.dec) || {})) {
+      const x = doc.dec[id];
+      const s = by[x.det || '?'] || (by[x.det || '?'] = { ok: 0, no: 0, edit: 0 });
+      if (x.d === 'ok' || x.d === 'todo') s.ok++; else if (x.d === 'no') s.no++; else if (x.d === 'edit') s.edit++;
+      total++;
+    }
+  }
+  return json({ ok: true, total, by });
+}
+
 async function exportAll(req, env) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   const out = { when: new Date().toISOString(), suggestions: [], edits: {} };
@@ -609,6 +690,11 @@ async function exportAll(req, env) {
   for (const k of await listAll(env, 'ed:')) {
     const v = await env.STORE.get(k.name, 'json');
     if (v) out.edits[k.name.slice(3)] = v;
+  }
+  out.bakara = {};
+  for (const k of await listAll(env, 'bk:c:')) {
+    const v = await env.STORE.get(k.name, 'json');
+    if (v) out.bakara[k.name.slice(5)] = v;
   }
   return json(out);
 }
@@ -771,6 +857,9 @@ export default {
       if (p === '/live' && req.method === 'GET') return await getEdits(req, env, url, true);
       if (p === '/edits' && req.method === 'PUT') return await putEdits(req, env);
       if (p === '/ingested' && req.method === 'POST') return await ingested(req, env);
+      if (p === '/bakara/data' && (req.method === 'GET' || req.method === 'PUT')) return await bkData(req, env, url, req.method);
+      if (p === '/bakara/dec' && (req.method === 'GET' || req.method === 'POST')) return await bkDec(req, env, url, req.method);
+      if (p === '/bakara/stats' && req.method === 'GET') return await bkStats(req, env);
       if (p === '/export' && req.method === 'GET') return await exportAll(req, env);
       if (p === '/ln/sync' && req.method === 'POST') return await lnSync(req, env);
       if (p === '/ln/code' && req.method === 'POST') return await lnCode(req, env);

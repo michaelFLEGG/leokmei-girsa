@@ -23,5 +23,14 @@
     var k=((days%CYCLE)+CYCLE)%CYCLE;
     for(var i=0;i<L.length;i++){if(k<L[i][3]){var n=L[i][2]+k;
       return {name:L[i][0],slug:L[i][1],n:n,daf:heb(n)+'.',label:heb(n)}}k-=L[i][3]}}
-  window.LGDaf={today:today,heb:heb,cycle:CYCLE};
+  /* נוסף 6.10.2026 למערכת הלומד: חישוב לתאריך נתון (שנה, חודש, יום) ללא תלות באזור הזמן
+     של המכשיר, הרשימה המלאה, ומספר המחזור (המחזור ה-14 התחיל ב-5.1.2020). */
+  function forYMD(y,m,d){
+    var days=Math.floor((Date.UTC(y,m-1,d)-START)/86400000);
+    var cyc=Math.floor(days/CYCLE);
+    var k=((days%CYCLE)+CYCLE)%CYCLE, idx=k;
+    for(var i=0;i<L.length;i++){if(k<L[i][3]){var n=L[i][2]+k;
+      return {name:L[i][0],slug:L[i][1],n:n,daf:heb(n)+'.',label:heb(n),cycle:14+cyc,index:idx}}k-=L[i][3]}}
+  function forStr(s){var a=String(s).split('-');return forYMD(+a[0],+a[1],+a[2])}
+  window.LGDaf={today:today,heb:heb,cycle:CYCLE,forYMD:forYMD,forStr:forStr,list:function(){return L},START:START};
 })();

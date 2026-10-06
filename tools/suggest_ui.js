@@ -315,7 +315,7 @@
       if(me0.pid!==m[1]){
         const unsent=SG.some(g=>!g.sent);
         if(!confirm('הקישור מחבר את המכשיר הזה להצעות של מציע קיים.'+(unsent?'\nיש במכשיר הצעה שטרם נשלחה, והיא תישלח בשם המציע החדש.':'')+'\nלחבר?'))return;
-        try{localStorage.setItem('lg-pid',m[1]);localStorage.setItem('lg-pt',m[2]);MCACHE={};localStorage.removeItem(MCK)}catch(e){}
+        try{localStorage.setItem('lg-pid',m[1]);localStorage.setItem('lg-pt',m[2]);localStorage.setItem('lg-lamed-sync','1');MCACHE={};localStorage.removeItem(MCK)}catch(e){}
         SG.forEach(g=>{if(!g.sent){g.pid=m[1];g.pt=m[2]}});saveSG()}
       try{history.replaceState(null,'',location.pathname+location.search+'#p='+cur)}catch(e){}
       mineOpen()},1200)})();

@@ -217,6 +217,8 @@ function keyT(name) { const p = name.split(':'); return +p[2] || 0; }
    עם מאות הצעות לא עובר את מגבלות הבקשה. */
 async function mine(req, env, url) {
   const pid = url.searchParams.get('pid') || '', pt = req.headers.get('x-proposer') || '';
+  /* מכשיר שמעולם לא שלח הצעה אינו רשום: אין לו הצעות, וזו אינה שגיאה (בלי 401 בקונסול) */
+  if (/^[a-z0-9]{8,20}$/.test(pid) && !(await env.STORE.get('pr:' + pid))) return json({ ok: true, rows: [], unseen: 0 });
   if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
   const rows = [];
   for (const k of await listAll(env, 'sg:')) {
@@ -611,6 +613,133 @@ async function exportAll(req, env) {
   return json(out);
 }
 
+/* ------------------------------------------------------------ מערכת הלומד (6.10.2026)
+   סנכרון בין מכשירים בקוד זמני, וסטטיסטיקה אנונימית ומצטברת למנהל.
+   נתוני הלומד יושבים כאן, במחסן הפרטי, ולא במאגר הציבורי. הזהות היא אותה
+   זהות מכשיר של המציעים (pid + אסימון). */
+const LN_CAP = 30000;
+function lnCompact(list) {
+  const lastPs = {}, lastCf = {}, out = [];
+  for (const e of list) {
+    if (e.k === 'ps') { const k = e.s || '*'; if (!lastPs[k] || lastPs[k].t < e.t) lastPs[k] = e; }
+    else if (e.k === 'cf') { if (!lastCf[e.key] || lastCf[e.key].t < e.t) lastCf[e.key] = e; }
+  }
+  for (const e of list) {
+    if (e.k === 'ps') { if (lastPs[e.s || '*'] === e) out.push(e); }
+    else if (e.k === 'cf') { if (lastCf[e.key] === e) out.push(e); }
+    else out.push(e);
+  }
+  return out;
+}
+async function lnSync(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const pid = str(b.pid, 20), pt = req.headers.get('x-proposer') || '';
+  if (!/^[a-z0-9]{8,20}$/.test(pid) || !pt) return bad('אין הרשאה', 401);
+  if (!(await ensureProposer(env, pid, str(pt, 80), ''))) return bad('הזהות במכשיר אינה תואמת', 401);
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  if (burstHit(ip)) return bad('מהיר מדי. נסה שוב בעוד רגע', 429);
+  const have = (await env.STORE.get('ln:' + pid, 'json')) || { ev: [] };
+  const byId = {};
+  for (const e of have.ev) if (e && e.id) byId[e.id] = e;
+  for (const e of (Array.isArray(b.ev) ? b.ev : []).slice(0, 8000)) {
+    if (!e || typeof e.id !== 'string' || e.id.length > 60 || typeof e.k !== 'string') continue;
+    /* ישיבה פתוחה מתעדכנת: אותו מזהה, הגרסה האחרונה (לפי t1) */
+    const old = byId[e.id];
+    if (!old || (e.t1 || e.t || 0) >= (old.t1 || old.t || 0)) byId[e.id] = e;
+  }
+  let ev = lnCompact(Object.values(byId).sort((a, c) => (a.t || 0) - (c.t || 0)));
+  if (ev.length > LN_CAP) ev = ev.slice(-LN_CAP);
+  await env.STORE.put('ln:' + pid, JSON.stringify({ ev, t: Date.now() }));
+  return json({ ok: true, ev });
+}
+const CODE_ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+async function lnCode(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const pid = str(b.pid, 20), pt = req.headers.get('x-proposer') || '';
+  if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
+  let code = '';
+  const r = crypto.getRandomValues(new Uint8Array(8));
+  for (const x of r) code += CODE_ALPHA[x % CODE_ALPHA.length];
+  /* תקף עשר דקות ונמחק אחרי מימוש: האסימון עובר רק בקוד קצר-חיים */
+  await env.STORE.put('lc:' + code, JSON.stringify({ pid, pt }), { expirationTtl: 600 });
+  return json({ ok: true, code });
+}
+async function lnRedeem(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const code = str(b.code, 12).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (code.length !== 8) return bad('הקוד אינו תקין');
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  if (burstHit(ip)) return bad('מהיר מדי. נסה שוב בעוד רגע', 429);
+  const rec = await env.STORE.get('lc:' + code, 'json');
+  if (!rec) return bad('הקוד אינו תקף או שפג תוקפו', 404);
+  await env.STORE.delete('lc:' + code);
+  return json({ ok: true, pid: rec.pid, pt: rec.pt });
+}
+/* סטטיסטיקה אנונימית: מונים מצטברים לפי יום. בלי שם ובלי זהות; מזהה אקראי
+   של התקנה משמש רק לספירת לומדים ייחודיים, ואינו קשור ל-pid של המציעים. */
+const BOT = /bot|crawl|spider|slurp|headless|lighthouse/i;
+function ilDay(t) { return new Date(t).toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' }); }
+async function lnStat(req, env) {
+  if (BOT.test(req.headers.get('user-agent') || '')) return json({ ok: true, skipped: 1 });
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  if (burstHit(ip)) return bad('מהיר מדי', 429);
+  const byDay = {};
+  for (const e of (Array.isArray(b.ev) ? b.ev : []).slice(0, 60)) {
+    if (!e || !/^[a-z0-9]{8,16}$/.test(e.aid || '') || !slugOk(e.s || '')) continue;
+    const t = Math.min(Date.now(), Math.max(Date.now() - 3 * 86400000, +e.t || Date.now()));
+    (byDay[ilDay(t)] = byDay[ilDay(t)] || []).push(e);
+  }
+  for (const day of Object.keys(byDay)) {
+    const key = 'st:' + day;
+    const rec = (await env.STORE.get(key, 'json')) || { aids: {}, pages: {}, fin: {}, by: {} };
+    for (const e of byDay[day]) {
+      if (Object.keys(rec.aids).length < 6000) rec.aids[e.aid] = 1;
+      const d = str(e.d, 10);
+      const k = e.s + '|' + d;
+      const pg = rec.pages[k] || (rec.pages[k] = { r: 0, s: 0, d: 0, ms: 0, rm: 0 });
+      if (e.start) pg.s++;
+      if (e.done) { pg.d++; pg.r++; pg.rm += Math.min(7200000, +e.ms || 0); }
+      const m = rec.by[e.s] || (rec.by[e.s] = { r: 0, ms: 0 });
+      if (e.done) m.r++;
+      m.ms += Math.min(3600000, Math.max(0, +e.ms || 0));
+      if (e.fin) rec.fin[e.s] = (rec.fin[e.s] || 0) + 1;
+    }
+    await env.STORE.put(key, JSON.stringify(rec), { expirationTtl: 86400 * 400 });
+  }
+  return json({ ok: true });
+}
+async function lnStats(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  const today = new Date();
+  const days = [];
+  for (let i = 0; i < 35; i++) days.push(ilDay(today.getTime() - i * 86400000));
+  const recs = await Promise.all(days.map((d) => env.STORE.get('st:' + d, 'json')));
+  const uniq = (from) => { const s = new Set(); for (let i = 0; i < from; i++) if (recs[i]) for (const a of Object.keys(recs[i].aids)) s.add(a); return s.size; };
+  const pages = {}, by = {}, fin = {};
+  recs.forEach((r) => {
+    if (!r) return;
+    for (const [k, v] of Object.entries(r.pages)) { const p = pages[k] || (pages[k] = { r: 0, s: 0, d: 0, rm: 0 }); p.r += v.r; p.s += v.s; p.d += v.d; p.rm += v.rm; }
+    for (const [k, v] of Object.entries(r.by)) { const m = by[k] || (by[k] = { r: 0, ms: 0 }); m.r += v.r; m.ms += v.ms; }
+    for (const [k, v] of Object.entries(r.fin)) fin[k] = (fin[k] || 0) + v;
+  });
+  const rows = Object.entries(pages).map(([k, v]) => { const [s, d] = k.split('|'); return { s, d, reads: v.r, starts: v.s, done: v.d, avg: v.d ? v.rm / v.d : 0 }; });
+  return json({
+    ok: true,
+    data: {
+      totals: { today: uniq(1), week: uniq(7), month: uniq(30), finished: Object.values(fin).reduce((a, b) => a + b, 0) },
+      byMasechet: Object.entries(by).map(([s, v]) => ({ s, reads: v.r, ms: v.ms })).sort((a, b) => b.reads - a.reads),
+      topPages: rows.slice().sort((a, b) => b.reads - a.reads).slice(0, 40).map((x) => ({ s: x.s, d: x.d, reads: x.reads })),
+      abandon: rows.filter((x) => x.starts >= 5).map((x) => ({ s: x.s, d: x.d, starts: x.starts, done: x.done })).sort((a, b) => (a.done / a.starts) - (b.done / b.starts)).slice(0, 30),
+      slow: rows.filter((x) => x.done >= 5).map((x) => ({ s: x.s, d: x.d, avg: x.avg, n: x.done })).sort((a, b) => b.avg - a.avg).slice(0, 30),
+    },
+  });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -643,6 +772,11 @@ export default {
       if (p === '/edits' && req.method === 'PUT') return await putEdits(req, env);
       if (p === '/ingested' && req.method === 'POST') return await ingested(req, env);
       if (p === '/export' && req.method === 'GET') return await exportAll(req, env);
+      if (p === '/ln/sync' && req.method === 'POST') return await lnSync(req, env);
+      if (p === '/ln/code' && req.method === 'POST') return await lnCode(req, env);
+      if (p === '/ln/redeem' && req.method === 'POST') return await lnRedeem(req, env);
+      if (p === '/ln/stat' && req.method === 'POST') return await lnStat(req, env);
+      if (p === '/ln/stats' && req.method === 'GET') return await lnStats(req, env);
       return bad('לא נמצא', 404);
     } catch (e) {
       return bad('שגיאה: ' + (e && e.message ? e.message : String(e)), 500);

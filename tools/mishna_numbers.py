@@ -124,7 +124,7 @@ def _next_daf(d):
 def _has_mn(u):
     """הטקסט הראשון של היחידה כבר נפתח בסגנון התו "מספר קטע" (בא מן הוורד)."""
     h = (u.get('a') if u.get('k') == 'dh' else ((u.get('l') or [['', '']])[0][1])) or ''
-    return h.lstrip().startswith('<i class="mn">')
+    return h.lstrip().startswith('<i class="mk">')
 
 
 def assign(pages, src, masechet=''):

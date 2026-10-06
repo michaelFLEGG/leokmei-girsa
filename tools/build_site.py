@@ -1192,8 +1192,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main[data-mn].dh::before,.main[data-mn].mishna p:first-child::before,.row.u .main[data-mn]>p:first-child::before{
      content:attr(data-mn) '.';font-family:'Vilna',serif;font-weight:700;font-size:.78em;color:#7a5a14;
      margin-inline-end:.35em;letter-spacing:.02em;unicode-bidi:isolate;white-space:nowrap}
-  .mn{font-family:'Vilna',serif;font-weight:700;font-size:.78em;color:#7a5a14;letter-spacing:.02em}
-  body.dark .main[data-mn].dh::before,body.dark .main[data-mn].mishna p:first-child::before,body.dark .row.u .main[data-mn]>p:first-child::before,body.dark .mn{color:#d8b45a}
+  .mk{font-family:'Vilna',serif;font-weight:700;font-size:.78em;color:#7a5a14;letter-spacing:.02em}
   .row .b0{margin-top:0}.row .b1{margin-top:calc(var(--lhpx) * .5)}
   /* "רווח לפני": חצי שורה (b1). כותרת,
      ד"ה משנה או חציצה שלפניה הן עצמן ההפרדה, ולכן הרווח אינו נוסף. */
@@ -1940,7 +1939,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const AKEY='lg-admin', EKEY='lg-ed-'+SLUG, TKEY='lg-gh';
   const REPO='michaelFLEGG/leokmei-girsa', EDPATH='data/edits/'+SLUG+'.json';
   const CSTY=(D.sty&&D.sty.c)||[], PSTY=(D.sty&&D.sty.p)||[];
-  const OKCLS=CSTY.map(x=>x[0]).concat(['mn']);     /* mn: מספר קטע, בא מן הוורד ואינו סגנון להחלה */
+  const OKCLS=CSTY.map(x=>x[0]).concat(['mk']);     /* mk: מספר קטע, בא מן הוורד ואינו סגנון להחלה */
   const PCLS=PSTY.map(x=>x[0]).filter(Boolean);
   let ED=[]; try{ED=JSON.parse(localStorage.getItem(EKEY)||'[]')}catch(e){ED=[]}
   /* _ap = "הוחל על הנתונים בטעינה הזאת"; הסימון זמני ואינו נשמר בין טעינות */
@@ -3893,7 +3892,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function srcPageHTML(i){
     const heb=SX.keys[i],pg=SRC.pages[heb];
     const per=pg.perush||null,wantP=SRCVIEW!=='gem',wantG=SRCVIEW!=='per';
-    const mnl=n=>MNSEG[pg.refs[n]]?'<i class="mn">'+esc(MNSEG[pg.refs[n]])+'.</i> ':'';
+    const mnl=n=>MNSEG[pg.refs[n]]?'<i class="mk">'+esc(MNSEG[pg.refs[n]])+'.</i> ':'';
     const one=n=>(wantG?'<p class="g">'+mnl(n)+(pg.gemara[n]||'')+'</p>':'')+
       (wantP&&per&&per[n]?'<div class="prs">'+per[n]+'</div>':'');
     return '<section class="spg" data-i="'+i+'"><h4>דף '+esc(heb)+'</h4>'+
@@ -4503,11 +4502,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   slug=os.path.basename(out_path)[:-5]
   hgbtn=(f'<a href="{slug}-hagaha.html" style="background:var(--gold);color:#2b2620;border-radius:4px;'
          f'padding:3px 10px;text-decoration:none;font-weight:700">הגהה</a>') if hagaha else ''
+  import build_lamed
+  LAMED_READER_CSS=build_lamed.reader_css()
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"suggest_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <style>{CSS}</style><script src="daf-yomi.js"></script></head><body>
+  <style>{CSS}{LAMED_READER_CSS}</style><script src="daf-yomi.js"></script></head><body>
   <div class="bar" id="bar">
   <div class="bg" data-pri="0"><a href="index.html" style="color:inherit;text-decoration:none"><span class="nm">לאוקמי גירסא</span></a> <span class="mn">{masechet}</span>
   <div class="nav"><button onclick="goDaf(-1)" title="דף קודם (Ctrl+חץ ימינה)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="goDaf(1)" title="דף הבא (Ctrl+חץ שמאלה)">הבא ‹</button></div></div>
@@ -4548,10 +4549,24 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <div class="panel" id="sg"><button class="x" onclick="panel('sg')">×</button><h3>ההצעות שלי</h3><div id="sgb"></div></div>
   <div class="panel" id="sgq"><button class="x" onclick="panel('sgq')">×</button><h3>הצעות תיקון ממתינות</h3><div id="sgqb"></div></div>
   <div class="flow" id="flow"></div><div id="srcl" aria-hidden="true"></div>
-  <script>const DATA={J},SLUG="{slug}";</script><script>{JS}</script></body></html>'''
+  <script>const DATA={J},SLUG="{slug}";</script><script>{JS}</script>
+  <script src="shas.js"></script><script src="lamed.js"></script></body></html>'''
 
   open(out_path,'w',encoding='utf-8').write(page)
-  return {'pages':len(pages),'toc':n_nose,'qa':qa,'empty':n_empty,'heavy':heavy,
+  # נתוני עזר למערכת הלומד: אורך כל עמוד במילים, ופתיחת כל פרק
+  def _w(h): return len(html.unescape(re.sub(r'<[^>]+>',' ',h or '')).split())
+  _dafim=[]; _perakim=[]
+  for _p in pages:
+      _n=0
+      for _u in _p['units']:
+          if _u['k'] in ('u','m','dh','nose'):
+              _n+=_w(_u.get('a'))+sum(_w(_x[1]) for _x in _u.get('l',[]))
+      _dafim.append([(_p.get('daf') or '').strip(),_n])
+      _pn=(_p.get('perek') or '')+'|'+(_p.get('perekName') or '')
+      if not _perakim or _perakim[-1][2]!=_pn:
+          _perakim.append([(_p.get('perek') or '').strip(),(_p.get('perekName') or '').strip(),_pn,(_p.get('daf') or '').strip()])
+  meta={'dafim':_dafim,'perakim':[[a,b,d] for a,b,_c,d in _perakim]}
+  return {'meta':meta,'pages':len(pages),'toc':n_nose,'qa':qa,'empty':n_empty,'heavy':heavy,
           'hatz':hz_stat,
           'joined':{'dafRange':n_range,'dafTail':n_tail_daf,'dafIndex':n_index_daf,'dafDup':n_dup_daf,
                     'winStack':n_stack,'winDrop':n_stack_drop,'winTail':n_tail_win,'hatzDup':n_hatz_dup}}

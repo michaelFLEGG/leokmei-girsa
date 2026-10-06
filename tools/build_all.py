@@ -269,6 +269,7 @@ def main():
                 print('   מסך הגהה:', h['findings'], 'ממצאים,', h['severe'], 'טעונים תיקון')
             os.remove(jp)
             built[m] = {'file': f, 'pages': r['pages'], 'toc': r['toc'], 'qa': len(r['qa']),
+                        'meta': r.get('meta'),
                         'hagaha': has_hagaha, 'heavy': r.get('heavy', []),
                         'hatz': r.get('hatz'), 'joined': r.get('joined')}
             if r.get('heavy'):
@@ -323,8 +324,13 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
  var c=a.cloneNode(true);c.classList.remove('now');c.querySelector('.now-tag').textContent='הדף היום: '+t.daf;g.appendChild(c);row.appendChild(h);row.appendChild(g);var m=document.querySelector('main');m.insertBefore(row,m.firstChild)}}
 }})();
 </script><footer>עודכן {now} · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a></footer></body></html>'''
-    open(os.path.join(SITE, 'index.html'), 'w', encoding='utf-8').write(idx)
+    # הלוח הישן (כל המסכתות, הגהה ובקרה) עבר ל-masechtot.html. השער החדש
+    # (index.html) הוא דף הבית של מערכת הלומד.
+    idx = idx.replace('<footer>', '<footer><a href="index.html" style="color:inherit">לדף הבית</a> · ', 1)
+    open(os.path.join(SITE, 'masechtot.html'), 'w', encoding='utf-8').write(idx)
     shutil.copy(os.path.join(ROOT, 'tools', 'daf_yomi.js'), os.path.join(SITE, 'daf-yomi.js'))
+    import build_lamed
+    build_lamed.build(SITE)
     # עמוד "מקורות": הייחוס הנדרש ברישיון, פעם אחת, בשורה שקטה. השם המקורי
     # של הפירוש מופיע רק כאן; בממשק עצמו הוא "פירוש הגמרא".
     open(os.path.join(SITE, 'mekorot.html'), 'w', encoding='utf-8').write(
@@ -338,7 +344,25 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
         'ברישיון CC BY-NC 4.0. האתר חינמי ואינו מוכר דבר.</p>'
         '<p><a href="index.html">חזרה לשער</a></p></main></body></html>')
     json.dump({'built': built, 'time': now}, open(os.path.join(SITE, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    write_shas(built)
     print(len(built), 'מסכתות נבנו')
+
+def write_shas(built):
+    """site/shas.json - מפת הש"ס למערכת הלומד: הסדרים, המסכתות, ולמסכת
+    שעלתה לאתר - כל עמוד ואורכו במילים, ופתיחת כל פרק."""
+    out = {'seder': [], 'time': datetime.datetime.now().isoformat(timespec='seconds')}
+    for seder, ms in SEDER:
+        row = []
+        for m in ms:
+            b = built.get(m) or {}
+            meta = b.get('meta') or {}
+            row.append({'name': m, 'slug': SLUG[m], 'built': m in built,
+                        'dafim': meta.get('dafim') or [], 'perakim': meta.get('perakim') or []})
+        out['seder'].append({'name': seder, 'masechtot': row})
+    json.dump(out, open(os.path.join(SITE, 'shas.json'), 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+    open(os.path.join(SITE, 'shas.js'), 'w', encoding='utf-8').write(
+        'window.LGSHAS=' + json.dumps(out, ensure_ascii=False, separators=(',', ':')) + ';')
+
 
 if __name__ == '__main__':
     main()

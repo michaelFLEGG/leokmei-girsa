@@ -88,7 +88,7 @@
       '.bkcard .fx{margin:4px 0;background:#f3efe3;border-radius:4px;padding:3px 7px;font-size:15px}.bkcard del{color:#a83c2f;background:#fbe5e1}.bkcard ins{color:#2e6b3f;background:#e3f3e6;text-decoration:none}'+
       '.bkcard .bt{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.bkcard .bt button{font:inherit;font-size:14px;border:1px solid #b9a97c;border-radius:5px;background:#f6f1e2;padding:2px 12px;cursor:pointer}'+
       '.bkcard .bt button.ok{background:#2e6b3f;color:#fff;border-color:#2e6b3f}.bkcard .bt button.no{color:#a83c2f}.bkcard input[type=text]{width:100%;box-sizing:border-box;font:inherit;font-size:14px;margin-top:5px}'+
-      '.bkcard .dim{font-size:12px;color:#8a7d66}'+
+      '.bkcard .dim{font-size:12px;color:#8a7d66}.bkcard .kk{font-size:10px;opacity:.7;margin-right:3px;direction:ltr;unicode-bidi:isolate}'+
       '.bkbar{position:fixed;left:12px;bottom:12px;z-index:7;background:#fffdf8;border:1px solid #c9b98f;border-radius:8px;box-shadow:0 3px 14px rgba(0,0,0,.22);padding:5px 10px;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;direction:rtl;max-width:94vw}'+
       'body.ed .bkbar{bottom:56px}.bkbar button{font:inherit;font-size:14px;border:1px solid #b9a97c;border-radius:5px;background:#f6f1e2;padding:1px 10px;cursor:pointer}.bkbar button.go{background:#2e5b8a;color:#fff;border-color:#2e5b8a}'+
       '#bkp .grp{margin:8px 0;border:1px solid #e0d8c4;border-radius:6px;background:#fff}#bkp .grp>summary{cursor:pointer;padding:4px 8px;font-weight:600}'+
@@ -178,7 +178,7 @@
     m.innerHTML='<b>בקרה</b><span>בדף: '+nd+' · בפרק: '+ns+' · בכל המסכת: '+na+(lost?' · לא אותרו: '+lost:'')+'</span>'+
       '<button class="go" onclick="bkNext(1)" title="לממצא הבא שטרם הוכרע (Alt+חץ למטה)">לממצא הבא ↓</button>'+
       '<button onclick="bkNext(-1)" title="לקודם (Alt+חץ למעלה)">↑</button>'+
-      '<button onclick="bkPanel()">רשימה</button><button onclick="bkToggle()">סיום</button>'}
+      '<button onclick="bkPanel()">רשימה</button><button onclick="bkToggle()">סיום</button><span class="kk" style="font-size:11px;opacity:.7" title="Enter / Alt+1 אשר · Alt+Delete / Alt+2 דחה · Alt+3 ערוך · Alt+Enter אשר תמיד">Alt+↑↓ · Enter אשר · Alt+Del דחה · Alt+3 ערוך</span>'}
   function bkDafNow(){return (($('#curdaf')||{}).textContent||'').trim()}
 
   /* ---- כרטיס צף ---- */
@@ -199,9 +199,9 @@
       '<button class="x" onmousedown="event.preventDefault()" onclick="bkHideCard(true)" aria-label="סגירה">×</button></div>'+
       '<div class="nt">'+esc(sn.n)+'</div>'+(sn.e?'<div class="ev">בגמרא: '+esc(sn.e)+'</div>':'')+fx+
       (st==='pending'||st==='todo'?
-        '<div class="bt"><button class="ok" onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'ok\')" title="'+esc(BKACT[bkAction(f)])+'">אשר</button>'+
-        '<button class="no" onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'no\')">דחה</button>'+
-        '<button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'edit\')">ערוך</button>'+
+        '<div class="bt"><button class="ok" onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'ok\')" title="'+esc(BKACT[bkAction(f)])+' - Enter / Alt+1">אשר <small class="kk">Enter</small></button>'+
+        '<button class="no" onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'no\')" title="דחה - Alt+Delete / Alt+2">דחה <small class="kk">Alt+Del</small></button>'+
+        '<button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'edit\')" title="ערוך - Alt+3 (אחר כך Alt+Enter לאישור, Escape לחזרה)">ערוך <small class="kk">Alt+3</small></button>'+
         (st==='todo'?'<button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'ok\',1)">בוצע</button>':'')+'</div>'+
         '<input type="text" id="bkwhy" maxlength="300" placeholder="נימוק (לא חובה)" aria-label="נימוק">'+
         (st==='todo'?'<div class="dim">אושר לביצוע: הוראה שטרם בוצעה.</div>':'')
@@ -245,10 +245,50 @@
     const h=e.target.closest&&e.target.closest('#flow')?bkHit(e.clientX,e.clientY):null;
     if(h){BK.curId=h.f.id;bkHL();if(!EDIT||e.pointerType==='touch'||BK.pin){bkShowCard(h.f,true,null)}else bkShowCard(h.f,false,null)}
     else if(BK.pin){bkHideCard(true)}},true);
+  /* ---- קיצורי מקלדת לבקרה (6.10.2026): event.code, כדי שיעבדו גם בפריסה עברית.
+     Alt+חץ מעלה/מטה: ממצא קודם/הבא · Enter לבדו: אשר (כשהמיקוד על הממצא ולא בתוך טקסט)
+     Alt+Enter: אשר תמיד (ואם נפתחה עריכה - "נערך") · Alt+Delete / Alt+Backspace / Alt+2: דחה
+     Alt+1: אשר · Alt+3: ערוך (Escape חוזר למיקוד על הממצא) ---- */
+  function bkKbFinding(){
+    const c=$('#bkcard');if(!c||!BK.curId||c.dataset.id!==BK.curId)return null;
+    const f=BK.byId[BK.curId];if(!f)return null;
+    const st=bkStatus(f);return (st==='pending'||st==='todo')?f:null}
+  function bkBlurText(){const a=document.activeElement;if(a&&a!==document.body&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT|BUTTON|A)$/.test(a.tagName)))a.blur()}
+  /* אחרי הכרעה: לממצא הבא שטרם הוכרע בפרק הפתוח, בלי לחזור להתחלה */
+  function bkAdvance(){
+    bkBlurText();BK.kb=true;
+    const sec=SEC[cur]||{from:0,to:0},co=bkCurOrd();
+    const nx=BK.ord.filter(bkPend).find(x=>{const L=BK.loc[x.id];return L&&L.ord>co&&L.pi>=sec.from&&L.pi<=sec.to});
+    if(nx){bkGo(nx.id,true)}else{BK.curId='';bkHideCard(true);bkHL();toast('אין עוד ממצאים בפרק.')}}
+  async function bkKbDecide(f,d){
+    const id=f.id,st=bkStatus(f);
+    if(d==='edit-ok'){BK.editId='';await bkDecide(id,'edit',false,true)}
+    else await bkDecide(id,d,d==='ok'&&st==='todo'?1:0);
+    if(bkStatus(f)!=='pending'&&!(d==='ok'&&st==='todo'&&bkStatus(f)==='todo'))bkAdvance()}
+  document.addEventListener('pointerdown',e=>{if(BK.ON&&!(e.target.closest&&e.target.closest('#bkcard,#bkbar')))BK.kb=false},true);
   document.addEventListener('keydown',e=>{
     if(!BK.ON)return;
-    if(e.key==='Escape'&&$('#bkcard')){bkHideCard(true);return}
-    if(e.altKey&&!e.ctrlKey&&!e.metaKey&&(e.key==='ArrowDown'||e.key==='ArrowUp')){e.preventDefault();bkNext(e.key==='ArrowDown'?1:-1)}},true);
+    if(e.code==='Escape'||e.key==='Escape'){
+      if(BK.editId){const f=BK.byId[BK.editId];BK.editId='';BK.kb=true;e.preventDefault();e.stopPropagation();bkBlurText();
+        if(f){BK.curId=f.id;bkHL();if(!$('#bkcard'))bkShowCard(f,true,bkRectOf(f));else BK.pin=true}return}
+      if($('#bkcard')){bkHideCard(true);BK.kb=false;return}}
+    if(e.metaKey||e.ctrlKey)return;
+    const c=e.code;
+    if(e.altKey&&!e.shiftKey&&(c==='ArrowDown'||c==='ArrowUp')){
+      e.preventDefault();e.stopPropagation();BK.editId='';bkBlurText();BK.kb=true;bkNext(c==='ArrowDown'?1:-1);return}
+    const f=bkKbFinding();if(!f)return;
+    const hit=()=>{e.preventDefault();e.stopPropagation()};
+    if(e.altKey&&!e.shiftKey){
+      if(c==='Enter'||c==='NumpadEnter'){hit();bkKbDecide(f,BK.editId===f.id?'edit-ok':'ok');return}
+      if(c==='Digit1'){hit();BK.editId='';bkKbDecide(f,'ok');return}
+      if(c==='Digit2'||c==='Delete'||c==='Backspace'){hit();BK.editId='';bkKbDecide(f,'no');return}
+      if(c==='Digit3'){hit();if(bkFocusEdit(f)){BK.editId=f.id;toast('עריכה על הקטע. Alt+Enter מאשר כ"נערך", Escape חוזר למיקוד על הממצא.',4000)}return}
+      return}
+    /* Enter לבדו: רק כשהמיקוד על הממצא - לא בתוך טקסט ולא על כפתור/שדה */
+    if(!e.altKey&&!e.shiftKey&&(c==='Enter'||c==='NumpadEnter')&&BK.kb&&!BK.editId){
+      const t=e.target;
+      if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT|BUTTON|A)$/.test(t.tagName)))return;
+      hit();bkKbDecide(f,'ok')}},true);
   addEventListener('scroll',()=>{if(!BK.pin)bkHideCard(true)},true);
   addEventListener('resize',()=>{if(BK.ON)bkSoon()});
 
@@ -323,7 +363,7 @@
     if(old)ED=ED.filter(x=>x!==old);
     ED.push(edit);saveED();applyTextNow(edit);return edit}
   function bkAfterEdit(){drawEd();pubSoon();syncSoon()}
-  async function bkDecide(id,d,done){
+  async function bkDecide(id,d,done,nofocus){
     const f=BK.byId[id];if(!f)return;
     const wi=$('#bkwhy'),why=wi?wi.value.trim():'';
     let now='',msg='';
@@ -348,7 +388,7 @@
         if(!bkFocusEdit(f))return;
         bkPut(f,'todo',why);bkSave();bkHideCard(true);bkRefresh();toast('אושר לביצוע. הסמן על הקטע: ערוך כרצונך.',5000);return}}
     if(d==='ok'&&done){/* "בוצע" אחרי עריכה ידנית */}
-    if(d==='edit'){if(!bkFocusEdit(f))return;msg='עריכה על הקטע. מה שתכתוב גובר על ההצעה.'}
+    if(d==='edit'){if(!nofocus&&!bkFocusEdit(f))return;msg='עריכה על הקטע. מה שתכתוב גובר על ההצעה.'}
     if(d==='no'){msg='נדחה.'}
     bkPut(f,d,why,now);bkSave();bkHideCard(true);bkRefresh();
     if(msg)toast(msg,4000);

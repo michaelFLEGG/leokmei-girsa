@@ -10,7 +10,7 @@
 מילה שנחתכה בגרש כדרך הקיצור הרגילה ('ואפי, 'מתני) אינה ממצא, ולכן היא
 רשומה ברשימת ההיתר שלהלן.
 """
-import json, re, html, os, sys, datetime, collections, hashlib
+import json, re, html, os, sys, io, datetime, collections, hashlib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from styles_map import ROLE, role_of
 
@@ -311,7 +311,7 @@ function counts(){
 function text(){
   const A=D.concat(LOST);
   const a=A.filter(f=>(ST[f.id]||{}).s==='אושר');
-  let t='הגהת מסכת '+MAS+' - לאוקמי גירסא\n'+new Date().toLocaleString('he-IL')+'\n';
+  let t='הגהת מסכת '+MAS+' - לאוקמי גירסא\n'+HD.dateTime(Date.now())+'\n';
   t+='לתיקון: '+a.length+' מתוך '+A.length+'\n\n';
   t+='==== לתקן בקובץ הוורד ====\n\n';
   for(const f of a){const st=ST[f.id]||{};
@@ -490,7 +490,7 @@ def build(blocks, out_path, masechet, slug, curated_path=None, source=''):
                   % (t, n, html.escape(d)) for t, n, d in notes if n)
     data = json.dumps(F, ensure_ascii=False).replace('</', '<\\/')
     lostd = json.dumps(lost, ensure_ascii=False).replace('</', '<\\/')
-    page = (PAGE.replace('__CSS__', CSS).replace('__JS__', JS).replace('__DATA__', data)
+    page = (PAGE.replace('__CSS__', CSS).replace('__JS__', io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hdate.js'), encoding='utf-8').read() + chr(10) + JS).replace('__DATA__', data)
             .replace('__LOST__', lostd)
             .replace('__M__', masechet).replace('__SLUG__', slug).replace('__GEN__', gen)
             .replace('__SRC__', html.escape(source or masechet))

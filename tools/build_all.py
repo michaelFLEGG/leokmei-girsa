@@ -279,6 +279,7 @@ def main():
             print('נכשל', m, repr(e))
     # index
     now = datetime.datetime.now().strftime('%d.%m.%Y %H:%M')
+    now_ts = int(datetime.datetime.now().timestamp() * 1000)   # התצוגה: תאריך עברי (hdate.js)
     rows = ''
     for seder, ms in SEDER:
         cells = ''
@@ -314,7 +315,7 @@ main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500
 .hg:hover{{background:#b8912f}}
 footer{{text-align:center;color:#8a7d66;font-size:13px;padding:20px}}</style></head><body>
 <header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p><button id="dy" type="button" style="display:none">הדף היומי</button></header>
-<main>{rows}</main><script src="daf-yomi.js"></script><script>
+<main>{rows}</main><script src="hdate.js"></script><script src="daf-yomi.js"></script><script>
 (function(){{var BUILT={json.dumps([SLUG[m] for m in built])};var b=document.getElementById('dy');if(!window.LGDaf)return;var t=LGDaf.today();if(!t)return;
 b.style.display='';
 b.onclick=function(){{if(BUILT.indexOf(t.slug)>-1)location.href=t.slug+'.html#daf='+encodeURIComponent(t.daf);else alert('מסכת '+t.name+' עדיין אינה באתר')}};
@@ -323,12 +324,13 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
  var row=document.createElement('section');row.id='nowrow';var h=document.createElement('h2');h.textContent='נלמדת עכשיו בדף היומי';var g=document.createElement('div');g.className='grid';
  var c=a.cloneNode(true);c.classList.remove('now');c.querySelector('.now-tag').textContent='הדף היום: '+t.daf;g.appendChild(c);row.appendChild(h);row.appendChild(g);var m=document.querySelector('main');m.insertBefore(row,m.firstChild)}}
 }})();
-</script><footer>עודכן {now} · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a></footer></body></html>'''
+</script><footer>עודכן <span id="upd" data-ts="{now_ts}"></span> · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a></footer><script>(function(){{var u=document.getElementById('upd');if(u&&window.HD)u.textContent=HD.dateTime(+u.getAttribute('data-ts'))}})()</script></body></html>'''
     # הלוח הישן (כל המסכתות, הגהה ובקרה) עבר ל-masechtot.html. השער החדש
     # (index.html) הוא דף הבית של מערכת הלומד.
     idx = idx.replace('<footer>', '<footer><a href="index.html" style="color:inherit">לדף הבית</a> · ', 1)
     open(os.path.join(SITE, 'masechtot.html'), 'w', encoding='utf-8').write(idx)
     shutil.copy(os.path.join(ROOT, 'tools', 'daf_yomi.js'), os.path.join(SITE, 'daf-yomi.js'))
+    shutil.copy(os.path.join(ROOT, 'tools', 'hdate.js'), os.path.join(SITE, 'hdate.js'))
     import build_lamed
     build_lamed.build(SITE)
     # עמוד "מקורות": הייחוס הנדרש ברישיון, פעם אחת, בשורה שקטה. השם המקורי

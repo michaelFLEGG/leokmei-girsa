@@ -38,6 +38,11 @@ def run(slug, dry=False, log=print):
     masechet = d['masechet']
     ops = [{'daf': o['daf'], 'context': o['text'], 'next': o.get('next', ''), 'i': o.get('i'),
             'letter': o['letter']} for o in d['ops'] if o.get('text')]
+    # הכרעות סמנטיות (6.10.2026): שאריות שלא הותאמו מכנית ונבדקו ידנית מול הקשר הסוגיה
+    xp = os.path.join(ROOT, 'data', 'm6', 'decisions', slug + '.json')
+    if os.path.exists(xp):
+        ops += [{'daf': o['daf'], 'context': o['text'], 'next': o.get('next', ''), 'i': o.get('i'),
+                 'letter': o['letter']} for o in json.load(io.open(xp, encoding='utf-8'))]
     left = list(range(len(ops)))
     summary = {'masechet': masechet, 'ops': len(ops), 'applied': 0, 'skipped': 0, 'files': []}
     for path in files_of(masechet):

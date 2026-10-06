@@ -94,6 +94,33 @@ def _contains_seq(hay, needle):
     return False
 
 
+def _prev_daf(d):
+    """הדף שלפני d (ג. -> ב:, ב: -> ב.)."""
+    t = d.strip()
+    if t.endswith(':'):
+        return t.rstrip(':') + '.'
+    core = t.rstrip('.:')
+    n = num_of(core.replace('"', '').replace("'", ''))
+    if n <= 2:
+        return ''
+    n -= 1
+    out = ''
+    rem = n
+    for v, c in ((400, 'ת'), (300, 'ש'), (200, 'ר'), (100, 'ק'), (90, 'צ'), (80, 'פ'), (70, 'ע'),
+                 (60, 'ס'), (50, 'נ'), (40, 'מ'), (30, 'ל'), (20, 'כ'), (10, 'י'), (9, 'ט'), (8, 'ח'),
+                 (7, 'ז'), (6, 'ו'), (5, 'ה'), (4, 'ד'), (3, 'ג'), (2, 'ב'), (1, 'א')):
+        while rem >= v:
+            if rem == 15:
+                out += 'טו'; rem = 0
+                break
+            if rem == 16:
+                out += 'טז'; rem = 0
+                break
+            out += c
+            rem -= v
+    return out + ':'
+
+
 def _next_daf(d):
     """הדף שאחרי d (ב. -> ב:, ב: -> ג.), לפי מספר הדף בגימטריה."""
     t = d.strip()
@@ -121,10 +148,43 @@ def _next_daf(d):
     return out + '.'
 
 
+NIKUD = re.compile(r'[֑-ׇ]')
+
+
+def _skel(t):
+    """מילים בשלד עיצורי (בלי ניקוד, בלי י/ו, בלי אות יחס בראש מילה ארוכה): להתאמה רפה."""
+    t = re.sub(r'<[^>]+>', ' ', t or '')
+    t = NIKUD.sub('', t).replace('־', ' ')
+    t = re.sub(r"[^א-ת\s]", ' ', t)
+    out = []
+    for w in t.split():
+        w = w.replace('י', '').replace('ו', '') or w
+        if len(w) > 3 and w[0] in 'הבלמשכד':
+            w = w[1:]
+        out.append(w)
+    return out
+
+
+def _ratio(a, b):
+    """סכום הקטעים המשותפים (לפי סדר) חלקי אורך הקצר מבין השניים."""
+    import difflib
+    if not a or not b:
+        return 0.0
+    sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
+    return sum(m.size for m in sm.get_matching_blocks()) / float(min(len(a), len(b)))
+
+
 def _has_mn(u):
     """הטקסט הראשון של היחידה כבר נפתח בסגנון התו "מספר קטע" (בא מן הוורד)."""
     h = (u.get('a') if u.get('k') == 'dh' else ((u.get('l') or [['', '']])[0][1])) or ''
     return h.lstrip().startswith('<i class="mk">')
+
+
+def _wl(u):
+    """אות הקטע שכתובה בוורד בתחילת היחידה (סגנון "מספר קטע"), או ''."""
+    h = (u.get('a') if u.get('k') == 'dh' else ((u.get('l') or [['', '']])[0][1])) or ''
+    m = re.match(r'\s*<i class="mk">([^<]*)</i>', h)
+    return m.group(1).strip().rstrip('.').strip() if m else ''
 
 
 def assign(pages, src, masechet=''):
@@ -171,15 +231,45 @@ def assign(pages, src, masechet=''):
                         break
                 if hit:
                     seg, how = hit, 'words'
+            if seg is None:
+                # שלב שלישי: התאמה רפה בשלד עיצורי מול הציטוט המודגש ומול נוסח הגמרא של
+                # הקטע, בדף ובשכנים. אות היחס, י/ו, ניקוד וגרשיים אינם שוברים אותה.
+                dwk = _skel(re.sub(r"וכו[׳']?", ' ', u.get('a') or ''))
+                if dwk:
+                    spg = (src.get('pages') or {}).get(daf) or {}
+                    best, hit = 0.0, None
+                    for dd in (daf, _prev_daf(daf), _next_daf(daf)):
+                        for x in by_daf.get(dd, []):
+                            if not x['letter']:
+                                continue
+                            gtxt = ((src.get('pages') or {}).get(dd) or {}).get('gemara') or []
+                            cands = [_skel(' '.join(re.findall(r'<b>(.*?)</b>', LABEL.sub('', x['text'], count=1), re.S)))]
+                            if x['seg'] < len(gtxt):
+                                cands.append(_skel(gtxt[x['seg']]))
+                            for cw in cands:
+                                r = _ratio(dwk[:8], cw[:14])
+                                if r > best:
+                                    best, hit = r, x
+                    need = 0.65 if len(dwk) >= 3 else 0.99
+                    if hit is not None and best >= need:
+                        seg, how = hit, 'fuzzy'
+                        u['mnr'] = round(best, 2)
             if seg is None or not seg['letter']:
                 rep['dh_none'] += 1
                 if len(rep['dh_unmatched']) < 400:
-                    rep['dh_unmatched'].append([daf, u['id'], MS.norm(u.get('a'))[:40]])
+                    import html as _h
+                    _nx = us[ui + 1] if ui + 1 < len(us) else None
+                    _nt = ''
+                    if _nx is not None:
+                        _nt = _h.unescape(re.sub(r'<[^>]+>', '', (_nx.get('a') if _nx['k'] != 'u' and _nx.get('a') and not _nx.get('l') else ((_nx.get('l') or [['', '']])[0][1])) or ''))
+                    rep['dh_unmatched'].append([daf, u['id'], MS.norm(u.get('a'))[:40],
+                                                _h.unescape(re.sub(r'<[^>]+>', '', u.get('a') or '')), _nt])
                 continue
             last_idx = seg['seg'] if seg['daf'] == daf else last_idx
             u['mn'] = seg['letter']
+            u['mns'] = [seg['daf'], seg['seg']]
             u['mnh'] = how
-            rep['dh_' + how] += 1
+            rep['dh_' + how] = rep.get('dh_' + how, 0) + 1
             used.add((seg['daf'], seg['seg']))
     # קטעי משנה שמסומנים כך בפירוש: יחידת המשנה (u.k == 'm') באותו דף
     # שמילותיה הן הציטוט המודגש של הקטע. ה-ref של יחידת משנה אינו אמין
@@ -229,7 +319,33 @@ def assign(pages, src, masechet=''):
             taken.add(id(tgt))
             rep['m_placed_ref'] = rep.get('m_placed_ref', 0) + 1
         else:
-            rep['m_missing'].append([x['daf'], x['seg'], x['letter'], round(best, 2)])
+            # שלב רפה: נוסח הגמרא של הקטע מול פתיחת כל יחידת משנה בדף ובשכנים
+            gtxt = ((src.get('pages') or {}).get(x['daf']) or {}).get('gemara') or []
+            gw = _skel(gtxt[x['seg']] if x['seg'] < len(gtxt) else '')[:12]
+            fb, fu = 0.0, None
+            for dd in (x['daf'], _prev_daf(x['daf']), _next_daf(x['daf'])):
+                for p in page_of.get(dd, []):
+                    for u in p['units']:
+                        if u['k'] != 'm' or id(u) in taken or u.get('mn'):
+                            continue
+                        if _has_mn(u) and _wl(u) != x['letter']:
+                            continue
+                        uw = _skel(' '.join(l[1] for l in (u.get('l') or [])[:2]))[:12]
+                        r = _ratio(gw, uw)
+                        if r > fb:
+                            fb, fu = r, u
+            if fu is not None and fb >= 0.65:
+                taken.add(id(fu))
+                if _has_mn(fu):
+                    rep['m_in_word'] = rep.get('m_in_word', 0) + 1     # כבר ממוספרת בוורד באותה אות
+                else:
+                    fu['mn'] = x['letter']
+                    fu['mnh'] = 'fuzzy'
+                    fu['mnr'] = round(fb, 2)
+                    fu['mns'] = [x['daf'], x['seg']]
+                    rep['m_fuzzy'] = rep.get('m_fuzzy', 0) + 1
+            else:
+                rep['m_missing'].append([x['daf'], x['seg'], x['letter'], round(max(best, fb), 2)])
     # רציפות הסימון של פירוש הגמרא עצמו
     prev = None
     for x in segs:

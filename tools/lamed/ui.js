@@ -29,7 +29,7 @@
     top.innerHTML = '<a class="lm-brand" href="index.html">לאוקמי גירסא</a>' +
       '<nav>' + [['home', 'index.html', 'בית'], ['shas', 'shas.html', 'מפת הש"ס'], ['lamed', 'lamed.html', 'הלימוד שלי'], ['yomi', 'yomi.html', 'הדף היומי'], ['settings', 'settings.html', 'הגדרות']]
         .map(function (a) { return '<a href="' + a[1] + '"' + (page === a[0] ? ' class="on"' : '') + '>' + a[2] + '</a>'; }).join('') + '</nav>' +
-      '<span class="lm-date">' + E(LG.hebDate(now)) + ' · ' + E(LG.gDate(now)) + '</span>';
+      '<span class="lm-date">' + E(HD.long(now)) + '</span>';
     document.body.insertBefore(top, document.body.firstChild);
     var nav = el('nav', 'lm-bnav');
     nav.setAttribute('aria-label', 'ניווט ראשי');
@@ -142,7 +142,7 @@
     var types = set.types || [];
     var hero = el('div', 'lm-card');
     hero.style.textAlign = 'center';
-    hero.innerHTML = '<div class="lm-small">' + E(LG.hebDate(now)) + '</div>' +
+    hero.innerHTML = '<div class="lm-small">' + E(HD.long(now)) + '</div>' +
       '<h1 class="lm-t" style="font-family:Leukmey,Vilna,serif;font-weight:900;font-size:46px;margin:6px 0">לאוקמי גירסא</h1>' +
       '<div class="lm-small" style="font-size:17px">"לעולם ליגרס איניש" (שבת סג.) · קיצור התלמוד הבבלי, שלד הסוגיה בלבד</div>';
     wrap.appendChild(hero);
@@ -164,7 +164,7 @@
     if (y) {
       var ym = LG.masechet(y.slug), has = ym && ym.built;
       var dc = el('div', 'lm-card lm-hero');
-      dc.innerHTML = '<div class="lm-txt"><div class="lm-small">הדף היומי · ' + E(LG.hebDateShort(now)) + ' · ' + E(LG.gDate(now)) + '</div>' +
+      dc.innerHTML = '<div class="lm-txt"><div class="lm-small">הדף היומי · ' + E(HD.long(now)) + '</div>' +
         '<div class="lm-big">' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</div>' +
         (has ? '' : '<div class="lm-small">מסכת זו עדיין בהכנה באתר. אפשר לסמן "למדתי בספר".</div>') + '</div>' +
         (has ? '<a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">ללמוד את הדף של היום</a>' : '<a class="lm-btn ghost" href="yomi.html">לדף היומי</a>');
@@ -284,7 +284,7 @@
       var mins = +$('#lm-sl', fc).value; $('#lm-slv', fc).textContent = mins;
       var r2 = LG.finishDate(rem, mins * 60000, set.skipDays);
       var base = daily >= 60000 ? 'בקצב שלך (כ-' + LG.nf(Math.round(perPage / 60000)) + ' דקות לעמוד ממוצע) נשארו לך ' + LG.dur(rem, true) + ' לסיום המסכת. ' : 'נשארו לך ' + LG.dur(rem, true) + ' לסיום המסכת (הערכה ראשונית). ';
-      out.textContent = base + (r2 ? 'אם תלמד ' + mins + ' דקות ביום - תסיים ביום ' + LG.WD[new Date(LG.ymdToUTC(r2.ymd)).getUTCDay()] + ' ' + LG.hebDateShort(LG.ymdToUTC(r2.ymd) + 43200000) + ' (' + LG.gDateShort(r2.ymd) + '.' + r2.ymd.slice(0, 4) + ').' : '');
+      out.textContent = base + (r2 ? 'אם תלמד ' + mins + ' דקות ביום - תסיים ' + HD.long(LG.ymdToUTC(r2.ymd) + 43200000) + '.' : '');
       var g = (set.goals || {})[slug];
       var note = $('#lm-fcn', fc);
       if (g && g.end && r2) {
@@ -340,7 +340,7 @@
     var info = LG.amudInfo(slug, daf), a = info.a, m = LG.masechet(slug);
     var rows = '';
     if (a && a.dates.length) rows = '<ul class="lm-list">' + a.dates.map(function (d, i) {
-      return '<li><span class="lm-grow">' + E(LG.gDate(LG.ymdToUTC(d) + 43200000)) + ' · ' + E(LG.hebDateShort(LG.ymdToUTC(d) + 43200000)) + '</span><span>' + (a.ms[i] ? E(LG.dur(a.ms[i])) : 'ללא מדידה') + '</span></li>';
+      return '<li><span class="lm-grow">' + E(HD.long(LG.ymdToUTC(d) + 43200000)) + '</span><span>' + (a.ms[i] ? E(LG.dur(a.ms[i])) : 'ללא מדידה') + '</span></li>';
     }).join('') + '</ul>';
     var first = a && a.ms.length > 1 && a.ms[0] && a.ms[a.ms.length - 1] ? '<p class="lm-note">זמן בחזרה הראשונה: ' + LG.dur(a.ms[0]) + ' · באחרונה: ' + LG.dur(a.ms[a.ms.length - 1]) + '</p>' : '';
     var href = UI.readHref(slug, daf);

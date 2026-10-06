@@ -119,6 +119,34 @@ def pull(by):
     return n
 
 
+def pull_notes():
+    """הערות המנהל לקלוד (פרטיות מוחלטת): נקראות קודם לכל דבר בכל סבב למידה.
+    נשמרות רק בתיקייה הפרטית (Documents), לעולם לא ב-_שומר, בדרייב או בריפו.
+    מחזיר את ההערות שטרם סומנו "נלמד"."""
+    try:
+        items = call('/notes').get('items', [])
+    except Exception as e:
+        print('ההערות לא נקראו:', e)
+        return []
+    os.makedirs(PRIV, exist_ok=True)
+    io.open(os.path.join(PRIV, 'notes.json'), 'w', encoding='utf-8').write(json.dumps(items, ensure_ascii=False, indent=1))
+    new = [x for x in items if not x.get('learned')]
+    for x in new:
+        print('הערת מנהל [%s %s]: %s' % (x.get('slug', ''), x.get('daf', ''), x.get('note', '')))
+        if x.get('sel'):
+            print('   על הטקסט:', plain(x['sel'])[:100])
+    return new
+
+
+def mark_notes_learned(ids):
+    if not ids:
+        return
+    try:
+        call('/notes', {'op': 'learned', 'ids': list(ids)})
+    except Exception as e:
+        print('סימון ההערות כנלמדו נכשל:', e)
+
+
 def pull_word(by):
     """תיקוני וורד בעקוב אחר שינויים של המחבר (לא של המנועים)."""
     import glob
@@ -341,6 +369,7 @@ def main():
         io.open(os.path.join(OUT, 'current.json'), 'w', encoding='utf-8').write(io.open(src, encoding='utf-8').read())
         print('הכללים הוחזרו לגרסה', n)
         return
+    new_notes = pull_notes()                             # ההערות נקראות ראשונות
     by, p = load_journal()
     state_p = os.path.join(PRIV, 'state.json')
     state = json.load(io.open(state_p, encoding='utf-8')) if os.path.exists(state_p) else {'done': []}
@@ -362,6 +391,7 @@ def main():
     cur_p = os.path.join(OUT, 'current.json')
     prev_ids = {r['id'] for r in json.load(io.open(cur_p, encoding='utf-8'))['rules'] if r['status'] == 'on' and r['kind'] != 'ctx'} if os.path.exists(cur_p) else set()
     ver, changed, on, offr = write_outputs(rules, held, cls, by, new, 0)
+    mark_notes_learned([x['id'] for x in new_notes])     # נקראו ושימשו בסבב הזה
     state['done'] = sorted(set(state['done']) | set(new))
     state['last'] = datetime.datetime.now().isoformat(timespec='seconds')
     io.open(state_p, 'w', encoding='utf-8').write(json.dumps(state))

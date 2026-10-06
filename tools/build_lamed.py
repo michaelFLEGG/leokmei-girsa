@@ -35,7 +35,7 @@ def reader_css():
 
 
 def build(site):
-    js = '\n'.join(read(os.path.join(SRC, p + '.js')) for p in PARTS)
+    js = read(os.path.join(HERE, 'hdate.js')) + '\n' + '\n'.join(read(os.path.join(SRC, p + '.js')) for p in PARTS)
     io.open(os.path.join(site, 'lamed.js'), 'w', encoding='utf-8').write(js)
     css = read(os.path.join(SRC, 'lamed.css'))
     io.open(os.path.join(site, 'lamed.css'), 'w', encoding='utf-8').write(css)

@@ -219,7 +219,7 @@
   function mineCard(g){
     const id=esc(g.id),ed=MED&&MED.id===g.id;
     const idq="'"+id+"'";
-    let h='<div class="mycard'+(g.mnew||ed?' new':'')+'" id="mc-'+id.replace(/[^\w]/g,'_')+'"><div class="mym"><b>'+esc(g.masechet||'')+(g.daf?' · דף '+esc(g.daf):'')+'</b> · '+new Date(g.t).toLocaleDateString('he-IL')+' '+stChip(g.st)+
+    let h='<div class="mycard'+(g.mnew||ed?' new':'')+'" id="mc-'+id.replace(/[^\w]/g,'_')+'"><div class="mym"><b>'+esc(g.masechet||'')+(g.daf?' · דף '+esc(g.daf):'')+'</b> · '+HD.date(g.t)+' '+stChip(g.st)+
       (g.st==='pending'&&g.up?'<span class="stchip" style="background:#b0721a">עודכנה</span>':'')+tyChip(g.type)+
       (g.from?'<span class="mydim"> · חידוד של הצעה קודמת</span>':'')+
       (g.next&&g.next.length?'<span class="mydim"> · הוגשה ממנה הצעה חדשה</span>':'')+'</div>'+
@@ -232,7 +232,7 @@
       h+='<div class="myn">'+esc(g.note)+'</div>';
       if((g.st==='rejected'||g.st==='stale')&&g.reason)h+='<div class="why">סיבה: '+esc(g.reason)+'</div>';
       if(g.st==='edited'&&g.now)h+='<div class="why" style="color:#5f7f2e">נכנס בנוסח: '+esc(g.now)+'</div>';
-      if(g.vers&&g.vers.length)h+='<details><summary>גרסאות קודמות ('+g.vers.length+')</summary>'+g.vers.slice().reverse().map(v=>'<div><span class="mydim">'+new Date(v.t).toLocaleString('he-IL')+'</span><br>'+esc(v.note)+'</div>').join('')+'</details>';
+      if(g.vers&&g.vers.length)h+='<details><summary>גרסאות קודמות ('+g.vers.length+')</summary>'+g.vers.slice().reverse().map(v=>'<div><span class="mydim">'+HD.dateTime(v.t)+'</span><br>'+esc(v.note)+'</div>').join('')+'</details>';
       h+=thrHTML(g);
       if(g.st==='pending')h+='<button onclick="mineStart('+idq+',\'edit\')">ערוך</button><button onclick="mineDel('+idq+')">משוך את ההצעה</button>';
       if(g.st==='rejected'||g.st==='stale')h+='<button class="go" onclick="mineStart('+idq+',\'again\')">חדד והגש מחדש</button>';
@@ -382,7 +382,7 @@
   function sqUpd(g){
     if(!g.up||!(g.vers&&g.vers.length))return '';
     const prev=g.vers[g.vers.length-1];
-    return '<span class="stchip" style="background:#b0721a">עודכנה</span><div class="sqctx"><small>הגרסה הקודמת ('+new Date(prev.t).toLocaleString('he-IL')+'):</small> <del style="color:#a83c2f;background:#fbe5e1">'+esc(prev.note)+'</del><br><small>עכשיו:</small> <ins style="color:#2e6b3f;background:#e3f3e6;text-decoration:none">'+esc(g.note)+'</ins></div>'}
+    return '<span class="stchip" style="background:#b0721a">עודכנה</span><div class="sqctx"><small>הגרסה הקודמת ('+HD.dateTime(prev.t)+'):</small> <del style="color:#a83c2f;background:#fbe5e1">'+esc(prev.note)+'</del><br><small>עכשיו:</small> <ins style="color:#2e6b3f;background:#e3f3e6;text-decoration:none">'+esc(g.note)+'</ins></div>'}
   function sqOrdered(){const S=slotsFull(),ok=[],lost=[];
     QQ.forEach(g=>{if(SQSKIP.has(g.id))return;const s=sqLocate(g,S);(s?ok:lost).push([g,s])});
     return {S,ok,lost}}
@@ -409,7 +409,7 @@
     rows.forEach((r,i)=>r.classList.toggle('cur',i===SQCUR));
     const c=rows[SQCUR];if(c&&c.scrollIntoView)c.scrollIntoView({block:'nearest'})}
   function sqRow(g,s,n){
-    const when=new Date(g.t).toLocaleString('he-IL'),id=esc(g.id);
+    const when=HD.dateTime(g.t),id=esc(g.id);
     const st=STYPES[g.type]||STYPES.nusach;
     /* בהצעה על הנוסח: מחוק באדום ומוסף בירוק, בהקשר השורה, כמו עקוב אחר שינויים */
     let ctx='';
@@ -541,3 +541,68 @@
     box.innerHTML=h}
   async function lnOff(id,on){try{const j=await api('/learn',{method:'POST',body:JSON.stringify({off:id,on:!!on})});LN.off=j.off;lnDraw();toast(on?'הכלל הוחזר.':'הכלל בוטל. הוא לא ייכנס לריצות הבאות.')}catch(e){alert(e.message)}}
   setTimeout(lnLoad,3500);
+
+  /* ---- הערות המנהל לקלוד (6.10.2026) - פרטיות מוחלטת ----
+     כפתור "הערה לקלוד" (Ctrl+Alt+H) בעורך: שדה קצר שבו המנהל מסביר את הרעיון
+     שמאחורי התיקון. ההערה נשמרת בנקודת הקליטה הפרטית (מאחורי הרשאת מנהל) יחד עם
+     המסכת, הדף, הטקסט המסומן, הנוסח לפני ואחרי, ותאריך. אינה עוברת לריפו, לבנייה,
+     לקובצי הוורד או לתיקיית השומר. הלומד קורא אותה בכל סבב למידה. */
+  let NT=null;
+  async function ntLoad(){if(!isAdmin()||!admKey())return;
+    try{const j=await api('/notes');NT=j.items||[]}catch(e){NT=null}ntBadge()}
+  function ntBadge(){const b=$('#ntbtn');if(!b)return;
+    b.style.display=isAdmin()?'':'none';
+    const n=NT?NT.filter(x=>!x.learned).length:0;
+    b.textContent='הערות לקלוד'+(n?' ('+n+')':'')}
+  function dafOfEl(el){const row=el&&el.closest&&el.closest('.row');let r=row;
+    while(r){const d=r.querySelector('.dafmark');if(d)return d.dataset.daf||d.textContent;r=r.previousElementSibling}return ''}
+  function ntContext(){
+    const el=(typeof edEl==='function')?edEl():null;
+    const s=getSelection();
+    let sel=s&&s.rangeCount?String(s).trim():'';
+    const k=el&&el.dataset?el.dataset.ek||'':'';
+    const ed=k?ED.find(x=>x.k===k):null;
+    if(!sel&&el&&isTxt(el))sel=txtOf(el).trim();
+    return {k,sel:sel.slice(0,4000),was:ed?ed.was:'',now:ed?ed.now:(el&&isTxt(el)?txtOf(el):''),daf:dafOfEl(el)}}
+  function ntAdd(){
+    if(!isAdmin()){return}
+    if(!admKey()){alert('כדי לשמור הערה צריך מפתח מנהל במכשיר הזה');return}
+    const ctx=ntContext();
+    const old=$('#ntm');if(old)old.remove();
+    const m=document.createElement('div');m.id='ntm';
+    m.style.cssText='position:fixed;z-index:50;left:50%;top:18%;transform:translateX(-50%);background:#fbf8f1;border:1px solid #c9a24a;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.35);padding:14px 16px;width:min(480px,92vw);direction:rtl;font-size:15px';
+    m.innerHTML='<b>הערה לקלוד</b><div style="font-size:12px;color:#7a6a45;margin:4px 0 6px">פרטית: רק אתה וקלוד רואים אותה. מה הרעיון שמאחורי התיקון?</div>'+
+      (ctx.sel?'<div style="font-size:12px;color:#4a4137;background:#eee9da;border-radius:4px;padding:4px 8px;margin-bottom:6px;max-height:4.2em;overflow:hidden">'+esc(ctx.sel.slice(0,160))+'</div>':'')+
+      '<textarea id="ntt" rows="4" style="width:100%;box-sizing:border-box;font:inherit;padding:6px" placeholder="למשל: כשהתנא נזכר בשמו מלא - להדגיש"></textarea>'+
+      '<div style="margin-top:8px;display:flex;gap:8px"><button type="button" id="nts" style="background:#c9a24a;border:0;border-radius:5px;padding:5px 16px;font:inherit;font-weight:700;cursor:pointer">שמירה</button>'+
+      '<button type="button" id="ntc" style="background:none;border:1px solid #b9ac8e;border-radius:5px;padding:5px 14px;font:inherit;cursor:pointer">ביטול</button></div>';
+    document.body.appendChild(m);
+    const t=$('#ntt');t.focus();
+    $('#ntc').onclick=()=>m.remove();
+    m.addEventListener('keydown',e=>{if(e.key==='Escape'){m.remove();e.stopPropagation()}else if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){$('#nts').click()}});
+    $('#nts').onclick=async()=>{const v=t.value.trim();if(!v){flash('ההערה ריקה');return}
+      try{const j=await api('/notes',{method:'POST',body:JSON.stringify({op:'add',slug:SLUG,masechet:D.masechet,daf:ctx.daf,k:ctx.k,sel:ctx.sel,was:ctx.was,now:ctx.now,note:v})});
+        if(NT)NT.unshift(j.item);else NT=[j.item];ntBadge();m.remove();flash('ההערה נשמרה');if($('#nt')&&$('#nt').classList.contains('open'))ntDraw()}
+      catch(e){alert(e.message)}}}
+  function ntOpen(){panel('nt');ntLoad().then(ntDraw)}
+  function ntDraw(){const box=$('#ntb');if(!box)return;
+    if(!NT){box.innerHTML='<div class="edsum">אי אפשר לטעון את ההערות (בדוק שיש מפתח מנהל במכשיר).</div>';return}
+    let h='<div class="dr">ההערות פרטיות: גלויות רק לך ולקלוד, ואינן נכנסות לאתר, לריפו או לקובצי הוורד.</div>';
+    if(!NT.length)h+='<div class="edsum">עדיין אין הערות. בעורך: Ctrl+Alt+H, או הכפתור "הערה לקלוד" בחלונית הסגנונות.</div>';
+    NT.forEach(x=>{h+='<div class="sgrow"><small>'+esc(HD.dateTime(x.t))+' · '+esc(x.masechet||x.slug||'')+(x.daf?' · דף '+esc(x.daf):'')+'</small>'+
+      (x.learned?' <span class="stchip" style="background:#2e6b3f">נלמד</span>':'')+
+      (x.sel?'<div class="sqctx">'+esc(x.sel.slice(0,120))+'</div>':'')+
+      '<div>'+esc(x.note)+'</div>'+
+      '<button data-id="'+esc(x.id)+'" onclick="ntEdit(this.dataset.id)">עריכה</button> <button data-id="'+esc(x.id)+'" onclick="ntDel(this.dataset.id)">מחיקה</button> <button data-id="'+esc(x.id)+'" onclick="ntLearned(this.dataset.id,'+(x.learned?0:1)+')">'+(x.learned?'סמן כלא נלמד':'סמן כנלמד')+'</button></div>'});
+    box.innerHTML=h}
+  async function ntEdit(id){const x=(NT||[]).find(y=>y.id===id);if(!x)return;
+    const v=prompt('עריכת ההערה:',x.note);if(v===null||!v.trim())return;
+    try{const j=await api('/notes',{method:'POST',body:JSON.stringify({op:'edit',id,note:v.trim()})});Object.assign(x,j.item);ntDraw();ntBadge()}catch(e){alert(e.message)}}
+  async function ntDel(id){if(!confirm('למחוק את ההערה?'))return;
+    try{await api('/notes',{method:'POST',body:JSON.stringify({op:'del',id})});NT=NT.filter(y=>y.id!==id);ntDraw();ntBadge()}catch(e){alert(e.message)}}
+  async function ntLearned(id,on){try{await api('/notes',{method:'POST',body:JSON.stringify({op:'learned',id,on:!!on})});
+    const x=NT.find(y=>y.id===id);if(x)x.learned=on?Date.now():0;ntDraw();ntBadge()}catch(e){alert(e.message)}}
+  document.addEventListener('keydown',e=>{
+    if(!EDIT||!isAdmin())return;
+    if(e.ctrlKey&&e.altKey&&!e.shiftKey&&!e.metaKey&&e.code==='KeyH'){e.preventDefault();ntAdd()}});
+  setTimeout(ntLoad,4000);

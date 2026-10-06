@@ -247,6 +247,11 @@ def _add_number_style(styles_xml):
     return etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True), True
 
 
+def _nzw(t):
+    t = (t or '').replace('‏', '').replace('‎', '').replace(' ', ' ')
+    return re.sub(r'\s+', ' ', t).strip()
+
+
 def apply_numbers(path, ops, author, masechet, log=print, dry=False):
     """מוסיף לפני פסקאות את מספר הקטע ("א. ") בסגנון התו "מספר קטע", כהוספה
     במעקב. כל אופ: {daf, context (נוסח הפסקה כולה), letter}. אין נגיעה בשום
@@ -275,9 +280,12 @@ def apply_numbers(path, ops, author, masechet, log=print, dry=False):
                 plan.append((before[ix], op))
                 continue
         hits = [b for b in win if b['text'].strip() == ctx.strip() and b['i'] not in used]
+        if not hits:
+            # נרמול רווחים וטאבים (האתר מכווץ אותם; הוורד שומר כפי שהם) - 6.10.2026
+            hits = [b for b in win if _nzw(b['text']) == _nzw(ctx) and b['i'] not in used]
         nxt = (op.get('next') or '').strip()
         if len(hits) > 1 and nxt:
-            hits = [b for b in hits if b['i'] + 1 < len(before) and before[b['i'] + 1]['text'].strip() == nxt] or hits
+            hits = [b for b in hits if b['i'] + 1 < len(before) and _nzw(before[b['i'] + 1]['text']) == _nzw(nxt)] or hits
         if len(hits) > 1 and op.get('i') is not None:
             hits = sorted(hits, key=lambda b: abs(b['i'] - op['i']))
             if len(hits) > 1 and abs(hits[0]['i'] - op['i']) == abs(hits[1]['i'] - op['i']):
@@ -531,6 +539,12 @@ def apply(path, ops, author, masechet, log=print, dry=False):
             if kind == 'cstyle' and (op.get('find') or '') not in b['text']:
                 missed.append((op, 'הטקסט לסגנון אינו בפסקה שאותרה'))
                 continue
+            # בתוך פסקת משנה: אמוראים והסבר נכתבים בסגנונות "במשנה" (6.10.2026)
+            if kind == 'cstyle' and op.get('style'):
+                from styles_map import CS as _CS, MISHNA_CS_BY_CLASS as _MB, MISHNA_CS_NAMES as _MN, role_of as _role
+                alt = _MB.get(_CS.get(op['style']))
+                if alt and op['style'] not in _MN and _role(b) == 'mishna':
+                    op = dict(op, style=alt)
             splan.append((b['i'], op))
             continue
         hit = hagaha.anchor(before, op)
@@ -564,6 +578,14 @@ def apply(path, ops, author, masechet, log=print, dry=False):
     z.close()
     sids = _style_ids(styles)
     extra = {}
+    # סגנונות המשנה (נושא משנה, תנאים במשנה, הסבר במשנה): נוספים לקובץ שחסר בו אחד מהם
+    _m6 = ('נושא משנה', 'תנאים במשנה', 'הסבר במשנה')
+    if any(op.get('style') in _m6 and op['style'] not in sids for _, op in splan):
+        import m6_word
+        styles, _added = m6_word.ensure_styles(styles)
+        extra['word/styles.xml'] = styles
+        sids = _style_ids(styles)
+        log('נוספו לקובץ סגנונות המשנה: %s' % ', '.join(_added))
     # "רווח לפני" הוא סגנון אחיד בכל המסכתות. קובץ שאין בו אותו - הוא נוסף
     # (תוספת בלבד, בלי נגיעה בסגנונות קיימים), ורק כשיש פסקה שמבקשת אותו.
     if any(op.get('style') == SPACE_STYLE for _, op in splan) and SPACE_STYLE not in sids:

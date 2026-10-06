@@ -100,19 +100,12 @@
     } catch (e) { return null; }
   }
   function hebMonthPref(m) { return /^[בוכלמשהד]/.test(m) && false ? m : 'ב' + m; }
-  function hebDate(ts) {
-    var p = hebParts(ts);
-    return p ? hebq(p.d) + ' ' + hebMonthPref(p.m) + ' ' + hebq(p.y % 1000) : '';
-  }
-  function hebDateShort(ts) {
-    var p = hebParts(ts);
-    return p ? hebq(p.d) + ' ' + hebMonthPref(p.m) : '';
-  }
-  function gDate(ts) {
-    var s = ymd(ts).split('-');
-    return +s[2] + '.' + +s[1] + '.' + s[0];
-  }
-  function gDateShort(s) { var a = s.split('-'); return +a[2] + '.' + +a[1]; }
+  /* תאריכים עבריים בלבד (6.10.2026): הפונקציה האחת היא HD (tools/hdate.js).
+     gDate ו-gDateShort נשארו כשמות בלבד, ומחזירים גם הם תאריך עברי. */
+  function hebDate(ts) { return HD.date(ts); }
+  function hebDateShort(ts) { return HD.dateShort(ts); }
+  function gDate(ts) { return HD.date(ts); }
+  function gDateShort(s) { return HD.ymdShort(s); }
   function relDay(s, today) {
     var d = diffDays(s, today);
     if (d <= 0) return 'היום';

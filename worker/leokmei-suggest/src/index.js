@@ -14,6 +14,7 @@
      GET  /live          העריכות והתיקונים שהתקבלו, לכל לומד (בלי שמות)
      POST /ingested      סימון עריכות שכבר נכנסו לוורד (הקליטה הלילית)
      GET  /export        יצוא מלא לגיבוי (מנהל)
+     GET/POST /notes     הערות המנהל לקלוד (פרטיות מוחלטת: מנהל בלבד)
 
      POST /auth          מילת המנהל -> אסימון מכשיר ארוך-טווח (ראה למטה)
      GET  /devices       רשימת המכשירים המוכרים (מנהל)
@@ -340,6 +341,67 @@ async function learn(req, env, method) {
   }
   await env.STORE.put('ln:last', JSON.stringify(b).slice(0, 60000));
   return json({ ok: true });
+}
+
+/* הערות המנהל לקלוד (6.10.2026, פרטיות מוחלטת): הסבר קצר לרעיון שמאחורי תיקון.
+   נשמרות במחסן הפרטי תחת המפתח nt: ונקראות רק במסלול של מנהל (מפתח או מכשיר מוכר).
+   אינן נכנסות ל-/live, ל-/export הציבורי (הוא עצמו מנהל בלבד), לריפו או לבנייה.
+   הלומד (tools/learn_corrections.py) קורא אותן בכל סבב למידה, קודם לכל דבר, ומסמן "נלמד". */
+async function notes(req, env, method) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (method === 'GET') {
+    const out = [];
+    for (const k of await listAll(env, 'nt:')) {
+      const v = await env.STORE.get(k.name, 'json');
+      if (v) out.push(v);
+    }
+    out.sort((a, b) => b.t - a.t);
+    return json({ ok: true, items: out });
+  }
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const op = str(b.op, 10);
+  if (op === 'add') {
+    const note = str(b.note, 2000).trim();
+    if (!note) return bad('ההערה ריקה');
+    const id = rid();
+    const rec = {
+      id, t: Date.now(), slug: str(b.slug, 30), masechet: str(b.masechet, 30), daf: str(b.daf, 12),
+      sel: str(b.sel, 4000), was: str(b.was, 4000), now: str(b.now, 4000), k: str(b.k, 48),
+      note, learned: 0,
+    };
+    await env.STORE.put('nt:' + id, JSON.stringify(rec));
+    return json({ ok: true, id, item: rec });
+  }
+  const id = str(b.id, 40);
+  if (op === 'learned') {                         /* סימון "נלמד" לרשימת מזהים */
+    const ids = Array.isArray(b.ids) ? b.ids.slice(0, 200) : (id ? [id] : []);
+    let n = 0;
+    for (const x of ids) {
+      const rec = await env.STORE.get('nt:' + str(x, 40), 'json');
+      if (!rec) continue;
+      rec.learned = b.on === false ? 0 : Date.now();
+      await env.STORE.put('nt:' + rec.id, JSON.stringify(rec));
+      n++;
+    }
+    return json({ ok: true, n });
+  }
+  const rec = id ? await env.STORE.get('nt:' + id, 'json') : null;
+  if (!rec) return bad('ההערה לא נמצאה', 404);
+  if (op === 'edit') {
+    const note = str(b.note, 2000).trim();
+    if (!note) return bad('ההערה ריקה');
+    rec.note = note;
+    rec.t2 = Date.now();
+    rec.learned = 0;                              /* הערה שנערכה נקראת שוב בסבב הבא */
+    await env.STORE.put('nt:' + id, JSON.stringify(rec));
+    return json({ ok: true, item: rec });
+  }
+  if (op === 'del') {
+    await env.STORE.delete('nt:' + id);
+    return json({ ok: true });
+  }
+  return bad('פעולה לא מוכרת');
 }
 
 /* יומן התיקונים (פרטי, למנהל בלבד): חומר הלמידה. נכתב מן הדף, ונקרא בידי הלומד. */
@@ -850,6 +912,7 @@ export default {
       if (p === '/trust' && req.method === 'POST') return await trust(req, env);
       if (p === '/bulk' && req.method === 'POST') return await bulk(req, env);
       if (p === '/journal') return await journal(req, env, req.method);
+      if (p === '/notes') return await notes(req, env, req.method);
       if (p === '/learn') return await learn(req, env, req.method);
       if (p === '/queue' && req.method === 'GET') return await queue(req, env, url);
       if (p === '/decide' && req.method === 'POST') return await decide(req, env);

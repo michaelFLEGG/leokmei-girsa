@@ -21,9 +21,9 @@
     var bars = series.map(function (x, i) {
       var h = Math.round((H - 2 * pad) * x.ms / max);
       var xx = W - pad - (i + 1) * bw;            /* ימין לשמאל: הישן ביותר מימין */
-      var t = (n <= 14 || i % Math.ceil(n / 10) === 0) ? '<text x="' + (xx + bw / 2) + '" y="' + (H - 5) + '" text-anchor="middle">' + LG.gDateShort(x.ymd) + '</text>' : '';
+      var t = (n <= 14 || i % Math.ceil(n / 10) === 0) ? '<text x="' + (xx + bw / 2) + '" y="' + (H - 5) + '" text-anchor="middle">' + HD.ymdShort(x.ymd) + '</text>' : '';
       return '<rect class="bar" x="' + (xx + 2).toFixed(1) + '" y="' + (H - pad - h) + '" width="' + Math.max(2, bw - 4).toFixed(1) + '" height="' + h + '" rx="2"><title>' +
-        E(LG.gDate(noonOf(x.ymd)) + ': ' + LG.dur(x.ms)) + '</title></rect>' + t;
+        E(HD.long(noonOf(x.ymd)) + ': ' + LG.dur(x.ms)) + '</title></rect>' + t;
     }).join('');
     var yl = [0, .5, 1].map(function (f) { return '<text x="' + (W - 2) + '" y="' + (H - pad - (H - 2 * pad) * f + 4) + '" text-anchor="end">' + (f ? LG.nf(Math.round(max * f / 60000)) + ' דק׳' : '0') + '</text>'; }).join('');
     return '<svg class="lm-chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + E(label) + '">' + bars + yl + '</svg>';
@@ -42,7 +42,7 @@
         var o = S.days[day], f = o ? o.ms / max : 0;
         var cls = !o ? '' : f > .75 ? 'h4' : f > .45 ? 'h3' : f > .2 ? 'h2' : 'h1';
         if (day > today) cls = 'f';
-        html += '<i class="' + cls + '" title="' + E(LG.gDate(noonOf(day)) + ' · ' + LG.hebDateShort(noonOf(day)) + (o ? ': ' + LG.dur(o.ms) : '')) + '"' + (cls === 'f' ? ' style="visibility:hidden"' : '') + '></i>';
+        html += '<i class="' + cls + '" title="' + E(HD.long(noonOf(day)) + (o ? ': ' + LG.dur(o.ms) : '')) + '"' + (cls === 'f' ? ' style="visibility:hidden"' : '') + '></i>';
       }
     }
     /* שורת חודשים עבריים */
@@ -161,7 +161,7 @@
     else c7.innerHTML += '<ul class="lm-list">' + ses.map(function (s) {
       var p = LG.parts(s.t0), pages = {}; Object.keys(s.per).forEach(function (k) { var sp = k.split('|'); (pages[sp[0]] = pages[sp[0]] || []).push(sp[1]); });
       var txt = Object.keys(pages).map(function (sl) { return LG.nameOf(sl) + ' ' + pages[sl].slice(0, 6).join(', ') + (pages[sl].length > 6 ? '…' : ''); }).join(' · ');
-      return '<li><span class="lm-grow"><b>' + E(LG.gDate(s.t0)) + '</b> · ' + E(LG.hebDateShort(s.t0)) + ' · ' + (p.h < 10 ? '0' : '') + p.h + ':' + (p.mi < 10 ? '0' : '') + p.mi + '</span><span>' + E(LG.dur(s.ms)) + '</span><span class="lm-small">' + E(txt) + '</span></li>';
+      return '<li><span class="lm-grow"><b>' + E(HD.long(s.t0)) + '</b> · ' + (p.h < 10 ? '0' : '') + p.h + ':' + (p.mi < 10 ? '0' : '') + p.mi + '</span><span>' + E(LG.dur(s.ms)) + '</span><span class="lm-small">' + E(txt) + '</span></li>';
     }).join('') + '</ul>';
     wrap.appendChild(c7);
     root.appendChild(wrap);
@@ -245,7 +245,7 @@
     var y = LGDaf.forStr(today), m = LG.masechet(y.slug), built = m && m.built;
     wrap.innerHTML = '<h1 class="lm-t">הדף היומי</h1>';
     var c1 = el('div', 'lm-card lm-hero');
-    c1.innerHTML = '<div class="lm-txt"><div class="lm-small">' + E(LG.hebDate(now)) + ' · ' + E(LG.gDate(now)) + '</div><div class="lm-big">' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</div>' +
+    c1.innerHTML = '<div class="lm-txt"><div class="lm-small">' + E(HD.long(now)) + '</div><div class="lm-big">' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</div>' +
       '<div class="lm-small">מחזור ' + E(LG.hebq(y.cycle)) + (built ? '' : ' · מסכת זו עדיין בהכנה באתר') + '</div></div>' +
       (built ? '<div class="lm-row"><a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">ללמוד את הדף של היום</a><a class="lm-btn ghost" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 1)) + '">עמוד ב</a></div>' : '') +
       '<div class="lm-row"><button class="lm-btn ghost" id="lm-yb" type="button">למדתי בספר</button></div>';
@@ -265,24 +265,29 @@
     c2.innerHTML = '<h3>מחזור ' + E(LG.hebq(y.cycle)) + '</h3>' + UI.bar(doneN, 0, cycLen) + '<p>נלמדו ' + LG.nf(doneN) + ' מתוך ' + LG.nf(cycLen) + ' דפים. היום הוא היום ה-' + LG.nf(thisIdx + 1) + ' במחזור.</p>';
     wrap.appendChild(c2);
 
-    /* לוח חודשי */
-    var ymNow = today.slice(0, 7);
-    var q = new URLSearchParams(location.search).get('ym') || ymNow;
-    var first = q + '-01', wd = new Date(LG.ymdToUTC(first)).getUTCDay();
-    var dim = new Date(Date.UTC(+q.slice(0, 4), +q.slice(5, 7), 0)).getUTCDate();
+    /* לוח חודשי - חודש עברי (6.10.2026). hd = יום כלשהו בתוך החודש; הוא מזהה פנימי
+       בלבד ואינו מוצג. ימי החודש מסומנים באותיות. */
+    var anchor = new URLSearchParams(location.search).get('hd') || today;
+    var T0 = noonOf(anchor);
+    function hkey(t) { var pp = HD.parts(t); return pp.y + '|' + pp.m; }
+    var hk = hkey(T0), fT = T0, lT = T0;
+    while (hkey(fT - ONE) === hk) fT -= ONE;
+    while (hkey(lT + ONE) === hk) lT += ONE;
+    var wd = new Date(fT).getUTCDay();
+    var dim = Math.round((lT - fT) / ONE) + 1;
     var cal = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;direction:rtl">' + LG.WD.map(function (w) { return '<div class="lm-small" style="text-align:center">' + w.slice(0, 3) + '</div>'; }).join('');
     for (var i = 0; i < wd; i++) cal += '<div></div>';
-    for (var dday = 1; dday <= dim; dday++) {
-      var ds = q + '-' + (dday < 10 ? '0' : '') + dday, inf = LGDaf.forStr(ds), st2 = ds > today ? 'future' : dayStatus(inf, ds);
+    for (var dday = 0; dday < dim; dday++) {
+      var tt = fT + dday * ONE, ds = LG.ymd(tt), inf = LGDaf.forStr(ds), st2 = ds > today ? 'future' : dayStatus(inf, ds);
       var bg = st2 === 'done' ? 'var(--c2)' : st2 === 'part' ? 'var(--prog)' : st2 === 'future' ? 'transparent' : 'var(--card2)';
       var fg = st2 === 'done' ? '#fff' : 'var(--ink)';
       cal += '<button type="button" class="lm-cal" data-d="' + ds + '" style="background:' + bg + ';color:' + fg + ';border:1px solid ' + (ds === today ? 'var(--red)' : 'var(--line)') + ';border-radius:6px;padding:4px 2px;font:inherit;font-size:13px;cursor:pointer;line-height:1.25">' +
-        '<b class="lm-num" style="font-size:14px">' + dday + '</b><br><span style="font-size:11px">' + E(inf.name.slice(0, 7)) + ' ' + E(LG.hebq(inf.n)) + '</span></button>';
+        '<b style="font-size:14px">' + E(HD.q(HD.parts(tt).d)) + '</b><br><span style="font-size:11px">' + E(inf.name.slice(0, 7)) + ' ' + E(LG.hebq(inf.n)) + '</span></button>';
     }
     cal += '</div>';
-    var prev = new Date(Date.UTC(+q.slice(0, 4), +q.slice(5, 7) - 2, 1)).toISOString().slice(0, 7), next = new Date(Date.UTC(+q.slice(0, 4), +q.slice(5, 7), 1)).toISOString().slice(0, 7);
+    var prev = LG.ymd(fT - ONE), next = LG.ymd(lT + ONE), hpm = HD.parts(fT);
     var c3 = el('div', 'lm-card');
-    c3.innerHTML = '<div class="lm-row" style="justify-content:space-between"><h3 style="margin:0">' + E(LG.hebDateShort(LG.ymdToUTC(first) + 43200000).split(' ').slice(1).join(' ')) + ' · ' + E(first.slice(5, 7) + '/' + first.slice(0, 4)) + '</h3><span><a href="?ym=' + prev + '">‹ הקודם</a> · <a href="?ym=' + next + '">הבא ›</a></span></div>' + cal +
+    c3.innerHTML = '<div class="lm-row" style="justify-content:space-between"><h3 style="margin:0">' + E(hpm.m + ' ' + HD.q(hpm.y % 1000)) + '</h3><span><a href="?hd=' + prev + '">‹ הקודם</a> · <a href="?hd=' + next + '">הבא ›</a></span></div>' + cal +
       '<div class="lm-legend"><span><em style="background:var(--c2)"></em>נלמד</span><span><em style="background:var(--prog)"></em>חלקי</span><span><em style="background:var(--card2)"></em>חסר</span></div>';
     wrap.appendChild(c3);
 
@@ -294,7 +299,7 @@
         '<p class="lm-note">הצעה רכה: לפרוס אותם על ' + (missing.length > 4 ? 'שבת וערב שבת, וקצת בכל יום' : 'הימים הקרובים') + ' - כדף אחד נוסף ביום, בלי למהר.</p>' +
         '<ul class="lm-list">' + missing.slice(-8).map(function (x) {
           var mm = LG.masechet(x.inf.slug), has = mm && mm.built;
-          return '<li><span class="lm-grow">' + E(LG.gDateShort(x.ymd)) + ' · ' + E(x.inf.name) + ' ' + E(LG.hebq(x.inf.n)) + '</span>' + (has ? '<a class="lm-btn small ghost" href="' + UI.readHref(x.inf.slug, LG.dafLabel(x.inf.n, 0)) + '">ללמוד</a>' : '') +
+          return '<li><span class="lm-grow">' + E(HD.ymdShort(x.ymd)) + ' · ' + E(x.inf.name) + ' ' + E(LG.hebq(x.inf.n)) + '</span>' + (has ? '<a class="lm-btn small ghost" href="' + UI.readHref(x.inf.slug, LG.dafLabel(x.inf.n, 0)) + '">ללמוד</a>' : '') +
             '<button class="lm-btn small ghost" type="button" data-bk="' + x.ymd + '">למדתי בספר</button></li>';
         }).join('') + '</ul>';
     } else c4.innerHTML = '<h3>השלמת פערים</h3><p>אין פערים ב-30 הימים האחרונים.</p>';
@@ -315,7 +320,7 @@
       var b = e.target.closest('[data-bk]'); if (b) { markBook(b.dataset.bk); location.reload(); }
       var c = e.target.closest('.lm-cal'); if (c) {
         var ds = c.dataset.d, inf = LGDaf.forStr(ds), mm = LG.masechet(inf.slug);
-        var mod = UI.modal('<h3>' + E(LG.gDate(LG.ymdToUTC(ds) + 43200000)) + ' · ' + E(LG.hebDateShort(LG.ymdToUTC(ds) + 43200000)) + '</h3><p><b>' + E(inf.name) + ' ' + E(LG.hebq(inf.n)) + '</b></p><div class="lm-row">' +
+        var mod = UI.modal('<h3>' + E(HD.long(LG.ymdToUTC(ds) + 43200000)) + '</h3><p><b>' + E(inf.name) + ' ' + E(LG.hebq(inf.n)) + '</b></p><div class="lm-row">' +
           (mm && mm.built ? '<a class="lm-btn" href="' + UI.readHref(inf.slug, LG.dafLabel(inf.n, 0)) + '">ללמוד</a>' : '<span class="lm-note">מסכת זו עדיין בהכנה באתר.</span>') + '<button class="lm-btn ghost" id="lm-cb" type="button">למדתי בספר</button></div>');
         $('#lm-cb', mod).onclick = function () { markBook(ds); mod.close(); location.reload(); };
       }
@@ -354,14 +359,21 @@
     /* יעדים */
     var goals = el('div', 'lm-card'); goals.id = 'goals';
     goals.innerHTML = '<h3>המסכתות שלי ויעדים</h3><div class="lm-field"><label for="lm-gm">מסכת</label><select id="lm-gm"></select></div>' +
-      '<div class="lm-field"><label for="lm-ge">תאריך סיום רצוי</label><input id="lm-ge" type="date"></div>' +
+      '<div class="lm-field"><label for="lm-ge">תאריך סיום רצוי</label><select id="lm-ge"></select></div>' +
       '<div class="lm-field"><label for="lm-gt">זמן יומי (דקות)</label><input id="lm-gt" type="number" min="0" max="600" step="5"></div>' +
       '<div class="lm-field"><label for="lm-gp">דפים בשבוע</label><input id="lm-gp" type="number" min="0" max="100"></div>' +
       '<div class="lm-row"><button class="lm-btn" id="lm-gs" type="button">שמור יעד</button><button class="lm-btn ghost" id="lm-gd" type="button">הסר יעד</button></div>';
     wrap.appendChild(goals);
     var gm = $('#lm-gm', goals);
     LG.masechtot().filter(function (m) { return m.built; }).forEach(function (m) { gm.appendChild(el('option', '', E(m.name))); gm.lastChild.value = m.slug; });
-    function fillGoal() { var g = (LG.settings().goals || {})[gm.value] || {}; $('#lm-ge', goals).value = g.end || ''; $('#lm-gt', goals).value = g.minutes || ''; $('#lm-gp', goals).value = g.perWeek || ''; }
+    /* תאריך היעד: רשימה של הימים הבאים בתאריך עברי (ערך פנימי: yyyy-mm-dd) */
+    function goalDates(cur) {
+      var sel = $('#lm-ge', goals), t0 = LG.ymd(Date.now()), h = '<option value="">ללא יעד</option>', seen = {};
+      for (var k = 1; k <= 400; k++) { var d = LG.addDays(t0, k); seen[d] = 1; h += '<option value="' + d + '">' + E(HD.ymdLong(d)) + '</option>'; }
+      if (cur && !seen[cur]) h += '<option value="' + E(cur) + '">' + E(HD.ymdLong(cur)) + '</option>';
+      sel.innerHTML = h;
+    }
+    function fillGoal() { var g = (LG.settings().goals || {})[gm.value] || {}; goalDates(g.end); $('#lm-ge', goals).value = g.end || ''; $('#lm-gt', goals).value = g.minutes || ''; $('#lm-gp', goals).value = g.perWeek || ''; }
     gm.onchange = fillGoal; fillGoal();
     $('#lm-gs', goals).onclick = function () {
       var all = Object.assign({}, LG.settings().goals || {}), my = (LG.settings().my || []).slice();
@@ -437,7 +449,7 @@
     wrap.innerHTML = '<div class="lm-card" style="text-align:center"><div class="lm-small">מסכת ' + E(m.name) + '</div><h1 class="lm-t" style="font-size:40px">הדרן עלך מסכת ' + E(m.name) + '</h1>' +
       '<p style="font-size:20px;line-height:1.9">' + E(HADRAN.replace(/%s/g, m.name)) + '</p><p class="lm-note">את שאר נוסח ההדרן ראו בסידור.</p></div>' +
       '<div class="lm-card"><h3>סיכום הלימוד</h3><div class="lm-stats"><div class="lm-stat"><b>' + E(LG.dur(st.ms)) + '</b><span>זמן לימוד</span></div><div class="lm-stat"><b>' + LG.nf(daysN) + '</b><span>ימים מתחילה ועד סיום</span></div>' +
-      '<div class="lm-stat"><b>' + (firstT < Infinity ? E(LG.gDate(firstT + 43200000)) : '-') + '</b><span>התחלה</span></div><div class="lm-stat"><b>' + (lastT ? E(LG.gDate(lastT + 43200000)) : '-') + '</b><span>סיום</span></div></div></div>' +
+      '<div class="lm-stat"><b>' + (firstT < Infinity ? E(HD.date(firstT + 43200000)) : '-') + '</b><span>התחלה</span></div><div class="lm-stat"><b>' + (lastT ? E(HD.date(lastT + 43200000)) : '-') + '</b><span>סיום</span></div></div></div>' +
       '<div class="lm-card"><h3>תעודת סיום</h3><div class="lm-field"><label for="lm-nm">שם (לא חובה)</label><input id="lm-nm" type="text" value="' + E(name) + '" autocomplete="off"></div><div class="lm-row"><button class="lm-btn" id="lm-cert" type="button">הדפסה או שמירה כ-PDF</button></div></div>' +
       '<div class="lm-card"><h3>ומה הלאה</h3><div class="lm-row"><a class="lm-btn" href="masechet.html?m=' + slug + '">מחזור חזרה</a><a class="lm-btn ghost" href="shas.html">המסכת הבאה</a></div></div>';
     root.appendChild(wrap);
@@ -449,8 +461,8 @@
         '@font-face{font-family:Vilna;src:url(' + location.origin + location.pathname.replace(/[^\/]*$/, '') + 'fonts/vilna-b.otf);font-weight:700}@font-face{font-family:Leukmey;src:url(' + location.origin + location.pathname.replace(/[^\/]*$/, '') + 'fonts/leukmey.otf)}' +
         'body{margin:0;font-family:Vilna,serif;color:#2b2620;background:#fbf8f1}.c{margin:14mm;border:3px double #7a5a14;height:calc(210mm - 28mm - 6px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10mm;box-sizing:border-box}' +
         'h1{font-family:Leukmey,Vilna;font-size:46pt;margin:0 0 6mm}h2{font-size:34pt;margin:0 0 8mm}p{font-size:18pt;margin:3mm 0}</style></head><body><div class="c"><h1>לאוקמי גירסא</h1><h2>הדרן עלך מסכת ' + E(m.name) + '</h2>' +
-        (nm ? '<p>סיים את המסכת: <b>' + E(nm) + '</b></p>' : '<p>תעודת סיום מסכת</p>') + '<p>' + E(LG.dur(st.ms)) + ' לימוד · מ-' + (firstT < Infinity ? E(LG.gDate(firstT + 43200000)) : '') + ' עד ' + (lastT ? E(LG.gDate(lastT + 43200000)) : '') + '</p>' +
-        '<p style="font-size:14pt">' + E(LG.hebDate(Date.now())) + ' · ' + E(LG.gDate(Date.now())) + '</p></div><script>setTimeout(function(){print()},400)<\/script></body></html>');
+        (nm ? '<p>סיים את המסכת: <b>' + E(nm) + '</b></p>' : '<p>תעודת סיום מסכת</p>') + '<p>' + E(LG.dur(st.ms)) + ' לימוד · מ-' + (firstT < Infinity ? E(HD.date(firstT + 43200000)) : '') + ' עד ' + (lastT ? E(HD.date(lastT + 43200000)) : '') + '</p>' +
+        '<p style="font-size:14pt">' + E(HD.long(Date.now())) + '</p></div><script>setTimeout(function(){print()},400)<\/script></body></html>');
       w.document.close();
     };
   };

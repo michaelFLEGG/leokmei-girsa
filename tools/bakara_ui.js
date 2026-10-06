@@ -139,6 +139,7 @@
         const fl=(ch.findings||[]).filter(f=>f.det!=='dh_inline');
         BK.CH.push({perek:+p,range:ch.range,n:fl.length});
         (ch.catalog||[]).forEach(x=>{BK.CAT[x[0]]=x});
+        if(ch.rules)BK.RULES=ch.rules;if(ch.costs)BK.COSTS=ch.costs;
         for(const f of fl){f.perek=+p;BK.F.push(f);BK.byId[f.id]=f}}
       BK.has=BK.F.length>0;
       BK.DEC=(c.doc&&c.doc.dec)||{};
@@ -452,7 +453,18 @@
         g.map(f=>bkItem(f)).join('')+'</div></details>'}
     if(lost.length)h+='<h3>שלא אותרו ('+lost.length+')</h3><div class="dim">הטקסט השתנה מאז הבקרה. אינם נתלים בשורה אחרת.</div>'+
       lost.map(f=>'<div class="it" onclick="bkShowLost(\''+f.id+'\')"><small>'+esc(f.daf||'')+' · '+esc(f.kind)+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span></div>').join('');
+    h+=bkInfoHtml();
     box.innerHTML=h}
+  /* אזור המנהל: מה למדה הבקרה מהכרעותיך, וכמה עלה כל פרק (הנתונים נטענים רק למנהל) */
+  function bkInfoHtml(){let h='';
+    const R=BK.RULES&&BK.RULES.rules;
+    if(R&&R.length)h+='<details class="grp"><summary>כללים שנלמדו מהכרעותיך <span class="n">('+R.length+')</span></summary><div class="gb">'+
+      '<div class="dim" style="font-size:12px;color:#8a7d66">'+esc(BK.RULES.threshold||'')+'</div>'+
+      R.map(x=>'<div class="it" style="cursor:default"><b>'+esc(x.id)+' · '+esc(x.status)+'</b> <small>('+x.n+' הכרעות)</small><br>'+esc(x.text)+'<br><small>'+esc(x.effect)+'</small></div>').join('')+'</div></details>';
+    const C=BK.COSTS&&BK.COSTS.rows;
+    if(C&&C.length)h+='<details class="grp"><summary>עלות הבקרה לפי פרק</summary><div class="gb">'+
+      C.map(x=>'<div class="it" style="cursor:default">'+esc(x.slug)+' פרק '+x.perek+' · '+esc(x.model)+' · '+Number(x.tokens).toLocaleString('he-IL')+' טוקנים'+(x.usd!=null?' · כ-$'+Number(x.usd).toFixed(2):'')+' <small>('+esc(x.kind)+')</small>'+(x.note?'<br><small>'+esc(x.note)+'</small>':'')+'</div>').join('')+'</div></details>';
+    return h}
   function bkItem(f){const st=bkStatus(f),sn=bkSplitNote(f);
     const dec=BK.DEC[f.id];
     return '<div class="it'+(f.id===BK.curId?' cur':'')+'" onclick="bkGo(\''+f.id+'\',true)"><small>'+esc(f.daf||'')+(st!=='pending'?' · '+({ok:'אושר',no:'נדחה',edit:'נערך',todo:'לביצוע'}[dec&&dec.d]||''):'')+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span><br><small>'+esc(sn.n.slice(0,110))+'</small></div>'}

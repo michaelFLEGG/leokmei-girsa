@@ -1299,7 +1299,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # קיים בו ולא תמציא חדש. סגנון שאין לו שם בקובץ הזה אינו מוצע כלל:
   # עדיף שלא יופיע מלהציע דבר שלא ניתן לכתוב אותו חזרה.
   CSLAB=[('am','אמוראים'),('ps','פסוק'),('tn','משנה'),('dm','ד"ה משנה'),('ns','נושא משנה'),
-         ('kt','כותרת'),('hs','רקע והסבר'),('ot','אות פותחת')]
+         ('kt','כותרת בשורה'),('hs','רקע והסבר'),('ot','אות פותחת')]
   PSLAB=[('','גוף'),('hr','רקע והסבר'),('in','פיסקת תשובה'),
          ('sp','רווח לפני'),('nk','נקודה')]
   cs_cnt=collections.defaultdict(collections.Counter)
@@ -1323,6 +1323,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   if not any(c[0]=='ns' for c in sty['c']):
       _mf=next((i for i,c in enumerate(sty['c']) if c[0]=='mf'),len(sty['c']))
       sty['c'].insert(_mf,['ns','נושא משנה','נושא משנה'])
+  # כותרת נושא וכותרת ד"ה משנה (6.10.2026): סגנון פסקה שמחליף גוף לכותרת, Ctrl+3 ו-Ctrl+5.
+  # שם הסגנון בוורד נבחר מן הסגנון השכיח בקובץ בתפקיד הזה; אם אין, השם הקבוע.
+  _hn=collections.defaultdict(collections.Counter)
+  for b in blocks:
+      _r=ROLE.get(b['style'])
+      if _r in ('nose','dh'): _hn[_r][b['style']]+=1
+  sty['p'].append(['nose','כותרת נושא',top(_hn['nose']) or 'נושא'])
+  sty['p'].append(['dh','כותרת ד"ה משנה',top(_hn['dh']) or "ד''ה משנה"])
   # סגנון "רווח לפני" מוצע בעורך בכל קובץ שהוא מוגדר בו, גם כשאין בו עדיין
   # אף פסקה כזאת: אחרת אי אפשר להפעיל אותו בקובץ שבו טרם נעשה בו שימוש.
   if not any(p[0]=='sp' for p in sty['p']):
@@ -1506,6 +1514,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main p{margin:0} .main p:empty::before{content:'\200b'} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
   /* פסקה מוזחת (פיסקת תשובה, וסעיפי רשימה): הזחה תלויה, כמו בוורד */
   .main p.in{padding-right:.9em;text-indent:-.9em}
+  /* פסקה שהוחלף סגנונה לכותרת מן האתר וטרם עלתה מן הוורד: נראית ככותרת מיד */
+  .main p.nose,.main p.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif}
+  .main p.nose{font-weight:700;font-size:calc(var(--k-nose) * 1em)}
+  .main p.dh{font-weight:900;font-size:calc(var(--k-dh) * 1em)}
   .dafmark{grid-column:1;justify-self:center;font-family:'VilnaG','Vilna',serif;
            font-size:1.3em;color:var(--red);margin:0}
   /* אין עוד overflow:hidden ואין ellipsis: חלון שנחתך בשקט הוא כישלון
@@ -2480,7 +2492,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* נושא משנה וד"ה משנה הם סגנון פסקה בוורד ומוצגים כ-div. הם נספרים כסגנון
      הפסקה ('nose'/'dh'), כדי שהחזרתם לגוף תירשם כשינוי סגנון פסקה. */
   function pcls(el){const c=[...el.classList].filter(c=>PCLS.indexOf(c)>-1);
-    if(el.tagName==='DIV')['nose','dh'].forEach(k=>{if(el.classList.contains(k))c.push(k)});
+    if(el.tagName==='DIV')['nose','dh'].forEach(k=>{if(el.classList.contains(k)&&c.indexOf(k)<0)c.push(k)});
     return c.join(' ')}
   function isHeadEl(el){return !!el&&el.tagName==='DIV'&&(el.classList.contains('nose')||el.classList.contains('dh'))}
   function isTxt(el){return !!el&&(el.tagName==='P'||(el.tagName==='DIV'&&el.classList.contains('main')))}
@@ -3421,7 +3433,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     sideCommit(e,hit.pi,hit,(e,h)=>{unsideApply(e,h);return 'u'+h.u.id+'.1'})}
   /* =================== מקשי עריכה: סגנונות תו, הדגשה, שמירה ===================
      נתפסים לפי event.code ולא לפי התו, כי בפריסה העברית Z הוא ז. */
-  const CK={Digit1:'am',Digit2:'ps',Digit3:'kt',Digit4:'hs',Digit5:'dm',Digit6:'ns'};   /* הכרעה 5.10.2026: Ctrl+1 = אמוראים (לא מפרשים). 6.10.2026: Ctrl+3 = כותרת, Ctrl+5 = ד"ה משנה, נושא משנה עבר ל-Ctrl+6 */
+  const CK={Digit1:'am',Digit2:'ps',Digit4:'hs',Digit6:'dm',Digit7:'ns'};   /* הכרעה 5.10.2026: Ctrl+1 = אמוראים (לא מפרשים). 6.10.2026: Ctrl+3 / Ctrl+5 = סגנון פסקה כותרת נושא / כותרת ד"ה משנה (headKey); ד"ה משנה בתו = Ctrl+6, נושא משנה = Ctrl+7 */
   /* פסקה שכולה "נושא משנה" ממורכזת ככותרת; חלק משורה - נשארת במקומה (מיידי, בלי רענון) */
   function nscFix(el){if(el&&el.tagName==='P'&&el.closest&&el.closest('.main.mishna'))el.classList.toggle('nsc',nsAll(el.innerHTML))}
   function csToggle(c){
@@ -3443,12 +3455,19 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const on=c&&host.closest&&host.closest('i.'+c);
     if(on){sPush(el);on.replaceWith(...on.childNodes);el.normalize();s.removeAllRanges();capture(el);hideSty();nscFix(el);return}
     setCs(c)}
+  /* Ctrl+3 / Ctrl+5: הפסקה הופכת לכותרת נושא / כותרת ד"ה משנה; שוב על אותו מקש - חוזרת לגוף */
+  function headKey(k){
+    const el=edEl();
+    if(!isTxt(el)){flash('העמד את הסמן בתוך פסקה');return}
+    if(el.tagName==='DIV'&&!isHeadEl(el)){flash('הסגנון הזה חל על פסקת גוף או על כותרת');return}
+    if(!PSTY.some(p=>p[0]===k)){flash('אין סגנון כזה בקובץ הזה');return}
+    setPs(el.classList.contains(k)?'':k)}
   function keysCard(){
     const old=$('#keyscard');if(old){old.remove();return}
     const m=document.createElement('div');m.className='modal';m.id='keyscard';
     const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
-      ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון תו: כותרת'],
-      ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון תו: ד"ה משנה'],['Ctrl+6','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+H','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
+      ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון פסקה: כותרת נושא (שוב - חוזרת לגוף)'],
+      ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון פסקה: כותרת ד"ה משנה (שוב - חוזרת לגוף)'],['Ctrl+6','סגנון תו: ד"ה משנה בתוך שורה'],['Ctrl+7','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+H','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl (בזמן בקרה עם כרטיס ממצא פתוח, Alt+1/2/3 = אשר / דחה / ערוך)'],
@@ -3609,7 +3628,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const SPOS='lg-stypos', SCOL='lg-stycol';
   function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
   function lsSet(k,v){try{if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
-  function shortOf(code){if(code==='ns')return 'Ctrl+6, במשנה Ctrl+B';for(const k in CK)if(CK[k]===code)return 'Ctrl+'+k.slice(5);return code==='b'?'Ctrl+B':''}
+  function shortOf(code){if(code==='ns')return 'Ctrl+7, במשנה Ctrl+B';for(const k in CK)if(CK[k]===code)return 'Ctrl+'+k.slice(5);return code==='b'?'Ctrl+B':''}
   function activeChar(el){
     const s=getSelection();if(!s.rangeCount)return {};
     const r=s.getRangeAt(0);let n=r.collapsed?r.startContainer:r.commonAncestorContainer;
@@ -3635,7 +3654,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const now=pcls(el);
       h+='<div class="stgrp"><span class="ttl">סגנון פסקה</span>'+
         PSTY.map(p=>btn(p[0]==='sp'?el.classList.contains('sp'):now===p[0],
-          p[0]==='sp'?'spToggle()':"setPs('"+p[0]+"')",p[1],p[0]==='sp'?'Ctrl+0':'')).join('')+
+          p[0]==='sp'?'spToggle()':"setPs('"+p[0]+"')",p[1],p[0]==='sp'?'Ctrl+0':p[0]==='nose'?'Ctrl+3':p[0]==='dh'?'Ctrl+5':'')).join('')+
         '</div>'}
     if(isTxt(el)){
       h+='<div class="stgrp">'+btn(false,'sideCmd()','כותרת צד','Ctrl+.')+
@@ -4098,6 +4117,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
        ובפריסה העברית גם לפי התו, מפני שהנקודה שם יושבת על מקש אחר. */
     if(((e.ctrlKey&&!e.altKey)||(e.altKey&&!e.ctrlKey))&&!e.shiftKey&&!e.metaKey&&
        (e.code==='Period'||e.key==='.')){e.preventDefault();sideCmd();return}
+    if(!e.shiftKey&&!e.metaKey&&((e.ctrlKey&&!e.altKey)||(e.altKey&&!e.ctrlKey))&&(e.code==='Digit3'||e.code==='Digit5')){
+      e.preventDefault();headKey(e.code==='Digit3'?'nose':'dh');return}
     if(!e.shiftKey&&!e.metaKey&&((e.ctrlKey&&!e.altKey)||(e.altKey&&!e.ctrlKey))&&CK[e.code]){
       e.preventDefault();csToggle(CK[e.code]);return}
     /* Ctrl+B בתוך משנה = "נושא משנה" (שוב - מסיר); מחוץ למשנה - מודגש רגיל */

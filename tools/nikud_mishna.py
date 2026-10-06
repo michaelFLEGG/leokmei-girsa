@@ -301,7 +301,7 @@ def apply(pages, src, est=None):
     """מנקד את כל המשניות. מחזיר סטטיסטיקה."""
     st = _apply(pages, src)
     st.update(complete(pages, est))
-    st.update(apply_verses(pages, src))
+    st.update(apply_verses(pages, src, est))
     return st
 
 
@@ -400,7 +400,95 @@ def span_words_of(tok):
     return [c for c in spans if c]
 
 
-def apply_verses(pages, src):
+def ps_indexed(tok):
+    """מילות הסגנון "פסוק" בשורה, עם מקומן בסדר כל מילות השורה: (idx, ti, a, b, word)."""
+    out, stack, idx = [], [], 0
+    for ti, (kind, t) in enumerate(tok):
+        if kind == 'tag':
+            if t.startswith('</i'):
+                if stack:
+                    stack.pop()
+            elif t.startswith('<i'):
+                stack.append(bool(PS_OPEN.match(t)) or any(stack))
+        else:
+            for m in WORD.finditer(t):
+                if any(stack):
+                    out.append((idx, ti, m.start(), m.end(), m.group(0)))
+                idx += 1
+    return out
+
+
+_TANAKH = []
+
+
+def tanakh_pack():
+    """נוסח המקרא המנוקד (data/tanakh-nikud.json), כמקור שני לפסוקים. נטען פעם אחת.
+    None כשהקובץ אינו קיים - ואז רק הגמרא המנוקדת משמשת."""
+    if _TANAKH:
+        return _TANAKH[0]
+    import os, json, io as _io
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'tanakh-nikud.json')
+    if not os.path.exists(path):
+        _TANAKH.append(None)
+        return None
+    rows = json.load(_io.open(path, encoding='utf-8'))
+    verses = [r[3] for r in rows]
+    keys = [[skel(w) for w in v] for v in verses]
+    idx = {}
+    for vi, ks in enumerate(keys):
+        for j, k in enumerate(ks):
+            idx.setdefault(k, []).append((vi, j))
+    _TANAKH.append((verses, keys, idx))
+    return _TANAKH[0]
+
+
+def _fit(w, s):
+    """ניקוד המילה s של המקור על המילה w שלו, או None אם אין התאמה בטוחה."""
+    if has_nikud(w) or not has_nikud(s):
+        return None
+    if letters(w) != letters(s):
+        t = transfer(w, s)
+        if t is None or letters(t) != letters(w):
+            return None
+        s = t
+    return s
+
+
+def tanakh_run(words, pack):
+    """רצף של שתי מילים ומעלה מתוך פסוק אחד במקרא המנוקד. מחזיר (רשימת
+    ניקוד לכל מילה, קבוצת הפסוקים) או None - גם כשהרצף נמצא בכמה פסוקים
+    והניקוד שונה ביניהם."""
+    if not pack or len(words) < 2:
+        return None
+    verses, keys, idx = pack
+    mine = [skel(w) for w in words]
+    n = len(mine)
+    found = {}
+    for vi, j in idx.get(mine[0], []):
+        if keys[vi][j:j + n] == mine:
+            res = tuple(_fit(w, verses[vi][j + k]) for k, w in enumerate(words))
+            found.setdefault(res, set()).add(vi)
+    if len(found) != 1:
+        return None
+    (res, vs), = found.items()
+    return list(res), vs
+
+
+def tanakh_word_in(word, vis, pack):
+    """מילה בודדת מתוך פסוקים שכבר זוהו באותה יחידה: רק אם היא מופיעה בהם
+    פעם אחת בדיוק (או כמה פעמים באותו ניקוד)."""
+    verses, keys, idx = pack
+    k = skel(word)
+    outs = set()
+    for vi in vis:
+        for j, kk in enumerate(keys[vi]):
+            if kk == k:
+                outs.add(_fit(word, verses[vi][j]))
+    outs.discard(None)
+    return outs.pop() if len(outs) == 1 else None
+
+
+def apply_verses(pages, src, est=None):
     """מנקד פסוקים בכל היחידות. מחזיר סטטיסטיקה.
 
     שני שלבים לכל יחידה. א: קטע פסוק של שתי מילים ומעלה שרצפו נמצא זהה
@@ -408,7 +496,7 @@ def apply_verses(pages, src):
     סגנון אחר, או מילה בודדת) - לפי יישור כל היחידה אל הגמרא המנוקדת,
     ורק בגוש מתאים של שלוש מילים לפחות סביבה, כדי שמילה נפוצה כמו "את"
     לא תקבל ניקוד ממקום אחר."""
-    st = {'psk': 0, 'psk_voc': 0, 'psk_words': 0, 'psk_left': 0}
+    st = {'psk': 0, 'psk_voc': 0, 'psk_words': 0, 'psk_left': 0, 'psk_est': 0}
     spages = (src or {}).get('pages') or {}
     if not spages:
         return st
@@ -447,6 +535,20 @@ def apply_verses(pages, src):
                     for (ti, a, b, w), r in zip(sp, res):
                         if r:
                             put[(li, ti, a)] = (b, r)
+            # שלב א2: רצף שאינו בגמרא המנוקדת - נוסח המקרא המנוקד
+            tp = tanakh_pack()
+            vis = set()
+            for li, sp in spans:
+                words = [w[3] for w in sp]
+                if all(has_nikud(w) for w in words) or any((li, w[0], w[1]) in put for w in sp):
+                    continue
+                r2 = tanakh_run(words, tp)
+                if r2:
+                    res, vs = r2
+                    vis |= vs
+                    for (ti, a, b, w), r in zip(sp, res):
+                        if r:
+                            put[(li, ti, a)] = (b, r)
             # שלב ב: יישור כל היחידה
             need = [(li, w) for li, sp in spans for w in sp
                     if not has_nikud(w[3]) and (li, w[0], w[1]) not in put]
@@ -476,6 +578,34 @@ def apply_verses(pages, src):
                             continue
                         s = t
                     put[(li, ti, a)] = (b, s)
+            # שלב ג: מילים שנשארו (קטעי פסוק שנחתכו בידי סגנון אחר, או מילה
+            # בודדת) - מתוך הפסוקים שזוהו ביחידה, רק אם המילה בהם חד-משמעית
+            if tp and vis:
+                for li, sp in spans:
+                    for (ti, a, b, w) in sp:
+                        if not has_nikud(w) and (li, ti, a) not in put:
+                            r3 = tanakh_word_in(w, vis, tp)
+                            if r3:
+                                put[(li, ti, a)] = (b, r3)
+            # שלב ד: ניקוד משוער של מנקד דיקטה (nikud_generate) למה שנשאר.
+            # מילה מנוקדת כך עטופה ב-nks (קו תחתי אפור למנהל בלבד), ורק אם
+            # אותיותיה זהות לגמרי למה שבוורד.
+            est_put = {}
+            if est:
+                for li in range(n):
+                    if 'class="ps' not in base[li][1]:
+                        continue
+                    words = est.get(plain_text(u['l'][li][1])) or []
+                    elig = eligible_bare(plain_text(base[li][1]))
+                    for (wi, ti, a, b, w) in ps_indexed(toks[li]):
+                        if (li, ti, a) in put or has_nikud(w) or wi not in elig or wi >= len(words):
+                            continue
+                        e = words[wi]
+                        if e and has_nikud(e) and letters(e) == letters(w):
+                            est_put[(li, ti, a)] = (b, '<span class="nks">' + e + '</span>')
+                            st['psk_est'] += 1
+            for k_, v_ in est_put.items():
+                put[k_] = v_
             if not put:
                 st['psk_left'] += len(spans)
                 continue

@@ -1121,8 +1121,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if nk.get('psk'):
           qa.append(('ניקוד פסוקים',
                      '%d קטעי פסוק בסגנון "פסוק": ב-%d נוספו ניקוד אוטומטי (%d מילים) מן הגמרא '
-                     'המנוקדת של הדף; %d נשארו בלי (אין להם רצף זהה בגמרא המנוקדת, או מילה בודדת)'
-                     % (nk['psk'],nk['psk_voc'],nk['psk_words'],nk['psk_left'])))
+                     'המנוקדת או מן המקרא המנוקד, ועוד %d מילים בניקוד משוער (דיקטה); %d קטעים נשארו בלי'
+                     % (nk['psk'],nk['psk_voc'],nk['psk_words'],nk.get('psk_est',0),nk['psk_left'])))
       if nk['mishnayot']:
           qa.append(('ניקוד המשניות',
                      '%d משניות מתוך %d נוקדו מן הגמרא המנוקדת (%.0f אחוזים), '

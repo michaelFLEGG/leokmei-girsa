@@ -132,6 +132,21 @@ def run(slug, log=print):
                 if bare_words_in(plain(h)) and any(
                         not NIKUD.search(w) for w in WORD.findall(plain(h))):
                     todo[plain(h0)] = 1
+    # פסוקים (6.10.2026): שורת גוף שיש בה מילה בסגנון "פסוק" בלי ניקוד,
+    # אחרי שהגמרא המנוקדת והמקרא המנוקד כבר מילאו את מה שיכלו
+    import nikud_mishna as NM
+    for p in d['pages']:
+        for u in p['units']:
+            if u.get('k') != 'u':
+                continue
+            lv = u.get('lv') if u.get('lv') and len(u['lv']) == len(u['l']) else u['l']
+            for (c, h), (c0, h0) in zip(lv, u['l']):
+                if 'class="ps' not in h:
+                    continue
+                elig = bare_words_in(plain(h))
+                if any(not NIKUD.search(w[4]) and w[0] in elig
+                       for w in NM.ps_indexed(NM._tokens(h))):
+                    todo[plain(h0)] = 1
     path = os.path.join(OUT, slug + '.json')
     have = json.load(io.open(path, encoding='utf-8')) if os.path.exists(path) else {}
     todo = [t for t in todo if t not in have]

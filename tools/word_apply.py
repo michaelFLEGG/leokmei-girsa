@@ -578,8 +578,8 @@ def apply(path, ops, author, masechet, log=print, dry=False):
     z.close()
     sids = _style_ids(styles)
     extra = {}
-    # סגנונות המשנה (נושא משנה, תנאים במשנה, הסבר במשנה): נוספים לקובץ שחסר בו אחד מהם
-    _m6 = ('נושא משנה', 'תנאים במשנה', 'הסבר במשנה')
+    # סגנונות המשנה (נושא משנה, תנאי המשנה, הסבר במשנה): נוספים לקובץ שחסר בו אחד מהם
+    _m6 = ('נושא משנה', 'תנאי המשנה', 'הסבר במשנה')
     if any(op.get('style') in _m6 and op['style'] not in sids for _, op in splan):
         import m6_word
         styles, _added = m6_word.ensure_styles(styles)

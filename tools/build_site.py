@@ -1,6 +1,7 @@
 import json, html, re, collections, sys, os, io
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from styles_map import MISHNA_CS_NAMES, MISHNA_CS_BY_CLASS,  ROLE, CS, MISSING_FONTS, hatz_kind, role_of, STAR_CHARS
+from styles_map import MISHNA_RAISE_PT, TANAI_BELOW_PT, HS_BELOW_PT
 # סמן החץ שוורד מציב במסגרת צפה ליד שורה. אינו תוכן.
 ARROW = chr(0x25c4)
 # העיטור האחיד של החציצה: שלוש כוכביות, שגופן וילנא הופך בליגטורת rlig
@@ -688,9 +689,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   I_fb   = _ink('frank-b.ttf', 1.1960)     # מודגש: PFT_Frank Bold
   I_v700 = _ink('vilna-b.otf', 1.0173)     # משנה ונושא: BA Vilna Bold
   I_v900 = _ink('vilna-xb.otf', 1.0173)    # דיבור המתחיל: BA Vilna Extra-Bold
-  K_MISHNA = I_body / I_v700
-  K_NOSE   = I_body / I_v700 * 10.0 / 9.0
-  K_DH     = I_body / I_v900 * 8.0 / 9.0
+  # 6.10.2026 (לווקר): המשנה גדלה בשתי נקודות (9 -> 11), ד"ה משנה זהה לה, ונושא
+  # אינו גדול מד"ה משנה. תנאי המשנה (M-2) והסבר (M-1) נגזרים ב-CSS מן המשנה עצמה.
+  MISHNA_PT = 9.0 + MISHNA_RAISE_PT
+  K_INK    = I_body / I_v700
+  K_MISHNA = K_INK * MISHNA_PT / 9.0
+  K_DH     = I_body / I_v900 * MISHNA_PT / 9.0      # ד"ה משנה = משנה
+  K_NOSE   = min(I_body / I_v700 * 10.0 / 9.0, K_DH)  # נושא <= ד"ה משנה
+  assert K_NOSE <= K_DH + 1e-9 and abs(K_DH - K_MISHNA * I_v700 / I_v900) < 1e-9
   # ההדגשה שהדפדפן מייצר מפרנקריהל קיצונית ומכוערת, ולכן ההדגשה היא
   # גופן ממש: PFT_Frank Bold. הוא גדול בהרבה ליחידת em (1.196 מול
   # 0.933), ו-size-adjust מקטין אותו בדיוק כך שגובה האותיות יהיה כשל
@@ -1137,6 +1143,77 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           v=m.group(1).replace('"','').replace("'",'').replace('״','').replace('׳','')
           return {'יא':11,'יב':12,'יג':13,'יד':14,'טו':15,'טז':16,'אחד עשר':11,'שנים עשר':12,'שלושה עשר':13,'ארבעה עשר':14,'חמישה עשר':15,'שישה עשר':16}.get(v)
       return None
+  # ---------- פתיחת פרק לפני המשנה (הכרעה 6.10.2026) ----------
+  # פתיחת הפרק ושם הפרק הם גוש עצמאי שבא תמיד לפני המשנה הראשונה של הפרק,
+  # ואינם חלק משורת המשנה. בוורד הם מסגרות צפות: שם הפרק נכתב לעתים אחרי
+  # המשנה הראשונה, וה"תחילת פרק" של סוכה יושבת בתוך המשנה שבעמוד. התצוגה
+  # אינה סומכת על כך שהוורד כבר מסודר: כל יחידת פתיחה של הפרק הפתוח שיושבת
+  # אחרי המשנה הראשונה שלו עוברת לגוש הפתיחה, לפני המשנה. הטקסט אינו
+  # משתנה, רק הסדר; פתיחה שהיא חזרה מדויקת על "פרק X" ושם שכבר מוצגים
+  # מיד לפניה מוצגת פעם אחת (היחידה נשארת בנתונים, ואינה נמחקת מן הוורד).
+  def _pk(t): return re.sub(r'[^א-ת]','',re.sub(r'[֑-ׇ]','',t or ''))
+  flat=[(pi,u) for pi,pg in enumerate(pages) for u in pg['units']]
+  moves=[]; open_=None
+  def _utxt(u): return re.sub('<[^>]+>','',u.get('a',''))
+  for pos,(pi,u) in enumerate(flat):
+      k=u['k']
+      if k=='hadran':
+          open_=None; continue
+      if k in ('perek-num','perek-start'):
+          if open_ is None or open_['first_m'] is not None:
+              if open_ is not None and k=='perek-start' and open_['ord'] and _ord_of(_utxt(u))==open_['ord']:
+                  moves.append((u,open_['first_m'])); continue    # חזרה על הפרק הפתוח, אחרי המשנה הראשונה
+              open_={'first_m':None,'ord':_ord_of(_utxt(u))}      # פרק חדש
+          elif not open_['ord']:
+              open_['ord']=_ord_of(_utxt(u))
+          continue
+      if open_ is None: continue
+      if k=='m':
+          if open_['first_m'] is None: open_['first_m']=u
+      elif open_['first_m'] is not None and k=='perek-name':
+          moves.append((u,open_['first_m']))
+  n_head_moved=0
+  for u,dst in moves:
+      src_pg=next(pg for pg in pages if any(x is u for x in pg['units']))
+      src_pg['units']=[x for x in src_pg['units'] if x is not u]
+      dpg=next(pg for pg in pages if any(x is dst for x in pg['units']))
+      di=next(i for i,x in enumerate(dpg['units']) if x is dst)
+      dpg['units'].insert(di,u); n_head_moved+=1
+  # חזרה מדויקת בגוש הפתיחה: "פרק שני הישן" אחרי "פרק שני" ו"הישן"
+  # סדר קבוע בגוש הפתיחה: מספר הפרק, אחריו שמו, ואחריו טווח הדפים (בוורד
+  # המסגרות הצפות נכתבות בסדר שרירותי: שם לפני מספר)
+  _RK={'perek-num':0,'perek-name':1,'perek-range':2}
+  for pg in pages:
+      us=pg['units']; i=0
+      while i<len(us):
+          if us[i]['k'] in _RK:
+              j=i
+              while j<len(us) and us[j]['k'] in _RK: j+=1
+              us[i:j]=sorted(us[i:j],key=lambda x:_RK[x['k']])
+              i=j
+          else: i+=1
+  n_head_dup=0
+  _HK=('perek-num','perek-name','perek-range')
+  for pg in pages:
+      us=pg['units']; i=0
+      while i<len(us):
+          if us[i]['k']=='perek-start':
+              mine=_pk(_utxt(us[i]))
+              behind=''; j=i-1
+              while j>=0 and us[j]['k'] in _HK:
+                  behind=_pk(_utxt(us[j]))+behind; j-=1
+              ahead=''; j=i+1
+              while j<len(us) and us[j]['k'] in _HK:
+                  ahead+=_pk(_utxt(us[j])); j+=1
+              if mine and mine in (behind,ahead):
+                  drop_ids.add(us[i]['id']); us.pop(i); n_head_dup+=1; continue
+          i+=1
+  if n_head_moved:
+      qa.append(('טופל בתצוגה: פתיחת פרק אחרי המשנה',
+                 f'{n_head_moved} יחידות פתיחה או שם פרק ישבו אחרי המשנה הראשונה של הפרק, והוצגו לפניה. הוורד לא נגע'))
+  if n_head_dup:
+      qa.append(('טופל בתצוגה: פתיחת פרק כפולה',
+                 f'{n_head_dup} פתיחות פרק היו חזרה מדויקת על פרק ושם שכבר מוצגים מיד לפניהן, והוצגו פעם אחת'))
   _hd=[]
   for _b in blocks:
       if role_of(_b) in ('perek-num','perek-start') and _b['text'].strip():
@@ -1475,6 +1552,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* א8: חציצה אינה נשארת לבדה בתחתית טור. בעמוד המודפס מנוע הגיליונות
      מצמיד אותה לפסקה שאחריה. */
   .row.hatz{break-after:avoid-column}
+  .main.mishna p.hatz{font-size:calc(1.1em * var(--mr))}
+  /* פתיחת פרק (6.10.2026): גוש עצמאי לפני המשנה הראשונה, ואינו מתנתק ממנה
+     בהדפסה ובטורים: שמור עם הבא. */
+  .row.perek-num,.row.perek-name,.row.perek-range,.row.perek-start{break-after:avoid;break-after:avoid-column;break-after:avoid-page}
   /* ב2: חלונות שנערמו זה מעל זה במסילה אחת. line-height:0 של המסילה
      היה מניח אותם זה על זה, ולכן ערימה מקבלת את רשת הגוף. */
   .win.stk{line-height:var(--lhpx)}
@@ -1493,28 +1574,29 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      או פסקה שמתחילה בה קטע. תוכן מדומה (::before) ולא טקסט: אי אפשר למחוק
      אותו בטעות בעריכה, והוא אינו משנה את שבירת השורות של הד"ה. */
   .main[data-mn].mishna p:first-child::before,.row.u .main[data-mn]>p:first-child::before{
-     content:attr(data-mn) '.';font-family:'Vilna',serif;font-weight:700;font-size:.78em;color:#7a5a14;
+     content:attr(data-mn) '.';font-family:'Vilna',serif;font-weight:700;font-size:calc(.78em * var(--mr));color:#7a5a14;
      margin-inline-end:.35em;letter-spacing:.02em;unicode-bidi:isolate;white-space:nowrap}
   /* ד"ה משנה ממורכז (כמו לפני המספור). האות מוצבת בהצבה מוחלטת בקצה הימני,
      ומרווח סימטרי משני הצדדים שומר שמרכז הד"ה יישאר מרכז השורה. */
   .main[data-mn].dh{padding-inline:1.5em}
   .main[data-mn].dh::before{content:attr(data-mn) '.';position:absolute;right:.1em;top:0;
-     font-family:'Vilna',serif;font-weight:700;font-size:.78em;color:#7a5a14;letter-spacing:.02em;
+     font-family:'Vilna',serif;font-weight:700;font-size:calc(.78em * var(--mr));color:#7a5a14;letter-spacing:.02em;
      unicode-bidi:isolate;white-space:nowrap}
   /* גם כשהמספר כתוב בוורד (סגנון התו "מספר קטע" בתחילת הד"ה): בהצבה מוחלטת, כדי
      שהד"ה יישאר ממורכז */
   .main.dh:has(>.mk:first-child){padding-inline:1.5em}
   .main.dh>.mk:first-child{position:absolute;right:.1em;top:0;white-space:nowrap}
-  .mk{font-family:'Vilna',serif;font-weight:700;font-size:.78em;color:#7a5a14;letter-spacing:.02em}
-  /* סגנונות תו בתוך משנה (6.10.2026). 1 נקודה = --fs / 9 (הגוף 9 נקודות).
-     נושא משנה: דרגת עובי אחת מעל המשנה (700 -> 900). תנאים: גדול בנקודה
-     אחת מן הטקסט הרץ של המשנה, בלי להיות כבד כנושא. הסבר: קטן בנקודה
-     אחת פחות מן המשנה, אך גדול בנקודה מן ההסבר שבגמרא. פסקה שכולה
-     "נושא משנה" ממורכזת ככותרת; שורה שחלקה בלבד - נשארת במקומה. */
+  .mk{font-family:'Vilna',serif;font-weight:700;font-size:calc(.78em * var(--mr));color:#7a5a14;letter-spacing:.02em}
+  /* סגנונות תו בתוך משנה. 1 נקודה = --fs / 9 (הגוף 9 נקודות), ובגופן המשנה
+     (וילנא מודגש) מוכפלת במקדם הדיו --k-ink. היחסים קבועים (הכרעה 6.10.2026,
+     והם נגזרים מגודל המשנה עצמה ולא מגודל הגמרא): משנה = M, ד"ה משנה = M,
+     נושא משנה = M בדרגת עובי אחת מעליה (700 -> 900), תנאי המשנה = M פחות
+     שתי נקודות, הסבר במשנה = M פחות נקודה. כשהמשנה תשתנה, הם זזים איתה.
+     פסקה שכולה "נושא משנה" ממורכזת ככותרת; שורה שחלקה בלבד - נשארת במקומה. */
   .main.mishna .ns{font-weight:900}
   .main.mishna p.nsc{text-align:center;text-align-last:center}
-  .main.mishna .am{font-weight:700;font-size:calc(1em + var(--fs) / 9)}
-  .main.mishna .hs{font-size:calc(.82em + var(--fs) / 9)}
+  .main.mishna .am{font-weight:700;font-size:calc(1em - var(--k-ink) * var(--fs) * 2 / 9)}
+  .main.mishna .hs{font-size:calc(1em - var(--k-ink) * var(--fs) * 1 / 9)}
   .row .b0{margin-top:0}.row .b1{margin-top:calc(var(--lhpx) * .5)}
   /* "רווח לפני": חצי שורה (b1). כותרת,
      ד"ה משנה או חציצה שלפניה הן עצמן ההפרדה, ולכן הרווח אינו נוסף. */
@@ -1783,10 +1865,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
              font-display:swap;size-adjust:%.2f%%}
   @font-face{font-family:'Frank';src:url(fonts/frank-b.ttf);font-weight:900;
              font-display:swap;size-adjust:%.2f%%}
-  :root{--k-nose:%.4f;--k-dh:%.4f;--k-mishna:%.4f}
+  :root{--k-nose:%.4f;--k-dh:%.4f;--k-mishna:%.4f;--k-ink:%.4f;--mr:%.5f}
   .main.nose,.main.dh,.main.mishna{line-height:var(--lhpx)}
+  /* המשנה וד"ה משנה גדלו (6.10.2026) ושורת הזרימה על המסך נשארה 1.06: ניקוד
+     המשנה נגע בשורה שמעליו (גובה הדיו 21.4 מול תיבת שורה 19.1 ב-18 פיקסל).
+     בזרימה על המסך הן מקבלות שורה גבוהה מרשת הגוף (פי 1.13); בתצוגת הספר (1.342) ובהדפסה
+     (11 נקודות) אין צורך, והרשת שלהן נשארת. */
+  @media screen{.flow:not(.book) .main.dh,.flow:not(.book) .main.mishna{line-height:calc(var(--fs) * 1.2)}}
   .main.hatz{line-height:calc(var(--lhpx) * %.4f)}
-  ''' % (K_BOLD * 100, K_BOLD * 100, K_NOSE, K_DH, K_MISHNA, line_ratio('hatz')))
+  ''' % (K_BOLD * 100, K_BOLD * 100, K_NOSE, K_DH, K_MISHNA, K_INK, 9.0 / MISHNA_PT, line_ratio('hatz')))
 
   JS=r'''
   const D=DATA;const MNSEG=D.mnseg||{};const $=s=>document.querySelector(s);
@@ -3360,7 +3447,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const old=$('#keyscard');if(old){old.remove();return}
     const m=document.createElement('div');m.className='modal';m.id='keyscard';
     const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
-      ['Ctrl+1','סגנון תו: אמוראים (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון תו: נושא'],
+      ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון תו: נושא'],
       ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+H','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],

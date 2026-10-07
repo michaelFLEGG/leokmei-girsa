@@ -897,6 +897,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           continue
       if r=='perek-num': perek=t
       if r=='perek-name': perekName=t
+      if r=='perek-start' and b['style']=='פתיחת פרק':
+          _pp=t.split(' - ',1); perek=_pp[0].strip(); perekName=(_pp[1].strip() if len(_pp)>1 else '')
       if r=='daf':
           # ב2: חלון שאין תחתיו טקסט אינו נעצר בציון הדף. הוא ממשיך
           # להמתין ליחידה הבאה, שתקבל אותו במסילתה יחד עם ציון הדף.
@@ -952,6 +954,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           n_hatz_dup+=1
       elif r in ('dh','nose','hatz','perek-num','perek-name','perek-range','perek-start','hadran'):
           u={'k':r,'a':h,'l':[],'id':b['i'],'s':sp_cls(b['style'])}
+          if b['style']=='פתיחת פרק': u['op']=1      # פתיחת פרק בשורה אחת (7.10.2026)
           if pend is not None: u['w']=take_pend()[0]
           cur['units'].append(u); unit=None
           if r in ('dh','nose'): add_toc(r,b)
@@ -1083,6 +1086,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       import mishna_numbers
       _mr=mishna_numbers.assign(pages,sources,masechet)
       mnseg=_mr.get('seg_letters',{})
+      # 7.10.2026: מספר קטע מופיע רק לפני ד"ה משנה. לא בתוך יחידת משנה ולא בפתיחת פסקה
+      _n_mn_drop=0
+      for _p in pages:
+          for _u in _p['units']:
+              if _u.get('mn') and _u['k']!='dh':
+                  for _k in ('mn','mnh','mnr','mns'): _u.pop(_k,None)
+                  _n_mn_drop+=1
+      if _n_mn_drop:
+          qa.append(('טופל בתצוגה: מספר קטע מחוץ לד"ה',
+                     f'{_n_mn_drop} מספרי קטע שהיו לפני יחידות משנה או פסקאות לא הוצגו: מספר קטע מופיע רק לפני ד"ה משנה'))
       _nd=sum(1 for p in pages for u in p['units'] if u.get('mn') and u['k']=='dh')
       _nm=sum(1 for p in pages for u in p['units'] if u.get('mn') and u['k']!='dh')
       def _loc_of(daf):
@@ -1192,6 +1205,49 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
               us[i:j]=sorted(us[i:j],key=lambda x:_RK[x['k']])
               i=j
           else: i+=1
+  # ---------- פתיחת פרק בשורה אחת (7.10.2026) ----------
+  # מעתה זו שורה אחת, "פרק ראשון - מאמתי", בסגנון "פתיחת פרק". קובץ שבו עדיין יש "פרק" ו"שם פרק"
+  # נפרדים מוצג באותה צורה: הצמד הסמוך מאוחד לשורה אחת בתצוגה. הוורד לא נגע.
+  n_open_merged=0; n_tag_hidden=0
+  for pg in pages:
+      us=pg['units']; i=0
+      while i<len(us)-1:
+          if us[i]['k']=='perek-num' and us[i+1]['k']=='perek-name':
+              a_=us[i]['a'].rstrip(); b_=us[i+1]['a'].strip()
+              us[i]=dict(us[i],k='perek-start',a=a_+' - '+b_,mg=us[i+1]['id'])
+              drop_ids.add(us[i+1]['id']); us.pop(i+1); n_open_merged+=1
+          i+=1
+  # מסגרות "פרק" ו"שם פרק" ישנות (וגם צמד שאוחד לעיל) שפתיחת פרק אמיתית כבר מציגה את אותו פרק: לא מוצגות שוב.
+  # פתיחת הפרק עשויה לבוא לפניהן או אחריהן (הן צפות בוורד), ולכן החלון הוא שמונה יחידות לכל כיוון, בלי לחצות הדרן.
+  _flat=[(pg,u) for pg in pages for u in pg['units']]
+  _hide=set()
+  for _j,(_pg,_u) in enumerate(_flat):
+      if not (_u['k']=='perek-start' and _u.get('op')): continue
+      _t_=_utxt(_u); _o_=_ord_of(_t_); _pk_=_pk(_t_)
+      for _dir in (-1,1):
+          _q=_j+_dir
+          while 0<=_q<len(_flat) and abs(_q-_j)<=8:
+              _v=_flat[_q][1]
+              if _v['k']=='hadran' or _v.get('op') or _v['k'] in ('m','dh'): break
+              if _v['k'] in ('perek-num','perek-name','perek-start'):
+                  _tv=_utxt(_v)
+                  if _v['k']=='perek-name': _h=bool(_pk(_tv)) and _pk(_tv) in _pk_
+                  else: _h=bool(_o_) and _ord_of(_tv)==_o_
+                  if _h: _hide.add(id(_v))
+              _q+=_dir
+  for pg in pages:
+      keep=[]
+      for u_ in pg['units']:
+          if id(u_) in _hide:
+              drop_ids.add(u_['id']); n_tag_hidden+=1; continue
+          keep.append(u_)
+      pg['units']=keep
+  if n_open_merged:
+      qa.append(('טופל בתצוגה: פרק ושם פרק נפרדים',
+                 f'{n_open_merged} פתיחות פרק היו בוורד שתי פסקאות נפרדות (פרק ושם פרק), והוצגו כשורה אחת. הוורד לא נגע'))
+  if n_tag_hidden:
+      qa.append(('טופל בתצוגה: מסגרת פרק כפולה',
+                 f'{n_tag_hidden} מסגרות "פרק" או "שם פרק" ישנות חזרו על פתיחת פרק שכבר מוצגת בשורה אחת, ולא הוצגו שוב. הוורד לא נגע'))
   n_head_dup=0
   _HK=('perek-num','perek-name','perek-range')
   for pg in pages:
@@ -1430,7 +1486,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* סולם הכותרות נגזר ממידת הגוף שבוורד, ולא ממספרים שנבחרו לעין:
      נושא = נקודה אחת מעל הגוף, משנה = כגוף, וד"ה משנה = נקודה אחת
      מתחת למשנה. שינוי --body-pt מזיז את שלושתם יחד. */
-  :root{--fs:18px;--body-pt:9;--measure:20.75em;--rail:6.92em;--gut:3.46em;
+  :root{--fs:18px;--body-pt:9;--measure:20.75em;--rail:6.92em;--gut:3.46em;--dafgap:1.1em;
         --ink:#1d1a16;--paper:#fbf8f1;--grey:#767171;--gold:#c9a24a;--red:#a83c2f;--bar:46px}
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:#e9e4d8;color:var(--ink);font-family:'Frank','Frank Ruhl Libre',serif;overflow:hidden}
@@ -1501,12 +1557,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      האותיות נראות (אין overflow:hidden), וקו הבסיס נשמר. */
   .row{display:grid;grid-template-columns:var(--rail) var(--measure);
        align-items:baseline;break-inside:avoid-column}
-  .rail{display:grid;grid-template-columns:var(--dafw,2.9em) minmax(0,1fr);
+  .rail{display:grid;grid-template-columns:minmax(0,1fr) calc(var(--dafw,2.9em) + var(--dafgap));
         align-items:baseline;column-gap:.14em;padding-left:.36em}
   .rail>*{line-height:0}
   .win.w2{line-height:var(--lhpx)}
   /* יחידה שאין לה ציון דף: נתיב הדף מתאפס, והחלון מקבל את כל המסילה */
-  .rail:not(:has(.dafmark)){grid-template-columns:0 minmax(0,1fr)}
+  .rail:not(:has(.dafmark)){grid-template-columns:minmax(0,1fr) 0}
   /* דף שאין בו יחידות: הטקסט ריק, והמסילה אינה תופסת גובה. בלי המינימום
      הזה היה ציון הדף נופל על השורה הבאה. */
   .row>.main:empty{min-height:var(--lhpx)}
@@ -1518,13 +1574,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main p.nose,.main p.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif}
   .main p.nose{font-weight:700;font-size:calc(var(--k-nose) * 1em)}
   .main p.dh{font-weight:900;font-size:calc(var(--k-dh) * 1em)}
-  .dafmark{grid-column:1;justify-self:center;font-family:'VilnaG','Vilna',serif;
-           font-size:1.3em;color:var(--red);margin:0}
+  .dafmark{grid-column:2;justify-self:start;font-family:'Vilna',serif;font-weight:900;
+           font-size:.975em;color:#000;margin:0}
   /* אין עוד overflow:hidden ואין ellipsis: חלון שנחתך בשקט הוא כישלון
      שקט. חלון שאינו נכנס מטופל במדידה (fitAnchors), ובסוף מוצג קטן יותר
      ולא נחתך. */
   /* הנתיב הפנימי: חלון הכותרת ותווית "משנה" יחד, זה לצד זה */
-  .win{grid-column:2;justify-self:end;white-space:nowrap;text-align:left}
+  .win{grid-column:1;justify-self:end;white-space:nowrap;text-align:left}
   .anchor{font-family:'Vilna',serif;font-weight:900;font-size:.9em;color:#5a5044}
   /* חלון שנמדד ואינו נכנס בשורה אחת, וליחידה יש שתי שורות טקסט לפחות */
   .win.w2{white-space:normal;line-height:var(--lhpx);text-align:left}
@@ -1573,11 +1629,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .win.stk{line-height:var(--lhpx)}
   /* ב1: ציון דף שהוא טווח ("יד:-טו.") - קטן יותר, כדי שלא ירחיב את נתיב
      הדף של כל המסכת. רוחבו נמדד ומוגדר לשורה שלו בלבד. */
-  .dafmark.rng{font-size:.95em;letter-spacing:-.02em}
+  .dafmark.rng{font-size:.72em;letter-spacing:-.02em}
   .perek-num .main{font-family:'Franknatan','Vilna',serif;color:var(--red);font-size:1.45em;line-height:1.1}
   .perek-name .main{font-family:'Franknatan','Vilna',serif;color:#8a7d66;font-size:1.09em}
   .perek-range .main{color:var(--red);font-size:.73em}
-  .perek-start .main{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;font-size:1.09em}
+  .perek-start .main{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;color:#000;font-size:calc(var(--k-dh) * 1em)}
   .hadran .main{text-align:center;text-align-last:center;font-size:1.09em;margin:0}
   /* מרווחי וורד, בחצאי שורה של רשת הגוף. b=לפני, a=אחרי.
      הכללים נכתבים כצאצא של .row כדי שמשקלם יגבר על '.main p{margin:0}'
@@ -1608,7 +1664,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main.mishna .ns{font-weight:900}
   .main.mishna p.nsc{text-align:center;text-align-last:center}
   .main.mishna .am{font-weight:700;font-size:calc(1em - var(--k-ink) * var(--fs) * 2 / 9)}
-  .main.mishna .hs{font-size:calc(1em - var(--k-ink) * var(--fs) * 1 / 9)}
+  .main.mishna .hs{font-size:calc(1em - var(--k-ink) * var(--fs) * 3 / 9)}
   .row .b0{margin-top:0}.row .b1{margin-top:calc(var(--lhpx) * .5)}
   /* "רווח לפני": חצי שורה (b1). כותרת,
      ד"ה משנה או חציצה שלפניה הן עצמן ההפרדה, ולכן הרווח אינו נוסף. */
@@ -2044,7 +2100,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function setDafW(){
     const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
     const cv=document.createElement('canvas'),cx=cv.getContext('2d');
-    cx.font='400 '+(1.3*fs)+"px 'VilnaG','Vilna',serif";
+    cx.font='900 '+(.975*fs)+"px 'Vilna',serif";
     /* תווית טווח ("יד:-טו.") אינה קובעת את רוחב נתיב הדף של כל המסכת;
        היא מקבלת רוחב לשורה שלה בלבד (fitAnchors). */
     let w=0;for(const p of D.pages){const x=cx.measureText(p.daf||'').width;if(x>w)w=x}
@@ -2054,7 +2110,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function dafWidth(txt){
     const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
     const cv=document.createElement('canvas'),cx=cv.getContext('2d');
-    cx.font='400 '+(1.3*fs)+"px 'VilnaG','Vilna',serif";
+    cx.font='900 '+(.975*fs)+"px 'Vilna',serif";
     return cx.measureText(txt||'').width+2;
   }
   /* חלון שאינו נכנס לנתיב הפנימי מטופל בסדר שנקבע: קודם מצטמצם נתיב הדף
@@ -2064,7 +2120,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const ASCALE=[1,.88,.8,.72];
   function trackW(rail){
     const g=getComputedStyle(rail).gridTemplateColumns.split(' ');
-    return parseFloat(g[g.length-1])||0;
+    return parseFloat(g[0])||0;
   }
   function fitAnchors(only){
     const f=$('#flow');if(!f)return;
@@ -2074,7 +2130,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* ב1: תווית טווח רחבה מנתיב הדף - הנתיב מורחב לשורה שלה בלבד */
     for(const r0 of rowsList)for(const d of r0.querySelectorAll('.dafmark.rng')){
       const r=d.closest('.row');if(!r)continue;
-      const w=dafWidth(d.textContent.trim())*0.95;
+      const w=dafWidth(d.textContent.trim())*0.74;
       r.style.setProperty('--dafw',Math.max(w,DAFW).toFixed(1)+'px');
     }
     for(const r of rowsList){
@@ -5048,7 +5104,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      אחריו דבר. 'פרק שם' ו'דפים בפרק' שייכים לגוש פתיחת הפרק, וגוש זה
      נשמר יחד ממילא מפני ש'פרק' פותח עמוד חדש. */
   /* א8: גם החציצה נצמדת לפסקה שאחריה ואינה נשארת לבדה בתחתית העמוד */
-  const HEADK=['nose','dh','perek-num','hatz'];
+  const HEADK=['nose','dh','perek-num','perek-start','hatz'];
   const isHead=u=>HEADK.indexOf(u.k)>-1||(!u.lines&&u.daf);
   function paginate(units){
     const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
@@ -5062,7 +5118,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(let i=0;i<units.length;i++){
       const u=units[i], nx=units[i+1];
       /* ד. פרק חדש פותח עמוד חדש, כמו sectPr בוורד */
-      if(u.k==='perek-num'&&cur.length)push();
+      if((u.k==='perek-num'||(u.k==='perek-start'&&u.u&&(u.u.op||u.u.mg)))&&cur.length)push();
       /* א+ג. כותרת, או ציון דף שאין תחתיו טקסט, אינם נשארים לבדם בתחתית
          העמוד: אם אין מקום להם ולשתי שורות מן הבא אחריהם - העמוד נסגר
          כאן, והם יורדים יחד עם התוכן שלהם. הבדיקה לפני החלוקה, ולכן

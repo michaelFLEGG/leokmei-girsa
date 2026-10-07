@@ -115,6 +115,10 @@
       (LG.sugg ? '<div class="lm-stat"><b>' + LG.nf(LG.sugg.total) + '</b><span>הצעות תיקון</span></div>' : '') + '</div>';
     wrap.appendChild(c1);
     var rc = UI.resumeCard(); if (rc) wrap.appendChild(rc);
+    var qsum = LG.quiz.score(), qc = el('div', 'lm-card lm-hero');
+    qc.innerHTML = '<div class="lm-txt"><div class="lm-small">בחן את עצמך</div><div class="lm-big">' + LG.nf(qsum.total) + ' נקודות</div><div class="lm-small">' + (qsum.answered ? E(LG.quiz.TITLES_ALL[LG.quiz.level(qsum.total, LG.quiz.T_ALL)] || 'עוד בלי תואר') + ' · ' + LG.nf(LG.quiz.dueCount()) + ' חזרות להיום' : 'שאלות חזרה על מה שלמדת') + '</div></div><a class="lm-btn" href="quiz.html">בחן את עצמך</a>';
+    wrap.appendChild(qc);
+    LG.quiz.proposerCard().then(function (pc) { if (pc) wrap.insertBefore(pc, qc.nextSibling); });
     /* הודעה עדינה, פעם אחת: אם ההיסטוריה נמחקת (מטמון, החלפת מכשיר) אפשר לא לאבד אותה */
     var tipSeen = false; try { tipSeen = localStorage.getItem('lg-lamed-tip') === '1'; } catch (e) { }
     if (!tipSeen && !window.__lmDemo && S.sessions.length >= 3 && !(LG.sync && LG.sync.linked())) {
@@ -247,7 +251,7 @@
     var c1 = el('div', 'lm-card lm-hero');
     c1.innerHTML = '<div class="lm-txt"><div class="lm-small">' + E(HD.long(now)) + '</div><div class="lm-big">' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</div>' +
       '<div class="lm-small">מחזור ' + E(LG.hebq(y.cycle)) + (built ? '' : ' · מסכת זו עדיין בהכנה באתר') + '</div></div>' +
-      (built ? '<div class="lm-row"><a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">ללמוד את הדף של היום</a><a class="lm-btn ghost" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 1)) + '">עמוד ב</a></div>' : '') +
+      (built ? '<div class="lm-row"><a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">ללמוד את הדף של היום</a><a class="lm-btn" href="quiz.html?mode=yomi">בחן את עצמך על הדף</a><a class="lm-btn ghost" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 1)) + '">עמוד ב</a></div>' : '') +
       '<div class="lm-row"><button class="lm-btn ghost" id="lm-yb" type="button">למדתי בספר</button></div>';
     wrap.appendChild(c1);
 
@@ -498,5 +502,6 @@
     html += table('זמן ממוצע לעמוד (הארוכים ביותר: מועמדים להידוק)', data.slow.slice(0, 12).map(function (x) { return { l: LG.nameOf(x.s) + ' ' + x.d, v: LG.dur(x.avg) + ' (' + LG.nf(x.n) + ' קריאות)' }; }));
     html += table('עדיפויות עריכה: נלמדים הרבה וטרם נערכו', data.topPages.filter(function (x) { return x.unedited; }).slice(0, 12).map(function (x) { return { l: LG.nameOf(x.s) + ' ' + x.d, v: LG.nf(x.reads) + ' קריאות' }; }));
     box.innerHTML = html;
+    if (!window.__lmDemo && LG.quiz && LG.quiz.adminDrafts) LG.quiz.adminDrafts(box, key);
   };
 })();

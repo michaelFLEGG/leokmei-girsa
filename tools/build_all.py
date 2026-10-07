@@ -335,6 +335,8 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     shutil.copy(os.path.join(ROOT, 'tools', 'hdate.js'), os.path.join(SITE, 'hdate.js'))
     import build_lamed
     build_lamed.build(SITE)
+    import quiz_build
+    quiz_build.run(SITE)
     # עמוד "מקורות": הייחוס הנדרש ברישיון, פעם אחת, בשורה שקטה. השם המקורי
     # של הפירוש מופיע רק כאן; בממשק עצמו הוא "פירוש הגמרא".
     open(os.path.join(SITE, 'mekorot.html'), 'w', encoding='utf-8').write(

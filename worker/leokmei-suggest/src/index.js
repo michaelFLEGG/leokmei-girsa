@@ -964,6 +964,195 @@ async function lnStats(req, env) {
   });
 }
 
+
+/* ------------------------------------------------------------ בחן את עצמך, תארים ולוח מובילים (מנה 3, 7.10.2026)
+   הניקוד מחושב במכשיר הלומד (חזרות מרווחות); כאן נשמר רק סיכום אנונימי לפי pid שהוא
+   מזהה אקראי של המכשיר (בלי שם, בלי דוא"ל). לוח המובילים מציג כינוי בלבד, ורק למי שהסכים.
+   סף התארים נרשם בחוקה ומשוכפל בלקוח (tools/lamed/quiz.js). */
+const QZ_T_ALL = [500, 3000, 10000, 30000, 100000];
+const QZ_T_M = [300, 1500, 5000, 15000, 40000];
+const QZ_DAYCAP = 5000;                     /* תקרת ניקוד ליום: מונעת זיוף גס, אינה פוגעת בלומד אמיתי */
+const nickOk = (v) => {
+  let t = String(v || '').normalize('NFC').replace(/[^֐-׿a-zA-Z0-9 '"\-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16);
+  if (/https?|www|@|\.com/i.test(String(v || ''))) t = '';
+  return t;
+};
+function ilWeek(t) {                        /* יום ראשון של השבוע, לפי שעון ישראל */
+  const d = new Date(ilDay(t) + 'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() - d.getUTCDay());
+  return d.toISOString().slice(0, 10);
+}
+async function qzScore(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const pid = str(b.pid, 20), pt = req.headers.get('x-proposer') || '';
+  if (!/^[a-z0-9]{8,20}$/.test(pid) || !pt) return bad('אין הרשאה', 401);
+  if (!(await ensureProposer(env, pid, str(pt, 80), ''))) return bad('הזהות במכשיר אינה תואמת', 401);
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  if (burstHit(ip)) return bad('מהיר מדי. נסה שוב בעוד רגע', 429);
+  const old = (await env.STORE.get('qz:' + pid, 'json')) || { t: 0, base: 0, day: '', wk: '', wp: 0 };
+  const today = ilDay(Date.now()), wk = ilWeek(Date.now());
+  const rec = { ...old };
+  if (rec.day !== today) { rec.day = today; rec.base = old.t || 0; }
+  if (rec.wk !== wk) { rec.wk = wk; rec.wp = 0; }
+  let total = Math.max(0, Math.min(5000000, Math.round(+b.total || 0)));
+  total = Math.min(total, rec.base + QZ_DAYCAP);       /* עלייה חדה ביום אחד נחתכת */
+  total = Math.max(total, old.t || 0);                  /* הניקוד אינו יורד */
+  const byM = {};
+  for (const [k, v] of Object.entries(b.byM || {}).slice(0, 60)) if (slugOk(k)) byM[k] = Math.max(0, Math.min(2000000, Math.round(+v || 0)));
+  rec.t = total; rec.m = byM;
+  const wpIn = Math.max(0, Math.round(+b.wp || 0));
+  rec.wp = Math.max(rec.wp, Math.min(wpIn, QZ_DAYCAP * 7));
+  rec.o = b.optin ? 1 : 0;
+  rec.n = rec.o ? (nickOk(b.nick) || '') : '';
+  rec.u = Date.now();
+  const mstr = Object.entries(byM).filter((x) => x[1] > 0).map((x) => x[0] + ':' + x[1]).join(',').slice(0, 700);
+  await env.STORE.put('qz:' + pid, JSON.stringify(rec), { metadata: { t: rec.t, o: rec.o, n: rec.n, wk: rec.wk, wp: rec.wp, m: mstr, u: rec.u } });
+  return json({ ok: true, total: rec.t, week: rec.wp });
+}
+const lvlOf = (pts, T) => { let l = 0; T.forEach((x, i) => { if (pts >= x) l = i + 1; }); return l; };
+async function qzBoard(req, env, url) {
+  const slug = slugOk(url.searchParams.get('s') || '') ? url.searchParams.get('s') : '';
+  const pid = url.searchParams.get('pid') || '';
+  const wk = ilWeek(Date.now());
+  const keys = await listAll(env, 'qz:');
+  const all = [], weekly = [];
+  const cAll = [0, 0, 0, 0, 0, 0], cM = [0, 0, 0, 0, 0, 0];
+  let me = null;
+  let n = 0;
+  for (const k of keys) {
+    const m = k.metadata || {};
+    if (!m.t) continue;
+    n++;
+    const id = k.name.slice(3);
+    const l = lvlOf(m.t, QZ_T_ALL);
+    for (let i = 1; i <= l; i++) cAll[i]++;
+    let mp = 0;
+    if (slug && m.m) { for (const part of String(m.m).split(',')) { const [s2, v] = part.split(':'); if (s2 === slug) mp = +v || 0; } }
+    if (slug) { const lm = lvlOf(mp, QZ_T_M); for (let i = 1; i <= lm; i++) cM[i]++; }
+    if (m.o) {
+      const nm = m.n || ('לומד אנונימי ' + (parseInt(id.slice(0, 4), 36) % 9000 + 1000));
+      all.push({ id, n: nm, p: m.t });
+      if (m.wk === wk && m.wp > 0) weekly.push({ id, n: nm, p: m.wp });
+    }
+    if (pid && id === pid) me = { t: m.t, wp: m.wk === wk ? (m.wp || 0) : 0, mp, o: m.o ? 1 : 0, n: m.n || '' };
+  }
+  all.sort((a, b) => b.p - a.p); weekly.sort((a, b) => b.p - a.p);
+  const pub = (x) => x.slice(0, 20).map((r) => ({ n: r.n, p: r.p, me: pid && r.id === pid ? 1 : 0 }));
+  const rank = (arr) => (pid ? (arr.findIndex((r) => r.id === pid) + 1) || 0 : 0);
+  return json({ ok: true, learners: n, week: pub(weekly), all: pub(all), counts: { all: cAll, m: cM }, rank: { week: rank(weekly), all: rank(all) }, me });
+}
+
+/* ---- תארי המציעים: לפי הצעות שאושרו, עם משקל לאיכות ---- */
+const PR_VET = 15, PR_TOP5 = 40, PR_TOP3 = 80;
+function prTitle(pts, rank) {
+  if (rank > 0 && rank <= 3 && pts >= PR_TOP3) return 'משלושת המגיהים הגדולים';
+  if (rank > 0 && rank <= 5 && pts >= PR_TOP5) return 'מחמשת המגיהים הגדולים';
+  if (pts >= PR_VET) return 'מגיה ותיק';
+  if (pts >= 1) return 'מגיה';
+  return '';
+}
+async function qzProposers(req, env, url) {
+  const pid = url.searchParams.get('pid') || '', pt = req.headers.get('x-proposer') || '';
+  const mineOk = pid && pt && (await proposerOk(env, pid, pt));
+  const agg = {}, first = {};
+  for (const k of await listAll(env, 'sg:')) {
+    const m = k.metadata || {};
+    if (!m.pid) continue;
+    const a = agg[m.pid] || (agg[m.pid] = { ok: 0, ed: 0, no: 0 });
+    if (m.st === 'accepted') a.ok++;
+    else if (m.st === 'edited') a.ed++;
+    else if (m.st === 'rejected') a.no++;
+    if ((m.st === 'accepted' || m.st === 'edited') && m.slug) {
+      const t = keyT(k.name);
+      if (!first[m.slug] || t < first[m.slug].t) first[m.slug] = { t, pid: m.pid };
+    }
+  }
+  const pts = (a) => {
+    const good = a.ok + a.ed * 0.8, dec = a.ok + a.ed + a.no;
+    const rate = dec >= 5 ? (a.ok + a.ed) / dec : 1;
+    return Math.round(good * (0.6 + 0.4 * rate) * 10) / 10;
+  };
+  const rows = Object.entries(agg).map(([id, a]) => ({ id, p: pts(a), a })).filter((r) => r.p > 0).sort((x, y) => y.p - x.p);
+  const nicks = {};
+  for (const k of await listAll(env, 'qz:')) { const m = k.metadata || {}; if (m.o && m.n) nicks[k.name.slice(3)] = m.n; }
+  const nm = (id) => nicks[id] || 'מגיה אנונימי';
+  rows.forEach((r, i) => { r.rank = i + 1; r.title = prTitle(r.p, r.rank); });
+  const firsts = Object.entries(first).map(([s, v]) => ({ s, n: nm(v.pid), me: pid && v.pid === pid ? 1 : 0 }));
+  let me = null;
+  if (mineOk) {
+    const a = agg[pid] || { ok: 0, ed: 0, no: 0 }, r = rows.find((x) => x.id === pid);
+    const p = pts(a), rank = r ? r.rank : 0, title = prTitle(p, rank);
+    let next = null;
+    if (title === '') next = { title: 'מגיה', need: Math.max(0, 1 - p) };
+    else if (title === 'מגיה') next = { title: 'מגיה ותיק', need: Math.round((PR_VET - p) * 10) / 10 };
+    else if (title === 'מגיה ותיק') next = { title: 'מחמשת המגיהים הגדולים', need: Math.max(0, Math.round((PR_TOP5 - p) * 10) / 10), rank: 5 };
+    else if (title === 'מחמשת המגיהים הגדולים') next = { title: 'משלושת המגיהים הגדולים', need: Math.max(0, Math.round((PR_TOP3 - p) * 10) / 10), rank: 3 };
+    me = { p, rank, title, ok: a.ok, ed: a.ed, no: a.no, next, firstIn: firsts.filter((f) => f.me).map((f) => f.s) };
+  }
+  return json({ ok: true, top: rows.slice(0, 10).map((r) => ({ n: nm(r.id), p: r.p, title: r.title, me: pid && r.id === pid ? 1 : 0 })), firsts, me,
+                rules: { vet: PR_VET, top5: PR_TOP5, top3: PR_TOP3 } });
+}
+
+/* ---- "לומדים כעת": ספירה אנונימית של מכשירים פעילים ב-6 הדקות האחרונות.
+   מפתח אחד במחסן, וכתיבה אליו לא יותר מפעם ב-150 שניות (מגבלת הכתיבות בתוכנית החינמית:
+   1000 ליום). פעימות שבין כתיבה לכתיבה נקלטות בכתיבה הבאה. אין שם, אין IP, אין pid. */
+const ON_WIN = 6 * 60000, ON_GAP = 150000;
+async function lnOnline(req, env, url) {
+  const now = Date.now();
+  const rec = (await env.STORE.get('on:all', 'json')) || { w: 0, a: {} };
+  let s = '';
+  if (req.method === 'POST') {
+    if (BOT.test(req.headers.get('user-agent') || '')) return json({ ok: true, skipped: 1 });
+    let b = {};
+    try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+    s = slugOk(b.s || '') ? b.s : '';
+    const aid = /^[a-z0-9]{8,16}$/.test(b.aid || '') ? b.aid : '';
+    if (aid) {
+      rec.a[aid] = [now, s];
+      if (now - rec.w >= ON_GAP) {
+        for (const k of Object.keys(rec.a)) if (now - rec.a[k][0] > ON_WIN) delete rec.a[k];
+        const ks = Object.keys(rec.a);
+        if (ks.length > 3000) for (const k of ks.slice(0, ks.length - 3000)) delete rec.a[k];
+        rec.w = now;
+        await env.STORE.put('on:all', JSON.stringify(rec), { expirationTtl: 3600 });
+      }
+    }
+  } else s = slugOk(url.searchParams.get('s') || '') ? url.searchParams.get('s') : '';
+  let n = 0, ns = 0;
+  for (const v of Object.values(rec.a)) if (now - v[0] <= ON_WIN) { n++; if (s && v[1] === s) ns++; }
+  return json({ ok: true, n, s: ns });
+}
+
+/* ---- שאלות טיוטה (שנוצרו במודל): הלומד רואה רק אחרי אישור המנהל ---- */
+async function qzDec(req, env, url) {
+  if (req.method === 'GET') {
+    const slug = url.searchParams.get('s') || '';
+    if (!slugOk(slug)) return bad('מסכת לא תקינה');
+    const rec = (await env.STORE.get('qd:' + slug, 'json')) || {};
+    const admin = await isAdmin(req, env);
+    const out = {};
+    for (const [id, v] of Object.entries(rec)) if (admin || v.st === 'ok') out[id] = admin ? v : { st: 'ok', e: v.e || null };
+    return json({ ok: true, dec: out });
+  }
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const slug = str(b.s, 30), id = str(b.id, 60), st = str(b.st, 4);
+  if (!slugOk(slug) || !id || ['ok', 'no', ''].indexOf(st) < 0) return bad('הכרעה לא תקינה');
+  const rec = (await env.STORE.get('qd:' + slug, 'json')) || {};
+  if (!st) delete rec[id];
+  else {
+    const v = { st, t: Date.now() };
+    if (st === 'ok' && b.e && Array.isArray(b.e.o) && b.e.o.length === 4) {
+      v.e = { q: str(b.e.q, 400), o: b.e.o.map((x) => str(x, 120)), a: Math.max(0, Math.min(3, b.e.a | 0)) };
+    }
+    rec[id] = v;
+  }
+  await env.STORE.put('qd:' + slug, JSON.stringify(rec));
+  return json({ ok: true });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -1006,6 +1195,11 @@ export default {
       if (p === '/ln/redeem' && req.method === 'POST') return await lnRedeem(req, env);
       if (p === '/ln/stat' && req.method === 'POST') return await lnStat(req, env);
       if (p === '/ln/stats' && req.method === 'GET') return await lnStats(req, env);
+      if (p === '/qz/score' && req.method === 'POST') return await qzScore(req, env);
+      if (p === '/qz/board' && req.method === 'GET') return await qzBoard(req, env, url);
+      if (p === '/qz/proposers' && req.method === 'GET') return await qzProposers(req, env, url);
+      if (p === '/qz/dec') return await qzDec(req, env, url);
+      if (p === '/ln/online') return await lnOnline(req, env, url);
       return bad('לא נמצא', 404);
     } catch (e) {
       return bad('שגיאה: ' + (e && e.message ? e.message : String(e)), 500);

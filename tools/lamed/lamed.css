@@ -165,6 +165,27 @@ h2.lm-t2{font-family:'Vilna',serif;font-size:23px;margin:30px 0 10px;font-weight
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
+/* ---- בחן את עצמך (מנה 3): שאלות, תארים, לוח מובילים ---- */
+.lm-qq{font-family:'Vilna','Frank',serif;font-size:22px;line-height:1.6;margin:14px 0}
+.lm-qopts{display:grid;gap:10px}
+.lm-qo{text-align:right;font-size:18px;line-height:1.4;white-space:normal;display:flex;gap:10px;align-items:baseline}
+.lm-qo b{opacity:.55;font-size:15px}
+.lm-qo.lm-ok{background:var(--green)!important;color:#fff!important;border-color:var(--green)!important;opacity:1!important}
+.lm-qo.lm-bad{background:var(--red)!important;color:#fff!important;border-color:var(--red)!important;opacity:1!important}
+.lm-qo[disabled]{opacity:.7}
+.lm-okt{color:var(--green)}.lm-badt{color:var(--red)}
+.lm-qfb p{margin:8px 0}
+.lm-ladder{list-style:none;margin:0 0 8px;padding:0}
+.lm-ladder li{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:baseline;padding:6px 10px;border-radius:8px;margin:3px 0;opacity:.6}
+.lm-ladder li.on{opacity:1;background:var(--card2);border:1px solid var(--gold)}
+.lm-ladder li span{color:var(--ink3);font-size:14px}.lm-ladder li em{font-style:normal;font-size:14px;color:var(--gold2);margin-inline-start:auto}
+.lm-lb{list-style:none;margin:10px 0 0;padding:0;counter-reset:lb}
+.lm-lb li{display:flex;gap:10px;padding:5px 8px;border-bottom:1px solid var(--line);counter-increment:lb}
+.lm-lb li:before{content:counter(lb) '.';width:2em;color:var(--ink3)}
+.lm-lb li.me{background:var(--card2);font-weight:700}
+.lm-grow{flex:1}
+@media (max-width:600px){.lm-qq{font-size:20px}.lm-ladder li em{margin-inline-start:0;width:100%}}
+
 /* ---- בדף הלימוד: שעון, קישורים, סמן התקדמות, "סיימתי", הדגשת חזרה ---- */
 #lm-layer{position:fixed;inset:0;pointer-events:none;z-index:7}
 #lm-pbar{position:fixed;top:0;right:0;left:0;height:2px;background:transparent;z-index:8}

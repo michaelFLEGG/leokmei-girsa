@@ -178,6 +178,7 @@
     var k = curKey();
     if (!k) return;
     var s = session();
+    if (LG.sync && (!G.hbT || now - G.hbT > 150000)) { G.hbT = now; LG.sync.heartbeat(SLUG); }
     if (!G.started[k] && G.cur && LG.sync) { G.started[k] = 1; LG.sync.stat({ s: SLUG, d: G.cur.d, start: 1 }); }
     s.ms += dt; s.t1 = now; s.per[k] = (s.per[k] || 0) + dt;
     G.pageMs[k] = (G.pageMs[k] || 0) + dt;

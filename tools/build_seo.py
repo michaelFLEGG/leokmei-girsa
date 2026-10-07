@@ -13,7 +13,7 @@ HOME_TITLE = 'לאוקמי גירסא · קיצור התלמוד הבבלי, ק�
 HOME_DESC = ('לאוקמי גירסא - קיצור התלמוד הבבלי: שלד הסוגיה בלבד, דף אחר דף. '
              'קיצור הדף היומי, קיצור הש"ס, ומערכת לימוד אישית. חינם.')
 API = 'https://leokmei-suggest.m7654301.workers.dev'
-NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'masechet.html')
+NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'masechet.html', 'quiz.html')
 
 ABOUT = ('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
          '<meta name="viewport" content="width=device-width,initial-scale=1"><title>אודות · לאוקמי גירסא</title>'
@@ -75,7 +75,8 @@ def lessons_static():
     """שיעורי היוטיוב מן השרת (קריאה פתוחה), לנתונים מובנים ולטקסט סטטי בדף השיעורים.
     כשל בקריאה אינו מפיל את הבנייה, אך נרשם בקול: הדף יעלה בלי הרשימה הסטטית."""
     try:
-        with urllib.request.urlopen(API + '/lessons', timeout=20) as r:
+        req = urllib.request.Request(API + '/lessons', headers={'User-Agent': 'leokmei-build/1.0'})
+        with urllib.request.urlopen(req, timeout=20) as r:
             return json.loads(r.read().decode('utf-8')).get('items', [])
     except Exception as e:
         print('אזהרה SEO: קריאת השיעורים נכשלה, דף השיעורים ללא רשימה סטטית:', e)
@@ -119,8 +120,12 @@ def run(site, built, slug):
         desc = ('מסכת %s בקיצור: שלד הסוגיה בלבד, דף אחר דף, מתוך קיצור התלמוד הבבלי של לאוקמי גירסא.' % m)
         ld = {'@context': 'https://schema.org', '@type': 'Book', 'name': 'מסכת %s בקיצור' % m,
               'inLanguage': 'he', 'url': BASE + '/' + fn, 'isPartOf': {'@type': 'WebSite', 'name': NAME, 'url': BASE + '/'}}
-        if rewrite(site, fn, 'מסכת %s בקיצור · %s' % (m, NAME), desc, ld=ld):
+        hub = ('<noscript><main style="max-width:640px;margin:20px auto;padding:0 18px;font-family:serif"><h1>מסכת %s בקיצור</h1>'
+               '<p><a href="%s/">רשימת כל דפי המסכת</a></p></main></noscript>') % (esc(m), slug[m])
+        if rewrite(site, fn, 'מסכת %s בקיצור · %s' % (m, NAME), desc, ld=ld, body_extra=hub):
             urls.append((fn, '0.8'))
+    import build_static
+    urls += build_static.run(site, built, slug)
     sm = ['<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for fn, pr in urls:
         loc = BASE + '/' if fn == 'index.html' else BASE + '/' + fn

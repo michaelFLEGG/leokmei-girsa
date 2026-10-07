@@ -194,16 +194,59 @@ async function proposerOk(env, pid, pt) {
   const v = await env.STORE.get('pr:' + pid, 'json');
   return !!(v && sameKey(v.h, await sha256hex(String(pt))));
 }
+/* זהויות שאוחדו (7.10.2026): מציע שעבר כתובת או מכשיר ונוצרה לו זהות חדשה.
+   ברשומה pr:<החדש> השדה also מחזיק את הזהויות הישנות שלו. הצעות הזהויות
+   הישנות נראות לו, ואף אחת לא נמחקת ולא נדרסת. */
+async function pidSet(env, pid) {
+  const v = await env.STORE.get('pr:' + pid, 'json');
+  return new Set([pid].concat((v && Array.isArray(v.also)) ? v.also : []));
+}
+async function mergePid(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const from = str(b.from, 20), to = str(b.to, 20);
+  const dst = await env.STORE.get('pr:' + to, 'json');
+  if (!dst || !(await env.STORE.get('pr:' + from))) return bad('אחת הזהויות לא נמצאה', 404);
+  dst.also = Array.from(new Set((dst.also || []).concat([from])));
+  await env.STORE.put('pr:' + to, JSON.stringify(dst));
+  return json({ ok: true, also: dst.also });
+}
 /* המטא-נתונים של המפתח נושאים תקציר של ההצעה: כך אפשר לרשום, לסנן ולמיין
    אלפי הצעות בקריאת רשימה אחת, בלי לקרוא כל הצעה בנפרד (בתוכנית החינמית
    מספר הקריאות לבקשה מוגבל). הגבול של KV הוא 1024 בתים. */
+/* מיקום בתוך הדף: מספר הפסקה ואחריו המילה (מפתח הקטע u<פסקה>.<מילה>) */
+function posOf(k) {
+  const m = /^u(\d+)(?:\.(\d+))?/.exec(k || '');
+  return m ? (+m[1]) * 1000 + (+m[2] || 0) : 0;
+}
+/* סדר הש"ס ושמות המסכתות, למיון לפי מסכת */
+const SHAS = [['berakhot','ברכות'],['shabbat','שבת'],['eruvin','עירובין'],['pesachim','פסחים'],['shekalim','שקלים'],['yoma','יומא'],['sukkah','סוכה'],['beitzah','ביצה'],['rosh-hashanah','ראש השנה'],['taanit','תענית'],['megillah','מגילה'],['moed-katan','מועד קטן'],['chagigah','חגיגה'],['yevamot','יבמות'],['ketubot','כתובות'],['nedarim','נדרים'],['nazir','נזיר'],['sotah','סוטה'],['gittin','גיטין'],['kiddushin','קידושין'],['bava-kamma','בבא קמא'],['bava-metzia','בבא מציעא'],['bava-batra','בבא בתרא'],['sanhedrin','סנהדרין'],['makkot','מכות'],['shevuot','שבועות'],['avodah-zarah','עבודה זרה'],['horayot','הוריות'],['zevachim','זבחים'],['menachot','מנחות'],['chullin','חולין'],['bekhorot','בכורות'],['arakhin','ערכין'],['temurah','תמורה'],['keritot','כריתות'],['meilah','מעילה'],['tamid','תמיד'],['niddah','נדה']];
+const SHAS_I = {}, HE_I = {};
+SHAS.forEach((x, i) => { SHAS_I[x[0]] = i; });
+SHAS.map((x) => x[1]).sort((a, b) => a.localeCompare(b, 'he')).forEach((n, i) => { HE_I[n] = i; });
+const HE_OF = {}; SHAS.forEach((x) => { HE_OF[x[0]] = x[1]; });
+/* ערך מספרי אמיתי של ציון דף (ב, ג ... י, יא ... ק, קא), ועמוד ב אחרי עמוד א */
+function dafNum(d) {
+  const V = { 'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'כ': 20, 'ל': 30, 'מ': 40, 'נ': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'צ': 90, 'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400 };
+  const t = String(d || '').trim(); let n = 0;
+  for (const c of t.replace(/[.:"'׳״]/g, '')) n += V[c] || 0;
+  return n ? n * 2 + (t.endsWith(':') ? 1 : 0) : 0;
+}
+function locCmp(ord) {
+  return (a, b) => {
+    const ia = ord === 'shas' ? (SHAS_I[a.slug] ?? 99) : (HE_I[HE_OF[a.slug]] ?? 99);
+    const ib = ord === 'shas' ? (SHAS_I[b.slug] ?? 99) : (HE_I[HE_OF[b.slug]] ?? 99);
+    return (ia - ib) || (dafNum(a.d) - dafNum(b.d)) || ((a.po || 0) - (b.po || 0)) || (a.t - b.t);
+  };
+}
 function sgMeta(rec) {
   const m = {
     st: rec.st, slug: rec.slug, pid: rec.pid || '', tr: rec.tr ? 1 : 0,
     d: rec.daf || '', ty: rec.type || 'nusach', up: rec.up ? 1 : 0, un: rec.seen === 0 ? 1 : 0,
     v: (rec.ver = (rec.ver || 0) + 1), nm: (rec.name || '').slice(0, 24),
     n: (rec.note || '').slice(0, 90), w: (rec.was || '').slice(0, 50), mn: rec.mnew ? 1 : 0,
-    sk: rec.sk || '',
+    sk: rec.sk || '', po: posOf(rec.k),
   };
   const size = () => new TextEncoder().encode(JSON.stringify(m)).length;
   while (size() > 950 && m.n.length > 10) { m.n = m.n.slice(0, Math.floor(m.n.length * 0.8)); m.w = m.w.slice(0, Math.floor(m.w.length * 0.8)); }
@@ -224,10 +267,10 @@ async function mine(req, env, url) {
   /* מכשיר שמעולם לא שלח הצעה אינו רשום: אין לו הצעות, וזו אינה שגיאה (בלי 401 בקונסול) */
   if (/^[a-z0-9]{8,20}$/.test(pid) && !(await env.STORE.get('pr:' + pid))) return json({ ok: true, rows: [], unseen: 0 });
   if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
-  const rows = [];
+  const rows = [], mine = await pidSet(env, pid);
   for (const k of await listAll(env, 'sg:')) {
     const m = k.metadata;
-    if (!m || m.pid !== pid) continue;
+    if (!m || !mine.has(m.pid) || m.st === 'deleted') continue;
     rows.push({ id: k.name.slice(3), t: keyT(k.name), st: m.st, slug: m.slug, daf: m.d || '', type: m.ty || '',
                 up: m.up || 0, un: m.un || 0, v: m.v || 0, n: m.n || '', w: m.w || '', mn: m.mn || 0, sk: m.sk || '' });
   }
@@ -239,10 +282,10 @@ async function mineBatch(req, env) {
   try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
   const pid = str(b.pid, 20), pt = req.headers.get('x-proposer') || '';
   if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
-  const out = [];
+  const out = [], mine = await pidSet(env, pid);
   for (const id of (Array.isArray(b.ids) ? b.ids : []).slice(0, 40)) {
     const rec = await env.STORE.get('sg:' + str(id, 80), 'json');
-    if (rec && rec.pid === pid) out.push(rec);
+    if (rec && mine.has(rec.pid)) out.push(rec);
   }
   return json({ ok: true, items: out });
 }
@@ -262,7 +305,16 @@ async function mineAct(req, env, what) {
     return json({ ok: true });
   }
   const rec = await env.STORE.get('sg:' + str(b.id, 80), 'json');
-  if (!rec || rec.pid !== pid) return bad('ההצעה לא נמצאה', 404);
+  if (!rec || !(await pidSet(env, pid)).has(rec.pid)) return bad('ההצעה לא נמצאה', 404);
+  /* מחיקה רכה: ההצעה נשמרת (ארכיון "נמחקו על ידי המציע" אצל המנהל), נעלמת מן
+     התצוגות, וניתן לבטל. מחיקה חוזרת של הצעה שכבר נמחקה היא הצלחה, לא שגיאה. */
+  if (what === 'undelete') {
+    if (rec.st !== 'deleted') return json({ ok: true, rec });
+    rec.st = 'pending'; delete rec.deletedAt;
+    await putSg(env, rec);
+    return json({ ok: true, rec });
+  }
+  if (what === 'delete' && rec.st === 'deleted') return json({ ok: true });
   if (what === 'reply') {
     const text = str(b.text, 600).trim();
     if (!text || LINK.test(text)) return bad('תשובה ריקה, או שיש בה קישור');
@@ -272,7 +324,7 @@ async function mineAct(req, env, what) {
     return json({ ok: true, rec });
   }
   if (rec.st !== 'pending') return bad('אחרי שההצעה טופלה אי אפשר לשנות אותה. שלח הצעה חדשה');
-  if (what === 'delete') { await env.STORE.delete('sg:' + rec.id); return json({ ok: true }); }
+  if (what === 'delete') { rec.st = 'deleted'; rec.deletedAt = Date.now(); await putSg(env, rec); return json({ ok: true }); }
   if (what === 'edit') {
     const note = str(b.note).trim();
     if (!note) return bad('אין הצעה');
@@ -577,6 +629,12 @@ async function queue(req, env, url) {
   const keys = await listAll(env, 'sg:');
   const counts = {}, props = {};
   const want = [], legacy = [];
+  if (q.get('deleted') === '1') {      /* ארכיון "נמחקו על ידי המציע" */
+    const del = keys.filter((k) => k.metadata && k.metadata.st === 'deleted').sort((a, b) => keyT(b.name) - keyT(a.name)).slice(0, 60);
+    const items = [];
+    for (const k of del) { const v = await env.STORE.get(k.name, 'json'); if (v && v.st === 'deleted') items.push(v); }
+    return json({ ok: true, items, total: del.length });
+  }
   for (const k of keys) {
     const m = k.metadata || {};
     if (m.st !== 'pending') continue;
@@ -589,19 +647,21 @@ async function queue(req, env, url) {
     if (tyF && m.ty !== tyF) continue;
     if (skF && m.sk !== skF) continue;
     if (upF && !m.up) continue;
-    want.push({ name: k.name, tr: m.tr ? 1 : 0, t: keyT(k.name) });
+    want.push({ name: k.name, tr: m.tr ? 1 : 0, t: keyT(k.name), slug: m.slug, d: m.d, po: m.po });
   }
   for (const name of legacy.slice(0, 30)) {
     const rec = await env.STORE.get(name, 'json');
     if (rec) await putSg(env, rec);
   }
   for (const name of legacy) want.push({ name, tr: 0, t: keyT(name) });
-  want.sort((a, b) => (b.tr - a.tr) || (a.t - b.t));
+  const ord = q.get('ord') || '';
+  if (ord === 'loc' || ord === 'shas') want.sort(locCmp(ord));
+  else want.sort((a, b) => (b.tr - a.tr) || (a.t - b.t));
   const slice = want.slice(page * size, page * size + size);
   const items = [];
   for (const w of slice) {
     const v = await env.STORE.get(w.name, 'json');
-    if (v) items.push(v);
+    if (v && v.st === 'pending') items.push(v);     /* רשימת המפתחות מתעכבת עד דקה: הרשומה עצמה קובעת */
   }
   return json({ ok: true, items, counts, total: Object.values(counts).reduce((a, b) => a + b, 0),
                 matched: want.length, page, size, proposers: Object.values(props).sort((a, b) => b.n - a.n).slice(0, 60) });
@@ -829,6 +889,9 @@ async function exportAll(req, env) {
     const v = await env.STORE.get(k.name, 'json');
     if (v) out.edits[k.name.slice(3)] = v;
   }
+  out.proposers = {}; out.learning = {}; out.devices = {};
+  for (const k of await listAll(env, 'pr:')) { const v = await env.STORE.get(k.name, 'json'); if (v) out.proposers[k.name.slice(3)] = v; }
+  for (const k of await listAll(env, 'ln:')) { const v = await env.STORE.get(k.name, 'json'); if (v) out.learning[k.name.slice(3)] = v; }
   out.bakara = {};
   for (const k of await listAll(env, 'bk:c:')) {
     const v = await env.STORE.get(k.name, 'json');
@@ -1171,6 +1234,8 @@ export default {
       if (p === '/mine/batch' && req.method === 'POST') return await mineBatch(req, env);
       if (p === '/mine/edit' && req.method === 'POST') return await mineAct(req, env, 'edit');
       if (p === '/mine/delete' && req.method === 'POST') return await mineAct(req, env, 'delete');
+      if (p === '/mine/undelete' && req.method === 'POST') return await mineAct(req, env, 'undelete');
+      if (p === '/merge-pid' && req.method === 'POST') return await mergePid(req, env);
       if (p === '/mine/reply' && req.method === 'POST') return await mineAct(req, env, 'reply');
       if (p === '/mine/seen' && req.method === 'POST') return await mineAct(req, env, 'seen');
       if (p === '/reply' && req.method === 'POST') return await adminReply(req, env);

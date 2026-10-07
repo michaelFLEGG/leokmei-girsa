@@ -34,6 +34,20 @@ def _is_dead(run):
     return False
 
 
+def _run_text(r):
+    """טקסט הריצה: w:t, טאב רגיל, ו-w:ptab ביישור שמאל (טאב-לשמאל של האתר, U+2063).
+    ptab ביישור ימין (309 בקבצים הקיימים) אינו חלק מן הטקסט, כמו תמיד."""
+    out = []
+    for t in r:
+        if t.tag == W + 't':
+            out.append(t.text or '')
+        elif t.tag == W + 'tab':
+            out.append('\t')
+        elif t.tag == W + 'ptab' and t.get(W + 'alignment') == 'left':
+            out.append('\u2063')
+    return ''.join(out)
+
+
 def convert(path):
     z = zipfile.ZipFile(path)
     doc = etree.fromstring(z.read('word/document.xml'))
@@ -63,8 +77,7 @@ def convert(path):
         for r in p.iter(W + 'r'):
             if _is_dead(r):
                 continue
-            txt = ''.join((t.text or '') if t.tag == W + 't' else ('\t' if t.tag == W + 'tab' else '')
-                          for t in r if t.tag in (W + 't', W + 'tab'))
+            txt = _run_text(r)
             if not txt:
                 continue
             rp = r.find('w:rPr', ns)

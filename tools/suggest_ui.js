@@ -351,7 +351,8 @@
       sel('sqfp',[['','כל המציעים']].concat(SQPROPS.map(x=>[x.pid,(x.name||'בלי שם')+' ('+x.n+')'])),SQF.pid,"SQF.pid=this.value;SQPAGE=0;queueLoad()")+
       sel('sqft',[['','כל הסוגים']].concat(Object.keys(STYPES).map(t=>[t,STYPES[t][0]])),SQF.ty,"SQF.ty=this.value;SQPAGE=0;queueLoad()")+
       '<input type="text" id="sqfd" placeholder="דף" size="5" value="'+esc(SQF.daf)+'" onchange="SQF.daf=this.value.trim();SQPAGE=0;queueLoad()" aria-label="דף">'+
-      '<label><input type="checkbox" '+(SQF.up?'checked ':'')+'onchange="SQF.up=this.checked?1:0;SQPAGE=0;queueLoad()"> עודכנו בלבד</label></div>'}
+      '<label><input type="checkbox" '+(SQF.up?'checked ':'')+'onchange="SQF.up=this.checked?1:0;SQPAGE=0;queueLoad()"> עודכנו בלבד</label>'+
+      '<button class="'+(SQF.ty==='style'?'on':'')+'" onclick="sqStyleFilter()" title="כל ההצעות לשינוי סגנון מרוכזות יחד: אשר אחת-אחת (Enter), או את כל ההצעות מאותו סוג של אותו מציע">הצעות סגנון'+(SQF.ty==='style'?' ✓':'')+'</button></div>'}
   function sqPager(){
     const pages=Math.max(1,Math.ceil(SQMATCH/SQSIZE));
     return '<div class="sgbar"><button '+(SQPAGE>0?'':'disabled ')+'onclick="SQPAGE--;queueLoad()">הקודם</button>'+
@@ -413,7 +414,9 @@
     const st=STYPES[g.type]||STYPES.nusach;
     /* בהצעה על הנוסח: מחוק באדום ומוסף בירוק, בהקשר השורה, כמו עקוב אחר שינויים */
     let ctx='';
-    if(s&&g.type==='nusach'&&s.t.indexOf(g.was)>-1){
+    if(g.edit&&s){ctx=sqEditCtx(g,s)}
+    else if(g.edit){ctx='<q>'+esc((g.was||'').slice(0,120))+'</q><small>לא אותר בקובץ הנוכחי: הטקסט השתנה מאז ההצעה</small>'}
+    else if(s&&g.type==='nusach'&&s.t.indexOf(g.was)>-1){
       const i=s.t.indexOf(g.was);
       ctx='<div class="sqctx">'+esc(s.t.slice(Math.max(0,i-60),i))+'<del style="color:#a83c2f;background:#fbe5e1">'+esc(g.was)+'</del><ins style="color:#2e6b3f;background:#e3f3e6;text-decoration:none">'+esc(g.note)+'</ins>'+esc(s.t.slice(i+g.was.length,i+g.was.length+60))+'</div>';
     }else if(s){ctx='<div class="sqctx">'+esc(s.t).replace(esc(g.was),'<mark>'+esc(g.was)+'</mark>')+'</div>'}
@@ -421,10 +424,11 @@
     const known=g.pid?true:false;
     return '<div class="sgrow'+(g.tr?' trust':'')+(s?'':' edlost')+'" data-id="'+id+'" data-n="'+(n===undefined?-1:n)+'" style="border-right:4px solid '+st[2]+'">'+
       '<label class="sqck"><input type="checkbox" class="sqsel" data-id="'+id+'" aria-label="סמן הצעה"> </label><small>'+esc(g.daf||'')+(g.name?' · '+esc(g.name):' · בלי שם')+' · '+when+'</small> '+tyChip(g.type)+(g.tr?'<span class="stchip" style="background:#c9a24a">מהימן</span>':'')+
-      (g.mnew?'<span class="stchip" style="background:#a83c2f">הודעה חדשה</span>':'')+sqUpd(g)+ctx+
-      (g.type==='nusach'?'':'<b>'+esc(g.note)+'</b>')+thrHTML(g,true)+
+      (g.mnew?'<span class="stchip" style="background:#a83c2f">הודעה חדשה</span>':'')+(g.sk?'<span class="stchip" style="background:#6a4a8f">'+esc(SKL[g.sk]||'')+'</span>':'')+sqUpd(g)+ctx+
+      ((g.type==='nusach'&&!g.edit)?'':'<b>'+esc(g.note)+'</b>')+thrHTML(g,true)+
       (s?'<button onclick="sqDecide(\''+id+'\',\'accepted\')">אשר</button>'+
-         (g.type==='nusach'?'<button onclick="sqDecide(\''+id+'\',\'edited\')">ערוך ואשר</button>':'')+
+         (g.type==='nusach'&&!g.edit?'<button onclick="sqDecide(\''+id+'\',\'edited\')">ערוך ואשר</button>':'')+
+         (g.edit&&g.pid?'<button onclick="sqSame(\''+id+'\')" title="כל ההצעות של המציע הזה מהסוג הזה, עם תצוגה מקדימה">אשר את כל מאותו סוג</button>':'')+
          '<button onclick="sqJump(\''+id+'\')">הצג</button>':'<button onclick="sqDecide(\''+id+'\',\'stale\')">סמן כהתיישנה</button>')+
       '<button onclick="sqDecide(\''+id+'\',\'rejected\')">דחה</button>'+
       '<button onclick="sqSkip(\''+id+'\')">דלג</button><button onclick="sqReply(\''+id+'\')">השב</button>'+
@@ -441,6 +445,7 @@
     const g=QQ.find(x=>x.id===id);if(!g)return;
     let edit=null,now='',reason='';
     const accept=(st==='accepted'||st==='edited');
+    if(accept&&g.edit)return sqDecideEdit(id,st);
     if(accept&&g.type==='nusach'){
       const s=sqLocate(g,slotsFull());
       if(!s){sqAlert('ההצעה לא אותרה בקובץ הנוכחי ואי אפשר להחיל אותה.');return}
@@ -475,6 +480,11 @@
     const u=SQUNDO;if(!u){toast('אין מה לבטל.');return}
     SQUNDO=null;
     try{await api('/decide',{method:'POST',body:JSON.stringify({id:u.id,st:'pending'})})}catch(e){alert('הביטול לא נרשם: '+e.message);return}
+    if(u.struct){
+      /* ביטול שינוי מבנה: מחזירים את הנתונים למקורם בטעינה מחדש של הדף */
+      edKeys();tomb(u.struct.k);ED=ED.filter(x=>x!==u.struct);saveED();
+      try{await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:TOMB,sty:D.sty})})}catch(e){}
+      location.reload();return}
     if(u.k){
       const cur=ED.find(x=>x.sg===u.id);
       if(cur){edKeys();tomb(cur.k);ED=ED.filter(x=>x!==cur)}
@@ -512,7 +522,7 @@
     if(e.key==='ArrowDown'||e.key==='j'){e.preventDefault();SQCUR=Math.min(rows.length-1,SQCUR+1);sqCurPaint()}
     else if(e.key==='ArrowUp'||e.key==='k'){e.preventDefault();SQCUR=Math.max(0,SQCUR-1);sqCurPaint()}
     else if(!id)return;
-    else if(e.code==='KeyA'){e.preventDefault();sqDecide(id,'accepted')}
+    else if(e.code==='KeyA'||(e.key==='Enter'&&SQF.ty==='style')){e.preventDefault();sqDecide(id,'accepted')}
     else if(e.code==='KeyD'){e.preventDefault();sqDecide(id,'rejected')}
     else if(e.code==='KeyS'){e.preventDefault();sqSkip(id)}
     else if(e.code==='KeyE'){e.preventDefault();sqDecide(id,'edited')}
@@ -549,7 +559,7 @@
      לקובצי הוורד או לתיקיית השומר. הלומד קורא אותה בכל סבב למידה. */
   let NT=null;
   async function ntLoad(){if(!isAdmin()||!admKey())return;
-    try{const j=await api('/notes');NT=j.items||[]}catch(e){NT=null}ntBadge()}
+    try{const j=await api('/notes');NT=j.items||[]}catch(e){NT=null}ntBadge();if(typeof ntMark==='function')ntMark()}
   function ntBadge(){const b=$('#ntbtn');if(!b)return;
     b.style.display=isAdmin()?'':'none';
     const n=NT?NT.filter(x=>!x.learned).length:0;
@@ -582,15 +592,21 @@
     m.addEventListener('keydown',e=>{if(e.key==='Escape'){m.remove();e.stopPropagation()}else if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){$('#nts').click()}});
     $('#nts').onclick=async()=>{const v=t.value.trim();if(!v){flash('ההערה ריקה');return}
       try{const j=await api('/notes',{method:'POST',body:JSON.stringify({op:'add',slug:SLUG,masechet:D.masechet,daf:ctx.daf,k:ctx.k,sel:ctx.sel,was:ctx.was,now:ctx.now,note:v})});
-        if(NT)NT.unshift(j.item);else NT=[j.item];ntBadge();m.remove();flash('ההערה נשמרה');if($('#nt')&&$('#nt').classList.contains('open'))ntDraw()}
+        if(NT)NT.unshift(j.item);else NT=[j.item];ntBadge();if(typeof ntMark==='function')ntMark();m.remove();flash('ההערה נשמרה');if($('#nt')&&$('#nt').classList.contains('open'))ntDraw()}
       catch(e){alert(e.message)}}}
+  let NTARCH=false;
   function ntOpen(){panel('nt');ntLoad().then(ntDraw)}
   function ntDraw(){const box=$('#ntb');if(!box)return;
     if(!NT){box.innerHTML='<div class="edsum">אי אפשר לטעון את ההערות (בדוק שיש מפתח מנהל במכשיר).</div>';return}
     let h='<div class="dr">ההערות פרטיות: גלויות רק לך ולקלוד, ואינן נכנסות לאתר, לריפו או לקובצי הוורד.</div>';
     if(!NT.length)h+='<div class="edsum">עדיין אין הערות. בעורך: Ctrl+Alt+H, או הכפתור "הערה לקלוד" בחלונית הסגנונות.</div>';
-    NT.forEach(x=>{h+='<div class="sgrow"><small>'+esc(HD.dateTime(x.t))+' · '+esc(x.masechet||x.slug||'')+(x.daf?' · דף '+esc(x.daf):'')+'</small>'+
-      (x.learned?' <span class="stchip" style="background:#2e6b3f">נלמד</span>':'')+
+    /* מצב: חדשה (קלוד טרם למד) / נלמדה. נלמדה יורדת מהתצוגה ונשמרת בארכיון הלמידה */
+    const arch=NT.filter(x=>x.learned).length,show=NT.filter(x=>NTARCH?x.learned:!x.learned);
+    h+='<div class="sgbar"><button class="'+(NTARCH?'':'on')+'" onclick="NTARCH=false;ntDraw()">חדשות ('+NT.filter(x=>!x.learned).length+')</button>'+
+       '<button class="'+(NTARCH?'on':'')+'" onclick="NTARCH=true;ntDraw()">ארכיון הלמידה ('+arch+')</button></div>';
+    if(!show.length)h+='<div class="edsum">'+(NTARCH?'הארכיון ריק.':'אין הערות חדשות. קלוד למד את כולן.')+'</div>';
+    show.forEach(x=>{h+='<div class="sgrow"><small>'+esc(HD.dateTime(x.t))+' · '+esc(x.masechet||x.slug||'')+(x.daf?' · דף '+esc(x.daf):'')+'</small>'+
+      (x.learned?' <span class="stchip" style="background:#2e6b3f">נלמדה</span>':' <span class="stchip" style="background:#b0721a">חדשה</span>')+
       (x.sel?'<div class="sqctx">'+esc(x.sel.slice(0,120))+'</div>':'')+
       '<div>'+esc(x.note)+'</div>'+
       '<button data-id="'+esc(x.id)+'" onclick="ntEdit(this.dataset.id)">עריכה</button> <button data-id="'+esc(x.id)+'" onclick="ntDel(this.dataset.id)">מחיקה</button> <button data-id="'+esc(x.id)+'" onclick="ntLearned(this.dataset.id,'+(x.learned?0:1)+')">'+(x.learned?'סמן כלא נלמד':'סמן כנלמד')+'</button></div>'});
@@ -601,7 +617,7 @@
   async function ntDel(id){if(!confirm('למחוק את ההערה?'))return;
     try{await api('/notes',{method:'POST',body:JSON.stringify({op:'del',id})});NT=NT.filter(y=>y.id!==id);ntDraw();ntBadge()}catch(e){alert(e.message)}}
   async function ntLearned(id,on){try{await api('/notes',{method:'POST',body:JSON.stringify({op:'learned',id,on:!!on})});
-    const x=NT.find(y=>y.id===id);if(x)x.learned=on?Date.now():0;ntDraw();ntBadge()}catch(e){alert(e.message)}}
+    const x=NT.find(y=>y.id===id);if(x)x.learned=on?Date.now():0;ntDraw();ntBadge();if(typeof ntMark==='function')ntMark()}catch(e){alert(e.message)}}
   document.addEventListener('keydown',e=>{
     if(!EDIT||!isAdmin())return;
     if(e.ctrlKey&&e.altKey&&!e.shiftKey&&!e.metaKey&&e.code==='KeyH'){e.preventDefault();ntAdd()}});

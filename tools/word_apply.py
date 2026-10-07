@@ -26,7 +26,7 @@ import os, sys, json, shutil, time, zipfile, datetime, argparse, io, re
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lxml import etree
-from docx2json import convert
+from docx2json import convert, _run_text
 import hagaha
 
 NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
@@ -87,9 +87,18 @@ def _mkrun(text, rpr, deleted=False):
     r = etree.SubElement(etree.Element('x'), W + 'r')
     if rpr is not None:
         r.append(etree.fromstring(etree.tostring(rpr)))
-    t = etree.SubElement(r, W + ('delText' if deleted else 't'))
-    t.text = text
-    t.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+    # U+2063 = טאב יישור לשמאל (Ctrl+L באתר): נכתב כ-w:ptab, ולא כטקסט
+    parts = text.split('\u2063')
+    for n, part in enumerate(parts):
+        if n:
+            pt = etree.SubElement(r, W + 'ptab')
+            pt.set(W + 'relativeTo', 'margin')
+            pt.set(W + 'alignment', 'left')
+            pt.set(W + 'leader', 'none')
+        if part or len(parts) == 1:
+            t = etree.SubElement(r, W + ('delText' if deleted else 't'))
+            t.text = part
+            t.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
     return r
 
 
@@ -105,8 +114,7 @@ def _runs_of(p):
             el = el.getparent()
         if dead:
             continue
-        txt = ''.join((t.text or '') if t.tag == W + 't' else ('\t' if t.tag == W + 'tab' else '')
-                      for t in r if t.tag in (W + 't', W + 'tab'))
+        txt = _run_text(r)
         if not txt:
             continue
         out.append((pos, txt, r))
@@ -911,6 +919,147 @@ def _apply_split_merge(path, ops, author, masechet, log=print, dry=False):
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
 
+
+# ------------------------------------- מחיקת עיטור והחלפתו בכותרת (pdel / prep)
+# מנה 2, 7.10.2026. העיטור (פסקת החציצה שבאה במקום ***) נמחק במעקב: כל התוכן
+# שלו וסימן הפסקה. ההחלפה בכותרת היא אותה מחיקה, ובצדה פסקה חדשה בסגנון
+# הכותרת (נושא או ד"ה משנה) אחרי הפסקה שלפניה. העיגון הוא הטקסט של שתי
+# הפסקאות השכנות (texts=[לפני, אחרי]), לא מספר הפסקה; ורצף של כמה פסקאות
+# חציצה בין שתיהן (האתר מציג אותן כעיטור אחד) נמחק כולו.
+
+def _delete_paragraph(p, author, when, nextid):
+    """מוחק פסקה במעקב: כל ריצה חיה נעטפת ב-w:del, וסימן הפסקה מסומן כנמחק."""
+    for pos, txt, r in _runs_of(p):
+        parent = r.getparent()
+        # ריצה בתוך הוספה-במעקב (w:ins) נמחקת כמו שוורד עצמו עושה: w:del בתוך ה-w:ins.
+        # כל מבנה אחר (מחיקה קיימת, העברה) - לא נוגעים.
+        if parent.tag not in (W + 'p', W + 'ins'):
+            return False
+        idx = list(parent).index(r)
+        d = etree.Element(W + 'del')
+        d.set(W + 'id', str(nextid()))
+        d.set(W + 'author', author)
+        d.set(W + 'date', when)
+        d.append(_mkrun(txt, _rpr(r), deleted=True))
+        parent.remove(r)
+        parent.insert(idx, d)
+    _mark_para(p, 'del', author, when, nextid)
+    return True
+
+
+def _apply_deco(path, ops, author, masechet, log=print, dry=False):
+    from styles_map import role_of
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    before = convert(path)
+    nb = [_nw(b['text']) for b in before]
+    role = [role_of(b) for b in before]
+    hz = [r == 'hatz' for r in role]
+    # בלוקים שהאתר אינו מציג כפריט טקסט (ריהוט עמוד, חלונות כותרת, ציוני דף): שקופים לעיגון
+    clear = [r in ('skip', 'anchor', 'daf') for r in role]
+
+    plan, missed = [], []
+    for op in ops:
+        t = op.get('texts') or []
+        if len(t) != 2:
+            missed.append((op, 'עיגון העיטור דורש את שתי הפסקאות השכנות'))
+            continue
+        w0, w1 = _nw(t[0]), _nw(t[1])
+        hits = []
+        for i in range(len(before)):
+            if hz[i] or clear[i]:
+                continue
+            if w0 and nb[i] != w0:
+                continue
+            if not w0 and i != 0 and any(not (hz[k] or clear[k]) for k in range(i)):
+                continue
+            j, span = i + 1, []
+            while j < len(before) and (hz[j] or clear[j]):
+                if hz[j]:
+                    span.append(j)
+                j += 1
+            if not span:
+                continue
+            if (w1 and (j >= len(before) or nb[j] != w1)) or (not w1 and j < len(before)):
+                continue
+            hits.append((i, span))
+        if len(hits) != 1:
+            missed.append((op, 'לא אותר עיטור יחיד בין שתי הפסקאות (%d מועמדים)' % len(hits)))
+            continue
+        plan.append((hits[0][0], hits[0][1], op))
+    if not plan:
+        return {'applied': 0, 'missed': missed, 'backup': None, 'verified': True}
+
+    gone = set()
+    for i, span, op in plan:
+        gone.update(span)
+    want_after = []
+    for n, b in enumerate(before):
+        for i, span, op in plan:
+            if op['kind'] == 'prep' and n == i:
+                want_after.append(nb[n])
+                want_after.append(_nw((op.get('res') or [''])[0]))
+                break
+        else:
+            if n not in gone:
+                want_after.append(nb[n])
+    if dry:
+        return {'applied': len(plan), 'missed': missed, 'backup': None, 'verified': None,
+                'plan': [(i, o['kind']) for i, _, o in plan]}
+
+    bk = backup(path, masechet)
+    log('גיבוי: ' + bk)
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    settings = z.read('word/settings.xml')
+    try:
+        sty_ids = _style_ids(z.read('word/styles.xml'))
+    except KeyError:
+        sty_ids = {}
+    z.close()
+    counter = [9700]
+
+    def nextid():
+        counter[0] += 1
+        return counter[0]
+
+    when = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    xml_ps = _paragraph_map(doc, before)
+    done = 0
+    for i, span, op in sorted(plan, key=lambda x: -x[0]):
+        ok = True
+        for j in span:
+            p = xml_ps.get(before[j]['i'])
+            if p is None or not _delete_paragraph(p, author, when, nextid):
+                ok = False
+                break
+        if not ok:
+            missed.append((op, 'לא ניתן למחוק את העיטור כאן (שינוי מעקב קיים או פסקה חסרה)'))
+            continue
+        if op['kind'] == 'prep':
+            pp = xml_ps.get(before[i]['i'])
+            new_text = (op.get('res') or [''])[0]
+            if pp is None or _insert_paragraph(pp, {'where': 'after', 'style': op.get('style') or ''},
+                                              [nb[i], new_text], sty_ids, author, when, nextid) is None:
+                missed.append((op, 'לא ניתן להוסיף את הכותרת במקום העיטור'))
+                continue
+        done += 1
+
+    tmp = path + '.new'
+    _rezip(path, tmp, {'word/document.xml':
+                       etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
+                       'word/settings.xml': _ensure_track(settings)[0]})
+    after = convert(tmp)
+    got = [_nw(b['text']) for b in after]
+    if got != want_after:
+        os.remove(tmp)
+        log('האימות נכשל. הקובץ לא נגע.')
+        return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
+    os.replace(tmp, path)
+    log('נכתבו %d שינויי עיטור, ואומתו' % done)
+    return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
+
+
 # ------------------------------------- כותרת צד: Ctrl+נקודה (pside / punside)
 
 def apply_struct(path, ops, author, masechet, log=print, dry=False):
@@ -919,7 +1068,8 @@ def apply_struct(path, ops, author, masechet, log=print, dry=False):
     hs = [o for o in ops if o.get('kind') == 'phsplit']
     old = [o for o in ops if o.get('kind') in ('psplit', 'pmerge', 'pins')]
     side = [o for o in ops if o.get('kind') in ('pside', 'punside')]
-    rest = [o for o in ops if o not in old and o not in side and o not in hs]
+    deco = [o for o in ops if o.get('kind') in ('pdel', 'prep')]
+    rest = [o for o in ops if o not in old and o not in side and o not in hs and o not in deco]
     out = {'applied': 0, 'missed': [(o, 'סוג שינוי מבנה לא מוכר') for o in rest],
            'backup': None, 'verified': True}
     # כותרת בשתיים: קודם הפיצול (הפסקה השנייה יורשת את סגנון הכותרת), ואחריו
@@ -944,7 +1094,7 @@ def apply_struct(path, ops, author, masechet, log=print, dry=False):
         out['missed'] += r2.get('missed') or []
         if r2.get('verified') is False:
             out['verified'] = False
-    for fn, batch in ((_apply_split_merge, old), (_apply_side, side)):
+    for fn, batch in ((_apply_split_merge, old), (_apply_side, side), (_apply_deco, deco)):
         if not batch:
             continue
         r = fn(path, batch, author, masechet, log=log, dry=dry)

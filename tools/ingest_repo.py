@@ -98,6 +98,12 @@ def ops_of(doc):
             elif kind == 'hmerge':
                 mops.append({'kind': 'pmerge', 'texts': e.get('texts') or [],
                              'res': e.get('resT') or []})
+            elif kind in ('hdel', 'hrep'):
+                # עיטור (***): מחיקה, או החלפה בכותרת (נושא / ד"ה משנה) שנכתב בה טקסט.
+                # texts=[הפסקה שלפני, הפסקה שאחרי]; res=נוסח הכותרת החדשה; style=שם הסגנון בוורד
+                mops.append({'kind': 'pdel' if kind == 'hdel' else 'prep',
+                             'texts': e.get('texts') or [], 'res': e.get('resT') or [],
+                             'style': e.get('psw') or '', 'daf': e.get('daf', '')})
             elif kind in ('side', 'unside'):
                 # כותרת צד (Ctrl+נקודה): res[0]=[סגנון, גוף], res[1]=[חלון],
                 # res[2]=[היסט החיתוך, אורכו] בתוך הנוסח שהיה.

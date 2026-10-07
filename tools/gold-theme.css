@@ -1,0 +1,60 @@
+/* מערכת העיצוב של האתר (מנה 2, 7.10.2026): כפתורי זהב בתלת-מימד.
+   מקור אחד לכל האתר: דפי המסכתות, השער ומערכת הלומד. גדלים, ריווח, צבעים וצל נקבעים כאן
+   כמשתנים, ולא כעיצוב נקודתי לכל כפתור. */
+:root{
+  --g-hi:#f6e3a1;--g-mid:#d9b45c;--g-lo:#b58b30;--g-edge:#8f6d22;--g-ink:#2b2620;
+  --g-r:6px;--g-pad:4px 12px;--g-fs:14px;--g-h:32px;
+  --g-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -2px 0 rgba(120,85,15,.35),0 2px 3px rgba(0,0,0,.38);
+  --g-glow:0 0 11px rgba(244,208,98,.75);
+  --g-press:inset 0 2px 4px rgba(80,55,5,.55);
+}
+/* הכפתור הזהוב: ברירת המחדל לכל כפתור באתר. החרגות: כפתור סגירה, כפתור "מקור" הצף, ותגיות פנימיות */
+body :is(.bar,.panel,.modal,.sgpop,.sgbar,.sgrow,.edbar,.edtools,.stybar,.sideask,.sgmodal,.edsum,#decobar,#navp,.edrow,.bkcard,.lm-toast,#lm-fin,header)
+  button:not(.x):not(.srcb):not(.stico):not(.ddb.mini-link):not(.lm-plain){
+  font:600 var(--g-fs)/1.25 'Frank','Frank Ruhl Libre',serif;color:var(--g-ink);
+  background:linear-gradient(180deg,var(--g-hi) 0%,var(--g-mid) 46%,var(--g-lo) 100%);
+  border:1px solid var(--g-edge);border-radius:var(--g-r);padding:var(--g-pad);min-height:var(--g-h);
+  box-shadow:var(--g-shadow);text-shadow:0 1px 0 rgba(255,255,255,.5);cursor:pointer;
+  transition:filter .12s,box-shadow .12s,transform .06s}
+body :is(.bar,.panel,.modal,.sgpop,.sgbar,.sgrow,.edbar,.edtools,.stybar,.sideask,.sgmodal,.edsum,#decobar,#navp,.edrow,.bkcard,.lm-toast,#lm-fin,header)
+  button:not(.x):not(.srcb):not(.stico):not(.lm-plain):hover{
+  filter:brightness(1.07) saturate(1.05);box-shadow:var(--g-shadow),var(--g-glow)}
+body :is(.bar,.panel,.modal,.sgpop,.sgbar,.sgrow,.edbar,.edtools,.stybar,.sideask,.sgmodal,.edsum,#decobar,#navp,.edrow,.bkcard,.lm-toast,#lm-fin,header)
+  button:not(.x):not(.srcb):not(.stico):not(.lm-plain):active{
+  transform:translateY(1px);box-shadow:var(--g-press);filter:brightness(.96)}
+/* מצב פעיל / לחוץ / נטען / מושבת */
+body :is(.bar,.panel,.modal,.sgpop,.sgbar,.sgrow,.edbar,.edtools,.stybar,.sideask,.sgmodal,#decobar,#navp) button.on{
+  background:linear-gradient(180deg,var(--g-lo) 0%,var(--g-mid) 100%);box-shadow:var(--g-press),0 0 0 2px rgba(255,255,255,.55)}
+body button.busy{cursor:progress;filter:grayscale(.35) brightness(.95)}
+body button:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.4);box-shadow:none}
+/* נגישות מקלדת: טבעת מיקוד ברורה */
+body button:focus-visible,body select:focus-visible,body input:focus-visible,body a:focus-visible{
+  outline:2px solid #fff;outline-offset:2px;box-shadow:0 0 0 4px #7a5a14}
+/* שדות ובוחרים בסרגל: אותו קו עיצוב, כהים */
+body .bar select,body .bar input{background:#3c342b;color:#f1ead9;border:1px solid #5a4d3c;border-radius:var(--g-r);min-height:var(--g-h);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
+body .bar select:hover,body .bar input:hover{border-color:var(--g-mid)}
+/* בסרגל העליון: קומפקטי, כדי שהכול ייכנס בשורה אחת */
+body .bar button{padding:2px 9px;min-height:30px;font-size:13.5px}
+/* כפתור ראשי בקבוצה, וכפתור משני קטן שלצדו (תפריט) */
+body .bar .bg>button.primary{font-weight:800}
+body .bar .bg .ddb.mini{padding:4px 7px;min-width:0}
+/* תג מונה (הצעות ממתינות וכד') */
+.g-badge{display:inline-block;min-width:1.35em;padding:0 5px;margin-inline-start:5px;border-radius:9px;background:#a83c2f;color:#fff;
+  font:700 12px/1.45 'Frank',serif;text-align:center;text-shadow:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+/* טולטיפ עברי: title מקורי של הדפדפן, ולצדו data-k (הקיצור) כשיש */
+@media (hover:none){body :is(.bar,.edtools) button{min-height:38px}}
+@media (prefers-reduced-motion:reduce){body button{transition:none}}
+/* טלפון: הסרגל נגלל לרוחב, התפריטים נפתחים מתחתיו ברוחב המסך (לא נחתכים), והחיפוש צר */
+@media (max-width:700px){
+  body .bar{overflow-x:auto;scrollbar-width:none}
+  body .bar::-webkit-scrollbar{display:none}
+  body .bar .mn{display:none}
+  body .bar{padding:6px 8px;gap:6px}
+  body .bar .nm{font-size:17px}
+  body .bar .nav button{font-size:0!important;min-width:36px!important;padding:2px 6px!important}
+  body .bar .nav button:first-child::after{content:'›';font-size:22px;line-height:1}
+  body .bar .nav button:last-child::after{content:'‹';font-size:22px;line-height:1}
+  body .bar input{width:68px}body .bar input:focus{width:140px}
+  body .bar .dd>.ddp,body .bar .more>.ddp{position:fixed;top:calc(var(--barH,46px) + 3px);left:8px;right:8px;width:auto;max-height:72vh;overflow:auto}
+}

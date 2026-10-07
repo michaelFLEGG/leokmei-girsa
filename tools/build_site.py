@@ -99,6 +99,92 @@ def _find_run(pages, texts, daf):
     return None
 
 
+
+# ------------------------------------------------ עיטור (***): מחיקה והחלפה בכותרת
+# מנה 2, 7.10.2026. הרשומה: kind=hdel|hrep, texts=[הפסקה שלפני העיטור, הפסקה שאחריו],
+# ועבור hrep: res=[[head, HTML]], resT=[נוסח], t = מזהה היחידה החדשה.
+# העיטור הוא יחידה משלו (k=hatz) או שורה בתוך משנה (['hatz', ...]). הפסקאות השכנות הן
+# הפריטים הקרובים ביותר שאינם עיטור, בכל צד.
+def _deco_items(pages):
+    items = []
+    for p in pages:
+        for u in p['units']:
+            k = u['k']
+            if k == 'hatz':
+                items.append({'t': '', 'deco': True, 'p': p, 'u': u, 'j': None})
+            elif k in ('u', 'm'):
+                for j, x in enumerate(u['l']):
+                    if x[0] == 'hatz':
+                        items.append({'t': '', 'deco': True, 'p': p, 'u': u, 'j': j})
+                    else:
+                        items.append({'t': _wn(_bare(x[1])), 'deco': False, 'p': p, 'u': u, 'j': j})
+            elif _bare(u.get('a') or ''):
+                items.append({'t': _wn(_bare(u['a'])), 'deco': False, 'p': p, 'u': u, 'j': None})
+    return items
+
+
+def _deco_nb(items, i):
+    a = next((items[k]['t'] for k in range(i - 1, -1, -1) if not items[k]['deco']), '')
+    b = next((items[k]['t'] for k in range(i + 1, len(items)) if not items[k]['deco']), '')
+    return a, b
+
+
+def _deco_find(pages, e):
+    texts = e.get('texts') or []
+    if len(texts) != 2:
+        return None
+    w0, w1 = _wn(texts[0]), _wn(texts[1])
+    items = _deco_items(pages)
+    hits = [it for i, it in enumerate(items) if it['deco'] and _deco_nb(items, i) == (w0, w1)]
+    if len(hits) == 1:
+        return hits[0]
+    if len(hits) > 1 and e.get('daf'):
+        k0 = _daf_key(e['daf'])
+        near = [h for h in hits if k0 is not None and _daf_key(h['p']['daf']) is not None
+                and abs(_daf_key(h['p']['daf']) - k0) <= 1]
+        if len(near) == 1:
+            return near[0]
+    return None
+
+
+def _deco_apply(pages, e):
+    it = _deco_find(pages, e)
+    if it is None:
+        return False
+    u, p = it['u'], it['p']
+    if it['j'] is not None:
+        if e.get('kind') == 'hrep':
+            return False                       # בתוך משנה: רק מחיקה
+        u['l'].pop(it['j'])
+        u.pop('lv', None)
+        return True
+    if e.get('kind') == 'hdel':
+        p['units'].remove(u)
+        return True
+    res = e.get('res') or []
+    if not res or not res[0] or res[0][0] not in ('nose', 'dh'):
+        return False
+    nu = {'k': res[0][0], 'a': res[0][1], 'l': [], 'id': e['t'], 's': ''}
+    p['units'][p['units'].index(u)] = nu
+    return True
+
+
+def _deco_done(pages, e):
+    texts = e.get('texts') or []
+    if len(texts) != 2:
+        return False
+    w0, w1 = _wn(texts[0]), _wn(texts[1])
+    mid = [_wn((e.get('resT') or [''])[0])] if e.get('kind') == 'hrep' else []
+    items = _deco_items(pages)
+    for i in range(len(items) - len(mid) - 1):
+        seq = items[i:i + len(mid) + 2]
+        if any(x['deco'] for x in seq):
+            continue
+        if [x['t'] for x in seq] == [w0] + mid + [w1]:
+            return True
+    return False
+
+
 # ------------------------------------------------ כותרת צד (Ctrl+נקודה)
 # מילה (או פסקה) הופכת לחלון כותרת במסילה הימנית. הרשומה:
 #   texts=[נוסח הפסקה שהיה]
@@ -525,8 +611,9 @@ def _apply_site_edits(pages, slug, qa):
                     lost.append(e)
                     keep.append(e)
                 continue
-            if kind in ('hsplit', 'hmerge'):
-                ap, dn = (_hsplit_apply, _hsplit_done) if kind == 'hsplit' else (_hmerge_apply, _hmerge_done)
+            if kind in ('hsplit', 'hmerge', 'hdel', 'hrep'):
+                ap, dn = ((_hsplit_apply, _hsplit_done) if kind == 'hsplit' else (_hmerge_apply, _hmerge_done)
+                          if kind == 'hmerge' else (_deco_apply, _deco_done))
                 if ap(pages, e):
                     done += 1
                     keep.append(e)
@@ -1563,6 +1650,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .win.w2{line-height:var(--lhpx)}
   /* יחידה שאין לה ציון דף: נתיב הדף מתאפס, והחלון מקבל את כל המסילה */
   .rail:not(:has(.dafmark)){grid-template-columns:minmax(0,1fr) 0}
+  /* כותרת הצד קודמת: היא צמודה לטקסט, וציון הדף מימין לה. בצפיפות מאוד - ציון הדף מועלה מעט
+     (dup), כך שכותרת הצד ומרקמה עם הטקסט אינם נפגעים לעולם. */
+  .rail.hw{grid-template-columns:calc(var(--dafw,2.9em) + .4em) minmax(0,1fr)}
+  .rail.hw .dafmark{grid-column:1;justify-self:start}
+  .rail.hw .win{grid-column:2;justify-self:end}
+  .rail.hw.dup{grid-template-columns:0 minmax(0,1fr)}
+  .rail.hw.dup .dafmark{transform:translateY(-.95em);white-space:nowrap}
+  .rail.hw:not(:has(.dafmark)){grid-template-columns:minmax(0,1fr) 0}
+  .rail.hw:not(:has(.dafmark)) .win{grid-column:1}
   /* דף שאין בו יחידות: הטקסט ריק, והמסילה אינה תופסת גובה. בלי המינימום
      הזה היה ציון הדף נופל על השורה הבאה. */
   .row>.main:empty{min-height:var(--lhpx)}
@@ -1575,7 +1671,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main p.nose{font-weight:700;font-size:calc(var(--k-nose) * 1em)}
   .main p.dh{font-weight:900;font-size:calc(var(--k-dh) * 1em)}
   .dafmark{grid-column:2;justify-self:start;font-family:'Vilna',serif;font-weight:900;
-           font-size:.975em;color:#000;margin:0}
+           font-size:1.197em;color:#000;margin:0}
   /* אין עוד overflow:hidden ואין ellipsis: חלון שנחתך בשקט הוא כישלון
      שקט. חלון שאינו נכנס מטופל במדידה (fitAnchors), ובסוף מוצג קטן יותר
      ולא נחתך. */
@@ -1629,7 +1725,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .win.stk{line-height:var(--lhpx)}
   /* ב1: ציון דף שהוא טווח ("יד:-טו.") - קטן יותר, כדי שלא ירחיב את נתיב
      הדף של כל המסכת. רוחבו נמדד ומוגדר לשורה שלו בלבד. */
-  .dafmark.rng{font-size:.72em;letter-spacing:-.02em}
+  .dafmark.rng{font-size:.884em;letter-spacing:-.02em}
   .perek-num .main{font-family:'Franknatan','Vilna',serif;color:var(--red);font-size:1.45em;line-height:1.1}
   .perek-name .main{font-family:'Franknatan','Vilna',serif;color:#8a7d66;font-size:1.09em}
   .perek-range .main{color:var(--red);font-size:.73em}
@@ -2100,7 +2196,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function setDafW(){
     const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
     const cv=document.createElement('canvas'),cx=cv.getContext('2d');
-    cx.font='900 '+(.975*fs)+"px 'Vilna',serif";
+    cx.font='900 '+(1.197*fs)+"px 'Vilna',serif";
     /* תווית טווח ("יד:-טו.") אינה קובעת את רוחב נתיב הדף של כל המסכת;
        היא מקבלת רוחב לשורה שלה בלבד (fitAnchors). */
     let w=0;for(const p of D.pages){const x=cx.measureText(p.daf||'').width;if(x>w)w=x}
@@ -2110,7 +2206,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function dafWidth(txt){
     const fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||18;
     const cv=document.createElement('canvas'),cx=cv.getContext('2d');
-    cx.font='900 '+(.975*fs)+"px 'Vilna',serif";
+    cx.font='900 '+(1.197*fs)+"px 'Vilna',serif";
     return cx.measureText(txt||'').width+2;
   }
   /* חלון שאינו נכנס לנתיב הפנימי מטופל בסדר שנקבע: קודם מצטמצם נתיב הדף
@@ -2120,7 +2216,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const ASCALE=[1,.88,.8,.72];
   function trackW(rail){
     const g=getComputedStyle(rail).gridTemplateColumns.split(' ');
-    return parseFloat(g[0])||0;
+    return parseFloat(g[rail.classList.contains('hw')&&rail.querySelector('.dafmark')?1:0])||0;
   }
   function fitAnchors(only){
     const f=$('#flow');if(!f)return;
@@ -2136,7 +2232,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(const r of rowsList){
       const a=r.querySelector(':scope > .rail > .win');
       if(!a||!a.textContent.trim())continue;
-      a.classList.remove('w2');a.style.fontSize='';
+      a.classList.remove('w2');a.style.fontSize='';a.parentElement.classList.remove('dup');
       if(!r.querySelector('.dafmark.rng'))r.style.removeProperty('--dafw');
       items.push({r,a,rail:a.parentElement});
     }
@@ -2157,6 +2253,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           ln=Math.max(1,Math.round((bt-t)/lhpx))}}
       o.lines=ln;
       o.dm=o.r.querySelector('.dafmark');
+      o.hw=o.rail.classList.contains('hw');
       /* ב2: ערימת חלונות גבוהה מן הטקסט שלה - נפרשת לשורה אחת, עם מפריד,
          כדי שהמסילה לא תגבה על היחידה. */
       if(o.a.classList.contains('stk')){
@@ -2180,6 +2277,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const wrapped=[];
     for(const o of still){
       if(o.aw<=o.tw+.5)continue;
+      /* כותרת הצד לא תיפגע: אם היא נכנסת במסילה כולה, ציון הדף מועלה מעט ויוצא מן הצפיפות */
+      if(o.hw&&o.dm){const cs=getComputedStyle(o.rail),full=o.rail.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0);
+        if(o.aw<=full+.5){o.rail.classList.add('dup');continue}}
       if(o.lines>=2&&!o.a.classList.contains('stk')){o.a.classList.add('w2');wrapped.push(o);continue}
       const need=o.tw/o.aw;
       let sc=ASCALE[ASCALE.length-1];
@@ -2297,7 +2397,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const d=document.createElement('div');d.innerHTML=h;
     d.querySelectorAll('i.ns,i.mk').forEach(x=>x.remove());
     return !d.textContent.replace(/[\s‏‎]/g,'')}
-  function unitHTML(u,daf,pi){
+  function unitHTML(u,daf,pi){return LTX(unitHTML0(u,daf,pi))}
+  function unitHTML0(u,daf,pi){
     const mk=daf!=null?dafMark(pi):'';
     const H=(u.ref?' data-ref="'+u.ref+'"':''),
           sb='';   /* סימון "מקור" הוא שכבה צפה (#srcl) מחוץ לטקסט - ראה srcLayer */
@@ -2305,7 +2406,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
        הפנימיים בתוך .win אחד - כדי שחלון ותווית "משנה" יישבו זה לצד זה
        באותה שורה, ולא ידחפו זה את זה לשורה שנייה.
        ב2: חלון שנערם על חלון (אין תחתיו טקסט) מסומן stk ומקבל רשת שורות. */
-    const win=(w,lab,uu)=>`<div class="rail">${mk}<span class="win${w&&w.indexOf('<br>')>-1?' stk':''}">`+
+    const win=(w,lab,uu)=>`<div class="rail${(w||lab)?' hw':''}">${mk}<span class="win${w&&w.indexOf('<br>')>-1?' stk':''}">`+
       (w?`<span class="anchor">${w}</span>`:'')+(lab?mbBox(uu):'')+
       `</span></div>`;
     const MN=u.mn?' data-mn="'+u.mn+'"':'';
@@ -2511,17 +2612,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* _ap = "הוחל על הנתונים בטעינה הזאת"; הסימון זמני ואינו נשמר בין טעינות */
   ED.forEach(e=>{delete e._ap;delete e._cur});
   let EDIT=false, EDSTAT={taken:0,lost:0}, EDTAKEN=0, EDWORD=0;
+  /* מצב הצעה (מנה 2, 7.10.2026): מציע תיקון עובד באותו עורך בדיוק; כל פעולה נרשמת כהצעה ואינה מתפרסמת (suggest_edit.js) */
+  let SUGM=false;
   function isAdmin(){try{return localStorage.getItem(AKEY)==='1'}catch(e){return false}}
   function ghTok(){try{return localStorage.getItem(TKEY)||''}catch(e){return ''}}
   /* אצל לומד שאינו מנהל ED הוא שכבת התיקונים שהתקבלו (מנקודת הקליטה),
      והיא אינה נשמרת במכשיר */
-  function saveED(){if(typeof EDRO!=='undefined'&&EDRO)return;try{localStorage.setItem(EKEY,JSON.stringify(ED))}catch(e){}}
+  function saveED(){if(SUGM)return;if(typeof EDRO!=='undefined'&&EDRO)return;try{localStorage.setItem(EKEY,JSON.stringify(ED))}catch(e){}}
   function plain(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent}
 
   /* ---- קריאה נקייה של אלמנט ניתן לעריכה ---- */
   function edClone(el){const d=el.cloneNode(true);
     d.querySelectorAll('.srcb,.mlabel').forEach(x=>x.remove());
     d.querySelectorAll('mark').forEach(m=>m.replaceWith(...m.childNodes));
+    d.querySelectorAll('span.ltab').forEach(m=>m.replaceWith(...m.childNodes));   /* טאב-לשמאל: בנתונים נשאר רק התו */
     return d}
   function txtOf(el){return edClone(el).textContent}
   /* השוואה בלי ניקוד. במשנה, הטקסט שעל המסך מגיע משכבת הניקוד ואילו
@@ -2536,14 +2640,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     [...root.querySelectorAll('*')].forEach(n=>{
       if(!n.isConnected||(n.closest&&n.closest('.srcb,.mlabel')))return;
       const tag=n.tagName.toLowerCase();
-      n.removeAttribute('style');
-      const ok=(tag==='i'&&n.classList.length===1&&OKCLS.indexOf(n.className)>-1)||
+      const lt=(tag==='span'&&n.classList.contains('ltab'));
+      if(!lt)n.removeAttribute('style');
+      const ok=lt||(tag==='i'&&n.classList.length===1&&OKCLS.indexOf(n.className)>-1)||
                (tag==='b'&&!n.className);
       if(!ok)n.replaceWith(...n.childNodes)});
     root.normalize();return root}
   function htmlOf(el){return edSan(edClone(el)).innerHTML}
   function setHTML(el,h){const b=el.querySelector('.srcb');
-    el.innerHTML=h; if(b)el.appendChild(b)}
+    el.innerHTML=LTX(h); if(b)el.appendChild(b)}
   /* מחלקת הפסקה, בלי מחלקות המרווח שנגזרו מוורד (b0-b4 / a0-a4) */
   /* נושא משנה וד"ה משנה הם סגנון פסקה בוורד ומוצגים כ-div. הם נספרים כסגנון
      הפסקה ('nose'/'dh'), כדי שהחזרתם לגוף תירשם כשינוי סגנון פסקה. */
@@ -2702,6 +2807,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!el.isConnected)return;      /* שורה שהוחלפה בינתיים (פיצול, איחוי) - אין מה ללכוד */
     if(el.__was===undefined)edBase(el);
     edSan(el);
+    if(hrepCapture(el))return;
     if(pinCapture(el))return;       /* פסקה חדשה מ-Enter: נרשמת ברשומת הוספה, לא כתיקון טקסט */
     const now=txtOf(el), nowH=htmlOf(el), nowP=pcls(el);
     const was=el.__was, wasH=el.__wasH, wasP=el.__wasP;
@@ -2731,7 +2837,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       SLOTS=null;
       const cu=ED.find(x=>x.k===k);if(cu){cu._ap=1;cu._cur=cu.now}
     }
-    saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon();syncSoon()}
+    saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon();syncSoon();ltFitSoon()}
   let CAPT=null;
   /* אחרי הקלדה, ובזמן מנוחה בלבד: הקליטה, ואיחוי השורות של הפסקה
      ושל שכנתה - לא של כל הפרק */
@@ -2883,6 +2989,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         dataSet(k,e.nowH!==undefined?e.nowH:esc(e.now));
         if(e.ps!==undefined)dataCls(k,e.ps);
         e._ap=1;e._cur=e.now;any=true;continue}
+      if(e.kind==='hdel'||e.kind==='hrep'){
+        const hit=decoFind(e.texts||[],e.daf);
+        if(hit){decoApplyData(hit,e);e.lost=0;e._ap=1;any=true;SLOTS=null}
+        else if(decoDone(e)){e.lost=0;e.done=1;EDTAKEN++,e.ing&&EDWORD++}
+        else e.lost=1;
+        continue}
       if(e.kind==='hsplit'||e.kind==='hmerge'){
         const sp=e.kind==='hsplit';
         const hit=sp?hFindSplit(e):hFindMerge(e);
@@ -3524,6 +3636,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
       ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון פסקה: כותרת נושא (שוב - חוזרת לגוף)'],
       ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון פסקה: כותרת ד"ה משנה (שוב - חוזרת לגוף)'],['Ctrl+6','סגנון תו: ד"ה משנה בתוך שורה'],['Ctrl+7','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+H','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
+      ['Ctrl+L (או Ctrl+Shift+L)','טאב יישור לשמאל: מה שאחרי הסמן נדחף לקצה השמאלי של השורה, כמו טאב שמאלי בוורד'],
+      ['Alt+N','פנל ניווט: רשימת הפרקים והדפים; לחיצה קופצת לדף בלי לצאת מהעריכה ובלי לאבד שינויים'],
+      ['עיטור (***)','לחיצה על העיטור מסמנת אותו: Delete או "מחק עיטור" מוחקים, "החלף בכותרת" הופך לשורה ריקה בסגנון נושא או ד"ה משנה'],
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl (בזמן בקרה עם כרטיס ממצא פתוח, Alt+1/2/3 = אשר / דחה / ערוך)'],
@@ -3541,10 +3656,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     m.addEventListener('click',e=>{if(e.target===m)m.remove()})}
   function structName(e){
     if(e.ins)return 'פסקה חדשה';
-    return e.kind==='split'?'פיצול פסקה':e.kind==='merge'?'איחוי שתי פסקאות':
+    return e.kind==='hdel'?'מחיקת עיטור':e.kind==='hrep'?'עיטור שהוחלף בכותרת':e.kind==='split'?'פיצול פסקה':e.kind==='merge'?'איחוי שתי פסקאות':
            e.kind==='side'?'כותרת צד':e.kind==='unside'?'החזרת כותרת צד לגוף':
            e.kind==='hsplit'?'פיצול כותרת':e.kind==='hmerge'?'איחוי כותרת עם שורה סמוכה':'שינוי מבנה'}
   function structShow(e){
+    if(e.kind==='hdel')return '*** ⟵ (נמחק)';
+    if(e.kind==='hrep')return '*** ⟵ '+(e.resT&&e.resT[0]||'');
     if(e.kind==='side')return (e.resT&&e.resT[1]||'')+' ⟵ כותרת צד';
     if(e.kind==='unside')return (e.resT&&e.resT[0]||'')+' ⟵ גוף';
     if(e.ins)return e.resT[e.where==='before'?0:1];
@@ -3556,6 +3673,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       alert('בתצוגת ספר אין עריכה, מפני שפסקה אחת עשויה להתחלק בין שני גיליונות. סגור את תצוגת הספר ונסה שוב.');
       return}
     EDIT=on;document.body.classList.toggle('ed',on);
+    if(!on&&SUGM){sugPush(0);SUGM=false;document.body.classList.remove('sugm')}
     /* המשניות מוצגות מנוקדות, ובמצב עריכה הן חייבות לחזור לנוסח
        הוורד. הבנייה מחדש נעשית לפני סימון המקומות הניתנים לעריכה. */
     if(was!==on&&typeof NK!=='undefined'&&NK&&D.nk&&D.nk.voc)render(cur);
@@ -3565,15 +3683,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       else {el.removeAttribute('contenteditable');delete el.__was;delete el.__wasH;delete el.__wasP}});
     let bar=$('#edbar');
     if(on&&!bar){bar=document.createElement('div');bar.className='edbar';bar.id='edbar';
-      bar.innerHTML='<b>מצב עריכה</b><span>· <span id="edn">'+ED.length+'</span> תיקונים</span>'+
+      bar.innerHTML='<b>'+(SUGM?'מצב הצעת תיקון':'מצב עריכה')+'</b><span>· <span id="edn">'+(SUGM?ED.filter(e=>!e.pub||e.sgi).length:ED.length)+'</span> '+(SUGM?'הצעות':'תיקונים')+'</span>'+
         '<select id="pstsel" title="סגנון הפסקה שהסמן בה" onmousedown="event.stopPropagation()" onchange="if(this.value!==\'#\'){setPs(this.value)}this.value=\'#\'"><option value="#">סגנון…</option>'+
           PSTY.map(p=>'<option value="'+esc(p[0])+'">'+esc(p[1])+'</option>').join('')+'</select>'+
         '<button onmousedown="event.preventDefault()" onclick="clearAll()" title="מסיר סגנון פסקה וסגנונות תו ומחזיר לרגיל (Ctrl+Q לפסקה)">נקה עיצוב</button>'+
         '<span id="edpub" class="edpub"></span><span id="procnote" class="edpub"></span><span class="sp"></span>'+
-        '<button onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>';
+        (SUGM?'<button onclick="sugPush(1)" title="שליחת ההצעות לעורך (Ctrl+S)">שלח הצעות</button>':'<button onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>');
       document.body.appendChild(bar);pubDraw()}
     else if(!on&&bar)bar.remove();
     if(!on)hideSty();
+    if(!on&&typeof navOpen==='function'){navOpen(false);decoHide()}
     edToolsDraw(on);
     if(on)procCheck();
     if($('#edbtn'))$('#edbtn').classList.toggle('on',on);
@@ -3598,10 +3717,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const et=$('#edtools');if(!et)return;
     if(!on){et.innerHTML='';barFit();return}
     et.innerHTML='<span class="ttl">סגנון תו</span>'+
-      CSTY.map((c,i)=>'<button onmousedown="event.preventDefault()" onclick="csToggle(\''+c[0]+'\')" title="'+esc(c[1])+(shortOf(c[0])?' ('+shortOf(c[0])+')':'')+'">'+esc(c[1])+'</button>').join('')+
+      CSTY.filter(c=>c[0]!=='b').map((c,i)=>'<button onmousedown="event.preventDefault()" onclick="csToggle(\''+c[0]+'\')" title="'+esc(c[1])+(shortOf(c[0])?' ('+shortOf(c[0])+')':'')+'">'+esc(c[1])+'</button>').join('')+
       '<button onmousedown="event.preventDefault()" onclick="csToggle(\'b\')" title="מודגש (Ctrl+B)"><b>מודגש</b></button>'+
       '<button onmousedown="event.preventDefault()" onclick="sideCmd()" title="הופך את המילה לכותרת בצד ימין (Ctrl+נקודה, או Ctrl+Alt+ק)">כותרת צד</button>'+
       '<button onclick="keysCard()" title="קיצורי מקשים (Ctrl+/)">קיצורי מקשים</button>'+
+      '<button onclick="navOpen()" id="navbtn" title="פנל ניווט: פרקים ודפים, בלי לצאת מהעריכה (Alt+N)">ניווט</button>'+
+      (SUGM?'<button onclick="mineOpen()" title="כל ההצעות ששלחת">ההצעות שלי</button>':'')+
+      (isAdmin()&&!SUGM?'<button onmousedown="event.preventDefault()" onclick="ntAdd()" title="הערה פרטית לקלוד, גלויה רק לך (Ctrl+Alt+H)">הערה לקלוד</button>':'')+
       '<button onclick="panel(\'ed\')" title="רשימת העריכות שלי">העריכות שלי</button>'+
       '<span class="sp"></span><button onclick="setEdit(false)" title="יציאה ממצב עריכה">סיום</button>';
     barFit()}
@@ -3648,7 +3770,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       g.dataset.at=all.indexOf(g);mp.appendChild(g)}}
   let BFT=null;addEventListener('resize',()=>{clearTimeout(BFT);BFT=setTimeout(()=>{barFit();barH()},120)});
   async function askAdmin(){
-    if(isAdmin()&&(admKey()||ONGESHER)){setEdit(!EDIT);return}
+    if(EDIT){setEdit(false);return}
+    if(isAdmin()&&(admKey()||ONGESHER)){SUGM=false;setEdit(true);return}
+    return edChoose()}
+  async function askAdminWord(){
     const a=prompt('מילת המנהל (מוקלדת פעם אחת בלבד בכל מכשיר):');
     if(a===null||!a.trim())return;
     try{
@@ -3795,6 +3920,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const pa=posAt(el,a),pb=posAt(el,b),nr=document.createRange();
       nr.setStart(pa[0],pa[1]);nr.setEnd(pb[0],pb[1]);
       s.removeAllRanges();s.addRange(nr)}
+    if(c==='am')amColon(el,s);
     sPush(el);
     const r=s.getRangeAt(0);
     /* בחירה שהיא כל תוכנו של סגנון תו קיים: מחליפים את האלמנט כולו, כדי
@@ -3900,9 +4026,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
 
   function drawEd(){
     const box=$('#edb');if(!box)return;
-    const by={};for(const e of ED)(by[e.daf||'']=by[e.daf||'']||[]).push(e);
-    const np=ED.filter(e=>!e.pub).length;
-    let h='<div class="edsum">'+ED.length+' תיקונים'+
+    const EDV=SUGM?ED.filter(e=>!e.pub||e.sgi):ED;
+    const by={};for(const e of EDV)(by[e.daf||'']=by[e.daf||'']||[]).push(e);
+    const np=EDV.filter(e=>!e.pub).length;
+    let h='<div class="edsum">'+EDV.length+(SUGM?' הצעות בעורך':' תיקונים')+
       (ED.length?(np?' · <b>'+np+' טרם פורסמו</b>':' · כולם פורסמו'):'')+
       (EDSTAT.taken?' · '+EDSTAT.taken+' כבר נקלטו':'')+
       (EDSTAT.lost?' · <b style="color:#a83c2f">'+EDSTAT.lost+' תלושים</b> - הפסקה שלהם השתנתה בוורד ולכן אינם מוחלים':'')+
@@ -3923,7 +4050,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           '<span class="was">'+esc(e.was.slice(0,90))+'</span><br>'+
           '<span class="now">'+esc(e.now.slice(0,90))+'</span><br>'+
           '<button onclick="undoEd('+i+')">ביטול</button></div>'})}
-    if(!ED.length)h='<div class="edsum">אין עדיין תיקונים.</div>';
+    if(!EDV.length)h='<div class="edsum">'+(SUGM?'עוד לא ערכת דבר בפגישה הזאת.':'אין עדיין תיקונים.')+'</div>';
+    if(SUGM){box.innerHTML=h+'<div style="margin-top:12px"><button onclick="sugPush(1)">שלח את ההצעות עכשיו</button> <button onclick="mineOpen()">ההצעות שלי</button></div>';return}
     h+='<div style="margin-top:12px;display:flex;gap:7px;flex-wrap:wrap">'+
        '<button onclick="pubNow(1)">פרסם עכשיו</button>'+
        '<button onclick="edDownload()" title="גיבוי בלבד; הקליטה לוורד קוראת מנקודת הקליטה">הורד לקובץ (גיבוי)</button>'+
@@ -4017,6 +4145,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const PDKEY='lg-pdirty-'+SLUG;
   function pdSave(){try{if(PUBDIRTY)localStorage.setItem(PDKEY,'1');else localStorage.removeItem(PDKEY)}catch(e){}}
   function queuePub(){
+    if(SUGM){sugSoon();return}
     if(PUBMSG&&PUBMSG.indexOf('לא פורסם')!==0)PUBMSG='';
     PUBDIRTY=true;pdSave();
     if(!PUBNEXT)PUBNEXT=Date.now()+PUBWIN;
@@ -4026,6 +4155,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(PUBNEXT&&Date.now()>=PUBNEXT&&!PUBBUSY){pubNow(0);return}
     pubDraw()}
   function pubDraw(){const e=$('#edpub');if(!e)return;
+    if(SUGM){sugDraw();return}
     const np=pubPending();
     let t=PUBMSG||(PUBBUSY?'· מפרסם…':np?'· ממתינים: '+np+(np===1?' תיקון':' תיקונים')+(PUBNEXT?' · יפורסמו '+inText(PUBNEXT-Date.now()):''):
       (ED.length?'· '+(PUBAT?'פורסם '+agoText(Date.now()-PUBAT):'נשמר ומוצג לכל הלומדים'):''));
@@ -4041,6 +4171,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      keepalive, שהדפדפן משלים גם אחרי שהדף נסגר. אם התור גדול מדי לכך, או
      שאין מפתח במכשיר - הוא נשאר שמור ויישלח בכניסה הבאה. */
   function pubFlush(){
+    if(SUGM){sugFlush();return}
     if(!isAdmin()||PUBBUSY||!pubPending())return;
     const k=admKey();if(!k)return;
     try{
@@ -4069,6 +4200,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
            ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t})},null,1)}
   async function pubNow(loud){
+    if(SUGM)return sugPush(loud);
     clearTimeout(PUBT);
     if(PUBBUSY)return;
     const body=pubBody();
@@ -4294,7 +4426,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      קריאת התור ושינוי סטטוס דורשים מפתח סודי שנשמר ב-Worker בלבד;
      המנהל מזין אותו פעם אחת בכל מכשיר. מילת המנהל נשארת שער נוחות
      להצגת כפתור העריכה בלבד. */
-  const SUGGEST_API='https://leokmei-suggest.m7654301.workers.dev';
+  /* בבדיקה מקומית בלבד (localhost) אפשר להפנות לנקודת קליטה מקומית: localStorage 'lg-api' */
+  const SUGGEST_API=(location.hostname==='localhost'&&lsGet('lg-api'))||'https://leokmei-suggest.m7654301.workers.dev';
   const ADMKEY='lg-adm', SGOUT='lg-sgout-'+SLUG, TKEY2='lg-tomb-'+SLUG;
   function admKey(){try{return localStorage.getItem(ADMKEY)||''}catch(e){return ''}}
   async function api(path,opt){
@@ -5255,8 +5388,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
          f'padding:3px 10px;text-decoration:none;font-weight:700">הגהה</a>') if hagaha else ''
   import build_lamed
   LAMED_READER_CSS=build_lamed.reader_css()
+  GOLD_CSS=io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'gold-theme.css'),encoding='utf-8').read()
+  GOLD_CSS+="\n.bar .adm-b{display:none}body.adm .bar .adm-b{display:block}.bar .nonadm-b{display:block}body.adm .bar .nonadm-b{display:none}"
   JS=io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"hdate.js"),encoding="utf-8").read()+chr(10)+JS
-  JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"suggest_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  _td=os.path.dirname(os.path.abspath(__file__))
+  JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
   # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.
   import glob as _glob
@@ -5269,8 +5405,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
 
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <style>{CSS}{LAMED_READER_CSS}</style><script src="daf-yomi.js"></script></head><body>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><script src="daf-yomi.js"></script></head><body>
   <div class="bar" id="bar">
   <div class="bg" data-pri="0"><a href="index.html" style="color:inherit;text-decoration:none"><span class="nm">לאוקמי גירסא</span></a> <span class="mn">{masechet}</span>
   <div class="nav"><button onclick="goDaf(-1)" title="דף קודם (Ctrl+חץ ימינה)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="goDaf(1)" title="דף הבא (Ctrl+חץ שמאלה)">הבא ‹</button></div></div>
@@ -5295,11 +5431,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <div class="bg dd" data-pri="3" data-label="הדפסה"><button class="ddb" onclick="ddToggle(this)" title="הדפסה ושמירה כ-PDF">הדפסה ▾</button>
     <div class="ddp"><button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר">הדפס פרק</button>
     <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button></div></div>
-  <div class="bg" data-pri="4"><button id="edbtn" onclick="askAdmin()" title="עריכה תוך כדי לימוד (Ctrl+Alt+E, או Ctrl+Alt+ק)">עריכה</button>
-  <button onclick="suggest()" title="סמן טקסט בדף, או לחץ כאן ובחר קטע">הצע תיקון</button>
+  <div class="bg dd" data-pri="1.5" data-label="עריכה"><button id="edbtn" class="primary" onclick="editBtn()" title="לאדם שאינו מנהל: עורך מלא עם כל הקיצורים, וכל פעולה נשלחת כהצעה לעורך. למנהל: עריכה (Ctrl+Alt+E)">הצע תיקון</button>
+  <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך">הצעות ממתינות</button>
+  <button class="ddb mini" onclick="ddToggle(this)" title="עוד: שאלה או הערה, ההצעות שלי, וכלי מנהל" aria-label="עוד פעולות עריכה">▾</button>
+  <div class="ddp"><button onclick="suggest()" title="שאלה, הערה או מקור: סמן טקסט בדף, או לחץ כאן ובחר קטע">שאלה, הערה או מקור</button>
   <button onclick="mineOpen()" title="כל ההצעות ששלחת: סינון, עריכה, חידוד">ההצעות שלי</button>
-  {bkbtn}<button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך">הצעות ממתינות</button><button id="lnbtn" style="display:none" onclick="lnOpen()" title="מה למד המערכת מהתיקונים שלך">הלמידה היומית</button><button id="ntbtn" style="display:none" onclick="ntOpen()" title="הערות פרטיות שלך לקלוד, על הרעיון שמאחורי תיקונים">הערות לקלוד</button></div>
-  <div class="bg adm-only" data-pri="5"><button onclick="panel('qa')" title="חריגות שנמצאו בהמרת הקובץ (למנהל)">חריגות המרה</button>{hgbtn}</div>
+  <button class="nonadm-b" onclick="askAdminWord()" title="כניסת מנהל: מילת המנהל מוקלדת פעם אחת בכל מכשיר">כניסת מנהל</button>
+  {bkbtn}<button id="lnbtn" class="adm-b" onclick="lnOpen()" title="מה למד המערכת מהתיקונים שלך">הלמידה היומית</button><button id="ntbtn" class="adm-b" onclick="ntOpen()" title="הערות פרטיות שלך לקלוד, על הרעיון שמאחורי תיקונים">הערות לקלוד</button>
+  <button class="adm-b" onclick="panel('qa')" title="חריגות שנמצאו בהמרת הקובץ (למנהל)">חריגות המרה</button><span class="adm-b">{hgbtn}</span></div></div>
   <div class="bg edtools" id="edtools" data-pri="9"></div>
   <div class="bg more" id="morebg" style="display:none"><button class="ddb" onclick="ddToggle(this)" title="עוד פעולות">עוד ▾</button><div class="ddp" id="morep"></div></div></div>
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>

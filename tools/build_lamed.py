@@ -39,7 +39,8 @@ def build(site):
     js = read(os.path.join(HERE, 'hdate.js')) + '\n' + '\n'.join(read(os.path.join(SRC, p + '.js')) for p in PARTS)
     io.open(os.path.join(site, 'lamed.js'), 'w', encoding='utf-8').write(js)
     css = read(os.path.join(SRC, 'lamed.css'))
-    io.open(os.path.join(site, 'lamed.css'), 'w', encoding='utf-8').write(css)
+    gold = read(os.path.join(HERE, 'gold-theme.css')).replace(':is(.bar,', ':is(#lm-app,.bar,')
+    io.open(os.path.join(site, 'lamed.css'), 'w', encoding='utf-8').write(css + '\n' + gold)
     ep = os.path.join(os.path.dirname(HERE), 'data', 'edited-pages.json')
     if os.path.exists(ep):
         io.open(os.path.join(site, 'edited-pages.json'), 'w', encoding='utf-8').write(read(ep))

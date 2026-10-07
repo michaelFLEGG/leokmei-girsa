@@ -46,7 +46,9 @@ function burstHit(ip) {
   if (burst.size > 500) for (const [k, v] of burst) if (!v.length || now - v[v.length - 1] > BURST_MS) burst.delete(k);
   return a.length > BURST_N;
 }
-const TYPES = ['nusach', 'style', 'question', 'note', 'source'];
+const TYPES = ['nusach', 'style', 'struct', 'question', 'note', 'source'];
+/* סוגי-משנה של הצעה מן העורך (מנה 2, 7.10.2026): נרשמת בהצעה כפעולה מדויקת */
+const SKINDS = ['text', 'create', 'remove', 'replace', 'para', 'struct', 'mixed'];
 const LINK = /(https?:\/\/|www\.|\.(com|net|org|il|co|info|ru|xyz|top|io)\b)/i;
 
 const CORS = {
@@ -201,6 +203,7 @@ function sgMeta(rec) {
     d: rec.daf || '', ty: rec.type || 'nusach', up: rec.up ? 1 : 0, un: rec.seen === 0 ? 1 : 0,
     v: (rec.ver = (rec.ver || 0) + 1), nm: (rec.name || '').slice(0, 24),
     n: (rec.note || '').slice(0, 90), w: (rec.was || '').slice(0, 50), mn: rec.mnew ? 1 : 0,
+    sk: rec.sk || '',
   };
   const size = () => new TextEncoder().encode(JSON.stringify(m)).length;
   while (size() > 950 && m.n.length > 10) { m.n = m.n.slice(0, Math.floor(m.n.length * 0.8)); m.w = m.w.slice(0, Math.floor(m.w.length * 0.8)); }
@@ -226,7 +229,7 @@ async function mine(req, env, url) {
     const m = k.metadata;
     if (!m || m.pid !== pid) continue;
     rows.push({ id: k.name.slice(3), t: keyT(k.name), st: m.st, slug: m.slug, daf: m.d || '', type: m.ty || '',
-                up: m.up || 0, un: m.un || 0, v: m.v || 0, n: m.n || '', w: m.w || '', mn: m.mn || 0 });
+                up: m.up || 0, un: m.un || 0, v: m.v || 0, n: m.n || '', w: m.w || '', mn: m.mn || 0, sk: m.sk || '' });
   }
   rows.sort((a, b) => b.t - a.t);
   return json({ ok: true, rows, unseen: rows.filter((x) => x.un).length });
@@ -534,11 +537,30 @@ async function suggest(req, env) {
   }
   const rec = {
     id, slug, masechet: str(b.masechet, 40), daf: str(b.daf, 12), uid: str(b.uid, 12),
-    k: str(b.k, 24), ctx: { b: str(b.ctx && b.ctx.b, 60), a: str(b.ctx && b.ctx.a, 60) },
+    k: str(b.k, 48), ctx: { b: str(b.ctx && b.ctx.b, 60), a: str(b.ctx && b.ctx.a, 60) },
     was: str(b.was), note, name: str(b.name, 80).trim(), t, st: 'pending',
     type, pid, thread: [], seen: 1, tr: (await isTrusted(env, pid)) ? 1 : 0,
   };
   if (from) rec.from = from;
+  /* הצעה מן העורך: הפעולה המדויקת (איזה טווח, מאיזה סגנון לאיזה סגנון, או שינוי
+     מבנה) נשמרת כרשומת עריכה ולא כטקסט חופשי, כדי שתחול אוטומטית באישור */
+  if (b.edit && typeof b.edit === 'object' && (b.edit.k || b.edit.op === 'struct')) {
+    rec.edit = cleanEdit(Object.assign({}, b.edit, { t: +b.edit.t || t }));
+    rec.sk = SKINDS.indexOf(b.sk) > -1 ? b.sk : (rec.edit.op === 'struct' ? 'struct' : 'text');
+    rec.mnew = 0;
+  }
+  /* עדכון של הצעה ממתינה של אותו מציע על אותו מקום (המציע המשיך לערוך באותה שורה):
+     אותו פריט בתור, עם הגרסה הקודמת בהיסטוריה, ולא כפילות */
+  if (pid && b.upd && rec.edit) {
+    const old = await env.STORE.get('sg:' + str(b.upd, 80), 'json');
+    if (old && old.pid === pid && old.st === 'pending' && old.edit) {
+      old.vers = (old.vers || []).concat([{ note: old.note, type: old.type, t: old.edited || old.t }]).slice(-30);
+      old.note = note; old.type = type; old.sk = rec.sk; old.edit = rec.edit; old.was = rec.was;
+      old.ctx = rec.ctx; old.edited = t; old.up = 1;
+      await putSg(env, old);
+      return json({ ok: true, id: old.id, updated: 1 });
+    }
+  }
   await putSg(env, rec);
   return json({ ok: true, id });
 }
@@ -550,7 +572,7 @@ async function queue(req, env, url) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   const q = url.searchParams;
   const slug = q.get('slug') || '', pidF = q.get('pid') || '', dafF = q.get('daf') || '', tyF = q.get('ty') || '';
-  const upF = q.get('up') === '1', page = Math.max(0, parseInt(q.get('page') || '0', 10) || 0);
+  const skF = q.get('sk') || '', upF = q.get('up') === '1', page = Math.max(0, parseInt(q.get('page') || '0', 10) || 0);
   const size = Math.min(40, Math.max(5, parseInt(q.get('size') || '30', 10) || 30));
   const keys = await listAll(env, 'sg:');
   const counts = {}, props = {};
@@ -565,6 +587,7 @@ async function queue(req, env, url) {
     if (pidF && m.pid !== pidF) continue;
     if (dafF && m.d !== dafF) continue;
     if (tyF && m.ty !== tyF) continue;
+    if (skF && m.sk !== skF) continue;
     if (upF && !m.up) continue;
     want.push({ name: k.name, tr: m.tr ? 1 : 0, t: keyT(k.name) });
   }
@@ -615,7 +638,7 @@ function cleanEdit(e) {
   const k = str(e.k, 48) || (e.op === 'struct' ? 's' + (+e.t || 0) : '');
   const out = { k, t: +e.t || Date.now() };
   if (e.del) { out.del = 1; return out; }
-  for (const f of ['was', 'now', 'wasH', 'nowH', 'daf', 'ps', 'psw', 'wasP', 'by', 'sg', 'op', 'kind']) {
+  for (const f of ['was', 'now', 'wasH', 'nowH', 'daf', 'ps', 'psw', 'wasP', 'by', 'sg', 'op', 'kind', 'ins', 'where', 'bt', 'bh', 'bp']) {
     if (e[f] !== undefined && e[f] !== null) out[f] = typeof e[f] === 'string' ? e[f].slice(0, 8000) : e[f];
   }
   for (const f of ['texts', 'res', 'resT']) {

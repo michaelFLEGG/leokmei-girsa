@@ -1582,7 +1582,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   body{display:flex;flex-direction:column}
   body.hc{--ink:#000;--paper:#fff;--grey:#333}
   /* סרגל הקריאה (7.10.2026): שורה אחת, ארבע קבוצות. הצבעים והכפתורים ב-ui.css. */
-  .bar{position:relative;z-index:5;flex:0 0 auto;display:flex;flex-wrap:nowrap;gap:8px;align-items:center;min-height:var(--bar);overflow:visible}
+  .bar{position:relative;z-index:11;flex:0 0 auto;display:flex;flex-wrap:nowrap;gap:8px;align-items:center;min-height:var(--bar);overflow:visible}
   .bar .sp{flex:1}
   .bar .bg{display:flex;align-items:center;gap:6px;flex:0 0 auto}
   .bar .bg.loc{flex:0 1 auto;min-width:0}
@@ -1868,7 +1868,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   body.srcoff #srcl{display:none}
   .src{position:fixed;z-index:9;background:var(--paper);box-shadow:0 -2px 18px rgba(0,0,0,.25);
        display:flex;flex-direction:column;font-size:17px;line-height:1.75}
-  .src.peek{left:0;right:0;bottom:0;height:38vh}
+  .src.peek{left:0;right:0;bottom:0;height:var(--srch,38vh)}
   .src.split{left:0;top:var(--barH,52px);bottom:0;width:var(--srcw,50vw);box-shadow:2px 0 18px rgba(0,0,0,.22)}
   .src.full{left:0;right:0;top:0;bottom:0}
   body.splitsrc .flow{width:calc(100vw - var(--srcw,50vw));margin-left:auto}
@@ -1885,6 +1885,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .srcall .sgx.hit{background:#fdf1d8;box-shadow:inset 3px 0 0 var(--gold)}
   .prs{font-size:.84em;line-height:1.5;color:#4a4137;background:#f2ede0;border-right:2px solid #cdc3a8;
        border-radius:3px;margin:2px 5px 6px;padding:5px 9px}
+  .sscope{display:flex;gap:6px;margin:0 0 8px}.sscope button{font:inherit;font-size:14px;padding:2px 12px;border:1px solid var(--line);border-radius:999px;background:var(--sheet);color:var(--tx);cursor:pointer}.sscope button.on{background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
   .srchd .srcsep{width:1px;align-self:stretch;background:#5a5147;margin:0 4px}
   .srcft{flex:0 0 auto;padding:6px 14px;font-size:12px;color:#8a7d66;background:#f3eee2;border-top:1px solid #e0d8c4}
   .srcbody .ld{color:#8a7d66;font-size:15px}
@@ -1899,8 +1900,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .smpop.open{display:block}
   .smpop button{display:block;width:100%;margin:2px 0;text-align:right}
   .sml{font-size:12px;color:#c9bfa8;margin:6px 4px 2px}
-  .srcdrag{position:absolute;top:0;bottom:0;right:-5px;width:10px;cursor:col-resize;z-index:12;touch-action:none}
-  .srcdrag:hover{background:rgba(201,162,74,.35)}
+  /* מפריד נגרר (7.10.2026): רחב לאצבע, קו גלוי תמיד, לחיצה כפולה מחזירה לחצי-חצי */
+  .srcdrag{position:absolute;top:0;bottom:0;right:-12px;width:24px;cursor:col-resize;z-index:12;touch-action:none}
+  .srcdrag::after{content:"";position:absolute;top:0;bottom:0;left:10px;width:4px;background:rgba(201,162,74,.55);border-radius:2px;transition:background .15s}
+  .srcdragv{position:absolute;left:0;right:0;top:-12px;height:24px;cursor:row-resize;z-index:12;touch-action:none}
+  .srcdragv::after{content:"";position:absolute;left:0;right:0;top:10px;height:4px;background:rgba(201,162,74,.55);border-radius:2px;transition:background .15s}
+  .srcdrag:hover::after,.srcdragv:hover::after,body.srcdragging .srcdrag::after,body.srcdragging .srcdragv::after{background:var(--gold)}
+  body.srcdragging{user-select:none;-webkit-user-select:none}
+  body.srcdragging .src .srcbody{pointer-events:none}
   .src:focus{outline:none}
   @media screen and (max-width:760px){.src.split{left:0;right:0;top:auto;bottom:0;width:auto;height:60vh}
     body.splitsrc .flow{width:auto;margin-left:0}}
@@ -2516,11 +2523,36 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function panel(id){const p=$('#'+id),o=p.classList.contains('open');document.querySelectorAll('.panel').forEach(x=>x.classList.remove('open'));if(!o)p.classList.add('open')}
   function dec(s){return s.replace(/&quot;/g,'"').replace(/&#x27;/g,"'").replace(/&amp;/g,'&')}
   function txt(u){return dec(u.a.replace(/<[^>]+>/g,'')+' '+u.l.map(l=>l[1].replace(/<[^>]+>/g,'')).join(' '))}
+  /* חיפוש במסכת (7.10.2026): בלאוקמי, בגמרא או בשניהם; מתעלם מניקוד, מטעמים ומגרשיים */
+  const NKR=new RegExp('['+String.fromCharCode(0x591)+'-'+String.fromCharCode(0x5bd)+String.fromCharCode(0x5bf)+String.fromCharCode(0x5c1,0x5c2,0x5c4,0x5c5,0x5c7,0x5f3,0x5f4,0x200e,0x200f)+"'"+'"'+']');
+  function nrm(s){let o='';const m=[];for(let i=0;i<s.length;i++){const c=s[i];
+    if(NKR.test(c))continue;o+=(c===String.fromCharCode(0x5be)?' ':c);m.push(i)}return {o,m}}
+  function sscope(){let v='both';try{v=localStorage.getItem('lg-sscope')||'both'}catch(e){}return /^(lk|gm|both)$/.test(v)?v:'both'}
+  function setScope(v){try{localStorage.setItem('lg-sscope',v)}catch(e){}search($('#q').value)}
+  function gmTxt(h){return dec((h||'').replace(/<[^>]+>/g,''))}
   function search(q){q=q.trim();LASTQ=q;const out=$('#sres');if(q.length<2){out.innerHTML='';return}
-   RES=[];let res=RES,n=0;D.pages.forEach((p,pi)=>{for(const u of p.units){const t=txt(u);const k=t.indexOf(q);if(k>-1){n++;if(res.length<120)res.push({pi,id:u.id,daf:p.daf,s:t.slice(Math.max(0,k-40),k+60)})}}});
-   out.innerHTML=`<div class="n">${n} תוצאות</div>`+res.map((r,i)=>`<div class="res"><a onclick="jumpR(${i})"><small>${r.daf}</small> …${esc(r.s).replace(esc(q),'<mark>'+esc(q)+'</mark>')}…</a></div>`).join('');
-   $('#search').classList.add('open')}
-  let RES=[],LASTQ='';function jumpR(i){jump(RES[i].pi,RES[i].id,LASTQ)}
+   const sc=sscope(),nq=nrm(q).o;if(nq.length<2){out.innerHTML='';return}
+   const bar='<div class="sscope" role="group" aria-label="היכן לחפש">'+[['both','שניהם'],['lk','לאוקמי'],['gm','גמרא']].map(x=>'<button type="button" class="'+(sc===x[0]?'on':'')+'" onclick="setScope(\''+x[0]+'\')">'+x[1]+'</button>').join('')+'</div>';
+   const mine=[];let n=0;
+   if(sc!=='gm')D.pages.forEach((p,pi)=>{for(const u of p.units){const t=txt(u),N=nrm(t),k=N.o.indexOf(nq);
+     if(k>-1){n++;if(mine.length<120){const a=N.m[k],b=N.m[k+nq.length-1]+1;mine.push({pi,id:u.id,daf:p.daf,s:t.slice(Math.max(0,a-40),a),m:t.slice(a,b),e:t.slice(b,b+60)})}}}});
+   RES=mine;
+   const draw=(gm,gn)=>{
+     let h=bar;
+     if(sc!=='gm'){h+='<div class="n">בלאוקמי: '+n+' תוצאות</div>'+mine.map((r,i)=>'<div class="res"><a onclick="jumpR('+i+')"><small>'+esc(r.daf)+'</small> …'+esc(r.s)+'<mark>'+esc(r.m)+'</mark>'+esc(r.e)+'…</a></div>').join('')}
+     if(sc!=='lk'){h+='<div class="n">'+(gm===null?'בגמרא: טוען…':'בגמרא: '+gn+' תוצאות')+'</div>'+(gm||[]).map((r,i)=>'<div class="res"><a onclick="gmJump('+i+')"><small>'+esc(r.heb)+'</small> …'+esc(r.s)+'<mark>'+esc(r.m)+'</mark>'+esc(r.e)+'…</a></div>').join('')}
+     out.innerHTML=h};
+   draw(sc==='lk'?[]:null,0);$('#search').classList.add('open');
+   if(sc==='lk')return;
+   loadSrc().then(j=>{if(q!==LASTQ)return;
+     const g=[];let gn=0;
+     for(const heb of Object.keys(j.pages)){const pg=j.pages[heb];
+       pg.gemara.forEach((h,k)=>{const t=gmTxt(h),N=nrm(t),x=N.o.indexOf(nq);
+         if(x>-1){gn++;if(g.length<120){const a=N.m[x],b=N.m[x+nq.length-1]+1;g.push({heb,ref:pg.refs[k],s:t.slice(Math.max(0,a-40),a),m:t.slice(a,b),e:t.slice(b,b+60)})}}})}
+     GRES=g;draw(g,gn)}).catch(()=>{if(q===LASTQ)draw([],0)})}
+  let RES=[],GRES=[],LASTQ='';function jumpR(i){jump(RES[i].pi,RES[i].id,RES[i].m||LASTQ)}
+  /* תוצאה בגמרא: פותחת את הגמרא במקום, בלי לצאת מהחיפוש */
+  function gmJump(i){const r=GRES[i];if(!r)return;SRCMODE=SRCMODE||srcDefault();openSrc(r.ref)}
   function jump(pi,id,q){const si=secOf(pi);render(si,q);
     setTimeout(()=>{const e=$('#u'+id);if(e){e.classList.add('hit');toEl(e)}$('#dafsel').value=pi;$('#curdaf').textContent=D.pages[pi].daf},20)}
   function amq(i){$('#q').value=D.am[i][0];search(D.am[i][0])}
@@ -3822,8 +3854,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(isTxt(el)){
       const cb=c=>btn(!!ac[c[0]],"csToggle('"+c[0]+"')",c[1],shortOf(c[0]).split(',')[0]);
       h+='<div class="stgrp"><span class="ttl">סגנון תו</span>'+CSTY.filter(c=>ST_C.indexOf(c[0])>-1).map(cb).join('')+
-        btn(false,'sideCmd()','כותרת צד','Ctrl+.')+'</div>';
-      rare+=CSTY.filter(c=>ST_C.indexOf(c[0])<0).map(cb).join('')+btn(false,"setCs('')",'ללא סגנון','Ctrl+רווח')}
+        btn(false,'sideCmd()','כותרת צד','Ctrl+.')+btn(false,"noStyle()",'ללא סגנון','Ctrl+רווח','טקסט רגיל: מסיר את סגנון התו מהמילים שנבחרו, ואם אין כזה - את סגנון הפסקה')+'</div>';
+      rare+=CSTY.filter(c=>ST_C.indexOf(c[0])<0).map(cb).join('')}
     if(isHeadEl(el))h+='<div class="stgrp"><span class="ttl">'+(el.classList.contains('nose')?'נושא משנה':'ד"ה משנה')+'</span>'+
       btn(false,'headBody()','הפוך לגוף','Ctrl+Q','הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים')+'</div>';
     if(el.tagName==='P'){
@@ -3901,6 +3933,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(bar.__ek!==(el.dataset.ek||'')||col!==bar.__col||!bar.__placed){styPlace(bar,el);bar.__placed=1}
     bar.__ek=el.dataset.ek||'';bar.__col=col}
   addEventListener('resize',()=>{const b=$('#stybar');if(b)b.__placed=0;STYSIG='';if(EDIT)styLater()});
+  /* "ללא סגנון": סגנון התו מהמילים שנבחרו; ואם אין בהן סגנון תו - סגנון הפסקה */
+  function noStyle(){
+    const el=edEl();if(!el)return;
+    if(Object.keys(activeChar(el)).length||!pcls(el))setCs('');else plainPara()}
   function setCs(c){
     const el=edEl();if(!el)return;
     const s=getSelection();if(!s.rangeCount)return;
@@ -4869,7 +4905,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function srcApplyW(){
     let w=+localStorage.getItem('lg-srcw');
     if(!(w>=25&&w<=75))w=50;
-    document.documentElement.style.setProperty('--srcw',w+'vw')}
+    document.documentElement.style.setProperty('--srcw',w+'vw');
+    let h=0;try{h=+localStorage.getItem('lg-srch')}catch(e){}
+    if(!(h>=18&&h<=80))h=38;
+    document.documentElement.style.setProperty('--srch',h+'vh')}
   function srcMenuHTML(mode){
     const g=(grp,list,cur)=>list.map(x=>'<button data-'+grp+'="'+x[0]+'" class="'+(x[0]===cur?'on':'')+'">'+x[1]+'</button>').join('');
     return '<div class="smpop" id="smpop"><div class="sml">מה מוצג</div>'+
@@ -4897,7 +4936,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       '<span class="smenu"><button id="smb" title="מה מוצג, וגודל המגירה">תצוגה ▾</button>'+srcMenuHTML(mode)+'</span>'+
       '<button onclick="closeSrc()" title="סגירה (Esc)">×</button></div>'+
       '<div class="srcbody" tabindex="-1"><div class="ld">טוען את הגמרא…</div></div>'+
-      (mode==='split'?'<div class="srcdrag" id="srcdrag" title="גרור לשינוי היחס בין הטקסט והמקור"></div>':'');
+      (mode==='split'?'<div class="srcdrag" id="srcdrag" title="גרור לשינוי היחס בין הטקסט והמקור; לחיצה כפולה: חצי-חצי"></div>':
+       mode==='peek'?'<div class="srcdragv" id="srcdragv" title="גרור לשינוי גובה המקור; לחיצה כפולה: גובה רגיל"></div>':'');
     srcSyncUi();
     $('#sp-prev').onclick=()=>srcPage(-1);$('#sp-next').onclick=()=>srcPage(1);
     $('#ss-prev').onclick=()=>srcSeg(-1);$('#ss-next').onclick=()=>srcSeg(1);
@@ -4931,15 +4971,32 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     body0.addEventListener('wheel',()=>srcFree(),{passive:true});
     body0.addEventListener('touchmove',()=>srcFree(),{passive:true});
     const dr=$('#srcdrag');
-    if(dr)dr.addEventListener('pointerdown',ev=>{
-      ev.preventDefault();dr.setPointerCapture(ev.pointerId);
-      const mv=e2=>{const pct=Math.max(25,Math.min(75,e2.clientX/innerWidth*100));
-        document.documentElement.style.setProperty('--srcw',pct.toFixed(1)+'vw')};
-      const up=e2=>{dr.removeEventListener('pointermove',mv);dr.removeEventListener('pointerup',up);
-        const pct=Math.max(25,Math.min(75,e2.clientX/innerWidth*100));
-        try{localStorage.setItem('lg-srcw',pct.toFixed(1))}catch(e){}
-        fitAnchors();squeezeRun()};
-      dr.addEventListener('pointermove',mv);dr.addEventListener('pointerup',up)});
+    const dragRaf=fn=>{let q=0,a=null;return e=>{a=e;if(!q){q=1;requestAnimationFrame(()=>{q=0;fn(a)})}}};
+    if(dr){
+      const setW=pct=>document.documentElement.style.setProperty('--srcw',pct.toFixed(1)+'vw');
+      const pctOf=e2=>Math.max(25,Math.min(75,e2.clientX/innerWidth*100));
+      dr.addEventListener('pointerdown',ev=>{
+        ev.preventDefault();dr.setPointerCapture(ev.pointerId);document.body.classList.add('srcdragging');
+        const mv=dragRaf(e2=>setW(pctOf(e2)));
+        const up=e2=>{dr.removeEventListener('pointermove',mv);dr.removeEventListener('pointerup',up);dr.removeEventListener('pointercancel',up);
+          document.body.classList.remove('srcdragging');
+          const pct=pctOf(e2);setW(pct);
+          try{localStorage.setItem('lg-srcw',pct.toFixed(1))}catch(e){}
+          fitAnchors();squeezeRun()};
+        dr.addEventListener('pointermove',mv);dr.addEventListener('pointerup',up);dr.addEventListener('pointercancel',up)});
+      dr.addEventListener('dblclick',()=>{setW(50);try{localStorage.setItem('lg-srcw','50')}catch(e){}fitAnchors();squeezeRun()})}
+    const dv=$('#srcdragv');
+    if(dv){
+      const setH=pct=>document.documentElement.style.setProperty('--srch',pct.toFixed(1)+'vh');
+      const pctOf=e2=>Math.max(18,Math.min(80,(innerHeight-e2.clientY)/innerHeight*100));
+      dv.addEventListener('pointerdown',ev=>{
+        ev.preventDefault();dv.setPointerCapture(ev.pointerId);document.body.classList.add('srcdragging');
+        const mv=dragRaf(e2=>setH(pctOf(e2)));
+        const up=e2=>{dv.removeEventListener('pointermove',mv);dv.removeEventListener('pointerup',up);dv.removeEventListener('pointercancel',up);
+          document.body.classList.remove('srcdragging');
+          const pct=pctOf(e2);setH(pct);try{localStorage.setItem('lg-srch',pct.toFixed(1))}catch(e){}};
+        dv.addEventListener('pointermove',mv);dv.addEventListener('pointerup',up);dv.addEventListener('pointercancel',up)});
+      dv.addEventListener('dblclick',()=>{setH(38);try{localStorage.setItem('lg-srch','38')}catch(e){}})}
     loadSrc().then(j=>{
       SX.keys=Object.keys(j.pages);
       const d=refDaf(ref);if(!d)return;

@@ -1657,7 +1657,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main p.nose,.main p.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif}
   .main p.nose{font-weight:700;font-size:calc(var(--k-nose) * 1em)}
   .main p.dh{font-weight:900;font-size:calc(var(--k-dh) * 1em)}
-  .dafmark{grid-column:2;justify-self:start;font-family:'Vilna',serif;font-weight:900;
+  .dafmark{grid-column:2;justify-self:end;font-family:'Vilna',serif;font-weight:900;
            font-size:1.197em;color:#000;margin:0}
   /* אין עוד overflow:hidden ואין ellipsis: חלון שנחתך בשקט הוא כישלון
      שקט. חלון שאינו נכנס מטופל במדידה (fitAnchors), ובסוף מוצג קטן יותר

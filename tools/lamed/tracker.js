@@ -68,6 +68,7 @@
     if (pi === undefined) return null;
     return { s: SLUG, d: dafOfPi(pi), pid: id, fp: LG.fpOf(rowText(row)), pi: pi };
   }
+  T.cur = function () { return G.cur || readPos(); };
   T.savePos = function () {
     var p = readPos();
     if (!p || window.__lmDemo) return;

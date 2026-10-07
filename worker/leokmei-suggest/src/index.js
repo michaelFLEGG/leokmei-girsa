@@ -405,6 +405,59 @@ async function notes(req, env, method) {
 }
 
 /* יומן התיקונים (פרטי, למנהל בלבד): חומר הלמידה. נכתב מן הדף, ונקרא בידי הלומד. */
+
+/* שיעורי יוטיוב (מנה 4, 7.10.2026): קריאה פתוחה לכולם, כתיבה למנהל בלבד.
+   כל שיעור משויך למסכת ולדף או לטווח דפים. הכותרת והתמונה נשלפות מ-oEmbed. */
+function ytId(u) {
+  const m = String(u || '').match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/) || String(u || '').match(/^([A-Za-z0-9_-]{11})$/);
+  return m ? m[1] : '';
+}
+async function lessons(req, env, method) {
+  if (method === 'GET') {
+    const out = [];
+    for (const k of await listAll(env, 'ls:')) {
+      const v = await env.STORE.get(k.name, 'json');
+      if (v) out.push(v);
+    }
+    out.sort((a, b) => (a.slug + a.from).localeCompare(b.slug + b.from) || a.t - b.t);
+    return json({ ok: true, items: out });
+  }
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const op = str(b.op, 10);
+  if (op === 'add') {
+    const vid = ytId(b.url);
+    if (!vid) return bad('הקישור אינו קישור יוטיוב תקין');
+    const slug = str(b.slug, 30).trim();
+    const from = str(b.from, 12).trim();
+    if (!slug || !from) return bad('חסרה מסכת או דף');
+    const to = str(b.to, 12).trim() || from;
+    let title = str(b.title, 200).trim(), author = '', thumb = 'https://i.ytimg.com/vi/' + vid + '/hqdefault.jpg';
+    try {
+      const r = await fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + vid));
+      if (r.ok) {
+        const j = await r.json();
+        if (!title) title = str(j.title, 200);
+        author = str(j.author_name, 80);
+        if (j.thumbnail_url) thumb = str(j.thumbnail_url, 300);
+      }
+    } catch (e) { /* בלי כותרת אוטומטית - ממשיכים עם מה שיש */ }
+    if (!title) title = 'שיעור על ' + slug + ' ' + from;
+    const id = rid();
+    const rec = { id, t: Date.now(), vid, title, author, thumb, slug, from, to, mas: str(b.mas, 40) };
+    await env.STORE.put('ls:' + id, JSON.stringify(rec));
+    return json({ ok: true, id, item: rec });
+  }
+  const id = str(b.id, 40);
+  if (op === 'del') {
+    if (!id) return bad('חסר מזהה');
+    await env.STORE.delete('ls:' + id);
+    return json({ ok: true });
+  }
+  return bad('פעולה לא מוכרת');
+}
+
 async function journal(req, env, method) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   if (method === 'GET') {
@@ -913,6 +966,7 @@ export default {
       if (p === '/bulk' && req.method === 'POST') return await bulk(req, env);
       if (p === '/journal') return await journal(req, env, req.method);
       if (p === '/notes') return await notes(req, env, req.method);
+      if (p === '/lessons') return await lessons(req, env, req.method);
       if (p === '/learn') return await learn(req, env, req.method);
       if (p === '/queue' && req.method === 'GET') return await queue(req, env, url);
       if (p === '/decide' && req.method === 'POST') return await decide(req, env);

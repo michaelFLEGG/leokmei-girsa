@@ -181,3 +181,17 @@ h2.lm-t2{font-family:'Vilna',serif;font-size:23px;margin:30px 0 10px;font-weight
 .lm-t2{bottom:90px}
 @keyframes lmhl{0%{background-color:rgba(255,226,122,.75)}100%{background-color:rgba(255,226,122,0)}}
 .lm-hl{animation:lmhl 2s ease-out}
+
+/* ---- שיעורי יוטיוב ---- */
+.lm-shiur-btn{position:fixed;bottom:64px;inset-inline-start:14px;z-index:35;background:var(--gold,#c9a24a);color:#2b2620;border:0;border-radius:22px;padding:9px 18px;font:700 16px 'Frank',serif;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.3)}
+.lm-shiur-btn[hidden]{display:none}
+.lm-shiur-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;display:flex;align-items:center;justify-content:center;padding:14px}
+.lm-shiur-box{position:relative;background:var(--card,#fbf8f1);color:var(--ink,#1d1a16);border-radius:12px;padding:16px;max-width:640px;width:100%;max-height:90vh;overflow:auto}
+.lm-shiur-x{position:absolute;top:6px;inset-inline-end:10px;background:none;border:0;font-size:28px;cursor:pointer;color:inherit}
+.lm-shiur-v{position:relative;aspect-ratio:16/9;background:#000;border-radius:8px;overflow:hidden;margin-bottom:10px}
+.lm-shiur-v iframe{width:100%;height:100%;border:0}
+.lm-shiur-play{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;background:none;cursor:pointer}
+.lm-shiur-play img{width:100%;height:100%;object-fit:cover;display:block}
+.lm-shiur-play span{position:absolute;inset:0;margin:auto;width:64px;height:64px;border-radius:50%;background:var(--gold,#c9a24a);color:#2b2620;font-size:28px;display:flex;align-items:center;justify-content:center}
+.lm-shiur h3{margin:6px 0 2px;font-size:18px}
+.lm-t2h{font-size:22px;margin:22px 0 10px}

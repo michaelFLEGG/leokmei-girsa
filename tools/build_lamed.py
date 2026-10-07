@@ -9,7 +9,7 @@ import os, io, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'lamed')
-PARTS = ['core', 'tracker', 'ui', 'ui2', 'sync', 'boot']
+PARTS = ['core', 'tracker', 'ui', 'ui2', 'shiurim', 'sync', 'boot']
 MARK = '/* ---- בדף הלימוד'
 
 PAGES = [
@@ -18,6 +18,7 @@ PAGES = [
     ('masechet.html', 'masechet', 'מסכת · לאוקמי גירסא'),
     ('lamed.html', 'lamed', 'הלימוד שלי · לאוקמי גירסא'),
     ('yomi.html', 'yomi', 'הדף היומי · לאוקמי גירסא'),
+    ('shiurim.html', 'shiurim', 'שיעורים · לאוקמי גירסא'),
     ('settings.html', 'settings', 'הגדרות · לאוקמי גירסא'),
     ('done.html', 'done', 'הדרן עלך מסכת · לאוקמי גירסא'),
     ('admin-lamdim.html', 'admin', 'תמונת הלומדים · לאוקמי גירסא'),

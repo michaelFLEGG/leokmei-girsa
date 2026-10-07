@@ -5,13 +5,14 @@
 מובנים; כותב sitemap.xml, robots.txt, CNAME ודף "אודות". הכתובת הקנונית
 היחידה היא BASE, בלי www. דפי עבודה (הגהה, מנהל, הגדרות) מסומנים noindex.
 """
-import os, io, re, json, datetime
+import os, io, re, json, datetime, urllib.request
 
 BASE = 'https://leokmei.com'
 NAME = 'לאוקמי גירסא'
 HOME_TITLE = 'לאוקמי גירסא · קיצור התלמוד הבבלי, קיצור הדף היומי וקיצור הש"ס'
 HOME_DESC = ('לאוקמי גירסא - קיצור התלמוד הבבלי: שלד הסוגיה בלבד, דף אחר דף. '
              'קיצור הדף היומי, קיצור הש"ס, ומערכת לימוד אישית. חינם.')
+API = 'https://leokmei-suggest.m7654301.workers.dev'
 NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'masechet.html')
 
 ABOUT = ('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
@@ -69,6 +70,17 @@ def rewrite(site, fn, title, desc, noindex=False, ld=None, body_extra=None):
     return True
 
 
+
+def lessons_static():
+    """שיעורי היוטיוב מן השרת (קריאה פתוחה), לנתונים מובנים ולטקסט סטטי בדף השיעורים.
+    כשל בקריאה אינו מפיל את הבנייה, אך נרשם בקול: הדף יעלה בלי הרשימה הסטטית."""
+    try:
+        with urllib.request.urlopen(API + '/lessons', timeout=20) as r:
+            return json.loads(r.read().decode('utf-8')).get('items', [])
+    except Exception as e:
+        print('אזהרה SEO: קריאת השיעורים נכשלה, דף השיעורים ללא רשימה סטטית:', e)
+        return []
+
 def run(site, built, slug):
     now = datetime.date.today().isoformat()
     io.open(os.path.join(site, 'about.html'), 'w', encoding='utf-8').write(ABOUT)
@@ -88,6 +100,18 @@ def run(site, built, slug):
     rewrite(site, 'shas.html', 'מפת הש"ס · ' + NAME, 'מפת הש"ס לפי סדרים ומסכתות, עם התקדמות הלימוד.')
     rewrite(site, 'about.html', 'אודות · ' + NAME, 'על לאוקמי גירסא: קיצור התלמוד הבבלי, מי עורך אותו ואיך הוא נבנה.')
     rewrite(site, 'mekorot.html', 'מקורות · ' + NAME, 'המקורות והרישיונות של הגמרא והפירוש המוצגים באתר.')
+    items = lessons_static()
+    ld_v = [{'@context': 'https://schema.org', '@type': 'VideoObject', 'name': l['title'],
+             'description': 'שיעור על %s %s' % (l['slug'], l['from']), 'thumbnailUrl': l['thumb'],
+             'uploadDate': datetime.date.fromtimestamp(l['t'] / 1000).isoformat(),
+             'embedUrl': 'https://www.youtube-nocookie.com/embed/' + l['vid'],
+             'contentUrl': 'https://www.youtube.com/watch?v=' + l['vid']} for l in items]
+    ns = '<noscript><main style="max-width:640px;margin:20px auto;padding:0 18px;font-family:serif"><h1>שיעורים</h1><ul>' + ''.join(
+        '<li><a href="https://www.youtube.com/watch?v=%s">%s</a></li>' % (l['vid'], esc(l['title'])) for l in items) + '</ul></main></noscript>'
+    rewrite(site, 'shiurim.html', 'שיעורי גמרא בקיצור · ' + NAME,
+            'שיעורי וידאו על הדף לפי מסכת ודף, ללומדי הדף היומי והש"ס, בצמוד לקיצור לאוקמי גירסא.',
+            ld=ld_v or None, body_extra=ns)
+    urls.append(('shiurim.html', '0.6'))
     for fn in NOINDEX:
         rewrite(site, fn, NAME, NAME, noindex=True)
     for m in built:

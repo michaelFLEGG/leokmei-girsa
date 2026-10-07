@@ -347,6 +347,8 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
         '<p><a href="index.html">חזרה לשער</a></p></main></body></html>')
     json.dump({'built': built, 'time': now}, open(os.path.join(SITE, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     write_shas(built)
+    import build_seo
+    build_seo.run(SITE, built, SLUG)
     print(len(built), 'מסכתות נבנו')
 
 def write_shas(built):

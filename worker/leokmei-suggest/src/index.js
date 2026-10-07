@@ -237,7 +237,7 @@ function locCmp(ord) {
   return (a, b) => {
     const ia = ord === 'shas' ? (SHAS_I[a.slug] ?? 99) : (HE_I[HE_OF[a.slug]] ?? 99);
     const ib = ord === 'shas' ? (SHAS_I[b.slug] ?? 99) : (HE_I[HE_OF[b.slug]] ?? 99);
-    return (ia - ib) || (dafNum(a.d) - dafNum(b.d)) || ((a.po || 0) - (b.po || 0)) || (a.t - b.t);
+    return (ia - ib) || ((dafNum(a.d) || 99999) - (dafNum(b.d) || 99999)) || ((a.po || 0) - (b.po || 0)) || (a.t - b.t);
   };
 }
 function sgMeta(rec) {

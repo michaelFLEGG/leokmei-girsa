@@ -27,7 +27,7 @@
     var now = Date.now();
     var top = el('header', 'lm-top');
     top.innerHTML = '<a class="lm-brand" href="index.html">לאוקמי גירסא</a>' +
-      '<nav>' + [['home', 'index.html', 'בית'], ['shas', 'shas.html', 'מפת הש"ס'], ['lamed', 'lamed.html', 'הלימוד שלי'], ['yomi', 'yomi.html', 'הדף היומי'], ['quiz', 'quiz.html', 'בחן את עצמך'], ['shiurim', 'shiurim.html', 'שיעורים'], ['settings', 'settings.html', 'הגדרות']]
+      '<nav>' + [['home', 'index.html', 'בית'], ['shas', 'shas.html', 'מפת הש"ס'], ['lamed', 'lamed.html', 'הלימוד שלי'], ['yomi', 'yomi.html', 'הדף היומי'], ['quiz', 'quiz.html', 'בחן את עצמך'], ['shiurim', 'shiurim.html', 'שיעורים'], ['settings', 'settings.html', 'הגדרות']].concat((function () { try { return localStorage.getItem('lg-adm') ? [['admin', 'admin-lamdim.html', 'מנהל: שאלות ולומדים']] : []; } catch (e) { return []; } })())
         .map(function (a) { return '<a href="' + a[1] + '"' + (page === a[0] ? ' class="on"' : '') + '>' + a[2] + '</a>'; }).join('') + '</nav>' +
       '<span class="lm-date">' + E(HD.long(now)) + '</span>';
     document.body.insertBefore(top, document.body.firstChild);

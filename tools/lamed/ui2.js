@@ -477,9 +477,24 @@
     root.appendChild(wrap);
     var box = $('#lm-ad');
     var key = ''; try { key = localStorage.getItem('lg-adm') || ''; } catch (e) { }
-    if (!key) { box.innerHTML = '<div class="lm-card"><p>דף זה למנהל בלבד. הכנס את מפתח המנהל (נשמר במכשיר הזה):</p><div class="lm-row"><input id="lm-ak" type="text" autocomplete="off" style="max-width:300px"><button class="lm-btn" id="lm-akb" type="button">כניסה</button></div></div>'; $('#lm-akb').onclick = function () { try { localStorage.setItem('lg-adm', $('#lm-ak').value.trim()); } catch (e) { } location.reload(); }; return; }
+    function login(msg) {
+      box.innerHTML = '<div class="lm-card"><p>דף זה למנהל בלבד. הקלד את מילת המנהל (אותה מילה שמקלידים בעריכה באתר; המכשיר יזוהה ולא תצטרך להקליד שוב):</p>' + (msg ? '<p style="color:var(--red)">' + E(msg) + '</p>' : '') +
+        '<div class="lm-row"><input id="lm-ak" type="password" autocomplete="off" style="max-width:300px"><button class="lm-btn" id="lm-akb" type="button">כניסה</button></div></div>';
+      var go = async function () {
+        var w = $('#lm-ak').value.trim(); if (!w) return;
+        try {
+          var r = await LG.sync.api('/auth', { method: 'POST', body: JSON.stringify({ word: w, label: 'מסך הלומדים · ' + HD.date(Date.now()) }) });
+          try { localStorage.setItem('lg-adm', r.token); localStorage.setItem('lg-admin', '1'); } catch (e) { }
+          location.reload();
+        } catch (e) { login(e.message); }
+      };
+      $('#lm-akb').onclick = go; $('#lm-ak').onkeydown = function (e) { if (e.key === 'Enter') go(); };
+    }
+    if (!key) { login(''); return; }
     var data;
-    try { data = await LG.sync.stats(key, window.__lmDemo); } catch (e) { box.innerHTML = '<div class="lm-card"><p>לא ניתן לטעון כרגע: ' + E(e.message) + '</p></div>'; return; }
+    try { data = await LG.sync.stats(key, window.__lmDemo); } catch (e) {
+      if (/הרשאה/.test(e.message || '')) { try { localStorage.removeItem('lg-adm'); } catch (x) { } login('המפתח השמור אינו תקף במכשיר הזה. הקלד את מילת המנהל.'); return; }
+      box.innerHTML = '<div class="lm-card"><p>לא ניתן לטעון כרגע: ' + E(e.message) + '</p></div>'; return; }
     /* עמודים שכבר נערכו בעריכה המתקדמת (data/edited-pages.json): כל השאר "טרם נערכו" */
     var edm = {};
     try { edm = await fetch('edited-pages.json').then(function (r) { return r.json(); }); } catch (e) { }

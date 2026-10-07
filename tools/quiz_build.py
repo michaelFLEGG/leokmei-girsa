@@ -8,6 +8,8 @@ site/quiz/<מסכת>.json. שלושה סוגי שאלות נוצרים מכני�
   m  "מי אמר"         - איזה תנא (מתוך תנאי המשנה) או אמורא (מתוך כותרות הדיבור) אמר
   c  "השלם את המשנה"  - מילה חסרה בקטע משנה
 
+[7.10.2026: התצוגה ללומדים בנויה רק משאלות מוגהות - ראה parse_reviewed ו-run בתחתית הקובץ.
+הקוד המכני שלמטה נשאר, אך אינו נקרא.]
 סוג רביעי, d "שאלת הבנה", נוצר בידי מודל קל ונשמר ב-data/quiz/draft-<מסכת>.json
 בסימון טיוטה; הוא מועתק ל-site/quiz/<מסכת>-draft.json ומוצג ללומדים רק אחרי שהמנהל אישר.
 
@@ -264,43 +266,99 @@ def clean_drafts(slug, D, raw):
     return out
 
 
+DAF_RE = re.compile(r'^[א-ת]{1,3} ע"[אב]$')
+
+
+def parse_reviewed(slug, path):
+    """data/quiz/<slug>.reviewed.txt -> רשימת שאלות מוגהות. כל פגם עוצר את הבנייה בהודעה ברורה.
+    מבנה: '@ פרק|דף|רמה', אחריה 'ש:' שאלה, '+' נכונה (אחת), '-' מסיחים (שלושה), 'ה:' הסבר."""
+    out, seen, cur = [], {}, None
+
+    def fail(n, msg):
+        sys.exit('שגיאה ב-%s, שורה %d: %s' % (os.path.basename(path), n, msg))
+
+    def close():
+        if cur is None:
+            return
+        n = cur['n']
+        if not cur['q']:
+            fail(n, 'שאלה בלי נוסח (ש:)')
+        if len(cur['plus']) != 1 or len(cur['minus']) != 3:
+            fail(n, 'חייבות להיות בדיוק 4 תשובות (אחת נכונה ושלושה מסיחים): %d נכונות, %d מסיחים' % (len(cur['plus']), len(cur['minus'])))
+        opts = cur['plus'] + cur['minus']
+        if len(set(opts)) != 4:
+            fail(n, 'שתי תשובות זהות באותה שאלה')
+        if not DAF_RE.match(cur['d']):
+            fail(n, 'דף לא בתבנית \'לה ע"א\': %r' % cur['d'])
+        if cur['lvl'] not in (1, 2, 3):
+            fail(n, 'רמה חייבת להיות 1, 2 או 3')
+        key = re.sub(r'\s+', ' ', cur['q']).strip()
+        if key in seen:
+            fail(n, 'שאלה כפולה (כבר בשורה %d)' % seen[key])
+        seen[key] = n
+        out.append({'i': 'r:%s:%s' % (slug, tid(key)), 'p': cur['p'], 'd': cur['d'], 'lvl': cur['lvl'],
+                    'q': key, 'o': opts, 'a': 0, 'x': cur['x']})
+
+    for n, line in enumerate(io.open(path, encoding='utf-8').read().split('\n'), 1):
+        line = line.rstrip()
+        if not line or line.startswith('#'):
+            continue
+        if line.startswith('@'):
+            close()
+            parts = [x.strip() for x in line[1:].split('|')]
+            if len(parts) != 3 or not parts[0].isdigit() or not parts[2].isdigit():
+                fail(n, 'כותרת שאלה לא תקינה, צריך \'@ פרק|דף|רמה\': %r' % line)
+            cur = {'n': n, 'p': int(parts[0]), 'd': parts[1], 'lvl': int(parts[2]), 'q': '', 'plus': [], 'minus': [], 'x': ''}
+        elif cur is None:
+            fail(n, 'שורה לפני הכותרת הראשונה')
+        elif line.startswith('ש:'):
+            cur['q'] = line[2:].strip()
+        elif line.startswith('ה:'):
+            cur['x'] = line[2:].strip()
+        elif line.startswith('+ '):
+            cur['plus'].append(line[2:].strip())
+        elif line.startswith('- '):
+            cur['minus'].append(line[2:].strip())
+        else:
+            fail(n, 'שורה לא מובנת: %r' % line)
+    close()
+    for q in out:
+        for f in (q['q'], q['x'], *q['o']):
+            if '–' in f or '—' in f:
+                sys.exit('שגיאה: קו מפריד ארוך בשאלה %r - יש להשתמש במקף רגיל' % q['q'][:40])
+    return out
+
+
 def run(site):
+    """מ-7.10.2026 (שדרוג בחן את עצמך): רק שאלות מוגהות. השאלות המכניות והטיוטות הישנות
+    אינן נכתבות לאתר (הקוד שלהן נשאר למעלה). מסכת בלי קובץ מוגה אינה מוצעת."""
     qdir = os.path.join(site, 'quiz')
     os.makedirs(qdir, exist_ok=True)
-    total = 0
-    summary = []
-    drafts = {}
-    for fn in sorted(os.listdir(site)):
-        if not fn.endswith('.html'):
+    for fn in os.listdir(qdir):
+        os.remove(os.path.join(qdir, fn))
+    ddir = os.path.join(ROOT, 'data', 'quiz')
+    idx, total = {}, 0
+    for fn in sorted(os.listdir(ddir)):
+        if not fn.endswith('.reviewed.txt'):
             continue
-        slug = fn[:-5]
-        p = os.path.join(site, fn)
-        if os.path.getsize(p) < 200000:
-            continue
-        D = load_data(p)
-        if not D or 'pages' not in D or not D.get('masechet'):
-            continue
-        res = build_masechet(slug, D)
-        if not res['q']:
-            print('אזהרה: למסכת %s לא נוצרה אף שאלה' % slug)
-            continue
+        slug = fn[:-len('.reviewed.txt')]
+        qs = parse_reviewed(slug, os.path.join(ddir, fn))
+        name = slug
+        hp = os.path.join(site, slug + '.html')
+        if os.path.exists(hp):
+            D = load_data(hp)
+            if D and D.get('masechet'):
+                name = D['masechet']
+        res = {'slug': slug, 'name': name, 'n': len(qs), 'q': qs}
         io.open(os.path.join(qdir, slug + '.json'), 'w', encoding='utf-8').write(
             json.dumps(res, ensure_ascii=False, separators=(',', ':')))
-        dr = os.path.join(ROOT, 'data', 'quiz', 'draft-%s.json' % slug)
-        if os.path.exists(dr):
-            dq = clean_drafts(slug, D, json.load(io.open(dr, encoding='utf-8')))
-            io.open(os.path.join(qdir, slug + '-draft.json'), 'w', encoding='utf-8').write(
-                json.dumps({'slug': slug, 'status': 'draft', 'q': dq}, ensure_ascii=False, separators=(',', ':')))
-            drafts[slug] = len(dq)
-            print('  טיוטות %s: %d שאלות הבנה (ממתינות לאישור המנהל)' % (slug, len(dq)))
-        total += res['n']
-        summary.append((slug, res['n'], res['by']))
-    # רשימת המסכתות שיש להן שאלות: הלקוח קורא אותה כדי לדעת מה להציע
-    idx = {s: n for s, n, _ in summary}
+        idx[slug] = len(qs)
+        total += len(qs)
+        print('  %s: %d שאלות מוגהות' % (slug, len(qs)))
     io.open(os.path.join(qdir, 'index.json'), 'w', encoding='utf-8').write(json.dumps(idx, ensure_ascii=False))
-    io.open(os.path.join(qdir, 'drafts.json'), 'w', encoding='utf-8').write(json.dumps(drafts, ensure_ascii=False))
-    print('שאלות: %d מסכתות, %d שאלות מכניות' % (len(summary), total))
-    return summary
+    io.open(os.path.join(qdir, 'drafts.json'), 'w', encoding='utf-8').write('{}')
+    print('שאלות: %d מסכתות, %d שאלות מוגהות' % (len(idx), total))
+    return idx
 
 
 if __name__ == '__main__':

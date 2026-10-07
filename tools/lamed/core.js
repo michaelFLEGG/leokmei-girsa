@@ -290,7 +290,7 @@
     types: [],            /* visitor, regular, yomi, scholar */
     my: [],               /* מסכתות אישיות */
     goals: {},            /* slug -> {end:'YYYY-MM-DD', minutes:N, perWeek:N} */
-    clock: true, bar: true, streak: true, share: true, dark: 'auto',
+    clock: true, bar: true, streak: true, share: true, dark: 'light',
     remind: { on: false, time: '06:00', browser: false },
     tz: 'Asia/Jerusalem', skipDays: [], name: '', gdoc: true, target: { 0: 10 }
   };

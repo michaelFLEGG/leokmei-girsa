@@ -13,36 +13,33 @@
   UI.applyTheme = function () {
     var d = LG.settings().dark;
     var r = document.documentElement;
-    if (d === 'light' || d === 'dark') r.setAttribute('data-theme', d); else r.removeAttribute('data-theme');
+    var v = (d === 'dark' || d === 'auto') ? d : 'light';
+    r.setAttribute('data-theme', v);
+    try { localStorage.setItem('lg-theme', v); } catch (e) { }
   };
 
   /* ---------------------------------------------------------- ראש הדף והניווט */
-  var ICONS = {
-    home: '<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>',
-    map: '<svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM9 5v14M15 5v14"/></svg>',
-    me: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 15-5 16 0"/></svg>',
-    yomi: '<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>'
-  };
+  function ic(n, c) { return '<svg class="ic' + (c ? ' ' + c : '') + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; }
+  UI.ic = ic;
+  var NAV = [['home', 'index.html', 'בית'], ['shas', 'shas.html', 'מפת הש"ס'], ['yomi', 'yomi.html', 'הדף היומי'], ['lamed', 'lamed.html', 'הלימוד שלי'], ['quiz', 'quiz.html', 'בחן את עצמך'], ['shiurim', 'shiurim.html', 'שיעורים']];
   UI.header = function (page) {
-    var now = Date.now();
+    var now = Date.now(), adm = false;
+    try { adm = !!localStorage.getItem('lg-adm'); } catch (e) { }
     var top = el('header', 'lm-top');
-    top.innerHTML = '<a class="lm-brand" href="index.html">לאוקמי גירסא</a>' +
-      '<nav>' + [['home', 'index.html', 'בית'], ['shas', 'shas.html', 'מפת הש"ס'], ['lamed', 'lamed.html', 'הלימוד שלי'], ['yomi', 'yomi.html', 'הדף היומי'], ['quiz', 'quiz.html', 'בחן את עצמך'], ['shiurim', 'shiurim.html', 'שיעורים'], ['settings', 'settings.html', 'הגדרות']].concat((function () { try { return localStorage.getItem('lg-adm') ? [['admin', 'admin-lamdim.html', 'מנהל: שאלות ולומדים']] : []; } catch (e) { return []; } })())
-        .map(function (a) { return '<a href="' + a[1] + '"' + (page === a[0] ? ' class="on"' : '') + '>' + a[2] + '</a>'; }).join('') + '</nav>' +
-      '<span class="lm-date">' + E(HD.long(now)) + '</span>';
+    top.innerHTML = '<button class="q lm-ib lm-burger" type="button" aria-label="תפריט" id="lm-burger">' + ic('list') + '</button>' +
+      '<a class="lm-brand" href="index.html" title="לדף הבית">לאוקמי גירסא</a>' +
+      '<nav id="lm-nav" aria-label="ניווט ראשי">' + NAV.map(function (a) { return '<a href="' + a[1] + '"' + (page === a[0] ? ' class="on" aria-current="page"' : '') + '>' + a[2] + '</a>'; }).join('') + '</nav>' +
+      '<span class="lm-date">' + E(HD.long(now)) + '</span>' +
+      '<div class="dd" id="lm-um"><button class="q lm-ib" type="button" aria-label="תפריט משתמש" aria-haspopup="menu" id="lm-umb">' + ic('user') + '</button>' +
+      '<div class="menu"><a class="mi" href="settings.html">' + ic('gear') + 'הגדרות</a>' +
+      (adm ? '<a class="mi" href="admin-lamdim.html">' + ic('shield') + 'מנהל: שאלות ולומדים</a>' : '') + '</div></div>';
     document.body.insertBefore(top, document.body.firstChild);
-    var nav = el('nav', 'lm-bnav');
-    nav.setAttribute('aria-label', 'ניווט ראשי');
-    nav.innerHTML = [['home', 'index.html', 'בית', ICONS.home], ['shas', 'shas.html', 'מפה', ICONS.map], ['lamed', 'lamed.html', 'הלימוד שלי', ICONS.me], ['yomi', 'yomi.html', 'דף יומי', ICONS.yomi]]
-      .map(function (a) { return '<a href="' + a[1] + '"' + (page === a[0] ? ' class="on"' : '') + '>' + a[3] + '<span>' + a[2] + '</span></a>'; }).join('');
-    document.body.appendChild(nav);
-    /* נעלם בקריאה (גלילה למטה) וחוזר בגלילה למעלה */
-    var lastY = scrollY;
-    addEventListener('scroll', function () {
-      var y = scrollY;
-      if (y > lastY + 8 && y > 120) nav.classList.add('hide'); else if (y < lastY - 8) nav.classList.remove('hide');
-      lastY = y;
-    }, { passive: true });
+    $('#lm-burger').onclick = function () { $('#lm-nav').classList.toggle('open'); };
+    $('#lm-umb').onclick = function (e) { e.stopPropagation(); $('#lm-um').classList.toggle('open'); };
+    document.addEventListener('click', function (e) { if (!e.target.closest('#lm-um')) $('#lm-um').classList.remove('open'); if (!e.target.closest('#lm-burger') && !e.target.closest('#lm-nav')) $('#lm-nav').classList.remove('open'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { $('#lm-um').classList.remove('open'); $('#lm-nav').classList.remove('open'); } });
+    /* גופני וילנא נטענים רק כשמשתמשים בהם; מבקשים אותם במפורש כדי שלא יישארו "לא נטענו" */
+    if (document.fonts && document.fonts.load) ['400 20px Vilna', '700 20px Vilna', '900 20px Vilna', '20px Leukmey'].forEach(function (f) { document.fonts.load(f, 'אבג').catch(function () { }); });
   };
 
   /* ---------------------------------------------------------- רכיבים */
@@ -139,64 +136,54 @@
   UI.home = function (root) {
     var S = LG.state(), set = S.settings, now = Date.now();
     var wrap = el('main', 'lm-wrap');
-    var types = set.types || [];
-    var hero = el('div', 'lm-card');
-    hero.style.textAlign = 'center';
-    hero.innerHTML = '<div class="lm-small">' + E(HD.long(now)) + '</div>' +
-      '<h1 class="lm-t" style="font-family:Leukmey,Vilna,serif;font-weight:900;font-size:46px;margin:6px 0">לאוקמי גירסא</h1>' +
-      '<div class="lm-small" style="font-size:17px">"לעולם ליגרס איניש" (שבת סג.) · קיצור התלמוד הבבלי, שלד הסוגיה בלבד</div>';
-    hero.appendChild(LG.quiz.liveLine(''));
-    wrap.appendChild(hero);
-
-    var rc = UI.resumeCard();
-    if (rc) wrap.appendChild(rc);
-    else {
-      var first = el('div', 'lm-card lm-hero');
-      var t = window.LGDaf && LGDaf.forStr(LG.ymd(now));
-      var mm = t && LG.masechet(t.slug);
-      first.innerHTML = '<div class="lm-txt"><div class="lm-small">ללומד חדש</div><div class="lm-big">התחל ללמוד</div>' +
-        '<div class="lm-small">הדף היומי של היום, או מסכת ברכות מן ההתחלה.</div></div>' +
-        '<div class="lm-row">' + (mm && mm.built ? '<a class="lm-btn" href="' + UI.readHref(t.slug, t.daf) + '">הדף היומי: ' + E(t.name) + ' ' + E(t.daf) + '</a>' : '') +
-        '<a class="lm-btn ghost" href="berakhot.html">מסכת ברכות</a></div>';
-      wrap.appendChild(first);
-    }
-    /* כרטיס הדף היומי */
     var y = window.LGDaf && LGDaf.forStr(LG.ymd(now));
-    if (y) {
-      var ym = LG.masechet(y.slug), has = ym && ym.built;
-      var dc = el('div', 'lm-card lm-hero');
-      dc.innerHTML = '<div class="lm-txt"><div class="lm-small">הדף היומי · ' + E(HD.long(now)) + '</div>' +
-        '<div class="lm-big">' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</div>' +
-        (has ? '' : '<div class="lm-small">מסכת זו עדיין בהכנה באתר. אפשר לסמן "למדתי בספר".</div>') + '</div>' +
-        (has ? '<a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">ללמוד את הדף של היום</a>' : '<a class="lm-btn ghost" href="yomi.html">לדף היומי</a>');
-      wrap.appendChild(dc);
-    }
-    /* לומד חוזר: תמצית */
+    var ym = y && LG.masechet(y.slug), yHas = ym && ym.built;
+    var l = S.last.all, rHref = l ? UI.readHref(l.s, l.d, l) : null;
+    /* באנר פתיחה: עיטור בקווי זהב, מוטו בכתב רש"י, שם האתר, משפט אחד, ושני כפתורים */
+    var ban = el('section', 'lm-hero-ban');
+    var btns;
+    if (rHref) btns = '<a class="lm-btn pri" href="' + rHref + '">המשך ללמוד · ' + E(LG.nameOf(l.s)) + ' ' + E(l.d) + '</a>' +
+      (yHas ? '<a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">הדף היומי · ' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</a>' : '<a class="lm-btn" href="yomi.html">הדף היומי</a>');
+    else btns = '<a class="lm-btn pri" href="' + (yHas ? UI.readHref(y.slug, LG.dafLabel(y.n, 0)) : 'berakhot.html') + '">התחל ללמוד</a><a class="lm-btn" href="shas.html">מפת הש"ס</a>';
+    ban.innerHTML = '<div class="lm-motto">"לעולם ליגרס איניש" (שבת סג.)</div><h1>לאוקמי גירסא</h1>' +
+      '<p>קיצור התלמוד הבבלי: שלד הסוגיה בלבד, עם המקור המנוקד מוצמד לכל קטע ו"פירוש הגמרא" לצדו.</p><div class="lm-row">' + btns + '</div>';
+    wrap.appendChild(ban);
+
+    /* שני כרטיסים: המשך מהמקום שעצרת, והדף היומי */
+    var two = el('div', 'lm-two');
+    var rc = el('div', 'lm-card');
+    if (l && rHref) {
+      var st = LG.masechetStats(l.s), snip = l.fp ? '״…' + E(l.fp.slice(0, 40)) + '…״' : '';
+      rc.innerHTML = '<div class="lm-small">המשך מהמקום שעצרת</div><div class="lm-big lm-h" style="font-size:26px">' + E(LG.nameOf(l.s)) + ' · עמוד ' + E(l.d) + '</div>' +
+        (snip ? '<div class="lm-quote">' + snip + '</div>' : '') +
+        UI.bar(st.done, st.ext, st.total) + '<div class="lm-small" style="margin:6px 0 12px">נלמדו ' + LG.nf(st.dafimDone) + ' מתוך ' + LG.nf(st.dafimTotal) + ' דפים במסכת · ' + LG.relDay(LG.ymd(l.t), LG.ymd(now)) + '</div>' +
+        '<a class="lm-btn" href="' + rHref + '">המשך ללמוד</a>';
+    } else rc.innerHTML = '<div class="lm-small">ללומד חדש</div><div class="lm-big lm-h" style="font-size:26px">אין עדיין היסטוריה</div><p class="lm-note">אחרי הדף הראשון שתלמד, כאן יופיע המקום שבו עצרת.</p><a class="lm-btn" href="berakhot.html">מסכת ברכות מן ההתחלה</a>';
+    two.appendChild(rc);
+    var dc = el('div', 'lm-card');
+    if (y) dc.innerHTML = '<div class="lm-small">הדף היומי</div><div class="lm-big lm-h" style="font-size:26px">' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</div>' +
+      '<p class="lm-note" style="margin:6px 0 12px">' + (yHas ? 'מחזור ' + E(LG.hebq(y.cycle)) : 'מסכת זו עדיין בהכנה באתר. אפשר לסמן "למדתי בספר".') + '</p>' +
+      (yHas ? '<a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">ללמוד את הדף</a>' : '<a class="lm-btn" href="yomi.html">לדף היומי</a>');
+    two.appendChild(dc);
+    wrap.appendChild(two);
+
+    /* שורת הספק אחת, שקטה */
     if (S.sessions.length || S.doneEvents.length) {
       var w = UI.weekSummary();
-      var sc = el('div', 'lm-card');
-      var my = (set.my || [])[0] || (S.last.all && S.last.all.s);
-      var fc = '';
-      if (my) {
-        var rem = LG.remainingMs(my), daily = LG.dailyMs(), fd = LG.finishDate(rem, daily, set.skipDays);
-        if (fd && rem > 0) fc = '<div class="lm-stat"><b>' + E(LG.gDateShort(fd.ymd)) + '</b><span>סיום ' + E(LG.nameOf(my)) + ' בקצב הנוכחי</span></div>';
-      }
-      sc.innerHTML = '<h3>השבוע שלך</h3><div class="lm-stats">' +
-        '<div class="lm-stat"><b>' + E(LG.dur(w.ms)) + '</b><span>זמן לימוד</span></div>' +
-        '<div class="lm-stat"><b>' + LG.nf(w.pages) + '</b><span>עמודים נלמדו</span></div>' +
-        (set.streak === false ? '' : '<div class="lm-stat"><b>' + LG.nf(w.streak) + '</b><span>ימים ברצף</span></div>') + fc + '</div>' +
-        '<p style="margin:12px 0 0"><a href="lamed.html">לכל הלימוד שלי</a></p>';
-      wrap.appendChild(sc);
+      var strip = el('div', 'lm-strip');
+      strip.innerHTML = '<span><b>' + E(LG.dur(w.ms)) + '</b>השבוע</span><span><b>' + LG.nf(w.pages) + '</b>עמודים</span>' +
+        (set.streak === false ? '' : '<span><b>' + LG.nf(w.streak) + '</b>ימים ברצף</span>') +
+        '<span><b>' + E(LG.dur(S.totalMs)) + '</b>סך הכול</span><a href="lamed.html">לכל הלימוד שלי</a>';
+      wrap.appendChild(strip);
     }
-    var qzc = el('div', 'lm-card lm-hero'), qsc = LG.quiz.score(), qdue = LG.quiz.dueCount();
-    qzc.innerHTML = '<div class="lm-txt"><div class="lm-small">חזרה מרווחת, ניקוד ותארים</div><div class="lm-big">בחן את עצמך</div>' +
-      '<div class="lm-small">' + (qsc.answered ? (qdue ? LG.nf(qdue) + ' חזרות ממתינות לך היום' : 'אין חזרות ממתינות היום') : 'שאלות על הדף שלמדת: איפה כתוב, מי אמר, השלם את המשנה') + '</div></div>' +
+    /* בחן את עצמך: כרטיס קטן */
+    var qsc = LG.quiz.score(), qdue = LG.quiz.dueCount();
+    var qz = el('div', 'lm-card lm-mini');
+    qz.innerHTML = '<div class="lm-txt"><b class="lm-h" style="font-size:20px">בחן את עצמך</b><div class="lm-small">' +
+      (qsc.answered ? (qdue ? LG.nf(qdue) + ' חזרות ממתינות לך היום' : 'אין חזרות ממתינות היום') : 'שאלות על הדף שלמדת: איפה כתוב, מי אמר, השלם את המשנה') + '</div></div>' +
       '<a class="lm-btn" href="quiz.html">' + (qdue ? 'לחזרות של היום' : 'לבחון את עצמי') + '</a>';
-    wrap.appendChild(qzc);
-    var nav = el('div', 'lm-card');
-    nav.innerHTML = '<h3>כניסות</h3><div class="lm-row"><a class="lm-btn" href="shas.html">מפת הש"ס</a><a class="lm-btn ghost" href="lamed.html">הלימוד שלי</a><a class="lm-btn ghost" href="yomi.html">הדף היומי</a></div>' +
-      '<p class="lm-note" style="margin:12px 0 0">לאוקמי גירסא הוא קיצור התלמוד הבבלי: שלד הסוגיה בלבד, עם המקור המנוקד מוצמד לכל קטע ו"פירוש הגמרא" לצדו.</p>';
-    wrap.appendChild(nav);
+    wrap.appendChild(qz);
+    wrap.appendChild(LG.quiz.liveLine(''));
     root.appendChild(wrap);
     UI.maybeOnboard();
   };
@@ -206,7 +193,7 @@
     var wrap = el('main', 'lm-wrap');
     wrap.innerHTML = '<h1 class="lm-t">מפת הש"ס</h1><p class="lm-sub">ששת הסדרים. מסכת שעדיין אינה באתר מוצגת עמומה, עם "בהכנה".</p>' +
       '<div class="lm-card"><div class="lm-field" style="margin:0"><label for="lm-jump">קפיצה מהירה (למשל "חולין מב" או "בכורות יח:")</label>' +
-      '<div class="lm-row"><input id="lm-jump" type="text" placeholder="מסכת ודף" autocomplete="off"><button class="lm-btn" id="lm-jgo" type="button">קפוץ</button></div><div class="lm-note" id="lm-jmsg"></div></div></div>';
+      '<div class="lm-row"><input id="lm-jump" type="text" placeholder="מסכת ודף" autocomplete="off"><button class="lm-btn pri" id="lm-jgo" type="button">קפוץ</button></div><div class="lm-note" id="lm-jmsg"></div></div></div>';
     LG.shas().seder.forEach(function (s) {
       var sec = el('section', 'lm-seder'); sec.innerHTML = '<h2 class="lm-t2">סדר ' + E(s.name) + '</h2>';
       var g = el('div', 'lm-vols');
@@ -215,9 +202,8 @@
         if (m.built) {
           var st = LG.masechetStats(m.slug);
           n.href = 'masechet.html?m=' + m.slug;
-          n.innerHTML = '<b>' + E(m.name) + '</b><small>' + LG.nf(st.dafimTotal) + ' דפים</small>' +
-            UI.ring(st.ratio, st.ratio ? LG.pct(st.ratio) : '', 'sm', 0) + UI.bar(st.done, st.ext, st.total) +
-            (st.cycle ? '<small>מחזור ' + E(LG.hebq(st.cycle + 1)) + '</small>' : '');
+          n.innerHTML = '<b>' + E(m.name) + '</b><small>' + LG.nf(st.dafimTotal) + ' דפים' + (st.cycle ? ' · מחזור ' + E(LG.hebq(st.cycle + 1)) : '') + '</small>' +
+            ((st.done || st.ext) ? UI.bar(st.done, st.ext, st.total) : '');
         } else n.innerHTML = '<b>' + E(m.name) + '</b><small>בהכנה</small>';
         g.appendChild(n);
       });

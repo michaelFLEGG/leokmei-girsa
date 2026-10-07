@@ -17,7 +17,7 @@
     '.chg-o{background:#f3b5ab;border-radius:2px}.chg-n{background:#9ed4ab;border-radius:2px}'+
     '.sqwarn{background:#fff3d6;border:1px solid #e3c277;border-radius:5px;padding:2px 8px;margin:4px 0;font-size:14px}'+
     '.sugbadge{background:#2e5b8a!important;color:#fff!important}'+
-    'body.sugm .edbar{background:#2e4a6b}body.sugm .edbar button{background:#3f6a99}'+
+    
     '.sgmodal .box{max-width:460px}.sgmodal input[type=text]{width:100%;font:inherit;box-sizing:border-box;margin:4px 0 8px}';
     document.head.appendChild(st)})();
 
@@ -142,7 +142,7 @@
   function sugSoon(){clearTimeout(SUGT);SUGT=setTimeout(()=>sugPush(0),2500);sugDraw()}
   function sugDraw(){const el=$('#edpub');if(!el)return;
     const pend=ED.filter(e=>!e.pub&&!e.lost).length;
-    el.textContent=SUGMSG||(SUGBUSY?'· שולח…':pend?'· '+pend+' ממתינות לשליחה':SUGCOUNT?'· '+SUGCOUNT+' הצעות נשלחו לעורך':'');
+    el.textContent=SUGMSG||(SUGBUSY?'שולח…':pend?(pend===1?'הצעה אחת ממתינה לשליחה':pend+' הצעות ממתינות לשליחה'):SUGCOUNT?SUGCOUNT+' הצעות נשלחו לעורך':'אין הצעות ממתינות');
     el.className='edpub'+(SUGMSG.indexOf('לא נשלח')===0?' bad':'')}
   /* הופך כל פעולה שטרם נשלחה להצעה בתור היוצא, ושולח */
   async function sugPush(loud){

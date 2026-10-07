@@ -436,12 +436,12 @@
   };
   /* "כעת לומדים באתר: X" - מונה אנונימי ומכובד; מוסתר אם אין נתון אמין */
   Q.liveLine = function (slug) {
-    var s = el('p', 'lm-live'); s.style.cssText = 'margin:8px 0 0;font-size:15px;opacity:.85;text-align:center';
+    var s = el('p', 'lm-live'); s.style.cssText = 'margin:8px 0 0;font-size:14px;text-align:center';
     if (offline()) return s;
     if (LG.sync) LG.sync.heartbeat(slug || '');
     var go = function () {
       LG.sync.online(slug).then(function (j) {
-        if (!j || !j.ok || !j.n) { s.textContent = ''; return; }
+        if (!j || !j.ok || !j.n || j.n < 20) { s.textContent = ''; return; }
         s.textContent = 'כעת לומדים באתר: ' + LG.nf(j.n) + (slug && j.s ? ' · במסכת זו: ' + LG.nf(j.s) : '');
       });
     };

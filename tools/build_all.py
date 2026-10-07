@@ -296,13 +296,14 @@ def main():
             else:
                 cells += f'<span class="m"><b>{m}</b><small>בעריכה</small></span>'
         rows += f'<section><h2>סדר {seder}</h2><div class="grid">{cells}</div></section>'
-    GOLD = io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'gold-theme.css'), encoding='utf-8').read()
+    GOLD = ''
     idx = f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>לאוקמי גירסא · קיצור התלמוד הבבלי</title>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="ui.css">
 <style>@font-face{{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900}}@font-face{{font-family:'Frank';src:url(fonts/frank.ttf)}}@font-face{{font-family:'Leukmey';src:url(fonts/leukmey.otf)}}
-body{{margin:0;background:#e9e4d8;color:#1d1a16;font-family:'Frank','Frank Ruhl Libre',serif}}
-header{{background:#2b2620;color:#f1ead9;padding:34px 20px 26px;text-align:center}} header h1{{font-family:'Leukmey','Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#cfc4ad;font-size:18px}}
+body{{margin:0;background:#f7f3ea;color:#1f1c18;font-family:'Assistant','Noto Sans Hebrew','Frank','Frank Ruhl Libre',sans-serif}}
+header{{background:#fffdf8;border-bottom:1px solid #e3dacb;color:#1f1c18;padding:34px 20px 26px;text-align:center}} header h1{{font-family:'Leukmey','Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#cfc4ad;font-size:18px}}
 #dy{{display:inline-block;margin-top:14px;padding:9px 22px;font-size:18px}}
 .m.now{{border-color:#a83c2f;box-shadow:0 0 0 2px #c9a24a}} .now-tag{{display:block;color:#a83c2f;font-size:12px;font-weight:700;margin-bottom:2px}}
 #nowrow{{margin:18px 0 0}} #nowrow .grid{{grid-template-columns:minmax(180px,260px)}}
@@ -316,7 +317,7 @@ main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500
 .hg:hover{{background:#b8912f}}
 footer{{text-align:center;color:#8a7d66;font-size:13px;padding:20px}}
 {GOLD}</style></head><body>
-<header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p><button id="dy" type="button" style="display:none">הדף היומי</button></header>
+<header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p><button id="dy" class="btn primary" type="button" style="display:none">הדף היומי</button></header>
 <main>{rows}</main><script src="hdate.js"></script><script src="daf-yomi.js"></script><script>
 (function(){{var BUILT={json.dumps([SLUG[m] for m in built])};var b=document.getElementById('dy');if(!window.LGDaf)return;var t=LGDaf.today();if(!t)return;
 b.style.display='';

@@ -14,20 +14,32 @@
                rejected:['נדחתה','#a83c2f'],stale:['התיישנה','#7a7a7a']};
   const STYLE_CHIPS=['זה פסוק','זה שם אמורא','זה הסבר','זה נושא','זה ד"ה'];
   (function(){const st=document.createElement('style');st.textContent=
-    '.sgpop{position:fixed;z-index:12;width:min(360px,94vw);background:#fffdf8;border:1px solid #c9b98f;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.28);padding:10px 12px;font-size:15px;line-height:1.5}'+
-    '.sgpop h3{margin:0 0 6px;font-size:15px}.sgpop textarea{width:100%;min-height:70px;font:inherit;box-sizing:border-box}'+
-    '.sgpop input[type=text]{width:100%;font:inherit;box-sizing:border-box}.sgpop .sel{max-height:64px;overflow:auto;background:#f3efe3;padding:3px 6px;border-radius:4px;font-size:14px}'+
-    '.sgtypes{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.sgtypes button,.sgchips button{font:inherit;font-size:13px;border:1px solid #d9d1bd;border-radius:12px;background:#fff;padding:1px 9px;cursor:pointer}'+
-    '.sgtypes button.on{color:#fff}.sgchips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}'+
-    '.sgpop .btns{display:flex;gap:8px;margin-top:8px;align-items:center}.sgpop .go{background:#2e6b3f;color:#fff;border:0;border-radius:4px;padding:4px 14px;font:inherit;cursor:pointer}'+
-    '.sgpop .dr{font-size:12px;color:#8a7d66}'+
-    '.stchip{display:inline-block;color:#fff;border-radius:10px;padding:0 8px;font-size:12px;margin-left:5px}'+
-    '.tychip{display:inline-block;border:1px solid;border-radius:10px;padding:0 7px;font-size:12px;margin-left:5px}'+
-    '.sgthr{margin:4px 0;padding:3px 8px;border-right:3px solid #d9d1bd;font-size:14px}.sgthr .m{color:#2e5b8a}.sgthr .p{color:#5a5044}'+
-    '.sgrow .why{color:#a83c2f;font-size:14px}.sgrow.cur{outline:2px solid #c9a24a}.sgrow.trust{background:#fbf6e4}'+
-    '.sgconf{display:flex;gap:8px;flex-wrap:wrap}.sgconf>.sgrow{flex:1 1 45%;border:1px solid #d9d1bd;border-radius:5px;padding:4px 8px}'+
-    '.sgrep{display:flex;gap:4px;margin-top:4px}.sgrep input{flex:1;font:inherit;font-size:14px}.sgbar{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}'+
-    '.sgbar select,.sgbar button{font:inherit;font-size:13px}.sgbell{background:#a83c2f;color:#fff;border-radius:9px;padding:0 6px;margin-right:4px;font-size:12px}';
+    '.sgpop{position:fixed;z-index:12;width:min(360px,94vw);background:var(--sheet);color:var(--tx);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 14px;font-size:15px;line-height:1.5}'+
+    '.sgpop h3{margin:0 0 6px;font-size:15px}.sgpop textarea{width:100%;min-height:70px;box-sizing:border-box}'+
+    '.sgpop input[type=text]{width:100%;box-sizing:border-box}.sgpop .sel{max-height:64px;overflow:auto;background:var(--parch);padding:4px 8px;border-radius:8px;font-size:14px}'+
+    '.sgtypes{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.sgchips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}'+
+    '.sgtypes button,.sgchips button{border-radius:999px!important;padding:2px 12px!important;min-height:30px!important;font-size:14px!important}'+
+    '.sgtypes button.on{background:var(--blue)!important;color:var(--blue-ink)!important;border-color:var(--blue)!important}'+
+    '.sgpop .btns{display:flex;gap:8px;margin-top:10px;align-items:center}'+
+    '.sgpop .dr,.dr{font-size:13px;color:var(--tx2)}'+
+    '.stchip{display:inline-block;background:var(--tx2);color:var(--sheet);border-radius:999px;padding:0 10px;font-size:12px;margin-left:6px}'+
+    '.tychip{display:inline-block;border:1px solid;border-radius:999px;padding:0 8px;font-size:12px;margin-left:6px}'+
+    '.sgthr{margin:6px 0;padding:4px 10px;border-inline-start:3px solid var(--line);font-size:14px}.sgthr .m{color:var(--blue)}.sgthr .p{color:var(--tx2)}'+
+    '.sgrow .why{color:var(--rd);font-size:14px}.sgrow.cur{border-color:var(--blue)!important;box-shadow:0 0 0 2px var(--blue-soft)}.sgrow.trust{background:var(--blue-soft)}'+
+    '.sgconf{display:flex;gap:8px;flex-wrap:wrap}.sgconf>.sgrow{flex:1 1 45%}'+
+    '.sgrep{display:flex;gap:6px;margin-top:6px}.sgrep input{flex:1;font-size:14px}.sgbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px;align-items:center}'+
+    '.sgbar select{font-size:14px!important}.sgbar button{font-size:14px!important;min-height:34px!important}'+
+    '.sgbell{background:var(--rd);color:var(--sheet);border-radius:999px;padding:0 7px;margin-right:4px;font-size:12px}'+
+    '#sgq .sgrow{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 12px;display:block}'+
+    '.sgact{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}'+
+    '.sgact>button{flex:1 1 90px;min-height:44px!important;font-size:16px!important;font-weight:700}'+
+    '.sgact>button.ok{background:var(--gn)!important;border-color:var(--gn)!important;color:var(--sheet)!important}'+
+    '.sgact>button.ok kbd{color:var(--sheet);border-color:var(--sheet);background:transparent}'+
+    '.sgmore{flex:0 0 100%}.sgmore>summary{cursor:pointer;color:var(--blue);font-weight:600;list-style:none;padding:6px 2px;width:fit-content}'+
+    '.sgmore>summary::-webkit-details-marker{display:none}.sgmore>summary::after{content:" ▾"}.sgmore[open]>summary::after{content:" ▴"}'+
+    '.sgmore>div{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.sgmore>div button{min-height:34px!important;font-size:14px!important}'+
+    '.sgbulk{position:sticky;top:0;z-index:2;background:var(--blue-soft);border:1px solid var(--blue);border-radius:12px;padding:8px 12px}'+
+    '.sgbulk[hidden]{display:none}.sgkeys{margin:4px 0 10px}.sgkeys kbd{margin:0 2px}';
     document.head.appendChild(st)})();
 
   /* ---- זהות המציע ---- */
@@ -343,7 +355,7 @@
   function sqBadge(){const b=$('#sqbtn');if(!b)return;
     if(!isAdmin()){b.style.display='none';return}
     b.style.display='';const n=SQCNT[SLUG]||0;
-    b.textContent=admKey()?('הצעות ממתינות ('+n+(QQTOT>n?' · '+QQTOT+' בכל המסכתות':'')+')'):'הצעות ממתינות - הזן מפתח';
+    b.innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-inbox"/></svg>'+(admKey()?('הצעות ממתינות<span class="badge">'+n+'</span>'+(QQTOT>n?' <small>(בכל המסכתות: '+QQTOT+')</small>':'')):'הצעות ממתינות - הזן מפתח');
     b.classList.toggle('on',n>0)}
   function sqFilterBar(){
     const sel=(id,opts,cur,fn)=>'<select id="'+id+'" onchange="'+fn+'">'+opts.map(o=>'<option value="'+esc(o[0])+'"'+(cur===o[0]?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select>';
@@ -359,8 +371,9 @@
       '<span class="dr">עמוד '+(SQPAGE+1)+' מתוך '+pages+' · '+SQMATCH+' הצעות</span>'+
       '<button '+(SQPAGE+1<pages?'':'disabled ')+'onclick="SQPAGE++;queueLoad()">הבא</button></div>'}
   function sqBulkBar(){
-    return '<div class="sgbar"><button onclick="sqSelAll()">סמן את כל הדף</button>'+
-      '<button onclick="sqBulkAcceptSel()">אשר מסומנות</button><button onclick="sqBulkRejectSel()">דחה מסומנות</button></div>'}
+    return '<div class="sgbar sgbulk" id="sqbulk" hidden><span id="sqbn"></span><button class="ok" onclick="sqBulkAcceptSel()">אשר מסומנות</button><button onclick="sqBulkRejectSel()">דחה מסומנות</button><button class="q" onclick="sqSelAll()">סמן את כל הדף</button></div>'}
+  function sqBulkShow(){const n=document.querySelectorAll('#sgqb .sqsel:checked').length,b=$('#sqbulk');if(!b)return;b.hidden=!n;const c=$('#sqbn');if(c)c.textContent=n+' מסומנות'}
+  document.addEventListener('change',e=>{if(e.target&&e.target.classList&&e.target.classList.contains('sqsel'))sqBulkShow()});
   function sqSelIds(){return [...document.querySelectorAll('#sgqb .sqsel:checked')].map(x=>x.dataset.id)}
   function sqSelAll(){const a=[...document.querySelectorAll('#sgqb .sqsel')];const on=a.some(x=>!x.checked);a.forEach(x=>x.checked=on)}
   async function sqBulkAcceptSel(){
@@ -392,7 +405,7 @@
     if(QQERR)h+='<div class="edsum" style="color:#a83c2f">לא ניתן לקרוא את התור: '+esc(QQERR)+'</div>';
     h+=sqFilterBar()+sqBulkBar();
     h+='<div class="sgbar"><button onclick="sqBulkPage()">אשר/דחה לפי דף</button><button onclick="sqBulkWho()">דחה את כל הצעות מציע</button>'+
-       '<button onclick="sqUndo()" title="Ctrl+Z">בטל פעולה אחרונה</button><small class="dr">חצים: מעבר · A אשר · D דחה · S דלג · E ערוך · R השב</small></div>';
+       '<button onclick="sqUndo()" title="Ctrl+Z">בטל פעולה אחרונה</button></div><div class="sgkeys dr">מקשים: <kbd>↑</kbd><kbd>↓</kbd> מעבר · אשר <kbd>A</kbd> · דחה <kbd>D</kbd> · דלג <kbd>S</kbd> · ערוך <kbd>E</kbd> · השב <kbd>R</kbd></div>';
     if(SQSKIP.size)h+='<div class="dr">'+SQSKIP.size+' הצעות נדחו לאחר כך <button onclick="SQSKIP.clear();drawSq()">הצג שוב</button></div>';
     if(lost.length){h+='<h3>התיישנו או לא אותרו</h3><div class="dr">הטקסט השתנה מאז ההצעה, או שהמקום לא נמצא. אינן נכנסות בעיוורון.</div>';
       lost.forEach(([g])=>{h+=sqRow(g,null)})}
@@ -426,13 +439,16 @@
       '<label class="sqck"><input type="checkbox" class="sqsel" data-id="'+id+'" aria-label="סמן הצעה"> </label><small>'+esc(g.daf||'')+(g.name?' · '+esc(g.name):' · בלי שם')+' · '+when+'</small> '+tyChip(g.type)+(g.tr?'<span class="stchip" style="background:#c9a24a">מהימן</span>':'')+
       (g.mnew?'<span class="stchip" style="background:#a83c2f">הודעה חדשה</span>':'')+(g.sk?'<span class="stchip" style="background:#6a4a8f">'+esc(SKL[g.sk]||'')+'</span>':'')+sqUpd(g)+ctx+
       ((g.type==='nusach'&&!g.edit)?'':'<b>'+esc(g.note)+'</b>')+thrHTML(g,true)+
-      (s?'<button onclick="sqDecide(\''+id+'\',\'accepted\')">אשר</button>'+
-         (g.type==='nusach'&&!g.edit?'<button onclick="sqDecide(\''+id+'\',\'edited\')">ערוך ואשר</button>':'')+
-         (g.edit&&g.pid?'<button onclick="sqSame(\''+id+'\')" title="כל ההצעות של המציע הזה מהסוג הזה, עם תצוגה מקדימה">אשר את כל מאותו סוג</button>':'')+
-         '<button onclick="sqJump(\''+id+'\')">הצג</button>':'<button onclick="sqDecide(\''+id+'\',\'stale\')">סמן כהתיישנה</button>')+
-      '<button onclick="sqDecide(\''+id+'\',\'rejected\')">דחה</button>'+
-      '<button onclick="sqSkip(\''+id+'\')">דלג</button><button onclick="sqReply(\''+id+'\')">השב</button>'+
-      (known?'<button onclick="sqTrust(\''+esc(g.pid)+'\','+(g.tr?0:1)+')" title="הצעותיו יופיעו ראשונות בתור">'+(g.tr?'בטל מהימנות':'סמן כמהימן')+'</button>':'')+'</div>'}
+      '<div class="sgact">'+(s?'<button class="ok" onclick="sqDecide(\''+id+'\',\'accepted\')">אשר <kbd>A</kbd></button>':
+        '<button onclick="sqDecide(\''+id+'\',\'stale\')">סמן כהתיישנה</button>')+
+      '<button class="no" onclick="sqDecide(\''+id+'\',\'rejected\')">דחה <kbd>D</kbd></button>'+
+      '<details class="sgmore"><summary>עוד</summary><div>'+
+      (s&&g.type==='nusach'&&!g.edit?'<button onclick="sqDecide(\''+id+'\',\'edited\')">ערוך ואשר <kbd>E</kbd></button>':'')+
+      (s&&g.edit&&g.pid?'<button onclick="sqSame(\''+id+'\')" title="כל ההצעות של המציע הזה מהסוג הזה, עם תצוגה מקדימה">אשר את כל מאותו סוג</button>':'')+
+      (s?'<button onclick="sqJump(\''+id+'\')">הצג בדף</button>':'')+
+      '<button onclick="sqSkip(\''+id+'\')">דלג <kbd>S</kbd></button><button onclick="sqReply(\''+id+'\')">השב <kbd>R</kbd></button>'+
+      (known?'<button onclick="sqTrust(\''+esc(g.pid)+'\','+(g.tr?0:1)+')" title="הצעותיו יופיעו ראשונות בתור">'+(g.tr?'בטל מהימנות':'סמן כמהימן')+'</button>':'')+
+      '</div></details></div></div>'}
   function sqSkip(id){SQSKIP.add(id);drawSq()}
   async function sqReply(id){const t=prompt('תשובה קצרה למציע (בלי להכריע):');if(!t||!t.trim())return;
     try{const j=await api('/reply',{method:'POST',body:JSON.stringify({id,text:t.trim()})});

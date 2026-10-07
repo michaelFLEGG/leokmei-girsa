@@ -1581,36 +1581,23 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      הסתיר את ראש הטקסט. מעתה הסרגל תופס את גובהו והטקסט את השאר. */
   body{display:flex;flex-direction:column}
   body.hc{--ink:#000;--paper:#fff;--grey:#333}
-  .bar{position:relative;z-index:5;flex:0 0 auto;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 12px;background:#2b2620;color:#f1ead9;font-size:14px;min-height:var(--bar)}
-  .bar .nm{font-family:'Leukmey','Vilna',serif;font-size:20px;line-height:1}
+  /* סרגל הקריאה (7.10.2026): שורה אחת, ארבע קבוצות. הצבעים והכפתורים ב-ui.css. */
+  .bar{position:relative;z-index:5;flex:0 0 auto;display:flex;flex-wrap:nowrap;gap:8px;align-items:center;min-height:var(--bar);overflow:visible}
   .bar .sp{flex:1}
-  .bar button,.bar select,.bar input{font:inherit;background:#4a4137;color:#f1ead9;border:0;border-radius:4px;padding:3px 9px;cursor:pointer}
-  .bar input{cursor:text;width:150px} .bar button.on{background:var(--gold);color:#2b2620}
-  .nav{display:flex;gap:4px;align-items:center}
-  /* סרגל אחד: שורה אחת בכל רוחב. מה שאינו נכנס עובר ל"עוד". */
-  .bar{flex-wrap:nowrap;gap:8px;overflow:visible}
-  .bar .bg{display:flex;align-items:center;gap:6px;flex:0 0 auto;padding-inline-start:8px;border-inline-start:1px solid #4a4137}
-  .bar .bg:first-child{border:0;padding:0}
-  .bar button,.bar select,.bar input{min-height:32px;white-space:nowrap}
-  .bar input{width:140px;transition:width .15s} .bar input:focus{width:230px}
-  .bar .mn{color:#cfc5ad}
-  .bar .bg.adm-only{display:none} body.adm .bar .bg.adm-only{display:flex}
+  .bar .bg{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+  .bar .bg.loc{flex:0 1 auto;min-width:0}
+  .bar .bg.sr{flex:1 1 200px;min-width:120px;max-width:340px}
+  .bar .sfield{position:relative;width:100%;display:block}
+  .bar .sfield .ic{position:absolute;inset-inline-start:11px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--ink2)}
+  .bar .sfield input{width:100%;padding-inline-start:36px}
   .bar .dd,.bar .more{position:relative}
-  .bar .ddp{display:none;position:absolute;top:calc(100% + 4px);inset-inline-start:0;z-index:30;background:#2b2620;border:1px solid #4a4137;border-radius:6px;padding:8px;min-width:190px;box-shadow:0 8px 24px rgba(0,0,0,.4);flex-direction:column;gap:4px}
-  .bar .dd.open>.ddp,.bar .more.open>.ddp{display:flex}
-  .bar .ddp button,.bar .ddp select{width:100%;text-align:right}
-  .bar .ddp .row3{display:flex;gap:4px} .bar .ddp .row3 button{flex:1;text-align:center}
-  .bar .sml{font-size:12px;color:#c9bfa8;margin:4px 2px 0}
-  .bar .more .ddp .bg{flex-direction:column;align-items:stretch;border:0;padding:0;margin-bottom:6px}
-  .bar .more .ddp .dd>.ddb{display:none}
-  .bar .more .ddp .dd .ddp{display:flex;position:static;border:0;padding:0;box-shadow:none;min-width:0;background:none}
-  .bar .more .ddp .dd::before{content:attr(data-label);font-size:12px;color:#c9bfa8}
-  body.ed .bar .bg:not(.edtools):not(.more):not(:first-child){display:none!important}
-  body.ed .bar .bg:first-child .nav{display:none}
-  .bar .edtools{display:none;border:0} body.ed .bar .edtools{display:flex;flex:1 1 auto;flex-wrap:nowrap}
-  .bar .edtools .sp{flex:1}
-  .bar .edtools .ttl{color:var(--gold);font-size:12px}
-  .nav .daf{min-width:52px;text-align:center;font-family:'VilnaG','Vilna',serif;font-size:17px}
+  .bar .bg.adm-only{display:none} body.adm .bar .bg.adm-only{display:flex}
+  .bar .edonly{display:none}
+  body.ed .bar .edonly{display:flex}
+  body.ed .bar .bg:not(.loc):not(.edonly):not(.edsw){display:none!important}
+  body.ed .bar .loc .seg,body.ed .bar .loc #peresel{display:none}
+  body.ed .bar .loc #curdaf{display:inline}
+  #curdaf{font-family:'VilnaG','Vilna',serif;font-size:19px}
   /* --lhpx הוא גובה שורת הגוף במידה מוחלטת. פריטי המסילה זקוקים לו:
      line-height שהוא מספר מתייחס לגודל האות של האלמנט עצמו, ולכן ציון דף
      של 1.3em היה מקבל שורה גבוהה ב-30 אחוזים ומגביה את כל היחידה. */
@@ -1795,59 +1782,53 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .tag{display:inline-block;background:#eeeae1;border-radius:3px;padding:0 6px;margin:2px;font-size:13px}
   .chips{display:flex;flex-wrap:wrap}
   /* ---- מצב עריכה (מנהל) ---- */
-  .ed [contenteditable]{outline:1px dashed rgba(201,162,74,.75);outline-offset:1px;border-radius:2px}
-  .ed [contenteditable]:focus{outline:1.5px solid var(--gold);background:rgba(201,162,74,.10)}
-  .ed [data-edited]{background:rgba(74,107,63,.13)}
-  .edbar{position:fixed;bottom:0;right:0;left:0;z-index:8;display:flex;flex-wrap:wrap;gap:8px 14px;
-         align-items:center;padding:7px 14px;background:#4a6b3f;color:#fff;font-size:15px}
-  .edbar button{font:inherit;font-size:14px;background:#3d5a34;color:#fff;border:0;border-radius:4px;padding:4px 12px;cursor:pointer}
-  .edbar .sp{flex:1}
-  .edrow{padding:7px 0;border-bottom:1px dotted #d9d1bd;line-height:1.5}
-  .edrow .was{color:#a83c2f;text-decoration:line-through} .edrow .now{color:#4a6b3f;font-weight:700}
-  .edrow small{color:#8a7d66} .edrow button{font:inherit;font-size:13px;background:#eeeae1;border:1px solid #e0d8c4;border-radius:4px;padding:2px 9px;cursor:pointer;margin-right:6px}
-  .edlost{background:#fdf1d8;border-right:3px solid #a83c2f;padding-right:8px}
-  .edsum{background:#eeeae1;border-radius:5px;padding:7px 11px;margin-bottom:8px;font-size:14px;line-height:1.6}
-  .edbar .edpub{font-size:13px;color:#cfe0c8}
+  .ed [contenteditable]{outline:none;border-radius:2px}
+  .ed [contenteditable]:focus{background:rgba(31,78,121,.10)}
+  /* שורה ששונתה: נקודה קטנה בשוליים, לא מסגרת. ::after אינו תפוס בדף (::before משמש למספור) */
+  .ed [data-edited]{position:relative}
+  .ed [data-edited]::after{content:'';position:absolute;inset-inline-end:-1.7em;top:.45em;width:.38em;height:.38em;border-radius:50%;background:var(--blue)}
+  .edrow{padding:8px 0;border-bottom:1px solid var(--line);line-height:1.5}
+  .edrow .was{color:var(--rd);text-decoration:line-through} .edrow .now{color:var(--gn);font-weight:700}
+  .edrow small{color:var(--tx2)}
+  .edlost{background:var(--rd-soft);border-inline-start:3px solid var(--rd);padding-inline-start:8px}
+  .edsum{background:var(--blue-soft);color:var(--tx);border-radius:var(--r);padding:8px 12px;margin-bottom:8px;font-size:14px;line-height:1.6}
   body.adm .nks{text-decoration:underline;text-decoration-color:#b9b2a2;text-decoration-thickness:1px;text-underline-offset:3px}
   @media print{body.adm .nks{text-decoration:none}}
-  .sideask{position:fixed;z-index:15;display:flex;gap:6px;align-items:center;direction:rtl;
-    background:#2f2a23;color:#f2ede1;border-radius:6px;padding:6px 10px;box-shadow:0 3px 14px rgba(0,0,0,.35)}
-  .sideask input{font:inherit;font-size:15px;width:9em;border:1px solid #6b6154;border-radius:4px;padding:3px 6px;background:#fff;color:#222}
-  .sideask button{font:inherit;font-size:14px;background:#3d5a34;color:#fff;border:0;border-radius:4px;padding:4px 12px;cursor:pointer}
+  .sideask{position:fixed;z-index:15;display:flex;gap:8px;align-items:center;direction:rtl;
+    background:var(--pal);color:var(--pal-ink);border-radius:12px;padding:8px 12px;box-shadow:var(--shadow)}
+  .sideask input{width:9em}
   .edflash{position:fixed;z-index:14;left:50%;transform:translateX(-50%);bottom:64px;display:none;
-     background:#a83c2f;color:#fff;border-radius:6px;padding:7px 16px;font-size:15px;
-     box-shadow:0 3px 14px rgba(0,0,0,.3)}
-  .edbar .edpub.bad{color:#ffd9d2;font-weight:700}
-  /* הסרגל הצף של הסגנונות. הוא נפתח מעל הבחירה, ולעולם אינו מכסה
-     את הטקסט הנערך: אם אין מקום מעליו הוא יורד מתחתיו. */
-  .stybar{position:fixed;z-index:12;display:none;flex-direction:column;gap:0;
-     width:210px;max-height:calc(100vh - 110px);overflow:auto;background:#2b2620;color:#f2ede1;border-radius:8px;
-     padding:0 0 6px;box-shadow:0 4px 18px rgba(0,0,0,.35);font-size:13px;direction:rtl}
-  .stybar .sthd{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;background:#1f1b17;
-     border-radius:8px 8px 0 0;position:sticky;top:0}
-  .stybar .stgrip{cursor:grab;color:#c9a24a;font-size:12px;flex:1;user-select:none;touch-action:none}
-  .stybar .stbody{display:flex;flex-direction:column;gap:2px;padding:4px 6px}
-  .stybar .stgrp{display:flex;flex-direction:column;gap:2px;padding-bottom:5px;margin-bottom:3px;border-bottom:1px solid #4a4137}
-  .stybar .stgrp:last-child{border-bottom:0;margin-bottom:0}
-  .stybar .ttl{color:#c9a24a;font-size:11px;padding:2px 3px}
-  .stybar button{font:inherit;font-size:13px;background:#413a31;color:#f2ede1;border:0;display:flex;
-     justify-content:space-between;align-items:baseline;gap:8px;
-     border-radius:4px;padding:3px 9px;cursor:pointer;white-space:nowrap;text-align:right}
-  .stybar button small{color:#a89f90;font-size:11px;direction:ltr}
-  .stybar button:hover{background:var(--gold);color:#2b2620}
-  .stybar button:hover small{color:#4a4137}
-  .stybar button.on{background:var(--gold);color:#2b2620;font-weight:700}
-  .stybar button.on small{color:#4a4137}
-  .stybar .stmin{background:transparent;color:#a89f90;font-size:11px;padding:0 4px}
+     background:var(--pal);color:var(--pal-ink);border-radius:var(--r);padding:8px 18px;font-size:15px;
+     box-shadow:var(--shadow)}
+  /* סרגל העריכה שבסרגל העליון: מונה, בטל, מתג */
+  .edpub{font-size:14px}.edpub.bad{color:var(--rd);font-weight:700}
+  #procnote{font-size:13px;color:var(--tx2)}
+  /* החלונית הצפה של הסגנונות: הבית היחיד של הסגנונות. כהה, ליד הבחירה. */
+  .stybar{position:fixed;z-index:12;display:none;flex-direction:column;width:244px;max-height:calc(100vh - 110px);overflow:auto;
+     background:var(--pal);color:var(--pal-ink);border:1px solid var(--pal-line);border-radius:14px;
+     padding:0 0 8px;box-shadow:var(--shadow);font-size:14px;direction:rtl}
+  .stybar .sthd{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 6px 10px;position:sticky;top:0;background:var(--pal);border-radius:14px 14px 0 0}
+  .stybar .stgrip{cursor:grab;color:var(--pal-ink);font-weight:700;font-size:13px;flex:1;user-select:none;touch-action:none}
+  .stybar .stbody{display:flex;flex-direction:column;gap:2px;padding:2px 6px}
+  .stybar .stgrp{display:flex;flex-direction:column;gap:2px;padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid var(--pal-line)}
+  .stybar .stgrp:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+  .stybar .ttl{color:var(--pal-mute);font-size:12px;font-weight:700;padding:3px 6px}
+  .stybar button{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:right;
+     font:500 14px/1.2 var(--ui);color:var(--pal-ink);background:transparent;border:0;border-radius:8px;padding:6px 8px;min-height:32px;cursor:pointer;
+     transition:background var(--t)}
+  .stybar button:hover{background:var(--pal-hover)}
+  .stybar button.on{background:var(--pal-ink);color:var(--pal)}
+  .stybar button.on kbd{color:var(--pal);border-color:var(--pal)}
+  .stybar kbd{font-size:11px;padding:2px 5px;min-width:0;color:var(--pal-mute);border-color:var(--pal-line);background:transparent}
+  .stybar .stmin,.stybar .stmore{width:auto;color:var(--pal-mute);font-size:13px;padding:4px 8px;min-height:28px;justify-content:center}
+  .stybar .stmore{width:100%;margin-top:2px}
+  .stybar .strare{display:none;flex-direction:column;gap:2px}
+  .stybar.more .strare{display:flex}
+  .stybar .m2{display:none}.stybar.more .m1{display:none}.stybar.more .m2{display:inline}
+  .stybar .stclr{border-top:1px solid var(--pal-line);border-radius:0 0 8px 8px;margin-top:4px;padding-top:8px;justify-content:center;font-weight:700}
   .stybar.col{width:auto;padding:0}
-  .stybar.col .stico{background:#2b2620;color:#c9a24a;border-radius:8px;padding:6px 12px}
-  .stybar.strip{width:100%;max-height:none;flex-direction:row;align-items:center;border-radius:0;padding:0;overflow-x:auto;overflow-y:hidden}
-  .stybar.strip .sthd{position:static;background:transparent;padding:2px 8px}
-  .stybar.strip .stbody{flex-direction:row;align-items:center;gap:4px;padding:2px 6px}
-  .stybar.strip .stgrp{flex-direction:row;align-items:center;border-bottom:0;border-inline-start:1px solid #4a4137;padding:0 0 0 6px;margin:0 0 0 4px}
-  .stybar.strip button{padding:2px 8px}
-  body.stystrip #flow{padding-bottom:var(--stypad,40px)}
-  @media print{.stybar,.edbar{display:none!important}}
+  .stybar.col .stico{width:auto;padding:8px 14px;border-radius:14px}
+  @media print{.stybar{display:none!important}}
   /* ---- הצע תיקון (לכל הלומדים) ---- */
   .pick #flow .main p:hover,.pick #flow .anchor:hover,.pick #flow .main.dh:hover,.pick #flow .main.nose:hover{
     background:rgba(201,162,74,.28);cursor:crosshair;border-radius:2px}
@@ -1876,11 +1857,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* ---- מגירת "מקור": הגמרא המנוקדת ---- */
   /* סימון "מקור": שכבה צפה מחוץ ל-#flow. לא בזרימה, לא בעריכה, לא בסמן, לא בהעתקה. */
   #srcl{position:fixed;left:0;top:0;width:0;height:0;z-index:5;pointer-events:none}
-  #srcl .srcb{position:fixed;pointer-events:auto;user-select:none;-webkit-user-select:none;
-        font:12px/1 system-ui,sans-serif;background:rgba(255,255,255,.7);border:1px solid #d9d1bd;color:#8a7d66;
-        border-radius:3px;padding:2px 5px;cursor:pointer;opacity:.5;margin:0}
-  #srcl .srcb.tight{opacity:.22;font-size:10px;padding:1px 3px}
-  #srcl .srcb:hover,#srcl .srcb:focus{opacity:1;background:var(--gold);color:#2b2620;border-color:#a8842f}
+  /* סמל "מקור": אינו תווית גלויה. מופיע בריחוף על השורה, בשוליים, ולא תופס מקום בשורה. בטלפון: לחיצה ארוכה. */
+  #srcl .srcb{position:fixed;pointer-events:auto;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;
+        width:28px;height:28px;padding:0;margin:0;background:var(--sheet);border:1px solid var(--line);color:var(--blue);
+        border-radius:8px;cursor:pointer;opacity:0;transition:opacity .15s,background .15s}
+  #srcl .srcb .ic{width:16px;height:16px}
+  #srcl .srcb.hot,#srcl .srcb:hover,#srcl .srcb:focus-visible{opacity:1}
+  #srcl .srcb:hover,#srcl .srcb:focus-visible{background:var(--blue-soft);border-color:var(--blue)}
+  @media (hover:none){#srcl .srcb{display:none}}
   body.srcoff #srcl{display:none}
   .src{position:fixed;z-index:9;background:var(--paper);box-shadow:0 -2px 18px rgba(0,0,0,.25);
        display:flex;flex-direction:column;font-size:17px;line-height:1.75}
@@ -2454,19 +2438,32 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       need.push([r,b])}
     for(const [r,b] of need){const ref=r.dataset.ref;seen.add(ref+'|'+r.id);
       const k=ref+'|'+r.id;let e=SRCPOOL.get(k);
-      if(!e){e=document.createElement('button');e.className='srcb';e.type='button';e.textContent='מקור';
-        e.title='הגמרא המנוקדת (מקש מ)';e.tabIndex=-1;
+      if(!e){e=document.createElement('button');e.className='srcb';e.type='button';e.innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-book"/></svg>';
+        e.setAttribute('aria-label','מקור: הגמרא המנוקדת');
+        e.title='מקור: הגמרא המנוקדת (מקש מ)';e.tabIndex=-1;
         e.addEventListener('mousedown',ev=>ev.preventDefault());
         e.addEventListener('click',()=>openSrc(ref));
         L.appendChild(e);SRCPOOL.set(k,e)}
-      const room=b.left-fr.left>W+4,x=room?b.left-W-2:b.left+2;
+      const room=b.left-fr.left>W+4,x=room?b.left-W+10:b.left+2;
       e.classList.toggle('tight',!room);
       e.style.left=Math.round(x)+'px';
-      e.style.top=Math.round(Math.max(fr.top,b.bottom-18))+'px';
+      e.style.top=Math.round(Math.max(fr.top,b.bottom-30))+'px';
       e.style.display=''}
     for(const [k,e] of SRCPOOL)if(!seen.has(k)){e.remove();SRCPOOL.delete(k)}
   }
   addEventListener('resize',srcLayer);
+  let SRCHOT=null;
+  function srcHot(k){if(k===SRCHOT)return;SRCHOT=k;for(const [kk,e] of SRCPOOL)e.classList.toggle('hot',kk===k)}
+  document.addEventListener('DOMContentLoaded',()=>{const f=document.getElementById('flow');
+    f.addEventListener('mouseover',ev=>{const r=ev.target.closest&&ev.target.closest('.row[data-ref]');srcHot(r?r.dataset.ref+'|'+r.id:null)});
+    f.addEventListener('mouseleave',()=>srcHot(null));
+    /* בטלפון אין ריחוף: לחיצה ארוכה על שורה פותחת את המקור */
+    let lp=null,lx=0,ly=0;
+    f.addEventListener('touchstart',ev=>{if(EDIT||BOOK)return;const r=ev.target.closest&&ev.target.closest('.row[data-ref]');if(!r)return;
+      const tt=ev.touches[0];lx=tt.clientX;ly=tt.clientY;clearTimeout(lp);lp=setTimeout(()=>{lp=null;openSrc(r.dataset.ref)},550)},{passive:true});
+    f.addEventListener('touchmove',ev=>{const tt=ev.touches[0];if(Math.abs(tt.clientX-lx)+Math.abs(tt.clientY-ly)>10){clearTimeout(lp);lp=null}},{passive:true});
+    ['touchend','touchcancel'].forEach(n=>f.addEventListener(n,()=>{clearTimeout(lp);lp=null}));
+  });
   document.addEventListener('DOMContentLoaded',()=>{const f=document.getElementById('flow');
     f.addEventListener('scroll',srcLayer,{passive:true});
     if(window.ResizeObserver)new ResizeObserver(srcLayer).observe(f);
@@ -3478,6 +3475,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     patchPage(before);
     if(key)placeCaret(key,0);
     drawEd();pubSoon();syncSoon()}
+  function edUndoBtn(){if(!undoLast())document.execCommand('undo')}
   function undoLast(){
     const x=UNDO.pop();if(!x)return false;
     const snaps=x.snaps||[{pi:x.pi,snap:x.snap}];
@@ -3681,21 +3679,19 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     f.querySelectorAll('[data-ek]').forEach(el=>{
       if(on){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');edBase(el)}
       else {el.removeAttribute('contenteditable');delete el.__was;delete el.__wasH;delete el.__wasP}});
-    let bar=$('#edbar');
-    if(on&&!bar){bar=document.createElement('div');bar.className='edbar';bar.id='edbar';
-      bar.innerHTML='<b>'+(SUGM?'מצב הצעת תיקון':'מצב עריכה')+'</b><span>· <span id="edn">'+(SUGM?ED.filter(e=>!e.pub||e.sgi).length:ED.length)+'</span> '+(SUGM?'הצעות':'תיקונים')+'</span>'+
-        '<select id="pstsel" title="סגנון הפסקה שהסמן בה" onmousedown="event.stopPropagation()" onchange="if(this.value!==\'#\'){setPs(this.value)}this.value=\'#\'"><option value="#">סגנון…</option>'+
-          PSTY.map(p=>'<option value="'+esc(p[0])+'">'+esc(p[1])+'</option>').join('')+'</select>'+
-        '<button onmousedown="event.preventDefault()" onclick="clearAll()" title="מסיר סגנון פסקה וסגנונות תו ומחזיר לרגיל (Ctrl+Q לפסקה)">נקה עיצוב</button>'+
-        '<span id="edpub" class="edpub"></span><span id="procnote" class="edpub"></span><span class="sp"></span>'+
-        (SUGM?'<button onclick="sugPush(1)" title="שליחת ההצעות לעורך (Ctrl+S)">שלח הצעות</button>':'<button onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>');
-      document.body.appendChild(bar);pubDraw()}
-    else if(!on&&bar)bar.remove();
+    /* הסטטוס והפרסום יושבים בסרגל העליון (#edstat), לא ברצועה תחתונה */
+    const eb=$('#edpushbtn');
+    if(on){
+      if(eb){eb.textContent=SUGM?'שלח הצעות':'פרסם עכשיו';eb.setAttribute('onclick',SUGM?'sugPush(1)':'pubNow(1)');
+        eb.title=SUGM?'שליחת ההצעות לעורך (Ctrl+S)':'שמירה ופרסום מיידי (Ctrl+S)'}
+      const nt=$('#ntedit');if(nt)nt.style.display=(isAdmin()&&!SUGM)?'':'none';
+      const mn=$('#mineedit');if(mn)mn.style.display=SUGM?'':'none';
+      pubDraw()}
     if(!on)hideSty();
     if(!on&&typeof navOpen==='function'){navOpen(false);decoHide()}
     edToolsDraw(on);
     if(on)procCheck();
-    if($('#edbtn'))$('#edbtn').classList.toggle('on',on);
+    if($('#edbtn')){$('#edbtn').classList.toggle('on',on);$('#edbtn').setAttribute('aria-checked',on?'true':'false')}
     if(on)drawEd()}
   /* כניסה למצב עריכה. מכשיר מוכר נכנס מיד. מכשיר חדש מקליד את מילת
      המנהל פעם אחת, ונקודת הקליטה מנפיקה לו אסימון ארוך-טווח: מאז הוא
@@ -3714,26 +3710,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* סרגל העריכה: בזמן עריכה השורה העליונה מתחלפת בכלי העריכה (ולא
      נוספת שורה שנייה); הרצועה שבתחתית נשארת לסטטוס ולפרסום */
   function edToolsDraw(on){
-    const et=$('#edtools');if(!et)return;
-    if(!on){et.innerHTML='';barFit();return}
-    et.innerHTML='<span class="ttl">סגנון תו</span>'+
-      CSTY.filter(c=>c[0]!=='b').map((c,i)=>'<button onmousedown="event.preventDefault()" onclick="csToggle(\''+c[0]+'\')" title="'+esc(c[1])+(shortOf(c[0])?' ('+shortOf(c[0])+')':'')+'">'+esc(c[1])+'</button>').join('')+
-      '<button onmousedown="event.preventDefault()" onclick="csToggle(\'b\')" title="מודגש (Ctrl+B)"><b>מודגש</b></button>'+
-      '<button onmousedown="event.preventDefault()" onclick="sideCmd()" title="הופך את המילה לכותרת בצד ימין (Ctrl+נקודה, או Ctrl+Alt+ק)">כותרת צד</button>'+
-      '<button onclick="keysCard()" title="קיצורי מקשים (Ctrl+/)">קיצורי מקשים</button>'+
-      '<button onclick="navOpen()" id="navbtn" title="פנל ניווט: פרקים ודפים, בלי לצאת מהעריכה (Alt+N)">ניווט</button>'+
-      (SUGM?'<button onclick="mineOpen()" title="כל ההצעות ששלחת">ההצעות שלי</button>':'')+
-      (isAdmin()&&!SUGM?'<button onmousedown="event.preventDefault()" onclick="ntAdd()" title="הערה פרטית לקלוד, גלויה רק לך (Ctrl+Alt+H)">הערה לקלוד</button>':'')+
-      '<button onclick="panel(\'ed\')" title="רשימת העריכות שלי">העריכות שלי</button>'+
-      '<span class="sp"></span><button onclick="setEdit(false)" title="יציאה ממצב עריכה">סיום</button>';
-    barFit()}
+    /* הסגנונות כולם בחלונית הצפה בלבד (#stybar). הסרגל העליון אינו נושא עוד כפתורי סגנון. */
+    const et=$('#edtools');if(et)et.innerHTML='';barFit()}
   /* ---- סרגל: תפריטים וגלישה ל"עוד" ---- */
+  function ddClose(){document.querySelectorAll('.bar .dd.open,.bar .more.open').forEach(x=>{x.classList.remove('open');
+    const bb=x.querySelector(':scope>.ddb');if(bb)bb.setAttribute('aria-expanded','false')})}
   function ddToggle(b){
     const g=b.parentElement,o=g.classList.contains('open');
-    document.querySelectorAll('.bar .dd.open,.bar .more.open').forEach(x=>x.classList.remove('open'));
-    if(!o)g.classList.add('open')}
-  document.addEventListener('click',e=>{if(!e.target.closest||!e.target.closest('.bar .dd,.bar .more'))
-    document.querySelectorAll('.bar .dd.open,.bar .more.open').forEach(x=>x.classList.remove('open'))});
+    ddClose();
+    if(!o){g.classList.add('open');b.setAttribute('aria-expanded','true')}}
+  document.addEventListener('click',e=>{if(!e.target.closest)return;
+    if(!e.target.closest('.bar .dd,.bar .more')){ddClose();return}
+    /* פריט בתפריט סוגר אותו; כפתורי גודל הגופן נשארים פתוחים כדי שאפשר להגדיל כמה פעמים */
+    const it=e.target.closest('.bar .ddp>button');if(it&&!it.closest('.row3'))ddClose()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')ddClose()});
   /* אופן תצוגה: אחד משלושה */
   function setView(m){
     const vert=$('#flow').classList.contains('vert');
@@ -3819,31 +3809,37 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(x.tagName==='I'&&OKCLS.indexOf(x.className)>-1)out[x.className]=1;
       if(x.tagName==='B')out.b=1}
     return out}
+  /* הסגנונות השכיחים נראים תמיד; הנדירים מאחורי "עוד". שכיח = יש לו קיצור מקשים */
+  const ST_C=['am','ps','hs','dm','ns','b'], ST_P=['nose','dh'];
+  function styMore(){const b=$('#stybar');if(!b)return;b.classList.toggle('more');lsSet('lg-stymore',b.classList.contains('more')?'1':null)}
   function styHtml(el,sel){
     const ac=activeChar(el);
-    const btn=(on,fn,label,key,title)=>'<button class="'+(on?'on':'')+'" onmousedown="event.preventDefault()" onclick="'+fn+'"'+
-      (title?' title="'+esc(title)+'"':'')+'><span>'+esc(label)+'</span>'+(key?'<small>'+esc(key)+'</small>':'')+'</button>';
+    const btn=(on,fn,label,key,title,cls)=>'<button class="'+(on?'on ':'')+(cls||'')+'" onmousedown="event.preventDefault()" onclick="'+fn+'"'+
+      (title?' title="'+esc(title)+'"':'')+'><span>'+esc(label)+'</span>'+(key?'<kbd>'+esc(key)+'</kbd>':'')+'</button>';
     let h='<div class="sthd"><span class="stgrip" title="גרור להזזה; לחיצה כפולה מחזירה למקום הרגיל">סגנונות</span>'+
       '<button class="stmin" onmousedown="event.preventDefault()" onclick="styCollapse(1)" title="כיווץ לסמל קטן">כיווץ</button></div><div class="stbody">';
+    let rare='';
     if(isTxt(el)){
-      h+='<div class="stgrp"><span class="ttl">סגנון תו</span>'+
-        CSTY.map(c=>btn(!!ac[c[0]],"csToggle('"+c[0]+"')",c[1],shortOf(c[0]))).join('')+
-        btn(false,"setCs('')",'ללא סגנון','Ctrl+רווח')+'</div>'}
+      const cb=c=>btn(!!ac[c[0]],"csToggle('"+c[0]+"')",c[1],shortOf(c[0]).split(',')[0]);
+      h+='<div class="stgrp"><span class="ttl">סגנון תו</span>'+CSTY.filter(c=>ST_C.indexOf(c[0])>-1).map(cb).join('')+
+        btn(false,'sideCmd()','כותרת צד','Ctrl+.')+'</div>';
+      rare+=CSTY.filter(c=>ST_C.indexOf(c[0])<0).map(cb).join('')+btn(false,"setCs('')",'ללא סגנון','Ctrl+רווח')}
     if(isHeadEl(el))h+='<div class="stgrp"><span class="ttl">'+(el.classList.contains('nose')?'נושא משנה':'ד"ה משנה')+'</span>'+
       btn(false,'headBody()','הפוך לגוף','Ctrl+Q','הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים')+'</div>';
     if(el.tagName==='P'){
       const now=pcls(el);
-      h+='<div class="stgrp"><span class="ttl">סגנון פסקה</span>'+
-        PSTY.map(p=>btn(p[0]==='sp'?el.classList.contains('sp'):now===p[0],
-          p[0]==='sp'?'spToggle()':"setPs('"+p[0]+"')",p[1],p[0]==='sp'?'Ctrl+0':p[0]==='nose'?'Ctrl+3':p[0]==='dh'?'Ctrl+5':'')).join('')+
-        '</div>'}
+      const pb=p=>btn(p[0]==='sp'?el.classList.contains('sp'):now===p[0],
+          p[0]==='sp'?'spToggle()':"setPs('"+p[0]+"')",p[1],p[0]==='sp'?'Ctrl+0':p[0]==='nose'?'Ctrl+3':p[0]==='dh'?'Ctrl+5':'');
+      h+='<div class="stgrp"><span class="ttl">סגנון פסקה</span>'+PSTY.filter(p=>ST_P.indexOf(p[0])>-1).map(pb).join('')+'</div>';
+      rare+=PSTY.filter(p=>p[0]&&ST_P.indexOf(p[0])<0).map(pb).join('')}
     if(isTxt(el)){
-      h+='<div class="stgrp">'+btn(false,'sideCmd()','כותרת צד','Ctrl+.')+
-        (isAdmin()?btn(false,'ntAdd()','הערה לקלוד','Ctrl+Alt+H','הערה פרטית שמסבירה לקלוד את הרעיון שמאחורי התיקון'):'')+
-        btn(false,'clearFmt()','נקה עיצוב','Ctrl+Shift+רווח','מסיר כל סגנון תו והדגשה מכל הפסקה, ומחזיר אותה לגוף')+
-        btn(false,'plainPara()','הסר סגנון פסקה','Ctrl+Q')+'</div>'}
+      rare+=btn(false,'plainPara()','הסר סגנון פסקה','Ctrl+Q')+
+        (isAdmin()?btn(false,'ntAdd()','הערה לקלוד','Ctrl+Alt+H','הערה פרטית שמסבירה לקלוד את הרעיון שמאחורי התיקון'):'')}
+    if(rare)h+='<button class="stmore" onmousedown="event.preventDefault()" onclick="styMore()"><span class="m1">עוד ▾</span><span class="m2">פחות ▴</span></button>'+
+      '<div class="strare">'+rare+'</div>';
+    if(isTxt(el))h+=btn(false,'clearFmt()','נקה','Ctrl+Shift+רווח','מסיר כל סגנון תו והדגשה מכל הפסקה, ומחזיר אותה לגוף','stclr');
     return h+'</div>'}
-  function styCollapse(on){lsSet(SCOL,on?'1':null);STYSIG='';showSty()}
+  function styCollapse(on){lsSet(SCOL,on?'1':'0');STYSIG='';showSty()}
   function stySavedPos(){try{const j=JSON.parse(lsGet(SPOS)||'null');return j&&isFinite(j.x)&&isFinite(j.y)?j:null}catch(e){return null}}
   function styPlace(bar,el){
     document.body.classList.remove('stystrip');bar.classList.remove('strip');
@@ -3863,12 +3859,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const rc=el.getBoundingClientRect();
       let y=Math.max(topMin,Math.min(innerHeight-bh-40,rc.top));
       bar.style.left=x+'px';bar.style.top=y+'px';bar.style.bottom='auto';return}
-    /* אין מקום בשוליים: פס דק בתחתית, מעל רצועת הסטטוס */
-    const eb=$('#edbar');
-    bar.classList.add('strip');bar.style.left='0';bar.style.top='auto';
-    bar.style.bottom=((eb&&eb.offsetHeight)||0)+'px';
-    document.body.style.setProperty('--stypad',bar.offsetHeight+'px');
-    document.body.classList.add('stystrip')}
+    /* אין מקום בשוליים: צף ליד הבחירה, מתחתיה, ואם אין מקום - מעליה */
+    const rc2=el.getBoundingClientRect();
+    let y2=rc2.bottom+10;if(y2+bh>innerHeight-8)y2=rc2.top-bh-10;
+    const x2=Math.max(8,Math.min(innerWidth-bw-8,rc2.left+(rc2.width-bw)/2));
+    bar.style.left=x2+'px';bar.style.top=Math.max(topMin,Math.min(innerHeight-bh-8,y2))+'px';bar.style.bottom='auto'}
   function styDrag(ev){
     const bar=$('#stybar');if(!bar)return;
     if(!ev.target.closest('.stgrip'))return;
@@ -3886,7 +3881,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const el=edEl();const s=getSelection();
     if(!el||!s||!s.rangeCount||el.classList.contains('anchor')){hideSty();return}
     const r=s.getRangeAt(0);
-    const col=lsGet(SCOL)==='1';
+    const _sc=lsGet(SCOL);const col=_sc==='1'||(_sc===null&&innerWidth<700);
     const ac=activeChar(el);
     const sig=[el.dataset.ek||'',r.collapsed,pcls(el),el.classList.contains('sp'),Object.keys(ac).join(','),col].join('|');
     if(sig===STYSIG)return;
@@ -3901,7 +3896,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     else{bar.classList.remove('col');
       const h=styHtml(el,!r.collapsed);
       if(!h){hideSty();return}
-      bar.innerHTML=h}
+      bar.innerHTML=h;bar.classList.toggle('more',lsGet('lg-stymore')==='1')}
     bar.style.display='flex';
     if(bar.__ek!==(el.dataset.ek||'')||col!==bar.__col||!bar.__placed){styPlace(bar,el);bar.__placed=1}
     bar.__ek=el.dataset.ek||'';bar.__col=col}
@@ -4157,8 +4152,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function pubDraw(){const e=$('#edpub');if(!e)return;
     if(SUGM){sugDraw();return}
     const np=pubPending();
-    let t=PUBMSG||(PUBBUSY?'· מפרסם…':np?'· ממתינים: '+np+(np===1?' תיקון':' תיקונים')+(PUBNEXT?' · יפורסמו '+inText(PUBNEXT-Date.now()):''):
-      (ED.length?'· '+(PUBAT?'פורסם '+agoText(Date.now()-PUBAT):'נשמר ומוצג לכל הלומדים'):''));
+    let t=PUBMSG||(PUBBUSY?'מפרסם…':np?(np===1?'תיקון אחד ממתין':np+' תיקונים ממתינים')+(PUBNEXT?' · יפורסמו '+inText(PUBNEXT-Date.now()):''):
+      (ED.length?(PUBAT?'פורסם '+agoText(Date.now()-PUBAT):'נשמר ומוצג לכל הלומדים'):'אין תיקונים ממתינים'));
     /* שלושת השלבים: נשמר ומוצג לכולם, נכלל בבניית האתר, נקלט בוורד */
     if(!PUBBUSY&&!np&&ED.length&&PUBMSG.indexOf('לא פורסם')!==0){
       const inWord=EDWORD+ED.filter(x=>x.ing).length, inBuild=Math.max(0,EDTAKEN-EDWORD);
@@ -4570,7 +4565,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function sqBadge(){const b=$('#sqbtn');if(!b)return;
     if(!isAdmin()){b.style.display='none';return}
     b.style.display='';
-    b.textContent=admKey()?('הצעות ממתינות ('+QQ.length+(QQTOT>QQ.length?' · '+QQTOT+' בכל המסכתות':'')+')'):'הצעות ממתינות - הזן מפתח';
+    b.innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-inbox"/></svg>'+(admKey()?('הצעות ממתינות<span class="badge">'+QQ.length+'</span>'+(QQTOT>QQ.length?' <small>(בכל המסכתות: '+QQTOT+')</small>':'')):'הצעות ממתינות - הזן מפתח');
     b.classList.toggle('on',QQ.length>0)}
   function sqMark(){const f=$('#flow');if(!f)return;
     f.querySelectorAll('.sgp').forEach(x=>x.classList.remove('sgp'));
@@ -5388,8 +5383,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
          f'padding:3px 10px;text-decoration:none;font-weight:700">הגהה</a>') if hagaha else ''
   import build_lamed
   LAMED_READER_CSS=build_lamed.reader_css()
-  GOLD_CSS=io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'gold-theme.css'),encoding='utf-8').read()
-  GOLD_CSS+="\n.bar .adm-b{display:none}body.adm .bar .adm-b{display:block}.bar .nonadm-b{display:block}body.adm .bar .nonadm-b{display:none}"
+  _tdir=os.path.dirname(os.path.abspath(__file__))
+  import hashlib as _hl
+  UIV=_hl.md5(io.open(os.path.join(_tdir,'ui.css'),'rb').read()).hexdigest()[:8]
+  ICON_SPRITE=io.open(os.path.join(_tdir,'ui-icons.svg'),encoding='utf-8').read()
+  GOLD_CSS=".bar .adm-b{display:none}body.adm .bar .adm-b{display:block}.bar .nonadm-b{display:block}body.adm .bar .nonadm-b{display:none}"
   JS=io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"hdate.js"),encoding="utf-8").read()+chr(10)+JS
   _td=os.path.dirname(os.path.abspath(__file__))
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
@@ -5406,15 +5404,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
   <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><script src="daf-yomi.js"></script></head><body>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+  <script>try{{var _t=localStorage.getItem('lg-theme');document.documentElement.setAttribute('data-theme',_t==='dark'||_t==='auto'?_t:'light')}}catch(e){{document.documentElement.setAttribute('data-theme','light')}}</script>
+  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}
   <div class="bar" id="bar">
-  <div class="bg" data-pri="0"><a href="index.html" style="color:inherit;text-decoration:none"><span class="nm">לאוקמי גירסא</span></a> <span class="mn">{masechet}</span>
-  <div class="nav"><button onclick="goDaf(-1)" title="דף קודם (Ctrl+חץ ימינה)">› הקודם</button><span class="daf" id="curdaf"></span><button onclick="goDaf(1)" title="דף הבא (Ctrl+חץ שמאלה)">הבא ‹</button></div></div>
-  <div class="bg" data-pri="0.5"><select id="peresel" title="פרק"></select><select id="dafsel" title="דף"></select>
-  <button id="dybtn" onclick="dafYomi()" title="פותח את הדף של היום לפי לוח הדף היומי">הדף היומי</button></div>
-  <div class="bg" data-pri="0"><input id="q" placeholder="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)" title="חיפוש בכל המסכת"></div>
-  <div class="bg" data-pri="2"><button onclick="panel('toc')" title="נושאי הסוגיות">תוכן העניינים</button><button onclick="panel('am')" title="אמוראים ותנאים לפי הסימון בקובץ">אמוראים</button></div>
-  <div class="bg dd" data-pri="1" data-label="תצוגה"><button class="ddb" onclick="ddToggle(this)" title="אופן התצוגה, גודל הגופן והניקוד">תצוגה ▾</button>
+  <div class="bg loc" data-pri="0"><a href="index.html" class="brand" title="לדף הבית" style="text-decoration:none"><span class="nm">לאוקמי גירסא</span></a><span class="mn">{masechet}</span>
+  <select id="peresel" title="פרק" aria-label="פרק"></select>
+  <div class="seg nav" role="group" aria-label="ניווט בין דפים"><button onclick="goDaf(-1)" aria-label="הדף הקודם" title="הדף הקודם (Ctrl+חץ ימינה)"><svg class="ic" aria-hidden="true"><use href="#i-right"/></svg></button><select id="dafsel" title="קפיצה לדף" aria-label="דף"></select><button onclick="goDaf(1)" aria-label="הדף הבא" title="הדף הבא (Ctrl+חץ שמאלה)"><svg class="ic" aria-hidden="true"><use href="#i-left"/></svg></button></div><span class="daf" id="curdaf" hidden></span></div>
+  <div class="bg sr" data-pri="0"><label class="sfield"><svg class="ic sm" aria-hidden="true"><use href="#i-search"/></svg><input id="q" type="search" placeholder="חיפוש ב{masechet}" aria-label="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)" title="חיפוש בכל המסכת"></label></div>
+  <div class="bg dd" data-pri="1" data-label="תצוגה"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" title="אופן התצוגה, גודל הגופן והניקוד"><svg class="ic" aria-hidden="true"><use href="#i-view"/></svg><span class="t">תצוגה</span></button>
     <div class="ddp"><div class="sml">אופן התצוגה</div>
     <button id="cbtn" onclick="setView('col')" title="טורים, כמו בעמוד הספר">טורים</button>
     <button id="vbtn" onclick="setView('vert')" title="כל המסכת בטור אחד, בגלילה מלמעלה למטה">טור רצוף</button>
@@ -5428,19 +5427,33 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
     <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
     <button onclick="document.body.classList.toggle('hc');this.classList.toggle('on')" title="ניגודיות גבוהה">ניגודיות</button></div></div>
-  <div class="bg dd" data-pri="3" data-label="הדפסה"><button class="ddb" onclick="ddToggle(this)" title="הדפסה ושמירה כ-PDF">הדפסה ▾</button>
-    <div class="ddp"><button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר">הדפס פרק</button>
-    <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש">כל המסכת ל-PDF</button></div></div>
-  <div class="bg dd" data-pri="1.5" data-label="עריכה"><button id="edbtn" class="primary" onclick="editBtn()" title="לאדם שאינו מנהל: עורך מלא עם כל הקיצורים, וכל פעולה נשלחת כהצעה לעורך. למנהל: עריכה (Ctrl+Alt+E)">הצע תיקון</button>
-  <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך">הצעות ממתינות</button>
-  <button class="ddb mini" onclick="ddToggle(this)" title="עוד: שאלה או הערה, ההצעות שלי, וכלי מנהל" aria-label="עוד פעולות עריכה">▾</button>
-  <div class="ddp"><button onclick="suggest()" title="שאלה, הערה או מקור: סמן טקסט בדף, או לחץ כאן ובחר קטע">שאלה, הערה או מקור</button>
-  <button onclick="mineOpen()" title="כל ההצעות ששלחת: סינון, עריכה, חידוד">ההצעות שלי</button>
-  <button class="nonadm-b" onclick="askAdminWord()" title="כניסת מנהל: מילת המנהל מוקלדת פעם אחת בכל מכשיר">כניסת מנהל</button>
-  {bkbtn}<button id="lnbtn" class="adm-b" onclick="lnOpen()" title="מה למד המערכת מהתיקונים שלך">הלמידה היומית</button><button id="ntbtn" class="adm-b" onclick="ntOpen()" title="הערות פרטיות שלך לקלוד, על הרעיון שמאחורי תיקונים">הערות לקלוד</button>
-  <button class="adm-b" onclick="panel('qa')" title="חריגות שנמצאו בהמרת הקובץ (למנהל)">חריגות המרה</button><span class="adm-b">{hgbtn}</span></div></div>
-  <div class="bg edtools" id="edtools" data-pri="9"></div>
-  <div class="bg more" id="morebg" style="display:none"><button class="ddb" onclick="ddToggle(this)" title="עוד פעולות">עוד ▾</button><div class="ddp" id="morep"></div></div></div>
+  <div class="bg dd" data-pri="2" data-label="כלים"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" aria-label="כלים" title="כלים: תוכן עניינים, אמוראים, הדפסה, הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-dots"/></svg><span class="t">כלים</span></button>
+    <div class="ddp">
+    <button onclick="panel('toc')" title="נושאי הסוגיות"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>תוכן העניינים</button>
+    <button onclick="panel('am')" title="אמוראים ותנאים לפי הסימון בקובץ"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>אמוראים</button>
+    <button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>הדפס פרק</button>
+    <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>כל המסכת ל-PDF</button>
+    <button id="dybtn" onclick="dafYomi()" title="פותח את הדף של היום לפי לוח הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg>הדף היומי</button>
+    <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך"><svg class="ic" aria-hidden="true"><use href="#i-inbox"/></svg>הצעות ממתינות</button>
+    <button onclick="suggest()" title="שאלה, הערה או מקור: סמן טקסט בדף, או לחץ כאן ובחר קטע">שאלה, הערה או מקור</button>
+    <button onclick="mineOpen()" title="כל ההצעות ששלחת: סינון, עריכה, חידוד">ההצעות שלי</button>
+    <button class="nonadm-b" onclick="askAdminWord()" title="כניסת מנהל: מילת המנהל מוקלדת פעם אחת בכל מכשיר">כניסת מנהל</button>
+    <div class="adm-b"><hr><div class="sml">מנהל</div>
+    <button id="lnbtn" onclick="lnOpen()" title="מה למד המערכת מהתיקונים שלך">הלמידה היומית</button>
+    <button id="ntbtn" onclick="ntOpen()" title="הערות פרטיות שלך לקלוד, על הרעיון שמאחורי תיקונים">הערות לקלוד</button>
+    <button onclick="panel('qa')" title="חריגות שנמצאו בהמרת הקובץ (למנהל בלבד)">חריגות המרה</button>{bkbtn}
+    <span class="adm-b">{hgbtn}</span></div></div></div>
+  <div class="bg edsw" data-pri="0"><button id="edbtn" class="tgl" role="switch" aria-checked="false" onclick="editBtn()" title="לאדם שאינו מנהל: עורך מלא עם כל הקיצורים, וכל פעולה נשלחת כהצעה לעורך. למנהל: עריכה (Ctrl+Alt+E)">עריכה</button></div>
+  <div class="bg edonly dd" id="edstat" data-pri="0"><button class="ddb ib" id="edpubbtn" onclick="ddToggle(this)" aria-haspopup="menu" title="מצב הפרסום. התיקונים נשמרים מיד ומתפרסמים יחד, לכל היותר כל חמש דקות"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg><span id="edpub" class="edpub"></span></button><span id="edn" hidden></span>
+    <div class="ddp"><button id="edpushbtn" class="primary" onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>
+    <button onclick="panel('ed')" title="רשימת העריכות שלי">העריכות שלי</button>
+    <button onclick="navOpen()" id="navbtn" title="פנל ניווט: פרקים ודפים, בלי לצאת מהעריכה (Alt+N)">ניווט</button>
+    <button onclick="keysCard()" title="קיצורי מקשים (Ctrl+/)">קיצורי מקשים</button>
+    <button id="ntedit" class="adm-b" onmousedown="event.preventDefault()" onclick="ntAdd()" title="הערה פרטית לקלוד, גלויה רק לך (Ctrl+Alt+H)">הערה לקלוד</button>
+    <button id="mineedit" style="display:none" onclick="mineOpen()" title="כל ההצעות ששלחת">ההצעות שלי</button></div>
+    <span id="procnote" class="edpub"></span>
+    <button class="ib" onmousedown="event.preventDefault()" onclick="edUndoBtn()" aria-label="בטל" title="בטל את הפעולה האחרונה (Ctrl+Z)"><svg class="ic" aria-hidden="true"><use href="#i-undo"/></svg><span class="t">בטל</span></button></div>
+  <div class="bg" id="edtools" hidden></div></div>
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
   <div class="panel" id="toc"><button class="x" onclick="panel('toc')">×</button><h3>תוכן העניינים - נושאי הסוגיות</h3><div id="tocb"></div></div>
   <div class="panel" id="am"><button class="x" onclick="panel('am')">×</button><h3>אמוראים ותנאים - לפי הסימון בקובץ</h3><div id="amb"></div></div>

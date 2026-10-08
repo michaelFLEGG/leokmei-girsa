@@ -56,11 +56,11 @@
       '<img class="steps" src="brand/parts/card-steps.webp" alt="" loading="lazy" decoding="async">';
     return a;
   };
-  /* כותרת תחתונה: כחול, שער קטן, "תנועת לאוקמי גירסא" בזהב */
+  /* כותרת תחתונה: כחול, שער קטן וקישורים (השורה "תנועת לאוקמי גירסא" הוסרה 8.10.2026) */
   B.footer = function () {
     var f = document.createElement('footer'); f.className = 'lm-foot';
     f.innerHTML = '<div class="lm-foot-in"><img src="brand/shaar-zahav-96.webp" alt="" width="23" height="34"><span class="nm">לאוקמי גירסא</span></div>' +
-      '<span class="mv">תנועת לאוקמי גירסא</span><div style="margin-top:8px"><a href="shas.html">מפת הש"ס</a><a href="mekorot.html">מקורות</a><a href="about.html">אודות</a></div>';
+      '<div style="margin-top:8px"><a href="shas.html">מפת הש"ס</a><a href="mekorot.html">מקורות</a><a href="about.html">אודות</a></div>';
     return f;
   };
 })();

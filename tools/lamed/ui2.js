@@ -474,7 +474,7 @@
     Object.keys(A).forEach(function (d) { (A[d].dates || []).forEach(function (x) { var t = LG.ymdToUTC(x); firstT = Math.min(firstT, t); lastT = Math.max(lastT, t); }); });
     var daysN = firstT < Infinity ? LG.diffDays(new Date(firstT).toISOString().slice(0, 10), new Date(lastT).toISOString().slice(0, 10)) + 1 : 0;
     var name = S.settings.name || '';
-    wrap.innerHTML = '<div class="lm-card" style="text-align:center"><div class="lm-small">מסכת ' + E(m.name) + '</div><h1 class="lm-t" style="font-size:40px">הדרן עלך מסכת ' + E(m.name) + '</h1>' +
+    wrap.innerHTML = '<div class="lm-card" style="text-align:center">' + LG.brand.gate() + '<div class="lm-small">מסכת ' + E(m.name) + '</div><h1 class="lm-t" style="font-size:40px">הדרן עלך מסכת ' + E(m.name) + '</h1>' +
       '<p style="font-size:20px;line-height:1.9">' + E(HADRAN.replace(/%s/g, m.name)) + '</p><p class="lm-note">את שאר נוסח ההדרן ראו בסידור.</p></div>' +
       '<div class="lm-card"><h3>סיכום הלימוד</h3><div class="lm-stats"><div class="lm-stat"><b>' + E(LG.dur(st.ms)) + '</b><span>זמן לימוד</span></div><div class="lm-stat"><b>' + LG.nf(daysN) + '</b><span>ימים מתחילה ועד סיום</span></div>' +
       '<div class="lm-stat"><b>' + (firstT < Infinity ? E(HD.date(firstT + 43200000)) : '-') + '</b><span>התחלה</span></div><div class="lm-stat"><b>' + (lastT ? E(HD.date(lastT + 43200000)) : '-') + '</b><span>סיום</span></div></div></div>' +

@@ -10,17 +10,32 @@ import os, io, re, json, datetime, urllib.request
 BASE = 'https://leokmei.com'
 NAME = 'לאוקמי גירסא'
 HOME_TITLE = 'לאוקמי גירסא · קיצור התלמוד הבבלי, קיצור הדף היומי וקיצור הש"ס'
-HOME_DESC = ('לאוקמי גירסא - קיצור התלמוד הבבלי: שלד הסוגיה בלבד, דף אחר דף. '
+HOME_DESC = ('לאוקמי גירסא - קיצור התלמוד הבבלי, דף אחר דף. '
              'קיצור הדף היומי, קיצור הש"ס, ומערכת לימוד אישית. חינם.')
 API = 'https://leokmei-suggest.m7654301.workers.dev'
 NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'masechet.html', 'quiz.html')
 
+ICONS = ('<meta property="og:image" content="%s/brand/og-image.png"><meta property="og:image:width" content="1200">'
+         '<meta property="og:image:height" content="630"><meta property="og:image:alt" content="שער לאוקמי גירסא">'
+         '<meta name="twitter:card" content="summary_large_image">'
+         '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/brand/icons/favicon-32.png">'
+         '<link rel="apple-touch-icon" href="/brand/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest">'
+         '<meta name="theme-color" content="#0b1c2a">') % BASE
+
+# מעטפת קטנה לדפי טקסט פשוטים (אודות, מקורות): סרגל כחול עם השער הקטן
+MINI_STYLE = ('@font-face{font-family:LGVilnaTitle;src:url(brand/fonts/vilna-title.woff2) format("woff2");font-display:swap}'
+              'body{margin:0;background:#f7f3ea;color:#1b1b1b;font-family:serif;line-height:1.8}'
+              'header.mh{background:#0b1c2a;border-bottom:1px solid #8f6a1e;padding:8px 18px}'
+              'header.mh a{display:inline-flex;align-items:center;gap:10px;color:#f9e08a;text-decoration:none;font:400 24px LGVilnaTitle,serif}'
+              'header.mh img{height:32px;width:auto}main{max-width:640px;margin:0 auto;padding:30px 18px}h1{font-size:28px}a{color:#8f6a1e}')
+MINI_HEADER = '<header class="mh"><a href="index.html"><img src="brand/shaar-zahav-96.webp" alt="">לאוקמי גירסא</a></header>'
+
+
 ABOUT = ('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
          '<meta name="viewport" content="width=device-width,initial-scale=1"><title>אודות · לאוקמי גירסא</title>'
-         '<style>body{margin:0;background:#e9e4d8;color:#1d1a16;font-family:serif;line-height:1.8}'
-         'main{max-width:640px;margin:0 auto;padding:30px 18px}h1{font-size:28px}a{color:#5a4a2a}</style></head><body><main>'
+         '<style>' + MINI_STYLE + '</style></head><body>' + MINI_HEADER + '<main>'
          '<h1>אודות לאוקמי גירסא</h1>'
-         '<p>לאוקמי גירסא הוא קיצור של התלמוד הבבלי: שלד הסוגיה בלבד, דף אחר דף, כך שאפשר לראות את מהלך הגמרא '
+         '<p>לאוקמי גירסא הוא קיצור של התלמוד הבבלי, דף אחר דף, כך שאפשר לראות את מהלך הגמרא '
          'ואת הכרעתה בלי לאבד את החוט. האתר מיועד ללומדי הדף היומי, ללומדי מסכת ולכל מי שרוצה לחזור על הש"ס.</p>'
          '<p>הקיצור נערך בידי הרב מיכאל פלג, ונבנה אוטומטית מקובצי העריכה. כל מסכת שמסתיימת עולה לאתר. '
          'הגמרא המנוקדת והפירוש מוצגים ברישיון ומפורטים בעמוד <a href="mekorot.html">מקורות</a>.</p>'
@@ -30,7 +45,7 @@ ABOUT = ('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
 
 NOSCRIPT = ('<noscript><main style="max-width:640px;margin:20px auto;padding:0 18px;font-family:serif;line-height:1.8">'
             '<h1>לאוקמי גירסא - קיצור התלמוד הבבלי</h1>'
-            '<p>קיצור הדף היומי וקיצור הש"ס: שלד הסוגיה בלבד, דף אחר דף. האתר פועל עם JavaScript.</p>'
+            '<p>קיצור הדף היומי וקיצור הש"ס, דף אחר דף. האתר פועל עם JavaScript.</p>'
             '<p><a href="masechtot.html">כל המסכתות</a> · <a href="yomi.html">הדף היומי היום</a> · '
             '<a href="about.html">אודות</a></p></main></noscript>')
 
@@ -47,7 +62,8 @@ def head_block(path, title, desc, noindex, ld=None):
          '<meta property="og:site_name" content="%s">' % NAME,
          '<meta property="og:title" content="%s">' % esc(title),
          '<meta property="og:description" content="%s">' % esc(desc),
-         '<meta property="og:url" content="%s">' % url]
+         '<meta property="og:url" content="%s">' % url,
+         ICONS]
     if noindex:
         h.append('<meta name="robots" content="noindex,follow">')
     if ld:
@@ -95,7 +111,7 @@ def run(site, built, slug):
             ('about.html', '0.4'), ('mekorot.html', '0.3')]
     rewrite(site, 'index.html', HOME_TITLE, HOME_DESC, ld=ld_home, body_extra=NOSCRIPT)
     rewrite(site, 'yomi.html', 'הדף היומי היום בקיצור · ' + NAME,
-            'הדף היומי של היום בקיצור: שלד הסוגיה של הדף שלומדים היום בעולם. מתעדכן מדי יום.')
+            'הדף היומי של היום בקיצור: הדף שלומדים היום בעולם. מתעדכן מדי יום.')
     rewrite(site, 'masechtot.html', 'כל מסכתות הש"ס בקיצור · ' + NAME,
             'רשימת כל מסכתות התלמוד הבבלי, עם המסכתות שכבר עלו לאתר בקיצור לאוקמי גירסא.')
     rewrite(site, 'shas.html', 'מפת הש"ס · ' + NAME, 'מפת הש"ס לפי סדרים ומסכתות, עם התקדמות הלימוד.')
@@ -117,7 +133,7 @@ def run(site, built, slug):
         rewrite(site, fn, NAME, NAME, noindex=True)
     for m in built:
         fn = slug[m] + '.html'
-        desc = ('מסכת %s בקיצור: שלד הסוגיה בלבד, דף אחר דף, מתוך קיצור התלמוד הבבלי של לאוקמי גירסא.' % m)
+        desc = ('מסכת %s בקיצור, דף אחר דף, מתוך קיצור התלמוד הבבלי של לאוקמי גירסא.' % m)
         ld = {'@context': 'https://schema.org', '@type': 'Book', 'name': 'מסכת %s בקיצור' % m,
               'inLanguage': 'he', 'url': BASE + '/' + fn, 'isPartOf': {'@type': 'WebSite', 'name': NAME, 'url': BASE + '/'}}
         hub = ('<noscript><main style="max-width:640px;margin:20px auto;padding:0 18px;font-family:serif"><h1>מסכת %s בקיצור</h1>'

@@ -301,7 +301,7 @@
         if (titleUp) {
           setTimeout(function () {
             modalOpen = true; Q.sfx('level');
-            var m = UI.modal('<div class="qz-title-up"><div class="qz-big">★</div><h3>תואר חדש!</h3><p>הגעת לתואר <b>' + E(titleUp.name) + '</b> (' + E(titleUp.scope) + ')</p><div class="lm-row"><button type="button" class="lm-btn pri" id="qz-tu">המשך</button></div></div>', function () { modalOpen = false; });
+            var m = UI.modal('<div class="qz-title-up">' + LG.brand.gate() + '<div class="qz-big">★</div><h3>תואר חדש!</h3><p>הגעת לתואר <b>' + E(titleUp.name) + '</b> (' + E(titleUp.scope) + ')</p><div class="lm-row"><button type="button" class="lm-btn pri" id="qz-tu">המשך</button></div></div>', function () { modalOpen = false; });
             if (pers === 'bahur') confetti();
             var b = m.querySelector('#qz-tu'); if (b) { b.onclick = function () { m.close(); }; b.focus(); }
           }, reduced() ? 100 : 900);
@@ -433,7 +433,7 @@
       var sc = Q.score(), due = Q.dueCount(), set = LG.settings();
       var tl = titleLine(sc.total, Q.T_ALL, Q.TITLES_ALL);
       var head = el('div', 'lm-card');
-      head.innerHTML = '<h1 class="lm-t" style="margin:0 0 4px">בחן את עצמך</h1>' +
+      head.innerHTML = LG.brand.gate() + '<h1 class="lm-t" style="margin:0 0 4px;text-align:center">בחן את עצמך</h1>' +
         '<p class="lm-sub" style="margin:0 0 12px">שאלות מוגהות על הלימוד, עם ניקוד מיידי על כל תשובה נכונה.</p>' +
         '<div class="lm-stats"><div class="lm-stat"><b>' + LG.nf(sc.total) + '</b><span>נקודות</span></div>' +
         '<div class="lm-stat"><b>' + E(tl.name) + '</b><span>התואר הכללי' + (tl.next ? ' · עוד ' + LG.nf(tl.need) + ' ל' + E(tl.next) : '') + '</span></div>' +

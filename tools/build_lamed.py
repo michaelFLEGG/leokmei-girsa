@@ -9,7 +9,7 @@ import os, io, re, hashlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'lamed')
-PARTS = ['core', 'tracker', 'ui', 'ui2', 'shiurim', 'sync', 'quiz', 'boot']
+PARTS = ['core', 'tracker', 'brand', 'ui', 'ui2', 'shiurim', 'sync', 'quiz', 'boot']
 MARK = '/* ---- בדף הלימוד'
 
 PAGES = [
@@ -36,7 +36,29 @@ def reader_css():
     return css[i:]
 
 
+def brand(site):
+    """מעתיק את מוטיב השער, החלקים, הגופנים והסמלילים (tools/brand) אל site/brand,
+    ואת ה-favicon וה-manifest אל שורש האתר (8.10.2026)."""
+    import shutil, json
+    src = os.path.join(HERE, 'brand'); dst = os.path.join(site, 'brand')
+    os.makedirs(dst, exist_ok=True)
+    for f in ('shaar-zahav.svg', 'shaar-currentColor.svg', 'shaar-zahav-96.webp', 'shaar-zahav-240.webp', 'shaar-zahav-960.webp'):
+        shutil.copy(os.path.join(src, f), os.path.join(dst, f))
+    for sub in ('parts', 'fonts', 'icons'):
+        d = os.path.join(dst, sub); os.makedirs(d, exist_ok=True)
+        for f in os.listdir(os.path.join(src, sub)):
+            shutil.copy(os.path.join(src, sub, f), os.path.join(d, f))
+    shutil.copy(os.path.join(src, 'icons', 'og-image.png'), os.path.join(dst, 'og-image.png'))
+    shutil.copy(os.path.join(src, 'icons', 'favicon.ico'), os.path.join(site, 'favicon.ico'))
+    io.open(os.path.join(site, 'manifest.webmanifest'), 'w', encoding='utf-8').write(json.dumps({
+        'name': 'לאוקמי גירסא - קיצור התלמוד הבבלי', 'short_name': 'לאוקמי גירסא', 'lang': 'he', 'dir': 'rtl',
+        'start_url': '/', 'display': 'standalone', 'background_color': '#0b1c2a', 'theme_color': '#0b1c2a',
+        'icons': [{'src': '/brand/icons/icon-192.png', 'sizes': '192x192', 'type': 'image/png'},
+                  {'src': '/brand/icons/icon-512.png', 'sizes': '512x512', 'type': 'image/png'}]}, ensure_ascii=False, indent=1))
+
+
 def build(site):
+    brand(site)
     js = read(os.path.join(HERE, 'hdate.js')) + '\n' + '\n'.join(read(os.path.join(SRC, p + '.js')) for p in PARTS)
     io.open(os.path.join(site, 'lamed.js'), 'w', encoding='utf-8').write(js)
     css = read(os.path.join(SRC, 'lamed.css'))

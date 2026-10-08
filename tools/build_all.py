@@ -302,22 +302,22 @@ def main():
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="ui.css">
 <style>@font-face{{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900}}@font-face{{font-family:'Frank';src:url(fonts/frank.ttf)}}@font-face{{font-family:'Leukmey';src:url(fonts/leukmey.otf)}}
-body{{margin:0;background:#f7f3ea;color:#1f1c18;font-family:'Assistant','Noto Sans Hebrew','Frank','Frank Ruhl Libre',sans-serif}}
-header{{background:#fffdf8;border-bottom:1px solid #e3dacb;color:#1f1c18;padding:34px 20px 26px;text-align:center}} header h1{{font-family:'Leukmey','Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#cfc4ad;font-size:18px}}
+body{{margin:0;background:var(--velvet-bg);background-color:#0b1c2a;color:#f3ead0;font-family:var(--ui);min-height:100vh}} html{{background:#0b1c2a}}
+header{{background:transparent;border-bottom:1px solid #8f6a1e;padding:26px 20px 22px;text-align:center}} header img{{height:64px;width:auto;display:block;margin:0 auto 6px}} header h1{{font-family:'LGVilnaXB','Vilna',serif;font-weight:400;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#e9c35a;font-size:18px}}
 #dy{{display:inline-block;margin-top:14px;padding:9px 22px;font-size:18px}}
 .m.now{{border-color:#a83c2f;box-shadow:0 0 0 2px #c9a24a}} .now-tag{{display:block;color:#a83c2f;font-size:12px;font-weight:700;margin-bottom:2px}}
 #nowrow{{margin:18px 0 0}} #nowrow .grid{{grid-template-columns:minmax(180px,260px)}}
-main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500;font-size:20px;color:#5a5044;border-bottom:1px solid #c9bfa8;margin:26px 0 10px;padding-bottom:4px}}
+main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500;font-size:20px;color:#e9c35a;border-bottom:1px solid #8f6a1e;margin:26px 0 10px;padding-bottom:4px}}
 .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}}
-.m{{display:block;background:#f3eee2;border-radius:6px;padding:12px 14px;text-decoration:none;color:#8a7d66;border:1px solid #e0d8c4}} .m.on{{background:#fbf8f1;color:#1d1a16;border-color:#c9a24a;box-shadow:0 1px 4px rgba(0,0,0,.08)}} .m.on:hover{{background:#fff}}
-.m b{{display:block;font-size:19px;font-weight:700}} .m small{{font-size:12px;color:#8a7d66}}
+.m{{display:block;background:#0f263b;border-radius:6px;padding:12px 14px;text-decoration:none;color:#c9bd98;border:1px solid rgba(209,162,58,.25);opacity:.8}} .m.on{{background:#fffdf8;color:#1b1b1b;border-color:#d1a23a;opacity:1;box-shadow:0 1px 4px rgba(0,0,0,.3)}} .m.on:hover{{background:#fff;border-color:#f9e08a}}
+.m b{{display:block;font-size:20px;font-weight:700}} .m small{{font-size:15px;color:#5a534a}} .m:not(.on) small{{color:#c9bd98}}
 .mw{{position:relative}} .mw .m{{padding-bottom:26px}}
 .m.warn{{border-color:#a83c2f;box-shadow:inset 3px 0 0 #a83c2f}} .m.warn small{{color:#a83c2f}}
-.hg{{position:absolute;bottom:7px;right:14px;font-size:12px;background:#c9a24a;color:#2b2620;border-radius:4px;padding:1px 9px;text-decoration:none;font-weight:700}}
+.hg{{position:absolute;bottom:7px;right:14px;font-size:15px;background:#d1a23a;color:#2b2620;border-radius:4px;padding:1px 9px;text-decoration:none;font-weight:700}}
 .hg:hover{{background:#b8912f}}
-footer{{text-align:center;color:#8a7d66;font-size:13px;padding:20px}}
+footer{{text-align:center;color:#c9bd98;font-size:15px;padding:20px;border-top:1px solid #8f6a1e}} footer a{{color:#e9c35a}}
 {GOLD}</style></head><body>
-<header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p><button id="dy" class="btn primary" type="button" style="display:none">הדף היומי</button></header>
+<header><img src="brand/shaar-zahav-96.webp" alt=""><h1 class="foil">לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי</p><button id="dy" class="btn primary" type="button" style="display:none">הדף היומי</button></header>
 <main>{rows}</main><script src="hdate.js"></script><script src="daf-yomi.js"></script><script>
 (function(){{var BUILT={json.dumps([SLUG[m] for m in built])};var b=document.getElementById('dy');if(!window.LGDaf)return;var t=LGDaf.today();if(!t)return;
 b.style.display='';
@@ -343,8 +343,7 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     open(os.path.join(SITE, 'mekorot.html'), 'w', encoding='utf-8').write(
         '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1"><title>מקורות · לאוקמי גירסא</title>'
-        '<style>body{margin:0;background:#e9e4d8;color:#1d1a16;font-family:serif;line-height:1.7}'
-        'main{max-width:640px;margin:0 auto;padding:30px 18px}h1{font-size:26px}a{color:#5a4a2a}</style></head><body><main>'
+        '<style>' + build_seo_mini_style() + '</style></head><body>' + build_seo_mini_header() + '<main>'
         '<h1>מקורות</h1>'
         '<p>הגמרא המנוקדת והפירוש המוצגים במגירת "מקור" נלקחו מספריא (Sefaria), '
         'ממהדורת William Davidson של התלמוד הבבלי בעריכת הרב עדין אבן־ישראל שטיינזלץ, '
@@ -355,6 +354,16 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     import build_seo
     build_seo.run(SITE, built, SLUG)
     print(len(built), 'מסכתות נבנו')
+
+def build_seo_mini_style():
+    import build_seo
+    return build_seo.MINI_STYLE
+
+
+def build_seo_mini_header():
+    import build_seo
+    return build_seo.MINI_HEADER
+
 
 def write_shas(built):
     """site/shas.json - מפת הש"ס למערכת הלומד: הסדרים, המסכתות, ולמסכת

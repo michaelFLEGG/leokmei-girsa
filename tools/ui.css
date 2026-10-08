@@ -1,48 +1,80 @@
-/* ui.css - מערכת העיצוב המשותפת של לאוקמי גירסא (7.10.2026).
+/* ui.css - מערכת העיצוב המשותפת של לאוקמי גירסא.
+   נוסח 7.10.2026, ועודכן 8.10.2026 לשפת "כחול קטיפה, זהב מלכותי ומוטיב השער" (docs/עיצוב - כחול קטיפה...).
    קובץ אחד לכל העמודים: דף המסכת, הבית, המפה, הלימוד שלי, הדף היומי, בחן את עצמך, שיעורים והגדרות.
    המעטפת בלבד: סרגלים, כפתורים, תפריטים, חלוניות, מגירות ועמודי הניווט. עיצוב דף הגמרא עצמו
    (גופני וילנא, גדלים, ריווח, טורים, מסילה) אינו כאן ואינו משתנה לעולם.
 
-   צבע פעיל אחד: תכלת. כל דבר לחיץ הוא תכלת. הזהב הוא קו, עיטור ותווית קטנה, ולעולם לא רקע כפתור.
-   אדום וירוק רק למצבים. שלושה סוגי כפתור: ראשי (תכלת מלא), משני (מסגרת), שקט (בלי מסגרת). */
+   שני תחומים: "כחול" (סרגלים, רקע העמודים, כותרת תחתונה) קבוע בשני המצבים; "נייר" (כרטיסים, תפריטים, חלונות,
+   מגירות) עוקב אחרי בחירת בהיר/כהה. הטוקנים הכלליים (--tx, --sheet, --blue ...) מקבלים את ערכי התחום שהם בתוכו:
+   זהב בהיר רק על כחול; על נייר בהיר - gold-700. שלושה סוגי כפתור: ראשי (כחול עם מסגרת זהב כפולה), משני (מסגרת זהב), שקט. */
+@font-face{font-family:'LGVilna';src:url(brand/fonts/vilna-lt.woff2) format('woff2');font-weight:300;font-display:swap}
+@font-face{font-family:'LGVilna';src:url(brand/fonts/vilna-rg.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'LGVilna';src:url(brand/fonts/vilna-md.woff2) format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'LGVilna';src:url(brand/fonts/vilna-bd.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'LGVilnaXB';src:url(brand/fonts/vilna-xb.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'LGVilnaTitle';src:url(brand/fonts/vilna-title.woff2) format('woff2');font-weight:400;font-display:swap}
 :root{
   color-scheme:light;
-  --parch:#f7f3ea; --sheet:#fffdf8; --tx:#1f1c18; --tx2:#5a534a; --line:#e3dacb;
-  --blue:#1f4e79; --blue-ink:#ffffff; --blue-soft:#e6eef6; --blue-hover:#173f64;
-  --gd:#b08a3a; --gd-tx:#7a5f1f;
-  --rd:#a6322a; --rd-soft:#f8e6e3; --gn:#2f6b46; --gn-soft:#e3f0e8;
-  --pop:#1f1c18; --pop-ink:#f7f3ea; --pop-line:#4a443b;
-  --pal:#1f1c18; --pal-ink:#f7f3ea; --pal-line:#4a443b; --pal-mute:#cfc6b4; --pal-hover:rgba(247,243,234,.14);
-  --scrim:rgba(31,28,24,.46);
-  --shadow:0 1px 2px rgba(31,28,24,.07),0 8px 24px rgba(31,28,24,.12);
+  /* פלטת המותג (קבועה) */
+  --navy-900:#0b1c2a; --navy-800:#0f263b; --navy-700:#173a58; --navy-room:#1e476f;
+  --gold-100:#f9e08a; --gold-300:#e9c35a; --gold-500:#d1a23a; --gold-700:#8f6a1e;
+  --cream:#f3ead0; --cream2:#c9bd98;
+  --foil:linear-gradient(170deg,#f9e08a 0%,#e2b847 28%,#c8942c 50%,#eccb63 68%,#b98522 85%,#e9c35a 100%);
+  --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --velvet:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='v'><feTurbulence type='fractalNoise' baseFrequency='1.4 .6' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .7  0 0 0 0 .85  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23v)'/></svg>");
+  --velvet-bg:var(--velvet),radial-gradient(ellipse 80% 60% at 50% 30%,#163a58 0%,var(--navy-800) 50%,var(--navy-900) 100%);
+  /* תחום הכחול: קבוע */
+  --n-parch:#0b1c2a; --n-sheet:#0f263b; --n-tx:#f3ead0; --n-tx2:#c9bd98; --n-line:rgba(209,162,58,.38);
+  --n-blue:#e9c35a; --n-blue-ink:#0b1c2a; --n-blue-soft:rgba(233,195,90,.15); --n-blue-hover:#f9e08a; --n-gd-tx:#e9c35a; --n-focus:#e9c35a;
+  --n-rd:#f0a39a; --n-rd-soft:#3b2421; --n-gn:#8cc7a0; --n-gn-soft:#1f3328;
+  /* תחום הנייר: בהיר (ברירת מחדל) */
+  --p-parch:#f7f3ea; --p-sheet:#fffdf8; --p-tx:#1b1b1b; --p-tx2:#5a534a; --p-line:#e3dacb;
+  --p-blue:#173a58; --p-blue-ink:#f9e08a; --p-blue-soft:#f1e8cf; --p-blue-hover:#0f263b; --p-gd-tx:#8f6a1e; --p-focus:#8f6a1e;
+  --p-rd:#a6322a; --p-rd-soft:#f8e6e3; --p-gn:#2f6b46; --p-gn-soft:#e3f0e8;
+  --p-shadow:0 1px 2px rgba(11,28,42,.08),0 8px 24px rgba(11,28,42,.16);
+  --parch:var(--p-parch); --sheet:var(--p-sheet); --tx:var(--p-tx); --tx2:var(--p-tx2); --line:var(--p-line);
+  --blue:var(--p-blue); --blue-ink:var(--p-blue-ink); --blue-soft:var(--p-blue-soft); --blue-hover:var(--p-blue-hover);
+  --gd:#d1a23a; --gd-tx:var(--p-gd-tx); --focus:var(--p-focus);
+  --rd:var(--p-rd); --rd-soft:var(--p-rd-soft); --gn:var(--p-gn); --gn-soft:var(--p-gn-soft);
+  --pop:#0f263b; --pop-ink:#f3ead0; --pop-line:#8f6a1e;
+  --pal:#0f263b; --pal-ink:#f3ead0; --pal-line:#8f6a1e; --pal-mute:#c9bd98; --pal-hover:rgba(233,195,90,.16);
+  --scrim:rgba(11,28,42,.58);
+  --shadow:var(--p-shadow);
   --r:10px; --t:150ms;
-  --ui:'Assistant','Noto Sans Hebrew',sans-serif;
-  --fs-ui:15px;
+  --ui:'LGVilna','Vilna','David',serif;
+  --fs-ui:15px; --fs-btn:17px;
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --parch:#16140f; --sheet:#1e1b15; --tx:#efe8da; --tx2:#bdb4a2; --line:#38332a;
-  --blue:#8fb6dc; --blue-ink:#10202f; --blue-soft:#22303f; --blue-hover:#a9c8e6;
-  --gd:#d3ab52; --gd-tx:#e0bd6a;
-  --rd:#e58a80; --rd-soft:#3b2421; --gn:#8cc7a0; --gn-soft:#1f3328;
-  --pop:#efe8da; --pop-ink:#1f1c18; --pop-line:#bdb4a2;
-  --pal:#2a2620; --pal-ink:#efe8da; --pal-line:#4a443b; --pal-mute:#bdb4a2; --pal-hover:rgba(239,232,218,.14);
-  --scrim:rgba(0,0,0,.6);
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.45);
+  --p-parch:#0b1c2a; --p-sheet:#0f263b; --p-tx:#f3ead0; --p-tx2:#c9bd98; --p-line:rgba(209,162,58,.34);
+  --p-blue:#e9c35a; --p-blue-ink:#0b1c2a; --p-blue-soft:#173a58; --p-blue-hover:#f9e08a; --p-gd-tx:#e9c35a; --p-focus:#e9c35a;
+  --p-rd:#f0a39a; --p-rd-soft:#3b2421; --p-gn:#8cc7a0; --p-gn-soft:#1f3328;
+  --p-shadow:0 1px 2px rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.5);
+  --scrim:rgba(0,0,0,.65);
 }
 @media (prefers-color-scheme:dark){
   :root[data-theme="auto"]{
     color-scheme:dark;
-    --parch:#16140f; --sheet:#1e1b15; --tx:#efe8da; --tx2:#bdb4a2; --line:#38332a;
-    --blue:#8fb6dc; --blue-ink:#10202f; --blue-soft:#22303f; --blue-hover:#a9c8e6;
-    --gd:#d3ab52; --gd-tx:#e0bd6a;
-    --rd:#e58a80; --rd-soft:#3b2421; --gn:#8cc7a0; --gn-soft:#1f3328;
-    --pop:#efe8da; --pop-ink:#1f1c18; --pop-line:#bdb4a2;
-    --pal:#2a2620; --pal-ink:#efe8da; --pal-line:#4a443b; --pal-mute:#bdb4a2; --pal-hover:rgba(239,232,218,.14);
-    --scrim:rgba(0,0,0,.6);
-    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.45);
+    --p-parch:#0b1c2a; --p-sheet:#0f263b; --p-tx:#f3ead0; --p-tx2:#c9bd98; --p-line:rgba(209,162,58,.34);
+    --p-blue:#e9c35a; --p-blue-ink:#0b1c2a; --p-blue-soft:#173a58; --p-blue-hover:#f9e08a; --p-gd-tx:#e9c35a; --p-focus:#e9c35a;
+    --p-rd:#f0a39a; --p-rd-soft:#3b2421; --p-gn:#8cc7a0; --p-gn-soft:#1f3328;
+    --p-shadow:0 1px 2px rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.5);
+    --scrim:rgba(0,0,0,.65);
   }
 }
+/* תחום הכחול: הסרגלים, גוף עמודי הלומד והכותרת התחתונה */
+.nv,.bar,.lm-top,.lm-foot,body.lm{
+  --parch:var(--n-parch); --sheet:var(--n-sheet); --tx:var(--n-tx); --tx2:var(--n-tx2); --line:var(--n-line);
+  --blue:var(--n-blue); --blue-ink:var(--n-blue-ink); --blue-soft:var(--n-blue-soft); --blue-hover:var(--n-blue-hover);
+  --gd-tx:var(--n-gd-tx); --focus:var(--n-focus); --rd:var(--n-rd); --rd-soft:var(--n-rd-soft); --gn:var(--n-gn); --gn-soft:var(--n-gn-soft);
+  --shadow:0 1px 2px rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.5);
+  color-scheme:dark}
+/* תחום הנייר בתוך הכחול: כרטיסים, תפריטים, חלונות ומגירות */
+.pp,.lm-card,.lm-vol,.lm-pick,.lm-box,.lm-shiur-box,.menu,.ddp,.smpop,.panel,.modal .box,#mbmenu,.sgpop,.sgmodal,.bkcard,.bkbar,.src,.lm-toast,.lm-hint,.qz-card{
+  --parch:var(--p-parch); --sheet:var(--p-sheet); --tx:var(--p-tx); --tx2:var(--p-tx2); --line:var(--p-line);
+  --blue:var(--p-blue); --blue-ink:var(--p-blue-ink); --blue-soft:var(--p-blue-soft); --blue-hover:var(--p-blue-hover);
+  --gd-tx:var(--p-gd-tx); --focus:var(--p-focus); --rd:var(--p-rd); --rd-soft:var(--p-rd-soft); --gn:var(--p-gn); --gn-soft:var(--p-gn-soft);
+  --shadow:var(--p-shadow)}
 
 /* ---------- סמלים ---------- */
 .ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
@@ -55,7 +87,7 @@
   :is(button,input,select,textarea,a,label,span,div,b,small,h3,h4,p,summary){
   font-family:var(--ui)}
 :is(.bar,.panel,.modal,.sgpop,.sgmodal,.stybar,.sideask,.edsum,#decobar,#navp,#mbmenu,.smpop,.srchd,.menu,.drawer,.lm-top,.lm-bnav,.lm-toast,.ui) button{
-  letter-spacing:0}
+  letter-spacing:.02em}
 @media (prefers-reduced-motion:no-preference){
   body{animation:uiIn .22s ease-out both}
   @keyframes uiIn{from{opacity:.0;transform:translateY(3px)}to{opacity:1;transform:none}}
@@ -94,8 +126,8 @@
 :is(.panel,.modal,.drawer,.menu,.sgbar,.srchd,.smpop) button.on{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
 /* סכנה */
 .btn.danger,button.danger{color:var(--rd);border-color:var(--rd)}
-:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
-:is(.stybar,.pop-dark) :focus-visible{outline-color:var(--pop-ink)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+:is(.stybar,.pop-dark) :focus-visible{outline-color:var(--gold-300)}
 
 /* ---------- שדות ---------- */
 :is(.bar,.panel,.modal,.sgpop,.sgmodal,.sgbar,.sideask,.drawer,.menu,.lm-wrap,.lm-box) :is(input[type=text],input[type=search],input[type=number],input[type=date],input[type=time],input:not([type]),select,textarea){
@@ -264,12 +296,131 @@ body:has(#sgq.open) .flow{width:calc(100vw - min(460px,100vw));margin-left:auto}
   body.ed .bar .bg.loc{flex:0 1 auto}
 }
 
-/* גודל טקסט ממשק מינימלי: 14 פיקסל */
-.sml,.menu .sml,.bar .ddp .sml,.lm-small,.lm-note,.lm-tag,.tl,.tag,.dr,.g-badge,.badge,.stchip,.tychip,.sgbell,kbd,.kbd,.srcft,.edpub,#procnote{font-size:14px!important}
-.stybar .ttl,.stybar kbd,.stybar .stmore{font-size:14px!important}
+/* גודל טקסט ממשק מינימלי: 15 פיקסל (8.10.2026) */
+.sml,.menu .sml,.bar .ddp .sml,.lm-small,.lm-note,.lm-tag,.tl,.tag,.dr,.g-badge,.badge,.stchip,.tychip,.sgbell,kbd,.kbd,.srcft,.edpub,#procnote{font-size:15px!important}
+.stybar .ttl,.stybar kbd,.stybar .stmore{font-size:15px!important}
 body :is(.lm-wrap,.lm-card,.panel,.bar,.stybar,.modal,.sgpop) [style*="font-size:11px"],
 body :is(.lm-wrap,.lm-card,.panel,.bar,.stybar,.modal,.sgpop) [style*="font-size:12px"],
-body :is(.lm-wrap,.lm-card,.panel,.bar,.stybar,.modal,.sgpop) [style*="font-size:13px"]{font-size:14px!important}
+body :is(.lm-wrap,.lm-card,.panel,.bar,.stybar,.modal,.sgpop) [style*="font-size:13px"]{font-size:15px!important}
 .lm-mcal .wd,.lm-chart text,.lm-tile i,.lm-dist div{font-size:14px}
 .lm-chart text{font-size:12px}
 .lm-mcal .d{font-size:15px}
+
+/* =====================================================================
+   8.10.2026 - כחול קטיפה, זהב מלכותי ומוטיב השער
+   ===================================================================== */
+html:has(body.lm){background:var(--navy-900)}
+body.lm{background:var(--velvet-bg);background-color:var(--navy-900);min-height:100vh}
+
+/* רדיד זהב מוטבע: לכותרות ולשם האתר */
+.foil,.bar .nm,.lm-top .lm-brand .nm,.lm-foot .nm{
+  background:var(--grain),var(--foil);background-size:160px 160px,100% 100%;background-blend-mode:multiply;
+  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(1px 1.5px 1px rgba(2,7,13,.9)) drop-shadow(0 -0.5px 0 rgba(255,244,207,.35))}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){.foil,.bar .nm,.lm-top .lm-brand .nm{color:var(--gold-300);background:none;-webkit-text-fill-color:currentColor}}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---------- כפתורים: משני (מסגרת זהב), ראשי (כחול, מסגרת זהב כפולה, ברק), שקט ---------- */
+.btn,
+:is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.edrow,.bkcard,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.stybar .stmore,.sideask,.srchd,.smpop) button{
+  font-family:var(--ui);font-weight:700;font-size:var(--fs-btn);letter-spacing:.02em;border-color:var(--gold-700)}
+.btn:hover,
+:is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.edrow,.bkcard,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.sideask,.srchd,.smpop) button:hover:not(:disabled){
+  border-color:var(--gd)}
+.btn.primary,.btn-p,.primary,.go,.lm-btn.pri,
+:is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.sideask) button:is(.primary,.go,.btn-p){
+  position:relative;overflow:hidden;background:var(--navy-800);color:var(--gold-100);border:1.5px solid var(--gold-500);
+  box-shadow:inset 0 0 0 3px var(--navy-800),inset 0 0 0 4px rgba(201,161,74,.55)}
+.btn.primary::after,.btn-p::after,.primary::after,.go::after,.lm-btn.pri::after{
+  content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(247,231,180,.35) 50%,transparent 70%);transform:translateX(-120%)}
+.btn.primary:hover::after,.btn-p:hover::after,.primary:hover::after,.go:hover::after,.lm-btn.pri:hover::after{transform:translateX(120%);transition:transform .7s ease}
+.btn.primary:hover,.btn-p:hover,.go:hover,.lm-btn.pri:hover,.primary:hover:not(:disabled),
+:is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.sideask) button:is(.primary,.go,.btn-p):hover:not(:disabled){
+  background:var(--navy-700)!important;color:var(--gold-100)!important;border-color:var(--gold-300)!important}
+@media (prefers-reduced-motion:reduce){.btn.primary::after,.btn-p::after,.primary::after,.go::after,.lm-btn.pri::after{display:none}}
+.btn.danger,button.danger{color:var(--rd);border-color:var(--rd)}
+.btn.q,.q,.x,
+:is(.panel,.modal,.sgpop,.sgmodal,.drawer,.menu,.lm-wrap,.lm-box,.smpop,.srchd) button:is(.q,.x,.mini-link,.lm-plain){border-color:transparent}
+:is(.panel,.modal,.drawer,.menu,.sgbar,.srchd,.smpop) button.on{background:var(--blue-soft);border-color:var(--gd);color:var(--blue)}
+
+/* ---------- הסרגל העליון בדף המסכת: קטיפה, קו זהב, שער קטן ---------- */
+.bar{background:var(--velvet-bg);background-color:var(--navy-900);border-bottom:1px solid var(--gold-700);
+  box-shadow:0 1px 0 rgba(249,224,138,.10),0 4px 14px rgba(0,0,0,.28)}
+.bar .brand{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+.bar .brand .lg{height:30px;width:auto;display:block;flex:none}
+.bar .nm,.lm-top .lm-brand .nm{font-family:'LGVilnaTitle','LGVilnaXB','Leukmey',serif!important;font-weight:400;font-size:25px;line-height:1.1;letter-spacing:.02em;white-space:nowrap}
+.bar .mn{font-family:'LGVilna','Vilna',serif;font-weight:700;font-size:21px;color:var(--gold-100)}
+.bar :is(button,select){font-family:var(--ui);font-size:16px;font-weight:700;letter-spacing:.02em}
+.bar input{font-family:var(--ui);font-size:var(--fs-ui)}
+.bar button:hover,.bar select:hover{background:transparent;border-color:var(--gold-700);color:var(--blue-hover)}
+.bar>.bg>button.on:not(.tgl),.bar .seg button.on{background:var(--navy-700);border-color:var(--gold-500);color:var(--gold-100)}
+.bar input{background:var(--navy-900);border-color:var(--gold-700);color:var(--cream)}
+.bar input:hover{background:var(--navy-900);border-color:var(--gd)}
+.bar input:focus{border-color:var(--gold-300);box-shadow:0 0 0 3px rgba(233,195,90,.22)}
+.seg{background:var(--navy-900);border-color:var(--gold-700)}
+.bar .seg select:hover,.bar .seg button:hover{background:var(--n-blue-soft)}
+.bar #peresel{background:transparent;border-color:var(--gold-700);color:var(--cream)}
+.bar select option{background:var(--navy-800);color:var(--cream)}
+.bar .bg+.bg{border-inline-start-color:var(--gold-700)}
+/* תפריטים בתוך הסרגל הם נייר */
+.bar .ddp,.bar .menu{border-color:var(--gold-700);border-top:4px double var(--gd)}
+.bar .ddp button,.bar .ddp .row3 button{font-size:var(--fs-btn)}
+.bar .ddp button:hover,.bar .menu button:hover{background:var(--blue-soft);border-color:transparent;color:var(--blue)}
+.bar .ddp button.on{background:var(--blue-soft);color:var(--blue);border-color:transparent}
+.bar .ddp .primary{background:var(--navy-800);color:var(--gold-100);border-color:var(--gold-500)}
+
+/* ---------- חלונות, תפריטים ומגירות: קו הכרכוב של השער בראשם ---------- */
+.panel,.modal .box,.lm-modal .lm-box,.menu,.smpop,#mbmenu,.sgpop,.sgmodal,.lm-shiur-box,.bkcard,.src{border-color:var(--gold-700);border-top:4px double var(--gd)}
+.panel h3,.modal h3,.lm-box h3{color:var(--gd-tx)}
+.tag,.tl{background:var(--blue-soft);color:var(--gd-tx)}
+.tgl[aria-checked="true"]::after,.tgl.on::after{background-color:var(--gold-300)}
+kbd,.kbd{border-color:var(--gold-700)}
+
+/* ---------- מסגרות ומפרידים ---------- */
+.divider{display:flex;align-items:center;gap:14px;margin:44px auto 24px;max-width:720px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-500),transparent)}
+.divider img{height:34px;width:auto}
+
+/* ---------- מד התקדמות: שיפוע זהב על מסילה כחולה ---------- */
+.prog,.lm-bar{background:var(--navy-700);border:1px solid var(--gold-700);border-radius:6px}
+.prog i,.lm-bar i{background:linear-gradient(90deg,#b98522,#f9e08a)}
+.lm-bar i.ext{background:var(--ext)}
+
+/* ---------- כותרת תחתונה ---------- */
+.lm-foot{position:relative;isolation:isolate;background:var(--velvet-bg);background-color:var(--navy-900);border-top:1px solid var(--gold-700);color:var(--cream2);text-align:center;padding:22px 16px 28px;margin-top:30px;font-size:15px}
+.lm-foot .lm-foot-in{display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.lm-foot img{height:34px;width:auto}
+.lm-foot .nm{font-family:'LGVilnaTitle','LGVilnaXB',serif!important;font-size:22px;line-height:1.1}
+.lm-foot a{color:var(--gold-300);margin-inline:8px}
+.lm-foot .mv{display:block;margin-top:6px;color:var(--gold-300);font-family:var(--ui);font-weight:700;font-size:16px;letter-spacing:.04em}
+
+/* ---------- הדפסה: כל המעטפת מוסתרת ---------- */
+@media print{.bar,.lm-top,.lm-foot,.panel,.modal{display:none!important}}
+
+/* ---------- השער הגדול, סימן המותג, כרטיסי-שער ---------- */
+.gate-hero{position:relative;width:min(560px,calc(78vh*.664),100%);margin:8px auto 0;aspect-ratio:226.6/341.1}
+.gate-hero>.gate-img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.gate-hero .opening{position:absolute;top:34%;bottom:24%;left:28%;right:28%;display:flex;align-items:center;justify-content:center}
+.brand-mark{width:100%;height:100%;overflow:visible;cursor:default}
+.ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:6px 0 4px}
+.lm-cont{max-width:520px;margin:12px auto 0;text-align:center}
+.lm-cont .lm-bar{margin-top:6px}
+.gate-sm{display:block;height:64px;width:auto;margin:0 auto 6px}
+.gcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px;margin:0 0 20px}
+body.lm a.gcard{position:relative;display:flex;flex-direction:column;color:var(--cream);text-align:center;text-decoration:none;
+  background:radial-gradient(ellipse 70% 60% at 50% 45%,rgba(243,207,106,.10),transparent 70%);transition:transform .25s,filter .25s}
+body.lm a.gcard:hover{transform:translateY(-3px);filter:drop-shadow(0 8px 18px rgba(217,167,58,.28));text-decoration:none}
+.gcard .crown{display:block;width:100%;height:auto}
+.gcard .gbody{position:relative;flex:1;padding:6px 23% 14px;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.gcard .gbody::before,.gcard .gbody::after{content:"";position:absolute;top:0;bottom:0;width:9%;border-inline:1.5px solid var(--gold-500);opacity:.9}
+.gcard .gbody::before{left:6.4%}.gcard .gbody::after{right:6.4%}
+.gcard .ped{position:absolute;bottom:13%;width:18%;height:auto}
+.gcard .ped.l{left:2.5%}.gcard .ped.r{right:2.5%;transform:scaleX(-1)}
+.gcard .steps{display:block;width:100%;height:auto;margin-top:-2px}
+.gcard h3{margin:0;font-family:'LGVilnaXB','Vilna',serif;font-weight:400;font-size:1.55rem;letter-spacing:.02em;line-height:1.2}
+.gcard p{margin:0;font-size:1.02rem;line-height:1.5;color:var(--cream);opacity:.92}
+.gcard .lm-bar{margin-top:8px}
+@media (prefers-reduced-motion:reduce){.gcard,body.lm a.gcard{transition:none}body.lm a.gcard:hover{transform:none}}
+@media (max-width:520px){.gate-hero{width:min(440px,100%)}.bar .nm{font-size:19px}.gcards{gap:14px}.gcard{max-width:340px;width:100%;margin-inline:auto}}
+.gate-sm.inl{margin:0;height:84px}
+.qz-title-up .qz-big{background:var(--foil);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}

@@ -128,6 +128,7 @@
     }
     var app = document.getElementById('lm-app') || (function () { var a = document.createElement('div'); a.id = 'lm-app'; document.body.appendChild(a); return a; })();
     draw(page);
+    document.body.appendChild(LG.brand.footer());
     function draw(p) {
       var host = document.getElementById('lm-app');
       var f = { home: UI.home, shas: UI.shas, masechet: UI.masechet, lamed: UI.lamed, yomi: UI.yomi, settings: UI.settings, done: UI.done, admin: UI.admin, shiurim: UI.shiurim, quiz: UI.quiz }[p];

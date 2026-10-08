@@ -89,7 +89,9 @@ def convert(path):
                     rs = names.get(st.get(W + 'val'), st.get(W + 'val'))
                 if rp.find('w:b', ns) is not None and rp.find('w:b', ns).get(W + 'val') not in ('0', 'false'):
                     b = True
-            runs.append({'t': txt, 'cs': rs, 'b': b})
+            cl = rp.find('w:color', ns) if rp is not None else None
+            runs.append({'t': txt, 'cs': rs, 'b': b,
+                         'brown': bool(cl is not None and (cl.get(W + 'val') or '').upper() == '7B3F00')})
         # פסקה שגם תוכנה וגם סימנה מחוקים - אינה קיימת. אין שורה ריקה,
         # ואין צורך במחיקה ממשית מן הקובץ.
         if mark_del and not ''.join(r['t'] for r in runs).strip():
@@ -109,8 +111,10 @@ def convert(path):
             if merged and merged[-1]['cs'] == r['cs'] and merged[-1]['b'] == r['b']:
                 merged[-1]['t'] += r['t']
             else:
-                merged.append(dict(r))
+                merged.append({k: v for k, v in r.items() if k != 'brown'})
         text = ''.join(r['t'] for r in merged)
+        # כותרת שקלוד ניסח (חום, חוקה 8.3): באתר מוצגת בחום למנהל בלבד
+        prop = bool(runs) and all(r.get('brown') for r in runs if r['t'].strip())
         # פסקה ריקה אינה נכתבת בשום סגנון, מפני שבדף היא נפתחת כשורה
         # ריקה. היוצא מן הכלל הוא ציון דף ריק: הוא ממצא הגהה של ממש,
         # ולכן הוא נשמר ומדווח.
@@ -122,8 +126,10 @@ def convert(path):
         if style == 'פרק':
             cur_perek = text.strip()
         pmap[len(blocks)] = pn
-        blocks.append({'i': len(blocks), 'style': style, 'daf': cur_daf, 'perek': cur_perek,
-                       'text': text, 'runs': merged})
+        blk = {'i': len(blocks), 'style': style, 'daf': cur_daf, 'perek': cur_perek,
+               'text': text, 'runs': merged}
+        if prop and style in ('נושא', "ד''ה משנה"): blk['prop'] = True
+        blocks.append(blk)
     if carry:
         # סימן הפסקה האחרונה בקובץ נמחק ואין למי להתאחד. אין דילוג שקט:
         # התוכן נשמר בפסקה משלו.
@@ -132,7 +138,7 @@ def convert(path):
             if merged and merged[-1]['cs'] == r['cs'] and merged[-1]['b'] == r['b']:
                 merged[-1]['t'] += r['t']
             else:
-                merged.append(dict(r))
+                merged.append({k: v for k, v in r.items() if k != 'brown'})
         blocks.append({'i': len(blocks), 'style': 'Normal', 'daf': cur_daf, 'perek': cur_perek,
                        'text': ''.join(r['t'] for r in merged), 'runs': merged})
     convert.last = {'dropped': dropped, 'joined': joined, 'empty': empty, 'pmap': pmap}

@@ -1041,6 +1041,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           n_hatz_dup+=1
       elif r in ('dh','nose','hatz','perek-num','perek-name','perek-range','perek-start','hadran'):
           u={'k':r,'a':h,'l':[],'id':b['i'],'s':sp_cls(b['style'])}
+          if b.get('prop'): u['s']=(u['s']+' prop').strip()   # כותרת מוצעת (חום) - נראית למנהל בלבד
           if b['style']=='פתיחת פרק': u['op']=1      # פתיחת פרק בשורה אחת (7.10.2026)
           if pend is not None: u['w']=take_pend()[0]
           cur['units'].append(u); unit=None
@@ -1726,6 +1727,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      רגע אחד והוחזר למרכז; המספור יושב בקצה, ראה .main[data-mn].dh) */
   .main.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
       font-size:calc(var(--k-dh) * 1em);margin:0;position:relative}
+  /* ד"ה משנה: רקע אפור עדין שנמוג בצדדים (8.10.2026, בקשת בעל הפרויקט) - כדי
+     שלא יתבלבל עם נושא, ולא יתבלבל עם משנה (רקע מלא מקצה לקצה). אותו גוון של
+     המשנה, ושקיפות בקצוות. */
+  .main.dh,.main p.dh{background:linear-gradient(to right,rgba(238,234,225,0) 0,#eeeae1 24%,#eeeae1 76%,rgba(238,234,225,0) 100%);
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  /* כותרת שקלוד ניסח (חום בוורד): חומה גם באתר, במצב מנהל בלבד, כדי להבחין ולהכריע */
+  body.adm .main.prop,body.adm .main.prop *{color:#7B3F00!important}
   .main.nose{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;
         font-size:calc(var(--k-nose) * 1em);margin:0;color:var(--ink)}
   /* ב. הכוכביות אינן כוכביות: בגופני וילנא יש שרשרת ליגטורות ב-rlig,

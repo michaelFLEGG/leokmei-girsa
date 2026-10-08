@@ -1,0 +1,103 @@
+<title>שער לאוקמי גירסא</title>
+<style>
+@font-face{font-family:"Vilna XB";src:url(vilna-xb.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Vilna";src:url(vilna-rg.otf) format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:"Vilna";src:url(vilna-bd.otf) format("opentype");font-weight:700;font-display:swap}
+@font-face{font-family:"Vilna";src:url(vilna-lt.otf) format("opentype");font-weight:300;font-display:swap}
+/* מעטפת כחול קטיפה, השער בזהב כמוטיב מרכזי, הטקסט בתוך פתח השער */
+:root{
+  --navy-900:#0b1c2a; --navy-800:#0f263b; --navy-700:#173a58; --navy-room:#1e476f;
+  --gold-100:#ece2a8; --gold-300:#dcc479; --gold-500:#c6a24c; --gold-700:#8f6f2c;
+  --parchment:#f8f3e6; --ink:#1b1b1b;
+  --foil:linear-gradient(118deg,#c9a447 0%,#dbbd62 22%,#efe0a0 40%,#dec169 52%,#cfac52 70%,#e6d088 88%,#c8a246 100%);
+  --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --velvet:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='v'><feTurbulence type='fractalNoise' baseFrequency='1.4 .6' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .7  0 0 0 0 .85  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23v)'/></svg>");
+  --f-display:"Vilna XB","Vilna","David",serif;
+  --f-ui:"Vilna","David",serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{direction:rtl}
+body{margin:0;background:var(--navy-900);color:var(--gold-100);font-family:var(--f-ui);
+  background-image:var(--velvet),radial-gradient(ellipse 80% 60% at 50% 30%,#163a58 0%,var(--navy-800) 50%,var(--navy-900) 100%);
+  min-height:100%}
+.foil{background:var(--grain),var(--foil);background-size:160px 160px,100% 100%;background-blend-mode:multiply;-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 -1px 0 rgba(0,0,0,.7)) drop-shadow(0 1px 0 rgba(236,226,168,.18))}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){.foil{color:var(--gold-300);background:none}}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(11,28,42,.94);
+  backdrop-filter:blur(6px);border-bottom:1px solid var(--gold-700)}
+.bar{max-width:1180px;margin:0 auto;padding-block:10px;padding-inline:16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo img{height:40px;width:auto}
+.logo span{font-family:var(--f-display);font-weight:400;font-size:1.6rem;letter-spacing:.02em}
+nav{display:flex;gap:4px;flex-wrap:wrap;margin-inline-start:auto}
+nav a{color:var(--gold-300);text-decoration:none;font-size:1.05rem;font-weight:700;letter-spacing:.02em;padding:6px 14px;border:1px solid transparent;border-radius:999px;transition:border-color .2s,background .2s}
+nav a:hover{border-color:var(--gold-700)}
+nav a[aria-current]{border-color:var(--gold-500);background:var(--navy-700);color:var(--gold-100)}
+main{max-width:1180px;margin:0 auto;padding-block:28px 60px;padding-inline:16px}
+.hero{position:relative;max-width:560px;margin:0 auto;aspect-ratio:226.6/341.1}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 -1px 0 rgba(0,0,0,.65)) drop-shadow(0 1px 0 rgba(236,226,168,.12))}
+.opening{position:absolute;top:38%;bottom:27%;left:31%;right:31%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.5em}
+.quote{font-size:clamp(.7rem,1.9vw,.95rem);color:var(--gold-300);font-style:italic}
+.title{font-family:var(--f-display);font-weight:400;letter-spacing:.02em;font-size:clamp(2.2rem,9vw,4.6rem);line-height:1.05;margin:0;text-wrap:balance}
+.sub{font-family:var(--f-ui);font-weight:700;font-size:clamp(1rem,3vw,1.6rem);letter-spacing:.02em;line-height:1.3;margin:0}
+.ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:-8px}
+.btn{position:relative;overflow:hidden;font-family:var(--f-ui);font-size:1.12rem;font-weight:700;letter-spacing:.02em;padding:12px 28px;border-radius:6px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn-primary{background:var(--navy-800);color:var(--gold-100);border:1.5px solid var(--gold-500);box-shadow:inset 0 0 0 3px var(--navy-800),inset 0 0 0 4px rgba(201,161,74,.55)}
+.btn-primary::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(247,231,180,.35) 50%,transparent 70%);transform:translateX(-120%)}
+.btn-primary:hover::after{transform:translateX(120%);transition:transform .7s ease}
+.btn-ghost{background:transparent;color:var(--gold-300);border:1px solid var(--gold-700)}
+.btn-ghost:hover{border-color:var(--gold-300)}
+.btn:focus-visible,nav a:focus-visible{outline:2px solid var(--gold-300);outline-offset:3px}
+.divider{display:flex;align-items:center;gap:14px;margin:48px auto 26px;max-width:720px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-500),transparent)}
+.divider img{height:34px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.card{position:relative;background:var(--parchment);color:var(--ink);padding:62px 20px 22px;text-align:center;
+  border-radius:120px 120px 8px 8px;border:1px solid var(--gold-500);box-shadow:inset 0 0 0 4px var(--parchment),inset 0 0 0 5px var(--gold-700);transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 4px var(--parchment),inset 0 0 0 5px var(--gold-700),0 10px 28px rgba(201,161,74,.25)}
+.card img{position:absolute;top:14px;left:50%;transform:translateX(-50%);height:40px;filter:brightness(.62) saturate(1.3)}
+.card h3{margin:0 0 6px;font-family:var(--f-display);font-weight:400;font-size:1.3rem;color:var(--gold-700)}
+.card p{margin:0;font-size:.95rem;line-height:1.55;color:#3a3326}
+.prog{height:6px;border-radius:3px;background:var(--navy-700);margin-top:14px;overflow:hidden}
+.prog i{display:block;height:100%;width:64%;background:linear-gradient(90deg,var(--gold-700),var(--gold-300))}
+.note{text-align:center;color:var(--gold-500);font-size:.85rem;margin-top:40px}
+@media (prefers-reduced-motion:reduce){.btn-primary::after,.card{transition:none}}
+@media (max-width:520px){.logo span{font-size:1.3rem}.opening{left:29%;right:29%}}
+</style>
+
+<header>
+  <div class="bar">
+    <a class="logo" href="#"><img src="shaar-zahav.svg" alt=""><span class="foil">לאוקמי גירסא</span></a>
+    <nav aria-label="ניווט ראשי">
+      <a href="#" aria-current="page">בית</a><a href="#">מפת הש"ס</a><a href="#">הדף היומי</a>
+      <a href="#">הלימוד שלי</a><a href="#">בחן את עצמך</a><a href="#">שיעורים</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-label="פתיחה">
+    <img src="shaar-zahav.svg" alt="שער לאוקמי גירסא">
+    <div class="opening">
+            <h1 class="title foil">לאוקמי<br>גירסא</h1>
+      <p class="sub foil">קיצור התלמוד הבבלי</p>
+    </div>
+  </section>
+
+  <div class="ctas">
+    <a class="btn btn-primary" href="#">המשך ללמוד · בכורות ב.</a>
+    <a class="btn btn-ghost" href="#">הדף היומי · בכורות כ'</a>
+  </div>
+
+  <div class="divider"><img src="shaar-zahav.svg" alt=""></div>
+
+  <div class="grid">
+    <div class="card"><img src="shaar-zahav.svg" alt=""><h3>מפת הש"ס</h3><p>כל המסכתות לפי סדרים, ומה כבר עלה לאתר</p></div>
+    <div class="card"><img src="shaar-zahav.svg" alt=""><h3>הלימוד שלי</h3><p>לדוגמה - בכורות: 14 דפים מתוך 61, תחזית סיום לפי הקצב</p><div class="prog"><i></i></div></div>
+    <div class="card"><img src="shaar-zahav.svg" alt=""><h3>בחן את עצמך</h3><p>שאלות על הדף, בשלוש רמות, עם נקודות ותארים</p></div>
+    <div class="card"><img src="shaar-zahav.svg" alt=""><h3>שיעורים</h3><p>שיעורי הדף היומי בצפייה מתוך האתר</p></div>
+  </div>
+
+  <p class="note">תצוגת כיוון בלבד. גופני הממשק כולם וילנא BA; הכותרת בוילנא אקסטרא בולד בזהב</p>
+</main>

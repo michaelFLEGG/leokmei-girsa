@@ -11,7 +11,7 @@ from docx2json import convert
 from styles_map import role_of
 import masechet_fmt
 
-SKIP_ACTIVE = ('בכורות', 'סוכה')   # נקלטות עכשיו מנקודת הקליטה
+SKIP_ACTIVE = () if os.environ.get('ORN_ALL') else ('בכורות', 'סוכה')
 
 def texts(path):
     return [b['text'] for b in convert(path) if role_of(b) != 'hatz']
@@ -41,5 +41,5 @@ if __name__ == '__main__':
     for f in sorted(glob.glob(os.path.join(wa.DRIVE, '*.docx'))):
         b = os.path.basename(f)
         if only and b not in only: continue
-        if any(s in b for s in SKIP_ACTIVE) or 'מעודכן' in b: print(b, '- דולג (פעיל)'); continue
+        if any(s in b for s in SKIP_ACTIVE) : print(b, '- דולג (פעיל)'); continue
         print(*run(f, real), sep=' | ', flush=True)

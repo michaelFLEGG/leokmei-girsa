@@ -114,5 +114,5 @@ if __name__ == '__main__':
     real = '--אמת' in sys.argv
     for f in sorted(glob.glob(os.path.join(wa.DRIVE, '*.docx'))):
         b = os.path.basename(f)
-        if 'בכורות' in b or 'סוכה' in b: print(b, '- דולג (פעיל)'); continue
+        if (not os.environ.get('ORN_ALL')) and ('בכורות' in b or 'סוכה' in b): print(b, '- דולג (פעיל)'); continue
         print(*run(f, real), sep=' | ', flush=True)

@@ -110,7 +110,7 @@ def deleted(p):
     return rPr is not None and rPr.find(q("del")) is not None
 
 
-def main(src, dst):
+def main(src, dst, only_adjacent=False):
     doc = Doc(src)
     log = collections.Counter()
     ps = list(doc.paragraphs())
@@ -136,12 +136,12 @@ def main(src, dst):
             dels.add(i)
     for i in sorted(dels):
         delete_paragraph(doc, ps[i]); log["חציצה צמודה לכותרת נמחקה"] += 1
-    for i in seps:
+    for i in ([] if only_adjacent else seps):
         if i in dels:
             continue
         if st[i] != "חציצה":
             set_pstyle_tracked(doc, ps[i], "חציצה"); log["חציצה אוחדה לסגנון חציצה"] += 1
-    for i in range(n):
+    for i in ([] if only_adjacent else range(n)):
         if i in dels or deleted(ps[i]):
             continue
         if st[i] in ("Normal", "רגיל", "0.1", "0.2", "List Paragraph") and is_empty(ps[i]):
@@ -153,4 +153,4 @@ def main(src, dst):
 
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2], only_adjacent='--רק-צמודות' in sys.argv)

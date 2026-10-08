@@ -1706,6 +1706,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main.mishna p.hatz{font-size:calc(1.1em * var(--mr))}
   /* פתיחת פרק (6.10.2026): גוש עצמאי לפני המשנה הראשונה, ואינו מתנתק ממנה
      בהדפסה ובטורים: שמור עם הבא. */
+  /* ב (8.10.2026): כל פרק מסיים את הטור שלו, וכל פרק חדש מתחיל בראש טור
+     חדש. ברצף (טור אחד): רווח ניכר ומכובד, וקו דק, בין הפרקים. */
+  .flow:not(.vert):not(.book) .row.chap1{break-before:column}
+  .flow.vert .row.chap1{margin-top:6em;padding-top:2.4em;border-top:1px solid #d8cdb4}
   .row.perek-num,.row.perek-name,.row.perek-range,.row.perek-start{break-after:avoid;break-after:avoid-column;break-after:avoid-page}
   /* ב2: חלונות שנערמו זה מעל זה במסילה אחת. line-height:0 של המסילה
      היה מניח אותם זה על זה, ולכן ערימה מקבלת את רשת הגוף. */
@@ -2460,7 +2464,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(let pi=from;pi<=to;pi++){const p=D.pages[pi];
       if(!p.units.length)continue;   /* ב1: עמוד בלי טקסט אינו נכתב (הבנייה כבר צירפה אותו לטווח) */
       let first=true;
-      for(const u of p.units){h+=unitHTML(u,first?p.daf:null,first?pi:null);first=false}}
+      for(const u of p.units){let uh=unitHTML(u,first?p.daf:null,first?pi:null);first=false;
+        /* ב (8.10.2026): פרק חדש בתוך זרימה אחת מסומן chap1, וה-CSS פותח אותו
+           בראש טור חדש (טורים) או ברווח ניכר (רצף). הפרק הראשון בזרימה אינו מסומן. */
+        if(h&&(u.k==='perek-num'||(u.k==='perek-start'&&(u.op||u.mg))))uh=uh.replace('class="row ','class="row chap1 ');
+        h+=uh}}
     return h}
   /* ---- סימון "מקור": שכבה צפה, לא חלק מהטקסט ----
      כפתור לכל יחידה שנראית במסך, ממוקם לפי הפינה השמאלית-תחתונה של היחידה

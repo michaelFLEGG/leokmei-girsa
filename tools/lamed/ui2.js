@@ -115,6 +115,10 @@
       (LG.sugg ? '<div class="lm-stat"><b>' + LG.nf(LG.sugg.total) + '</b><span>הצעות תיקון</span></div>' : '') + '</div>';
     wrap.appendChild(c1);
     var rc = UI.resumeCard(); if (rc) wrap.appendChild(rc);
+    var qsum = LG.quiz.score(), qc = el('div', 'lm-card lm-hero');
+    qc.innerHTML = '<div class="lm-txt"><div class="lm-small">בחן את עצמך</div><div class="lm-big">' + LG.nf(qsum.total) + ' נקודות</div><div class="lm-small">' + (qsum.answered ? E(LG.quiz.TITLES_ALL[LG.quiz.level(qsum.total, LG.quiz.T_ALL)] || 'עוד בלי תואר') + ' · ' + LG.nf(LG.quiz.dueCount()) + ' חזרות להיום' : 'שאלות חזרה על מה שלמדת') + '</div></div><a class="lm-btn" href="quiz.html">בחן את עצמך</a>';
+    wrap.appendChild(qc);
+    LG.quiz.proposerCard().then(function (pc) { if (pc) wrap.insertBefore(pc, qc.nextSibling); });
     /* הודעה עדינה, פעם אחת: אם ההיסטוריה נמחקת (מטמון, החלפת מכשיר) אפשר לא לאבד אותה */
     var tipSeen = false; try { tipSeen = localStorage.getItem('lg-lamed-tip') === '1'; } catch (e) { }
     if (!tipSeen && !window.__lmDemo && S.sessions.length >= 3 && !(LG.sync && LG.sync.linked())) {
@@ -123,9 +127,10 @@
       setTimeout(function () { var x = $('#lm-tipx'); if (x) x.onclick = function () { try { localStorage.setItem('lg-lamed-tip', '1'); } catch (e) { } tip.remove(); }; }, 0);
     }
 
-    /* גרף שבועי וחודשי */
+    /* לוח חודש עברי: נקודה בכל יום לימוד, העוצמה לפי דקות. מתג שבוע/חודש קטן בתכלת */
     var c2 = el('div', 'lm-card');
-    c2.innerHTML = '<h3>דקות לימוד ליום</h3><div class="lm-row" style="margin-bottom:8px"><button class="lm-btn small" id="lm-g7" type="button">שבוע</button><button class="lm-btn small ghost" id="lm-g30" type="button">חודש</button></div><div id="lm-gc"></div>';
+    c2.innerHTML = '<div class="lm-row" style="justify-content:space-between;margin-bottom:10px"><h3 style="margin:0" id="lm-ct"></h3>' +
+      '<div class="lm-seg" role="group" aria-label="תצוגה"><button type="button" id="lm-g7">שבוע</button><button type="button" id="lm-g30" class="on">חודש</button></div></div><div id="lm-gc"></div>';
     wrap.appendChild(c2);
     var c3 = el('div', 'lm-card'); c3.innerHTML = '<h3>השנה האחרונה</h3>' + heatYear() + '<div class="lm-legend"><span>פחות</span><span><em style="background:var(--c0)"></em></span><span><em style="background:var(--c1)"></em></span><span><em style="background:var(--c2)"></em></span><span><em style="background:var(--c3)"></em></span><span><em style="background:var(--c4)"></em></span><span>יותר</span></div>';
     wrap.appendChild(c3);
@@ -165,8 +170,31 @@
     }).join('') + '</ul>';
     wrap.appendChild(c7);
     root.appendChild(wrap);
-    function drawG(n) { $('#lm-gc').innerHTML = barChart(daysSeries(n), n === 7 ? 'שבוע אחרון' : 'חודש אחרון'); $('#lm-g7').classList.toggle('ghost', n !== 7); $('#lm-g30').classList.toggle('ghost', n !== 30); }
-    $('#lm-g7').onclick = function () { drawG(7); }; $('#lm-g30').onclick = function () { drawG(30); }; drawG(7);
+    function monthCal() {
+      var today = LG.ymd(Date.now()), T0 = noonOf(today);
+      function hkey(x) { var pp = HD.parts(x); return pp.y + '|' + pp.m; }
+      var hk = hkey(T0), fT = T0, lT = T0;
+      while (hkey(fT - ONE) === hk) fT -= ONE;
+      while (hkey(lT + ONE) === hk) lT += ONE;
+      var wd = new Date(fT).getUTCDay(), dim = Math.round((lT - fT) / ONE) + 1, max = 60000;
+      Object.keys(S.days).forEach(function (k) { max = Math.max(max, S.days[k].ms); });
+      var h = '<div class="lm-mcal">' + LG.WD.map(function (w) { return '<div class="wd">' + w.slice(0, 3) + '</div>'; }).join('');
+      for (var i = 0; i < wd; i++) h += '<div></div>';
+      for (var d = 0; d < dim; d++) {
+        var tt = fT + d * ONE, ds = LG.ymd(tt), o = S.days[ds], f = o ? o.ms / max : 0;
+        var cls = !o || !o.ms ? '' : f > .66 ? 'h3' : f > .33 ? 'h2' : 'h1';
+        h += '<div class="d' + (ds === today ? ' today' : '') + (ds > today ? ' f' : '') + '" title="' + E(HD.long(tt) + (o && o.ms ? ': ' + LG.dur(o.ms) : '')) + '"><span>' + E(HD.q(HD.parts(tt).d)) + '</span><i class="' + cls + '"></i></div>';
+      }
+      var hp = HD.parts(fT);
+      $('#lm-ct').textContent = hp.m + ' ' + HD.q(hp.y % 1000);
+      return h + '</div>';
+    }
+    function drawG(n) {
+      $('#lm-gc').innerHTML = n === 7 ? barChart(daysSeries(7), 'שבוע אחרון') : monthCal();
+      if (n === 7) $('#lm-ct').textContent = 'דקות לימוד ביום, בשבוע האחרון';
+      $('#lm-g7').classList.toggle('on', n === 7); $('#lm-g30').classList.toggle('on', n !== 7);
+    }
+    $('#lm-g7').onclick = function () { drawG(7); }; $('#lm-g30').onclick = function () { drawG(30); }; drawG(30);
   };
 
   function suggCard() {
@@ -247,7 +275,7 @@
     var c1 = el('div', 'lm-card lm-hero');
     c1.innerHTML = '<div class="lm-txt"><div class="lm-small">' + E(HD.long(now)) + '</div><div class="lm-big">' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</div>' +
       '<div class="lm-small">מחזור ' + E(LG.hebq(y.cycle)) + (built ? '' : ' · מסכת זו עדיין בהכנה באתר') + '</div></div>' +
-      (built ? '<div class="lm-row"><a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">ללמוד את הדף של היום</a><a class="lm-btn ghost" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 1)) + '">עמוד ב</a></div>' : '') +
+      (built ? '<div class="lm-row"><a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">ללמוד את הדף של היום</a><a class="lm-btn" href="quiz.html?mode=yomi">בחן את עצמך על הדף</a><a class="lm-btn ghost" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 1)) + '">עמוד ב</a></div>' : '') +
       '<div class="lm-row"><button class="lm-btn ghost" id="lm-yb" type="button">למדתי בספר</button></div>';
     wrap.appendChild(c1);
 
@@ -386,12 +414,12 @@
     var disp = el('div', 'lm-card');
     disp.innerHTML = '<h3>תצוגה</h3>' +
       chk('clock', 'שעון קטן בסרגל הלימוד', set.clock !== false) + chk('bar', 'סמן התקדמות דק בראש הדף', set.bar !== false) + chk('streak', 'רצף ימי לימוד', set.streak !== false) +
-      '<div class="lm-field"><label for="lm-dk">מצב תצוגה</label><select id="lm-dk"><option value="auto">לפי המכשיר</option><option value="light">בהיר</option><option value="dark">כהה</option></select></div>' +
+      '<div class="lm-field"><label for="lm-dk">מצב תצוגה</label><select id="lm-dk"><option value="light">בהיר</option><option value="dark">כהה</option><option value="auto">לפי המכשיר</option></select></div>' +
       '<div class="lm-field"><label for="lm-tz">אזור זמן</label><select id="lm-tz"><option value="Asia/Jerusalem">שעון ישראל</option><option value="Europe/London">לונדון</option><option value="America/New_York">ניו יורק</option><option value="America/Los_Angeles">לוס אנג׳לס</option><option value="Europe/Paris">פריז</option></select></div>' +
       '<div class="lm-field"><label for="lm-rt">שעת תזכורת</label><input id="lm-rt" type="time" value="' + E((set.remind && set.remind.time) || '06:00') + '"></div>';
     wrap.appendChild(disp);
     function chk(key, label, on) { return '<label class="lm-check"><input type="checkbox" data-cf="' + key + '"' + (on ? ' checked' : '') + '><span>' + label + '</span></label>'; }
-    $('#lm-dk', disp).value = set.dark || 'auto'; $('#lm-tz', disp).value = set.tz || 'Asia/Jerusalem';
+    $('#lm-dk', disp).value = set.dark || 'light'; $('#lm-tz', disp).value = set.tz || 'Asia/Jerusalem';
     disp.addEventListener('change', function (e) {
       var t = e.target;
       if (t.dataset.cf) { LG.setSetting(t.dataset.cf, t.checked); }
@@ -473,9 +501,24 @@
     root.appendChild(wrap);
     var box = $('#lm-ad');
     var key = ''; try { key = localStorage.getItem('lg-adm') || ''; } catch (e) { }
-    if (!key) { box.innerHTML = '<div class="lm-card"><p>דף זה למנהל בלבד. הכנס את מפתח המנהל (נשמר במכשיר הזה):</p><div class="lm-row"><input id="lm-ak" type="text" autocomplete="off" style="max-width:300px"><button class="lm-btn" id="lm-akb" type="button">כניסה</button></div></div>'; $('#lm-akb').onclick = function () { try { localStorage.setItem('lg-adm', $('#lm-ak').value.trim()); } catch (e) { } location.reload(); }; return; }
+    function login(msg) {
+      box.innerHTML = '<div class="lm-card"><p>דף זה למנהל בלבד. הקלד את מילת המנהל (אותה מילה שמקלידים בעריכה באתר; המכשיר יזוהה ולא תצטרך להקליד שוב):</p>' + (msg ? '<p style="color:var(--red)">' + E(msg) + '</p>' : '') +
+        '<div class="lm-row"><input id="lm-ak" type="password" autocomplete="off" style="max-width:300px"><button class="lm-btn" id="lm-akb" type="button">כניסה</button></div></div>';
+      var go = async function () {
+        var w = $('#lm-ak').value.trim(); if (!w) return;
+        try {
+          var r = await LG.sync.api('/auth', { method: 'POST', body: JSON.stringify({ word: w, label: 'מסך הלומדים · ' + HD.date(Date.now()) }) });
+          try { localStorage.setItem('lg-adm', r.token); localStorage.setItem('lg-admin', '1'); } catch (e) { }
+          location.reload();
+        } catch (e) { login(e.message); }
+      };
+      $('#lm-akb').onclick = go; $('#lm-ak').onkeydown = function (e) { if (e.key === 'Enter') go(); };
+    }
+    if (!key) { login(''); return; }
     var data;
-    try { data = await LG.sync.stats(key, window.__lmDemo); } catch (e) { box.innerHTML = '<div class="lm-card"><p>לא ניתן לטעון כרגע: ' + E(e.message) + '</p></div>'; return; }
+    try { data = await LG.sync.stats(key, window.__lmDemo); } catch (e) {
+      if (/הרשאה/.test(e.message || '')) { try { localStorage.removeItem('lg-adm'); } catch (x) { } login('המפתח השמור אינו תקף במכשיר הזה. הקלד את מילת המנהל.'); return; }
+      box.innerHTML = '<div class="lm-card"><p>לא ניתן לטעון כרגע: ' + E(e.message) + '</p></div>'; return; }
     /* עמודים שכבר נערכו בעריכה המתקדמת (data/edited-pages.json): כל השאר "טרם נערכו" */
     var edm = {};
     try { edm = await fetch('edited-pages.json').then(function (r) { return r.json(); }); } catch (e) { }
@@ -498,5 +541,6 @@
     html += table('זמן ממוצע לעמוד (הארוכים ביותר: מועמדים להידוק)', data.slow.slice(0, 12).map(function (x) { return { l: LG.nameOf(x.s) + ' ' + x.d, v: LG.dur(x.avg) + ' (' + LG.nf(x.n) + ' קריאות)' }; }));
     html += table('עדיפויות עריכה: נלמדים הרבה וטרם נערכו', data.topPages.filter(function (x) { return x.unedited; }).slice(0, 12).map(function (x) { return { l: LG.nameOf(x.s) + ' ' + x.d, v: LG.nf(x.reads) + ' קריאות' }; }));
     box.innerHTML = html;
+    if (!window.__lmDemo && LG.quiz && LG.quiz.adminDrafts) LG.quiz.adminDrafts(box, key);
   };
 })();

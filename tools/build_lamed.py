@@ -5,11 +5,11 @@
 החדשים ולגיליון הקטן של דף הלימוד (שמוטמע בו), וכותב את הדפים: בית, מפת הש"ס,
 דף מסכת, הלימוד שלי, הדף היומי, הגדרות, סיום מסכת, תמונת הלומדים.
 """
-import os, io, re
+import os, io, re, hashlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'lamed')
-PARTS = ['core', 'tracker', 'ui', 'ui2', 'sync', 'boot']
+PARTS = ['core', 'tracker', 'ui', 'ui2', 'shiurim', 'sync', 'quiz', 'boot']
 MARK = '/* ---- בדף הלימוד'
 
 PAGES = [
@@ -18,6 +18,8 @@ PAGES = [
     ('masechet.html', 'masechet', 'מסכת · לאוקמי גירסא'),
     ('lamed.html', 'lamed', 'הלימוד שלי · לאוקמי גירסא'),
     ('yomi.html', 'yomi', 'הדף היומי · לאוקמי גירסא'),
+    ('shiurim.html', 'shiurim', 'שיעורים · לאוקמי גירסא'),
+    ('quiz.html', 'quiz', 'בחן את עצמך · לאוקמי גירסא'),
     ('settings.html', 'settings', 'הגדרות · לאוקמי גירסא'),
     ('done.html', 'done', 'הדרן עלך מסכת · לאוקמי גירסא'),
     ('admin-lamdim.html', 'admin', 'תמונת הלומדים · לאוקמי גירסא'),
@@ -39,6 +41,10 @@ def build(site):
     io.open(os.path.join(site, 'lamed.js'), 'w', encoding='utf-8').write(js)
     css = read(os.path.join(SRC, 'lamed.css'))
     io.open(os.path.join(site, 'lamed.css'), 'w', encoding='utf-8').write(css)
+    ui = read(os.path.join(HERE, 'ui.css'))
+    io.open(os.path.join(site, 'ui.css'), 'w', encoding='utf-8').write(ui)
+    uiv = hashlib.md5(ui.encode('utf-8')).hexdigest()[:8]
+    sprite = read(os.path.join(HERE, 'ui-icons.svg'))
     ep = os.path.join(os.path.dirname(HERE), 'data', 'edited-pages.json')
     if os.path.exists(ep):
         io.open(os.path.join(site, 'edited-pages.json'), 'w', encoding='utf-8').write(read(ep))
@@ -47,10 +53,13 @@ def build(site):
         html = ('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
                 '<meta name="viewport" content="width=device-width,initial-scale=1">'
                 '<meta name="color-scheme" content="light dark"><title>%s</title>'
-                '<link rel="stylesheet" href="lamed.css"></head>'
-                '<body class="lm" data-page="%s"><div id="lm-app"></div>'
+                '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+                '<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&family=Noto+Rashi+Hebrew:wght@400;700&display=swap" rel="stylesheet">'
+                '<script>try{var t=localStorage.getItem("lg-theme");document.documentElement.setAttribute("data-theme",t==="dark"||t==="auto"?t:"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>'
+                '<link rel="stylesheet" href="ui.css?v=%s"><link rel="stylesheet" href="lamed.css?v=%s"></head>'
+                '<body class="lm" data-page="%s">%s<div id="lm-app"></div>'
                 '<script src="daf-yomi.js"></script><script src="shas.js"></script>'
-                '<script src="lamed.js"></script></body></html>') % (title, page)
+                '<script src="lamed.js"></script></body></html>') % (title, uiv, hashlib.md5(css.encode('utf-8')).hexdigest()[:8], page, sprite)
         io.open(os.path.join(site, fn), 'w', encoding='utf-8').write(html)
 
 

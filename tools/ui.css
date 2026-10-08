@@ -1,0 +1,275 @@
+/* ui.css - מערכת העיצוב המשותפת של לאוקמי גירסא (7.10.2026).
+   קובץ אחד לכל העמודים: דף המסכת, הבית, המפה, הלימוד שלי, הדף היומי, בחן את עצמך, שיעורים והגדרות.
+   המעטפת בלבד: סרגלים, כפתורים, תפריטים, חלוניות, מגירות ועמודי הניווט. עיצוב דף הגמרא עצמו
+   (גופני וילנא, גדלים, ריווח, טורים, מסילה) אינו כאן ואינו משתנה לעולם.
+
+   צבע פעיל אחד: תכלת. כל דבר לחיץ הוא תכלת. הזהב הוא קו, עיטור ותווית קטנה, ולעולם לא רקע כפתור.
+   אדום וירוק רק למצבים. שלושה סוגי כפתור: ראשי (תכלת מלא), משני (מסגרת), שקט (בלי מסגרת). */
+:root{
+  color-scheme:light;
+  --parch:#f7f3ea; --sheet:#fffdf8; --tx:#1f1c18; --tx2:#5a534a; --line:#e3dacb;
+  --blue:#1f4e79; --blue-ink:#ffffff; --blue-soft:#e6eef6; --blue-hover:#173f64;
+  --gd:#b08a3a; --gd-tx:#7a5f1f;
+  --rd:#a6322a; --rd-soft:#f8e6e3; --gn:#2f6b46; --gn-soft:#e3f0e8;
+  --pop:#1f1c18; --pop-ink:#f7f3ea; --pop-line:#4a443b;
+  --pal:#1f1c18; --pal-ink:#f7f3ea; --pal-line:#4a443b; --pal-mute:#cfc6b4; --pal-hover:rgba(247,243,234,.14);
+  --scrim:rgba(31,28,24,.46);
+  --shadow:0 1px 2px rgba(31,28,24,.07),0 8px 24px rgba(31,28,24,.12);
+  --r:10px; --t:150ms;
+  --ui:'Assistant','Noto Sans Hebrew',sans-serif;
+  --fs-ui:15px;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --parch:#16140f; --sheet:#1e1b15; --tx:#efe8da; --tx2:#bdb4a2; --line:#38332a;
+  --blue:#8fb6dc; --blue-ink:#10202f; --blue-soft:#22303f; --blue-hover:#a9c8e6;
+  --gd:#d3ab52; --gd-tx:#e0bd6a;
+  --rd:#e58a80; --rd-soft:#3b2421; --gn:#8cc7a0; --gn-soft:#1f3328;
+  --pop:#efe8da; --pop-ink:#1f1c18; --pop-line:#bdb4a2;
+  --pal:#2a2620; --pal-ink:#efe8da; --pal-line:#4a443b; --pal-mute:#bdb4a2; --pal-hover:rgba(239,232,218,.14);
+  --scrim:rgba(0,0,0,.6);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.45);
+}
+@media (prefers-color-scheme:dark){
+  :root[data-theme="auto"]{
+    color-scheme:dark;
+    --parch:#16140f; --sheet:#1e1b15; --tx:#efe8da; --tx2:#bdb4a2; --line:#38332a;
+    --blue:#8fb6dc; --blue-ink:#10202f; --blue-soft:#22303f; --blue-hover:#a9c8e6;
+    --gd:#d3ab52; --gd-tx:#e0bd6a;
+    --rd:#e58a80; --rd-soft:#3b2421; --gn:#8cc7a0; --gn-soft:#1f3328;
+    --pop:#efe8da; --pop-ink:#1f1c18; --pop-line:#bdb4a2;
+    --pal:#2a2620; --pal-ink:#efe8da; --pal-line:#4a443b; --pal-mute:#bdb4a2; --pal-hover:rgba(239,232,218,.14);
+    --scrim:rgba(0,0,0,.6);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.45);
+  }
+}
+
+/* ---------- סמלים ---------- */
+.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+.ic.sm{width:16px;height:16px}
+.ic.lg{width:24px;height:24px}
+
+/* ---------- בסיס הממשק: גופן, גודל, מעבר רך ---------- */
+:is(.bar,.panel,.modal,.sgpop,.sgmodal,.stybar,.sideask,.edsum,.hint,.edflash,#decobar,#navp,#mbmenu,.smpop,.srchd,.srcft,
+    .lm-top,.lm-bnav,.lm-toast,.lm-box,.lm-shiur-box,.menu,.drawer,#lm-fin,.ui)
+  :is(button,input,select,textarea,a,label,span,div,b,small,h3,h4,p,summary){
+  font-family:var(--ui)}
+:is(.bar,.panel,.modal,.sgpop,.sgmodal,.stybar,.sideask,.edsum,#decobar,#navp,#mbmenu,.smpop,.srchd,.menu,.drawer,.lm-top,.lm-bnav,.lm-toast,.ui) button{
+  letter-spacing:0}
+@media (prefers-reduced-motion:no-preference){
+  body{animation:uiIn .22s ease-out both}
+  @keyframes uiIn{from{opacity:.0;transform:translateY(3px)}to{opacity:1;transform:none}}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* ---------- שלושה סוגי כפתור ----------
+   ברירת מחדל של כל כפתור בממשק: משני (שקוף עם מסגרת דקה). ראשי: .primary / .go / .btn-p. שקט: .q / .x / .ddb */
+.btn,
+:is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.edrow,.bkcard,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.stybar .stmore,.sideask,.srchd,.smpop) button{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font:600 var(--fs-ui)/1.25 var(--ui);color:var(--blue);background:transparent;
+  border:1px solid var(--line);border-radius:var(--r);padding:6px 14px;min-height:36px;
+  cursor:pointer;box-shadow:none;text-shadow:none;
+  transition:background var(--t),border-color var(--t),color var(--t)}
+.btn:hover,
+:is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.edrow,.bkcard,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.sideask,.srchd,.smpop) button:hover:not(:disabled){
+  background:var(--blue-soft);border-color:var(--blue)}
+.btn:disabled,button:disabled{opacity:.5;cursor:not-allowed}
+/* ראשי: אחד לכל מסך */
+.btn.primary,.btn-p,.primary,.go,.lm-btn.pri,
+:is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.sideask) button:is(.primary,.go,.btn-p){
+  background:var(--blue);color:var(--blue-ink);border-color:var(--blue)}
+.btn.primary:hover,.btn-p:hover,.go:hover,.lm-btn.pri:hover,
+:is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.sideask) button:is(.primary,.go,.btn-p):hover:not(:disabled){
+  background:var(--blue-hover);border-color:var(--blue-hover);color:var(--blue-ink)}
+/* שקט: סמל או טקסט בלבד, רקע תכלת חיוור בריחוף */
+.btn.q,.q,.x,
+:is(.panel,.modal,.sgpop,.sgmodal,.drawer,.menu,.lm-wrap,.lm-box,.smpop,.srchd) button:is(.q,.x,.mini-link,.lm-plain){
+  background:transparent;border-color:transparent;color:var(--tx2);padding:6px 10px}
+.btn.q:hover,.q:hover,.x:hover,
+:is(.panel,.modal,.sgpop,.sgmodal,.drawer,.menu,.lm-wrap,.lm-box,.smpop,.srchd) button:is(.q,.x,.mini-link,.lm-plain):hover:not(:disabled){
+  background:var(--blue-soft);border-color:transparent;color:var(--blue)}
+.x{font-size:22px;line-height:1;min-height:36px;min-width:36px}
+/* מצב פעיל */
+:is(.panel,.modal,.drawer,.menu,.sgbar,.srchd,.smpop) button.on{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+/* סכנה */
+.btn.danger,button.danger{color:var(--rd);border-color:var(--rd)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+:is(.stybar,.pop-dark) :focus-visible{outline-color:var(--pop-ink)}
+
+/* ---------- שדות ---------- */
+:is(.bar,.panel,.modal,.sgpop,.sgmodal,.sgbar,.sideask,.drawer,.menu,.lm-wrap,.lm-box) :is(input[type=text],input[type=search],input[type=number],input[type=date],input[type=time],input:not([type]),select,textarea){
+  font:400 var(--fs-ui)/1.3 var(--ui);color:var(--tx);background:var(--sheet);
+  border:1px solid var(--line);border-radius:var(--r);padding:6px 10px;min-height:36px;
+  transition:border-color var(--t),box-shadow var(--t)}
+:is(.bar,.panel,.modal,.sgpop,.sgmodal,.sgbar,.sideask,.drawer,.menu,.lm-wrap,.lm-box) :is(input,select,textarea):hover{border-color:var(--tx2)}
+:is(.bar,.panel,.modal,.sgpop,.sgmodal,.sgbar,.sideask,.drawer,.menu,.lm-wrap,.lm-box) :is(input,select,textarea):focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft);outline:none}
+::placeholder{color:var(--tx2);opacity:.8}
+input[type=checkbox],input[type=radio],input[type=range]{accent-color:var(--blue)}
+
+/* ---------- מקש (kbd) ---------- */
+kbd,.kbd{display:inline-block;font:600 12px/1 var(--ui);direction:ltr;unicode-bidi:isolate;color:var(--tx2);
+  background:var(--sheet);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:3px 6px;min-width:1.7em;text-align:center}
+:is(.stybar,.pop-dark) kbd{background:transparent;color:var(--pop-ink);border-color:var(--pop-line);opacity:.9}
+
+/* ---------- תפריט נפתח ---------- */
+.menu,.bar .ddp{display:none;position:absolute;top:calc(100% + 6px);inset-inline-start:0;z-index:30;min-width:220px;max-width:min(92vw,340px);
+  background:var(--sheet);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:var(--shadow);
+  flex-direction:column;gap:2px}
+.dd.open>.menu,.dd.open>.ddp,.bar .dd.open>.ddp,.bar .more.open>.ddp{display:flex}
+.menu>button,.bar .ddp>button,.bar .ddp .row3 button{justify-content:flex-start;text-align:start;width:100%;border-color:transparent;color:var(--tx);font-weight:500;padding:8px 12px;min-height:38px}
+.menu>button:hover,.bar .ddp>button:hover{background:var(--blue-soft);color:var(--blue)}
+.menu>button.on,.bar .ddp>button.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+.bar .ddp .row3{display:flex;gap:4px}.bar .ddp .row3 button{justify-content:center;text-align:center}
+.menu .sml,.bar .ddp .sml{font-size:13px;font-weight:700;color:var(--tx2);margin:8px 12px 2px}
+.menu hr,.bar .ddp hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
+.menu>button .kbd,.menu>button kbd{margin-inline-start:auto}
+.g-badge,.badge{display:inline-block;min-width:1.5em;padding:1px 7px;margin-inline-start:6px;border-radius:999px;background:var(--rd);color:#fff;
+  font:700 12px/1.4 var(--ui);text-align:center}
+:root[data-theme="dark"] .g-badge,:root[data-theme="dark"] .badge{color:#1f1c18}
+@media (prefers-color-scheme:dark){:root[data-theme="auto"] .g-badge,:root[data-theme="auto"] .badge{color:#1f1c18}}
+
+/* ---------- חלוניות ומגירות ---------- */
+.panel{background:var(--sheet);color:var(--tx);border-inline-start:1px solid var(--line);box-shadow:var(--shadow)}
+.panel h3{color:var(--tx2);font:700 14px/1.4 var(--ui);border-bottom:1px solid var(--line);padding-bottom:6px}
+.panel a{color:var(--tx)}.panel a:hover{color:var(--blue)}
+.modal{background:var(--scrim)}
+.modal .box{background:var(--sheet);color:var(--tx);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.modal h3{font-family:var(--ui)}
+.modal label{color:var(--tx2)}
+.modal textarea,.modal input{background:var(--sheet);color:var(--tx);border:1px solid var(--line)}
+.modal .ref{color:var(--tx2)}
+.hint,.sideask{background:var(--pop);color:var(--pop-ink)}
+.card,.lm-card{background:var(--sheet);border:1px solid var(--line);border-radius:14px;box-shadow:none}
+.tag,.tl{background:var(--blue-soft);color:var(--blue)}
+
+/* ---------- מתג (עריכה, הגדרות) ---------- */
+.tgl{display:inline-flex;align-items:center;gap:8px;font:600 var(--fs-ui)/1 var(--ui);color:var(--tx);background:transparent;border:0;padding:4px 6px;cursor:pointer;min-height:36px}
+.tgl::after{content:'';width:38px;height:22px;border-radius:999px;background:var(--line);box-shadow:inset 0 0 0 1px var(--tx2);
+  background-image:radial-gradient(circle at 11px 11px,var(--sheet) 8px,transparent 9px);background-repeat:no-repeat;background-position:0 0;
+  transition:background-color var(--t),background-position var(--t)}
+.tgl[aria-checked="true"]::after,.tgl.on::after{background-color:var(--blue);box-shadow:none;background-position:-16px 0}
+:root[dir=rtl] .tgl::after,html[dir=rtl] .tgl::after{background-position:16px 0}
+html[dir=rtl] .tgl[aria-checked="true"]::after,html[dir=rtl] .tgl.on::after{background-position:0 0}
+html[dir=rtl] .tgl::after{background-position:16px 0}
+
+/* ---------- ארבע קבוצות בסרגל ---------- */
+.bar{background:var(--sheet);color:var(--tx);border-bottom:1px solid var(--line);font-size:var(--fs-ui);gap:8px;padding:6px 14px;min-height:var(--bar,46px)}
+.bar .nm{font-family:'Leukmey','Vilna',serif;font-size:24px;line-height:1;color:var(--tx);white-space:nowrap}
+.bar .mn{font-family:'Vilna',serif;font-weight:700;font-size:21px;line-height:1;color:var(--tx);white-space:nowrap}
+.bar .bg{border:0;padding:0;gap:6px;position:relative}
+.bar .bg+.bg{border-inline-start:1px solid var(--line);padding-inline-start:10px}
+.bar button,.bar select,.bar input{font:500 var(--fs-ui)/1.25 var(--ui);color:var(--tx);background:transparent;border:1px solid transparent;border-radius:var(--r);
+  padding:3px 10px;min-height:32px;box-shadow:none;text-shadow:none;cursor:pointer;transition:background var(--t),border-color var(--t),color var(--t)}
+.bar button:hover,.bar select:hover{background:var(--blue-soft);color:var(--blue)}
+.bar button.on{background:var(--blue-soft);color:var(--blue)}
+.bar input{background:var(--parch);border-color:var(--line);cursor:text}
+.bar input:hover{border-color:var(--tx2);background:var(--parch);color:var(--tx)}
+.bar input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft);outline:none}
+.bar .nav .daf,.bar .daf{font-family:'VilnaG','Vilna',serif;font-size:19px;color:var(--tx)}
+/* מיקום: [›] דף [‹] כקבוצה מחוברת אחת */
+.seg{display:inline-flex;align-items:stretch;border:1px solid var(--line);border-radius:var(--r);background:var(--parch);overflow:hidden}
+.seg>*{border:0!important;border-radius:0!important;min-height:30px}
+.seg>*+*{border-inline-start:1px solid var(--line)!important}
+.bar .seg button{padding:2px 8px;min-height:30px}
+.bar .seg select{font-family:'VilnaG','Vilna',serif;font-size:19px;padding:2px 6px;text-align:center;text-align-last:center;appearance:none;-webkit-appearance:none;min-width:3.4em}
+.bar .seg select:hover{background:var(--blue-soft)}
+.bar #peresel{max-width:15em;text-overflow:ellipsis;font-weight:600;background:transparent;border-color:var(--line)}
+/* כפתור סמל */
+.ib{display:inline-flex;align-items:center;gap:6px}
+.bar .ib .t{font-weight:600}
+/* מתג העריכה */
+.bar #edbtn{padding:2px 8px;min-height:32px}
+
+/* ---------- ציון ידני: טלפון ---------- */
+@media (max-width:700px){
+  .bar{flex-wrap:wrap!important;row-gap:6px;padding:6px 10px}
+  .bar .mn,.bar .nm{font-size:19px}
+  .bar .bg+.bg{border-inline-start:0;padding-inline-start:0}
+  .bar .ib .t{display:none}
+  .bar .bg.sr{flex:1 1 140px;min-width:0}.bar .bg.sr input{width:100%!important}
+  .bar .dd>.ddp,.bar .dd>.menu{position:fixed;top:calc(var(--barH,56px) + 4px);inset-inline:8px;width:auto;max-width:none;max-height:72vh;overflow:auto}
+}
+
+/* ---------- קבוצות מקובצות בתפריט: אייקון + טקסט ---------- */
+:where(.bar .ddp)>button{display:flex;align-items:center;gap:10px}
+.bar .ddp>button .badge{margin-inline-start:auto}
+body.adm .bar .ddp .adm-b{display:contents}
+.bar .ddp>.adm-b>button{display:flex;align-items:center;gap:10px;justify-content:flex-start;text-align:start;width:100%;border-color:transparent;color:var(--tx);font-weight:500;padding:8px 12px;min-height:38px}
+.bar .ddp>.adm-b>button:hover{background:var(--blue-soft);color:var(--blue)}
+.bar .ddp .primary{justify-content:center;font-weight:700}
+.bar #edstat{gap:6px}
+.bar #edstat>.ddb .edpub{max-width:30em;white-space:normal;text-align:start;line-height:1.25}
+.bar #lm-clock .lm-clk{font-size:14px;color:var(--tx2);padding:2px 8px;min-height:30px}
+.bar #lm-clock{border:0!important;padding-inline-start:0!important}
+@media (max-width:700px){.bar #lm-clock,.bar .mn{display:none}.bar #edstat>.ddb .edpub{max-width:11em;font-size:13px}}
+
+/* ---------- גוף העמוד והגלילה: צבע בלבד, בלי לשנות גיאומטריה ---------- */
+html,body{background:var(--parch)}
+.flow{scrollbar-color:var(--line) transparent}
+
+/* ---------- מגירת המקור (פירוש הגמרא) ---------- */
+.src{background:var(--sheet);color:var(--tx)}
+.srchd{background:var(--sheet);color:var(--tx);border-bottom:1px solid var(--line);font-size:15px}
+.srchd b{font-family:'VilnaG','Vilna',serif;font-weight:400;font-size:19px;color:var(--tx)}
+.srchd button{background:transparent;color:var(--blue);border:1px solid var(--line);border-radius:var(--r);padding:4px 12px;min-height:34px;font:600 14px var(--ui)}
+.srchd button:hover{background:var(--blue-soft);border-color:var(--blue)}
+.srchd button.on{background:var(--blue-soft);border-color:var(--blue)}
+.srchd .srcsep{background:var(--line)}
+.srcft{background:var(--parch);color:var(--tx2);border-top:1px solid var(--line)}
+.srcbody h4{color:var(--tx2);border-bottom-color:var(--line)}
+.smpop{background:var(--sheet);color:var(--tx);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.sml{color:var(--tx2)}
+#mbmenu{background:var(--sheet);color:var(--tx);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);font-family:var(--ui)}
+#mbmenu .mbh{color:var(--tx2);border-bottom-color:var(--line)}
+#mbmenu button{color:var(--tx);font-family:var(--ui)}
+#mbmenu button:hover:not(:disabled){background:var(--blue-soft);color:var(--blue)}
+.hint{border-radius:var(--r);font-family:var(--ui);box-shadow:var(--shadow)}
+
+/* ---------- בקרת תוכן (מנהל) ---------- */
+body .bkcard{background:var(--sheet);color:var(--tx);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);font-family:var(--ui)}
+body .bkcard .bt button,body .bkbar button{font:600 14px var(--ui);color:var(--blue);background:transparent;border:1px solid var(--line);border-radius:var(--r);padding:4px 12px;min-height:34px}
+body .bkcard .bt button.ok,body .bkbar button.go{background:var(--gn);color:var(--sheet);border-color:var(--gn)}
+body .bkcard .bt button.no{color:var(--rd);border-color:var(--rd)}
+body .bkcard .fx{background:var(--parch)}
+body .bkbar{background:var(--sheet);color:var(--tx);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);font-family:var(--ui)}
+body #bkp .grp{background:var(--sheet);border-color:var(--line)}
+body #bkp .it:hover{background:var(--blue-soft)}
+body #bkp .it .mk{color:var(--tx)}
+body #bkbtn2.on{background:var(--blue-soft);color:var(--blue)}
+
+/* ---------- הצעות תיקון: מגירה בצד שמאל, לא מעל טור הגמרא ---------- */
+#sgq{right:auto;left:0;width:min(460px,100vw);border-inline-start:0;border-right:1px solid var(--line)}
+body:has(#sgq.open) .flow{width:calc(100vw - min(460px,100vw));margin-left:auto}
+@media (max-width:760px){body:has(#sgq.open) .flow{width:auto;margin-left:0}#sgq{width:100vw}}
+.sgbar{align-items:center}
+.sgrow{border-bottom-color:var(--line)}
+.sgrow q{color:var(--tx2)}.sgrow small{color:var(--tx2)}
+.sqctx{background:var(--parch);border:1px solid var(--line);border-radius:8px}
+.sqctx del,.sqctx ins{border-radius:3px;padding:0 2px}
+.menu>a.mi{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--r);color:var(--tx);font-weight:500;text-decoration:none}
+.menu>a.mi:hover{background:var(--blue-soft);color:var(--blue);text-decoration:none}
+/* סרגל הקריאה נשאר בגובה 46: גוף הדף אינו זז בפיקסל */
+.bar .bg :is(select,input,button){min-height:32px;padding-top:2px;padding-bottom:2px}
+.bar .bg .seg>*{min-height:30px}
+.bar .bg input{padding-inline-start:36px}
+/* טלפון: שתי שורות מסודרות. שורה א: לוגו, פרק, דף. שורה ב: חיפוש, תצוגה, כלים, עריכה */
+@media (max-width:700px){
+  .bar .bg.loc{flex:1 1 100%;flex-wrap:nowrap;gap:6px}
+  .bar .bg.loc .brand .nm{font-size:18px}
+  .bar .bg.loc #peresel{flex:1 1 0;min-width:0;max-width:none}
+  .bar .bg.loc .seg{flex:0 0 auto}
+  .bar .bg.sr{flex:1 1 0;min-width:90px}
+  .bar .edsw .tgl{padding:2px 4px}
+  body.ed .bar .bg.loc{flex:0 1 auto}
+}
+
+/* גודל טקסט ממשק מינימלי: 14 פיקסל */
+.sml,.menu .sml,.bar .ddp .sml,.lm-small,.lm-note,.lm-tag,.tl,.tag,.dr,.g-badge,.badge,.stchip,.tychip,.sgbell,kbd,.kbd,.srcft,.edpub,#procnote{font-size:14px!important}
+.stybar .ttl,.stybar kbd,.stybar .stmore{font-size:14px!important}
+body :is(.lm-wrap,.lm-card,.panel,.bar,.stybar,.modal,.sgpop) [style*="font-size:11px"],
+body :is(.lm-wrap,.lm-card,.panel,.bar,.stybar,.modal,.sgpop) [style*="font-size:12px"],
+body :is(.lm-wrap,.lm-card,.panel,.bar,.stybar,.modal,.sgpop) [style*="font-size:13px"]{font-size:14px!important}
+.lm-mcal .wd,.lm-chart text,.lm-tile i,.lm-dist div{font-size:14px}
+.lm-chart text{font-size:12px}
+.lm-mcal .d{font-size:15px}

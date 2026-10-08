@@ -24,11 +24,14 @@
     if (!r.ok || !j || !j.ok) throw new Error((j && j.error) || ('שגיאה ' + r.status));
     return j;
   }
+  S.base = API;
   function pApi(path, body) {
     var id = S.identity(), o = { method: body ? 'POST' : 'GET', headers: { 'x-proposer': id.pt } };
     if (body) o.body = JSON.stringify(Object.assign({ pid: id.pid }, body));
     return api(path + (body ? '' : (path.indexOf('?') > -1 ? '&' : '?') + 'pid=' + id.pid), o);
   }
+
+  S.api = api; S.pApi = function (path, body) { return pApi(path, body); };
 
   /* ---------------- סנכרון: איחוד אירועים לפי מזהה, בלי דריסה ---------------- */
   S.linked = function () { return ls('lg-lamed-sync') === '1'; };
@@ -81,6 +84,18 @@
       LG.notify && LG.notify();
       return s;
     } catch (e) { return null; }
+  };
+
+
+  /* ---------------- "לומדים כעת": פעימה אנונימית (מזהה התקנה אקראי, בלי שם ובלי pid) ----------------
+     נשלחת רק כשהלומד פעיל (קורא או מתרגל), לכל היותר אחת ב-150 שניות. */
+  S.heartbeat = function (slug) {
+    if (window.__lmDemo || isBot() || LG.settings().share === false) return;
+    var aid = ls('lg-lamed-aid'); if (!aid) { aid = rnd(12); ls('lg-lamed-aid', aid); }
+    api('/ln/online', { method: 'POST', body: JSON.stringify({ aid: aid, s: slug || '' }) }).catch(function () { });
+  };
+  S.online = function (slug) {
+    return api('/ln/online' + (slug ? '?s=' + encodeURIComponent(slug) : ''), { method: 'GET' }).catch(function () { return null; });
   };
 
   /* ---------------- סטטיסטיקה אנונימית ומצטברת ---------------- */

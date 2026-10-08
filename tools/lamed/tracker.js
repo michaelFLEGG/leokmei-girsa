@@ -68,6 +68,7 @@
     if (pi === undefined) return null;
     return { s: SLUG, d: dafOfPi(pi), pid: id, fp: LG.fpOf(rowText(row)), pi: pi };
   }
+  T.cur = function () { return G.cur || readPos(); };
   T.savePos = function () {
     var p = readPos();
     if (!p || window.__lmDemo) return;
@@ -177,6 +178,7 @@
     var k = curKey();
     if (!k) return;
     var s = session();
+    if (LG.sync && (!G.hbT || now - G.hbT > 150000)) { G.hbT = now; LG.sync.heartbeat(SLUG); }
     if (!G.started[k] && G.cur && LG.sync) { G.started[k] = 1; LG.sync.stat({ s: SLUG, d: G.cur.d, start: 1 }); }
     s.ms += dt; s.t1 = now; s.per[k] = (s.per[k] || 0) + dt;
     G.pageMs[k] = (G.pageMs[k] || 0) + dt;
@@ -306,15 +308,11 @@
     var bar = $('#bar');
     if (!bar || $('#lm-clock')) return;
     var g = document.createElement('div');
-    g.className = 'bg'; g.id = 'lm-clock'; g.setAttribute('data-pri', '1');
+    g.className = 'bg clk'; g.id = 'lm-clock'; g.setAttribute('data-pri', '1');
     g.innerHTML = '<button type="button" class="lm-clk"><span class="lm-c1">0 ד׳</span><span class="lm-c2"></span></button>';
     g.querySelector('button').onclick = function () { G.paused = !G.paused; drawClock(); };
-    var more = $('#morebg');
-    bar.insertBefore(g, more || null);
-    var g2 = document.createElement('div');
-    g2.className = 'bg'; g2.id = 'lm-links'; g2.setAttribute('data-pri', '2');
-    g2.innerHTML = '<a class="lm-a" href="lamed.html">הלימוד שלי</a><a class="lm-a" href="shas.html">מפת הש"ס</a>';
-    bar.insertBefore(g2, g);
+    /* "הלימוד שלי" ו"מפת הש"ס" אינם בסרגל הקריאה: הלוגו מוביל הביתה */
+    bar.insertBefore(g, $('#bar .edsw') || null);
     if (typeof barFit === 'function') setTimeout(barFit, 50);
   }
 

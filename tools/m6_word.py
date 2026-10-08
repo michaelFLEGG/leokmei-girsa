@@ -26,13 +26,14 @@ import word_apply
 from word_apply import (ns, W, NS, DRIVE, Refused, convert, _runs_of, _rpr, _mkrun, _mark, _mark_para,
                         _style_ids, _paragraph_map, _rezip, _ensure_track, backup, is_open_in_word,
                         wait_free, _copy_no_change)
-from styles_map import ROLE, CS, role_of
+from styles_map import ROLE, CS, role_of, TANAI_NAME
 import mishna_box
+import mishna_sizes
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AUTHOR = 'קלוד'
 NIKUD = re.compile(r'[֑-ׇ]')
-S_NS, S_TN, S_HS, S_MB = 'נושא משנה', 'תנאים במשנה', 'הסבר במשנה', 'משנה בצד'
+S_NS, S_TN, S_HS, S_MB = 'נושא משנה', TANAI_NAME, 'הסבר במשנה', 'משנה בצד'   # S_TN: עד 6.10.2026 ערב "תנאים במשנה"
 NUMBER_STYLES = ('מספר קטע', 'מספר קטע תו')
 
 AM_NAMES = {n for n, c in CS.items() if c == 'am' and n not in (S_TN, S_TN + ' תו')}
@@ -120,8 +121,12 @@ def _char_style(root, name, sid_base, rpr_children, based_on=None, link=None):
 
 def ensure_styles(styles_xml, log=print):
     """מוסיף את הסגנונות החסרים. מחזיר (xml, רשימת מה שנוסף)."""
+    # השם הקודם של סגנון התנאים הופך לשם הקבוע (באותו מזהה), לפני כל בדיקת קיום
+    styles_xml, _rep = mishna_sizes.sync(styles_xml)
     root = etree.fromstring(styles_xml)
-    added = []
+    added = ['תנאי המשנה (נוצר)'] if _rep.get('created') else []
+    if _rep.get('renamed'):
+        added.append('תנאי המשנה (שונה שם מ-%s)' % _rep['renamed'])
     if _style_el(root, S_NS) is None:
         # כמו הקיים בסוכה: וילנא Extra-Bold, בגודל המשנה (דרגת עובי אחת מעליה)
         _char_style(root, S_NS, 'NoseMishna', [
@@ -164,7 +169,9 @@ def ensure_styles(styles_xml, log=print):
         for el in spec:
             mb.append(el)
         added.append(S_MB + ' (עוצב כריבוע)')
-    return etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True), added
+    # יישור הגדלים ליחס הקבוע (נוצר סגנון חדש בגודל ברירת מחדל)
+    out, _ = mishna_sizes.sync(etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True))
+    return out, added
 
 
 # סגנונות הפסקה של ד"ה משנה (ממורכזים). המספר ("א. ") יושב בתחילת השורה הממורכזת

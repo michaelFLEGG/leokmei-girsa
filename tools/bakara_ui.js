@@ -164,7 +164,9 @@
   /* ---- כניסה ויציאה ---- */
   function bkToggle(){
     if(!isAdmin()){return}
-    if(!admKey()){admKeyAsk();setTimeout(bkLoad,800);return}
+    {const k=admKey();if(!k||/[^\x00-\xff]/.test(k)){
+      try{localStorage.removeItem('lg-adm')}catch(e){}
+      Promise.resolve(admKeyAsk()).then(ok=>{if(ok&&admKey())bkLoad().then(()=>{if(BK.loaded)bkToggle()})});return}}
     if(!BK.loaded){bkLoad().then(()=>{if(BK.loaded)bkToggle();else toast('לא ניתן לטעון את ממצאי הבקרה: '+(BK.err||'שגיאה'),5000)});return}
     BK.ON=!BK.ON;bkCss();
     if(!BK.ON){bkHideCard(true);const m=$('#bkbar');if(m)m.remove();bkHL();bkCount();return}

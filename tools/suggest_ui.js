@@ -14,20 +14,32 @@
                rejected:['נדחתה','#a83c2f'],stale:['התיישנה','#7a7a7a']};
   const STYLE_CHIPS=['זה פסוק','זה שם אמורא','זה הסבר','זה נושא','זה ד"ה'];
   (function(){const st=document.createElement('style');st.textContent=
-    '.sgpop{position:fixed;z-index:12;width:min(360px,94vw);background:#fffdf8;border:1px solid #c9b98f;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.28);padding:10px 12px;font-size:15px;line-height:1.5}'+
-    '.sgpop h3{margin:0 0 6px;font-size:15px}.sgpop textarea{width:100%;min-height:70px;font:inherit;box-sizing:border-box}'+
-    '.sgpop input[type=text]{width:100%;font:inherit;box-sizing:border-box}.sgpop .sel{max-height:64px;overflow:auto;background:#f3efe3;padding:3px 6px;border-radius:4px;font-size:14px}'+
-    '.sgtypes{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.sgtypes button,.sgchips button{font:inherit;font-size:13px;border:1px solid #d9d1bd;border-radius:12px;background:#fff;padding:1px 9px;cursor:pointer}'+
-    '.sgtypes button.on{color:#fff}.sgchips{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}'+
-    '.sgpop .btns{display:flex;gap:8px;margin-top:8px;align-items:center}.sgpop .go{background:#2e6b3f;color:#fff;border:0;border-radius:4px;padding:4px 14px;font:inherit;cursor:pointer}'+
-    '.sgpop .dr{font-size:12px;color:#8a7d66}'+
-    '.stchip{display:inline-block;color:#fff;border-radius:10px;padding:0 8px;font-size:12px;margin-left:5px}'+
-    '.tychip{display:inline-block;border:1px solid;border-radius:10px;padding:0 7px;font-size:12px;margin-left:5px}'+
-    '.sgthr{margin:4px 0;padding:3px 8px;border-right:3px solid #d9d1bd;font-size:14px}.sgthr .m{color:#2e5b8a}.sgthr .p{color:#5a5044}'+
-    '.sgrow .why{color:#a83c2f;font-size:14px}.sgrow.cur{outline:2px solid #c9a24a}.sgrow.trust{background:#fbf6e4}'+
-    '.sgconf{display:flex;gap:8px;flex-wrap:wrap}.sgconf>.sgrow{flex:1 1 45%;border:1px solid #d9d1bd;border-radius:5px;padding:4px 8px}'+
-    '.sgrep{display:flex;gap:4px;margin-top:4px}.sgrep input{flex:1;font:inherit;font-size:14px}.sgbar{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}'+
-    '.sgbar select,.sgbar button{font:inherit;font-size:13px}.sgbell{background:#a83c2f;color:#fff;border-radius:9px;padding:0 6px;margin-right:4px;font-size:12px}';
+    '.sgpop{position:fixed;z-index:12;width:min(360px,94vw);background:var(--sheet);color:var(--tx);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 14px;font-size:15px;line-height:1.5}'+
+    '.sgpop h3{margin:0 0 6px;font-size:15px}.sgpop textarea{width:100%;min-height:70px;box-sizing:border-box}'+
+    '.sgpop input[type=text]{width:100%;box-sizing:border-box}.sgpop .sel{max-height:64px;overflow:auto;background:var(--parch);padding:4px 8px;border-radius:8px;font-size:14px}'+
+    '.sgtypes{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.sgchips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}'+
+    '.sgtypes button,.sgchips button{border-radius:999px!important;padding:2px 12px!important;min-height:30px!important;font-size:14px!important}'+
+    '.sgtypes button.on{background:var(--blue)!important;color:var(--blue-ink)!important;border-color:var(--blue)!important}'+
+    '.sgpop .btns{display:flex;gap:8px;margin-top:10px;align-items:center}'+
+    '.sgpop .dr,.dr{font-size:13px;color:var(--tx2)}'+
+    '.stchip{display:inline-block;background:var(--tx2);color:var(--sheet);border-radius:999px;padding:0 10px;font-size:12px;margin-left:6px}'+
+    '.tychip{display:inline-block;border:1px solid;border-radius:999px;padding:0 8px;font-size:12px;margin-left:6px}'+
+    '.sgthr{margin:6px 0;padding:4px 10px;border-inline-start:3px solid var(--line);font-size:14px}.sgthr .m{color:var(--blue)}.sgthr .p{color:var(--tx2)}'+
+    '.sgrow .why{color:var(--rd);font-size:14px}.sgrow.cur{border-color:var(--blue)!important;box-shadow:0 0 0 2px var(--blue-soft)}.sgrow.trust{background:var(--blue-soft)}'+
+    '.sgconf{display:flex;gap:8px;flex-wrap:wrap}.sgconf>.sgrow{flex:1 1 45%}'+
+    '.sgrep{display:flex;gap:6px;margin-top:6px}.sgrep input{flex:1;font-size:14px}.sgbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px;align-items:center}'+
+    '.sgbar select{font-size:14px!important}.sgbar button{font-size:14px!important;min-height:34px!important}'+
+    '.sgbell{background:var(--rd);color:var(--sheet);border-radius:999px;padding:0 7px;margin-right:4px;font-size:12px}'+
+    '#sgq .sgrow{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 12px;display:block}'+
+    '.sgact{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}'+
+    '.sgact>button{flex:1 1 90px;min-height:44px!important;font-size:16px!important;font-weight:700}'+
+    '.sgact>button.ok{background:var(--gn)!important;border-color:var(--gn)!important;color:var(--sheet)!important}'+
+    '.sgact>button.ok kbd{color:var(--sheet);border-color:var(--sheet);background:transparent}'+
+    '.sgmore{flex:0 0 100%}.sgmore>summary{cursor:pointer;color:var(--blue);font-weight:600;list-style:none;padding:6px 2px;width:fit-content}'+
+    '.sgmore>summary::-webkit-details-marker{display:none}.sgmore>summary::after{content:" ▾"}.sgmore[open]>summary::after{content:" ▴"}'+
+    '.sgmore>div{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.sgmore>div button{min-height:34px!important;font-size:14px!important}'+
+    '.sgbulk{position:sticky;top:0;z-index:2;background:var(--blue-soft);border:1px solid var(--blue);border-radius:12px;padding:8px 12px}'+
+    '.sgbulk[hidden]{display:none}.sgkeys{margin:4px 0 10px}.sgkeys kbd{margin:0 2px}';
     document.head.appendChild(st)})();
 
   /* ---- זהות המציע ---- */
@@ -48,7 +60,14 @@
   function sgGrp(){try{const g=JSON.parse(localStorage.getItem('lg-sg-grp')||'null');
     if(g&&Date.now()-g.t<600000){g.t=Date.now();localStorage.setItem('lg-sg-grp',JSON.stringify(g));return g.id}
     const n={id:rnd(10),t:Date.now()};localStorage.setItem('lg-sg-grp',JSON.stringify(n));return n.id}catch(e){return rnd(10)}}
+  /* ניקוי הטקסט שנטען לשדה ההצעה: שורה אחת לכל פסקה, בלי שורות ריקות כפולות,
+     בלי רווחים מיותרים ובלי תווי עיצוב נסתרים (כיווניות, רוחב אפס, רווח קשיח) */
+  function sgClean(t){
+    return String(t||'').replace(/[​-‏‪-‮⁦-⁩﻿]/g,'').replace(/ /g,' ')
+      .replace(/\r\n?/g,'\n').split('\n').map(l=>l.replace(/[ \t]+/g,' ').trim()).filter(Boolean).join('\n')}
+  function sgGrow(ta){ta.style.height='auto';ta.style.height=Math.min(innerHeight*0.6,ta.scrollHeight+4)+'px'}
   function openSg(text,el){
+    text=sgClean(text);
     closeSg();
     const u=unitOf(el),k=(el&&el.dataset&&el.dataset.ek)||'';
     const dk='lg-sg-draft-'+SLUG+'-'+k;let dr=null;try{dr=JSON.parse(localStorage.getItem(dk)||'null')}catch(e){}
@@ -66,6 +85,7 @@
     document.body.appendChild(m);
     const sel=$('#sgn');
     sel.value=dr&&dr.note!==undefined?dr.note:text;
+    sel.style.overflow='hidden';sel.style.resize='none';sgGrow(sel);sel.addEventListener('input',()=>sgGrow(sel));
     function paint(){
       $('#sgty').innerHTML=Object.keys(STYPES).map(t=>'<button type="button" data-t="'+t+'" class="'+(t===type?'on':'')+'" style="'+(t===type?'background:'+STYPES[t][2]+';border-color:'+STYPES[t][2]:'color:'+STYPES[t][2])+'">'+STYPES[t][1]+' '+STYPES[t][0]+'</button>').join('');
       $('#sgty').querySelectorAll('button').forEach(b=>b.onclick=()=>{
@@ -125,11 +145,15 @@
   const MCK='lg-mine-cache';
   let MINE=[],MROWS=[],MINEERR='',MFIL={q:'',mas:'',st:'',daf:'',sort:'new'},MSHOW=60,MED=null,MCACHE={},MLOAD=0,MLOADING=false;
   try{MCACHE=JSON.parse(localStorage.getItem(MCK)||'{}')}catch(e){MCACHE={}}
+  /* מצבות מחיקה (7.10.2026): רשימת ההצעות בשרת מתעדכנת באיחור של עד דקה, ולכן הצעה
+     שנמחקה הייתה חוזרת לתצוגה. המכשיר זוכר מה נמחק ומסתיר מיד; השרת שומר אותה בארכיון. */
+  let MTOMB={};try{MTOMB=JSON.parse(localStorage.getItem('lg-mine-tomb')||'{}')}catch(e){MTOMB={}}
+  function tombSave(){const now=Date.now();for(const k in MTOMB)if(now-MTOMB[k]>3600000)delete MTOMB[k];try{localStorage.setItem('lg-mine-tomb',JSON.stringify(MTOMB))}catch(e){}}
   function mcSave(){try{localStorage.setItem(MCK,JSON.stringify(MCACHE))}catch(e){try{localStorage.removeItem(MCK)}catch(e2){}}}
   async function mineLoad(markSeen){
     if(MLOADING)return;MLOADING=true;
     try{
-      const j=await papi('/mine');MROWS=j.rows||[];MINEERR='';mineBell(j.unseen||0);
+      const j=await papi('/mine');MROWS=(j.rows||[]).filter(r=>!MTOMB[r.id]);MINEERR='';mineBell(j.unseen||0);
       const idn=pident().pid;
       if(MCACHE.pid!==idn)MCACHE={pid:idn,items:{}};
       const have=new Set(MROWS.map(r=>r.id));
@@ -140,7 +164,7 @@
         const b=await papi('/mine/batch',{ids:need.slice(i,i+40)});
         (b.items||[]).forEach(rec=>{MCACHE.items[rec.id]={v:rec.ver||0,rec}})}
       MLOAD=0;mcSave();
-      MINE=MROWS.map(r=>(MCACHE.items[r.id]||{}).rec).filter(Boolean);
+      MINE=MROWS.map(r=>(MCACHE.items[r.id]||{}).rec).filter(g=>g&&g.st!=='deleted'&&!MTOMB[g.id]);
       if(markSeen&&j.unseen)papi('/mine/seen',{}).then(()=>mineBell(0)).catch(()=>{})}
     catch(e){MLOAD=0;MINEERR=/הרשאה/.test(e.message)?'':(e.message||'')}
     MLOADING=false}
@@ -177,7 +201,7 @@
         '<div class="mysbar"><input type="search" id="myq" placeholder="חיפוש חופשי בהצעות" aria-label="חיפוש חופשי בהצעות">'+
         '<select id="mym" aria-label="מסכת"></select>'+
         '<select id="myst" aria-label="מצב"><option value="">כל המצבים</option><option value="pending">ממתינה</option><option value="upd">עודכנה</option><option value="accepted">אושרה</option><option value="edited">אושרה בשינוי</option><option value="rejected">נדחתה</option><option value="stale">התיישנה</option></select>'+
-        '<input type="text" id="myd" placeholder="דף" aria-label="דף"><select id="myso" aria-label="סדר"><option value="new">החדשות תחילה</option><option value="old">הישנות תחילה</option><option value="loc">לפי מסכת ודף</option></select></div>'+
+        '<input type="text" id="myd" placeholder="דף" aria-label="דף"><select id="myso" aria-label="סדר"><option value="new">החדשות תחילה</option><option value="old">הישנות תחילה</option><option value="loc">לפי מסכת (א"ב) ודף</option><option value="shas">לפי סדר הש"ס ודף</option></select></div>'+
         '<div id="myl"></div></div>';
       document.body.appendChild(o);
       const upd=()=>{MFIL.q=$('#myq').value;MFIL.mas=$('#mym').value;MFIL.st=$('#myst').value;MFIL.daf=$('#myd').value.trim();MFIL.sort=$('#myso').value;MSHOW=60;mineList()};
@@ -202,7 +226,11 @@
       (!df||String(g.daf||'').replace(/[.:\s]/g,'')===df)&&
       (!q||nonik([g.note,g.was,g.reason||'',g.now||'',(g.thread||[]).map(x=>x.txt).join(' '),(g.vers||[]).map(v=>v.note).join(' ')].join(' ')).indexOf(q)>-1));
     if(MFIL.sort==='old')items.sort((a,b)=>a.t-b.t);
-    else if(MFIL.sort==='loc')items.sort((a,b)=>String(a.masechet).localeCompare(String(b.masechet),'he')||dafSortKey(a.daf)-dafSortKey(b.daf)||a.t-b.t);
+    else if(MFIL.sort==='loc'||MFIL.sort==='shas'){
+      const SO=['ברכות','שבת','עירובין','פסחים','שקלים','יומא','סוכה','ביצה','ראש השנה','תענית','מגילה','מועד קטן','חגיגה','יבמות','כתובות','נדרים','נזיר','סוטה','גיטין','קידושין','בבא קמא','בבא מציעא','בבא בתרא','סנהדרין','מכות','שבועות','עבודה זרה','הוריות','זבחים','מנחות','חולין','בכורות','ערכין','תמורה','כריתות','מעילה','תמיד','נדה'];
+      const pos=g=>{const m=/^u(\d+)(?:\.(\d+))?/.exec(g.k||'');return m?(+m[1])*1000+(+m[2]||0):0};
+      const mk=g=>MFIL.sort==='shas'?(SO.indexOf(g.masechet)<0?99:SO.indexOf(g.masechet)):0;
+      items.sort((a,b)=>(MFIL.sort==='shas'?mk(a)-mk(b):String(a.masechet).localeCompare(String(b.masechet),'he'))||dafSortKey(a.daf)-dafSortKey(b.daf)||pos(a)-pos(b)||a.t-b.t)}
     else items.sort((a,b)=>b.t-a.t);
     const c=$('#myc');if(c)c.textContent=MINE.length+' הצעות'+(items.length!==MINE.length?' · מוצגות '+items.length:'')+(MLOAD?' · טוען '+MLOAD+' מתוך '+MROWS.length+'…':'');
     const offline=SG.filter(g=>!g.sent);
@@ -219,7 +247,7 @@
   function mineCard(g){
     const id=esc(g.id),ed=MED&&MED.id===g.id;
     const idq="'"+id+"'";
-    let h='<div class="mycard'+(g.mnew||ed?' new':'')+'" id="mc-'+id.replace(/[^\w]/g,'_')+'"><div class="mym"><b>'+esc(g.masechet||'')+(g.daf?' · דף '+esc(g.daf):'')+'</b> · '+HD.date(g.t)+' '+stChip(g.st)+
+    let h='<div class="mycard'+(g.mnew||ed?' new':'')+'" id="mc-'+id.replace(/[^\w]/g,'_')+'"><div class="mym"><b>'+esc(g.masechet||'')+(g.daf?' · דף '+esc(g.daf):'')+'</b> · '+HD.date(g.t)+' '+stChip(g.st)+(g.decided&&g.st!=='pending'?'<span class="mydim">'+(g.st==='rejected'?' נדחתה ':g.st==='stale'?' התיישנה ':' הוכרעה ')+HD.date(g.decided)+'</span>':'')+
       (g.st==='pending'&&g.up?'<span class="stchip" style="background:#b0721a">עודכנה</span>':'')+tyChip(g.type)+
       (g.from?'<span class="mydim"> · חידוד של הצעה קודמת</span>':'')+
       (g.next&&g.next.length?'<span class="mydim"> · הוגשה ממנה הצעה חדשה</span>':'')+'</div>'+
@@ -270,8 +298,22 @@
       MED=null;await mineLoad();mineList()}
     catch(e){alert(e.message||'השליחה נכשלה. הטקסט נשמר כטיוטה, נסה שוב.')}}
   async function mineDel(id){if(!confirm('למשוך את ההצעה? אפשר רק כל עוד לא טופלה.'))return;
-    try{await papi('/mine/delete',{id});await mineLoad();mineList();toast('ההצעה נמשכה.')}
-    catch(e){alert(e.message)}}
+    MTOMB[id]=Date.now();tombSave();                       /* נעלמת מיד, גם אם השרת עוד לא התעדכן */
+    MINE=MINE.filter(g=>g.id!==id);MROWS=MROWS.filter(r=>r.id!==id);mineList();
+    try{await papi('/mine/delete',{id})}
+    catch(e){if(!/לא נמצאה/.test(e.message)){delete MTOMB[id];tombSave();alert(e.message);mineLoad().then(mineList);return}}
+    mineUndoBar(id)}
+  /* "בטל מחיקה": כמה שניות אחרי המשיכה */
+  function mineUndoBar(id){
+    let b=$('#myundo');if(b)b.remove();
+    b=document.createElement('div');b.id='myundo';
+    b.style.cssText='position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:60;background:#2b2b2b;color:#fff;padding:9px 16px;border-radius:999px;font-size:15px;direction:rtl;box-shadow:0 4px 16px rgba(0,0,0,.3)';
+    b.innerHTML='ההצעה נמשכה. <button style="font:inherit;margin-inline-start:10px;padding:1px 12px;border-radius:999px;border:1px solid #fff;background:transparent;color:#fff;cursor:pointer">בטל מחיקה</button>';
+    document.body.appendChild(b);
+    const t=setTimeout(()=>b.remove(),8000);
+    b.querySelector('button').onclick=async()=>{clearTimeout(t);b.remove();
+      try{await papi('/mine/undelete',{id});delete MTOMB[id];tombSave();await mineLoad();mineList();toast('המשיכה בוטלה, ההצעה חזרה.')}
+      catch(e){alert(e.message)}}}
   async function mineReply(id,inp){const t=(inp.value||'').trim();if(!t)return;
     try{await papi('/mine/reply',{id,text:t});inp.value='';await mineLoad();mineList()}catch(e){alert(e.message)}}
   function sgClear(){if(SG.some(g=>!g.sent)&&!confirm('יש הצעה שטרם נשלחה. למחוק בכל זאת?'))return;SG=SG.filter(g=>!g.sent&&false);saveSG();mineList()}
@@ -334,6 +376,7 @@
       if(SQF.daf)p.push('daf='+encodeURIComponent(SQF.daf));
       if(SQF.ty)p.push('ty='+SQF.ty);
       if(SQF.up)p.push('up=1');
+      if(SQF.ord)p.push('ord='+SQF.ord);
       const j=await api('/queue?'+p.join('&'));
       QQ=j.items||[];QQTOT=j.total||0;SQMATCH=j.matched||0;SQPROPS=j.proposers||[];SQCNT=j.counts||{};QQERR='';
       if(SQPAGE>0&&!QQ.length&&SQMATCH>0){SQPAGE=Math.max(0,Math.ceil(SQMATCH/SQSIZE)-1);return queueLoad()}}
@@ -343,7 +386,7 @@
   function sqBadge(){const b=$('#sqbtn');if(!b)return;
     if(!isAdmin()){b.style.display='none';return}
     b.style.display='';const n=SQCNT[SLUG]||0;
-    b.textContent=admKey()?('הצעות ממתינות ('+n+(QQTOT>n?' · '+QQTOT+' בכל המסכתות':'')+')'):'הצעות ממתינות - הזן מפתח';
+    b.innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-inbox"/></svg>'+(admKey()?('הצעות ממתינות<span class="badge">'+n+'</span>'+(QQTOT>n?' <small>(בכל המסכתות: '+QQTOT+')</small>':'')):'הצעות ממתינות - הזן מפתח');
     b.classList.toggle('on',n>0)}
   function sqFilterBar(){
     const sel=(id,opts,cur,fn)=>'<select id="'+id+'" onchange="'+fn+'">'+opts.map(o=>'<option value="'+esc(o[0])+'"'+(cur===o[0]?' selected':'')+'>'+esc(o[1])+'</option>').join('')+'</select>';
@@ -351,15 +394,25 @@
       sel('sqfp',[['','כל המציעים']].concat(SQPROPS.map(x=>[x.pid,(x.name||'בלי שם')+' ('+x.n+')'])),SQF.pid,"SQF.pid=this.value;SQPAGE=0;queueLoad()")+
       sel('sqft',[['','כל הסוגים']].concat(Object.keys(STYPES).map(t=>[t,STYPES[t][0]])),SQF.ty,"SQF.ty=this.value;SQPAGE=0;queueLoad()")+
       '<input type="text" id="sqfd" placeholder="דף" size="5" value="'+esc(SQF.daf)+'" onchange="SQF.daf=this.value.trim();SQPAGE=0;queueLoad()" aria-label="דף">'+
-      '<label><input type="checkbox" '+(SQF.up?'checked ':'')+'onchange="SQF.up=this.checked?1:0;SQPAGE=0;queueLoad()"> עודכנו בלבד</label></div>'}
+      '<label><input type="checkbox" '+(SQF.up?'checked ':'')+'onchange="SQF.up=this.checked?1:0;SQPAGE=0;queueLoad()"> עודכנו בלבד</label>'+
+      sel('sqfo',[['','לפי זמן ההצעה'],['loc','לפי דף ומיקום']],SQF.ord||'',"SQF.ord=this.value;SQPAGE=0;queueLoad()")+
+      '<button onclick="sqArchive()" title="הצעות שהמציע משך">נמחקו על ידי המציע</button>'+
+      '<button class="'+(SQF.ty==='style'?'on':'')+'" onclick="sqStyleFilter()" title="כל ההצעות לשינוי סגנון מרוכזות יחד: אשר אחת-אחת (Enter), או את כל ההצעות מאותו סוג של אותו מציע">הצעות סגנון'+(SQF.ty==='style'?' ✓':'')+'</button></div>'}
+  async function sqArchive(){
+    try{const j=await api('/queue?deleted=1');
+      const rows=(j.items||[]).map(g=>'<div class="sgrow"><small>'+esc(g.masechet||'')+' '+esc(g.daf||'')+' · '+esc(g.name||'בלי שם')+' · נמחקה '+HD.dateTime(g.deletedAt||g.t)+'</small><q>'+esc((g.was||'').slice(0,120))+'</q><div>'+esc(g.note||'')+'</div></div>').join('')||'<div class="edsum">אין הצעות שנמחקו.</div>';
+      const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:70;background:#fbf8ef;overflow:auto;padding:16px;direction:rtl';
+      o.innerHTML='<button class="b" onclick="this.parentNode.remove()" style="float:left">סגירה ✕</button><h3>נמחקו על ידי המציע ('+(j.total||0)+')</h3>'+rows;document.body.appendChild(o)}
+    catch(e){alert(e.message)}}
   function sqPager(){
     const pages=Math.max(1,Math.ceil(SQMATCH/SQSIZE));
     return '<div class="sgbar"><button '+(SQPAGE>0?'':'disabled ')+'onclick="SQPAGE--;queueLoad()">הקודם</button>'+
       '<span class="dr">עמוד '+(SQPAGE+1)+' מתוך '+pages+' · '+SQMATCH+' הצעות</span>'+
       '<button '+(SQPAGE+1<pages?'':'disabled ')+'onclick="SQPAGE++;queueLoad()">הבא</button></div>'}
   function sqBulkBar(){
-    return '<div class="sgbar"><button onclick="sqSelAll()">סמן את כל הדף</button>'+
-      '<button onclick="sqBulkAcceptSel()">אשר מסומנות</button><button onclick="sqBulkRejectSel()">דחה מסומנות</button></div>'}
+    return '<div class="sgbar sgbulk" id="sqbulk" hidden><span id="sqbn"></span><button class="ok" onclick="sqBulkAcceptSel()">אשר מסומנות</button><button onclick="sqBulkRejectSel()">דחה מסומנות</button><button class="q" onclick="sqSelAll()">סמן את כל הדף</button></div>'}
+  function sqBulkShow(){const n=document.querySelectorAll('#sgqb .sqsel:checked').length,b=$('#sqbulk');if(!b)return;b.hidden=!n;const c=$('#sqbn');if(c)c.textContent=n+' מסומנות'}
+  document.addEventListener('change',e=>{if(e.target&&e.target.classList&&e.target.classList.contains('sqsel'))sqBulkShow()});
   function sqSelIds(){return [...document.querySelectorAll('#sgqb .sqsel:checked')].map(x=>x.dataset.id)}
   function sqSelAll(){const a=[...document.querySelectorAll('#sgqb .sqsel')];const on=a.some(x=>!x.checked);a.forEach(x=>x.checked=on)}
   async function sqBulkAcceptSel(){
@@ -391,7 +444,7 @@
     if(QQERR)h+='<div class="edsum" style="color:#a83c2f">לא ניתן לקרוא את התור: '+esc(QQERR)+'</div>';
     h+=sqFilterBar()+sqBulkBar();
     h+='<div class="sgbar"><button onclick="sqBulkPage()">אשר/דחה לפי דף</button><button onclick="sqBulkWho()">דחה את כל הצעות מציע</button>'+
-       '<button onclick="sqUndo()" title="Ctrl+Z">בטל פעולה אחרונה</button><small class="dr">חצים: מעבר · A אשר · D דחה · S דלג · E ערוך · R השב</small></div>';
+       '<button onclick="sqUndo()" title="Ctrl+Z">בטל פעולה אחרונה</button></div><div class="sgkeys dr">מקשים: <kbd>↑</kbd><kbd>↓</kbd> מעבר · אשר <kbd>A</kbd> · דחה <kbd>D</kbd> · דלג <kbd>S</kbd> · ערוך <kbd>E</kbd> · השב <kbd>R</kbd></div>';
     if(SQSKIP.size)h+='<div class="dr">'+SQSKIP.size+' הצעות נדחו לאחר כך <button onclick="SQSKIP.clear();drawSq()">הצג שוב</button></div>';
     if(lost.length){h+='<h3>התיישנו או לא אותרו</h3><div class="dr">הטקסט השתנה מאז ההצעה, או שהמקום לא נמצא. אינן נכנסות בעיוורון.</div>';
       lost.forEach(([g])=>{h+=sqRow(g,null)})}
@@ -413,7 +466,9 @@
     const st=STYPES[g.type]||STYPES.nusach;
     /* בהצעה על הנוסח: מחוק באדום ומוסף בירוק, בהקשר השורה, כמו עקוב אחר שינויים */
     let ctx='';
-    if(s&&g.type==='nusach'&&s.t.indexOf(g.was)>-1){
+    if(g.edit&&s){ctx=sqEditCtx(g,s)}
+    else if(g.edit){ctx='<q>'+esc((g.was||'').slice(0,120))+'</q><small>לא אותר בקובץ הנוכחי: הטקסט השתנה מאז ההצעה</small>'}
+    else if(s&&g.type==='nusach'&&s.t.indexOf(g.was)>-1){
       const i=s.t.indexOf(g.was);
       ctx='<div class="sqctx">'+esc(s.t.slice(Math.max(0,i-60),i))+'<del style="color:#a83c2f;background:#fbe5e1">'+esc(g.was)+'</del><ins style="color:#2e6b3f;background:#e3f3e6;text-decoration:none">'+esc(g.note)+'</ins>'+esc(s.t.slice(i+g.was.length,i+g.was.length+60))+'</div>';
     }else if(s){ctx='<div class="sqctx">'+esc(s.t).replace(esc(g.was),'<mark>'+esc(g.was)+'</mark>')+'</div>'}
@@ -421,14 +476,18 @@
     const known=g.pid?true:false;
     return '<div class="sgrow'+(g.tr?' trust':'')+(s?'':' edlost')+'" data-id="'+id+'" data-n="'+(n===undefined?-1:n)+'" style="border-right:4px solid '+st[2]+'">'+
       '<label class="sqck"><input type="checkbox" class="sqsel" data-id="'+id+'" aria-label="סמן הצעה"> </label><small>'+esc(g.daf||'')+(g.name?' · '+esc(g.name):' · בלי שם')+' · '+when+'</small> '+tyChip(g.type)+(g.tr?'<span class="stchip" style="background:#c9a24a">מהימן</span>':'')+
-      (g.mnew?'<span class="stchip" style="background:#a83c2f">הודעה חדשה</span>':'')+sqUpd(g)+ctx+
-      (g.type==='nusach'?'':'<b>'+esc(g.note)+'</b>')+thrHTML(g,true)+
-      (s?'<button onclick="sqDecide(\''+id+'\',\'accepted\')">אשר</button>'+
-         (g.type==='nusach'?'<button onclick="sqDecide(\''+id+'\',\'edited\')">ערוך ואשר</button>':'')+
-         '<button onclick="sqJump(\''+id+'\')">הצג</button>':'<button onclick="sqDecide(\''+id+'\',\'stale\')">סמן כהתיישנה</button>')+
-      '<button onclick="sqDecide(\''+id+'\',\'rejected\')">דחה</button>'+
-      '<button onclick="sqSkip(\''+id+'\')">דלג</button><button onclick="sqReply(\''+id+'\')">השב</button>'+
-      (known?'<button onclick="sqTrust(\''+esc(g.pid)+'\','+(g.tr?0:1)+')" title="הצעותיו יופיעו ראשונות בתור">'+(g.tr?'בטל מהימנות':'סמן כמהימן')+'</button>':'')+'</div>'}
+      (g.mnew?'<span class="stchip" style="background:#a83c2f">הודעה חדשה</span>':'')+(g.sk?'<span class="stchip" style="background:#6a4a8f">'+esc(SKL[g.sk]||'')+'</span>':'')+sqUpd(g)+ctx+
+      ((g.type==='nusach'&&!g.edit)?'':'<b>'+esc(g.note)+'</b>')+thrHTML(g,true)+
+      '<div class="sgact">'+(s?'<button class="ok" onclick="sqDecide(\''+id+'\',\'accepted\')">אשר <kbd>A</kbd></button>':
+        '<button onclick="sqDecide(\''+id+'\',\'stale\')">סמן כהתיישנה</button>')+
+      '<button class="no" onclick="sqDecide(\''+id+'\',\'rejected\')">דחה <kbd>D</kbd></button>'+
+      '<details class="sgmore"><summary>עוד</summary><div>'+
+      (s&&g.type==='nusach'&&!g.edit?'<button onclick="sqDecide(\''+id+'\',\'edited\')">ערוך ואשר <kbd>E</kbd></button>':'')+
+      (s&&g.edit&&g.pid?'<button onclick="sqSame(\''+id+'\')" title="כל ההצעות של המציע הזה מהסוג הזה, עם תצוגה מקדימה">אשר את כל מאותו סוג</button>':'')+
+      (s?'<button onclick="sqJump(\''+id+'\')">הצג בדף</button>':'')+
+      '<button onclick="sqSkip(\''+id+'\')">דלג <kbd>S</kbd></button><button onclick="sqReply(\''+id+'\')">השב <kbd>R</kbd></button>'+
+      (known?'<button onclick="sqTrust(\''+esc(g.pid)+'\','+(g.tr?0:1)+')" title="הצעותיו יופיעו ראשונות בתור">'+(g.tr?'בטל מהימנות':'סמן כמהימן')+'</button>':'')+
+      '</div></details></div></div>'}
   function sqSkip(id){SQSKIP.add(id);drawSq()}
   async function sqReply(id){const t=prompt('תשובה קצרה למציע (בלי להכריע):');if(!t||!t.trim())return;
     try{const j=await api('/reply',{method:'POST',body:JSON.stringify({id,text:t.trim()})});
@@ -441,6 +500,7 @@
     const g=QQ.find(x=>x.id===id);if(!g)return;
     let edit=null,now='',reason='';
     const accept=(st==='accepted'||st==='edited');
+    if(accept&&g.edit)return sqDecideEdit(id,st);
     if(accept&&g.type==='nusach'){
       const s=sqLocate(g,slotsFull());
       if(!s){sqAlert('ההצעה לא אותרה בקובץ הנוכחי ואי אפשר להחיל אותה.');return}
@@ -475,6 +535,11 @@
     const u=SQUNDO;if(!u){toast('אין מה לבטל.');return}
     SQUNDO=null;
     try{await api('/decide',{method:'POST',body:JSON.stringify({id:u.id,st:'pending'})})}catch(e){alert('הביטול לא נרשם: '+e.message);return}
+    if(u.struct){
+      /* ביטול שינוי מבנה: מחזירים את הנתונים למקורם בטעינה מחדש של הדף */
+      edKeys();tomb(u.struct.k);ED=ED.filter(x=>x!==u.struct);saveED();
+      try{await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:TOMB,sty:D.sty})})}catch(e){}
+      location.reload();return}
     if(u.k){
       const cur=ED.find(x=>x.sg===u.id);
       if(cur){edKeys();tomb(cur.k);ED=ED.filter(x=>x!==cur)}
@@ -512,7 +577,7 @@
     if(e.key==='ArrowDown'||e.key==='j'){e.preventDefault();SQCUR=Math.min(rows.length-1,SQCUR+1);sqCurPaint()}
     else if(e.key==='ArrowUp'||e.key==='k'){e.preventDefault();SQCUR=Math.max(0,SQCUR-1);sqCurPaint()}
     else if(!id)return;
-    else if(e.code==='KeyA'){e.preventDefault();sqDecide(id,'accepted')}
+    else if(e.code==='KeyA'||(e.key==='Enter'&&SQF.ty==='style')){e.preventDefault();sqDecide(id,'accepted')}
     else if(e.code==='KeyD'){e.preventDefault();sqDecide(id,'rejected')}
     else if(e.code==='KeyS'){e.preventDefault();sqSkip(id)}
     else if(e.code==='KeyE'){e.preventDefault();sqDecide(id,'edited')}
@@ -549,7 +614,7 @@
      לקובצי הוורד או לתיקיית השומר. הלומד קורא אותה בכל סבב למידה. */
   let NT=null;
   async function ntLoad(){if(!isAdmin()||!admKey())return;
-    try{const j=await api('/notes');NT=j.items||[]}catch(e){NT=null}ntBadge()}
+    try{const j=await api('/notes');NT=j.items||[]}catch(e){NT=null}ntBadge();if(typeof ntMark==='function')ntMark()}
   function ntBadge(){const b=$('#ntbtn');if(!b)return;
     b.style.display=isAdmin()?'':'none';
     const n=NT?NT.filter(x=>!x.learned).length:0;
@@ -582,15 +647,21 @@
     m.addEventListener('keydown',e=>{if(e.key==='Escape'){m.remove();e.stopPropagation()}else if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){$('#nts').click()}});
     $('#nts').onclick=async()=>{const v=t.value.trim();if(!v){flash('ההערה ריקה');return}
       try{const j=await api('/notes',{method:'POST',body:JSON.stringify({op:'add',slug:SLUG,masechet:D.masechet,daf:ctx.daf,k:ctx.k,sel:ctx.sel,was:ctx.was,now:ctx.now,note:v})});
-        if(NT)NT.unshift(j.item);else NT=[j.item];ntBadge();m.remove();flash('ההערה נשמרה');if($('#nt')&&$('#nt').classList.contains('open'))ntDraw()}
+        if(NT)NT.unshift(j.item);else NT=[j.item];ntBadge();if(typeof ntMark==='function')ntMark();m.remove();flash('ההערה נשמרה');if($('#nt')&&$('#nt').classList.contains('open'))ntDraw()}
       catch(e){alert(e.message)}}}
+  let NTARCH=false;
   function ntOpen(){panel('nt');ntLoad().then(ntDraw)}
   function ntDraw(){const box=$('#ntb');if(!box)return;
     if(!NT){box.innerHTML='<div class="edsum">אי אפשר לטעון את ההערות (בדוק שיש מפתח מנהל במכשיר).</div>';return}
     let h='<div class="dr">ההערות פרטיות: גלויות רק לך ולקלוד, ואינן נכנסות לאתר, לריפו או לקובצי הוורד.</div>';
     if(!NT.length)h+='<div class="edsum">עדיין אין הערות. בעורך: Ctrl+Alt+H, או הכפתור "הערה לקלוד" בחלונית הסגנונות.</div>';
-    NT.forEach(x=>{h+='<div class="sgrow"><small>'+esc(HD.dateTime(x.t))+' · '+esc(x.masechet||x.slug||'')+(x.daf?' · דף '+esc(x.daf):'')+'</small>'+
-      (x.learned?' <span class="stchip" style="background:#2e6b3f">נלמד</span>':'')+
+    /* מצב: חדשה (קלוד טרם למד) / נלמדה. נלמדה יורדת מהתצוגה ונשמרת בארכיון הלמידה */
+    const arch=NT.filter(x=>x.learned).length,show=NT.filter(x=>NTARCH?x.learned:!x.learned);
+    h+='<div class="sgbar"><button class="'+(NTARCH?'':'on')+'" onclick="NTARCH=false;ntDraw()">חדשות ('+NT.filter(x=>!x.learned).length+')</button>'+
+       '<button class="'+(NTARCH?'on':'')+'" onclick="NTARCH=true;ntDraw()">ארכיון הלמידה ('+arch+')</button></div>';
+    if(!show.length)h+='<div class="edsum">'+(NTARCH?'הארכיון ריק.':'אין הערות חדשות. קלוד למד את כולן.')+'</div>';
+    show.forEach(x=>{h+='<div class="sgrow"><small>'+esc(HD.dateTime(x.t))+' · '+esc(x.masechet||x.slug||'')+(x.daf?' · דף '+esc(x.daf):'')+'</small>'+
+      (x.learned?' <span class="stchip" style="background:#2e6b3f">נלמדה</span>':' <span class="stchip" style="background:#b0721a">חדשה</span>')+
       (x.sel?'<div class="sqctx">'+esc(x.sel.slice(0,120))+'</div>':'')+
       '<div>'+esc(x.note)+'</div>'+
       '<button data-id="'+esc(x.id)+'" onclick="ntEdit(this.dataset.id)">עריכה</button> <button data-id="'+esc(x.id)+'" onclick="ntDel(this.dataset.id)">מחיקה</button> <button data-id="'+esc(x.id)+'" onclick="ntLearned(this.dataset.id,'+(x.learned?0:1)+')">'+(x.learned?'סמן כלא נלמד':'סמן כנלמד')+'</button></div>'});
@@ -601,7 +672,7 @@
   async function ntDel(id){if(!confirm('למחוק את ההערה?'))return;
     try{await api('/notes',{method:'POST',body:JSON.stringify({op:'del',id})});NT=NT.filter(y=>y.id!==id);ntDraw();ntBadge()}catch(e){alert(e.message)}}
   async function ntLearned(id,on){try{await api('/notes',{method:'POST',body:JSON.stringify({op:'learned',id,on:!!on})});
-    const x=NT.find(y=>y.id===id);if(x)x.learned=on?Date.now():0;ntDraw();ntBadge()}catch(e){alert(e.message)}}
+    const x=NT.find(y=>y.id===id);if(x)x.learned=on?Date.now():0;ntDraw();ntBadge();if(typeof ntMark==='function')ntMark()}catch(e){alert(e.message)}}
   document.addEventListener('keydown',e=>{
     if(!EDIT||!isAdmin())return;
     if(e.ctrlKey&&e.altKey&&!e.shiftKey&&!e.metaKey&&e.code==='KeyH'){e.preventDefault();ntAdd()}});

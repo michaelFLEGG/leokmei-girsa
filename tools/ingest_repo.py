@@ -98,6 +98,12 @@ def ops_of(doc):
             elif kind == 'hmerge':
                 mops.append({'kind': 'pmerge', 'texts': e.get('texts') or [],
                              'res': e.get('resT') or []})
+            elif kind in ('hdel', 'hrep'):
+                # עיטור (***): מחיקה, או החלפה בכותרת (נושא / ד"ה משנה) שנכתב בה טקסט.
+                # texts=[הפסקה שלפני, הפסקה שאחרי]; res=נוסח הכותרת החדשה; style=שם הסגנון בוורד
+                mops.append({'kind': 'pdel' if kind == 'hdel' else 'prep',
+                             'texts': e.get('texts') or [], 'res': e.get('resT') or [],
+                             'style': e.get('psw') or '', 'daf': e.get('daf', '')})
             elif kind in ('side', 'unside'):
                 # כותרת צד (Ctrl+נקודה): res[0]=[סגנון, גוף], res[1]=[חלון],
                 # res[2]=[היסט החיתוך, אורכו] בתוך הנוסח שהיה.
@@ -145,10 +151,104 @@ def ops_of(doc):
     return ops, sops, mops, skipped
 
 
+def replay_plan(masechet, doc, docx_path):
+    """מריץ את אותה הרצה שהאתר מריץ בכל בנייה (build_site._apply_site_edits) על קובץ
+    הוורד כפי שהוא עכשיו, ומחזיר את התוכנית האפקטיבית: לכל תיקון - מה הוחל בפועל,
+    ובאיזה נוסח פסקה (ולא נוסח המקור שרשם הדפדפן, שאינו תקף אחרי פיצולים וחיתוכים).
+    בלי זה כל שרשרת פיצולים הפילה את אימות האצווה כולה, ושום תיקון לא הגיע לוורד."""
+    import tempfile
+    import build_site as B
+    import build_all
+    from docx2json import convert
+    slug = build_all.SLUG[masechet]
+    T = tempfile.mkdtemp(prefix='lg-replay-')
+    io.open(os.path.join(T, slug + '.json'), 'w', encoding='utf-8').write(
+        json.dumps(doc, ensure_ascii=False))
+    blocks = convert(docx_path)
+    bj = os.path.join(T, slug + '_blocks.json')
+    json.dump(blocks, io.open(bj, 'w', encoding='utf-8'), ensure_ascii=False)
+    sp = os.path.join(HERE, 'data', 'sources', slug + '.json')
+    sources = json.load(io.open(sp, encoding='utf-8')) if os.path.exists(sp) else None
+    # הבנייה כותבת לכמה תיקיות נתונים במאגר (sections, mbox, dhmiss, nikud-nakdan).  
+    # הן נגזרות ואינן חלק מהקליטה: אם נקיות לפני, מחזירים אותן אחרי, כדי שלא יישאר עץ מלוכלך
+    # שיכשיל את ה-pull של הקולט המתוזמן.
+    derived = ['data/sections', 'data/mbox', 'data/dhmiss', 'data/nikud-nakdan']
+    _c, dirty_before, _e = git(HERE, 'status', '--porcelain', '--', *derived)
+    was_clean = not dirty_before.strip()
+    old = B.EDITS_DIR
+    B.EDITS_DIR = T
+    try:
+        B.build(bj, os.path.join(T, slug + '.html'), masechet, hagaha=False,
+                sources=sources, spacing={})
+        plan = list(B.PLAN)
+    finally:
+        B.EDITS_DIR = old
+        shutil.rmtree(T, ignore_errors=True)
+        if was_clean:
+            git(HERE, 'checkout', '--', *derived)
+    return plan
+
+
+def _apply_one(path, e, doc, masechet, bk, log, dry):
+    """תיקון אחד לוורד, באותו סדר שבו הוא נעשה. כישלון בו אינו עוצר את האחרים."""
+    ops, sops, mops, skipped = ops_of({'sty': doc.get('sty'), 'edits': [e]})
+    res = {'applied': 0, 'missed': [(o, why) for o, why in [(x[0], x[1]) for x in skipped]]}
+    for batch, fn in ((ops, apply), (sops, apply), (mops, apply_struct)):
+        if not batch:
+            continue
+        r = fn(path, batch, 'עריכה מהאתר', masechet, log=log, dry=dry)
+        res['applied'] += r.get('applied') or 0
+        res['missed'] += r.get('missed') or []
+        if r.get('verified') is False:
+            res['failed'] = True
+    return res
+
+
+def ingest_replay(masechet, doc, path, dry, log=print):
+    """קליטה לפי ההרצה: תיקון אחר תיקון, לפי הסדר. גיבוי אחד לפני הכתיבה הראשונה."""
+    plan = replay_plan(masechet, doc, path)
+    log('   תוכנית: %d תיקונים שהאתר מחיל בפועל' % len(plan))
+    state = {'bk': None}
+    real_backup = word_apply.backup
+
+    def one_backup(p, m):
+        if state['bk'] is None:
+            state['bk'] = real_backup(p, m)
+        return state['bk']
+
+    word_apply.backup = one_backup
+    ok = bad = 0
+    try:
+        for item in plan:
+            if item[0] == 'struct':
+                e = item[1]
+            else:
+                e = dict(item[1], was=item[2]['was'], wasH=item[2]['wasH'])
+            try:
+                r = _apply_one(path, e, doc, masechet, None, lambda *a: None, dry)
+            except Refused as x:
+                log('   נעצר: %s' % x)
+                break
+            if r.get('failed') or (r['applied'] == 0 and r['missed']):
+                bad += 1
+                for o, why in r['missed'][:2]:
+                    log('    לא הוחל (הוורד גובר): %s | %s' % (
+                        why, (o.get('find') or o.get('style') or o.get('kind') or '')[:40]))
+            else:
+                ok += r['applied'] and 1 or 0
+    finally:
+        word_apply.backup = real_backup
+    log('   הוחלו %d תיקונים, %d לא' % (ok, bad))
+    return ok, bad
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--repo', default=HERE)
     ap.add_argument('--dry', action='store_true')
+    ap.add_argument('--only', default=None, help='שם מסכת בלבד')
+    ap.add_argument('--legacy', action='store_true', help='הקליטה הישנה, אצווה אחת')
+    ap.add_argument('--docx', default=None, help='קובץ וורד לבדיקה (במקום זה שבדרייב)')
     ap.add_argument('--install-task', action='store_true')
     a = ap.parse_args()
     if a.install_task:
@@ -160,6 +260,8 @@ def main():
         return
     for fname, doc in docs:
         masechet = doc.get('masechet') or ''
+        if a.only and masechet != a.only:
+            continue
         ops, sops, mops, skipped = ops_of(doc)
         print('--- %s: %d תיקוני נוסח, %d שינויי סגנון, %d שינויי מבנה'
               % (masechet, len(ops), len(sops), len(mops)))
@@ -168,12 +270,15 @@ def main():
         if not ops and not sops and not mops:
             continue
         try:
-            path = docx_for(masechet)
+            path = a.docx or docx_for(masechet)
         except Refused as e:
             print('   ', e)
             continue
         if word_apply.is_open_in_word(path):
             print('   הקובץ פתוח בוורד. מדלג, והתיקונים ימשיכו להיות מוצגים באתר.')
+            continue
+        if not a.legacy:
+            ingest_replay(masechet, doc, path, a.dry)
             continue
         # שני מעברים: הנוסח תחילה, ואחריו הסגנון - שכן הסגנון עשוי לחול
         # על מילה שנוספה במעבר הראשון.

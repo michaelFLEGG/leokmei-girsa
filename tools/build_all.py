@@ -1,5 +1,5 @@
 """build_all.py - ממיר כל קובץ וורד ב-input/docx לעמוד מסכת, בונה שער ומעתיק גופנים ל-site/"""
-import os, sys, json, shutil, re, html, datetime, argparse
+import os, sys, json, shutil, re, html, datetime, argparse, io
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from docx2json import convert
 from build_site import build
@@ -296,13 +296,15 @@ def main():
             else:
                 cells += f'<span class="m"><b>{m}</b><small>בעריכה</small></span>'
         rows += f'<section><h2>סדר {seder}</h2><div class="grid">{cells}</div></section>'
+    GOLD = ''
     idx = f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>לאוקמי גירסא · קיצור התלמוד הבבלי</title>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="ui.css">
 <style>@font-face{{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900}}@font-face{{font-family:'Frank';src:url(fonts/frank.ttf)}}@font-face{{font-family:'Leukmey';src:url(fonts/leukmey.otf)}}
-body{{margin:0;background:#e9e4d8;color:#1d1a16;font-family:'Frank','Frank Ruhl Libre',serif}}
-header{{background:#2b2620;color:#f1ead9;padding:34px 20px 26px;text-align:center}} header h1{{font-family:'Leukmey','Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#cfc4ad;font-size:18px}}
-#dy{{display:inline-block;margin-top:14px;background:#c9a24a;color:#2b2620;border:0;border-radius:6px;padding:9px 22px;font:700 18px 'Frank','Frank Ruhl Libre',serif;cursor:pointer}} #dy:hover{{background:#b8912f}}
+body{{margin:0;background:#f7f3ea;color:#1f1c18;font-family:'Assistant','Noto Sans Hebrew','Frank','Frank Ruhl Libre',sans-serif}}
+header{{background:#fffdf8;border-bottom:1px solid #e3dacb;color:#1f1c18;padding:34px 20px 26px;text-align:center}} header h1{{font-family:'Leukmey','Vilna','Frank Ruhl Libre',serif;font-weight:900;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#cfc4ad;font-size:18px}}
+#dy{{display:inline-block;margin-top:14px;padding:9px 22px;font-size:18px}}
 .m.now{{border-color:#a83c2f;box-shadow:0 0 0 2px #c9a24a}} .now-tag{{display:block;color:#a83c2f;font-size:12px;font-weight:700;margin-bottom:2px}}
 #nowrow{{margin:18px 0 0}} #nowrow .grid{{grid-template-columns:minmax(180px,260px)}}
 main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500;font-size:20px;color:#5a5044;border-bottom:1px solid #c9bfa8;margin:26px 0 10px;padding-bottom:4px}}
@@ -313,8 +315,9 @@ main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500
 .m.warn{{border-color:#a83c2f;box-shadow:inset 3px 0 0 #a83c2f}} .m.warn small{{color:#a83c2f}}
 .hg{{position:absolute;bottom:7px;right:14px;font-size:12px;background:#c9a24a;color:#2b2620;border-radius:4px;padding:1px 9px;text-decoration:none;font-weight:700}}
 .hg:hover{{background:#b8912f}}
-footer{{text-align:center;color:#8a7d66;font-size:13px;padding:20px}}</style></head><body>
-<header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p><button id="dy" type="button" style="display:none">הדף היומי</button></header>
+footer{{text-align:center;color:#8a7d66;font-size:13px;padding:20px}}
+{GOLD}</style></head><body>
+<header><h1>לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי · שלד הסוגיה בלבד</p><button id="dy" class="btn primary" type="button" style="display:none">הדף היומי</button></header>
 <main>{rows}</main><script src="hdate.js"></script><script src="daf-yomi.js"></script><script>
 (function(){{var BUILT={json.dumps([SLUG[m] for m in built])};var b=document.getElementById('dy');if(!window.LGDaf)return;var t=LGDaf.today();if(!t)return;
 b.style.display='';
@@ -333,6 +336,8 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     shutil.copy(os.path.join(ROOT, 'tools', 'hdate.js'), os.path.join(SITE, 'hdate.js'))
     import build_lamed
     build_lamed.build(SITE)
+    import quiz_build
+    quiz_build.run(SITE)
     # עמוד "מקורות": הייחוס הנדרש ברישיון, פעם אחת, בשורה שקטה. השם המקורי
     # של הפירוש מופיע רק כאן; בממשק עצמו הוא "פירוש הגמרא".
     open(os.path.join(SITE, 'mekorot.html'), 'w', encoding='utf-8').write(
@@ -347,6 +352,8 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
         '<p><a href="index.html">חזרה לשער</a></p></main></body></html>')
     json.dump({'built': built, 'time': now}, open(os.path.join(SITE, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     write_shas(built)
+    import build_seo
+    build_seo.run(SITE, built, SLUG)
     print(len(built), 'מסכתות נבנו')
 
 def write_shas(built):

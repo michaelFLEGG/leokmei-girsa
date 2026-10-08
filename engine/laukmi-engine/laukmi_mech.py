@@ -8,6 +8,11 @@
 import re, sys, json, shutil, zipfile, datetime
 from lxml import etree
 
+# הכרעת 6.10.2026: בתוך משנה לעולם לא מוחל "אמוראים". הרשימה זהה ל-MISHNA_STYLES שב-laukmi_rules.py
+# (כאן עותק, כדי לא ליצור תלות מעגלית בין המודולים).
+MISHNA_STYLES = {"משניות", "חלק משנה מודגש", "חלק משנה מודגשת", "תחילת משניות", "תנאי משנה",
+                 "0.1 משנה", "0.2 משנה", "0.3 משנה", "0.4 משנה"}
+
 W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 NS = {"w": W}
 def q(t): return f"{{{W}}}{t}"
@@ -210,6 +215,8 @@ def style_names(doc, names, allowed_styles, style_name, log):
     pats = [re.compile(name_re(n)) for n in ordered]
     for p in list(doc.paragraphs()):
         if doc.pstyle(p) not in allowed_styles: continue
+        # הכרעת 6.10.2026: "אמוראים" אינו מוחל בתוך משנה, גם אם הסגנון נכלל ברשימת המותרים
+        if doc.pstyle(p) in MISHNA_STYLES: continue
         txt, _ = text_map(p)
         hits = []
         for rx in pats:

@@ -220,26 +220,39 @@
     measureCls('.main.dh', 'dh');
     measureCls('.main.mishna', 'mishna');
     var TOL = 1.02;
-    if (heads.nose && heads.nose.ink > heads.body.ink * (10 / 9) * TOL)
+    /* היחסים הקבועים (הכרעת 6.10.2026): משנה = גוף ביחס 11/9 (הועלתה בשתי נקודות),
+       ד"ה משנה = משנה, ונושא אינו גדול מד"ה משנה. */
+    if (heads.nose && heads.dh && heads.nose.ink > heads.dh.ink * TOL)
       F.push({ code: 8, unit: '', daf: '', kind: 'nose',
                msg: 'גובה האותיות של נושא ' + heads.nose.ink.toFixed(1) +
-                    ' מול גוף ' + heads.body.ink.toFixed(1) + ', והמותר ' +
-                    (heads.body.ink * 10 / 9).toFixed(1),
-               num: { ink: heads.nose.ink, max: heads.body.ink * 10 / 9 }, rect: null });
-    if (heads.dh && heads.mishna && heads.dh.ink > heads.mishna.ink * (8 / 9) * TOL)
+                    ' מול ד"ה משנה ' + heads.dh.ink.toFixed(1) + ' (נושא אינו גדול מד"ה משנה)',
+               num: { ink: heads.nose.ink, max: heads.dh.ink }, rect: null });
+    if (heads.dh && heads.mishna && Math.abs(heads.dh.ink - heads.mishna.ink) > heads.mishna.ink * 0.03)
       F.push({ code: 8, unit: '', daf: '', kind: 'dh',
                msg: 'גובה האותיות של ד"ה משנה ' + heads.dh.ink.toFixed(1) +
-                    ' מול משנה ' + heads.mishna.ink.toFixed(1) + ', והמותר ' +
-                    (heads.mishna.ink * 8 / 9).toFixed(1),
-               num: { ink: heads.dh.ink, max: heads.mishna.ink * 8 / 9 }, rect: null });
-    if (heads.mishna && heads.mishna.ink > heads.body.ink * TOL * 1.02)
+                    ' מול משנה ' + heads.mishna.ink.toFixed(1) + ' (ד"ה משנה זהה למשנה)',
+               num: { ink: heads.dh.ink, max: heads.mishna.ink }, rect: null });
+    if (heads.mishna && Math.abs(heads.mishna.ink - heads.body.ink * 11 / 9) > heads.body.ink * 11 / 9 * 0.03)
       F.push({ code: 8, unit: '', daf: '', kind: 'mishna',
                msg: 'גובה האותיות של משנה ' + heads.mishna.ink.toFixed(1) +
-                    ' מול גוף ' + heads.body.ink.toFixed(1) + ' (המשנה אמורה להיות כגוף)',
-               num: { ink: heads.mishna.ink, max: heads.body.ink }, rect: null });
+                    ' מול גוף ' + heads.body.ink.toFixed(1) + ' (המשנה אמורה להיות גדולה בשתי נקודות: ' +
+                    (heads.body.ink * 11 / 9).toFixed(1) + ')',
+               num: { ink: heads.mishna.ink, max: heads.body.ink * 11 / 9 }, rect: null });
+    var tnEl = flow.querySelector('.main.mishna .am');
+    if (tnEl && heads.mishna) {
+      var tm = metrics(tnEl), want = heads.mishna.ink * 9 / 11;
+      if (Math.abs(tm.ink - want) > want * 0.04)
+        F.push({ code: 8, unit: '', daf: '', kind: 'mishna',
+                 msg: 'תנאי המשנה ' + tm.ink.toFixed(1) + ' מול משנה ' + heads.mishna.ink.toFixed(1) +
+                      ' (אמור להיות קטן בשתי נקודות: ' + want.toFixed(1) + ')',
+                 num: { ink: tm.ink, max: want }, rect: null });
+    }
     /* line-height שאינו של רשת הגוף - שורש השורות הלבנות המדומות */
     ['nose', 'dh', 'mishna'].forEach(function (n) {
-      if (heads[n] && heads[n].lh && Math.abs(heads[n].lh - LH) > 0.6)
+      /* משנה וד"ה משנה בזרימה על המסך מקבלות שורה גבוהה מרשת הגוף, בכוונה (ניקוד גדול
+         מתיבת השורה); רק שורה נמוכה מרשת הגוף, או גבוהה מ-1.3 ממנה, היא ממצא */
+      var tallOk = (n === 'mishna' || n === 'dh') && heads[n].lh >= LH - 0.6 && heads[n].lh <= LH * 1.3;
+      if (heads[n] && heads[n].lh && !tallOk && Math.abs(heads[n].lh - LH) > 0.6)
         F.push({ code: 8, unit: '', daf: '', kind: n,
                  msg: 'מרווח השורה של ' + n + ' הוא ' + heads[n].lh.toFixed(2) +
                       ' ואינו רשת הגוף ' + LH.toFixed(2),

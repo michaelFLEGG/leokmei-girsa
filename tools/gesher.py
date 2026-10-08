@@ -25,9 +25,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = 8760
 REPO = 'michaelFLEGG/leokmei-girsa'
-ORIGINS = ('https://michaelflegg.github.io',)
+ORIGINS = ('https://leokmei.com', 'https://www.leokmei.com', 'https://michaelflegg.github.io')
 SLUG_OK = re.compile(r'^[a-z][a-z0-9-]{1,40}$')
-SITE = 'https://michaelflegg.github.io/leokmei-girsa'
+SITE = 'https://leokmei.com'
 CACHE, CACHE_TTL = {}, 60
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TASK = 'לאוקמי גירסא - גשר הפרסום'

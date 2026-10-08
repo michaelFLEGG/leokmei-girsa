@@ -19,7 +19,7 @@ import os, sys, io, json, time, subprocess, urllib.request, webbrowser
 PORT = 8760
 HOME = os.path.join(os.path.expanduser('~'), 'leokmei-gesher')
 TASK = 'לאוקמי גירסא - גשר הפרסום'
-PUBLIC = 'https://michaelflegg.github.io/leokmei-girsa/'
+PUBLIC = 'https://leokmei.com/'
 LOCAL = 'http://127.0.0.1:%d/index.html' % PORT
 LOG = os.path.join(HOME, 'open_edit.log')
 NOWIN = 0x08000000  # CREATE_NO_WINDOW

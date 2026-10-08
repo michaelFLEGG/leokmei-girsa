@@ -46,7 +46,9 @@ function burstHit(ip) {
   if (burst.size > 500) for (const [k, v] of burst) if (!v.length || now - v[v.length - 1] > BURST_MS) burst.delete(k);
   return a.length > BURST_N;
 }
-const TYPES = ['nusach', 'style', 'question', 'note', 'source'];
+const TYPES = ['nusach', 'style', 'struct', 'question', 'note', 'source'];
+/* סוגי-משנה של הצעה מן העורך (מנה 2, 7.10.2026): נרשמת בהצעה כפעולה מדויקת */
+const SKINDS = ['text', 'create', 'remove', 'replace', 'para', 'struct', 'mixed'];
 const LINK = /(https?:\/\/|www\.|\.(com|net|org|il|co|info|ru|xyz|top|io)\b)/i;
 
 const CORS = {
@@ -192,15 +194,59 @@ async function proposerOk(env, pid, pt) {
   const v = await env.STORE.get('pr:' + pid, 'json');
   return !!(v && sameKey(v.h, await sha256hex(String(pt))));
 }
+/* זהויות שאוחדו (7.10.2026): מציע שעבר כתובת או מכשיר ונוצרה לו זהות חדשה.
+   ברשומה pr:<החדש> השדה also מחזיק את הזהויות הישנות שלו. הצעות הזהויות
+   הישנות נראות לו, ואף אחת לא נמחקת ולא נדרסת. */
+async function pidSet(env, pid) {
+  const v = await env.STORE.get('pr:' + pid, 'json');
+  return new Set([pid].concat((v && Array.isArray(v.also)) ? v.also : []));
+}
+async function mergePid(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const from = str(b.from, 20), to = str(b.to, 20);
+  const dst = await env.STORE.get('pr:' + to, 'json');
+  if (!dst || !(await env.STORE.get('pr:' + from))) return bad('אחת הזהויות לא נמצאה', 404);
+  dst.also = Array.from(new Set((dst.also || []).concat([from])));
+  await env.STORE.put('pr:' + to, JSON.stringify(dst));
+  return json({ ok: true, also: dst.also });
+}
 /* המטא-נתונים של המפתח נושאים תקציר של ההצעה: כך אפשר לרשום, לסנן ולמיין
    אלפי הצעות בקריאת רשימה אחת, בלי לקרוא כל הצעה בנפרד (בתוכנית החינמית
    מספר הקריאות לבקשה מוגבל). הגבול של KV הוא 1024 בתים. */
+/* מיקום בתוך הדף: מספר הפסקה ואחריו המילה (מפתח הקטע u<פסקה>.<מילה>) */
+function posOf(k) {
+  const m = /^u(\d+)(?:\.(\d+))?/.exec(k || '');
+  return m ? (+m[1]) * 1000 + (+m[2] || 0) : 0;
+}
+/* סדר הש"ס ושמות המסכתות, למיון לפי מסכת */
+const SHAS = [['berakhot','ברכות'],['shabbat','שבת'],['eruvin','עירובין'],['pesachim','פסחים'],['shekalim','שקלים'],['yoma','יומא'],['sukkah','סוכה'],['beitzah','ביצה'],['rosh-hashanah','ראש השנה'],['taanit','תענית'],['megillah','מגילה'],['moed-katan','מועד קטן'],['chagigah','חגיגה'],['yevamot','יבמות'],['ketubot','כתובות'],['nedarim','נדרים'],['nazir','נזיר'],['sotah','סוטה'],['gittin','גיטין'],['kiddushin','קידושין'],['bava-kamma','בבא קמא'],['bava-metzia','בבא מציעא'],['bava-batra','בבא בתרא'],['sanhedrin','סנהדרין'],['makkot','מכות'],['shevuot','שבועות'],['avodah-zarah','עבודה זרה'],['horayot','הוריות'],['zevachim','זבחים'],['menachot','מנחות'],['chullin','חולין'],['bekhorot','בכורות'],['arakhin','ערכין'],['temurah','תמורה'],['keritot','כריתות'],['meilah','מעילה'],['tamid','תמיד'],['niddah','נדה']];
+const SHAS_I = {}, HE_I = {};
+SHAS.forEach((x, i) => { SHAS_I[x[0]] = i; });
+SHAS.map((x) => x[1]).sort((a, b) => a.localeCompare(b, 'he')).forEach((n, i) => { HE_I[n] = i; });
+const HE_OF = {}; SHAS.forEach((x) => { HE_OF[x[0]] = x[1]; });
+/* ערך מספרי אמיתי של ציון דף (ב, ג ... י, יא ... ק, קא), ועמוד ב אחרי עמוד א */
+function dafNum(d) {
+  const V = { 'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'כ': 20, 'ל': 30, 'מ': 40, 'נ': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'צ': 90, 'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400 };
+  const t = String(d || '').trim(); let n = 0;
+  for (const c of t.replace(/[.:"'׳״]/g, '')) n += V[c] || 0;
+  return n ? n * 2 + (t.endsWith(':') ? 1 : 0) : 0;
+}
+function locCmp(ord) {
+  return (a, b) => {
+    const ia = ord === 'shas' ? (SHAS_I[a.slug] ?? 99) : (HE_I[HE_OF[a.slug]] ?? 99);
+    const ib = ord === 'shas' ? (SHAS_I[b.slug] ?? 99) : (HE_I[HE_OF[b.slug]] ?? 99);
+    return (ia - ib) || ((dafNum(a.d) || 99999) - (dafNum(b.d) || 99999)) || ((a.po || 0) - (b.po || 0)) || (a.t - b.t);
+  };
+}
 function sgMeta(rec) {
   const m = {
     st: rec.st, slug: rec.slug, pid: rec.pid || '', tr: rec.tr ? 1 : 0,
     d: rec.daf || '', ty: rec.type || 'nusach', up: rec.up ? 1 : 0, un: rec.seen === 0 ? 1 : 0,
     v: (rec.ver = (rec.ver || 0) + 1), nm: (rec.name || '').slice(0, 24),
     n: (rec.note || '').slice(0, 90), w: (rec.was || '').slice(0, 50), mn: rec.mnew ? 1 : 0,
+    sk: rec.sk || '', po: posOf(rec.k),
   };
   const size = () => new TextEncoder().encode(JSON.stringify(m)).length;
   while (size() > 950 && m.n.length > 10) { m.n = m.n.slice(0, Math.floor(m.n.length * 0.8)); m.w = m.w.slice(0, Math.floor(m.w.length * 0.8)); }
@@ -221,12 +267,12 @@ async function mine(req, env, url) {
   /* מכשיר שמעולם לא שלח הצעה אינו רשום: אין לו הצעות, וזו אינה שגיאה (בלי 401 בקונסול) */
   if (/^[a-z0-9]{8,20}$/.test(pid) && !(await env.STORE.get('pr:' + pid))) return json({ ok: true, rows: [], unseen: 0 });
   if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
-  const rows = [];
+  const rows = [], mine = await pidSet(env, pid);
   for (const k of await listAll(env, 'sg:')) {
     const m = k.metadata;
-    if (!m || m.pid !== pid) continue;
+    if (!m || !mine.has(m.pid) || m.st === 'deleted') continue;
     rows.push({ id: k.name.slice(3), t: keyT(k.name), st: m.st, slug: m.slug, daf: m.d || '', type: m.ty || '',
-                up: m.up || 0, un: m.un || 0, v: m.v || 0, n: m.n || '', w: m.w || '', mn: m.mn || 0 });
+                up: m.up || 0, un: m.un || 0, v: m.v || 0, n: m.n || '', w: m.w || '', mn: m.mn || 0, sk: m.sk || '' });
   }
   rows.sort((a, b) => b.t - a.t);
   return json({ ok: true, rows, unseen: rows.filter((x) => x.un).length });
@@ -236,10 +282,10 @@ async function mineBatch(req, env) {
   try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
   const pid = str(b.pid, 20), pt = req.headers.get('x-proposer') || '';
   if (!(await proposerOk(env, pid, pt))) return bad('אין הרשאה', 401);
-  const out = [];
+  const out = [], mine = await pidSet(env, pid);
   for (const id of (Array.isArray(b.ids) ? b.ids : []).slice(0, 40)) {
     const rec = await env.STORE.get('sg:' + str(id, 80), 'json');
-    if (rec && rec.pid === pid) out.push(rec);
+    if (rec && mine.has(rec.pid)) out.push(rec);
   }
   return json({ ok: true, items: out });
 }
@@ -259,7 +305,16 @@ async function mineAct(req, env, what) {
     return json({ ok: true });
   }
   const rec = await env.STORE.get('sg:' + str(b.id, 80), 'json');
-  if (!rec || rec.pid !== pid) return bad('ההצעה לא נמצאה', 404);
+  if (!rec || !(await pidSet(env, pid)).has(rec.pid)) return bad('ההצעה לא נמצאה', 404);
+  /* מחיקה רכה: ההצעה נשמרת (ארכיון "נמחקו על ידי המציע" אצל המנהל), נעלמת מן
+     התצוגות, וניתן לבטל. מחיקה חוזרת של הצעה שכבר נמחקה היא הצלחה, לא שגיאה. */
+  if (what === 'undelete') {
+    if (rec.st !== 'deleted') return json({ ok: true, rec });
+    rec.st = 'pending'; delete rec.deletedAt;
+    await putSg(env, rec);
+    return json({ ok: true, rec });
+  }
+  if (what === 'delete' && rec.st === 'deleted') return json({ ok: true });
   if (what === 'reply') {
     const text = str(b.text, 600).trim();
     if (!text || LINK.test(text)) return bad('תשובה ריקה, או שיש בה קישור');
@@ -269,7 +324,7 @@ async function mineAct(req, env, what) {
     return json({ ok: true, rec });
   }
   if (rec.st !== 'pending') return bad('אחרי שההצעה טופלה אי אפשר לשנות אותה. שלח הצעה חדשה');
-  if (what === 'delete') { await env.STORE.delete('sg:' + rec.id); return json({ ok: true }); }
+  if (what === 'delete') { rec.st = 'deleted'; rec.deletedAt = Date.now(); await putSg(env, rec); return json({ ok: true }); }
   if (what === 'edit') {
     const note = str(b.note).trim();
     if (!note) return bad('אין הצעה');
@@ -405,6 +460,59 @@ async function notes(req, env, method) {
 }
 
 /* יומן התיקונים (פרטי, למנהל בלבד): חומר הלמידה. נכתב מן הדף, ונקרא בידי הלומד. */
+
+/* שיעורי יוטיוב (מנה 4, 7.10.2026): קריאה פתוחה לכולם, כתיבה למנהל בלבד.
+   כל שיעור משויך למסכת ולדף או לטווח דפים. הכותרת והתמונה נשלפות מ-oEmbed. */
+function ytId(u) {
+  const m = String(u || '').match(/(?:youtu\.be\/|v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/) || String(u || '').match(/^([A-Za-z0-9_-]{11})$/);
+  return m ? m[1] : '';
+}
+async function lessons(req, env, method) {
+  if (method === 'GET') {
+    const out = [];
+    for (const k of await listAll(env, 'ls:')) {
+      const v = await env.STORE.get(k.name, 'json');
+      if (v) out.push(v);
+    }
+    out.sort((a, b) => (a.slug + a.from).localeCompare(b.slug + b.from) || a.t - b.t);
+    return json({ ok: true, items: out });
+  }
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const op = str(b.op, 10);
+  if (op === 'add') {
+    const vid = ytId(b.url);
+    if (!vid) return bad('הקישור אינו קישור יוטיוב תקין');
+    const slug = str(b.slug, 30).trim();
+    const from = str(b.from, 12).trim();
+    if (!slug || !from) return bad('חסרה מסכת או דף');
+    const to = str(b.to, 12).trim() || from;
+    let title = str(b.title, 200).trim(), author = '', thumb = 'https://i.ytimg.com/vi/' + vid + '/hqdefault.jpg';
+    try {
+      const r = await fetch('https://www.youtube.com/oembed?format=json&url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + vid));
+      if (r.ok) {
+        const j = await r.json();
+        if (!title) title = str(j.title, 200);
+        author = str(j.author_name, 80);
+        if (j.thumbnail_url) thumb = str(j.thumbnail_url, 300);
+      }
+    } catch (e) { /* בלי כותרת אוטומטית - ממשיכים עם מה שיש */ }
+    if (!title) title = 'שיעור על ' + slug + ' ' + from;
+    const id = rid();
+    const rec = { id, t: Date.now(), vid, title, author, thumb, slug, from, to, mas: str(b.mas, 40) };
+    await env.STORE.put('ls:' + id, JSON.stringify(rec));
+    return json({ ok: true, id, item: rec });
+  }
+  const id = str(b.id, 40);
+  if (op === 'del') {
+    if (!id) return bad('חסר מזהה');
+    await env.STORE.delete('ls:' + id);
+    return json({ ok: true });
+  }
+  return bad('פעולה לא מוכרת');
+}
+
 async function journal(req, env, method) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   if (method === 'GET') {
@@ -481,11 +589,30 @@ async function suggest(req, env) {
   }
   const rec = {
     id, slug, masechet: str(b.masechet, 40), daf: str(b.daf, 12), uid: str(b.uid, 12),
-    k: str(b.k, 24), ctx: { b: str(b.ctx && b.ctx.b, 60), a: str(b.ctx && b.ctx.a, 60) },
+    k: str(b.k, 48), ctx: { b: str(b.ctx && b.ctx.b, 60), a: str(b.ctx && b.ctx.a, 60) },
     was: str(b.was), note, name: str(b.name, 80).trim(), t, st: 'pending',
     type, pid, thread: [], seen: 1, tr: (await isTrusted(env, pid)) ? 1 : 0,
   };
   if (from) rec.from = from;
+  /* הצעה מן העורך: הפעולה המדויקת (איזה טווח, מאיזה סגנון לאיזה סגנון, או שינוי
+     מבנה) נשמרת כרשומת עריכה ולא כטקסט חופשי, כדי שתחול אוטומטית באישור */
+  if (b.edit && typeof b.edit === 'object' && (b.edit.k || b.edit.op === 'struct')) {
+    rec.edit = cleanEdit(Object.assign({}, b.edit, { t: +b.edit.t || t }));
+    rec.sk = SKINDS.indexOf(b.sk) > -1 ? b.sk : (rec.edit.op === 'struct' ? 'struct' : 'text');
+    rec.mnew = 0;
+  }
+  /* עדכון של הצעה ממתינה של אותו מציע על אותו מקום (המציע המשיך לערוך באותה שורה):
+     אותו פריט בתור, עם הגרסה הקודמת בהיסטוריה, ולא כפילות */
+  if (pid && b.upd && rec.edit) {
+    const old = await env.STORE.get('sg:' + str(b.upd, 80), 'json');
+    if (old && old.pid === pid && old.st === 'pending' && old.edit) {
+      old.vers = (old.vers || []).concat([{ note: old.note, type: old.type, t: old.edited || old.t }]).slice(-30);
+      old.note = note; old.type = type; old.sk = rec.sk; old.edit = rec.edit; old.was = rec.was;
+      old.ctx = rec.ctx; old.edited = t; old.up = 1;
+      await putSg(env, old);
+      return json({ ok: true, id: old.id, updated: 1 });
+    }
+  }
   await putSg(env, rec);
   return json({ ok: true, id });
 }
@@ -497,11 +624,17 @@ async function queue(req, env, url) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   const q = url.searchParams;
   const slug = q.get('slug') || '', pidF = q.get('pid') || '', dafF = q.get('daf') || '', tyF = q.get('ty') || '';
-  const upF = q.get('up') === '1', page = Math.max(0, parseInt(q.get('page') || '0', 10) || 0);
+  const skF = q.get('sk') || '', upF = q.get('up') === '1', page = Math.max(0, parseInt(q.get('page') || '0', 10) || 0);
   const size = Math.min(40, Math.max(5, parseInt(q.get('size') || '30', 10) || 30));
   const keys = await listAll(env, 'sg:');
   const counts = {}, props = {};
   const want = [], legacy = [];
+  if (q.get('deleted') === '1') {      /* ארכיון "נמחקו על ידי המציע" */
+    const del = keys.filter((k) => k.metadata && k.metadata.st === 'deleted').sort((a, b) => keyT(b.name) - keyT(a.name)).slice(0, 60);
+    const items = [];
+    for (const k of del) { const v = await env.STORE.get(k.name, 'json'); if (v && v.st === 'deleted') items.push(v); }
+    return json({ ok: true, items, total: del.length });
+  }
   for (const k of keys) {
     const m = k.metadata || {};
     if (m.st !== 'pending') continue;
@@ -512,20 +645,23 @@ async function queue(req, env, url) {
     if (pidF && m.pid !== pidF) continue;
     if (dafF && m.d !== dafF) continue;
     if (tyF && m.ty !== tyF) continue;
+    if (skF && m.sk !== skF) continue;
     if (upF && !m.up) continue;
-    want.push({ name: k.name, tr: m.tr ? 1 : 0, t: keyT(k.name) });
+    want.push({ name: k.name, tr: m.tr ? 1 : 0, t: keyT(k.name), slug: m.slug, d: m.d, po: m.po });
   }
   for (const name of legacy.slice(0, 30)) {
     const rec = await env.STORE.get(name, 'json');
     if (rec) await putSg(env, rec);
   }
   for (const name of legacy) want.push({ name, tr: 0, t: keyT(name) });
-  want.sort((a, b) => (b.tr - a.tr) || (a.t - b.t));
+  const ord = q.get('ord') || '';
+  if (ord === 'loc' || ord === 'shas') want.sort(locCmp(ord));
+  else want.sort((a, b) => (b.tr - a.tr) || (a.t - b.t));
   const slice = want.slice(page * size, page * size + size);
   const items = [];
   for (const w of slice) {
     const v = await env.STORE.get(w.name, 'json');
-    if (v) items.push(v);
+    if (v && v.st === 'pending') items.push(v);     /* רשימת המפתחות מתעכבת עד דקה: הרשומה עצמה קובעת */
   }
   return json({ ok: true, items, counts, total: Object.values(counts).reduce((a, b) => a + b, 0),
                 matched: want.length, page, size, proposers: Object.values(props).sort((a, b) => b.n - a.n).slice(0, 60) });
@@ -562,7 +698,7 @@ function cleanEdit(e) {
   const k = str(e.k, 48) || (e.op === 'struct' ? 's' + (+e.t || 0) : '');
   const out = { k, t: +e.t || Date.now() };
   if (e.del) { out.del = 1; return out; }
-  for (const f of ['was', 'now', 'wasH', 'nowH', 'daf', 'ps', 'psw', 'wasP', 'by', 'sg', 'op', 'kind']) {
+  for (const f of ['was', 'now', 'wasH', 'nowH', 'daf', 'ps', 'psw', 'wasP', 'by', 'sg', 'op', 'kind', 'ins', 'where', 'bt', 'bh', 'bp']) {
     if (e[f] !== undefined && e[f] !== null) out[f] = typeof e[f] === 'string' ? e[f].slice(0, 8000) : e[f];
   }
   for (const f of ['texts', 'res', 'resT']) {
@@ -753,6 +889,9 @@ async function exportAll(req, env) {
     const v = await env.STORE.get(k.name, 'json');
     if (v) out.edits[k.name.slice(3)] = v;
   }
+  out.proposers = {}; out.learning = {}; out.devices = {};
+  for (const k of await listAll(env, 'pr:')) { const v = await env.STORE.get(k.name, 'json'); if (v) out.proposers[k.name.slice(3)] = v; }
+  for (const k of await listAll(env, 'ln:')) { const v = await env.STORE.get(k.name, 'json'); if (v) out.learning[k.name.slice(3)] = v; }
   out.bakara = {};
   for (const k of await listAll(env, 'bk:c:')) {
     const v = await env.STORE.get(k.name, 'json');
@@ -888,6 +1027,195 @@ async function lnStats(req, env) {
   });
 }
 
+
+/* ------------------------------------------------------------ בחן את עצמך, תארים ולוח מובילים (מנה 3, 7.10.2026)
+   הניקוד מחושב במכשיר הלומד (חזרות מרווחות); כאן נשמר רק סיכום אנונימי לפי pid שהוא
+   מזהה אקראי של המכשיר (בלי שם, בלי דוא"ל). לוח המובילים מציג כינוי בלבד, ורק למי שהסכים.
+   סף התארים נרשם בחוקה ומשוכפל בלקוח (tools/lamed/quiz.js). */
+const QZ_T_ALL = [500, 3000, 10000, 30000, 100000];
+const QZ_T_M = [300, 1500, 5000, 15000, 40000];
+const QZ_DAYCAP = 5000;                     /* תקרת ניקוד ליום: מונעת זיוף גס, אינה פוגעת בלומד אמיתי */
+const nickOk = (v) => {
+  let t = String(v || '').normalize('NFC').replace(/[^֐-׿a-zA-Z0-9 '"\-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16);
+  if (/https?|www|@|\.com/i.test(String(v || ''))) t = '';
+  return t;
+};
+function ilWeek(t) {                        /* יום ראשון של השבוע, לפי שעון ישראל */
+  const d = new Date(ilDay(t) + 'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() - d.getUTCDay());
+  return d.toISOString().slice(0, 10);
+}
+async function qzScore(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const pid = str(b.pid, 20), pt = req.headers.get('x-proposer') || '';
+  if (!/^[a-z0-9]{8,20}$/.test(pid) || !pt) return bad('אין הרשאה', 401);
+  if (!(await ensureProposer(env, pid, str(pt, 80), ''))) return bad('הזהות במכשיר אינה תואמת', 401);
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  if (burstHit(ip)) return bad('מהיר מדי. נסה שוב בעוד רגע', 429);
+  const old = (await env.STORE.get('qz:' + pid, 'json')) || { t: 0, base: 0, day: '', wk: '', wp: 0 };
+  const today = ilDay(Date.now()), wk = ilWeek(Date.now());
+  const rec = { ...old };
+  if (rec.day !== today) { rec.day = today; rec.base = old.t || 0; }
+  if (rec.wk !== wk) { rec.wk = wk; rec.wp = 0; }
+  let total = Math.max(0, Math.min(5000000, Math.round(+b.total || 0)));
+  total = Math.min(total, rec.base + QZ_DAYCAP);       /* עלייה חדה ביום אחד נחתכת */
+  total = Math.max(total, old.t || 0);                  /* הניקוד אינו יורד */
+  const byM = {};
+  for (const [k, v] of Object.entries(b.byM || {}).slice(0, 60)) if (slugOk(k)) byM[k] = Math.max(0, Math.min(2000000, Math.round(+v || 0)));
+  rec.t = total; rec.m = byM;
+  const wpIn = Math.max(0, Math.round(+b.wp || 0));
+  rec.wp = Math.max(rec.wp, Math.min(wpIn, QZ_DAYCAP * 7));
+  rec.o = b.optin ? 1 : 0;
+  rec.n = rec.o ? (nickOk(b.nick) || '') : '';
+  rec.u = Date.now();
+  const mstr = Object.entries(byM).filter((x) => x[1] > 0).map((x) => x[0] + ':' + x[1]).join(',').slice(0, 700);
+  await env.STORE.put('qz:' + pid, JSON.stringify(rec), { metadata: { t: rec.t, o: rec.o, n: rec.n, wk: rec.wk, wp: rec.wp, m: mstr, u: rec.u } });
+  return json({ ok: true, total: rec.t, week: rec.wp });
+}
+const lvlOf = (pts, T) => { let l = 0; T.forEach((x, i) => { if (pts >= x) l = i + 1; }); return l; };
+async function qzBoard(req, env, url) {
+  const slug = slugOk(url.searchParams.get('s') || '') ? url.searchParams.get('s') : '';
+  const pid = url.searchParams.get('pid') || '';
+  const wk = ilWeek(Date.now());
+  const keys = await listAll(env, 'qz:');
+  const all = [], weekly = [];
+  const cAll = [0, 0, 0, 0, 0, 0], cM = [0, 0, 0, 0, 0, 0];
+  let me = null;
+  let n = 0;
+  for (const k of keys) {
+    const m = k.metadata || {};
+    if (!m.t) continue;
+    n++;
+    const id = k.name.slice(3);
+    const l = lvlOf(m.t, QZ_T_ALL);
+    for (let i = 1; i <= l; i++) cAll[i]++;
+    let mp = 0;
+    if (slug && m.m) { for (const part of String(m.m).split(',')) { const [s2, v] = part.split(':'); if (s2 === slug) mp = +v || 0; } }
+    if (slug) { const lm = lvlOf(mp, QZ_T_M); for (let i = 1; i <= lm; i++) cM[i]++; }
+    if (m.o) {
+      const nm = m.n || ('לומד אנונימי ' + (parseInt(id.slice(0, 4), 36) % 9000 + 1000));
+      all.push({ id, n: nm, p: m.t });
+      if (m.wk === wk && m.wp > 0) weekly.push({ id, n: nm, p: m.wp });
+    }
+    if (pid && id === pid) me = { t: m.t, wp: m.wk === wk ? (m.wp || 0) : 0, mp, o: m.o ? 1 : 0, n: m.n || '' };
+  }
+  all.sort((a, b) => b.p - a.p); weekly.sort((a, b) => b.p - a.p);
+  const pub = (x) => x.slice(0, 20).map((r) => ({ n: r.n, p: r.p, me: pid && r.id === pid ? 1 : 0 }));
+  const rank = (arr) => (pid ? (arr.findIndex((r) => r.id === pid) + 1) || 0 : 0);
+  return json({ ok: true, learners: n, week: pub(weekly), all: pub(all), counts: { all: cAll, m: cM }, rank: { week: rank(weekly), all: rank(all) }, me });
+}
+
+/* ---- תארי המציעים: לפי הצעות שאושרו, עם משקל לאיכות ---- */
+const PR_VET = 15, PR_TOP5 = 40, PR_TOP3 = 80;
+function prTitle(pts, rank) {
+  if (rank > 0 && rank <= 3 && pts >= PR_TOP3) return 'משלושת המגיהים הגדולים';
+  if (rank > 0 && rank <= 5 && pts >= PR_TOP5) return 'מחמשת המגיהים הגדולים';
+  if (pts >= PR_VET) return 'מגיה ותיק';
+  if (pts >= 1) return 'מגיה';
+  return '';
+}
+async function qzProposers(req, env, url) {
+  const pid = url.searchParams.get('pid') || '', pt = req.headers.get('x-proposer') || '';
+  const mineOk = pid && pt && (await proposerOk(env, pid, pt));
+  const agg = {}, first = {};
+  for (const k of await listAll(env, 'sg:')) {
+    const m = k.metadata || {};
+    if (!m.pid) continue;
+    const a = agg[m.pid] || (agg[m.pid] = { ok: 0, ed: 0, no: 0 });
+    if (m.st === 'accepted') a.ok++;
+    else if (m.st === 'edited') a.ed++;
+    else if (m.st === 'rejected') a.no++;
+    if ((m.st === 'accepted' || m.st === 'edited') && m.slug) {
+      const t = keyT(k.name);
+      if (!first[m.slug] || t < first[m.slug].t) first[m.slug] = { t, pid: m.pid };
+    }
+  }
+  const pts = (a) => {
+    const good = a.ok + a.ed * 0.8, dec = a.ok + a.ed + a.no;
+    const rate = dec >= 5 ? (a.ok + a.ed) / dec : 1;
+    return Math.round(good * (0.6 + 0.4 * rate) * 10) / 10;
+  };
+  const rows = Object.entries(agg).map(([id, a]) => ({ id, p: pts(a), a })).filter((r) => r.p > 0).sort((x, y) => y.p - x.p);
+  const nicks = {};
+  for (const k of await listAll(env, 'qz:')) { const m = k.metadata || {}; if (m.o && m.n) nicks[k.name.slice(3)] = m.n; }
+  const nm = (id) => nicks[id] || 'מגיה אנונימי';
+  rows.forEach((r, i) => { r.rank = i + 1; r.title = prTitle(r.p, r.rank); });
+  const firsts = Object.entries(first).map(([s, v]) => ({ s, n: nm(v.pid), me: pid && v.pid === pid ? 1 : 0 }));
+  let me = null;
+  if (mineOk) {
+    const a = agg[pid] || { ok: 0, ed: 0, no: 0 }, r = rows.find((x) => x.id === pid);
+    const p = pts(a), rank = r ? r.rank : 0, title = prTitle(p, rank);
+    let next = null;
+    if (title === '') next = { title: 'מגיה', need: Math.max(0, 1 - p) };
+    else if (title === 'מגיה') next = { title: 'מגיה ותיק', need: Math.round((PR_VET - p) * 10) / 10 };
+    else if (title === 'מגיה ותיק') next = { title: 'מחמשת המגיהים הגדולים', need: Math.max(0, Math.round((PR_TOP5 - p) * 10) / 10), rank: 5 };
+    else if (title === 'מחמשת המגיהים הגדולים') next = { title: 'משלושת המגיהים הגדולים', need: Math.max(0, Math.round((PR_TOP3 - p) * 10) / 10), rank: 3 };
+    me = { p, rank, title, ok: a.ok, ed: a.ed, no: a.no, next, firstIn: firsts.filter((f) => f.me).map((f) => f.s) };
+  }
+  return json({ ok: true, top: rows.slice(0, 10).map((r) => ({ n: nm(r.id), p: r.p, title: r.title, me: pid && r.id === pid ? 1 : 0 })), firsts, me,
+                rules: { vet: PR_VET, top5: PR_TOP5, top3: PR_TOP3 } });
+}
+
+/* ---- "לומדים כעת": ספירה אנונימית של מכשירים פעילים ב-6 הדקות האחרונות.
+   מפתח אחד במחסן, וכתיבה אליו לא יותר מפעם ב-150 שניות (מגבלת הכתיבות בתוכנית החינמית:
+   1000 ליום). פעימות שבין כתיבה לכתיבה נקלטות בכתיבה הבאה. אין שם, אין IP, אין pid. */
+const ON_WIN = 6 * 60000, ON_GAP = 150000;
+async function lnOnline(req, env, url) {
+  const now = Date.now();
+  const rec = (await env.STORE.get('on:all', 'json')) || { w: 0, a: {} };
+  let s = '';
+  if (req.method === 'POST') {
+    if (BOT.test(req.headers.get('user-agent') || '')) return json({ ok: true, skipped: 1 });
+    let b = {};
+    try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+    s = slugOk(b.s || '') ? b.s : '';
+    const aid = /^[a-z0-9]{8,16}$/.test(b.aid || '') ? b.aid : '';
+    if (aid) {
+      rec.a[aid] = [now, s];
+      if (now - rec.w >= ON_GAP) {
+        for (const k of Object.keys(rec.a)) if (now - rec.a[k][0] > ON_WIN) delete rec.a[k];
+        const ks = Object.keys(rec.a);
+        if (ks.length > 3000) for (const k of ks.slice(0, ks.length - 3000)) delete rec.a[k];
+        rec.w = now;
+        await env.STORE.put('on:all', JSON.stringify(rec), { expirationTtl: 3600 });
+      }
+    }
+  } else s = slugOk(url.searchParams.get('s') || '') ? url.searchParams.get('s') : '';
+  let n = 0, ns = 0;
+  for (const v of Object.values(rec.a)) if (now - v[0] <= ON_WIN) { n++; if (s && v[1] === s) ns++; }
+  return json({ ok: true, n, s: ns });
+}
+
+/* ---- שאלות טיוטה (שנוצרו במודל): הלומד רואה רק אחרי אישור המנהל ---- */
+async function qzDec(req, env, url) {
+  if (req.method === 'GET') {
+    const slug = url.searchParams.get('s') || '';
+    if (!slugOk(slug)) return bad('מסכת לא תקינה');
+    const rec = (await env.STORE.get('qd:' + slug, 'json')) || {};
+    const admin = await isAdmin(req, env);
+    const out = {};
+    for (const [id, v] of Object.entries(rec)) if (admin || v.st === 'ok') out[id] = admin ? v : { st: 'ok', e: v.e || null };
+    return json({ ok: true, dec: out });
+  }
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const slug = str(b.s, 30), id = str(b.id, 60), st = str(b.st, 4);
+  if (!slugOk(slug) || !id || ['ok', 'no', ''].indexOf(st) < 0) return bad('הכרעה לא תקינה');
+  const rec = (await env.STORE.get('qd:' + slug, 'json')) || {};
+  if (!st) delete rec[id];
+  else {
+    const v = { st, t: Date.now() };
+    if (st === 'ok' && b.e && Array.isArray(b.e.o) && b.e.o.length === 4) {
+      v.e = { q: str(b.e.q, 400), o: b.e.o.map((x) => str(x, 120)), a: Math.max(0, Math.min(3, b.e.a | 0)) };
+    }
+    rec[id] = v;
+  }
+  await env.STORE.put('qd:' + slug, JSON.stringify(rec));
+  return json({ ok: true });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -906,6 +1234,8 @@ export default {
       if (p === '/mine/batch' && req.method === 'POST') return await mineBatch(req, env);
       if (p === '/mine/edit' && req.method === 'POST') return await mineAct(req, env, 'edit');
       if (p === '/mine/delete' && req.method === 'POST') return await mineAct(req, env, 'delete');
+      if (p === '/mine/undelete' && req.method === 'POST') return await mineAct(req, env, 'undelete');
+      if (p === '/merge-pid' && req.method === 'POST') return await mergePid(req, env);
       if (p === '/mine/reply' && req.method === 'POST') return await mineAct(req, env, 'reply');
       if (p === '/mine/seen' && req.method === 'POST') return await mineAct(req, env, 'seen');
       if (p === '/reply' && req.method === 'POST') return await adminReply(req, env);
@@ -913,6 +1243,7 @@ export default {
       if (p === '/bulk' && req.method === 'POST') return await bulk(req, env);
       if (p === '/journal') return await journal(req, env, req.method);
       if (p === '/notes') return await notes(req, env, req.method);
+      if (p === '/lessons') return await lessons(req, env, req.method);
       if (p === '/learn') return await learn(req, env, req.method);
       if (p === '/queue' && req.method === 'GET') return await queue(req, env, url);
       if (p === '/decide' && req.method === 'POST') return await decide(req, env);
@@ -929,6 +1260,11 @@ export default {
       if (p === '/ln/redeem' && req.method === 'POST') return await lnRedeem(req, env);
       if (p === '/ln/stat' && req.method === 'POST') return await lnStat(req, env);
       if (p === '/ln/stats' && req.method === 'GET') return await lnStats(req, env);
+      if (p === '/qz/score' && req.method === 'POST') return await qzScore(req, env);
+      if (p === '/qz/board' && req.method === 'GET') return await qzBoard(req, env, url);
+      if (p === '/qz/proposers' && req.method === 'GET') return await qzProposers(req, env, url);
+      if (p === '/qz/dec') return await qzDec(req, env, url);
+      if (p === '/ln/online') return await lnOnline(req, env, url);
       return bad('לא נמצא', 404);
     } catch (e) {
       return bad('שגיאה: ' + (e && e.message ? e.message : String(e)), 500);

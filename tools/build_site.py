@@ -1161,7 +1161,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   if sources:
       st=match_sources.attach(pages,sources)
       srcmeta={'slug':os.path.basename(out_path)[:-5],
-               'attribution':sources.get('attribution',''),
+               'attribution':re.sub(r',\s*William Davidson','',sources.get('attribution','')),  # בעל הפרויקט (8.10.2026): די בספריא
                'matched':st['matched'],'eligible':st['eligible']}
       qa.append(('מקור מן הגמרא',
                  '%d יחידות מתוך %d הוצמדו למקטע בגמרא; %d לא עברו את הסף ואין להן כפתור "מקור"'

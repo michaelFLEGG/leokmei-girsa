@@ -346,8 +346,7 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
         '<style>' + build_seo_mini_style() + '</style></head><body>' + build_seo_mini_header() + '<main>'
         '<h1>מקורות</h1>'
         '<p>הגמרא המנוקדת והפירוש המוצגים במגירת "מקור" נלקחו מספריא (Sefaria), '
-        'ממהדורת William Davidson של התלמוד הבבלי בעריכת הרב עדין אבן־ישראל שטיינזלץ, '
-        'ברישיון CC BY-NC 4.0. האתר חינמי ואינו מוכר דבר.</p>'
+        'ברישיון CC BY-NC 4.0. הלימוד באתר חינמי.</p>'
         '<p><a href="index.html">חזרה לשער</a></p></main></body></html>')
     json.dump({'built': built, 'time': now}, open(os.path.join(SITE, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     write_shas(built)

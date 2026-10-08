@@ -28,26 +28,17 @@ MINI_STYLE = ('@font-face{font-family:LGVilnaXB;src:url(brand/fonts/vilna-xb.wof
               'header.mh{background:#0b1c2a;border-bottom:1px solid #8f6a1e;padding:8px 18px}'
               'header.mh a{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:400 25px/1.1 LGVilnaXB,serif;background:linear-gradient(170deg,#fbe7a1,#e6bd52 30%,#c38f2a 55%,#efcf6b 75%,#b07c1f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(240,196,90,.45))}'
               'header.mh img{height:34px;width:auto}main{flex:1 0 auto;box-sizing:border-box;width:100%;max-width:640px;margin:0 auto;padding:30px 18px}h1{font-size:28px;color:#f9e08a}a{color:#e9c35a}')
-# דף אודות מחוץ למשימת השער הסימטרי (הנחיה נפרדת ממתינה לעריכת המנהל): נשאר בעיצובו הקודם
-ABOUT_STYLE = ('@font-face{font-family:LGVilnaTitle;src:url(brand/fonts/vilna-title.woff2) format("woff2");font-display:swap}'
-               'body{margin:0;background:#f7f3ea;color:#1b1b1b;font-family:serif;line-height:1.8}'
-               'header.mh{background:#0b1c2a;border-bottom:1px solid #8f6a1e;padding:8px 18px}'
-               'header.mh a{display:inline-flex;align-items:center;gap:10px;color:#f9e08a;text-decoration:none;font:400 24px LGVilnaTitle,serif}'
-               'header.mh img{height:32px;width:auto}main{max-width:640px;margin:0 auto;padding:30px 18px}h1{font-size:28px}a{color:#8f6a1e}')
 MINI_HEADER = '<header class="mh"><a href="index.html"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="">לאוקמי גירסא</a></header>'
 
 
-ABOUT = ('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
-         '<meta name="viewport" content="width=device-width,initial-scale=1"><title>אודות · לאוקמי גירסא</title>'
-         '<style>' + ABOUT_STYLE + '</style></head><body>' + MINI_HEADER + '<main>'
-         '<h1>אודות לאוקמי גירסא</h1>'
-         '<p>לאוקמי גירסא הוא קיצור של התלמוד הבבלי, דף אחר דף, כך שאפשר לראות את מהלך הגמרא '
-         'ואת הכרעתה בלי לאבד את החוט. האתר מיועד ללומדי הדף היומי, ללומדי מסכת ולכל מי שרוצה לחזור על הש"ס.</p>'
-         '<p>הקיצור נערך בידי הרב מיכאל פלג, ונבנה אוטומטית מקובצי העריכה. כל מסכת שמסתיימת עולה לאתר. '
-         'הגמרא המנוקדת והפירוש מוצגים ברישיון ומפורטים בעמוד <a href="mekorot.html">מקורות</a>.</p>'
-         '<p>האתר חינמי ואינו מוכר דבר. מצאת טעות? אפשר להציע תיקון ישירות בדף הגמרא.</p>'
-         '<p><a href="index.html">חזרה לשער</a> · <a href="yomi.html">הדף היומי היום</a></p>'
-         '</main></body></html>')
+def about_html():
+    """דף האודות נבנה מהתבנית tools/about_template.html (8.10.2026). עדכון תוכן - רק בתבנית."""
+    t = io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'about_template.html'), encoding='utf-8').read()
+    hdr_style = ('header.mh{background:#0b1c2a;border-bottom:1px solid #8f6a1e;padding:8px 18px}'
+                 'header.mh a{display:inline-flex;align-items:center;gap:10px;color:#f9e08a;text-decoration:none;font:400 24px LGVilnaTitle,serif}'
+                 'header.mh img{height:32px;width:auto}')
+    return t.replace('/*MINI_STYLE*/', hdr_style).replace('<!--MINI_HEADER-->', MINI_HEADER)
+
 
 NOSCRIPT = ('<noscript><main style="max-width:640px;margin:20px auto;padding:0 18px;font-family:serif;line-height:1.8">'
             '<h1>לאוקמי גירסא - קיצור התלמוד הבבלי</h1>'
@@ -106,7 +97,7 @@ def lessons_static():
 
 def run(site, built, slug):
     now = datetime.date.today().isoformat()
-    io.open(os.path.join(site, 'about.html'), 'w', encoding='utf-8').write(ABOUT)
+    io.open(os.path.join(site, 'about.html'), 'w', encoding='utf-8').write(about_html())
     io.open(os.path.join(site, 'CNAME'), 'w', encoding='utf-8').write('leokmei.com\n')
     io.open(os.path.join(site, 'robots.txt'), 'w', encoding='utf-8').write(
         'User-agent: *\nAllow: /\nDisallow: /galeria-lamed/\n\nSitemap: %s/sitemap.xml\n' % BASE)
@@ -121,7 +112,7 @@ def run(site, built, slug):
     rewrite(site, 'masechtot.html', 'כל מסכתות הש"ס בקיצור · ' + NAME,
             'רשימת כל מסכתות התלמוד הבבלי, עם המסכתות שכבר עלו לאתר בקיצור לאוקמי גירסא.')
     rewrite(site, 'shas.html', 'מפת הש"ס · ' + NAME, 'מפת הש"ס לפי סדרים ומסכתות, עם התקדמות הלימוד.')
-    rewrite(site, 'about.html', 'אודות · ' + NAME, 'על לאוקמי גירסא: קיצור התלמוד הבבלי, מי עורך אותו ואיך הוא נבנה.')
+    rewrite(site, 'about.html', 'אודות · ' + NAME, 'על לאוקמי גירסא - קיצור התלמוד הבבלי: דרך הקיצור, ראשית המפעל, הסכמות גדולי ישראל וספרי המחבר.')
     rewrite(site, 'mekorot.html', 'מקורות · ' + NAME, 'המקורות והרישיונות של הגמרא והפירוש המוצגים באתר.')
     items = lessons_static()
     ld_v = [{'@context': 'https://schema.org', '@type': 'VideoObject', 'name': l['title'],

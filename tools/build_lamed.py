@@ -48,7 +48,7 @@ def brand(site):
     for f in os.listdir(os.path.join(src, 'shaar-v2')):
         if f.endswith('.webp'):
             shutil.copy(os.path.join(src, 'shaar-v2', f), os.path.join(v2, f))
-    for sub in ('parts', 'fonts', 'icons'):
+    for sub in ('parts', 'fonts', 'icons', 'about'):
         d = os.path.join(dst, sub); os.makedirs(d, exist_ok=True)
         for f in os.listdir(os.path.join(src, sub)):
             shutil.copy(os.path.join(src, sub, f), os.path.join(d, f))

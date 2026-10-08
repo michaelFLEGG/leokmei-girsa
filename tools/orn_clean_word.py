@@ -31,7 +31,7 @@ def run(path, real):
         os.remove(tmp); return name, n, 'יבש, תקין'
     if wa.is_open_in_word(path):
         os.remove(tmp); return name, n, 'פתוח בוורד - דולג'
-    bk = wa.backup(path, 'עיטורים')
+    bk = wa.backup(path, 'עיטורים ' + os.path.splitext(name)[0][:20])
     shutil.copy2(tmp, path + '.new'); os.replace(path + '.new', path); os.remove(tmp)
     return name, n, 'נכתב; גיבוי: ' + os.path.basename(bk)
 

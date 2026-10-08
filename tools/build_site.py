@@ -1726,6 +1726,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      רגע אחד והוחזר למרכז; המספור יושב בקצה, ראה .main[data-mn].dh) */
   .main.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;
       font-size:calc(var(--k-dh) * 1em);margin:0;position:relative}
+  /* ד"ה משנה: רקע אפור עדין שנמוג בצדדים (8.10.2026, בקשת בעל הפרויקט) - כדי
+     שלא יתבלבל עם נושא, ולא יתבלבל עם משנה (רקע מלא מקצה לקצה). אותו גוון של
+     המשנה, ושקיפות בקצוות. */
+  .main.dh,.main p.dh{background:linear-gradient(to right,rgba(238,234,225,0) 0,#eeeae1 24%,#eeeae1 76%,rgba(238,234,225,0) 100%);
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
   .main.nose{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;
         font-size:calc(var(--k-nose) * 1em);margin:0;color:var(--ink)}
   /* ב. הכוכביות אינן כוכביות: בגופני וילנא יש שרשרת ליגטורות ב-rlig,

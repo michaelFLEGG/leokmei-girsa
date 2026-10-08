@@ -38,6 +38,10 @@ figcaption{text-align:center;font-size:15px;color:var(--muted)}
 .haskama blockquote{margin:0;font-size:17.5px}
 .haskama details{margin-top:10px}
 .haskama summary{cursor:pointer;color:var(--gold-700);font-weight:700;font-size:15px}
+.tmunot{margin:18px 0 6px;border:1px solid #d9c9a3;border-right:4px solid var(--gold-700);border-radius:4px;background:#fffdf7;padding:12px 18px}
+.tmunot summary{cursor:pointer;color:var(--gold-700);font-weight:700;font-size:15px}
+.tmunot figure,.haskama details figure{margin:12px 0 0}
+.tmunot img,.haskama details figure img{display:block;width:100%;max-width:100%;height:auto;border:1px solid #ddd;box-shadow:0 2px 10px rgba(0,0,0,.12)}
 .haskama img{display:block;max-width:100%;height:auto;margin:12px auto 0;border:1px solid #ddd;box-shadow:0 2px 10px rgba(0,0,0,.12)}
 .author{border-radius:6px;padding:26px 22px;text-align:center}
 .author p{margin:0;color:#f3ead0;font-size:18px}
@@ -82,7 +86,7 @@ a.soft:hover{border-bottom-style:solid}
 
 <main>
 
-<p class="lead">זה עשרים שנה, מאז יצאו לאור לראשונה בשנת תשס"ז, נלמדים ספרי <b>לאוקמי גירסא</b> בהיכלי הישיבות והכוללים. הסדרה, שחיבר <b>הרב מ. ח. מיכאל פלעג</b>, יצאה מאז בשתים עשרה מהדורות ובלמעלה ממאתיים ושמונים אלף עותקים, והייתה לכלי יסוד בידי אלפי לומדים בחזרה ובשינון הש"ס.</p>
+<p class="lead">זה עשרים שנה, מאז יצאו לאור לראשונה בשנת תשס"ז, נלמדים ספרי <b>לאוקמי גירסא</b> בהיכלי הישיבות והכוללים. הסדרה, שחיבר <b>מ. ח. מיכאל פלעג</b>, יצאה מאז בשתים עשרה מהדורות ובלמעלה ממאתיים ושמונים אלף עותקים, והייתה לכלי יסוד בידי אלפי לומדים בחזרה ובשינון הש"ס.</p>
 
 <p class="lead" style="margin-top:18px">לאוקמי גירסא אינו עוד סיכום על הגמרא - הוא הגמרא עצמה, מזוקקת. הוא פורש לפני הלומד את התלמוד הבבלי דף אחר דף, בלשון מדויקת שכל מילה בה נשקלה ונבחרה, כך שהסוגיה כולה - מן המשנה ועד המסקנה, על שאלותיה ותירוציה, ראיותיה ודחיותיה, שיטותיה ומחלוקותיה, עד הכרעתה וכל הדינים והכללים העולים ממנה - עומדת לנגד עיני הלומד בבת אחת, כבנין שלם שכל חלקיו גלויים. מי שלמד את הדף בעיון, חוזר עליו כאן בזמן קצר, ומה שעבר תחת ידו נקבע בזכרונו.</p>
 
@@ -117,10 +121,11 @@ a.soft:hover{border-bottom-style:solid}
   <h2>ראשית הדרך</h2>
   <p>סדרת ספרי לאוקמי גירסא נולדה ונוצרה לבקשתו ובשליחותו של מרן הגאון הגדול רבי גרשון אדלשטיין זצ"ל, ראש ישיבת פוניבז', שמסר נפשו וכל כוחו על החדרת ענין ידיעת התורה בהיקף ובבקיאות, בחזרה ובשינון, עד שיהיו דברי תורה שגורים בפי הלומדים; והמחבר נמנה על תלמידיו המובהקים וזכה לקרבה מיוחדת אליו.</p>
   <p>המלאכה כולה נעשתה בהתייעצות קבועה עם מרן הגאון הגדול רבי חיים קנייבסקי זצ"ל, שליווה את המפעל באופן אישי לאורך כל הדרך, והשיב ברוחב דעתו על שאלות רבות שעלו במהלך העבודה ונדרשה בהן הכרעה. ובהגיע המלאכה לסיומה, נערך סיום הש"ס על לאוקמי גירסא בביתו של מרן זצ"ל ובמעמדו.</p>
-  <figure style="margin:0">
-    <div class="slot" data-photo="siyum-hashas">[מקום שמור לתמונה: סיום הש"ס על לאוקמי גירסא בבית מרן הגר"ח קנייבסקי זצ"ל]</div>
-    <figcaption>סיום הש"ס על לאוקמי גירסא בבית מרן הגר"ח קנייבסקי זצ"ל</figcaption>
-  </figure>
+  <details class="tmunot">
+    <summary>לצפייה בתמונות מעמד סיום הש"ס בבית מרן הגר"ח קנייבסקי זצ"ל</summary>
+    <figure><img src="brand/about/siyum-hashas-1.webp" alt="מרן הגר&quot;ח קנייבסקי זצ&quot;ל מעיין בספר לאוקמי גירסא במעמד סיום הש&quot;ס בביתו" loading="lazy" width="1400" height="933"></figure>
+    <figure><img src="brand/about/siyum-hashas-2.webp" alt="מעמד סיום הש&quot;ס על לאוקמי גירסא בבית מרן הגר&quot;ח קנייבסקי זצ&quot;ל" loading="lazy" width="736" height="699"></figure>
+  </details>
 </section>
 
 <section>
@@ -132,7 +137,7 @@ a.soft:hover{border-bottom-style:solid}
     <div class="when">על ספרי לאוקמי גירסא · ניסן תשפ"א</div>
     <blockquote>"חזיתי איש מהיר במלאכתו לפני מלכים יתיצב... שוקד על דלתי תורה בהתמדה, וחפץ ה' הצליח בידו, אשר מתוך עמלה של תורה ודיבוק חברים זכה להעלות עלי גליון קונטרסי לאוקמי גירסא, לקבץ תמצית דברי התלמוד, בסדר נבון ונכון, ובשפה ברורה, ויש בזה תועלת לשינון וחזרה, ובפרט לצעירי הצאן."</blockquote>
     <div class="when" style="margin-top:8px">ועל המכתב חתם מרן שר התורה הגר"ח קנייבסקי זצ"ל: "ג"א מצטרף להנ"ל".</div>
-    <details><summary>לצפייה במכתב המקורי</summary><img src="brand/about/haskama-rey-finkel-leokmei.webp" alt="מכתב ההסכמה של הגאון רבי אליעזר יהודה פינקל על לאוקמי גירסא" loading="lazy"></details>
+    <details><summary>לצפייה במכתב המקורי</summary><img src="brand/about/haskama-rey-finkel-leokmei.webp" alt="מכתב ההסכמה של הגאון רבי אליעזר יהודה פינקל על לאוקמי גירסא" loading="lazy"><figure><img src="brand/about/grach-hatima-haskama.webp" alt="מרן הגר&quot;ח קנייבסקי זצ&quot;ל בחתימת יד קודשו על ההסכמה" loading="lazy" width="1400" height="1050"><figcaption>מרן הגר"ח קנייבסקי זצ"ל בחתימת יד קודשו על ההסכמה</figcaption></figure></details>
   </div>
 
   <div class="haskama">
@@ -167,7 +172,7 @@ a.soft:hover{border-bottom-style:solid}
 </section>
 
 <section id="sefarim">
-  <p class="authorline">לאוקמי גירסא נכתב ונערך, שורה אחר שורה ומסכת אחר מסכת, בידי <b>הרב מ. ח. מיכאל פלעג</b>, אב"ד ק"ק מיכלשטאט, ראש כולל ביהמ"ד גבוה להוראה בעיר העתיקה בירושלים שבין החומות.</p>
+  <p class="authorline">לאוקמי גירסא נכתב ונערך, שורה אחר שורה ומסכת אחר מסכת, בידי <b>מ. ח. מיכאל פלעג</b>, אב"ד ק"ק מיכלשטאט, ראש כולל ביהמ"ד גבוה להוראה בעיר העתיקה בירושלים שבין החומות.</p>
   <p class="authorline">ניתן להשיג מספרי המחבר על התורה והנ"ך, על הש"ס וההלכה, על סדר המועדים ועל הזוהר הקדוש:</p>
 
   <div class="group"><h3>על התורה</h3>

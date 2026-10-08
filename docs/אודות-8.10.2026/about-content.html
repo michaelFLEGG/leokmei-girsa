@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>אודות · לאוקמי גירסא</title>
+<style>
+@font-face{font-family:LGVilna;src:url(FONTS/vilna-rg.woff2) format("woff2");font-weight:400}
+@font-face{font-family:LGVilna;src:url(FONTS/vilna-bd.woff2) format("woff2");font-weight:700}
+@font-face{font-family:LGVilna;src:url(FONTS/vilna-xb.woff2) format("woff2");font-weight:900}
+@font-face{font-family:LGVilnaTitle;src:url(FONTS/vilna-title.woff2) format("woff2")}
+:root{--navy-900:#0b1c2a;--navy-800:#0f263b;--navy-700:#173a58;--gold-100:#f9e08a;--gold-300:#e9c35a;--gold-500:#d1a23a;--gold-700:#8f6a1e;--parch:#f7f3ea;--ink:#1b1b1b;--muted:#5a5246}
+*{box-sizing:border-box}
+body{margin:0;background:var(--parch);color:var(--ink);font-family:"Frank Ruhl Libre",LGVilna,serif;font-size:18px;line-height:1.85}
+.velvet{background:radial-gradient(ellipse at 50% 0%,#163a58 0%,var(--navy-800) 55%,var(--navy-900) 100%);color:var(--gold-100)}
+.foil{background:linear-gradient(180deg,#f9e08a 0%,#e2b847 35%,#c8942c 55%,#eccb63 75%,#b98522 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+header.hero{text-align:center;padding:54px 16px 46px;border-bottom:2px solid var(--gold-700)}
+.hero h1{margin:0;font:900 clamp(38px,8vw,64px)/1.1 LGVilna,serif;letter-spacing:.2px}
+.hero .sub{font:400 clamp(20px,4vw,26px) LGVilna,serif;color:var(--gold-300);margin-top:10px}
+.rule{display:flex;align-items:center;gap:12px;justify-content:center;margin:18px auto 0;max-width:340px}
+.rule:before,.rule:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-500),transparent)}
+.rule i{width:9px;height:9px;background:var(--gold-500);transform:rotate(45deg)}
+main{max-width:860px;margin:0 auto;padding:10px 16px 50px}
+section{margin:46px 0}
+h2{font:900 30px/1.3 LGVilna,serif;color:var(--navy-800);margin:0 0 14px;text-align:center}
+h2:after{content:"";display:block;width:90px;height:2px;margin:10px auto 0;background:linear-gradient(90deg,transparent,var(--gold-700),transparent)}
+h3{font:700 22px/1.35 LGVilna,serif;color:var(--navy-700);margin:0 0 6px}
+.lead{font-size:21px;text-align:center;max-width:720px;margin:34px auto 0}
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:20px}
+.pillar{background:#fffdf7;border:1px solid #d9c9a3;border-top:3px solid var(--gold-700);border-radius:4px;padding:18px 18px 14px}
+.pillar p{margin:0;font-size:17px}
+.band{border-radius:6px;padding:28px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;text-align:center;margin:30px 0 18px}
+.band b{display:block;font:900 clamp(30px,6vw,42px)/1.15 LGVilna,serif}
+.band span{color:var(--gold-300);font-size:16px}
+.slot{border:2px dashed var(--gold-700);border-radius:6px;background:#fbf6e8;min-height:260px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);padding:20px;margin:18px 0 6px}
+figcaption{text-align:center;font-size:15px;color:var(--muted)}
+.haskama{background:#fffdf7;border:1px solid #d9c9a3;border-right:4px solid var(--gold-700);border-radius:4px;padding:18px 20px;margin:16px 0}
+.haskama .who{font:700 19px LGVilna,serif;color:var(--navy-800)}
+.haskama .when{font-size:14px;color:var(--muted);margin-bottom:6px}
+.haskama blockquote{margin:0;font-size:17.5px}
+.haskama details{margin-top:10px}
+.haskama summary{cursor:pointer;color:var(--gold-700);font-weight:700;font-size:15px}
+.haskama img{display:block;max-width:100%;height:auto;margin:12px auto 0;border:1px solid #ddd;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.author{border-radius:6px;padding:26px 22px;text-align:center}
+.author p{margin:0;color:#f3ead0;font-size:18px}
+.author h2{color:var(--gold-100)}.author h2:after{background:linear-gradient(90deg,transparent,var(--gold-500),transparent)}
+.group{margin:26px 0 8px}
+.group>h3{font:900 21px LGVilna,serif;color:var(--gold-700);border-bottom:1px solid #d9c9a3;padding-bottom:4px;margin-bottom:10px}
+.book{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;padding:12px 0;border-bottom:1px dotted #d9c9a3}
+.book h4{margin:0;font:700 20px LGVilna,serif;color:var(--navy-800)}
+.book p{margin:2px 0 0;font-size:16.5px}
+.book .get{flex:none;align-self:center;font:700 15px LGVilna,serif;color:var(--gold-700);border:1px solid var(--gold-700);border-radius:3px;padding:4px 12px;text-decoration:none;white-space:nowrap;opacity:.55}
+.book .get[href]{opacity:1}
+.note{font-size:15px;color:var(--muted);text-align:center}
+.close{text-align:center;font-size:17px}
+.close a{color:var(--gold-700)}
+.sugya{max-width:720px;margin:38px auto 0;background:#fffdf7;border:1px solid #d9c9a3;border-radius:4px;padding:22px 24px 16px;position:relative}
+.sugya .src{font:700 15px LGVilna,serif;color:var(--gold-700);text-align:center;margin-bottom:10px}
+.sugya p{margin:0 0 8px;font-size:18px}.sugya .am{font:700 16px LGVilna,serif;color:var(--navy-700)}
+.sugya .tail{font-size:17px;color:#3a342b;border-top:1px solid #e6dbbf;margin-top:12px;padding-top:12px}
+@media (max-width:560px){.book{flex-direction:column}.book .get{align-self:flex-start}}
+</style></head><body>
+
+<header class="hero velvet">
+  <h1 class="foil">לאוקמי גירסא</h1>
+  <div class="sub">קיצור התלמוד הבבלי</div>
+  <div class="rule"><i></i></div>
+</header>
+
+<main>
+
+<p class="lead">לאוקמי גירסא פורש לפני הלומד את התלמוד הבבלי דף אחר דף, בלשון מזוקקת ומדויקת, כך שהסוגיה כולה - שאלותיה ותירוציה, ראיותיה ושיטותיה, עד הכרעתה - עומדת לנגד עיניו בבת אחת. מי שלמד את הדף בעיון חוזר עליו כאן בזמן קצר, ומה שעבר תחת ידו נקבע בזכרונו.</p>
+<p class="lead" style="margin-top:14px;font-size:19px">הקיצור נועד בראש ובראשונה למי שכבר למד את הסוגיה על כל צדדיה, ומבקש לחזור ולשנן כמות גדולה של דפים על הסדר, בבהירות ובתמציתיות.</p>
+
+<div class="sugya">
+  <div class="src">איתא בגמרא, עירובין נ"ד.</div>
+  <p><span class="am">אמר ליה שמואל לרב יהודה:</span> שיננא, פתח פומיך קרי, פתח פומיך תני, כי היכי דתתקיים בך ותוריך חיי, שנאמר "כי חיים הם למוצאיהם ולכל בשרו מרפא".</p>
+  <p><span class="am">רבא:</span> אימתי שמחה לאיש - בזמן שמענה פיו.</p>
+  <p><span class="am">רב חסדא:</span> אין תורה נקנית אלא בסימנין, שנאמר "שימה בפיהם".</p>
+  <p><span class="am">שם:</span> "הציבי לך ציונים" - עשו ציונים לתורה. "אמור לחכמה אחותי את ומודע לבינה תקרא" - עשה מודעים לתורה.</p>
+  <p class="tail">התענוג הנצחי הגדול ביותר הקיים עלי אדמות הוא ללמוד ולהגות בתורת ה', לחזור ולשנן, ובייחוד בתורה שבעל פה, אשר בסגולתה ובכח קדושתה מרוממת את האדם מעל גבוה, להידבק בש"ס ובתורתו. ואין שמחה ואושר גדול יותר מעמל בתורה שמענה פיו, כי קרוב אליך הדבר מאוד - בפיך ובלבבך לעשותו.</p>
+</div>
+
+<section>
+  <h2>מלאכת מחשבת בכל שורה</h2>
+  <p>מאחורי כל שורה עומדת עבודה ארוכה ושקולה. כל מילה ומילה בגמרא נבחנה: מה מוכרח לגוף הסוגיה ומה אפשר לקצר בלי לחסר, היכן לשמור על לשון הגמרא כמות שהיא, והיכן לתרגם ולבאר בתוך השורה עצמה כדי שהדברים יתבררו מאליהם. כך נבנה הש"ס כולו, מסכת אחר מסכת, מתוך עמל של שנים רבות.</p>
+  <div class="pillars">
+    <div class="pillar"><h3>הזיכרון החזותי</h3><p>כל עמוד בנוי כך שהעין זוכרת אותו. כותרות בצד השורה מסמנות את תחנות הדרך של הסוגיה, המשנה ניכרת מן הגמרא, ושמות התנאים והאמוראים בולטים מגוף דבריהם. הלומד רואה את מבנה הסוגיה עוד לפני שקרא אותה, וכשהוא שב אליה - התמונה כבר ממתינה לו.</p></div>
+    <div class="pillar"><h3>התוכן במלואו</h3><p>דבר מעיקר הסוגיה אינו נשמט: כל קושיא ותירוצה, כל ראיה ודחייתה, כל שיטה ומסקנתה. הקיצור אינו מוותר על התוכן, אלא מסיר את מה שמכסה עליו.</p></div>
+    <div class="pillar"><h3>דיוק הניסוח</h3><p>כל שורה מנוסחת בקפידה, בלשון קצרה ובהירה הנשענת על לשון הגמרא עצמה ועל לשון הלימוד המסורתית. לעיתים מילה אחת במקומה חוסכת שורות שלמות, ולעולם אין הקיצור בא על חשבון הדיוק.</p></div>
+    <div class="pillar"><h3>סדר הסוגיה ומבנה</h3><p>סדר הגמרא נשמר כפי שהוא. הקיצור אינו מסדר את הדברים מחדש ואינו מחליף את דרכה של הגמרא בדרך אחרת: הלומד צועד בדיוק בשביל שהגמרא סללה, אלא שצעדיו מהירים וברורים יותר.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>בהיכלי התורה</h2>
+  <div class="band velvet">
+    <div><b class="foil">תשס"ז</b><span>המהדורה הראשונה</span></div>
+    <div><b class="foil">12</b><span>מהדורות</span></div>
+    <div><b class="foil">280,000+</b><span>עותקים</span></div>
+  </div>
+  <p>מאז הופיעו החוברות הראשונות בשנת תשס"ז, יצא לאוקמי גירסא בשתים עשרה מהדורות ובלמעלה ממאתיים ושמונים אלף עותקים. הוא נלמד בישיבות ובכוללים בכל רחבי עולם התורה, הליטאי והחסידי כאחד, ומלווה בחורי ישיבות ואברכי כוללים בחזרה ובשינון הש"ס.</p>
+</section>
+
+<section>
+  <h2>ראשית הדרך</h2>
+  <p>יוזמת לאוקמי גירסא נולדה לבקשתו של מרן הגאון הגדול רבי גרשון אדלשטיין זצ"ל, ראש ישיבת פוניבז', שהמחבר זכה לקרבה מיוחדת אליו ולשבת עמו בחברותא.</p>
+  <p>המלאכה כולה נעשתה בליווי צמוד של מרן הגאון הגדול רבי חיים קנייבסקי זצ"ל, שליווה את המפעל באופן אישי לאורך כל הדרך. ובהגיע המלאכה לסיומה, נערך סיום הש"ס על לאוקמי גירסא בביתו של מרן זצ"ל ובמעמדו.</p>
+  <figure style="margin:0">
+    <div class="slot" data-photo="siyum-hashas">[מקום שמור לתמונה: סיום הש"ס על לאוקמי גירסא בבית מרן הגר"ח קנייבסקי זצ"ל]</div>
+    <figcaption>סיום הש"ס על לאוקמי גירסא בבית מרן הגר"ח קנייבסקי זצ"ל</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>הסכמות גדולי ישראל</h2>
+  <p style="text-align:center">על לאוקמי גירסא ועל שאר חיבורי המחבר ניתנו הסכמות מגדולי ישראל, מרנן ראשי הישיבות והאדמו"רים. לפניכם מקצתן.</p>
+
+  <div class="haskama">
+    <div class="who">מרן הגאון הגדול רבי אליעזר יהודה פינקל, ראש ישיבת מיר</div>
+    <div class="when">על ספרי לאוקמי גירסא · ניסן תשפ"א</div>
+    <blockquote>"חזיתי איש מהיר במלאכתו לפני מלכים יתיצב... שוקד על דלתי תורה בהתמדה, וחפץ ה' הצליח בידו, אשר מתוך עמלה של תורה ודיבוק חברים זכה להעלות עלי גליון קונטרסי לאוקמי גירסא, לקבץ תמצית דברי התלמוד, בסדר נבון ונכון, ובשפה ברורה, ויש בזה תועלת לשינון וחזרה, ובפרט לצעירי הצאן."</blockquote>
+    <div class="when" style="margin-top:8px">ועל המכתב חתם מרן שר התורה הגר"ח קנייבסקי זצ"ל: "ג"א מצטרף להנ"ל".</div>
+    <details><summary>לצפייה במכתב המקורי</summary><img src="IMG/haskama-rey-finkel-leokmei.webp" alt="מכתב ההסכמה של הגאון רבי אליעזר יהודה פינקל על לאוקמי גירסא" loading="lazy"></details>
+  </div>
+
+  <div class="haskama">
+    <div class="who">הגאון הגדול רבי אביגדור נבנצאל, רב העיר העתיקה בירושלים</div>
+    <div class="when">על לאוקמי גירסא · אייר תשע"ט</div>
+    <blockquote>"...שהוא ת"ח מופלג ומרביץ תורה גדול בעיה"ק ירושלים, ונודע מאוד במתיקות ועריבות שיעוריו בעיון עמוק, ובקיאות ישרה, ורב גובריה לתורה ולתעודה... ועתה שכתב חיבור גדול על כל הש"ס 'לאוקמי גירסא', שנתקבל בחיבה יתרה אצל אלפי ישראל..."</blockquote>
+    <details><summary>לצפייה במכתב המקורי</summary><img src="IMG/haskama-nebenzahl-leokmei.webp" alt="מכתב ההסכמה של הגאון רבי אביגדור נבנצאל על לאוקמי גירסא" loading="lazy"></details>
+  </div>
+
+  <div class="haskama">
+    <div class="who">מרן הגאון הגדול רבי נתן צבי פינקל זצ"ל, ראש ישיבת מיר</div>
+    <div class="when">על עיונים ומראה מקומות למסכת חולין · חשון תשס"ט</div>
+    <blockquote>"...אבל האמת בודאי ניתן להאמר כי יש בזה חכמה גדולה לדעת ולהכיר איזה אבנים טובות ומרגליות הם אבני יסוד לבנין כל סוגיא וסוגיא, והמעיין בקונטרסו הנ"ל בודאי נוכח לראות את רב העמל ויגיעה של תורה הנדרש לברך על המוגמר של עבודה חשובה זו..."</blockquote>
+    <details><summary>לצפייה במכתב המקורי</summary><img src="IMG/haskama-rnt-finkel.webp" alt="מכתב ההסכמה של הגאון רבי נתן צבי פינקל זצ&quot;ל" loading="lazy"></details>
+  </div>
+
+  <div class="haskama">
+    <div class="who">מרן הגאון הגדול רבי ברוך דב פוברסקי, ראש ישיבת פוניבז'</div>
+    <div class="when">על עיונים ומראה מקומות לסדר נשים ונזיקין · חשון תשס"ח</div>
+    <blockquote>"מה מאוד נתענגתי כאשר הובאו לפני כתבי יקירי ורב חביבי... הן בדברי התורה וחידושיו הנעימים אשר עמל בהם ביגיעה רבה ובכשרונותיו הברוכים, וזכה להוציא תח"י בשכל זך ובתבונה ישרה ועמוקה בשפה ברורה ונעימה... תוכו רצוף אהבה ודביקות בהשי"ת ובתוה"ק."</blockquote>
+  </div>
+
+  <div class="haskama">
+    <div class="who">הגאון הגדול רבי אביגדור נבנצאל</div>
+    <div class="when">על עיונים ומראה מקומות על הבבלי · תשרי תשס"ח</div>
+    <blockquote>"וראיתי כי דלה דלה, וגם העלה מים זכים מבורות עמוקים, ירד לשיתין בין השיטין, והוא שר המשקים מעריב ומשכים, סיני ועוקר הרים, עמרים עמרים, ותורתו תמימה."</blockquote>
+  </div>
+
+  <div class="slot" data-photo="haskamot-nosafot" style="min-height:140px">[מקום שמור להסכמות נוספות: אדמו"רים וראשי ישיבות - צילומים יתווספו]</div>
+</section>
+
+<section class="author velvet">
+  <h2>על המחבר</h2>
+  <p>לאוקמי גירסא נכתב בידי מיכאל פלעג, המכהן כראש כולל חושן משפט בעיר העתיקה בירושלים, כאב"ד קהל קודש מיכלשטאט, וכראש ישיבת המקובלים שעל ידי "אור הרשב"י" בירושלים עיה"ק. לצד לאוקמי גירסא חיבר ספרים וקונטרסים רבים על התורה והנ"ך, על הש"ס וההלכה, על המועדים ועל הזוהר הקדוש.</p>
+</section>
+
+<section id="sefarim">
+  <h2>ספרי המחבר</h2>
+  <p class="note">הספרים יוצאים לאור ומופצים על ידי מכון לאוקמי גירסא. ליד כל ספר יופיע קישור להשגה.</p>
+
+  <div class="group"><h3>על התורה</h3>
+    <div class="book"><div><h4>עיונים ומראה מקומות</h4><p>על כל פרשיות התורה, הנ"ך וחמש מגילות, כל פרשה בחוברת נפרדת. ריכוז סדור של עיונים ומראי מקומות על הפרשה, המוליך את הלומד ואת מגיד השיעור אל המקורות עצמם ופותח לפניו את הסוגיות שבפרשה.</p></div><a class="get" data-book="iyunim-torah">להשגה</a></div>
+    <div class="book"><div><h4>תורה שלמה</h4><p>על פרשיות ספר דברים.</p></div><a class="get" data-book="torah-shlema">להשגה</a></div>
+  </div>
+
+  <div class="group"><h3>על הנ"ך</h3>
+    <div class="book"><div><h4>נ"ך המפורש</h4><p>על כ"ד ספרים. פירוש ערוך ומשולב בקיצור נמרץ מכל גדולי מפרשי הנ"ך, מילה במילה: הפירוש שזור בתוך הפסוקים עצמם, כך שהלומד קורא את הכתוב ומבינו כסדרו, בלי לדלג בין עמודים ובין מפרשים. ניתן להוריד גם ישירות מאתר נ"ך המפורש.</p></div><a class="get" data-book="nach-hameforash">להשגה</a></div>
+  </div>
+
+  <div class="group"><h3>תלמוד בבלי</h3>
+    <div class="book"><div><h4>לאוקמי גירסא</h4><p>על כל מסכתות הש"ס, בסט שלם ובכרכים בודדים. קיצור התלמוד הבבלי לחזרה ולשינון, שהאתר הזה מוקדש לו. ניתן להוריד גם ישירות מאתר זה.</p></div><a class="get" data-book="leokmei-girsa">להשגה</a></div>
+    <div class="book"><div><h4>עיונים ומראה מקומות</h4><p>על כל סדרי מועד, נשים ונזיקין. עיונים ומראי מקומות על סוגיות הש"ס, המכוונים את הלומד אל אבני היסוד של כל סוגיה ואל מקורותיה.</p></div><a class="get" data-book="iyunim-shas">להשגה</a></div>
+    <div class="book"><div><h4>שיננא</h4><p>על כל מסכתות הש"ס, בחוברות כיס ובגליונות, לשינון הש"ס בכל מקום ובכל עת.</p></div><a class="get" data-book="shinena">להשגה</a></div>
+    <div class="book"><div><h4>שואל ומשיב</h4><p>מאות שאלות ותשובות על סדר המסכת, לבחינה עצמית, לשינון ולחזרה: הלומד בוחן את עצמו על מה שלמד ויודע היטב היכן הוא עומד. ניתן להוריד ישירות מאתר התלמוד הבבלי.</p></div><a class="get" data-book="shoel-umeshiv">להשגה</a></div>
+  </div>
+
+  <div class="group"><h3>שולחן ערוך</h3>
+    <div class="book"><div><h4>לאסוקי שמעתתא</h4><p>על סדר אבן העזר ועל סדר חושן משפט, ולבחינות ברבנות. מסלול סדור מן הסוגיה אל ההלכה, ללומדי הלכה ולנבחנים בבחינות הרבנות.</p></div><a class="get" data-book="leasukei">להשגה</a></div>
+  </div>
+
+  <div class="group"><h3>מועדים</h3>
+    <div class="book"><div><h4>פעמייך</h4><p>עיונים ומראה מקומות על המועדים, ללימוד ולהכנת שיעורים לקראת כל מועד ומועד.</p></div><a class="get" data-book="paamaich">להשגה</a></div>
+  </div>
+
+  <div class="group"><h3>זוהר</h3>
+    <div class="book"><div><h4>זוהר רבא</h4><p>כל כתבי הזוהר הקדוש על סדר הפרשה: על כל פרשיות התורה, על כל הנ"ך ועל המועדים. במקום אחד מוצא הלומד את כל מה שנאמר בזוהר על הפרשה ועל הפסוק שלפניו.</p></div><a class="get" data-book="zohar-raba">להשגה</a></div>
+    <div class="book"><div><h4>זוהר גירסא</h4><p>כל כתבי הזוהר הקדוש על סדר הזוהר, בצורה סדורה ומקוטעת, עם כותרת וסיכום על כל קטע וקטע, בתוספת הערות.</p></div><a class="get" data-book="zohar-girsa">להשגה</a></div>
+    <div class="book"><div><h4>רזא דפרשתא</h4><p>הזוהר על פרשת השבוע בתרגום ללשון הקודש, ובין מילותיו ביאור שזור מתוך דברי המפרשים, כך שהלומד מבין את דברי הזוהר כסדרם.</p></div><a class="get" data-book="raza-dparshata">להשגה</a></div>
+    <div class="book"><div><h4>חומש רשב"י</h4><p>תמצית כל החידושים שנדרשו בזוהר ונלמדו מדיוקי לשון כל מילה ומילה בתורה, על סדר הפרשה.</p></div><a class="get" data-book="chumash-rashbi">להשגה</a></div>
+  </div>
+</section>
+
+<section class="close">
+  <p>הלימוד באתר פתוח לכל וללא תשלום. מצאתם טעות? אפשר להציע תיקון ישירות בדף הגמרא. הגמרא המנוקדת והפירוש מוצגים ברישיון, ומפורטים בעמוד <a href="mekorot.html">מקורות</a>.</p>
+  <p><a href="index.html">חזרה לשער</a> · <a href="yomi.html">הדף היומי היום</a></p>
+</section>
+
+</main></body></html>

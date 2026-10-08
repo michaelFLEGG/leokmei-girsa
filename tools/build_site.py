@@ -5559,6 +5559,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   has_bakara=bool(_glob.glob(os.path.join(_root,'data','bakara',slug+'-*.json')))
   if has_bakara:
     JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"bakara_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  # צורת הדף (8.10.2026): הקוד והכפתור נכללים רק במסכת שיש לה צורת דף במניפסט. אחרת - כלום.
+  _tzm=os.path.join(_root,'data','tzura','manifest.json')
+  tz_man=None
+  if os.path.exists(_tzm):
+    tz_man=json.load(io.open(_tzm,encoding='utf-8')).get(slug)
+  if tz_man:
+    JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__TZMAN="+json.dumps(tz_man,ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tzura_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="ממצאי הבקרה בתוך הדף (למנהל בלבד)">בקרה</button>' if has_bakara else ''
   bkpanel=('<div class="panel" id="bkp"><button class="x" onclick="panel(&quot;bkp&quot;)">×</button><h3>בקרת תוכן - הממצאים לפי סוג</h3><div id="bkpb"></div></div>') if has_bakara else ''
 

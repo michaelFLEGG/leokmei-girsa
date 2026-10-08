@@ -1216,6 +1216,38 @@ async function qzDec(req, env, url) {
   return json({ ok: true });
 }
 
+/* ---- צורת הדף (8.10.2026): תמונות מוגנות מ-R2, בכתובת חתומה קצרת-תוקף ----
+   /tz/tok מנפיק אסימון ל-5 דקות רק לדף שמגיע מאתר לאוקמי (Referer/Origin).
+   /tz/img/<מסכת>/<צד>.<v|z>.webp מגיש את העמוד רק עם אסימון תקף ו-Referer מותר.
+   אין נתיב להורדת ה-PDF המלא, ואין בו קוד כזה בכלל. נדרשים: קשירת R2 בשם TZURA והסוד TZ_SECRET. */
+const TZ_HOSTS = ['leokmei.com', 'www.leokmei.com', 'localhost', '127.0.0.1'];
+function tzHostOk(req) {
+  const o = req.headers.get('origin') || req.headers.get('referer') || '';
+  try { const h = new URL(o).hostname; return TZ_HOSTS.indexOf(h) >= 0 || /\.github\.io$/.test(h); } catch (e) { return false; }
+}
+async function tzSign(env, exp) {
+  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.TZ_SECRET || ''), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', k, new TextEncoder().encode('tz.' + exp));
+  return exp + '.' + btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/[+/=]/g, (c) => ({ '+': '-', '/': '_', '=': '' }[c]));
+}
+async function tzTok(req, env) {
+  if (!env.TZ_SECRET) return bad('לא מוגדר', 503);
+  if (!tzHostOk(req)) return bad('אסור', 403);
+  return json({ ok: true, t: await tzSign(env, Math.floor(Date.now() / 1000) + 300) });
+}
+async function tzImg(req, env, url, p) {
+  if (!env.TZ_SECRET || !env.TZURA) return bad('לא מוגדר', 503);
+  const m = /^\/tz\/img\/([a-z-]{3,30})\/(\d{3}[ab])\.(v|z)\.webp$/.exec(p);
+  if (!m) return bad('לא נמצא', 404);
+  if (req.headers.get('referer') && !tzHostOk(req)) return bad('אסור', 403);
+  const t = url.searchParams.get('t') || '';
+  const exp = parseInt(t.split('.')[0], 10);
+  if (!(exp > Date.now() / 1000) || (await tzSign(env, exp)) !== t) return bad('פג תוקף', 403);
+  const o = await env.TZURA.get(m[1] + '/' + m[2] + '.' + m[3] + '.webp');
+  if (!o) return bad('לא נמצא', 404);
+  return new Response(o.body, { headers: { ...CORS, 'content-type': 'image/webp', 'cache-control': 'private, max-age=300', 'x-robots-tag': 'noindex' } });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -1223,6 +1255,8 @@ export default {
     const p = url.pathname.replace(/\/+$/, '') || '/';
     try {
       if (p === '/' || p === '/health') return json({ ok: true, service: 'leokmei-suggest' });
+      if (p === '/tz/tok' && req.method === 'GET') return await tzTok(req, env);
+      if (p.startsWith('/tz/img/') && req.method === 'GET') return await tzImg(req, env, url, p);
       if (p === '/suggest' && req.method === 'POST') return await suggest(req, env);
       if (p === '/auth' && req.method === 'POST') return await auth(req, env);
       if (p === '/proc' && req.method === 'GET') return await procGet(req, env, url);

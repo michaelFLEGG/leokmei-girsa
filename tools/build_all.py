@@ -334,6 +334,10 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     open(os.path.join(SITE, 'masechtot.html'), 'w', encoding='utf-8').write(idx)
     shutil.copy(os.path.join(ROOT, 'tools', 'daf_yomi.js'), os.path.join(SITE, 'daf-yomi.js'))
     shutil.copy(os.path.join(ROOT, 'tools', 'hdate.js'), os.path.join(SITE, 'hdate.js'))
+    # צורת הדף: קואורדינטות בלבד (התמונות אינן באתר הציבורי ואינן במאגר)
+    _tz = os.path.join(ROOT, 'data', 'tzura')
+    if os.path.isdir(_tz):
+        shutil.copytree(_tz, os.path.join(SITE, 'tzura'), dirs_exist_ok=True)
     import build_lamed
     build_lamed.build(SITE)
     import quiz_build

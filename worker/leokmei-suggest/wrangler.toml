@@ -13,3 +13,9 @@ id = "94cebf3b2d294c3d903ee0be904f041c"
 
 [observability]
 enabled = false
+
+# צורת הדף (8.10.2026): להפעלה רק אחרי יצירת הדלי והעלאת התמונות (ראו docs/צורת-הדף.md):
+# [[r2_buckets]]
+# binding = "TZURA"
+# bucket_name = "leokmei-tzura"
+# והסוד: wrangler secret put TZ_SECRET

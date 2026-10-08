@@ -25,8 +25,13 @@ class H(BaseHTTPRequestHandler):
         p = urllib.parse.unquote(p)
         if p.endswith('/'):
             p += 'index.html'
-        full = os.path.normpath(os.path.join(ROOT, p.lstrip('/')))
-        if not full.startswith(ROOT) or not os.path.isfile(full):
+        if p.startswith('/tzimg/'):   # צורת הדף: תמונות פרטיות, לבדיקה מקומית בלבד
+            full = os.path.normpath(os.path.join(os.path.dirname(ROOT), '_work', 'tzura', 'assets', p[len('/tzimg/'):]))
+            if not full.startswith(os.path.join(os.path.dirname(ROOT), '_work')) or not os.path.isfile(full):
+                self.send_error(404); return
+        else:
+            full = os.path.normpath(os.path.join(ROOT, p.lstrip('/')))
+        if not (full.startswith(ROOT) or p.startswith('/tzimg/')) or not os.path.isfile(full):
             self.send_error(404)
             return
         data = open(full, 'rb').read()

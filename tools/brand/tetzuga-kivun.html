@@ -94,17 +94,17 @@ main{max-width:1180px;margin:0 auto;padding-block:28px 60px;padding-inline:16px}
     <radialGradient id="glow" cx=".5" cy=".46" r=".55"><stop offset="0" stop-color="#f3cf6a" stop-opacity=".28"/><stop offset=".55" stop-color="#d9a73a" stop-opacity=".08"/><stop offset="1" stop-color="#d9a73a" stop-opacity="0"/></radialGradient>
     <filter id="tfoil" x="-10%" y="-10%" width="120%" height="125%" color-interpolation-filters="sRGB">
 <feGaussianBlur in="SourceAlpha" stdDeviation="2.2" result="b"/>
-<feSpecularLighting in="b" surfaceScale="5" specularConstant="1.05" specularExponent="18" lighting-color="#fff4cf" result="s"><feDistantLight azimuth="225" elevation="42"><animate id="sweep" attributeName="azimuth" values="140;265;225" keyTimes="0;.7;1" dur="2.6s" begin="0.5s" fill="freeze"/></feDistantLight></feSpecularLighting>
+<feSpecularLighting in="b" surfaceScale="5" specularConstant="1.25" specularExponent="18" lighting-color="#fff4cf" result="s"><feDistantLight azimuth="225" elevation="42"><animate id="sweep" attributeName="azimuth" values="140;265;225" keyTimes="0;.7;1" dur="2.6s" begin="0.5s" fill="freeze"/></feDistantLight></feSpecularLighting>
 <feComposite in="s" in2="SourceAlpha" operator="in" result="si"/>
-<feComposite in="SourceGraphic" in2="si" operator="arithmetic" k2="1" k3=".85" result="lit"/>
+<feComposite in="SourceGraphic" in2="si" operator="arithmetic" k2="1" k3="1" result="lit"/>
 <feOffset in="SourceAlpha" dx="1.9800000000000002" dy="2.8600000000000003" result="o"/><feGaussianBlur in="o" stdDeviation="1.7600000000000002" result="ob"/>
-<feFlood flood-color="#02070d" flood-opacity=".85"/><feComposite in2="ob" operator="in" result="sh"/>
-<feMerge><feMergeNode in="sh"/><feMergeNode in="lit"/></feMerge></filter>
+<feFlood flood-color="#02070d" flood-opacity="1"/><feComposite in2="ob" operator="in" result="sh"/>
+<feMorphology in="SourceAlpha" operator="dilate" radius="1.3" result="rim0"/><feFlood flood-color="#120a00" flood-opacity=".9"/><feComposite in2="rim0" operator="in" result="rim"/><feMerge><feMergeNode in="sh"/><feMergeNode in="rim"/><feMergeNode in="lit"/></feMerge></filter>
   </defs>
   <ellipse cx="150" cy="185" rx="165" ry="190" fill="url(#glow)"/>
   <g filter="url(#tfoil)" fill="url(#tg)" font-family="Vilna XB, Vilna, serif" text-anchor="middle" direction="rtl">
-    <text x="150" y="150" font-size="104">לאוקמי</text>
-    <text x="150" y="262" font-size="104">גירסא</text>
+    <text x="150" y="150" font-size="104" stroke="url(#tg)" stroke-width="2.6" stroke-linejoin="round" paint-order="stroke">לאוקמי</text>
+    <text x="150" y="262" font-size="104" stroke="url(#tg)" stroke-width="2.6" stroke-linejoin="round" paint-order="stroke">גירסא</text>
     <g font-family="Vilna, serif" font-weight="700">
       <text x="150" y="338" font-size="30" letter-spacing="1">קיצור התלמוד הבבלי</text>
     </g>

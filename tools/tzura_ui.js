@@ -282,5 +282,5 @@
   /* קישור עמוק: ‎#tz=<ref>‎ */
   document.addEventListener('DOMContentLoaded',function(){
     var m=/[#&]tz=([^&]+)/.exec(location.hash||'');if(m)setTimeout(function(){tzOpen(decodeURIComponent(m[1]))},900)});
-  window.tzOpen=tzOpen;window.tzClose=tzClose;
+  window.tzOpen=tzOpen;window.tzClose=tzClose;window.tzIsOpen=function(){return !!TZ.open};
   })();

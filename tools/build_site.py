@@ -4971,6 +4971,24 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!SX||!SRCSYNC)return;
     const r=curFlowRef();
     if(r&&r!==SX.ref)srcGo(r,true)}
+  /* ---- קיצורים בסרגל, ליד "תצוגה" (8.10.2026): גמרא ופירוש בצד, צורת הדף, ושאלות על הדף ---- */
+  function barRef(){
+    let r='';try{r=curFlowRef()}catch(e){}
+    if(r)return r;
+    const rows=document.querySelectorAll('#flow .row[data-ref]');return rows.length?rows[0].dataset.ref:''}
+  function gemaraBtn(){
+    if($('#srcx')){closeSrc();barBtnUi();return}
+    const r=barRef();if(!r){toast('אין כאן קטע גמרא לפתוח',3000);return}
+    SRCMODE=SRCMODE||srcDefault();openSrc(r);barBtnUi()}
+  function tzBtn(){
+    if(!window.tzOpen)return;
+    if(window.tzIsOpen&&tzIsOpen()){tzClose();return}
+    const r=barRef();if(r)tzOpen(r)}
+  function quizDaf(){
+    const i=+($('#dafsel')||{}).value||0,p=D_PAGES()[i];if(!p)return;
+    window.open('quiz.html?mode=daf&m='+encodeURIComponent(SLUG)+'&daf='+encodeURIComponent((p.daf||'').trim()),'_blank','noopener')}
+  function D_PAGES(){return DATA.pages||[]}
+  function barBtnUi(){const b=$('#gmbtn');if(b)b.classList.toggle('on',!!$('#srcx'))}
   /* גלילה רציפה: בהגעה לסוף הדף הבא נטען מתחתיו, ובהגעה לראשו - הקודם */
   function srcScroll(){
     const b=srcBody();if(!b||!SX)return;
@@ -5566,6 +5584,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     tz_man=json.load(io.open(_tzm,encoding='utf-8')).get(slug)
   if tz_man:
     JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__TZMAN="+json.dumps(tz_man,ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tzura_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  tzbtn='<button id="tzbtn" class="ib" onclick="tzBtn()" title="צורת הדף: עמוד הגמרא כפי שהוא מודפס (Alt+צ)"><svg class="ic" aria-hidden="true"><use href="#i-page"/></svg><span class="t">צורת הדף</span></button>' if tz_man else ''
   bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="ממצאי הבקרה בתוך הדף (למנהל בלבד)">בקרה</button>' if has_bakara else ''
   bkpanel=('<div class="panel" id="bkp"><button class="x" onclick="panel(&quot;bkp&quot;)">×</button><h3>בקרת תוכן - הממצאים לפי סוג</h3><div id="bkpb"></div></div>') if has_bakara else ''
 
@@ -5595,6 +5614,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
     <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
     <button onclick="document.body.classList.toggle('hc');this.classList.toggle('on')" title="ניגודיות גבוהה">ניגודיות</button></div></div>
+  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת והפירוש בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}<button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
   <div class="bg dd" data-pri="2" data-label="כלים"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" aria-label="כלים" title="כלים: תוכן עניינים, אמוראים, הדפסה, הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-dots"/></svg><span class="t">כלים</span></button>
     <div class="ddp">
     <button onclick="panel('toc')" title="נושאי הסוגיות"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>תוכן העניינים</button>

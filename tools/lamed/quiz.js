@@ -117,10 +117,18 @@
     var bank = await Q.bank(slug);
     if (!bank) return null;
     var pool = bank.q;
-    if (mode === 'yomi') {
-      var y = LGDaf.forStr(today), a0 = LG.dafLabel(y.n, 0), a1 = LG.dafLabel(y.n, 1), k0 = LG.dafKey(a0);
-      var near = pool.filter(function (q) { return q.sd === a0 || q.sd === a1; });
-      for (var w = 2; near.length < ROUND && w <= 12; w += 2) {
+    if (mode === 'yomi' || mode === 'daf') {
+      var a0, a1, k0, y;
+      if (mode === 'daf') {
+        /* שאלות על הדף שהלומד קורא (כפתור "בחן אותי על הדף" בדף הקריאה): העמוד עצמו, ואם אין די - שני צדדיו וסביבתו */
+        a0 = siteDaf(Q._daf || ''); k0 = LG.dafKey(a0);
+        a1 = a0.replace(/[.:]$/, '') + (/\.$/.test(a0) ? ':' : '.');
+      } else {
+        y = LGDaf.forStr(today); a0 = LG.dafLabel(y.n, 0); a1 = LG.dafLabel(y.n, 1); k0 = LG.dafKey(a0);
+      }
+      var own = mode === 'daf' ? pool.filter(function (q) { return q.sd === a0; }) : [];
+      var near = own.length >= 3 ? own : pool.filter(function (q) { return q.sd === a0 || q.sd === a1; });
+      for (var w = 2; own.length < 3 && near.length < ROUND && w <= 12; w += 2) {
         near = pool.filter(function (q) { return Math.abs(LG.dafKey(q.sd) - k0) <= w; });
       }
       pool = near.length >= 3 ? near : pool;
@@ -563,6 +571,7 @@
     function enter() {
       applyPersona();
       var md = qs.get('mode');
+      if (md === 'daf' && qs.get('daf') && slugs.length) { Q._daf = qs.get('daf'); start('daf', cur, 0, 0); return; }
       if (md && md !== 'home' && slugs.length) {
         var y = LGDaf.forStr(LG.ymd(Date.now()));
         start(md, md === 'yomi' ? y.slug : cur, 0, 0);

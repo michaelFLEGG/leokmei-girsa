@@ -1530,6 +1530,40 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
                      'נשארו בלי ניקוד (ראשי תיבות, קיצורים או מילה שלא נמצאה לה התאמה בטוחה)'
                      % (nk.get('est',0),nk.get('left',0))))
 
+  # א (8.10.2026): "הדרן עלך [שם הפרק]" בסוף כל פרק. שם הפרק נלקח משורת פתיחת
+  # הפרק עצמה. שורה שכבר קיימת בוורד (בכל סגנון, גם נושא או ד"ה) מקבלת את
+  # סגנון "הדרן"; היכן שחסרה - נוספת שורה מן הבנייה בלבד (syn), והוורד אינו
+  # נכתב כאן. כשהשורה תיכתב בוורד, זו שמן הבנייה נעלמת מעצמה.
+  _HAD_RE=re.compile(r'^[^א-ת]*הדר[ןך]\s+עלך(?=\s|$)')
+  def _had_text(u):
+      return re.sub(r'\s+',' ',html.unescape(re.sub(r'[֑-ׇ]','',_utxt(u)))).strip()
+  _fl=[(pg,u) for pg in pages for u in pg['units']]
+  _ops=[j for j,(pg,u) in enumerate(_fl) if u['k']=='perek-start' and (u.get('op') or u.get('mg'))]
+  n_had_new=n_had_conv=n_had_noname=0
+  _ins=[]
+  for _n,_j in enumerate(_ops):
+      _end=(_ops[_n+1] if _n+1<len(_ops) else len(_fl))
+      _t=html.unescape(_utxt(_fl[_j][1])).strip()
+      _m=re.match(r'^[^-–:]*?\s*[-–:]\s*(.+)$',_t)
+      _name=re.sub(r'[+]','',_m.group(1)) if _m else ''
+      _name=re.sub(r'\s+',' ',_name).strip().rstrip('.,:;').strip()
+      _have=[q for q in range(_j+1,_end) if _HAD_RE.match(_had_text(_fl[q][1])) and 'מסכת' not in _had_text(_fl[q][1])[:14]]
+      if _have:
+          _hu=_fl[_have[-1]][1]
+          if _hu['k']!='hadran':
+              _hu['k']='hadran'; n_had_conv+=1
+          continue
+      if not _name:
+          n_had_noname+=1; continue
+      _pg,_lu=_fl[_end-1]
+      _ins.append((_pg,_lu,{'k':'hadran','a':html.escape('הדרן עלך '+_name,quote=False),'l':[],'id':900000+_n,'s':'','syn':1}))
+  for _pg,_lu,_nu in _ins:
+      _pg['units'].insert([id(x) for x in _pg['units']].index(id(_lu))+1,_nu); n_had_new+=1
+  if n_had_new or n_had_conv or n_had_noname:
+      qa.append(('טופל בתצוגה: הדרן עלך',
+                 f'{n_had_new} שורות "הדרן עלך" נוספו מן הבנייה בלבד (חסרות בוורד), {n_had_conv} שורות הדרן שהיו בסגנון אחר קיבלו את סגנון ההדרן'
+                 +(f'; {n_had_noname} פרקים בלי שם בשורת הפתיחה - לא נוספה שורה' if n_had_noname else '')))
+
   data={'mbt':mbt,'mnseg':mnseg,'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 
@@ -1721,7 +1755,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .perek-name .main{font-family:'Franknatan','Vilna',serif;color:#8a7d66;font-size:1.09em}
   .perek-range .main{color:var(--red);font-size:.73em}
   .perek-start .main{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:900;color:#000;font-size:calc(var(--k-dh) * 1em)}
-  .hadran .main{text-align:center;text-align-last:center;font-size:1.09em;margin:0}
+  .hadran .main{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;color:#000;
+           font-size:calc(var(--k-dh) * .92em);margin:0}
+  .row.hadran{margin-top:.5em;margin-bottom:.4em}
   /* מרווחי וורד, בחצאי שורה של רשת הגוף. b=לפני, a=אחרי.
      הכללים נכתבים כצאצא של .row כדי שמשקלם יגבר על '.main p{margin:0}'
      ועל כללי הכותרות. בלי זה הם לא חלו כלל, והמרווח שבוורד נעלם. */

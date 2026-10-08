@@ -2051,6 +2051,41 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
 
   /* scrollIntoView אינו גולל מכולת-טורים, ולכן המיקום מחושב במידות פיזיות:
      מיישרים את קצה האלמנט לקצה הימני של המסגרת. הנוסחה נכונה בשני מוסכמות ה-RTL. */
+  /* מחוון הדף בשדה העליון (8.10.2026). הדף נגזר מסמן "דף בצד" האחרון
+     שלפני הקטע שנראה בראש התצוגה, ובעריכה - לפני הפסקה שהסמן בה. זה נכון
+     גם בטורים (גלילה אופקית) וגם ברצף (גלילת העמוד). אחרי קפיצה יזומה
+     (בורר הדפים, תוכן העניינים) הוא שותק רגע כדי לא לבטל אותה. */
+  let DAFNAV=0,DAFT=0;
+  function dafTrack(){
+    if(Date.now()-DAFNAV<900)return;
+    const f=$('#flow'),ds=$('#dafsel');if(!f||!ds||!f.children.length)return;
+    let ref=null;
+    if(typeof EDIT!=='undefined'&&EDIT){const sl=getSelection();
+      if(sl&&sl.anchorNode&&f.contains(sl.anchorNode)){const n=sl.anchorNode.nodeType===1?sl.anchorNode:sl.anchorNode.parentElement;
+        ref=n&&n.closest?n.closest('#flow>*'):null}}
+    if(!ref){
+      /* נקודת הקריאה: שליש מן הגובה הנראה, בטור הימני ביותר (בטורים) או
+         באמצע העמוד (ברצף). הדגימה בנקודה אחת קובעת את הקטע שהעין עליו,
+         ולא קטע שרק קצהו נראה בפינה. */
+      const br=document.querySelector('.bar'),top0=(br?br.getBoundingClientRect().bottom:0)+2,W=innerWidth,H=innerHeight;
+      const y=Math.round(top0+(H-top0)*0.33),vert=f.classList.contains('vert');
+      const xs=vert?[W/2,W/2-120,W/2+120,W/2-250,W/2+250]:[W-70,W-200,W-330,W-460,W-590,W-720];
+      for(const x of xs){
+        const el=document.elementFromPoint(Math.max(1,Math.min(W-1,x)),y);
+        const r=el&&el.closest?el.closest('#flow>*'):null;
+        if(r){ref=r;break}}}
+    if(!ref)return;
+    let pi=-1;
+    for(let r=ref;r;r=r.previousElementSibling){const d=r.querySelector('.dafmark');
+      if(d&&/^d\d+$/.test(d.id)){pi=+d.id.slice(1);break}}
+    if(pi<0){const sc=SEC[cur];pi=sc?sc.from:0}
+    if(!D.pages[pi]||+ds.value===pi)return;
+    ds.value=pi;const cd=$('#curdaf');if(cd)cd.textContent=D.pages[pi].label||D.pages[pi].daf}
+  function dafSoon(){clearTimeout(DAFT);DAFT=setTimeout(dafTrack,100)}
+  (function(){const f=$('#flow');if(f)f.addEventListener('scroll',dafSoon,{passive:true});
+    addEventListener('scroll',dafSoon,{passive:true});addEventListener('resize',dafSoon);
+    document.addEventListener('selectionchange',()=>{if(typeof EDIT!=='undefined'&&EDIT)dafSoon()});
+    if(f&&window.MutationObserver)new MutationObserver(dafSoon).observe(f,{childList:true})})();
   function toEl(e){const f=$('#flow');
     if(f.classList.contains('vert')){e.scrollIntoView({block:'center'});return}
     f.scrollLeft += e.getBoundingClientRect().right - f.getBoundingClientRect().right;}
@@ -2499,7 +2534,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     srcLayer();
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
-  function toDaf(pi){const si=secOf(pi);if(si!==cur)render(si);
+  function toDaf(pi){DAFNAV=Date.now();const si=secOf(pi);if(si!==cur)render(si);
     setTimeout(()=>{const e=$('#d'+pi);if(e)toEl(e);$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi},20)}
   function dafYomi(){const t=window.LGDaf&&LGDaf.today();if(!t)return;
     if(t.slug===SLUG){const pi=D.pages.findIndex(p=>p.daf===t.daf);
@@ -2553,7 +2588,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   let RES=[],GRES=[],LASTQ='';function jumpR(i){jump(RES[i].pi,RES[i].id,RES[i].m||LASTQ)}
   /* תוצאה בגמרא: פותחת את הגמרא במקום, בלי לצאת מהחיפוש */
   function gmJump(i){const r=GRES[i];if(!r)return;SRCMODE=SRCMODE||srcDefault();openSrc(r.ref)}
-  function jump(pi,id,q){const si=secOf(pi);render(si,q);
+  function jump(pi,id,q){DAFNAV=Date.now();const si=secOf(pi);render(si,q);
     setTimeout(()=>{const e=$('#u'+id);if(e){e.classList.add('hit');toEl(e)}$('#dafsel').value=pi;$('#curdaf').textContent=D.pages[pi].daf},20)}
   function amq(i){$('#q').value=D.am[i][0];search(D.am[i][0])}
   function build(){

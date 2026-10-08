@@ -3697,6 +3697,22 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(e.ins)return e.resT[e.where==='before'?0:1];
     return ((e.kind==='split'||e.kind==='hsplit')?e.resT:e.texts).join(' ⟂ ')}
 
+  /* מהירות ההקשה (8.10.2026). בעמוד של טורים כל הקשה מחשבת מחדש את פריסת
+     כל הטורים שאחרי השורה: נמדד כ-200 מילישניות להקשה בבכורות. בעריכה
+     בלבד, שורות שמחוץ למסך נדלגות (content-visibility) ובגובהן המדוד
+     המדויק, כך שחלוקת הטורים אינה זזה והעריכה מיידית (נמדד: 6 מילישניות). */
+  let CVT=0;
+  function edCvNow(){
+    const f=$('#flow');if(!f)return;
+    const rows=[...f.children];
+    rows.forEach(r=>{r.style.contentVisibility='';r.style.containIntrinsicSize=''});
+    if(!EDIT||f.classList.contains('book'))return;
+    const hs=rows.map(r=>[...r.getClientRects()].reduce((a,b)=>a+b.height,0));
+    rows.forEach((r,i)=>{if(hs[i]>0){r.style.contentVisibility='auto';r.style.containIntrinsicSize='auto '+hs[i].toFixed(2)+'px'}})}
+  function edCv(ms){clearTimeout(CVT);CVT=setTimeout(edCvNow,ms==null?250:ms)}
+  (function(){const f=$('#flow');if(f&&window.MutationObserver)new MutationObserver(()=>{if(EDIT)edCv(300)}).observe(f,{childList:true})})();
+  addEventListener('resize',()=>{if(EDIT)edCv(400)});
+  document.addEventListener('click',e=>{if(EDIT&&!(e.target.closest&&e.target.closest('#flow')))edCv(500)});
   function setEdit(on){
     const was=EDIT;
     if(on&&$('#flow').classList.contains('book')){
@@ -3724,6 +3740,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     edToolsDraw(on);
     if(on)procCheck();
     if($('#edbtn')){$('#edbtn').classList.toggle('on',on);$('#edbtn').setAttribute('aria-checked',on?'true':'false')}
+    edCv(on?250:0);
     if(on)drawEd()}
   /* כניסה למצב עריכה. מכשיר מוכר נכנס מיד. מכשיר חדש מקליד את מילת
      המנהל פעם אחת, ונקודת הקליטה מנפיקה לו אסימון ארוך-טווח: מאז הוא

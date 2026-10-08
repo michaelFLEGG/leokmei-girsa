@@ -1248,6 +1248,85 @@ async function tzImg(req, env, url, p) {
   return new Response(o.body, { headers: { ...CORS, 'content-type': 'image/webp', 'cache-control': 'private, max-age=300', 'x-robots-tag': 'noindex' } });
 }
 
+/* ------------------------------------------------------------ טקסטי האתר (עיפרון המנהל, 8.10.2026)
+   שכבת שינויים לטקסטים קבועים של המעטפת. נשמרת כאן, לא בקבצי האתר, ולכן
+   מופיעה תוך דקה בלי בנייה ובלי פרסום. מחיקה רכה בלבד: כל שמירה נרשמת ביומן. */
+const TX_CUR = 'tx:cur';
+const TX_MAX = 600;
+function txClean(v) {
+  return String(v == null ? '' : v).normalize('NFC')
+    .replace(/<[^>]*>/g, '')
+    .replace(/[<>]/g, '')
+    .replace(/[‒–—―−]/g, '-')
+    .replace(/[‎‏‪-‮⁦-⁩]/g, '')
+    .replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n')
+    .trim().slice(0, TX_MAX);
+}
+const TX_KINDS = ['text', 'title', 'aria-label', 'placeholder', 'alt', 'doctitle', 'metadesc'];
+const txKind = (k) => (TX_KINDS.indexOf(k) >= 0 ? k : 'text');
+const txKeyOk = (k) => typeof k === 'string' && /^[A-Za-z0-9_.֐-׿-]{3,90}$/.test(k);
+async function txLoad(env) {
+  try { return JSON.parse((await env.STORE.get(TX_CUR)) || '') || { rev: 0, items: {} }; }
+  catch (e) { return { rev: 0, items: {} }; }
+}
+async function txGet(req, env, url) {
+  const cur = await txLoad(env);
+  if (url.searchParams.get('full') === '1') {
+    if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+    const logs = [];
+    for (const k of (await listAll(env, 'txlog:')).slice(-400)) {
+      const r = await env.STORE.get(k.name);
+      if (r) { try { logs.push(JSON.parse(r)); } catch (e) { /* דילוג */ } }
+    }
+    logs.sort((a, b) => b.ts - a.ts);
+    return json({ ok: true, rev: cur.rev, items: cur.items, log: logs });
+  }
+  const pub = {};
+  for (const [k, v] of Object.entries(cur.items)) pub[k] = v.h ? { h: 1, o: v.o, d: v.d || 'text' } : { t: v.t, o: v.o, d: v.d || 'text' };
+  return new Response(JSON.stringify({ ok: true, rev: cur.rev, items: pub }), {
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=30', ...CORS },
+  });
+}
+async function txSave(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  if (!txKeyOk(b.key)) return bad('מפתח טקסט לא תקין');
+  const orig = txClean(b.orig);
+  const text = txClean(b.text);
+  const hide = b.hide === true;
+  if (!text && !hide) return bad('הטקסט ריק. כדי להסתיר אותו יש לאשר הסתרה', 422);
+  const cur = await txLoad(env);
+  const prev = cur.items[b.key] || null;
+  const before = prev ? (prev.h ? '' : prev.t) : orig;
+  if (!hide && text === (prev ? prev.o : orig)) {
+    delete cur.items[b.key];
+  } else {
+    if (Object.keys(cur.items).length > 3000) return bad('יותר מדי שינויי טקסט', 413);
+    cur.items[b.key] = { t: hide ? '' : text, h: hide ? 1 : 0, o: prev ? prev.o : orig, d: txKind(b.kind), s: str(b.scope, 40), ts: Date.now() };
+  }
+  cur.rev = (cur.rev || 0) + 1;
+  await env.STORE.put(TX_CUR, JSON.stringify(cur));
+  const ent = { id: rid(), ts: Date.now(), key: b.key, scope: str(b.scope, 40), before, after: hide ? '' : text, hide, orig: prev ? prev.o : orig, act: 'save' };
+  await env.STORE.put('txlog:' + String(ent.ts).padStart(14, '0') + ':' + ent.id, JSON.stringify(ent));
+  return json({ ok: true, rev: cur.rev, text: hide ? '' : text, cleaned: text !== String(b.text == null ? '' : b.text).trim() });
+}
+async function txRevert(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  if (!txKeyOk(b.key)) return bad('מפתח טקסט לא תקין');
+  const cur = await txLoad(env);
+  const prev = cur.items[b.key];
+  if (!prev) return json({ ok: true, rev: cur.rev, none: true });
+  delete cur.items[b.key];
+  cur.rev = (cur.rev || 0) + 1;
+  await env.STORE.put(TX_CUR, JSON.stringify(cur));
+  const ent = { id: rid(), ts: Date.now(), key: b.key, scope: prev.s || '', before: prev.h ? '' : prev.t, after: prev.o, hide: false, orig: prev.o, act: 'revert' };
+  await env.STORE.put('txlog:' + String(ent.ts).padStart(14, '0') + ':' + ent.id, JSON.stringify(ent));
+  return json({ ok: true, rev: cur.rev, orig: prev.o });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -1257,6 +1336,9 @@ export default {
       if (p === '/' || p === '/health') return json({ ok: true, service: 'leokmei-suggest' });
       if (p === '/tz/tok' && req.method === 'GET') return await tzTok(req, env);
       if (p.startsWith('/tz/img/') && req.method === 'GET') return await tzImg(req, env, url, p);
+      if (p === '/tx' && req.method === 'GET') return await txGet(req, env, url);
+      if (p === '/tx/save' && req.method === 'POST') return await txSave(req, env);
+      if (p === '/tx/revert' && req.method === 'POST') return await txRevert(req, env);
       if (p === '/suggest' && req.method === 'POST') return await suggest(req, env);
       if (p === '/auth' && req.method === 'POST') return await auth(req, env);
       if (p === '/proc' && req.method === 'GET') return await procGet(req, env, url);

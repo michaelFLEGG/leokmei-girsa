@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>טקסטים ששיניתי · לאוקמי גירסא</title>
+<style>
+:root{--bg:#0b1c2a;--paper:#fbf8f1;--gold:#c9a24a;--ink:#1d2733}
+body{margin:0;background:var(--bg);color:#f2e7c9;font-family:Assistant,"Noto Sans Hebrew",system-ui,sans-serif;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--gold);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+header h1{margin:0;font-size:22px;color:#e5c26b}header a{color:#e5c26b}
+main{max-width:1000px;margin:0 auto;padding:12px 14px 60px}
+h2{margin:22px 0 8px;font-size:18px;color:#e5c26b;border-bottom:1px solid rgba(201,162,74,.4);padding-bottom:3px}
+.card{background:var(--paper);color:var(--ink);border-radius:8px;padding:10px 12px;margin:8px 0}
+.lb{font-size:12px;color:#7a6a45}
+.old{color:#8a2b2b;text-decoration:line-through}.new{color:#14693b;font-weight:600}
+.orph{background:#f6d9d0;color:#7a2a12;border-radius:4px;padding:0 6px;font-size:12px;margin-inline-start:6px}
+button{font:inherit;font-size:14px;border:1px solid var(--gold);background:var(--bg);color:#e5c26b;border-radius:5px;padding:3px 12px;cursor:pointer}
+.msg{padding:30px 10px;text-align:center;font-size:18px}
+</style></head><body>
+<header><h1>טקסטים ששיניתי</h1><a href="/index.html">לדף הבית</a></header>
+<main id="m"><div class="msg">טוען...</div></main>
+<script src="/hdate.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+var API=(window.LK&&LK.cfg&&LK.cfg.api)||"https://leokmei-suggest.m7654301.workers.dev";
+var m=document.getElementById('m');
+var key='';try{key=localStorage.getItem('lg-adm')||''}catch(e){}
+if(!key){m.innerHTML='<div class="msg">הדף הזה למנהל בלבד. היכנס קודם כמנהל באחד מדפי האתר.</div>';return}
+var TYPE={home:'בית',shas:'מפת הש"ס',masechtot:'רשימת מסכתות',yomi:'הדף היומי',lamed:'המקום שלי',quiz:'בחן את עצמך',shiurim:'שיעורים',about:'אודות',settings:'הגדרות',done:'סיום מסכת',admin:'מנהל',mekorot:'מקורות','masechet-shell':'מסכת',gemara:'דף גמרא',privacy:'פרטיות',site:'כל הדפים (כותרת, תחתית)'};
+var KIND={text:'טקסט',title:'טקסט ריחוף','aria-label':'תווית נגישות',placeholder:'טקסט בשדה',alt:'תיאור תמונה',doctitle:'כותרת הדף',metadesc:'תיאור לגוגל'};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function hd(ts){try{return HD.dateTime(ts)}catch(e){return new Date(ts).toLocaleString('he-IL')}}
+function api(p,b){return fetch(API+p,{method:b?'POST':'GET',headers:{'content-type':'application/json','x-admin-key':key},body:b?JSON.stringify(b):undefined,cache:'no-store'}).then(function(r){return r.json()})}
+Promise.all([api('/tx?full=1'),fetch('/lk-texts.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():{}}).catch(function(){return{}})]).then(function(a){
+ var d=a[0],reg=a[1]||{};
+ if(!d.ok){m.innerHTML='<div class="msg">'+esc(d.error||'אין הרשאה')+'</div>';return}
+ var items=d.items||{},keys=Object.keys(items),by={};
+ keys.forEach(function(k){var it=items[k],sc=k.split('.')[0];(by[sc]=by[sc]||[]).push([k,it])});
+ var h='';
+ if(!keys.length)h+='<div class="card">עדיין לא שונה אף טקסט.</div>';
+ Object.keys(by).sort().forEach(function(sc){
+  h+='<h2>'+esc(TYPE[sc]||sc)+'</h2>';
+  by[sc].sort(function(x,y){return y[1].ts-x[1].ts}).forEach(function(p){
+   var k=p[0],it=p[1],regKey=sc+'|'+(it.d||'text')+'|'+it.o,orph=!reg[regKey]&&Object.keys(reg).some(function(x){return x.indexOf(sc+'|')===0});
+   h+='<div class="card"><div class="lb">'+esc(KIND[it.d||'text']||'')+' · '+hd(it.ts)+(orph?'<span class="orph">יתום: הרכיב כבר אינו בדף</span>':'')+'</div>'+
+    '<div>נוסח קודם: <span class="old">'+esc(it.o)+'</span></div><div>נוסח חדש: <span class="new">'+(it.h?'(מוסתר)':esc(it.t))+'</span></div>'+
+    '<div style="margin-top:6px"><button data-k="'+esc(k)+'">החזר לנוסח המקורי</button></div></div>';
+  });
+ });
+ h+='<h2>היסטוריה מלאה</h2>';
+ (d.log||[]).forEach(function(e){
+  h+='<div class="card"><div class="lb">'+hd(e.ts)+' · '+(e.act==='revert'?'החזרה לנוסח המקורי':'שמירה')+' · '+esc(TYPE[e.scope]||e.scope||'')+'</div>'+
+   '<div>קודם: <span class="old">'+esc(e.before)+'</span></div><div>אחרי: <span class="new">'+(e.hide?'(מוסתר)':esc(e.after))+'</span></div><div class="lb">'+esc(e.key)+'</div></div>';
+ });
+ m.innerHTML=h;
+ m.onclick=function(ev){var b=ev.target.closest('button[data-k]');if(!b)return;api('/tx/revert',{key:b.getAttribute('data-k')}).then(function(j){if(j.ok)location.reload();else alert(j.error||'ההחזרה נכשלה')})};
+});
+});
+</script></body></html>

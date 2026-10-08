@@ -328,7 +328,7 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
  var row=document.createElement('section');row.id='nowrow';var h=document.createElement('h2');h.textContent='נלמדת עכשיו בדף היומי';var g=document.createElement('div');g.className='grid';
  var c=a.cloneNode(true);c.classList.remove('now');c.querySelector('.now-tag').textContent='הדף היום: '+t.daf;g.appendChild(c);row.appendChild(h);row.appendChild(g);var m=document.querySelector('main');m.insertBefore(row,m.firstChild)}}
 }})();
-</script><footer>עודכן <span id="upd" data-ts="{now_ts}"></span> · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a></footer><script>(function(){{var u=document.getElementById('upd');if(u&&window.HD)u.textContent=HD.dateTime(+u.getAttribute('data-ts'))}})()</script></body></html>'''
+</script><footer>עודכן <span id="upd" data-ts="{now_ts}"></span> · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a> · <a href="privacy.html" style="color:inherit">פרטיות</a></footer><script>(function(){{var u=document.getElementById('upd');if(u&&window.HD)u.textContent=HD.dateTime(+u.getAttribute('data-ts'))}})()</script></body></html>'''
     # הלוח הישן (כל המסכתות, הגהה ובקרה) עבר ל-masechtot.html. השער החדש
     # (index.html) הוא דף הבית של מערכת הלומד.
     idx = idx.replace('<footer>', '<footer><a href="index.html" style="color:inherit">לדף הבית</a> · ', 1)
@@ -353,11 +353,28 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
         '<p>הגמרא המנוקדת והפירוש המוצגים במגירת "מקור" נלקחו מספריא (Sefaria), '
         'ברישיון CC BY-NC 4.0. הלימוד באתר חינמי.</p>'
         '<p><a href="index.html">חזרה לשער</a></p></main></body></html>')
+    write_privacy(SITE)
     json.dump({'built': built, 'time': now}, open(os.path.join(SITE, 'status.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     write_shas(built)
     import build_seo
     build_seo.run(SITE, built, SLUG)
+    # נתוני גלישה ועיפרון המנהל: אחרון, כדי שיעטוף גם את הדפים הסטטיים (8.10.2026)
+    import lk_inject
+    lk_inject.run(SITE)
     print(len(built), 'מסכתות נבנו')
+
+def write_privacy(site):
+    # עמוד "פרטיות" (8.10.2026): נוסח קצר וקבוע; ניתן לעריכה בעיפרון המנהל
+    open(os.path.join(site, 'privacy.html'), 'w', encoding='utf-8').write(
+        '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1"><title>פרטיות · לאוקמי גירסא</title>'
+        '<meta name="robots" content="noindex">'
+        '<style>' + build_seo_mini_style() + '</style></head><body>' + build_seo_mini_header() + '<main>'
+        '<h1>פרטיות</h1>'
+        '<p>האתר משתמש בכלי ניתוח של Cloudflare ושל Microsoft לשיפור הנוחות, בלי עוגיות ובלי איסוף פרטים מזהים. '
+        'נתוני ההקלדה בשדות האתר מוסתרים.</p>'
+        '<p><a href="index.html">חזרה לשער</a></p></main></body></html>')
+
 
 def build_seo_mini_style():
     import build_seo

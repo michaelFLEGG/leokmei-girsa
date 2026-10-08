@@ -44,6 +44,10 @@ def brand(site):
     os.makedirs(dst, exist_ok=True)
     for f in ('shaar-zahav.svg', 'shaar-currentColor.svg', 'shaar-zahav-96.webp', 'shaar-zahav-240.webp', 'shaar-zahav-960.webp'):
         shutil.copy(os.path.join(src, f), os.path.join(dst, f))
+    v2 = os.path.join(dst, 'shaar-v2'); os.makedirs(v2, exist_ok=True)
+    for f in os.listdir(os.path.join(src, 'shaar-v2')):
+        if f.endswith('.webp'):
+            shutil.copy(os.path.join(src, 'shaar-v2', f), os.path.join(v2, f))
     for sub in ('parts', 'fonts', 'icons'):
         d = os.path.join(dst, sub); os.makedirs(d, exist_ok=True)
         for f in os.listdir(os.path.join(src, sub)):

@@ -1,38 +1,45 @@
+# -*- coding: utf-8 -*-
+"""make_icons.py - favicon, אייקון לטלפון ותמונת שיתוף מהשער הסימטרי (8.10.2026).
+המקור: shaar-v2/shaar-symmetri-master.png (שקוף, סימטרי עד הפיקסל). הרצה: uv run --with pillow --with playwright python make_icons.py (מתוך tools/brand)."""
 import os
-from playwright.sync_api import sync_playwright
 from PIL import Image
-stops,filt=open('foil_parts.txt').read().split('\n',1)
-velvet="url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='v'><feTurbulence type='fractalNoise' baseFrequency='1.4 .6' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .7  0 0 0 0 .85  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23v)'/></svg>\")"
-base=('<style>@font-face{font-family:T;src:url(vilna-title.ttf)}@font-face{font-family:VB;src:url(vilna-bd.otf)}'
- 'html,body{margin:0}body{background:%s,radial-gradient(ellipse 80%% 70%% at 50%% 40%%,#163a58,#0f263b 55%%,#0b1c2a)}</style>'%velvet)
-def svgtxt(w,h,inner,blur,scale):
-    f=filt.replace('id="tfoil"','id="f"').replace('stdDeviation="2.2"','stdDeviation="%s"'%blur).replace('surfaceScale="5"','surfaceScale="%s"'%scale)
-    return '<svg width="%d" height="%d" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g" x1="0" y1="0" x2=".35" y2="1">%s</linearGradient>%s</defs><g filter="url(#f)" fill="url(#g)">%s</g></svg>'%(w,h,w,h,stops,f,inner)
-og=base+('<div style="width:1200px;height:630px;position:relative;overflow:hidden">'
- '<img src="shaar-zahav.svg" style="position:absolute;left:60px;top:40px;height:550px">'
- '<div style="position:absolute;right:40px;top:0;bottom:0;width:700px;display:flex;align-items:center;justify-content:center">'+
- svgtxt(700,440,'<text x="350" y="200" font-family="T" font-size="96" text-anchor="middle" direction="rtl">לאוקמי גירסא</text>'
- '<path d="M80 266 H312 V270 H80Z M388 266 H620 V270 H388Z"/><path d="M350 256 l12 12 -12 12 -12 -12z"/>'
- '<text x="350" y="352" font-family="VB" font-size="56" text-anchor="middle" direction="rtl">קיצור התלמוד הבבלי</text>',2.4,6)+'</div></div>')
-def tile(px,blur,scale,rad):
-    inner='<text x="%s" y="%s" font-family="T" font-size="%s" text-anchor="middle">ל</text>'%(px/2,px*0.80,px*0.86)
-    return base+'<div style="width:%dpx;height:%dpx;border-radius:%dpx;overflow:hidden;display:flex;align-items:center;justify-content:center">%s</div>'%(px,px,rad,svgtxt(px,px,inner,blur,scale))
-gate=lambda px: base+'<div style="width:%dpx;height:%dpx;display:flex;align-items:center;justify-content:center"><img src="shaar-zahav.svg" style="height:%dpx"></div>'%(px,px,px*0.86)
-jobs={'og-image.png':(og,1200,630),'favicon-16.png':(tile(16,.3,.8,3),16),'favicon-32.png':(tile(32,.5,1.2,6),32),'favicon-48.png':(tile(48,.7,1.6,8),48),
- 'apple-touch-icon.png':(tile(180,2.0,4,0),180),'icon-192.png':(tile(192,2.0,4,0),192),'icon-512.png':(gate(512),512)}
+from playwright.sync_api import sync_playwright
+HERE = os.path.dirname(os.path.abspath(__file__)); os.chdir(HERE)
+M = Image.open('shaar-v2/shaar-symmetri-master.png').convert('RGBA')
+NAVY = (11, 28, 42, 255)
+
+def tile(px, fill=0.88, bg=NAVY, radius=0):
+    t = Image.new('RGBA', (px, px), bg if bg else (0, 0, 0, 0))
+    h = round(px * fill); w = round(h * M.width / M.height)
+    g = M.resize((w, h), Image.LANCZOS)
+    t.alpha_composite(g, ((px - w) // 2, (px - h) // 2))
+    return t
+
+os.makedirs('icons', exist_ok=True)
+tile(16, .96, None).save('icons/favicon-16.png')
+tile(32, .96, None).save('icons/favicon-32.png')
+tile(48, .96, None).save('icons/favicon-48.png')
+tile(180, .86).save('icons/apple-touch-icon.png')
+tile(192, .86).save('icons/icon-192.png')
+tile(512, .88).save('icons/icon-512.png')
+Image.open('icons/favicon-48.png').save('icons/favicon.ico', sizes=[(16, 16), (32, 32), (48, 48)])
+
+from pathlib import Path
+U = lambda p: Path(os.path.abspath(p)).as_uri()
+html = '''<style>@font-face{font-family:XB;src:url(%s)}@font-face{font-family:BD;src:url(%s)}
+html,body{margin:0}body{width:1200px;height:630px;overflow:hidden;position:relative;background:radial-gradient(ellipse 80%% 60%% at 50%% 20%%,#102a42,#091827 55%%,#060f18)}
+img{position:absolute;left:70px;top:40px;height:550px}
+.t{position:absolute;right:50px;top:0;bottom:0;width:640px;display:flex;flex-direction:column;align-items:center;justify-content:center;direction:rtl;text-align:center}
+.f{background:linear-gradient(170deg,#fbe7a1,#e6bd52 30%%,#c38f2a 55%%,#efcf6b 75%%,#b07c1f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 rgba(0,0,0,.7)) drop-shadow(0 0 10px rgba(240,196,90,.45))}
+h1{font:400 118px/1.1 XB;margin:0}p{font:700 54px/1.3 BD;margin:14px 0 0}
+.r{width:420px;height:3px;margin:22px 0 0;background:linear-gradient(90deg,transparent,#d1a23a,transparent)}</style>
+<img src="%s"><div class="t"><h1 class="f">לאוקמי גירסא</h1><div class="r"></div><p class="f">קיצור התלמוד הבבלי</p></div>''' % (
+    U('fonts/vilna-xb.woff2'), U('fonts/vilna-bd.woff2'),
+    U('shaar-v2/shaar-zohar-1120.webp'))
+open('icons/_og.html', 'w', encoding='utf-8').write('<meta charset="utf-8">' + html)
 with sync_playwright() as pw:
-    b=pw.chromium.launch()
-    for name,v in jobs.items():
-        html,w=v[0],v[1]; h=630 if name=='og-image.png' else w
-        open('icons/_t.html','w',encoding='utf8').write(html)
-        pg=b.new_page(viewport={'width':w,'height':h})
-        pg.goto('file://'+os.path.abspath('icons/_t.html')); pg.wait_for_timeout(2500)
-        pg.screenshot(path='icons/'+name,clip={'x':0,'y':0,'width':w,'height':h},omit_background=name.startswith('favicon')); pg.close()
-    b.close()
-Image.open('icons/favicon-48.png').save('icons/favicon.ico',sizes=[(16,16),(32,32),(48,48)])
-im=Image.new('RGBA',(300,120),(255,255,255,255))
-for i,(n,x) in enumerate((('favicon-16.png',10),('favicon-32.png',40),('favicon-48.png',90),('apple-touch-icon.png',150))):
-    t=Image.open('icons/'+n); 
-    if n.startswith('apple'): t=t.resize((110,110))
-    im.paste(t,(x,5),t if t.mode=='RGBA' else None)
-im.save('icons_preview.png')
+    b = pw.chromium.launch(channel='chrome'); pg = b.new_page(viewport={'width': 1200, 'height': 630})
+    pg.goto(U('icons/_og.html')); pg.wait_for_timeout(1500)
+    pg.screenshot(path='icons/og-image.png'); b.close()
+os.remove('icons/_og.html')
+print('ok')

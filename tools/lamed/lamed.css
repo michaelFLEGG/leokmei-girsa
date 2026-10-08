@@ -12,7 +12,7 @@
 :root{
   --bg:var(--parch);--card:var(--sheet);--card2:var(--parch);--ink:var(--tx);--ink2:var(--tx2);--ink3:var(--tx2);
   --gold:var(--gd);--gold2:var(--gd-tx);--red:var(--rd);--green:var(--gn);
-  --c0:#ece6d8;--c1:#f6e7b4;--c2:#e9c35a;--c3:#c8942c;--c4:#8f6a1e;--c3t:#1b1b1b;--c4t:#fff;--ext:#8d9aa5;--prog:#f1e0a0;
+  --c0:#173a58;--c1:#2b4a50;--c2:#7a6a30;--c3:#c8942c;--c4:#f9e08a;--c3t:#0b1c2a;--c4t:#0b1c2a;--ext:#5d6d75;--prog:#3a4a3c;
 }
 :root[data-theme="dark"]{--c0:#173a58;--c1:#2b4a50;--c2:#7a6a30;--c3:#c8942c;--c4:#f9e08a;--c3t:#0b1c2a;--c4t:#0b1c2a;--ext:#5d6d75;--prog:#3a4a3c}
 @media (prefers-color-scheme:dark){:root[data-theme="auto"]{--c0:#173a58;--c1:#2b4a50;--c2:#7a6a30;--c3:#c8942c;--c4:#f9e08a;--c3t:#0b1c2a;--c4t:#0b1c2a;--ext:#5d6d75;--prog:#3a4a3c}}
@@ -332,6 +332,91 @@ h2.lm-t2{font-family:'Vilna',serif;font-size:24px;margin:34px 0 12px;font-weight
   .qz-pts b,.qz-str b{font-size:26px}
 }
 
+/* 8.10.2026 (ב) - לוחיות כחולות, מפת הש"ס, בחן את עצמך ולוח השנה (אחרי כללי הבסיס שלמעלה) */
+/* ---------- לוחיות כחולות במקום תיבות לבנות ---------- */
+body.lm .lm-card,body.lm .qz-card{background:linear-gradient(180deg,#143451,#0e2338 75%);border:0;border-radius:6px;box-shadow:var(--plate-frame);padding:22px 24px;color:var(--tx)}
+.lm-modal .lm-box{background:linear-gradient(180deg,#183d5c,#0f263b 70%);border:0;border-top:4px double var(--gd);border-radius:6px;box-shadow:inset 0 0 0 1px #8f6a1e,0 18px 44px rgba(0,0,0,.6);color:var(--tx)}
+.lm-modal .lm-box .gate-sm.inl{height:72px;margin:0 auto 6px}
+.lm-shiur-box{background:linear-gradient(180deg,#183d5c,#0f263b 70%);border:1px solid #8f6a1e;border-radius:6px}
+.lm-pick{background:linear-gradient(180deg,#183d5c,#0f263b 70%);border:0;border-radius:6px;box-shadow:inset 0 0 0 1px #8f6a1e,inset 0 0 0 4px #0f263b,inset 0 0 0 5px rgba(209,162,58,.45);padding:18px 18px}
+.lm-pick b{color:var(--gold-100)}
+.lm-pick:hover{box-shadow:inset 0 0 0 1px var(--gold-300),inset 0 0 0 4px #0f263b,inset 0 0 0 5px var(--gold-300),0 0 14px rgba(233,195,90,.18)}
+.lm-pick.on{background:linear-gradient(180deg,#245278,#143451 70%);box-shadow:inset 0 0 0 2px var(--gold-300),inset 0 0 0 5px #0f263b,inset 0 0 0 6px rgba(233,195,90,.7),0 0 16px rgba(233,195,90,.2)}
+.lm-pick:focus-visible{outline:2px solid var(--gold-300);outline-offset:3px}
+.lm-jumpbox{margin:0 0 26px;padding:18px clamp(14px,3vw,24px) 14px;border-radius:8px;background:rgba(15,38,59,.6);box-shadow:inset 0 0 0 1px rgba(209,162,58,.35)}
+.lm-empty{text-align:center;padding:34px 18px 26px;border-radius:8px;background:rgba(15,38,59,.6);box-shadow:inset 0 0 0 1px rgba(209,162,58,.3);color:var(--cream2)}
+.lm-empty p{margin:6px 0 0;font-size:18px;color:var(--cream)}
+
+/* שדות חרוטים */
+body.lm .lm-wrap :is(input[type=text],input[type=number],input[type=date],input[type=time],select),body.lm .lm-box :is(input,select){
+  background:#081521;color:var(--cream);border:1px solid var(--gold-700);border-radius:6px;box-shadow:inset 0 2px 5px rgba(0,0,0,.6);min-height:44px;font-size:17px}
+body.lm .lm-wrap :is(input,select):focus,body.lm .lm-box :is(input,select):focus{border-color:var(--gold-300);box-shadow:inset 0 2px 5px rgba(0,0,0,.6),0 0 0 3px rgba(233,195,90,.25);outline:none}
+body.lm .lm-wrap input::placeholder{color:#8a8068}
+.lm-jumpbox #lm-jump{flex:1;min-width:0;max-width:340px;padding:10px 14px;font-size:1.05rem}
+
+/* ---------- מפת הש"ס ---------- */
+h1.lm-t{font-family:'LGVilnaXB','Vilna',serif;font-weight:400;font-size:clamp(30px,5vw,44px);line-height:1.15}
+h2.lm-t2,.lm-seder h2{font-family:'LGVilnaXB','Vilna',serif;font-weight:400}
+.seder-h{display:flex;align-items:center;gap:14px;margin:0 0 4px}
+.seder-h h2{margin:0;font-size:clamp(1.4rem,3vw,1.75rem);line-height:1.2;white-space:nowrap}
+.seder-h h2::after{display:none}
+.seder-h .ln{flex:1;height:1px;background:linear-gradient(to left,var(--gold-500),transparent)}
+.seder-h .ct{font-size:15px;color:var(--cream2);white-space:nowrap}
+.lm-seder{margin:30px 0 0}
+.lm-vols{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:14px}
+.lm-vol{position:relative;display:flex;flex-direction:column;gap:4px;padding:14px 14px 12px;border:0;border-radius:5px;background:var(--plate);box-shadow:var(--plate-frame);color:var(--cream);text-decoration:none;transition:transform .2s,box-shadow .2s}
+.lm-vol:hover{transform:translateY(-3px);background:var(--plate);box-shadow:inset 0 0 0 1px #e9c35a,inset 0 0 0 4px #0f263b,inset 0 0 0 5px #e9c35a,0 10px 20px rgba(0,0,0,.4),0 0 18px rgba(233,195,90,.18)}
+.lm-vol:focus-visible{outline:2px solid var(--gold-300);outline-offset:3px}
+.lm-vol b{font-family:'LGVilnaXB','Vilna',serif;font-weight:400;font-size:1.45rem;line-height:1.15;background:var(--foil);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:var(--foil-glow)}
+.lm-vol small{font-size:15px;color:var(--cream2)}
+.lm-vol .lm-bar{height:4px;margin-top:8px;background:rgba(0,0,0,.45);border-color:rgba(209,162,58,.5)}
+.lm-vol .rib{position:absolute;top:-1px;left:12px;font-size:14px;padding:3px 8px 5px;color:#2a1c04;background:var(--foil);border-radius:0 0 4px 4px;font-family:'LGVilna',serif;font-weight:500}
+.lm-vol.off,.lm-vol.off:hover{background:transparent;box-shadow:none;border:1px dashed rgba(209,162,58,.5);transform:none;cursor:default}
+.lm-vol.off b{background:none;filter:none;color:#8d8569;-webkit-text-fill-color:#8d8569}
+.lm-vol.off small{color:#9a9275}
+@media (prefers-reduced-motion:reduce){.lm-vol{transition:none}.lm-vol:hover{transform:none}}
+
+/* ---------- בחן את עצמך: זהב חם עם ניצוץ, ואברך בכחול וזהב שקט ---------- */
+.lm-wrap.qz .qz-door.bahur{background:radial-gradient(circle at 80% 18%,rgba(255,250,225,.55) 0,transparent 22%),linear-gradient(135deg,#f6dc7e,#d9a73a 48%,#a8741a);color:#2a1c04;border:1px solid #6e4f12;
+  box-shadow:inset 0 1px 0 rgba(255,250,225,.8),inset 0 -5px 0 #7a1f2b,0 6px 18px rgba(0,0,0,.45),0 0 22px rgba(240,196,90,.22);position:relative}
+.lm-wrap.qz .qz-door.bahur::after{content:"\2726";position:absolute;top:10px;inset-inline-start:14px;font-size:22px;color:#fff4cf;opacity:.9}
+.lm-wrap.qz .qz-door.bahur b{color:#2a1c04}
+.lm-wrap.qz .qz-door.avrech{background:var(--plate);box-shadow:var(--plate-frame);border:0;color:var(--cream)}
+.lm-wrap.qz .qz-door.avrech b{color:var(--gold-100)}
+.lm-wrap.qz .qz-door{border-radius:8px}
+.lm-wrap.qz.qz-bahur .qz-card,.lm-wrap.qz.qz-bahur .qz-card.qz-l1,.lm-wrap.qz.qz-bahur .qz-card.qz-l2,.lm-wrap.qz.qz-bahur .qz-card.qz-l3{border:0;box-shadow:inset 0 0 0 1px #8f6a1e,inset 0 0 0 4px #0f263b,inset 0 0 0 5px #e9c35a,0 8px 26px rgba(0,0,0,.5);background:linear-gradient(180deg,#143451,#0e2338 75%)}
+.lm-wrap.qz.qz-bahur .qz-c0{border-color:#2f6a9c}.qz-bahur .qz-c0 b{background:#2f6a9c;color:#fff}
+.lm-wrap.qz.qz-bahur .qz-c1{border-color:#6f4f94}.qz-bahur .qz-c1 b{background:#6f4f94;color:#fff}
+.lm-wrap.qz.qz-bahur .qz-c2{border-color:#2b7a6e}.qz-bahur .qz-c2 b{background:#2b7a6e;color:#fff}
+.lm-wrap.qz.qz-bahur .qz-c3{border-color:#a8601c}.qz-bahur .qz-c3 b{background:#a8601c;color:#fff}
+.lm-wrap.qz.qz-bahur .qz-pts b,.qz-str.hot b{color:var(--gold-300)}
+.qz-lv2{background:#b85a0a}
+.lm-wrap.qz .qz-opt{background:linear-gradient(180deg,#183d5c,#0f263b 70%);border-color:var(--gold-700);color:var(--cream)}
+.lm-wrap.qz .qz-opt b{background:rgba(233,195,90,.15);color:var(--gold-300)}
+.lm-wrap.qz .qz-seg button{background:var(--plate);color:var(--cream);border-color:var(--gold-700)}
+.lm-wrap.qz .qz-seg button.on,.lm-wrap.qz.qz-avrech .qz-seg button.on{background:var(--navy-700);border-color:var(--gold-500);color:var(--gold-100)}
+.lm-wrap.qz.qz-avrech .qz-card{background:linear-gradient(180deg,#143451,#0e2338 75%);border:0;box-shadow:var(--plate-frame)}
+.lm-wrap.qz.qz-avrech .qz-opt:not([disabled]):hover{background:linear-gradient(180deg,#1d4466,#0f263b);border-color:var(--gold-300)}
+.qz-title-up .qz-big{background:var(--foil);filter:var(--foil-glow)}
+
+/* ---------- הלימוד שלי: לוח השנה ---------- */
+.lm-mcal .d{background:rgba(23,58,88,.45);border:1px solid rgba(209,162,58,.3);border-radius:6px;color:var(--cream)}
+.lm-mcal .d.today{border:1.5px solid var(--gold-300);box-shadow:0 0 0 1px var(--gold-300),0 0 12px rgba(233,195,90,.25)}
+.lm-mcal .d.sh{background:rgba(11,28,42,.5);color:var(--cream2)}
+.lm-mcal .d.yt{box-shadow:inset 0 -3px 0 rgba(233,195,90,.45)}
+.lm-mcal .d.f{opacity:.5}
+.lm-mcal .d i{background:rgba(199,188,156,.22)}
+.lm-mcal .d i.h1{background:#d1a23a}.lm-mcal .d i.h2{background:#e9c35a;box-shadow:0 0 6px rgba(233,195,90,.5)}.lm-mcal .d i.h3{background:#f9e08a;box-shadow:0 0 9px rgba(249,224,138,.65)}
+.lm-mcal .wd{color:var(--cream2)}
+.lm-seg{background:#081521;border-color:var(--gold-700)}
+.lm-seg button{color:var(--cream2)}
+body.lm .lm-foot a{color:var(--gold-300)}
+
+.lm-empty .gate-sm.inl,.lm-modal .lm-box .gate-sm.inl{margin:0 auto 10px}
+
+@media (max-width:400px){.lm-top .lm-date{display:none}.lm-top{padding-inline:10px;gap:6px}.lm-top .lm-brand .nm{font-size:21px}.lm-top .lm-brand .lg{height:34px}.lm-top .dd{margin-inline-start:auto}}
+
+
 /* ---- בדף הלימוד: שעון, סמן התקדמות, "סיימתי", הדגשת חזרה (מוטמע בדף המסכת) ---- */
 #lm-layer{position:fixed;inset:0;pointer-events:none;z-index:7}
 body:has(.panel.open) #lm-layer #lm-fin,body:has(.modal) #lm-layer #lm-fin,body:has(.sgpop) #lm-layer #lm-fin{display:none!important}
@@ -366,3 +451,8 @@ body:has(.panel.open) #lm-layer #lm-fin,body:has(.modal) #lm-layer #lm-fin,body:
 .lm-card [style*="repeat(7,1fr)"]{grid-template-columns:repeat(7,minmax(0,1fr))!important}
 .lm-cal{min-width:0;overflow:hidden;text-overflow:ellipsis;font-family:var(--ui)!important}
 @media (max-width:600px){.lm-cal span{display:none}.lm-mcal .d{aspect-ratio:1}}
+
+#lm-fin button{background:linear-gradient(180deg,#1d4466,#0f263b);color:#f9e08a;border:1px solid var(--gold-500);box-shadow:0 2px 0 #06111b,0 4px 8px rgba(0,0,0,.4);font-family:var(--ui);font-weight:500;font-size:15px}
+#lm-fin button:hover{background:linear-gradient(180deg,#245278,#143451);border-color:var(--gold-300)}
+
+body.lm{--card2:#173a58}

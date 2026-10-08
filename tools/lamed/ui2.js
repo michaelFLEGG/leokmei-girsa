@@ -183,7 +183,8 @@
       for (var d = 0; d < dim; d++) {
         var tt = fT + d * ONE, ds = LG.ymd(tt), o = S.days[ds], f = o ? o.ms / max : 0;
         var cls = !o || !o.ms ? '' : f > .66 ? 'h3' : f > .33 ? 'h2' : 'h1';
-        h += '<div class="d' + (ds === today ? ' today' : '') + (ds > today ? ' f' : '') + '" title="' + E(HD.long(tt) + (o && o.ms ? ': ' + LG.dur(o.ms) : '')) + '"><span>' + E(HD.q(HD.parts(tt).d)) + '</span><i class="' + cls + '"></i></div>';
+        var hpp = HD.parts(tt), yt = (hpp.m === 'תשרי' && (hpp.d <= 2 || hpp.d === 10 || (hpp.d >= 15 && hpp.d <= 23))) || (hpp.m === 'ניסן' && (hpp.d === 15 || hpp.d === 21 || hpp.d === 22)) || (hpp.m === 'סיון' && hpp.d === 6);
+        h += '<div class="d' + (ds === today ? ' today' : '') + (new Date(tt).getUTCDay() === 6 ? ' sh' : '') + (yt ? ' yt' : '') + (ds > today ? ' f' : '') + '" title="' + E(HD.long(tt) + (o && o.ms ? ': ' + LG.dur(o.ms) : '')) + '"><span>' + E(HD.q(HD.parts(tt).d)) + '</span><i class="' + cls + '"></i></div>';
       }
       var hp = HD.parts(fT);
       $('#lm-ct').textContent = hp.m + ' ' + HD.q(hp.y % 1000);
@@ -307,9 +308,9 @@
     for (var i = 0; i < wd; i++) cal += '<div></div>';
     for (var dday = 0; dday < dim; dday++) {
       var tt = fT + dday * ONE, ds = LG.ymd(tt), inf = LGDaf.forStr(ds), st2 = ds > today ? 'future' : dayStatus(inf, ds);
-      var bg = st2 === 'done' ? 'var(--c2)' : st2 === 'part' ? 'var(--prog)' : st2 === 'future' ? 'transparent' : 'var(--card2)';
-      var fg = st2 === 'done' ? '#fff' : 'var(--ink)';
-      cal += '<button type="button" class="lm-cal" data-d="' + ds + '" style="background:' + bg + ';color:' + fg + ';border:1px solid ' + (ds === today ? 'var(--red)' : 'var(--line)') + ';border-radius:6px;padding:4px 2px;font:inherit;font-size:13px;cursor:pointer;line-height:1.25">' +
+      var bg = st2 === 'done' ? 'linear-gradient(180deg,#e9c35a,#c8942c)' : st2 === 'part' ? 'var(--prog)' : st2 === 'future' ? 'transparent' : 'rgba(23,58,88,.45)';
+      var fg = st2 === 'done' ? '#2a1c04' : 'var(--ink)';
+      cal += '<button type="button" class="lm-cal" data-d="' + ds + '" style="background:' + bg + ';color:' + fg + ';border:1px solid ' + (ds === today ? 'var(--gold-300);box-shadow:0 0 0 1px var(--gold-300)' : 'var(--line)') + ';border-radius:6px;padding:4px 2px;font:inherit;font-size:13px;cursor:pointer;line-height:1.25">' +
         '<b style="font-size:14px">' + E(HD.q(HD.parts(tt).d)) + '</b><br><span style="font-size:11px">' + E(inf.name.slice(0, 7)) + ' ' + E(LG.hebq(inf.n)) + '</span></button>';
     }
     cal += '</div>';

@@ -27,7 +27,7 @@
     try { adm = !!localStorage.getItem('lg-adm'); } catch (e) { }
     var top = el('header', 'lm-top');
     top.innerHTML = '<button class="q lm-ib lm-burger" type="button" aria-label="תפריט" id="lm-burger">' + ic('list') + '</button>' +
-      '<a class="lm-brand" href="index.html" title="לדף הבית"><img class="lg" src="brand/shaar-zahav-96.webp" alt="" width="27" height="40"><span class="nm">לאוקמי גירסא</span></a>' +
+      '<a class="lm-brand" href="index.html" title="לדף הבית"><img class="lg" src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="27" height="40"><span class="nm">לאוקמי גירסא</span></a>' +
       '<nav id="lm-nav" aria-label="ניווט ראשי">' + NAV.map(function (a) { return '<a href="' + a[1] + '"' + (page === a[0] ? ' class="on" aria-current="page"' : '') + '>' + a[2] + '</a>'; }).join('') + '</nav>' +
       '<span class="lm-date">' + E(HD.long(now)) + '</span>' +
       '<div class="dd" id="lm-um"><button class="q lm-ib" type="button" aria-label="תפריט משתמש" aria-haspopup="menu" id="lm-umb">' + ic('user') + '</button>' +
@@ -102,7 +102,7 @@
   ];
   UI.onboard = function (after) {
     var sel = {};
-    var m = UI.modal('<h3>איך תרצה ללמוד?</h3><p class="lm-sub">אפשר לבחור יותר מאחד, ולשנות בכל עת בהגדרות.</p>' +
+    var m = UI.modal(LG.brand.gate('inl') + '<h3>איך תרצה ללמוד?</h3><p class="lm-sub">אפשר לבחור יותר מאחד, ולשנות בכל עת בהגדרות.</p>' +
       '<div class="lm-cards4" id="lm-ob">' + TYPES.map(function (t) {
         return '<button type="button" class="lm-pick" data-t="' + t[0] + '"><b>' + t[1] + '</b><span>' + t[2] + '</span></button>';
       }).join('') + '</div><div class="lm-row" style="margin-top:16px"><button class="lm-btn" id="lm-ob-ok" type="button">בחירה</button><button class="lm-btn ghost" id="lm-ob-skip" type="button">דלג</button></div>');
@@ -158,13 +158,13 @@
 
     /* ארבעה כרטיסי-שער: מפת הש"ס, הלימוד שלי, בחן את עצמך, שיעורים */
     var qsc = LG.quiz.score(), qdue = LG.quiz.dueCount();
-    var learnBody = '<p>' + (S.sessions.length || S.doneEvents.length ? 'ההתקדמות שלך, רצף הלימוד וההיסטוריה' : 'ההתקדמות שלך, רצף הלימוד וההיסטוריה, במכשיר שלך') + '</p>';
+    var learnBody = '<p>ההתקדמות שלך</p>';
     if (l && rHref) { var st2 = LG.masechetStats(l.s); learnBody += UI.bar(st2.done, st2.ext, st2.total); }
     var grid = el('div', 'gcards');
-    grid.appendChild(LG.brand.card('shas.html', 'מפת הש"ס', '<p>כל המסכתות לפי סדרים, ומה כבר עלה לאתר</p>'));
+    grid.appendChild(LG.brand.card('shas.html', 'מפת הש"ס', '<p>כל המסכתות לפי סדרים</p>'));
     grid.appendChild(LG.brand.card('lamed.html', 'הלימוד שלי', learnBody));
-    grid.appendChild(LG.brand.card('quiz.html', 'בחן את עצמך', '<p>' + (qsc.answered ? (qdue ? LG.nf(qdue) + ' חזרות ממתינות לך היום' : 'אין חזרות ממתינות היום') : 'שאלות על הדף, בשלוש רמות, עם נקודות ותארים') + '</p>'));
-    grid.appendChild(LG.brand.card('shiurim.html', 'שיעורים', '<p>שיעורי הדף היומי בצפייה מתוך האתר</p>'));
+    grid.appendChild(LG.brand.card('quiz.html', 'בחן את עצמך', '<p>' + (qsc.answered ? (qdue ? LG.nf(qdue) + ' חזרות ממתינות' : 'אין חזרות היום') : 'שאלות על הדף בשלוש רמות') + '</p>'));
+    grid.appendChild(LG.brand.card('shiurim.html', 'שיעורים', '<p>שיעורי הדף היומי</p>'));
     wrap.appendChild(grid);
 
     /* שורת הספק אחת, שקטה */
@@ -184,18 +184,23 @@
   /* ---------------------------------------------------------- מפת הש"ס */
   UI.shas = function (root) {
     var wrap = el('main', 'lm-wrap');
-    wrap.innerHTML = '<h1 class="lm-t">מפת הש"ס</h1><p class="lm-sub">ששת הסדרים. מסכת שעדיין אינה באתר מוצגת עמומה, עם "בהכנה".</p>' +
-      '<div class="lm-card"><div class="lm-field" style="margin:0"><label for="lm-jump">קפיצה מהירה (למשל "חולין מב" או "בכורות יח:")</label>' +
-      '<div class="lm-row"><input id="lm-jump" type="text" placeholder="מסכת ודף" autocomplete="off"><button class="lm-btn pri" id="lm-jgo" type="button">קפוץ</button></div><div class="lm-note" id="lm-jmsg"></div></div></div>';
+    var yd = window.LGDaf && LGDaf.forStr(LG.ymd(Date.now())), ym2 = yd && LG.masechet(yd.slug), yHref = ym2 && ym2.built ? UI.readHref(yd.slug, LG.dafLabel(yd.n, 0)) : null;
+    wrap.innerHTML = '<h1 class="lm-t">מפת הש"ס</h1><p class="lm-sub">ששת הסדרים. מסכת שעדיין אינה באתר מוצגת כלוחית חלולה, עם "בהכנה".</p>' +
+      '<div class="lm-jumpbox"><form class="lm-field" id="lm-jf" style="margin:0"><label for="lm-jump">קפיצה מהירה - למשל "חולין כב" או "בכורות יח:"</label>' +
+      '<div class="lm-row"><input id="lm-jump" type="text" placeholder="מסכת ודף" autocomplete="off"><button class="lm-btn pri" id="lm-jgo" type="submit">קפוץ</button>' +
+      (yHref ? '<a class="lm-btn" href="' + yHref + '">הדף היומי</a>' : '<a class="lm-btn" href="yomi.html">הדף היומי</a>') +
+      '</div><div class="lm-note" id="lm-jmsg"></div></form></div>';
     LG.shas().seder.forEach(function (s) {
-      var sec = el('section', 'lm-seder'); sec.innerHTML = '<h2 class="lm-t2">סדר ' + E(s.name) + '</h2>';
+      var sec = el('section', 'lm-seder'), nb = s.masechtot.filter(function (m) { return m.built; }).length;
+      sec.innerHTML = '<div class="seder-h"><h2 class="foil">סדר ' + E(s.name) + '</h2><span class="ln"></span><span class="ct">' +
+        (nb ? E(LG.heb(nb)) + ' באתר מתוך ' + E(LG.heb(s.masechtot.length)) : 'טרם עלתה מסכת, מתוך ' + E(LG.heb(s.masechtot.length))) + '</span></div>';
       var g = el('div', 'lm-vols');
       s.masechtot.forEach(function (m) {
         var n = el(m.built ? 'a' : 'div', 'lm-vol' + (m.built ? '' : ' off'));
         if (m.built) {
           var st = LG.masechetStats(m.slug);
           n.href = 'masechet.html?m=' + m.slug;
-          n.innerHTML = '<b>' + E(m.name) + '</b><small>' + LG.nf(st.dafimTotal) + ' דפים' + (st.cycle ? ' · מחזור ' + E(LG.hebq(st.cycle + 1)) : '') + '</small>' +
+          n.innerHTML = (yd && yd.slug === m.slug ? '<span class="rib">הדף היומי</span>' : '') + '<b>' + E(m.name) + '</b><small>' + E(LG.hebq(st.dafimTotal)) + ' דפים' + (st.cycle ? ' · מחזור ' + E(LG.hebq(st.cycle + 1)) : '') + '</small>' +
             ((st.done || st.ext) ? UI.bar(st.done, st.ext, st.total) : '');
         } else n.innerHTML = '<b>' + E(m.name) + '</b><small>בהכנה</small>';
         g.appendChild(n);
@@ -219,8 +224,7 @@
       if (!has) { msg.textContent = 'העמוד ' + daf + ' אינו במסכת ' + m.name + '.'; return; }
       location.href = UI.readHref(m.slug, daf);
     }
-    $('#lm-jgo').onclick = go;
-    $('#lm-jump').addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+    $('#lm-jf').onsubmit = function (e) { e.preventDefault(); go(); };
   };
 
   /* ---------------------------------------------------------- דף מסכת */

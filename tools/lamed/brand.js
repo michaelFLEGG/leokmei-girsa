@@ -33,33 +33,29 @@
     try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) { if (a) a.parentNode.removeChild(a); return; } } catch (e) { }
     if (a) sv.addEventListener('mouseenter', function () { try { a.beginElement(); } catch (e) { } });
   };
-  /* השער הגדול עם הסימן בפתחו. מוצג מיד ב-webp, ומוחלף ב-SVG המואר (1.2MB) כשהוא נטען */
+  /* השער הגדול הסימטרי (זהב זוהר) עם הסימן בפתחו, ואור חם בפתח */
   B.hero = function () {
     var s = document.createElement('section'); s.className = 'gate-hero'; s.setAttribute('aria-label', 'פתיחה');
-    s.innerHTML = '<h1 class="sr-only">לאוקמי גירסא - קיצור התלמוד הבבלי</h1><img class="gate-img" src="brand/shaar-zahav-960.webp" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async">' +
+    s.innerHTML = '<h1 class="sr-only">לאוקמי גירסא - קיצור התלמוד הבבלי</h1><img class="gate-img" src="brand/shaar-v2/shaar-zohar-960.webp" srcset="brand/shaar-v2/shaar-zohar-960.webp 1x, brand/shaar-v2/shaar-zohar-1600.webp 2x" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async">' +
       '<div class="opening">' + B.mark() + '</div>';
     B.arm(s);
-    var img = s.querySelector('.gate-img');
-    function up() { var t = new Image(); t.onload = function () { img.src = 'brand/shaar-zahav.svg'; }; t.src = 'brand/shaar-zahav.svg'; }
-    if (window.requestIdleCallback) requestIdleCallback(up, { timeout: 3000 }); else setTimeout(up, 800);
     return s;
   };
   /* שער קטן קישוטי (alt ריק): מסכי פתיחה וסיום, הישגים */
-  B.gate = function (cls) { return '<img class="gate-sm ' + (cls || '') + '" src="brand/shaar-zahav-96.webp" alt="" width="64" height="96" loading="lazy" decoding="async">'; };
+  B.gate = function (cls) { return '<img class="gate-sm ' + (cls || '') + '" src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="64" height="96" loading="lazy" decoding="async">'; };
   /* מפריד: קו זהב נמוג ובמרכזו שער קטן */
-  B.divider = function () { var d = document.createElement('div'); d.className = 'divider'; d.setAttribute('role', 'presentation'); d.innerHTML = '<img src="brand/shaar-zahav-96.webp" alt="" loading="lazy" decoding="async">'; return d; };
-  /* כרטיס-שער: כתר, פירי עמודים בקווי זהב, כני עמודים ומדרגות. התוכן בפתח. */
+  B.divider = function () { var d = document.createElement('div'); d.className = 'divider'; d.setAttribute('role', 'presentation'); d.innerHTML = '<img src="brand/shaar-v2/shaar-zohar-96.webp" alt="" loading="lazy" decoding="async">'; return d; };
+  /* כרטיס-שער: השער הסימטרי השלם כתמונה אחת, והכיתוב בתוך הפתח (8.10.2026) */
   B.card = function (href, title, bodyHtml, extra) {
     var a = document.createElement('a'); a.className = 'gcard'; a.href = href;
-    a.innerHTML = '<img class="crown" src="brand/parts/card-crown.webp" alt="" loading="lazy" decoding="async"><div class="gbody"><h3 class="foil">' + LG.esc(title) + '</h3>' + bodyHtml + '</div>' +
-      '<img class="ped l" src="brand/parts/card-pedestal.webp" alt="" loading="lazy" decoding="async"><img class="ped r" src="brand/parts/card-pedestal.webp" alt="" loading="lazy" decoding="async">' +
-      '<img class="steps" src="brand/parts/card-steps.webp" alt="" loading="lazy" decoding="async">';
+    a.innerHTML = '<img class="gimg" src="brand/shaar-v2/shaar-zohar-560.webp" srcset="brand/shaar-v2/shaar-zohar-560.webp 1x, brand/shaar-v2/shaar-zohar-1120.webp 2x" width="560" height="843" alt="" loading="lazy" decoding="async">' +
+      '<div class="gbody"><h3 class="foil">' + LG.esc(title) + '</h3>' + bodyHtml + '</div>';
     return a;
   };
   /* כותרת תחתונה: כחול, שער קטן, "תנועת לאוקמי גירסא" בזהב */
   B.footer = function () {
     var f = document.createElement('footer'); f.className = 'lm-foot';
-    f.innerHTML = '<div class="lm-foot-in"><img src="brand/shaar-zahav-96.webp" alt="" width="23" height="34"><span class="nm">לאוקמי גירסא</span></div>' +
+    f.innerHTML = '<div class="lm-foot-in"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="23" height="34"><span class="nm">לאוקמי גירסא</span></div>' +
       '<span class="mv">תנועת לאוקמי גירסא</span><div style="margin-top:8px"><a href="shas.html">מפת הש"ס</a><a href="mekorot.html">מקורות</a><a href="about.html">אודות</a></div>';
     return f;
   };

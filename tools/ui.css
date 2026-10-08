@@ -18,13 +18,14 @@
   /* פלטת המותג (קבועה) */
   --navy-900:#0b1c2a; --navy-800:#0f263b; --navy-700:#173a58; --navy-room:#1e476f;
   --gold-100:#f9e08a; --gold-300:#e9c35a; --gold-500:#d1a23a; --gold-700:#8f6a1e;
-  --cream:#f3ead0; --cream2:#c9bd98;
-  --foil:linear-gradient(170deg,#f9e08a 0%,#e2b847 28%,#c8942c 50%,#eccb63 68%,#b98522 85%,#e9c35a 100%);
+  --cream:#f5edd6; --cream2:#c7bc9c;
+  --foil:linear-gradient(170deg,#fbe7a1,#e6bd52 30%,#c38f2a 55%,#efcf6b 75%,#b07c1f);
+  --foil-glow:drop-shadow(0 1px 0 rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(240,196,90,.45));
   --grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   --velvet:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='v'><feTurbulence type='fractalNoise' baseFrequency='1.4 .6' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .7  0 0 0 0 .85  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23v)'/></svg>");
-  --velvet-bg:var(--velvet),radial-gradient(ellipse 80% 60% at 50% 30%,#163a58 0%,var(--navy-800) 50%,var(--navy-900) 100%);
+  --velvet-bg:var(--velvet),radial-gradient(ellipse 80% 60% at 50% 20%,#102a42,#091827 55%,#060f18);
   /* תחום הכחול: קבוע */
-  --n-parch:#0b1c2a; --n-sheet:#0f263b; --n-tx:#f3ead0; --n-tx2:#c9bd98; --n-line:rgba(209,162,58,.38);
+  --n-parch:#0b1c2a; --n-sheet:#0f263b; --n-tx:#f5edd6; --n-tx2:#c7bc9c; --n-line:rgba(209,162,58,.38);
   --n-blue:#e9c35a; --n-blue-ink:#0b1c2a; --n-blue-soft:rgba(233,195,90,.15); --n-blue-hover:#f9e08a; --n-gd-tx:#e9c35a; --n-focus:#e9c35a;
   --n-rd:#f0a39a; --n-rd-soft:#3b2421; --n-gn:#8cc7a0; --n-gn-soft:#1f3328;
   /* תחום הנייר: בהיר (ברירת מחדל) */
@@ -69,8 +70,15 @@
   --gd-tx:var(--n-gd-tx); --focus:var(--n-focus); --rd:var(--n-rd); --rd-soft:var(--n-rd-soft); --gn:var(--n-gn); --gn-soft:var(--n-gn-soft);
   --shadow:0 1px 2px rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.5);
   color-scheme:dark}
-/* תחום הנייר בתוך הכחול: כרטיסים, תפריטים, חלונות ומגירות */
-.pp,.lm-card,.lm-vol,.lm-pick,.lm-box,.lm-shiur-box,.menu,.ddp,.smpop,.panel,.modal .box,#mbmenu,.sgpop,.sgmodal,.bkcard,.bkbar,.src,.lm-toast,.lm-hint,.qz-card{
+/* בתוך המעטפת אין תיבות לבנות (8.10.2026): כרטיסים, תפריטים, חלונות ומגירות הם לוחיות כחולות.
+   הנייר הבהיר שמור לטור הגמרא ולמגירת המקור בלבד. */
+.pp,.lm-card,.lm-vol,.lm-pick,.lm-box,.lm-shiur-box,.menu,.ddp,.smpop,.panel,.modal .box,#mbmenu,.sgpop,.sgmodal,.lm-toast,.lm-hint,.qz-card{
+  --parch:var(--n-parch); --sheet:var(--n-sheet); --tx:var(--n-tx); --tx2:var(--n-tx2); --line:var(--n-line);
+  --blue:var(--n-blue); --blue-ink:var(--n-blue-ink); --blue-soft:var(--n-blue-soft); --blue-hover:var(--n-blue-hover);
+  --gd-tx:var(--n-gd-tx); --focus:var(--n-focus); --rd:var(--n-rd); --rd-soft:var(--n-rd-soft); --gn:var(--n-gn); --gn-soft:var(--n-gn-soft);
+  --shadow:0 1px 2px rgba(0,0,0,.45),0 8px 24px rgba(0,0,0,.5)}
+/* מגירת המקור ובקרת המנהל: נייר, עוקב אחרי הבחירה */
+.bkcard,.bkbar,.src{
   --parch:var(--p-parch); --sheet:var(--p-sheet); --tx:var(--p-tx); --tx2:var(--p-tx2); --line:var(--p-line);
   --blue:var(--p-blue); --blue-ink:var(--p-blue-ink); --blue-soft:var(--p-blue-soft); --blue-hover:var(--p-blue-hover);
   --gd-tx:var(--p-gd-tx); --focus:var(--p-focus); --rd:var(--p-rd); --rd-soft:var(--p-rd-soft); --gn:var(--p-gn); --gn-soft:var(--p-gn-soft);
@@ -312,11 +320,11 @@ body :is(.lm-wrap,.lm-card,.panel,.bar,.stybar,.modal,.sgpop) [style*="font-size
 html:has(body.lm){background:var(--navy-900)}
 body.lm{background:var(--velvet-bg);background-color:var(--navy-900);min-height:100vh}
 
-/* רדיד זהב מוטבע: לכותרות ולשם האתר */
-.foil,.bar .nm,.lm-top .lm-brand .nm,.lm-foot .nm{
-  background:var(--grain),var(--foil);background-size:160px 160px,100% 100%;background-blend-mode:multiply;
+/* רדיד זהב מוטבע והילה רכה: לכותרות ולשם האתר */
+.foil,.bar .nm,.lm-top .lm-brand .nm,.lm-foot .nm,h1.lm-t,h2.lm-t2,.lm-seder h2,.lm-card>h3,.lm-box>h3{
+  background:var(--foil);
   -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(1px 1.5px 1px rgba(2,7,13,.9)) drop-shadow(0 -0.5px 0 rgba(255,244,207,.35))}
+  filter:var(--foil-glow)}
 @supports not ((-webkit-background-clip:text) or (background-clip:text)){.foil,.bar .nm,.lm-top .lm-brand .nm{color:var(--gold-300);background:none;-webkit-text-fill-color:currentColor}}
 .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
@@ -348,7 +356,7 @@ body.lm{background:var(--velvet-bg);background-color:var(--navy-900);min-height:
   box-shadow:0 1px 0 rgba(249,224,138,.10),0 4px 14px rgba(0,0,0,.28)}
 .bar .brand{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
 .bar .brand .lg{height:30px;width:auto;display:block;flex:none}
-.bar .nm,.lm-top .lm-brand .nm{font-family:'LGVilnaTitle','LGVilnaXB','Leukmey',serif!important;font-weight:400;font-size:25px;line-height:1.1;letter-spacing:.02em;white-space:nowrap}
+.bar .nm,.lm-top .lm-brand .nm{font-family:'LGVilnaXB','Leukmey',serif!important;font-weight:400;font-size:25px;line-height:1.1;letter-spacing:.02em;white-space:nowrap}
 .bar .mn{font-family:'LGVilna','Vilna',serif;font-weight:700;font-size:21px;color:var(--gold-100)}
 .bar :is(button,select){font-family:var(--ui);font-size:16px;font-weight:700;letter-spacing:.02em}
 .bar input{font-family:var(--ui);font-size:var(--fs-ui)}
@@ -390,7 +398,7 @@ kbd,.kbd{border-color:var(--gold-700)}
 .lm-foot{position:relative;isolation:isolate;background:var(--velvet-bg);background-color:var(--navy-900);border-top:1px solid var(--gold-700);color:var(--cream2);text-align:center;padding:22px 16px 28px;margin-top:30px;font-size:15px}
 .lm-foot .lm-foot-in{display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
 .lm-foot img{height:34px;width:auto}
-.lm-foot .nm{font-family:'LGVilnaTitle','LGVilnaXB',serif!important;font-size:22px;line-height:1.1}
+.lm-foot .nm{font-family:'LGVilnaXB',serif!important;font-size:22px;line-height:1.1}
 .lm-foot a{color:var(--gold-300);margin-inline:8px}
 .lm-foot .mv{display:block;margin-top:6px;color:var(--gold-300);font-family:var(--ui);font-weight:700;font-size:16px;letter-spacing:.04em}
 
@@ -400,27 +408,66 @@ kbd,.kbd{border-color:var(--gold-700)}
 /* ---------- השער הגדול, סימן המותג, כרטיסי-שער ---------- */
 .gate-hero{position:relative;width:min(560px,calc(78vh*.664),100%);margin:8px auto 0;aspect-ratio:226.6/341.1}
 .gate-hero>.gate-img{position:absolute;inset:0;width:100%;height:100%;display:block}
-.gate-hero .opening{position:absolute;top:34%;bottom:24%;left:28%;right:28%;display:flex;align-items:center;justify-content:center}
+.gate-hero .opening{position:absolute;top:36%;bottom:25%;left:30%;right:30%;display:flex;align-items:center;justify-content:center;border-radius:40% 40% 6px 6px/22% 22% 6px 6px;
+  background:radial-gradient(ellipse 75% 60% at 50% 45%,rgba(249,224,138,.22),rgba(249,224,138,.07) 60%,transparent 80%)}
 .brand-mark{width:100%;height:100%;overflow:visible;cursor:default}
 .ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:6px 0 4px}
 .lm-cont{max-width:520px;margin:12px auto 0;text-align:center}
 .lm-cont .lm-bar{margin-top:6px}
 .gate-sm{display:block;height:64px;width:auto;margin:0 auto 6px}
-.gcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px;margin:0 0 20px}
-body.lm a.gcard{position:relative;display:flex;flex-direction:column;color:var(--cream);text-align:center;text-decoration:none;
-  background:radial-gradient(ellipse 70% 60% at 50% 45%,rgba(243,207,106,.10),transparent 70%);transition:transform .25s,filter .25s}
-body.lm a.gcard:hover{transform:translateY(-3px);filter:drop-shadow(0 8px 18px rgba(217,167,58,.28));text-decoration:none}
-.gcard .crown{display:block;width:100%;height:auto}
-.gcard .gbody{position:relative;flex:1;padding:6px 23% 14px;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:6px}
-.gcard .gbody::before,.gcard .gbody::after{content:"";position:absolute;top:0;bottom:0;width:9%;border-inline:1.5px solid var(--gold-500);opacity:.9}
-.gcard .gbody::before{left:6.4%}.gcard .gbody::after{right:6.4%}
-.gcard .ped{position:absolute;bottom:13%;width:18%;height:auto}
-.gcard .ped.l{left:2.5%}.gcard .ped.r{right:2.5%;transform:scaleX(-1)}
-.gcard .steps{display:block;width:100%;height:auto;margin-top:-2px}
-.gcard h3{margin:0;font-family:'LGVilnaXB','Vilna',serif;font-weight:400;font-size:1.55rem;letter-spacing:.02em;line-height:1.2}
-.gcard p{margin:0;font-size:1.02rem;line-height:1.5;color:var(--cream);opacity:.92}
-.gcard .lm-bar{margin-top:8px}
-@media (prefers-reduced-motion:reduce){.gcard,body.lm a.gcard{transition:none}body.lm a.gcard:hover{transform:none}}
-@media (max-width:520px){.gate-hero{width:min(440px,100%)}.bar .nm{font-size:19px}.gcards{gap:14px}.gcard{max-width:340px;width:100%;margin-inline:auto}}
+/* כרטיס-שער: השער הסימטרי השלם כתמונה אחת והכיתוב בתוך הפתח */
+.gcards{display:grid;grid-template-columns:repeat(4,minmax(0,280px));justify-content:center;gap:22px;margin:0 0 20px}
+@media (max-width:900px){.gcards{grid-template-columns:repeat(2,minmax(0,280px));gap:16px}}
+.gcard{position:relative;display:block;container-type:inline-size;text-align:center;text-decoration:none;color:#f5edd6;transition:transform .25s,filter .25s}
+body.lm a.gcard:hover{text-decoration:none}
+.gcard .gimg{display:block;width:100%;height:auto}
+.gcard .gbody{position:absolute;left:32.5%;right:32.5%;top:39%;bottom:27.5%;display:flex;flex-direction:column;justify-content:center;gap:5px;overflow:hidden;
+  border-radius:40% 40% 6px 6px/22% 22% 6px 6px;
+  background:radial-gradient(ellipse 75% 60% at 50% 45%,rgba(249,224,138,.22),rgba(249,224,138,.07) 60%,transparent 80%)}
+.gcard h3{margin:0;font-family:'LGVilnaXB','Vilna',serif;font-weight:400;font-size:clamp(1.05rem,8.2cqi,1.45rem);line-height:1.12;text-wrap:balance}
+.gcard p{margin:0;font-size:clamp(.78rem,5.2cqi,.95rem);line-height:1.3;color:#f5edd6}
+.gcard .lm-bar{margin-top:4px}
+.gcard:hover{transform:translateY(-3px);filter:drop-shadow(0 8px 18px rgba(240,196,90,.3))}
+.gcard:focus-visible{outline:2px solid #efcf6b;outline-offset:4px}
+@container (max-width:200px){.gcard p{display:none}.gcard h3{font-size:clamp(.7rem,9.2cqi,1rem)}.gcard .lm-bar{display:none}}
+@media (prefers-reduced-motion:reduce){.gcard{transition:none}.gcard:hover{transform:none}}
+@media (max-width:520px){.gate-hero{width:min(440px,100%)}.bar .nm{font-size:19px}}
 .gate-sm.inl{margin:0;height:84px}
 .qz-title-up .qz-big{background:var(--foil);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+
+/* =====================================================================
+   8.10.2026 (ב) - שער סימטרי זוהר, מפת הש"ס ויישור הדפים
+   כל התיבות במעטפת הן לוחיות כחולות עם מסגרת זהב; הנייר הבהיר שמור לטור הגמרא.
+   ===================================================================== */
+:root{--plate:linear-gradient(180deg,#183d5c,#0f263b 70%);
+  --plate-frame:inset 0 0 0 1px #8f6a1e,inset 0 0 0 4px #0f263b,inset 0 0 0 5px rgba(209,162,58,.55),0 4px 10px rgba(0,0,0,.35)}
+html:has(body.lm){background:#060f18}
+body.lm{display:flex;flex-direction:column;min-height:100vh;background:var(--velvet-bg);background-color:#060f18}
+body.lm>#lm-app{flex:1 0 auto}
+body.lm>.lm-foot{margin-top:auto}
+body.lm>svg{position:absolute;width:0;height:0}
+
+/* ---------- כפתור ראשי: זהב תלת-ממדי, ושקיעה בלחיצה ---------- */
+body .btn.primary,body .btn-p,body .primary,body .go,body .lm-btn.pri,body a.lm-btn.pri,
+body :is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.sideask) button:is(.primary,.go,.btn-p){
+  background:linear-gradient(180deg,#fbe9a6 0%,#eccb63 38%,#c8942c 62%,#b98522 100%);color:#2a1c04;border:1px solid #6e4f12;border-radius:7px;
+  font-family:'LGVilna','Vilna',serif;font-weight:500;text-shadow:none;
+  box-shadow:inset 0 1px 0 rgba(255,250,225,.9),inset 0 -2px 0 rgba(110,79,18,.55),0 3px 0 #5c410d,0 6px 12px rgba(0,0,0,.45);
+  transition:transform 80ms,box-shadow 80ms,filter .2s}
+body .btn.primary::after,body .btn-p::after,body .primary::after,body .go::after,body .lm-btn.pri::after{display:none}
+body .btn.primary:hover,body .btn-p:hover,body .go:hover,body .lm-btn.pri:hover,body a.lm-btn.pri:hover,body .primary:hover:not(:disabled),
+body :is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.sideask) button:is(.primary,.go,.btn-p):hover:not(:disabled){
+  background:linear-gradient(180deg,#fbe9a6 0%,#eccb63 38%,#c8942c 62%,#b98522 100%)!important;color:#2a1c04!important;border-color:#6e4f12!important;filter:brightness(1.07);text-decoration:none}
+body .btn.primary:active,body .btn-p:active,body .go:active,body .lm-btn.pri:active,body a.lm-btn.pri:active,body .primary:active:not(:disabled),
+body :is(.panel,.modal,.sgpop,.sgmodal,.sgbar,.sgrow,.edsum,.drawer,.menu,.lm-wrap,.lm-box,.lm-toast,.sideask) button:is(.primary,.go,.btn-p):active:not(:disabled){
+  transform:translateY(3px);box-shadow:inset 0 2px 4px rgba(92,65,13,.6),0 0 0 #5c410d,0 2px 4px rgba(0,0,0,.4)}
+/* כפתור משני: אותה צורה בכחול, מסגרת וטקסט זהב */
+body .lm-btn:not(.pri),body .btn:not(.primary):not(.q):not(.danger){
+  font-family:'LGVilna','Vilna',serif;font-weight:500;color:#f9e08a;background:linear-gradient(180deg,#1d4466,#0f263b);border:1px solid var(--gold-500);border-radius:7px;
+  box-shadow:inset 0 1px 0 rgba(249,224,138,.35),0 3px 0 #06111b,0 6px 12px rgba(0,0,0,.45);transition:transform 80ms,box-shadow 80ms,filter .2s}
+body .lm-btn:not(.pri):hover,body .btn:not(.primary):not(.q):hover{background:linear-gradient(180deg,#1d4466,#0f263b);filter:brightness(1.15);border-color:var(--gold-300);text-decoration:none}
+body .lm-btn:not(.pri):active,body .btn:not(.primary):not(.q):active{transform:translateY(3px);box-shadow:inset 0 2px 4px rgba(0,0,0,.5),0 0 0 #06111b,0 2px 4px rgba(0,0,0,.4)}
+body .lm-btn:focus-visible,body .btn:focus-visible{outline:2px solid #f9e08a;outline-offset:3px}
+body .lm-btn[disabled]{opacity:.5;filter:grayscale(.4)}
+@media (prefers-reduced-motion:reduce){body .lm-btn,body .btn,body .primary{transition:none}}
+

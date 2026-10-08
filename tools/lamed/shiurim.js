@@ -73,7 +73,7 @@
     function draw() {
       load().then(function (items) {
         var box = $('#lm-sh-list'); box.innerHTML = '';
-        if (!items.length) { box.innerHTML = '<div class="lm-card">עדיין לא נוספו שיעורים.</div>'; return; }
+        if (!items.length) { box.innerHTML = '<div class="lm-empty">' + LG.brand.gate('inl') + '<p>השיעורים הראשונים יעלו כאן בקרוב.</p></div>'; return; }
         ldInject(items);
         var by = {};
         items.forEach(function (l) { (by[l.slug] = by[l.slug] || []).push(l); });

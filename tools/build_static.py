@@ -17,14 +17,22 @@ TAG = re.compile(r'<[^>]+>')
 GEM = {'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'כ': 20, 'ל': 30, 'מ': 40,
        'נ': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'צ': 90, 'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400}
 
-CSS = ('body{margin:0;background:#efe9d9;color:#1d1a16;font:19px/1.75 "Frank Ruhl Libre",Frank,serif}'
-       'header{background:#0b1c2a;border-bottom:1px solid #8f6a1e;color:#e9c35a;padding:8px 18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}header a{color:#e9c35a;text-decoration:none;font-weight:700;font-size:17px}header a.lg{display:inline-flex;align-items:center;gap:8px;color:#f9e08a;font-size:22px}header a.lg img{height:30px;width:auto}'
-       '@font-face{font-family:LGVilnaTitle;src:url(/brand/fonts/vilna-title.woff2) format("woff2");font-display:swap}header a.lg{font-family:LGVilnaTitle,serif;font-weight:400}'
-       'main{max-width:760px;margin:0 auto;padding:22px 18px 60px}h1{font-size:30px;margin:.2em 0}h2{font-size:23px;margin:1.4em 0 .3em;border-bottom:1px solid #c9bfa8}'
+CSS = ('@font-face{font-family:LGVilnaXB;src:url(/brand/fonts/vilna-xb.woff2) format("woff2");font-display:swap}'
+       ':root{--foil:linear-gradient(170deg,#fbe7a1,#e6bd52 30%,#c38f2a 55%,#efcf6b 75%,#b07c1f);--glow:drop-shadow(0 1px 0 rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(240,196,90,.45))}'
+       'html{background:#060f18}body{margin:0;min-height:100vh;display:flex;flex-direction:column;color:#1d1a16;font:19px/1.75 "Frank Ruhl Libre",Frank,serif;'
+       'background:radial-gradient(ellipse 80% 60% at 50% 20%,#102a42,#091827 55%,#060f18);background-color:#060f18}'
+       'header{background:#0b1c2a;border-bottom:1px solid #8f6a1e;box-shadow:0 4px 14px rgba(0,0,0,.28);color:#e9c35a;padding:8px 18px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}'
+       'header a{color:#e9c35a;text-decoration:none;font-weight:700;font-size:17px}header a.lg{display:inline-flex;align-items:center;gap:8px;font:400 25px/1.1 LGVilnaXB,serif;'
+       'background:var(--foil);-webkit-background-clip:text;background-clip:text;color:transparent;filter:var(--glow)}header a.lg img{height:34px;width:auto;-webkit-text-fill-color:initial}'
+       'main{flex:1 0 auto;box-sizing:border-box;width:100%;max-width:760px;margin:22px auto 30px;padding:22px 24px 40px;background:#f7f3ea;border-radius:6px;'
+       'box-shadow:0 0 0 1px #8f6a1e,0 0 0 5px #0f263b,0 0 0 6px rgba(209,162,58,.55),0 10px 26px rgba(0,0,0,.5)}'
+       'h1{font-size:30px;margin:.2em 0}h2{font-size:23px;margin:1.4em 0 .3em;border-bottom:1px solid #c9bfa8}'
        'h3{font-size:19px;margin:1em 0 .2em;color:#5a4a2a}p{margin:.35em 0}p strong{color:#7a5a14}a{color:#7a5a14}'
        'nav.crumbs,nav.pn{font-size:16px;margin:8px 0}nav.pn{display:flex;justify-content:space-between;margin-top:28px}'
-       '.cta{display:inline-block;background:#c9a24a;color:#2b2620;padding:8px 18px;border-radius:8px;font-weight:700;text-decoration:none;margin:6px 0}'
-       '.note{font-size:15px;color:#6a5f4d}ul.dafs{columns:3;list-style:none;padding:0}ul.dafs a{display:block;padding:2px 0}')
+       '.cta{display:inline-block;background:linear-gradient(180deg,#fbe9a6,#eccb63 38%,#c8942c 62%,#b98522);color:#2a1c04;border:1px solid #6e4f12;padding:8px 18px;border-radius:7px;font-weight:700;text-decoration:none;margin:6px 0;'
+       'box-shadow:inset 0 1px 0 rgba(255,250,225,.9),0 3px 0 #5c410d}'
+       '.note{font-size:15px;color:#6a5f4d}ul.dafs{columns:3;list-style:none;padding:0}ul.dafs a{display:block;padding:2px 0}'
+       '@media(max-width:560px){main{margin:14px 10px 24px;width:auto;padding:16px 14px 30px}ul.dafs{columns:2}}')
 
 
 def esc(s):
@@ -74,7 +82,7 @@ def head(title, desc, url, ld):
             '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/brand/icons/favicon-32.png">'
             '<link rel="apple-touch-icon" href="/brand/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#0b1c2a">'
             '<script type="application/ld+json">%s</script><style>%s</style></head><body>'
-            '<header><a class="lg" href="/"><img src="/brand/shaar-zahav-96.webp" alt="">%s</a><a href="/yomi.html">הדף היומי</a><a href="/masechtot.html">כל המסכתות</a></header>'
+            '<header><a class="lg" href="/"><img src="/brand/shaar-v2/shaar-zohar-96.webp" alt="">%s</a><a href="/yomi.html">הדף היומי</a><a href="/masechtot.html">כל המסכתות</a></header>'
             % (esc(title), esc(desc), url, NAME, esc(title), esc(desc), url, json.dumps(ld, ensure_ascii=False), CSS, NAME))
 
 

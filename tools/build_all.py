@@ -305,19 +305,20 @@ def main():
 body{{margin:0;background:var(--velvet-bg);background-color:#0b1c2a;color:#f3ead0;font-family:var(--ui);min-height:100vh}} html{{background:#0b1c2a}}
 header{{background:transparent;border-bottom:1px solid #8f6a1e;padding:26px 20px 22px;text-align:center}} header img{{height:64px;width:auto;display:block;margin:0 auto 6px}} header h1{{font-family:'LGVilnaXB','Vilna',serif;font-weight:400;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#e9c35a;font-size:18px}}
 #dy{{display:inline-block;margin-top:14px;padding:9px 22px;font-size:18px}}
-.m.now{{border-color:#a83c2f;box-shadow:0 0 0 2px #c9a24a}} .now-tag{{display:block;color:#a83c2f;font-size:12px;font-weight:700;margin-bottom:2px}}
+.m.now{{box-shadow:inset 0 0 0 2px #e9c35a,0 0 14px rgba(233,195,90,.3)}} .now-tag{{display:block;color:#f9e08a;font-size:14px;font-weight:700;margin-bottom:2px}}
 #nowrow{{margin:18px 0 0}} #nowrow .grid{{grid-template-columns:minmax(180px,260px)}}
 main{{max-width:980px;margin:0 auto;padding:18px 16px 60px}} h2{{font-weight:500;font-size:20px;color:#e9c35a;border-bottom:1px solid #8f6a1e;margin:26px 0 10px;padding-bottom:4px}}
 .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}}
-.m{{display:block;background:#0f263b;border-radius:6px;padding:12px 14px;text-decoration:none;color:#c9bd98;border:1px solid rgba(209,162,58,.25);opacity:.8}} .m.on{{background:#fffdf8;color:#1b1b1b;border-color:#d1a23a;opacity:1;box-shadow:0 1px 4px rgba(0,0,0,.3)}} .m.on:hover{{background:#fff;border-color:#f9e08a}}
-.m b{{display:block;font-size:20px;font-weight:700}} .m small{{font-size:15px;color:#5a534a}} .m:not(.on) small{{color:#c9bd98}}
+.m{{display:block;position:relative;background:transparent;border-radius:5px;padding:12px 14px;text-decoration:none;color:#c7bc9c;border:1px dashed rgba(209,162,58,.5)}} .m b{{color:#8d8569}} .m.on{{background:linear-gradient(180deg,#183d5c,#0f263b 70%);color:#f5edd6;border:0;box-shadow:inset 0 0 0 1px #8f6a1e,inset 0 0 0 4px #0f263b,inset 0 0 0 5px rgba(209,162,58,.55),0 4px 10px rgba(0,0,0,.35);transition:transform .2s,box-shadow .2s}} .m.on b{{font-family:'LGVilnaXB','Vilna',serif;font-weight:400;font-size:23px;background:var(--foil);-webkit-background-clip:text;background-clip:text;color:transparent;filter:var(--foil-glow)}} .m.on:hover{{transform:translateY(-3px);box-shadow:inset 0 0 0 1px #e9c35a,inset 0 0 0 4px #0f263b,inset 0 0 0 5px #e9c35a,0 10px 20px rgba(0,0,0,.4),0 0 18px rgba(233,195,90,.18)}}
+.m b{{display:block;font-size:20px;font-weight:700}} .m small{{font-size:15px;color:#9a9275}} .m.on small{{color:#c7bc9c}}
 .mw{{position:relative}} .mw .m{{padding-bottom:26px}}
-.m.warn{{border-color:#a83c2f;box-shadow:inset 3px 0 0 #a83c2f}} .m.warn small{{color:#a83c2f}}
-.hg{{position:absolute;bottom:7px;right:14px;font-size:15px;background:#d1a23a;color:#2b2620;border-radius:4px;padding:1px 9px;text-decoration:none;font-weight:700}}
-.hg:hover{{background:#b8912f}}
+.m.warn{{border-color:#a83c2f;box-shadow:inset 3px 0 0 #a83c2f}} .m.warn small{{color:#f0a39a}}
+.hg{{position:absolute;bottom:7px;right:14px;font-size:15px;background:var(--foil);color:#2a1c04;border-radius:4px;padding:1px 9px;text-decoration:none;font-weight:700}}
+.hg:hover{{filter:brightness(1.1)}}
+body{{display:flex;flex-direction:column}} main{{flex:1 0 auto;width:100%;box-sizing:border-box}} footer{{margin-top:auto}} h2{{font-family:'LGVilnaXB','Vilna',serif!important;font-weight:400!important;background:var(--foil);-webkit-background-clip:text;background-clip:text;color:transparent!important;filter:var(--foil-glow)}}
 footer{{text-align:center;color:#c9bd98;font-size:15px;padding:20px;border-top:1px solid #8f6a1e}} footer a{{color:#e9c35a}}
 {GOLD}</style></head><body>
-<header><img src="brand/shaar-zahav-96.webp" alt=""><h1 class="foil">לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי</p><button id="dy" class="btn primary" type="button" style="display:none">הדף היומי</button></header>
+<header><img src="brand/shaar-v2/shaar-zohar-96.webp" alt=""><h1 class="foil">לאוקמי גירסא</h1><p>קיצור התלמוד הבבלי</p><button id="dy" class="btn primary" type="button" style="display:none">הדף היומי</button></header>
 <main>{rows}</main><script src="hdate.js"></script><script src="daf-yomi.js"></script><script>
 (function(){{var BUILT={json.dumps([SLUG[m] for m in built])};var b=document.getElementById('dy');if(!window.LGDaf)return;var t=LGDaf.today();if(!t)return;
 b.style.display='';

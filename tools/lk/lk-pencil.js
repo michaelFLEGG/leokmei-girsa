@@ -319,9 +319,9 @@
     };
   }
   LK.openStats = function () {
-    var c = LK.cfg;
-    W.open(c.cfDash || 'https://dash.cloudflare.com/?to=/:account/web-analytics', '_blank', 'noopener');
-    W.open(c.clarityDash || 'https://clarity.microsoft.com/', '_blank', 'noopener');
+    /* מנה 9.10.2026: הלוח המשוכפל מהזוהר, בתוך האתר. הלוחות הגולמיים של Cloudflare ו-Clarity אינם נפתחים מכאן עוד */
+    var w = W.open('/admin-stats.html', '_blank', 'noopener');
+    if (!w) location.href = '/admin-stats.html';
   };
 
   function build() {

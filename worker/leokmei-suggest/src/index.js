@@ -1327,6 +1327,95 @@ async function txRevert(req, env) {
   return json({ ok: true, rev: cur.rev, orig: prev.o });
 }
 
+/* ------------------------------------------------------------ נתוני גלישה (מנה 9.10.2026)
+   העתקה של מערכת הספירה האנונימית של ממלכת הזוהר (zstats/hit.js ו-summary.js) ללאוקמי גירסא.
+   האחסון הוא D1 נפרד (leokmei-stats, בלי עלות): כל צפייה היא הגדלת מונה, ולא כתיבת רשומה שלמה ל-KV,
+   שהמכסה היומית שלו קטנה. בלי כתובת, בלי דפדפן ובלי עוגייה: האיזור נלקח מ-req.cf וכתובת ה-IP אינה נשמרת.
+   POST /stats/hit      ציבורי. גוף (text/plain עם JSON): {p, s, t, e, n, r, d}
+   GET  /stats/summary  מנהל בלבד (x-admin-key): ?days=30, באותו מבנה של הזוהר. */
+const ST_MAX = { pages: 200, entry: 200, geo: 300, refs: 100, hours: 24, dev: 4 };
+const ST_MAX_SIDS = 4000;
+let stReady = false;
+async function stEnsure(db) {
+  if (stReady) return;
+  await db.batch([
+    db.prepare('CREATE TABLE IF NOT EXISTS zs_c (day TEXT NOT NULL, f TEXT NOT NULL, k TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, f, k))'),
+    db.prepare('CREATE TABLE IF NOT EXISTS zs_s (day TEXT NOT NULL, sid TEXT NOT NULL, PRIMARY KEY (day, sid))'),
+  ]);
+  stReady = true;
+}
+function stBump(db, day, f, k, delta = 1) {
+  const cap = ST_MAX[f];
+  if (!cap) return db.prepare('INSERT INTO zs_c (day, f, k, n) VALUES (?1, ?2, ?3, ?4) ON CONFLICT(day, f, k) DO UPDATE SET n = n + ?4').bind(day, f, k, delta);
+  return db.prepare(
+    'INSERT INTO zs_c (day, f, k, n) SELECT ?1, ?2, ?3, ?4 WHERE EXISTS (SELECT 1 FROM zs_c WHERE day = ?1 AND f = ?2 AND k = ?3) OR (SELECT COUNT(*) FROM zs_c WHERE day = ?1 AND f = ?2) < ?5 ' +
+    'ON CONFLICT(day, f, k) DO UPDATE SET n = n + ?4'
+  ).bind(day, f, k, delta, cap);
+}
+function stIlHour() {
+  try {
+    return parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jerusalem', hour: 'numeric', hour12: false }).format(new Date()), 10) % 24;
+  } catch (e) { return (new Date().getUTCHours() + 3) % 24; }
+}
+async function statsHit(req, env) {
+  if (!env.LSTATS) return json({ ok: false, error: 'no-db' }, 503);
+  let b;
+  try { b = JSON.parse(await req.text()); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  if (!b || typeof b !== 'object') return bad('גוף הבקשה אינו JSON');
+  const page = String(b.p || '').slice(0, 80);
+  const sid = String(b.s || '').replace(/[^A-Za-z0-9]/g, '').slice(0, 24);
+  const secs = Math.max(0, Math.min(7200, parseInt(b.t, 10) || 0));
+  if (!sid || !page) return bad('חסר');
+  const db = env.LSTATS;
+  await stEnsure(db);
+  const day = new Date().toISOString().slice(0, 10);
+  const st = [];
+  if (secs) {
+    st.push(stBump(db, day, 'secs', '', secs));
+  } else {
+    st.push(stBump(db, day, 'views', '', 1));
+    st.push(db.prepare('INSERT OR IGNORE INTO zs_s (day, sid) SELECT ?1, ?2 WHERE (SELECT COUNT(*) FROM zs_s WHERE day = ?1) < ?3').bind(day, sid, ST_MAX_SIDS));
+    st.push(stBump(db, day, 'pages', page));
+    st.push(stBump(db, day, 'hours', String(stIlHour())));
+    const cf = req.cf || {};
+    const country = String(cf.country || '').slice(0, 2).toUpperCase();
+    if (country) st.push(stBump(db, day, 'geo', (country === 'IL' && cf.city) ? 'IL:' + String(cf.city).slice(0, 40) : country));
+    if (b.e) {
+      if (b.n) st.push(stBump(db, day, 'newv', '', 1));
+      if (b.d === 'm' || b.d === 'd') st.push(stBump(db, day, 'dev', b.d));
+      const ref = String(b.r || '').toLowerCase().replace(/^www\./, '').replace(/[^a-z0-9.\-]/g, '').slice(0, 60);
+      st.push(stBump(db, day, 'refs', ref || 'direct'));
+      st.push(stBump(db, day, 'entry', page));
+    }
+  }
+  await db.batch(st);
+  return json({ ok: true });
+}
+async function statsSummary(req, env, url) {
+  if (!(await isAdmin(req, env))) return json({ error: 'unauthorized' }, 403);
+  if (!env.LSTATS) return json({ error: 'no-db' }, 503);
+  const days = Math.max(1, Math.min(400, parseInt(url.searchParams.get('days'), 10) || 30));
+  const db = env.LSTATS;
+  await stEnsure(db);
+  const list = [];
+  const now = Date.now();
+  for (let i = 0; i < days; i++) list.push(new Date(now - i * 86400000).toISOString().slice(0, 10));
+  const since = list[list.length - 1];
+  const rows = (await db.prepare('SELECT day, f, k, n FROM zs_c WHERE day >= ?1').bind(since).all()).results || [];
+  const sids = (await db.prepare('SELECT day, COUNT(*) AS c FROM zs_s WHERE day >= ?1 GROUP BY day').bind(since).all()).results || [];
+  const by = {};
+  list.forEach((d) => { by[d] = { day: d, views: 0, visitors: 0, minutes: 0, pages: {}, newv: 0, geo: {}, hours: {}, dev: {}, refs: {}, entry: {}, _secs: 0 }; });
+  rows.forEach((r) => {
+    const o = by[r.day]; if (!o) return;
+    if (r.f === 'views') o.views = r.n;
+    else if (r.f === 'secs') o._secs = r.n;
+    else if (r.f === 'newv') o.newv = r.n;
+    else if (o[r.f] && typeof o[r.f] === 'object') o[r.f][r.k] = r.n;
+  });
+  sids.forEach((r) => { if (by[r.day]) by[r.day].visitors = r.c; });
+  return json({ days: list.map((d) => { const o = by[d]; o.minutes = Math.round(o._secs / 60); delete o._secs; return o; }) });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -1336,6 +1425,8 @@ export default {
       if (p === '/' || p === '/health') return json({ ok: true, service: 'leokmei-suggest' });
       if (p === '/tz/tok' && req.method === 'GET') return await tzTok(req, env);
       if (p.startsWith('/tz/img/') && req.method === 'GET') return await tzImg(req, env, url, p);
+      if (p === '/stats/hit' && req.method === 'POST') return await statsHit(req, env);
+      if (p === '/stats/summary' && req.method === 'GET') return await statsSummary(req, env, url);
       if (p === '/tx' && req.method === 'GET') return await txGet(req, env, url);
       if (p === '/tx/save' && req.method === 'POST') return await txSave(req, env);
       if (p === '/tx/revert' && req.method === 'POST') return await txRevert(req, env);

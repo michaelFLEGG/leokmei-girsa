@@ -22,9 +22,9 @@
   var SLUGS = /^(avodah-zarah|bava-batra|bava-kamma|bava-metzia|beitzah|bekhorot|berakhot|chagigah|chullin|eruvin|gittin|horayot|ketubot|kiddushin|makkot|megillah|moed-katan|nazir|nedarim|niddah|pesachim|rosh-hashanah|sanhedrin|shabbat|shevuot|sotah|sukkah|taanit|temurah|yevamot|yoma|zevachim|meilah|keritot|arakhin|tamid|kinnim|midot|menachot|temura)$/;
   var TYPES = { '': 'home', 'index': 'home', 'shas': 'shas', 'masechtot': 'masechtot', 'yomi': 'yomi', 'hadaf-hayomi': 'yomi-static', 'lamed': 'lamed',
     'quiz': 'quiz', 'shiurim': 'shiurim', 'about': 'about', 'settings': 'settings', 'done': 'done', 'admin-lamdim': 'admin', 'mekorot': 'mekorot',
-    'masechet': 'masechet-shell', 'admin-texts': 'admin-texts', 'privacy': 'privacy' };
+    'masechet': 'masechet-shell', 'admin-texts': 'admin-texts', 'admin-stats': 'admin-stats', 'privacy': 'privacy' };
   var TYPE_HE = { home: 'בית', shas: 'מפת הש"ס', masechtot: 'רשימת מסכתות', yomi: 'הדף היומי', 'yomi-static': 'הדף היומי (סטטי)', lamed: 'המקום שלי', quiz: 'בחן את עצמך',
-    shiurim: 'שיעורים', about: 'אודות', settings: 'הגדרות', done: 'סיום מסכת', admin: 'מנהל', mekorot: 'מקורות', 'masechet-shell': 'מסכת', gemara: 'דף גמרא', 'daf-static': 'דף גמרא (סטטי)',
+    shiurim: 'שיעורים', about: 'אודות', settings: 'הגדרות', done: 'סיום מסכת', admin: 'מנהל', 'admin-stats': 'נתוני גלישה', mekorot: 'מקורות', 'masechet-shell': 'מסכת', gemara: 'דף גמרא', 'daf-static': 'דף גמרא (סטטי)',
     privacy: 'פרטיות', other: 'אחר' };
   LK.pageType = function () {
     var p = decodeURIComponent(location.pathname || '/').replace(/^\/+|\/+$/g, '');
@@ -156,6 +156,66 @@
     var mo = new MutationObserver(function () { if (editing()) { clarityStop(); } });
     mo.observe(D.body, { attributes: true, attributeFilter: ['class'] });
     if (editing()) clarityStop();
+  }
+
+
+  /* ================================================================
+     ג. ספירת צפיות אנונימית ללוח נתוני הגלישה (9.10.2026)
+     העתקה של zstats.js של ממלכת הזוהר: בלי כתובת, בלי עוגיות, בלי מזהה אישי. מנהל אינו נספר.
+     אינה נוגעת ב-Cloudflare Web Analytics וב-Clarity. ראו docs/נתוני-גלישה.md */
+  var MASECHET_HE = { 'avodah-zarah': 'עבודה זרה', 'bava-batra': 'בבא בתרא', 'bava-kamma': 'בבא קמא', 'bava-metzia': 'בבא מציעא', beitzah: 'ביצה',
+    bekhorot: 'בכורות', berakhot: 'ברכות', chagigah: 'חגיגה', chullin: 'חולין', eruvin: 'עירובין', gittin: 'גיטין', horayot: 'הוריות', ketubot: 'כתובות',
+    kiddushin: 'קידושין', makkot: 'מכות', megillah: 'מגילה', 'moed-katan': 'מועד קטן', nazir: 'נזיר', nedarim: 'נדרים', niddah: 'נדה', pesachim: 'פסחים',
+    'rosh-hashanah': 'ראש השנה', sanhedrin: 'סנהדרין', shabbat: 'שבת', shevuot: 'שבועות', sotah: 'סוטה', sukkah: 'סוכה', taanit: 'תענית', temurah: 'תמורה',
+    temura: 'תמורה', yevamot: 'יבמות', yoma: 'יומא', zevachim: 'זבחים', meilah: 'מעילה', keritot: 'כריתות', arakhin: 'ערכין', tamid: 'תמיד', kinnim: 'קינים',
+    midot: 'מידות', menachot: 'מנחות' };
+  function viewLabel() {
+    var t = PT.type, name = LK.typeHe(t);
+    if (t === 'admin' || t === 'admin-texts' || t === 'admin-stats') return '';   /* דפי המנהל אינם נספרים */
+    if (t === 'gemara' || t === 'daf-static' || t === 'masechet-shell') {
+      var m = MASECHET_HE[PT.masechet] || PT.masechet || '';
+      var d = dafNow();
+      return (m ? m : name) + (d && t !== 'masechet-shell' ? ' ' + d : '');
+    }
+    return name;
+  }
+  function startViews() {
+    if (ADMIN || !/(^|\.)leokmei\.com$/.test(location.hostname)) return;
+    var sid;
+    try { sid = sessionStorage.getItem('lsid'); if (!sid) { sid = Math.random().toString(36).slice(2, 12) + Date.now().toString(36).slice(-4); sessionStorage.setItem('lsid', sid); } }
+    catch (e) { sid = 'anon' + Math.random().toString(36).slice(2, 8); }
+    function send(o) {
+      try {
+        var body = JSON.stringify(o), url = CFG.api + '/stats/hit';
+        if (navigator.sendBeacon) navigator.sendBeacon(url, new Blob([body], { type: 'text/plain;charset=UTF-8' }));
+        else fetch(url, { method: 'POST', body: body, keepalive: true, headers: { 'content-type': 'text/plain;charset=UTF-8' } });
+      } catch (e) { }
+    }
+    var last = '', entered = false, sentLeave = false, t0 = Date.now(), timer = 0;
+    function view() {
+      if (ADMIN || LK.isAdminDevice() || editing()) return;
+      var p = viewLabel(); if (!p || p === last) return;
+      last = p;
+      var o = { p: p, s: sid };
+      if (!entered) {
+        entered = true; o.e = 1;
+        var ref = '';
+        try { if (D.referrer) { var rh = new URL(D.referrer).hostname; if (rh && rh !== location.hostname) ref = rh; } } catch (e) { }
+        if (ref) o.r = ref;
+        o.d = (W.matchMedia && W.matchMedia('(pointer: coarse)').matches) ? 'm' : 'd';
+        if (!ls('luid')) { ls('luid', '1'); o.n = 1; }
+      }
+      send(o);
+    }
+    function soon() { clearTimeout(timer); timer = setTimeout(view, 600); }
+    function leave() { if (sentLeave || !last) return; sentLeave = true; send({ p: last, s: sid, t: Math.round((Date.now() - t0) / 1000) }); }
+    W.addEventListener('pagehide', leave);
+    D.addEventListener('visibilitychange', function () { if (D.visibilityState === 'hidden') leave(); else sentLeave = false; });
+    W.addEventListener('hashchange', soon);
+    W.addEventListener('popstate', soon);
+    D.addEventListener('change', function (e) { if (e.target && e.target.id === 'dafsel') soon(); }, true);
+    var ps2 = history.pushState; history.pushState = function () { var r = ps2.apply(this, arguments); soon(); return r; };
+    setTimeout(view, 900); setTimeout(view, 3000);
   }
 
   /* ================================================================
@@ -333,7 +393,7 @@
   }
 
   function boot() {
-    watch(); loadTx(); startAnalytics(); adminTools();
+    watch(); loadTx(); startAnalytics(); startViews(); adminTools();
   }
   if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', boot); else boot();
 })();

@@ -48,6 +48,7 @@ def build_assets(site):
     _write(os.path.join(site, 'lk-core.js'), core)
     _write(os.path.join(site, 'lk-pencil.js'), pencil)
     _write(os.path.join(site, 'admin-texts.html'), _read(os.path.join(LK, 'admin-texts.html')))
+    _write(os.path.join(site, 'admin-stats.html'), _read(os.path.join(LK, 'admin-stats.html')))
     reg = os.path.join(LK, 'texts-registry.json')
     if os.path.exists(reg):
         shutil.copy(reg, os.path.join(site, 'lk-texts.json'))

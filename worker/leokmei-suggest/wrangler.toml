@@ -19,3 +19,9 @@ enabled = false
 binding = "TZURA"
 bucket_name = "leokmei-tzura"
 # והסוד: wrangler secret put TZ_SECRET
+
+# נתוני גלישה (9.10.2026): ספירת צפיות אנונימית ולוח המנהל. D1 חינמי, נפרד מכל מערכת אחרת.
+[[d1_databases]]
+binding = "LSTATS"
+database_name = "leokmei-stats"
+database_id = "09171730-3be8-40a6-96c3-cee2059ab64a"

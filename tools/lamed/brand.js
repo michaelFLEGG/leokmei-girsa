@@ -33,11 +33,21 @@
     try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) { if (a) a.parentNode.removeChild(a); return; } } catch (e) { }
     if (a) sv.addEventListener('mouseenter', function () { try { a.beginElement(); } catch (e) { } });
   };
+  /* תמונת השער: הגרסה המתאימה לרוחב המסך (טלפון אינו מוריד גרסת מחשב). עד שהיא מגיעה - תמונה מטושטשת זעירה מוטמעת */
+  B.gateImg = function () {
+    return '<img class="gate-img" src="brand/shaar-v2/shaar-zohar-560.webp" srcset="brand/shaar-v2/shaar-zohar-560.webp 560w, brand/shaar-v2/shaar-zohar-960.webp 960w, brand/shaar-v2/shaar-zohar-1600.webp 1600w" sizes="(max-width:520px) 62vw, 460px" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onload="this.classList.add(\'ld\')">';
+  };
   /* השער הגדול הסימטרי (זהב זוהר) עם הסימן בפתחו, ואור חם בפתח */
-  B.hero = function () {
+  B.hero = function (adopt) {
+    if (adopt) {   /* שער סטטי קיים: מוסיפים לו רק את הסימן בפתח */
+      if (!adopt.querySelector('.opening')) { var op = document.createElement('div'); op.className = 'opening'; op.innerHTML = B.mark(); (adopt.querySelector('.gate-link') || adopt).appendChild(op); B.arm(adopt); }
+      var im = adopt.querySelector('.gate-img'); if (im && im.complete) im.classList.add('ld');
+      return adopt;
+    }
     var s = document.createElement('section'); s.className = 'gate-hero'; s.setAttribute('aria-label', 'פתיחה');
-    s.innerHTML = '<h1 class="sr-only">לאוקמי גירסא - קיצור התלמוד הבבלי</h1><img class="gate-img" src="brand/shaar-v2/shaar-zohar-960.webp" srcset="brand/shaar-v2/shaar-zohar-960.webp 1x, brand/shaar-v2/shaar-zohar-1600.webp 2x" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async">' +
-      '<div class="opening">' + B.mark() + '</div>';
+    /* כניסה מיידית: לחיצה על כל אזור בשער מובילה ישר למפת הש"ס, בלי מסך ביניים */
+    s.innerHTML = '<h1 class="sr-only">לאוקמי גירסא - קיצור התלמוד הבבלי</h1><a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס">' + B.gateImg() +
+      '<div class="opening">' + B.mark() + '</div></a>';
     B.arm(s);
     return s;
   };
@@ -48,7 +58,7 @@
   /* כרטיס-שער: השער הסימטרי השלם כתמונה אחת, והכיתוב בתוך הפתח (8.10.2026) */
   B.card = function (href, title, bodyHtml, extra) {
     var a = document.createElement('a'); a.className = 'gcard'; a.href = href;
-    a.innerHTML = '<img class="gimg" src="brand/shaar-v2/shaar-zohar-560.webp" srcset="brand/shaar-v2/shaar-zohar-560.webp 1x, brand/shaar-v2/shaar-zohar-1120.webp 2x" width="560" height="843" alt="" loading="lazy" decoding="async">' +
+    a.innerHTML = '<img class="gimg" src="brand/shaar-v2/shaar-zohar-560.webp" srcset="brand/shaar-v2/shaar-zohar-560.webp 560w, brand/shaar-v2/shaar-zohar-1120.webp 1120w" sizes="(max-width:700px) 44vw, 300px" width="560" height="843" alt="" loading="lazy" decoding="async">' +
       '<div class="gbody"><h3 class="foil">' + LG.esc(title) + '</h3>' + bodyHtml + '</div>';
     return a;
   };

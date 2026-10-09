@@ -1,0 +1,338 @@
+{
+ "mobile | בית": {
+  "fcp": 852,
+  "lcp": 12784,
+  "tbt": 106,
+  "requests": 29,
+  "transfer": 2419992,
+  "decoded": 2987572,
+  "dom": 1152,
+  "load": 12755,
+  "warm_fcp": 148,
+  "warm_lcp": 156,
+  "warm_transfer": 0,
+  "cls": 0.012,
+  "big": [
+   [
+    "/brand/shaar-v2/shaar-zohar-1600.webp",
+    938800,
+    938500
+   ],
+   [
+    "/brand/shaar-v2/shaar-zohar-1120.webp",
+    685194,
+    684894
+   ],
+   [
+    "/fonts/vilna-xb.otf",
+    137826,
+    251444
+   ],
+   [
+    "/fonts/vilna-b.otf",
+    131010,
+    235724
+   ],
+   [
+    "/lamed.js",
+    60716,
+    201046
+   ],
+   [
+    "/fonts/vilna-r.otf",
+    59892,
+    98600
+   ],
+   [
+    "/fonts/leukmey.otf",
+    58371,
+    96376
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89900,
+    89600
+   ]
+  ]
+ },
+ "mobile | מפת הש\"ס": {
+  "fcp": 844,
+  "lcp": 1724,
+  "tbt": 330,
+  "requests": 26,
+  "transfer": 795658,
+  "decoded": 1362992,
+  "dom": 1139,
+  "load": 5068,
+  "warm_fcp": 156,
+  "warm_lcp": 468,
+  "warm_transfer": 0,
+  "cls": 0,
+  "big": [
+   [
+    "/fonts/vilna-xb.otf",
+    137826,
+    251444
+   ],
+   [
+    "/fonts/vilna-b.otf",
+    131010,
+    235724
+   ],
+   [
+    "/lamed.js",
+    60716,
+    201046
+   ],
+   [
+    "/fonts/vilna-r.otf",
+    59892,
+    98600
+   ],
+   [
+    "/fonts/leukmey.otf",
+    58371,
+    96376
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89900,
+    89600
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83196,
+    82896
+   ],
+   [
+    "/brand/fonts/vilna-md.woff2",
+    66184,
+    65884
+   ]
+  ]
+ },
+ "mobile | דף גמרא": {
+  "fcp": 1152,
+  "lcp": 6544,
+  "tbt": 11948,
+  "requests": 29,
+  "transfer": 1185507,
+  "decoded": 2864466,
+  "dom": 9358,
+  "load": 14765,
+  "warm_fcp": 168,
+  "warm_lcp": 168,
+  "warm_transfer": 0,
+  "cls": 0.001,
+  "big": [
+   [
+    "/fonts/frank-b.ttf",
+    90140,
+    263368
+   ],
+   [
+    "/fonts/vilna-xb.otf",
+    137826,
+    251444
+   ],
+   [
+    "/fonts/vilna-b.otf",
+    131010,
+    235724
+   ],
+   [
+    "/lamed.js",
+    60716,
+    201046
+   ],
+   [
+    "/fonts/vilna-r.otf",
+    59892,
+    98600
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89900,
+    89600
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83196,
+    82896
+   ],
+   [
+    "/fonts/frank.ttf",
+    48356,
+    77492
+   ]
+  ]
+ },
+ "desktop | בית": {
+  "fcp": 632,
+  "lcp": 2196,
+  "tbt": 0,
+  "requests": 29,
+  "transfer": 1796096,
+  "decoded": 2363676,
+  "dom": 634,
+  "load": 2146,
+  "warm_fcp": 72,
+  "warm_lcp": 64,
+  "warm_transfer": 0,
+  "cls": 0.012,
+  "big": [
+   [
+    "/brand/shaar-v2/shaar-zohar-960.webp",
+    753440,
+    753140
+   ],
+   [
+    "/fonts/vilna-xb.otf",
+    137826,
+    251444
+   ],
+   [
+    "/brand/shaar-v2/shaar-zohar-560.webp",
+    246658,
+    246358
+   ],
+   [
+    "/fonts/vilna-b.otf",
+    131010,
+    235724
+   ],
+   [
+    "/lamed.js",
+    60716,
+    201046
+   ],
+   [
+    "/fonts/vilna-r.otf",
+    59892,
+    98600
+   ],
+   [
+    "/fonts/leukmey.otf",
+    58371,
+    96376
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89900,
+    89600
+   ]
+  ]
+ },
+ "desktop | מפת הש\"ס": {
+  "fcp": 624,
+  "lcp": 796,
+  "tbt": 6,
+  "requests": 25,
+  "transfer": 795658,
+  "decoded": 1362992,
+  "dom": 665,
+  "load": 1329,
+  "warm_fcp": 96,
+  "warm_lcp": null,
+  "warm_transfer": 0,
+  "cls": 0.001,
+  "big": [
+   [
+    "/fonts/vilna-xb.otf",
+    137826,
+    251444
+   ],
+   [
+    "/fonts/vilna-b.otf",
+    131010,
+    235724
+   ],
+   [
+    "/lamed.js",
+    60716,
+    201046
+   ],
+   [
+    "/fonts/vilna-r.otf",
+    59892,
+    98600
+   ],
+   [
+    "/fonts/leukmey.otf",
+    58371,
+    96376
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89900,
+    89600
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83196,
+    82896
+   ],
+   [
+    "/brand/fonts/vilna-md.woff2",
+    66184,
+    65884
+   ]
+  ]
+ },
+ "desktop | דף גמרא": {
+  "fcp": 1228,
+  "lcp": 1484,
+  "tbt": 48,
+  "requests": 32,
+  "transfer": 1211416,
+  "decoded": 2912394,
+  "dom": 1228,
+  "load": 1911,
+  "warm_fcp": 236,
+  "warm_lcp": 236,
+  "warm_transfer": 0,
+  "cls": 0,
+  "big": [
+   [
+    "/fonts/frank-b.ttf",
+    90140,
+    263368
+   ],
+   [
+    "/fonts/vilna-xb.otf",
+    137826,
+    251444
+   ],
+   [
+    "/fonts/vilna-b.otf",
+    131010,
+    235724
+   ],
+   [
+    "/lamed.js",
+    60716,
+    201046
+   ],
+   [
+    "/fonts/vilna-r.otf",
+    59892,
+    98600
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89900,
+    89600
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83196,
+    82896
+   ],
+   [
+    "/fonts/frank.ttf",
+    48356,
+    77492
+   ]
+  ]
+ }
+}

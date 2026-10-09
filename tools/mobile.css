@@ -1,0 +1,156 @@
+/* mobile.css - קונסולת הניווט של הטלפון והטאבלט (מנה 9.10.2026).
+   מעטפת בלבד: לא נוגע בעיצוב תוכן הדף (גופנים, גדלים, סגנונות הגמרא). רק מבנה הפריסה סביבו.
+   כל הכללים כאן מתחילים ב-html.dev-phone או html.dev-tab, ולכן במחשב אין להם השפעה. */
+
+:root{--mtop:46px;--mbot:72px;--msafe:env(safe-area-inset-bottom,0px);--mside:0px}
+html.dev-phone,html.dev-tab{--mbh:calc(var(--mbot) + var(--msafe))}
+
+/* ---- הסרגל הישן מוסתר; במצב עריכה (מנהל) הוא נשאר ---- */
+html.dev-phone body:not(.ed) #bar,html.dev-tab body:not(.ed) #bar{display:none}
+html.dev-phone body.showbar #bar,html.dev-tab body.showbar #bar{display:flex}
+html:not(.dev-phone):not(.dev-tab) #mtop,html:not(.dev-phone):not(.dev-tab) #mbot,html:not(.dev-phone):not(.dev-tab) #msheet,html:not(.dev-phone):not(.dev-tab) #mscrim,html:not(.dev-phone):not(.dev-tab) #mprog{display:none!important}
+body.ed #mtop,body.ed #mbot,body.ed #mprog{display:none!important}
+
+/* ---- סרגל עליון מינימלי ---- */
+#mtop{position:fixed;top:0;inset-inline:0;height:var(--mtop);z-index:30;display:flex;align-items:center;gap:8px;padding:0 10px;
+  background:linear-gradient(180deg,#0f263b,#0b1c2a);border-bottom:1px solid rgba(209,162,58,.5);color:#f5edd6;
+  transition:transform .22s ease;font-family:var(--ui,'LGVilna',serif)}
+#mtop .mhome{flex:none;display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin-inline-start:-8px;background:transparent;border:0;padding:0}
+#mtop .mhome img{height:30px;width:auto}
+#mtop .mttl{flex:1 1 auto;min-width:0;height:44px;display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(233,195,90,.1);
+  border:1px solid rgba(209,162,58,.45);border-radius:12px;color:#f9e08a;font:600 17px/1 var(--ui,'LGVilna',serif);padding:0 12px;cursor:pointer}
+#mtop .mttl .mdf{font-family:'VilnaG','Vilna',serif;font-size:21px;color:#fff3c4}
+#mtop .mttl .ic{width:16px;height:16px;opacity:.8}
+#mtop .msr{flex:none;width:48px;height:48px;margin-inline-end:-8px;display:flex;align-items:center;justify-content:center;background:transparent;border:0;color:#e9c35a;padding:0}
+#mprog{position:fixed;top:var(--mtop);inset-inline:0;height:3px;z-index:31;background:rgba(209,162,58,.18);transition:transform .22s ease}
+#mprog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c38f2a,#f9e08a);margin-inline-start:auto;transition:width .3s}
+
+/* ---- סרגל תחתון קבוע, חמישה כפתורים ---- */
+#mbot{position:fixed;bottom:0;inset-inline:0;height:var(--mbh);padding:6px 8px calc(6px + var(--msafe));gap:8px;z-index:30;display:flex;align-items:stretch;
+  background:linear-gradient(180deg,#102a42,#0b1c2a);border-top:2px solid #c9a24a;box-shadow:0 -4px 14px rgba(0,0,0,.35);
+  transition:transform .22s ease;font-family:var(--ui,'LGVilna',serif)}
+#mbot button{flex:1 1 0;min-width:0;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  background:rgba(233,195,90,.07);border:0;border-radius:12px;color:#f5edd6;font:600 13px/1.1 var(--ui,'LGVilna',serif);padding:4px 2px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
+#mbot button .ic{width:24px;height:24px;stroke-width:1.8}
+#mbot button.on{color:#f9e08a}
+#mbot button:disabled{opacity:.4}
+#mbot button::after,#mtop button::after{content:"";position:absolute;inset:0;background:radial-gradient(circle,rgba(249,224,138,.55),transparent 70%);opacity:0;pointer-events:none}
+#mbot button.flash::after,#mtop button.flash::after{animation:mflash .35s ease-out}
+@keyframes mflash{0%{opacity:.9}100%{opacity:0}}
+body.mhide #mtop,body.mhide #mprog{transform:translateY(calc(-100% - 4px))}
+body.mhide #mbot{transform:translateY(100%)}
+
+/* ---- הטקסט: ריפוד שמחזיק את הסרגלים, כך שהשורה האחרונה אינה מוסתרת ---- */
+html.dev-phone .flow,html.dev-tab .flow{padding-top:calc(var(--mtop) + 10px);padding-bottom:calc(var(--mbh) + 24px);scroll-padding-top:calc(var(--mtop) + 6px);scroll-padding-bottom:calc(var(--mbh) + 10px);overscroll-behavior:contain}
+html.dev-phone body.ed .flow,html.dev-tab body.ed .flow{padding-top:.9em;padding-bottom:1.2em}
+html.dev-phone .flow.book,html.dev-tab .flow.book{padding-top:calc(var(--mtop) + 10px);padding-bottom:calc(var(--mbh) + 10px)}
+
+/* ---- טלפון: כותרות הצד בעמודה שמורה (גריד), רוחב מצומצם, ולעולם לא בתוך הטקסט ---- */
+html.dev-phone .flow:not(.book){column-width:auto;column-count:auto;column-rule:0;column-fill:balance;width:auto;padding-inline:.7em;overflow-x:hidden}
+html.dev-phone .flow:not(.book) .row{display:grid;grid-template-columns:[rail] var(--mrail,3.1em) [text] minmax(0,1fr);align-items:baseline;column-gap:.35em;width:auto;max-width:100%;margin:0}
+html.dev-phone .rail{display:grid;grid-template-columns:minmax(0,1fr);grid-column:rail;text-align:right;padding:0;line-height:1.06;min-width:0;overflow-wrap:anywhere}
+html.dev-phone .rail>*{font-size:.78em;line-height:1.05;white-space:normal}
+html.dev-phone .main{grid-column:text;min-width:0}
+html.dev-phone .win{display:block;white-space:normal;max-width:100%}
+html.dev-phone .anchor{display:block;font-size:.78em}
+html.dev-phone .dafmark{display:block;margin:0}
+html.dev-phone .mlabel{display:block;margin:0}
+html.dev-phone .flow .row.hatz,html.dev-phone .flow .row.perek-num,html.dev-phone .flow .row.perek-name{grid-template-columns:minmax(0,1fr)}
+
+/* ---- טאבלט: "טור אחד" רצוף (במקום טורים שגוללים הצידה), ו"ספר" כעמוד שלם ---- */
+html.dev-tab .flow:not(.book){column-width:auto;column-count:auto;column-rule:0;column-fill:balance;width:auto;padding-inline:.6em;overflow-x:hidden}
+html.dev-tab .flow:not(.book) .row{width:fit-content;margin:0 auto;max-width:100%}
+html.dev-tab.land #mbot{top:var(--mtop);bottom:0;inset-inline:auto;left:0;right:auto;width:78px;height:auto;flex-direction:column;border-top:0;border-right:2px solid #c9a24a;box-shadow:4px 0 14px rgba(0,0,0,.3);padding:8px}
+html.dev-tab.land body{padding-left:78px}
+html.dev-tab.land .flow{padding-bottom:24px}
+html.dev-tab.land .flow.book{padding-bottom:10px}
+html.dev-tab.land body.mhide #mbot{transform:none}
+html.dev-tab.land #mprog,html.dev-tab.land #mtop{inset-inline:0}
+/* ספר בטאבלט: הגיליון כולו, בקנה מידה (גודל האות כל המידות ב-em), דפדוף בהחלקה */
+html.dev-tab .flow.book{font-size:var(--mfs,16px)!important;display:grid;grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:31.125em;grid-template-rows:44.979em;
+  gap:1.2em;justify-content:start;align-content:safe center;width:calc(var(--mn,1) * 31.125em + (var(--mn,1) - 1) * 1.2em + 1.6em);max-width:100%;margin-inline:auto;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;direction:rtl;padding-inline:.6em}
+html.dev-tab .flow.book .sheet{scroll-snap-align:center;scroll-snap-stop:always}
+html.dev-tab .flow.book.dbl{transform-origin:top center}
+
+/* ---- פירוש הגמרא: גיליון תחתון בשלושה מצבים ---- */
+html.dev-phone #srcx.src,html.dev-tab #srcx.src{left:0!important;right:0!important;top:auto!important;bottom:var(--mbh);width:auto!important;height:var(--msh,45vh);max-height:calc(100dvh - var(--mtop) - var(--mbh));
+  border-radius:16px 16px 0 0;z-index:25;box-shadow:0 -8px 24px rgba(0,0,0,.35);display:flex;flex-direction:column;transition:height .2s ease}
+html.dev-tab.land #srcx.src{left:86px!important}
+html.dev-phone body.splitsrc .flow,html.dev-tab body.splitsrc .flow{width:auto;margin-left:0}
+#msh{flex:none;height:44px;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab;position:relative}
+#msh::before{content:"";width:46px;height:5px;border-radius:3px;background:#c9a24a;opacity:.85}
+#msh .mshb{position:absolute;inset-inline-end:6px;top:0;display:flex;gap:2px}
+html.dev-phone #srcx .srchd button,html.dev-tab #srcx .srchd button{min-height:44px;min-width:44px}
+html.dev-phone .srcdrag,html.dev-phone .srcdragv,html.dev-tab .srcdrag,html.dev-tab .srcdragv{display:none}
+body.msrcopen #lm-fin{display:none!important}
+
+/* ---- גיליון "עוד" ובורר הדפים ---- */
+#mscrim{position:fixed;inset:0;background:rgba(3,10,18,.55);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+#mscrim.on{opacity:1;pointer-events:auto}
+#msheet{position:fixed;inset-inline:0;bottom:0;z-index:41;max-height:82dvh;overflow:auto;background:#0f263b;color:#f5edd6;border-radius:18px 18px 0 0;
+  border-top:2px solid #c9a24a;padding:6px 14px calc(18px + var(--msafe));transform:translateY(110%);visibility:hidden;pointer-events:none;transition:transform .24s ease,visibility 0s linear .26s;font-family:var(--ui,'LGVilna',serif);overscroll-behavior:contain}
+#msheet.on{transform:none;visibility:visible;pointer-events:auto;transition:transform .24s ease,visibility 0s}
+html.dev-tab.land #msheet{inset-inline:auto;left:86px;width:min(520px,calc(100vw - 90px));border-radius:18px 18px 0 0}
+#msheet .grip{width:46px;height:5px;border-radius:3px;background:#c9a24a;opacity:.7;margin:6px auto 10px;touch-action:none}
+#msheet h3{margin:6px 4px 10px;font:700 19px var(--ui,'LGVilna',serif);color:#f9e08a}
+#msheet .mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#msheet .mgrid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+#msheet .mi{min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(233,195,90,.08);
+  border:1px solid rgba(209,162,58,.45);border-radius:14px;color:#f5edd6;font:600 14px/1.15 var(--ui,'LGVilna',serif);text-align:center;padding:8px 6px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+#msheet .mi .ic{width:26px;height:26px;color:#e9c35a}
+#msheet .mi.on{background:rgba(233,195,90,.24);color:#fff3c4;border-color:#f9e08a}
+#msheet .mi:disabled{opacity:.4}
+#msheet .mrow{display:flex;gap:10px;align-items:stretch;margin:10px 0}
+#msheet .mrow>button{flex:1 1 0;min-height:52px;background:rgba(233,195,90,.08);border:1px solid rgba(209,162,58,.45);border-radius:12px;color:#f5edd6;font:600 16px var(--ui,'LGVilna',serif);cursor:pointer}
+#msheet .mrow>button.on{background:rgba(233,195,90,.26);color:#fff3c4;border-color:#f9e08a}
+#msheet .mlbl{margin:12px 4px 6px;font:600 14px var(--ui,'LGVilna',serif);color:#c7bc9c}
+#msheet select,#msheet input[type=search]{width:100%;min-height:52px;background:#0b1c2a;color:#f5edd6;border:1px solid rgba(209,162,58,.6);border-radius:12px;padding:6px 12px;font:600 18px var(--ui,'LGVilna',serif);margin-bottom:10px}
+#msheet select#mdaf{font-family:'VilnaG','Vilna',serif;font-size:21px;text-align:center}
+#msheet .mbtn{width:100%;min-height:52px;margin-top:6px;background:linear-gradient(180deg,#1d4466,#0f263b);color:#f9e08a;border:1px solid #d1a23a;border-radius:12px;font:700 17px var(--ui,'LGVilna',serif);cursor:pointer}
+body.msheet-open{overflow:hidden}
+
+/* חיפוש: התוצאות בחלונית הקיימת, מעל הסרגל התחתון */
+html.dev-phone .panel,html.dev-tab .panel{max-height:calc(100dvh - var(--mtop) - var(--mbh))}
+html.dev-phone #lm-clock,html.dev-tab #lm-clock{display:none!important}
+html.dev-phone #lm-fin,html.dev-tab #lm-fin{display:none!important}
+html.dev-phone #lm-pbar,html.dev-tab #lm-pbar{display:none!important}
+
+@media (prefers-reduced-motion:reduce){#mtop,#mbot,#msheet,#mscrim,#mprog{transition:none}}
+
+/* כותרת המגירה: כפתורים של 44 לפחות, מרווח 8 */
+html.dev-phone .srchd,html.dev-tab .srchd{flex-wrap:wrap;gap:8px;padding:10px 10px 8px;align-items:center}
+html.dev-phone .srchd button,html.dev-tab .srchd button{min-height:44px;min-width:44px;margin:0}
+html.dev-phone .srchd .srcsep,html.dev-tab .srchd .srcsep{display:none}
+/* צורת הדף: גיליון תחתון באותו אופן, וסרגל כפתורים גדול */
+html.dev-phone .tzx.split,html.dev-tab .tzx.split{left:0!important;right:0!important;top:auto!important;bottom:var(--mbh);width:auto!important;height:min(74dvh,calc(100dvh - var(--mtop) - var(--mbh) - 6px));border-radius:16px 16px 0 0;z-index:26;box-shadow:0 -8px 24px rgba(0,0,0,.35)}
+html.dev-tab.land .tzx.split{left:86px!important}
+html.dev-phone body.tzsplit .flow,html.dev-tab body.tzsplit .flow{width:auto;margin-left:0}
+html.dev-phone .tzx.full,html.dev-tab .tzx.full{z-index:45}
+html.dev-phone .tzdrag,html.dev-tab .tzdrag{display:none}
+html.dev-phone .tzhd,html.dev-tab .tzhd{gap:8px;padding:8px 10px}
+html.dev-phone .tzhd button,html.dev-phone .tzhd select,html.dev-tab .tzhd button,html.dev-tab .tzhd select{min-height:44px;min-width:44px;font-size:15px;padding:4px 12px;margin:0}
+html.dev-phone .tzhd b,html.dev-tab .tzhd b{flex:1 1 100%;min-width:0}
+/* טלפון: חלונות הפתיחה והשיעורים מעל הסרגל התחתון */
+html.dev-phone .sgpop,html.dev-tab .sgpop{max-height:calc(100dvh - var(--mtop) - var(--mbh))}
+
+/* טלפון לרוחב: המגירה והצורה עוברות לצד שמאל (חצי מסך), והסרגל התחתון נמוך יותר */
+html.dev-phone.land{--mbot:58px}
+html.dev-phone.land #mbot button{flex-direction:row;gap:6px}
+html.dev-phone.land #mbot button .ic{width:22px;height:22px}
+html.dev-phone.land #srcx.src,html.dev-phone.land .tzx.split{left:0!important;right:auto!important;top:var(--mtop)!important;bottom:var(--mbh)!important;width:52vw!important;height:auto!important;max-height:none;border-radius:0 16px 16px 0}
+html.dev-phone.land #msh{display:none}
+html.dev-phone.land body.msrcopen .flow,html.dev-phone.land body.tzsplit .flow{width:48vw;margin-left:auto}
+
+/* לשוניות המגירה: רק במסך מלא */
+#mtabs{display:none;gap:8px;padding:10px 10px 12px}
+#srcx[data-snap="2"] #mtabs{display:flex}
+#mtabs button{flex:1 1 0;min-height:44px;border:1px solid #c9a24a;border-radius:12px;background:transparent;color:inherit;font:600 16px var(--ui,serif)}
+#mtabs button.on{background:#c9a24a;color:#2b2620}
+html.dev-phone.land #mtabs{display:flex}
+
+html.dev-tab .flow.book.bkz{font-size:calc(var(--mfs,16px) * 1.7)!important;overflow:auto;scroll-snap-type:none;grid-template-rows:auto;width:auto;justify-content:center}
+/* טאבלט לרוחב: הקונסולה בצד, ולכן המגירות יושבות על תחתית המסך */
+html.dev-tab.land #srcx.src,html.dev-tab.land .tzx.split{bottom:0!important}
+html.dev-tab.land #srcx.src{max-height:calc(100dvh - var(--mtop) - 12px)}

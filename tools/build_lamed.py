@@ -61,9 +61,41 @@ def brand(site):
                   {'src': '/brand/icons/icon-512.png', 'sizes': '512x512', 'type': 'image/png'}]}, ensure_ascii=False, indent=1))
 
 
+# שער סטטי לדף הבית: מצויר מיד, עוד לפני שהסקריפט רץ. אחר כך lamed.js מאמץ אותו (ui.js: UI.home).
+GATE_PH = 'PLACEHOLDER'
+PRE = {'home': ('<main class="lm-wrap lm-pre"><section class="gate-hero" aria-label="פתיחה" style="background-image:url(%s)"><h1 class="sr-only">לאוקמי גירסא - קיצור התלמוד הבבלי</h1>'
+                '<a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס"><img class="gate-img" src="brand/shaar-v2/shaar-zohar-560.webp" '
+                'srcset="brand/shaar-v2/shaar-zohar-560.webp 560w, brand/shaar-v2/shaar-zohar-960.webp 960w, brand/shaar-v2/shaar-zohar-1600.webp 1600w" '
+                'sizes="(max-width:520px) 62vw, 460px" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" '
+                'onload="this.classList.add(\'ld\')"></a></section>'
+                '<div class="ctas"><a class="lm-btn pri" href="shas.html">מפת הש&quot;ס</a></div></main>')}
+
+
+def placeholder(site):
+    """תמונה מטושטשת זעירה (כ-1 קילובייט) מוטמעת בדף הבית: מוצגת מיד, ונעלמת כשהשער המלא מגיע."""
+    src = os.path.join(site, 'brand', 'shaar-v2', 'shaar-zohar-96.webp')
+    try:
+        from PIL import Image, ImageFilter
+        import base64, io as _io
+        im = Image.open(src).convert('RGBA'); im.thumbnail((28, 42)); im = im.filter(ImageFilter.GaussianBlur(0.6))
+        b = _io.BytesIO(); im.save(b, 'WEBP', quality=40, method=6)
+        return 'data:image/webp;base64,' + base64.b64encode(b.getvalue()).decode('ascii')
+    except Exception:
+        return ''
+
+
+def js_text():
+    return read(os.path.join(HERE, 'hdate.js')) + '\n' + '\n'.join(read(os.path.join(SRC, p + '.js')) for p in PARTS)
+
+
+def js_hash():
+    """גרסת lamed.js לכתובת (?v=): מאפשרת ל-Service Worker לשמור אותו מיד, בלי סיכון לגרסה ישנה."""
+    return hashlib.md5(js_text().encode('utf-8')).hexdigest()[:8]
+
+
 def build(site):
     brand(site)
-    js = read(os.path.join(HERE, 'hdate.js')) + '\n' + '\n'.join(read(os.path.join(SRC, p + '.js')) for p in PARTS)
+    js = js_text()
     io.open(os.path.join(site, 'lamed.js'), 'w', encoding='utf-8').write(js)
     css = read(os.path.join(SRC, 'lamed.css'))
     io.open(os.path.join(site, 'lamed.css'), 'w', encoding='utf-8').write(css)
@@ -74,18 +106,26 @@ def build(site):
     ep = os.path.join(os.path.dirname(HERE), 'data', 'edited-pages.json')
     if os.path.exists(ep):
         io.open(os.path.join(site, 'edited-pages.json'), 'w', encoding='utf-8').write(read(ep))
+    # Service Worker: גרסת המטמון נגזרת מתוכן המעטפת, כך ששינוי כלשהו מחליף את המטמון הישן
+    swv = hashlib.md5((ui + css + js + read(os.path.join(HERE, 'mobile.js')) + read(os.path.join(HERE, 'mobile.css'))).encode('utf-8')).hexdigest()[:10]
+    io.open(os.path.join(site, 'sw.js'), 'w', encoding='utf-8').write(read(os.path.join(HERE, 'sw.js')).replace('__SWV__', swv))
     gallery(site)
+    ph = placeholder(site)
+    PRE['home'] = PRE['home'] % ph if '%s' in PRE['home'] else PRE['home']
     for fn, page, title in PAGES:
         html = ('<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8">'
                 '<meta name="viewport" content="width=device-width,initial-scale=1">'
                 '<meta name="color-scheme" content="light dark"><title>%s</title>'
-                '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-                '<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&family=Noto+Rashi+Hebrew:wght@400;700&display=swap" rel="stylesheet">'
+                '<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0b1c2a">'
+                '<link rel="preload" href="brand/fonts/vilna-xb.woff2" as="font" type="font/woff2" crossorigin>'
+                '<link rel="preload" href="brand/fonts/vilna-rg.woff2" as="font" type="font/woff2" crossorigin>'
                 '<script>try{var t=localStorage.getItem("lg-theme");document.documentElement.setAttribute("data-theme",t==="dark"||t==="auto"?t:"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>'
                 '<link rel="stylesheet" href="ui.css?v=%s"><link rel="stylesheet" href="lamed.css?v=%s"></head>'
-                '<body class="lm" data-page="%s">%s<div id="lm-app"></div>'
+                '<body class="lm" data-page="%s">%s<div id="lm-app">%s</div>'
                 '<script src="daf-yomi.js"></script><script src="shas.js"></script>'
-                '<script src="lamed.js"></script></body></html>') % (title, uiv, hashlib.md5(css.encode('utf-8')).hexdigest()[:8], page, sprite)
+                '<script src="lamed.js?v=%s"></script>'
+                '<script>if("serviceWorker"in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})</script>'
+                '</body></html>') % (title, uiv, hashlib.md5(css.encode('utf-8')).hexdigest()[:8], page, sprite, PRE.get(page, ''), js_hash())
         io.open(os.path.join(site, fn), 'w', encoding='utf-8').write(html)
 
 

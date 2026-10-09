@@ -146,7 +146,7 @@
         var fd = LG.finishDate(rem, daily, set.skipDays);
         var r = el('div', 'lm-hero'); r.style.margin = '10px 0 16px';
         r.innerHTML = UI.ring(st.ratio, null, 'sm') + '<div class="lm-txt"><a href="masechet.html?m=' + m.slug + '"><b class="lm-h" style="font-size:20px">' + E(m.name) + '</b></a>' +
-          '<div class="lm-small">נלמדו ' + LG.nf(st.dafimDone) + ' מתוך ' + LG.nf(st.dafimTotal) + ' דפים' + (st.cycle ? ' · מחזור ' + E(LG.hebq(st.cycle + 1)) : '') + '</div>' +
+          '<div class="lm-small">נלמדו ' + LG.nf(st.learned) + ' מתוך ' + LG.nf(st.total) + ' עמודים' + (st.cycle ? ' · מחזור ' + E(LG.hebq(st.cycle + 1)) : '') + '</div>' +
           (rem > 0 ? '<div>' + (daily >= 60000 ? 'בקצב שלך נשארו כ-' + E(LG.dur(rem, true)) + (fd ? ', סיום בערך ב-' + E(LG.gDateShort(fd.ymd)) : '') : 'נשארו כ-' + E(LG.dur(rem, true)) + ' (הערכה ראשונית)') + '</div>' : '<div>המסכת נשלמה במחזור הנוכחי.</div>') + '</div>';
         c5.appendChild(r);
       });

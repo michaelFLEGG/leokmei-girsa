@@ -184,6 +184,8 @@ def main():
                     shutil.copy(src, dst)
         absent = [t for t in FONT_MAP if not os.path.exists(os.path.join(SITE, 'fonts', t))]
         if absent: print('אזהרה: גופן חסר באתר:', ', '.join(absent))
+    import font_woff2    # גרסת woff2 מקוצצת לכל גופן (גם בבנייה חלקית: הגופנים כבר באתר)
+    font_woff2.run(os.path.join(SITE, 'fonts'), list(FONT_MAP))
     # masechtot
     built = {}
     if only:
@@ -299,9 +301,8 @@ def main():
     GOLD = ''
     idx = f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>לאוקמי גירסא · קיצור התלמוד הבבלי</title>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="ui.css">
-<style>@font-face{{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900}}@font-face{{font-family:'Frank';src:url(fonts/frank.ttf)}}@font-face{{font-family:'Leukmey';src:url(fonts/leukmey.otf)}}
+<link rel="stylesheet" href="ui.css">
+<style>@font-face{{font-family:'Vilna';src:url(fonts/vilna-xb.woff2) format('woff2'),url(fonts/vilna-xb.otf);font-weight:900}}@font-face{{font-family:'Frank';src:url(fonts/frank.woff2) format('woff2'),url(fonts/frank.ttf)}}@font-face{{font-family:'Leukmey';src:url(fonts/leukmey.woff2) format('woff2'),url(fonts/leukmey.otf)}}
 body{{margin:0;background:var(--velvet-bg);background-color:#0b1c2a;color:#f3ead0;font-family:var(--ui);min-height:100vh}} html{{background:#0b1c2a}}
 header{{background:transparent;border-bottom:1px solid #8f6a1e;padding:26px 20px 22px;text-align:center}} header img{{height:64px;width:auto;display:block;margin:0 auto 6px}} header h1{{font-family:'LGVilnaXB','Vilna',serif;font-weight:400;font-size:46px;margin:0;letter-spacing:.02em}} header p{{margin:8px 0 0;color:#e9c35a;font-size:18px}}
 #dy{{display:inline-block;margin-top:14px;padding:9px 22px;font-size:18px}}

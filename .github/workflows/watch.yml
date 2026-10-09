@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: pip install lxml fonttools playwright
+      - run: pip install lxml fonttools playwright brotli pillow
       - name: הורדה מהדרייב
         id: fetch
         run: python tools/fetch.py | tee fetch.log; grep -q CHANGED fetch.log && echo changed=1 >> $GITHUB_OUTPUT || echo changed=0 >> $GITHUB_OUTPUT

@@ -40,7 +40,20 @@
     document.addEventListener('click', function (e) { if (!e.target.closest('#lm-um')) $('#lm-um').classList.remove('open'); if (!e.target.closest('#lm-burger') && !e.target.closest('#lm-nav')) $('#lm-nav').classList.remove('open'); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { $('#lm-um').classList.remove('open'); $('#lm-nav').classList.remove('open'); } });
     /* גופני וילנא נטענים רק כשמשתמשים בהם; מבקשים אותם במפורש כדי שלא יישארו "לא נטענו" */
-    if (document.fonts && document.fonts.load) ['400 20px Vilna', '700 20px Vilna', '900 20px Vilna', '20px Leukmey'].forEach(function (f) { document.fonts.load(f, 'אבג').catch(function () { }); });
+    if (document.getElementById('flow') && document.fonts && document.fonts.load) ['400 20px Vilna', '700 20px Vilna', '900 20px Vilna', '20px Leukmey'].forEach(function (f) { document.fonts.load(f, 'אבג').catch(function () { }); });
+    UI.warmLinks();
+  };
+
+  /* טעינה מוקדמת חכמה: במגע או בריחוף על קישור למסכת (או לעמוד בה) מתחילים להוריד אותה, כך שעד שהאצבע מתרוממת הדף כבר בדרך */
+  UI.warmLinks = function () {
+    function slugOf(a) {
+      var h = a && a.getAttribute && a.getAttribute('href'); if (!h) return null;
+      var m = /^([a-z\-]+)\.html(#|$)/.exec(h); if (!m) return null;
+      var ms = LG.masechet && LG.masechet(m[1]); return ms && ms.built ? m[1] + '.html' : null;
+    }
+    function on(e) { var a = e.target.closest && e.target.closest('a'); var u = slugOf(a); if (u && LG.prefetch) LG.prefetch(u); }
+    document.addEventListener('touchstart', on, { passive: true, capture: true });
+    document.addEventListener('mouseover', on, { passive: true, capture: true });
   };
 
   /* ---------------------------------------------------------- רכיבים */
@@ -145,14 +158,16 @@
     if (rHref) btns = '<a class="lm-btn pri" href="' + rHref + '">המשך ללמוד · ' + E(LG.nameOf(l.s)) + ' ' + E(l.d) + '</a>' +
       (yHas ? '<a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">הדף היומי · ' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</a>' : '<a class="lm-btn" href="yomi.html">הדף היומי</a>');
     else btns = '<a class="lm-btn pri" href="' + (yHas ? UI.readHref(y.slug, LG.dafLabel(y.n, 0)) : 'berakhot.html') + '">התחל ללמוד</a><a class="lm-btn" href="shas.html">מפת הש"ס</a>';
-    wrap.appendChild(LG.brand.hero());
+    var pre = root.querySelector('main.lm-pre');          /* השער הסטטי שצויר לפני הסקריפט: מאמצים אותו, בלי לצייר מחדש */
+    wrap.appendChild(LG.brand.hero(pre && pre.querySelector('.gate-hero')));
+    if (pre) pre.parentNode.removeChild(pre);
     var ctas = el('div', 'ctas', btns);
     wrap.appendChild(ctas);
     /* המשך מהמקום שעצרת: שורה שקטה אחת מתחת לכפתורים */
     if (l && rHref) {
       var st = LG.masechetStats(l.s), snip = l.fp ? '״…' + E(l.fp.slice(0, 40)) + '…״ · ' : '';
       var cont = el('div', 'lm-cont');
-      cont.innerHTML = '<div class="lm-small">' + snip + 'נלמדו ' + LG.nf(st.dafimDone) + ' מתוך ' + LG.nf(st.dafimTotal) + ' דפים ב' + E(LG.nameOf(l.s)) + ' · ' + LG.relDay(LG.ymd(l.t), LG.ymd(now)) + '</div>' + UI.bar(st.done, st.ext, st.total);
+      cont.innerHTML = '<div class="lm-small">' + snip + 'נלמדו ' + LG.nf(st.learned) + ' מתוך ' + LG.nf(st.total) + ' עמודים ב' + E(LG.nameOf(l.s)) + ' · ' + LG.relDay(LG.ymd(l.t), LG.ymd(now)) + '</div>' + UI.bar(st.done, st.ext, st.total);
       wrap.appendChild(cont);
     }
     wrap.appendChild(LG.brand.divider());
@@ -179,7 +194,6 @@
     }
     wrap.appendChild(LG.quiz.liveLine(''));
     root.appendChild(wrap);
-    UI.maybeOnboard();
   };
 
   /* ---------------------------------------------------------- מפת הש"ס */
@@ -251,7 +265,7 @@
     var rem = LG.remainingMs(slug), daily = LG.dailyMs(), pace = LG.pace(slug), fd = LG.finishDate(rem, daily, set.skipDays);
     head.innerHTML = LG.brand.gate('inl') + UI.ring(st.ratio, null, '', st.ratio ? 0 : 0) + '<div class="lm-txt"><h1 class="lm-t" style="margin:0">מסכת ' + E(m.name) + '</h1>' +
       '<div class="lm-small">' + LG.nf(perakim.length) + ' פרקים · ' + LG.nf(st.dafimTotal) + ' דפים · ' + LG.nf(st.total) + ' עמודים</div>' +
-      '<div style="margin-top:6px">נלמדו ' + LG.nf(st.dafimDone) + ' מתוך ' + LG.nf(st.dafimTotal) + ' דפים' + (st.cycle ? ' · מחזור ' + E(LG.hebq(st.cycle + 1)) : '') + '</div></div>' +
+      '<div style="margin-top:6px">נלמדו ' + LG.nf(st.learned) + ' מתוך ' + LG.nf(st.total) + ' עמודים' + (st.dafimDone ? ' (' + LG.nf(st.dafimDone) + ' דפים שלמים)' : '') + (st.cycle ? ' · מחזור ' + E(LG.hebq(st.cycle + 1)) : '') + '</div></div>' +
       '<div class="lm-row"><a class="lm-btn" href="' + (UI.readHref(slug, amudim[0] ? amudim[0].daf : 'ב.', last) || '#') + '">' + (last ? 'המשך ללמוד' : 'התחל ללמוד') + '</a>' +
       '<a class="lm-btn" href="quiz.html?m=' + slug + '">בחן את עצמך</a>' +
       '<button class="lm-btn ghost" id="lm-my" type="button">' + (my ? 'הסר מ"המסכתות שלי"' : 'הוסף ל"המסכתות שלי"') + '</button></div>';
@@ -295,7 +309,7 @@
     if ($('#lm-sl', fc)) { $('#lm-sl', fc).oninput = drawFc; drawFc(); }
 
     /* מפת עמודים לפי פרקים */
-    var mapC = el('div', 'lm-card'); mapC.innerHTML = '<h3>עמודי המסכת</h3>' +
+    var mapC = el('div', 'lm-card'); mapC.innerHTML = '<h3>עמודי המסכת</h3><p class="lm-note" style="margin:0 0 8px">לחיצה על עמוד פותחת אותו מיד. לפרטים וסימון כנלמד: לחיצה ארוכה (בעכבר: לחיצה ימנית).</p>' +
       '<div class="lm-legend"><span><em style="background:var(--c0)"></em>לא נלמד</span><span><em style="background:var(--prog)"></em>בתהליך</span><span><em style="background:var(--c1)"></em>נלמד</span><span><em style="background:var(--c2)"></em>פעמיים</span><span><em style="background:var(--c3)"></em>4+</span><span><em style="background:var(--c4)"></em>10+</span><span><em style="background:var(--ext)"></em>בשיעור או בספר</span></div>';
     var chap = [];
     perakim.forEach(function (p, i) { chap.push({ name: (p[0] || '') + (p[1] ? ': ' + p[1] : ''), from: LG.dafKey(p[2]) }); });
@@ -313,8 +327,20 @@
         t.innerHTML = E(a.daf) + (info.n > 1 ? '<i>' + LG.nf(info.n) + '</i>' : '') + (sugg[a.daf] ? '<u title="הצעת תיקון שלך"></u>' : '');
         if (info.st === 'prog' && info.a) t.style.setProperty('--p', Math.round(100 * Math.min(.95, info.a.prog || .3)) + '%');
         if (last && last.d === a.daf) t.classList.add('now');
-        t.onclick = function () { UI.tileInfo(slug, a.daf); };
-        t.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); UI.tileInfo(slug, a.daf); } };
+        /* לחיצה רגילה פותחת את הדף מיד. פרטים וסימון כנלמד: לחיצה ארוכה, לחיצה ימנית או Shift+Enter */
+        (function (daf) {
+          var lp = null, fired = false, hr = UI.readHref(slug, daf);
+          function open() { if (hr) location.href = hr; else UI.tileInfo(slug, daf); }
+          t.addEventListener('pointerdown', function (e) { fired = false; clearTimeout(lp); if (e.pointerType === 'mouse') return; lp = setTimeout(function () { fired = true; if (navigator.vibrate) try { navigator.vibrate(15); } catch (x) { } UI.tileInfo(slug, daf); }, 480); });
+          ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (n) { t.addEventListener(n, function () { clearTimeout(lp); }); });
+          t.addEventListener('contextmenu', function (e) { e.preventDefault(); clearTimeout(lp); UI.tileInfo(slug, daf); });
+          t.addEventListener('touchstart', function () { }, { passive: true });
+          t.onclick = function (e) { if (fired) { fired = false; e.preventDefault(); return; } open(); };
+          t.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (e.shiftKey) UI.tileInfo(slug, daf); else open(); } };
+          /* טעינה מוקדמת: במגע או בריחוף מתחילים להוריד את המסכת, כך שהדף מוכן עד שהאצבע מתרוממת */
+          function warm() { if (hr && LG.prefetch) LG.prefetch(slug + '.html'); }
+          t.addEventListener('touchstart', warm, { passive: true }); t.addEventListener('mouseenter', warm);
+        })(a.daf);
         tl.appendChild(t);
       });
       box.appendChild(tl); mapC.appendChild(box);

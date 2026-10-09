@@ -53,10 +53,15 @@
      א. נתוני גלישה
      ================================================================ */
   var clarityOn = false, cfOn = false;
+  /* מהירות (9.10.2026): כלי הניתוח נטענים רק אחרי שהדף נטען והדפדפן הבטל, כדי שלא יתחרו בתוכן על הרשת והמעבד */
+  function later(fn) {
+    function go() { if (W.requestIdleCallback) W.requestIdleCallback(fn, { timeout: 5000 }); else setTimeout(fn, 3000); }
+    if (D.readyState === 'complete') go(); else W.addEventListener('load', go, { once: true });
+  }
   function loadScript(src, attrs) {
     var s = D.createElement('script'); s.async = true; s.src = src;
     for (var k in (attrs || {})) s.setAttribute(k, attrs[k]);
-    (D.head || D.documentElement).appendChild(s); return s;
+    later(function () { (D.head || D.documentElement).appendChild(s); }); return s;
   }
   function startCF() {
     if (cfOn || !CFG.cf || ADMIN) return; cfOn = true;
@@ -73,7 +78,7 @@
     (function (c, l, a, r, i, t, y) {
       c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
       t = l.createElement(r); t.async = 1; t.src = 'https://www.clarity.ms/tag/' + i;
-      y = l.getElementsByTagName(r)[0]; if (y) y.parentNode.insertBefore(t, y); else l.head.appendChild(t);
+      later(function () { y = l.getElementsByTagName(r)[0]; if (y) y.parentNode.insertBefore(t, y); else l.head.appendChild(t); });
     })(W, D, 'clarity', 'script', CFG.clarity);
     try { W.clarity('consent', false); } catch (e) { }   /* בלי עוגיות */
     tagView();

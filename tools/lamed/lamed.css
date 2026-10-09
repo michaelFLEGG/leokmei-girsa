@@ -1,12 +1,12 @@
 /* lamed - עיצוב מערכת הלומד (7.10.2026). הצבעים, הכפתורים והגופנים באים מ-ui.css, המשותף לכל האתר.
    כאן רק הפריסה של מסכי הלומד: בית, מפת הש"ס, הלימוד שלי, הדף היומי, בחן את עצמך, שיעורים, הגדרות.
    בהיר הוא ברירת המחדל; כהה לפי בחירה בהגדרות. */
-@font-face{font-family:'Frank';src:url(fonts/frank.ttf);font-display:swap}
-@font-face{font-family:'Vilna';src:url(fonts/vilna-r.otf);font-weight:400;font-display:swap}
-@font-face{font-family:'Vilna';src:url(fonts/vilna-m.ttf);font-weight:500;font-display:swap}
-@font-face{font-family:'Vilna';src:url(fonts/vilna-b.otf);font-weight:700;font-display:swap}
-@font-face{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900;font-display:swap}
-@font-face{font-family:'Leukmey';src:url(fonts/leukmey.otf);font-display:swap}
+@font-face{font-family:'Frank';src:url(fonts/frank.woff2) format('woff2'),url(fonts/frank.ttf);font-display:swap}
+@font-face{font-family:'Vilna';src:url(fonts/vilna-r.woff2) format('woff2'),url(fonts/vilna-r.otf);font-weight:400;font-display:swap}
+@font-face{font-family:'Vilna';src:url(fonts/vilna-m.woff2) format('woff2'),url(fonts/vilna-m.ttf);font-weight:500;font-display:swap}
+@font-face{font-family:'Vilna';src:url(fonts/vilna-b.woff2) format('woff2'),url(fonts/vilna-b.otf);font-weight:700;font-display:swap}
+@font-face{font-family:'Vilna';src:url(fonts/vilna-xb.woff2) format('woff2'),url(fonts/vilna-xb.otf);font-weight:900;font-display:swap}
+@font-face{font-family:'Leukmey';src:url(fonts/leukmey.woff2) format('woff2'),url(fonts/leukmey.otf);font-display:swap}
 
 /* שמות ישנים שהקוד משתמש בהם, מכוונים אל מערכת העיצוב החדשה */
 :root{
@@ -397,7 +397,7 @@ h2.lm-t2,.lm-seder h2{font-family:'LGVilnaXB','Vilna',serif;font-weight:400}
 .lm-wrap.qz .qz-seg button.on,.lm-wrap.qz.qz-avrech .qz-seg button.on{background:var(--navy-700);border-color:var(--gold-500);color:var(--gold-100)}
 .lm-wrap.qz.qz-avrech .qz-card{background:linear-gradient(180deg,#143451,#0e2338 75%);border:0;box-shadow:var(--plate-frame)}
 .lm-wrap.qz.qz-avrech .qz-opt:not([disabled]):hover{background:linear-gradient(180deg,#1d4466,#0f263b);border-color:var(--gold-300)}
-.qz-title-up .qz-big{background:var(--foil);filter:var(--foil-glow)}
+.qz-title-up .qz-big{background:var(--foil);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:var(--foil-glow)}
 
 /* ---------- הלימוד שלי: לוח השנה ---------- */
 .lm-mcal .d{background:rgba(23,58,88,.45);border:1px solid rgba(209,162,58,.3);border-radius:6px;color:var(--cream)}
@@ -456,3 +456,28 @@ body:has(.panel.open) #lm-layer #lm-fin,body:has(.modal) #lm-layer #lm-fin,body:
 #lm-fin button:hover{background:linear-gradient(180deg,#245278,#143451);border-color:var(--gold-300)}
 
 body.lm{--card2:#173a58}
+
+/* ---- בחן את עצמך: חוויית משחק (9.10.2026) ---- */
+.qz-mul{align-self:center;min-width:56px;text-align:center;font:800 26px var(--ui);color:#f9e08a;opacity:0;transform:scale(.6);transition:opacity .2s,transform .25s;text-shadow:0 0 10px rgba(240,196,90,.6)}
+.qz-mul.on{opacity:1;transform:scale(1)}
+.qz-time{display:flex;flex-direction:column;align-items:center;line-height:1.1;min-width:64px}
+.qz-time small{font-size:12px;color:var(--tx2)}.qz-time b{font-size:30px;font-family:'Vilna','Frank',serif;color:var(--rd)}
+.qz-prog{height:8px;margin:2px 0 8px;border-radius:6px;background:rgba(0,0,0,.28);border:1px solid var(--gold-700);overflow:hidden;direction:rtl}
+.qz-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c38f2a,#f9e08a);transition:width .35s ease}
+.qz-aids{margin:10px 0 0;display:flex;justify-content:center}
+.qz-opt.qz-gone{opacity:.18;pointer-events:none;filter:grayscale(1)}
+.qz-togm{margin-top:4px}
+.qz-best{margin:10px 0 0;color:var(--tx2)}.qz-best b{color:var(--gd-tx)}
+.qz-rank{position:fixed;top:78px;inset-inline:0;margin-inline:auto;width:min(360px,calc(100vw - 32px));z-index:400;text-align:center;padding:14px 18px;border-radius:16px;
+  background:linear-gradient(180deg,#1d4466,#0f263b);border:2px solid #e9c35a;color:#fff3c4;box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 24px rgba(240,196,90,.45);
+  font-family:var(--ui);animation:qzrank .5s cubic-bezier(.2,1.4,.4,1);transition:opacity .45s,transform .45s}
+.qz-rank b{display:block;font:800 26px var(--ui);color:#f9e08a}.qz-rank span{font-size:17px}
+.qz-rank.gentle{box-shadow:0 6px 18px rgba(0,0,0,.3);border-width:1px}
+.qz-rank.out{opacity:0;transform:translateY(-14px)}
+@keyframes qzrank{0%{transform:translateY(-30px) scale(.8);opacity:0}100%{transform:none;opacity:1}}
+.lm-wrap.qz .qz-vol{display:inline-flex;align-items:center;margin-inline-start:12px;height:44px;width:150px;vertical-align:middle}
+.lm-wrap.qz .qz-vol input{width:100%;height:44px;margin:0;background:transparent}
+.lm-wrap.qz .qz-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+@media (prefers-reduced-motion:reduce){.qz-rank{animation:none;transition:none}.qz-mul{transition:none}}
+
+body[data-page=quiz] .lm-foot{padding-bottom:92px}

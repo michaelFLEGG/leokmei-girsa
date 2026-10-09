@@ -47,9 +47,15 @@
   function pct(x) { return Math.round(x * 100) + '%'; }
 
   /* משך בעברית טבעית: "שעה ו-12 דקות", "כ-3 שעות", "45 דקות", "דקה" */
+  /* טעינה מוקדמת חכמה: מבקשים את המסמך ברקע בקדימות נמוכה (מטמון הדפדפן), פעם אחת לכל כתובת */
+  var PF = {};
+  LG.prefetch = function (u) {
+    if (!u || PF[u]) return; PF[u] = 1;
+    try { var l = document.createElement('link'); l.rel = 'prefetch'; l.href = u; l.as = 'document'; document.head.appendChild(l); } catch (e) { }
+  };
   function dur(ms, approx) {
     var m = Math.round(ms / 60000);
-    if (m < 1) return ms >= 20000 ? 'פחות מדקה' : 'אפס דקות';
+    if (m < 1) return ms > 0 ? 'פחות מדקה' : 'אפס דקות';
     function mins(k) { return k === 1 ? 'דקה' : (k === 2 ? 'שתי דקות' : nf(k) + ' דקות'); }
     if (m < 60) return (approx && m > 10 ? 'כ-' : '') + mins(m);
     var h = Math.floor(m / 60), r = m % 60;

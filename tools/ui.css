@@ -471,3 +471,41 @@ body .lm-btn:focus-visible,body .btn:focus-visible{outline:2px solid #f9e08a;out
 body .lm-btn[disabled]{opacity:.5;filter:grayscale(.4)}
 @media (prefers-reduced-motion:reduce){body .lm-btn,body .btn,body .primary{transition:none}}
 
+/* ============ מגע, טלפון וטאבלט (9.10.2026) ============
+   יעד מגע לפחות 48 (הרף בבדיקה: 44) ומרווח 8 בין סמוכים. מעטפת בלבד. */
+.gate-hero .gate-img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.gate-link{position:absolute;inset:0;display:block;color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.gate-hero{cursor:pointer}
+.gate-hero .opening{pointer-events:none}
+.lm-bar{background:rgba(0,0,0,.4)}
+@media (pointer:coarse),(max-width:767px){
+  body.lm .lm-top{gap:8px 10px;min-height:62px}
+  body.lm .lm-top .lm-ib,body.lm .lm-top .lm-burger{min-width:48px;min-height:48px;padding:10px}
+  body.lm .lm-top .lm-brand{min-height:48px;padding-inline:6px}
+  body.lm .lm-top nav{gap:8px}
+  body.lm .lm-top nav a{min-height:48px;display:inline-flex;align-items:center}
+  body.lm .lm-top .menu .mi,body.lm .lm-top .menu a{min-height:48px}
+  .lm-foot .lm-foot-in{gap:8px 12px}
+  .lm-foot a{display:inline-flex;align-items:center;min-height:48px;padding-inline:10px;margin-inline:4px}
+  .lm-btn,a.lm-btn,button.lm-btn,.btn,.primary{min-height:48px}
+  .lm-btn+.lm-btn,.lm-row>*+*{margin-inline-start:0}
+  .lm-row{gap:8px}
+  input[type=range]{min-height:44px;width:100%;cursor:pointer}
+  body.lm .lm-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}
+  body.lm .lm-tile{width:auto;min-width:48px;height:48px}
+  body.lm .lm-seg button,body.lm .lm-tabs button,body.lm .lm-pill,body.lm .lm-chip{min-height:44px;min-width:44px}
+  body.lm #lm-ob-ok,body.lm #lm-ob-skip,body.lm #lm-jgo,body.lm #lm-my,body.lm #lm-tipx,body.lm .lm-tip button,body.lm #lm-g7,body.lm #lm-g30{min-height:48px;min-width:48px}
+  .lm-modal button,.lm-box button{min-height:48px}
+  .lm-pick{min-height:64px}
+  body.lm .lm-seg{gap:8px;padding:4px}
+  body.lm .lm-seg button{min-height:44px;min-width:56px}
+  select,input[type=text],input[type=search]{min-height:48px}
+}
+.gate-hero{margin-bottom:12px}
+.ctas{margin-top:12px}
+
+/* שער בשני שלבים: תמונה מטושטשת זעירה מוטמעת מוצגת מיד, והשער המלא מתחלף בה בדעיכה רכה */
+.gate-hero{background-size:contain;background-repeat:no-repeat;background-position:center}
+.gate-hero .gate-img{opacity:0;transition:opacity .45s ease}
+.gate-hero .gate-img.ld{opacity:1}
+@media (prefers-reduced-motion:reduce){.gate-hero .gate-img{transition:none}}

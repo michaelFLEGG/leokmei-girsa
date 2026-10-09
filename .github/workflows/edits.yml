@@ -24,7 +24,7 @@ jobs:
         with: { fetch-depth: 2 }
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: pip install lxml fonttools
+      - run: pip install lxml fonttools brotli pillow
       # האתר שנבנה בפעם הקודמת. המפתח כולל את טביעת קובצי הוורד, ולכן
       # עותק שנבנה ממקור אחר לעולם אינו משוחזר - ואי אפשר שהפרסום הזה
       # יחזיר לאחור מסכת שהשומר בנה מחדש.

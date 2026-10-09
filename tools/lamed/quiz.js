@@ -114,6 +114,21 @@
       due.sort(function (a, b) { return a.due < b.due ? -1 : 1; });
       return due.slice(0, ROUND).map(function (x) { return x.q; }).sort(function (a, b) { return a.lvl - b.lvl; });
     }
+    if (mode === 'blitz') {
+      var bb = await Q.bank(slug); if (!bb) return null;
+      return shuffle(bb.q.map(function (q) { return tag(bb, q); })).slice(0, 80);
+    }
+    if (mode === 'daily') {
+      /* אתגר יומי: חמש שאלות קבועות ליום על הדף היומי, זהות לכל הלומדים (הגרעין נגזר מהתאריך) */
+      var yd = LGDaf.forStr(today), yb0 = yd && LG.masechet(yd.slug) && LG.masechet(yd.slug).built, sl = yb0 ? yd.slug : slug;
+      var bd = await Q.bank(sl) || await Q.bank(slug); if (!bd) return null;
+      var sd = 7; today.split('').forEach(function (c) { sd = (Math.imul(sd, 31) + c.charCodeAt(0)) | 0; });
+      var r = (function (a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; })(sd);
+      var k0d = yd && yd.slug === bd.slug ? LG.dafKey(LG.dafLabel(yd.n, 0)) : null;
+      var pl = bd.q.slice().sort(function (a, b) { return a.i < b.i ? -1 : 1; });
+      if (k0d != null) { for (var w2 = 2; w2 <= 14; w2 += 2) { var nr = pl.filter(function (q) { return Math.abs(LG.dafKey(q.sd) - k0d) <= w2; }); if (nr.length >= 8) { pl = nr; break; } } }
+      return shuffle(pl.map(function (q) { return tag(bd, q); }), r).slice(0, 5).sort(function (a, b) { return a.lvl - b.lvl; });
+    }
     var bank = await Q.bank(slug);
     if (!bank) return null;
     var pool = bank.q;
@@ -159,14 +174,23 @@
     return out;
   };
 
-  /* ---------------------------------------------------------- צלילים (Web Audio, בלי קובצי שמע) */
-  var AC = null;
+  /* ---------------------------------------------------------- צלילים (Web Audio, בלי קובצי שמע)
+     סט מקצועי (9.10.2026): פעמונים ונבל מסונתזים (CC0, נוצרו בקוד, ללא רישיון חיצוני), מדחס ורמת עוצמה אחידה וגבוהה
+     (בערך -14 LUFS בעוצמת 80 אחוז). אורכים 0.4 עד 1.5 שניות; התרועה המושלמת עד 2.2. */
+  var AC = null, MASTER = null;
   Q.sfxLog = [];
   function actx() {
     if (AC) return AC;
     var C = window.AudioContext || window.webkitAudioContext;
     if (!C) return null;
-    try { AC = new C(); } catch (e) { AC = null; }
+    try {
+      AC = new C();
+      MASTER = AC.createGain(); MASTER.gain.value = Q.vol();
+      var comp = AC.createDynamicsCompressor();
+      comp.threshold.value = -20; comp.knee.value = 12; comp.ratio.value = 7; comp.attack.value = 0.003; comp.release.value = 0.22;
+      var mk = AC.createGain(); mk.gain.value = 2.4;     /* החלקה אחרי המדחס: מעלה את הרמה הכללית */
+      MASTER.connect(comp); comp.connect(mk); mk.connect(AC.destination);
+    } catch (e) { AC = null; }
     return AC;
   }
   Q.unlockAudio = function () { var a = actx(); if (a && a.state === 'suspended') a.resume().catch(function () { }); };
@@ -176,25 +200,91 @@
     if (s.qzSnd === true || s.qzSnd === false) return s.qzSnd;
     return s.qzUi === 'bahur';
   };
-  function tone(freq, t0, dur, type, vol) {
-    var a = AC; if (!a) return;
-    var o = a.createOscillator(), g = a.createGain(), t = a.currentTime + t0;
-    o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.015);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.05);
+  /* עוצמה 0..1, ברירת מחדל 0.8, נשמרת במכשיר */
+  Q.vol = function () { var v = LG.settings().qzVol; return typeof v === 'number' && v >= 0 && v <= 1 ? v : 0.8; };
+  Q.setVol = function (v) { v = Math.max(0, Math.min(1, v)); LG.setSetting('qzVol', v); if (MASTER) MASTER.gain.value = v; };
+  function env(g, t, atk, dur, v) {
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, v), t + atk); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   }
-  /* name: ok / bad / streak (גובה לפי אורך הרצף) / fan (תרועת סיום) / level (תואר חדש) */
-  Q.sfx = function (name) {
+  function osc(type, f, t, dur, v, atk, dest) {
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t); env(g, t, atk || 0.008, dur, v);
+    o.connect(g); g.connect(dest || MASTER); o.start(t); o.stop(t + dur + 0.05); return o;
+  }
+  /* פעמון: מרכיבים הרמוניים לא שלמים, כל אחד דועך בקצב משלו */
+  function bell(f, t0, dur, v) {
+    var t = AC.currentTime + t0;
+    [[1, 1, 1], [2.01, 0.5, 0.7], [2.99, 0.28, 0.5], [4.2, 0.16, 0.35], [5.4, 0.1, 0.25]].forEach(function (p) { osc('sine', f * p[0], t, dur * p[2], v * p[1], 0.004); });
+  }
+  /* נבל: משולש עם מסנן שנסגר מהר */
+  function pluck(f, t0, dur, v) {
+    var t = AC.currentTime + t0, o = AC.createOscillator(), g = AC.createGain(), fl = AC.createBiquadFilter();
+    o.type = 'triangle'; o.frequency.setValueAtTime(f, t); fl.type = 'lowpass'; fl.frequency.setValueAtTime(f * 7, t); fl.frequency.exponentialRampToValueAtTime(f * 1.6, t + dur);
+    env(g, t, 0.004, dur, v); o.connect(fl); fl.connect(g); g.connect(MASTER); o.start(t); o.stop(t + dur + 0.05);
+    osc('sine', f * 2, t, dur * 0.6, v * 0.35, 0.004);
+  }
+  /* נחושת לתרועה */
+  function brass(f, t0, dur, v) {
+    var t = AC.currentTime + t0, o = AC.createOscillator(), o2 = AC.createOscillator(), g = AC.createGain(), fl = AC.createBiquadFilter();
+    o.type = 'sawtooth'; o2.type = 'sawtooth'; o.frequency.setValueAtTime(f, t); o2.frequency.setValueAtTime(f * 1.004, t);
+    fl.type = 'lowpass'; fl.frequency.setValueAtTime(700, t); fl.frequency.exponentialRampToValueAtTime(2600, t + Math.min(0.12, dur / 2)); fl.frequency.exponentialRampToValueAtTime(900, t + dur);
+    env(g, t, 0.025, dur, v); o.connect(fl); o2.connect(fl); fl.connect(g); g.connect(MASTER);
+    o.start(t); o2.start(t); o.stop(t + dur + 0.05); o2.stop(t + dur + 0.05);
+  }
+  function tick(t0) {
+    var t = AC.currentTime + (t0 || 0);
+    osc('square', 1900, t, 0.05, 0.22, 0.002); osc('sine', 1250, t, 0.09, 0.25, 0.002);
+  }
+  function sparkle(t0, n, base) {
+    for (var i = 0; i < n; i++) bell((base || 1568) * (1 + (i % 3) * 0.25), t0 + i * 0.07, 0.35, 0.16);
+  }
+  var N = { C4: 262, E4: 330, G4: 392, C5: 523, D5: 587, E5: 659, G5: 784, A5: 880, B5: 988, C6: 1047, E6: 1319, G6: 1568, C7: 2093 };
+  /* name: tap / ok / bad / streak(n) / rank / level / fan / perfect / record */
+  Q.sfx = function (name, n) {
     if (!Q.soundOn()) return;
     Q.sfxLog.push(name);
     if (!actx()) return;
     Q.unlockAudio();
-    if (name === 'ok') { tone(784, 0, 0.18, 'sine', 0.11); tone(1175, 0.09, 0.26, 'sine', 0.1); }
-    else if (name === 'bad') { tone(196, 0, 0.28, 'triangle', 0.1); tone(165, 0.12, 0.32, 'triangle', 0.08); }
-    else if (name === 'streak') { [523, 659, 784, 1047].forEach(function (f, i) { tone(f, i * 0.07, 0.2, 'sine', 0.1); }); }
-    else if (name === 'fan' || name === 'level') { [523, 659, 784, 1047, 784, 1047, 1319].forEach(function (f, i) { tone(f, i * 0.11, i > 5 ? 0.5 : 0.22, 'triangle', 0.1); }); }
+    try {
+      if (name === 'tap') tick(0);
+      else if (name === 'ok') { bell(N.E5, 0, 0.9, 0.5); bell(N.B5, 0.1, 1.0, 0.5); bell(N.E6, 0.18, 0.7, 0.22); }
+      else if (name === 'bad') { osc('sine', 233, AC.currentTime, 0.55, 0.42, 0.02); osc('sine', 196, AC.currentTime + 0.17, 0.65, 0.4, 0.02); osc('triangle', 98, AC.currentTime + 0.17, 0.6, 0.18, 0.02); }
+      else if (name === 'streak') {
+        n = n || 3;
+        if (n >= 10) { [N.C5, N.E5, N.G5, N.C6, N.E6, N.G6, N.C7].forEach(function (f, i) { bell(f, i * 0.075, 0.9, 0.42); }); brass(N.C5, 0.55, 0.8, 0.2); brass(N.G5, 0.55, 0.8, 0.16); sparkle(0.62, 5); }
+        else if (n >= 5) { [N.C5, N.E5, N.G5, N.C6, N.E6].forEach(function (f, i) { bell(f, i * 0.08, 0.85, 0.44); }); sparkle(0.45, 3); }
+        else { [N.C5, N.E5, N.G5].forEach(function (f, i) { bell(f, i * 0.09, 0.8, 0.46); }); bell(N.C6, 0.27, 0.7, 0.3); }
+      }
+      else if (name === 'rank' || name === 'level') {
+        [N.C5, N.E5, N.G5, N.C6, N.E6, N.G6, N.C7].forEach(function (f, i) { pluck(f, i * 0.06, 0.55, 0.5); });
+        [N.C5, N.E5, N.G5, N.C6].forEach(function (f) { bell(f, 0.46, 1.0, 0.3); });
+        if (name === 'level') { brass(N.C5, 0.46, 0.9, 0.18); brass(N.G5, 0.46, 0.9, 0.14); }
+      }
+      else if (name === 'fan') {
+        brass(N.G4, 0, 0.16, 0.34); brass(N.G4, 0.19, 0.16, 0.34); brass(N.G4, 0.38, 0.16, 0.34); brass(N.C5, 0.57, 0.45, 0.4);
+        [N.C5, N.E5, N.G5, N.C6].forEach(function (f) { brass(f, 1.0, 0.5, 0.26); bell(f * 2, 1.0, 0.9, 0.2); });
+      }
+      else if (name === 'perfect') {
+        brass(N.G4, 0, 0.16, 0.36); brass(N.G4, 0.19, 0.16, 0.36); brass(N.G4, 0.38, 0.16, 0.36); brass(N.C5, 0.57, 0.4, 0.42);
+        brass(N.E5, 1.0, 0.18, 0.36); brass(N.G5, 1.2, 0.18, 0.36); brass(N.C6, 1.4, 0.7, 0.44);
+        [N.C5, N.E5, N.G5, N.C6, N.E6, N.G6, N.C7].forEach(function (f, i) { pluck(f, 1.0 + i * 0.07, 0.6, 0.42); });
+        [N.C6, N.E6, N.G6].forEach(function (f) { bell(f, 1.45, 1.2, 0.3); }); sparkle(1.5, 5, 2093);
+      }
+      else if (name === 'record') {
+        [N.C6, N.G6, N.C7].forEach(function (f, i) { bell(f, i * 0.16, 1.0, 0.5); }); [N.E6, N.G6].forEach(function (f) { bell(f, 0.5, 0.9, 0.3); }); sparkle(0.52, 6, 2093);
+      }
+    } catch (e) { }
+  };
+  /* רטט: קצר לנכונה, כפול לשגויה (היכן שנתמך) */
+  Q.buzz = function (ok) { try { if (navigator.vibrate && Q.soundOn()) navigator.vibrate(ok ? 18 : [30, 70, 30]); } catch (e) { } };
+  /* חימום: מייצרים הקשר שמע ומריצים כל צליל פעם אחת בעוצמה אפס, כדי שהראשון האמיתי לא ידלג */
+  Q.warm = function () {
+    if (!actx()) return; Q.unlockAudio();
+    MASTER.gain.value = 0;
+    var on = Q.soundOn; Q.soundOn = function () { return true; };
+    try { ['tap', 'ok', 'bad'].forEach(function (n) { Q.sfx(n); }); } catch (e) { }
+    Q.soundOn = on; Q.sfxLog.length = 0;
+    setTimeout(function () { if (MASTER) MASTER.gain.value = Q.vol(); }, 1300);
   };
 
   /* ---------------------------------------------------------- אנימציות */
@@ -222,9 +312,9 @@
   }
   function confetti() {
     if (reduced()) return;
-    var cols = ['#e53935', '#fb8c00', '#fdd835', '#43a047', '#1e88e5', '#8e24aa'], layer = el('div', 'qz-confetti');
+    var cols = ['#f9e08a', '#e9c35a', '#d1a23a', '#c38f2a', '#fff3c4', '#fbe7a1'], layer = el('div', 'qz-confetti');
     document.body.appendChild(layer);
-    for (var i = 0; i < 70; i++) {
+    for (var i = 0; i < 46; i++) {
       var c = el('i'); c.style.background = cols[i % cols.length]; c.style.left = Math.random() * 100 + '%';
       layer.appendChild(c);
       if (c.animate) c.animate([{ transform: 'translate(0,-20px) rotate(0)', opacity: 1 }, { transform: 'translate(' + (Math.random() * 160 - 80) + 'px,' + (window.innerHeight + 40) + 'px) rotate(' + (Math.random() * 720) + 'deg)', opacity: .9 }],
@@ -233,50 +323,102 @@
     setTimeout(function () { layer.remove(); }, 4200);
   }
 
+  /* הודעה חגיגית בחציית סף נקודות (כל 50) */
+  function rankBanner(total, gentle) {
+    var b = el('div', 'qz-rank' + (gentle ? ' gentle' : ''), '<b>עלית דרגה!</b><span>הגעת ל-' + E(LG.nf(total)) + ' נקודות</span>');
+    b.setAttribute('role', 'status'); document.body.appendChild(b);
+    if (!gentle) confetti();
+    setTimeout(function () { b.classList.add('out'); }, 2300); setTimeout(function () { b.remove(); }, 2800);
+  }
+  Q.POINT_STEP = 50;
+
+  /* כרטיס תוצאה לשיתוף: תמונה בשפת השער (כחול קטיפה וזהב), נוצרת בדפדפן */
+  Q.shareCard = async function (info) {
+    try { await Promise.all([document.fonts.load('700 70px LGVilnaXB'), document.fonts.load('600 40px LGVilna')]); } catch (e) { }
+    var W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    var x = cv.getContext('2d');
+    var g = x.createRadialGradient(W / 2, 360, 100, W / 2, 500, 1000); g.addColorStop(0, '#173a58'); g.addColorStop(1, '#091827');
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.strokeStyle = '#d1a23a'; x.lineWidth = 6; x.strokeRect(36, 36, W - 72, H - 72); x.lineWidth = 2; x.strokeRect(58, 58, W - 116, H - 116);
+    var img = await new Promise(function (res) { var i = new Image(); i.onload = function () { res(i); }; i.onerror = function () { res(null); }; i.src = 'brand/shaar-v2/shaar-zohar-560.webp'; });
+    if (img) x.drawImage(img, W / 2 - 190, 90, 380, 572);
+    x.direction = 'rtl'; x.textAlign = 'center';
+    var gold = x.createLinearGradient(0, 700, 0, 800); gold.addColorStop(0, '#fbe7a1'); gold.addColorStop(.5, '#e6bd52'); gold.addColorStop(1, '#c38f2a');
+    x.fillStyle = gold; x.font = '700 92px LGVilnaXB, serif'; x.fillText('לאוקמי גירסא', W / 2, 760);
+    x.fillStyle = '#f5edd6'; x.font = '600 48px LGVilna, serif'; x.fillText('בחן את עצמך · ' + info.masechet, W / 2, 830);
+    x.fillStyle = '#f9e08a'; x.font = '700 150px LGVilnaXB, serif'; x.fillText(info.pts + ' נקודות', W / 2, 1010);
+    x.fillStyle = '#f5edd6'; x.font = '600 50px LGVilna, serif';
+    x.fillText(info.right + ' נכונות מתוך ' + info.total + ' (' + info.pct + '%)  ·  רצף ' + info.best, W / 2, 1100);
+    x.fillStyle = '#e9c35a'; x.font = '600 46px LGVilna, serif'; x.fillText(info.title ? 'התואר: ' + info.title : '', W / 2, 1170);
+    x.fillStyle = '#c7bc9c'; x.font = '500 36px LGVilna, serif'; x.fillText('leokmei.com', W / 2, 1265);
+    var blob = await new Promise(function (res) { cv.toBlob(res, 'image/png'); });
+    if (!blob) return;
+    var file = new File([blob], 'leokmei-result.png', { type: 'image/png' });
+    try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'לאוקמי גירסא · בחן את עצמך' }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'leokmei-result.png'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  };
+
   /* ---------------------------------------------------------- סבב שאלות */
   var COLORS = ['', 'ok', 'mid', 'hard'];
   Q.run = function (host, queue, ctx, onEnd) {
     var pers = persona() || 'bahur';
-    var n0 = queue.length, i = 0, res = { right: 0, wrong: 0, pts: 0, streak: 0, best: 0, missed: [], total0: Q.score().total, marks: [] };
+    var blitz = !!(ctx && ctx.blitz), BSECS = 60, tEnd = blitz ? Date.now() + BSECS * 1000 : 0, over = false, tmr = null;
+    var n0 = blitz ? 0 : queue.length, i = 0, res = { right: 0, wrong: 0, pts: 0, streak: 0, best: 0, missed: [], total0: Q.score().total, marks: [], t00: Date.now(), blitz: blitz, mul: 0, aids: 0 };
     var retry = [], t0 = 0, locked = false, advanced = false, modalOpen = false, perm = [], ptsShown = res.total0;
-    function end() { Q.syncScore(); document.removeEventListener('keydown', keys); onEnd(res); }
+    function end() { if (tmr) clearInterval(tmr); res.ms = Date.now() - res.t00; Q.syncScore(); document.removeEventListener('keydown', keys); onEnd(res); }
     function show() {
-      if (i >= queue.length) return end();
+      if (i >= queue.length || over) return end();
       var q = queue[i], isRetry = !!q._retry, card = el('div', 'lm-card lm-qz qz-card qz-l' + q.lvl);
       locked = false; advanced = false; t0 = Date.now();
       perm = shuffle([0, 1, 2, 3]);               /* סדר התשובות מעורבב בכל הצגה; הנכונה היא o[0] */
       var correctAt = perm.indexOf(0);
       var track = '';
-      for (var k = 0; k < n0; k++) track += '<li class="' + (res.marks[k] || (k === i ? 'cur' : '')) + '" aria-label="שאלה ' + (k + 1) + '">★</li>';
+      if (!blitz) for (var k = 0; k < n0; k++) track += '<li class="' + (res.marks[k] || (k === i ? 'cur' : '')) + '" aria-label="שאלה ' + (k + 1) + '">★</li>';
       var opts = perm.map(function (pi, k) { return '<button type="button" class="qz-opt qz-c' + k + '" data-k="' + k + '"><b>' + (k + 1) + '</b><span>' + E(q.o[pi]) + '</span></button>'; }).join('');
       card.innerHTML =
         '<div class="qz-hud"><div class="qz-pts" aria-live="off"><small>נקודות</small><b id="qz-pts">' + LG.nf(ptsShown) + '</b></div>' +
+        '<div class="qz-mul' + (res.mul > 1 ? ' on' : '') + '" id="qz-mul" title="מכפיל בונוס הרצף" aria-live="polite">' + (res.mul > 1 ? '×' + res.mul : '') + '</div>' +
+        (blitz ? '<div class="qz-time" id="qz-time"><small>זמן</small><b id="qz-t">' + Math.max(0, Math.ceil((tEnd - Date.now()) / 1000)) + '</b></div>' : '') +
         '<div class="qz-str' + (res.streak >= 3 ? ' hot' : '') + '" id="qz-str"><small>רצף</small><b>' + res.streak + '</b></div></div>' +
+        (blitz ? '<div class="qz-prog" role="progressbar" aria-label="הזמן שנותר" aria-valuemin="0" aria-valuemax="60"><i id="qz-tb" style="width:' + Math.max(0, (tEnd - Date.now()) / 600) + '%"></i></div>' :
+          '<div class="qz-prog" role="progressbar" aria-label="התקדמות במבחן" aria-valuemin="0" aria-valuemax="' + n0 + '" aria-valuenow="' + Math.min(i, n0) + '"><i style="width:' + Math.round(100 * Math.min(i, n0) / Math.max(1, n0)) + '%"></i></div>') +
         '<ol class="qz-track" aria-label="התקדמות בסבב">' + track + '</ol>' +
         '<div class="qz-meta"><span class="qz-chip qz-lv' + q.lvl + '">' + Q.LVL[q.lvl].n + ' · ' + Q.LVL[q.lvl].pts + ' נקודות</span>' +
         '<span class="lm-small">שאלה ' + Math.min(i + 1, queue.length) + ' מתוך ' + queue.length + ' · ' + E(LG.nameOf(q.s)) + ' פרק ' + E(PEREK[q.p] || q.p) + (isRetry ? ' · ניסיון חוזר (בלי ניקוד)' : '') + '</span></div>' +
-        '<h3 class="lm-qq">' + E(q.q) + '</h3><div class="qz-opts" role="group" aria-label="תשובות">' + opts + '</div><div class="qz-fb" aria-live="polite"></div>';
+        '<h3 class="lm-qq">' + E(q.q) + '</h3><div class="qz-opts" role="group" aria-label="תשובות">' + opts + '</div>' +
+        (isRetry || blitz ? '' : '<div class="qz-aids"><button type="button" class="lm-btn small ghost" id="qz-5050" title="מוחק שתי תשובות שגויות, ומוריד 3 נקודות מהשאלה">חמישים-חמישים (עולה 3 נקודות)</button></div>') +
+        '<div class="qz-fb" aria-live="polite"></div>';
       host.innerHTML = ''; host.appendChild(card);
       card.querySelectorAll('.qz-opt').forEach(function (b) { b.onclick = function () { pick(+b.getAttribute('data-k')); }; });
+      var aided = false;
+      var a5 = $('#qz-5050', card);
+      if (a5) a5.onclick = function () {
+        if (locked || aided) return; aided = true; res.aids++; a5.disabled = true; Q.sfx('tap');
+        var wrong = [0, 1, 2, 3].filter(function (k) { return k !== correctAt; }); shuffle(wrong);
+        wrong.slice(0, 2).forEach(function (k) { var b = card.querySelectorAll('.qz-opt')[k]; b.disabled = true; b.classList.add('qz-gone'); b.setAttribute('aria-hidden', 'true'); });
+      };
       card._pick = pick;
       function pick(k) {
         if (locked || modalOpen) return; locked = true;
         Q.unlockAudio();
         var ok = k === correctAt, btns = card.querySelectorAll('.qz-opt'), fb = $('.qz-fb', card);
         btns.forEach(function (b, n) { b.disabled = true; if (n === correctAt) b.classList.add('qz-right'); else if (n === k) b.classList.add('qz-wrong'); });
-        var pts = 0, bn = 0, before = Q.score(), titleUp = null;
+        var pts = 0, bn = 0, before = Q.score(), titleUp = null, rankUp = 0;
         if (!isRetry) {
           if (ok) {
             res.streak++; res.best = Math.max(res.best, res.streak); res.right++;
             bn = res.streak >= 3 ? Math.min(25, 5 * (res.streak - 2)) : 0;
             pts = Q.LVL[q.lvl].pts + bn;
-          } else { res.streak = 0; res.wrong++; res.missed.push({ q: q, picked: q.o[perm[k]] }); }
-          res.marks[Math.min(i, n0 - 1)] = ok ? 'ok' : 'bad';
+            res.mul = bn ? Math.round(10 * pts / Q.LVL[q.lvl].pts) / 10 : 0;
+            if (aided) pts = Math.max(1, pts - 3);
+          } else { res.streak = 0; res.mul = 0; res.wrong++; res.missed.push({ q: q, picked: q.o[perm[k]] }); }
+          res.marks[Math.min(i, Math.max(0, n0 - 1))] = ok ? 'ok' : 'bad';
           var r = Q.record(q, ok, Date.now() - t0, pts, bn);
           res.pts += pts;
           var after = Q.score();
           var lA = Q.level(before.total, Q.T_ALL), lB = Q.level(after.total, Q.T_ALL);
           var mA = Q.level(before.byM[q.s] || 0, Q.T_M), mB = Q.level(after.byM[q.s] || 0, Q.T_M);
+          if (ok && Math.floor(after.total / Q.POINT_STEP) > Math.floor(before.total / Q.POINT_STEP)) rankUp = after.total;
           if (lB > lA) titleUp = { name: Q.TITLES_ALL[lB], scope: 'הכללי' };
           else if (mB > mA) titleUp = { name: Q.TITLES_M[mB], scope: 'במסכת ' + LG.nameOf(q.s) };
         }
@@ -284,7 +426,10 @@
         if (track[i] && !isRetry) { track[i].className = ok ? 'ok' : 'bad'; }
         var href = UI.readHref(q.s, q.sd);
         if (ok) {
-          Q.sfx(res.streak === 3 || res.streak === 5 || res.streak === 10 ? 'streak' : 'ok');
+          var big = res.streak === 3 || res.streak === 5 || res.streak === 10 || (res.streak > 10 && res.streak % 5 === 0);
+          Q.sfx(big ? 'streak' : 'ok', res.streak); Q.buzz(true);
+          var mulEl = $('#qz-mul', card); if (mulEl) { mulEl.textContent = res.mul > 1 ? '×' + res.mul : ''; mulEl.classList.toggle('on', res.mul > 1); }
+          if (rankUp) setTimeout(function () { Q.sfx('rank'); rankBanner(rankUp, pers === 'avrech'); }, big ? 900 : 520);
           if (pts) {
             var from = ptsShown; ptsShown += pts;
             fly(btns[correctAt], '+' + pts, $('#qz-pts', card), pers === 'avrech', function () { roll($('#qz-pts', card) || document.createElement('b'), from, ptsShown); });
@@ -292,18 +437,20 @@
             $('#qz-str', card).classList.toggle('hot', res.streak >= 3);
           }
         } else {
-          Q.sfx('bad');
+          Q.sfx('bad'); Q.buzz(false);
+          var mulE2 = $('#qz-mul', card); if (mulE2) { mulE2.textContent = ''; mulE2.classList.remove('on'); }
           $('#qz-str b', card).textContent = 0; $('#qz-str', card).classList.remove('hot');
         }
         var msg = ok ? '<b class="lm-okt">נכון!</b>' + (pts ? ' +' + pts + ' נקודות' + (bn ? ' (כולל בונוס רצף ' + bn + '+)' : '') : '') :
           '<b class="lm-badt">לא נכון.</b> התשובה: <b>' + E(q.o[0]) + '</b>';
         fb.innerHTML = '<p class="qz-msg">' + msg + '</p>' +
           (q.x ? '<p class="qz-exp' + (ok ? ' small' : '') + '">' + E(q.x) + '</p>' : '') +
-          (!ok && href ? '<p class="lm-note"><a href="' + href + '" target="_blank" rel="noopener">למקום בגמרא: ' + E(LG.nameOf(q.s)) + ' ' + E(q.d) + '</a></p>' : '') +
+          (href ? '<p class="lm-note"><a class="lm-btn small ghost qz-togm" href="' + href + '" target="_blank" rel="noopener">לשורה בגמרא: ' + E(LG.nameOf(q.s)) + ' ' + E(q.d) + '</a></p>' : '') +
           '<div class="lm-row"><button type="button" class="lm-btn pri" id="qz-next">הבא</button></div>';
-        if (!ok && !isRetry) retry.push(Object.assign({}, q, { _retry: 1 }));
+        if (!ok && !isRetry && !blitz) retry.push(Object.assign({}, q, { _retry: 1 }));
         var nx = $('#qz-next', card);
-        if (i + 1 >= queue.length && !retry.length) nx.textContent = 'לסיום';
+        if (!blitz && i + 1 >= queue.length && !retry.length) nx.textContent = 'לסיום';
+        if (blitz) setTimeout(function () { if (!modalOpen) go(); }, ok ? 700 : 1500);
         nx.focus({ preventScroll: true });
         nx.onclick = go;
         if (titleUp) {
@@ -319,6 +466,7 @@
         if (advanced || modalOpen) return; advanced = true;
         i++;
         if (i >= queue.length && retry.length) { queue = queue.concat(retry); retry = []; }
+        if (blitz && Date.now() >= tEnd) over = true;
         show();
       }
       card._go = go;
@@ -331,6 +479,13 @@
       else if (e.key === 'Enter' && locked) { e.preventDefault(); card._go(); }
     }
     document.addEventListener('keydown', keys);
+    if (blitz) {
+      tmr = setInterval(function () {
+        var left = Math.max(0, tEnd - Date.now()), t = $('#qz-t'), tb = $('#qz-tb');
+        if (t) t.textContent = Math.ceil(left / 1000); if (tb) tb.style.width = (left / 600) + '%';
+        if (left <= 0) { clearInterval(tmr); over = true; if (!locked && !modalOpen) end(); }
+      }, 200);
+    }
     show();
   };
 
@@ -375,10 +530,16 @@
     root.appendChild(wrap);
     var idx = await Q.index();
     var slugs = Object.keys(idx).filter(function (s) { var m = LG.masechet(s); return m && m.built && idx[s] > 0; });
-    var bar = el('div', 'qz-bar'), host = el('div'), snd = el('button', 'qz-snd');
+    var bar = el('div', 'qz-bar'), host = el('div'), snd = el('button', 'qz-snd'), volBox = el('div', 'qz-vol');
     snd.type = 'button';
+    volBox.innerHTML = '<input type="range" id="qz-vol" min="0" max="100" step="10" aria-label="עוצמת הצלילים">';
     wrap.appendChild(bar); wrap.appendChild(host);
     wrap.appendChild(snd);
+    var vIn = volBox.querySelector('#qz-vol'); vIn.value = Math.round(Q.vol() * 100);
+    vIn.oninput = function () { Q.setVol(vIn.value / 100); };
+    vIn.onchange = function () { Q.unlockAudio(); Q.sfx('tap'); };
+    /* "טיק" נעים בכל הקשה על כפתור (בממשק הצבעוני) */
+    wrap.addEventListener('pointerdown', function (e) { if (persona() === 'bahur' && e.target.closest && e.target.closest('button:not(.qz-snd):not([disabled]), a.lm-btn')) Q.sfx('tap'); });
     var want = qs.get('m') || '';
     var cur = want && idx[want] ? want : '';
     if (!cur) { var l = LG.state().last.all; cur = l && idx[l.s] ? l.s : (slugs.indexOf('sukkah') > -1 ? 'sukkah' : slugs[0]); }
@@ -387,7 +548,8 @@
     function applyPersona() {
       var p = persona();
       wrap.className = 'lm-wrap narrow qz' + (p ? ' qz-' + p : '');
-      bar.innerHTML = p ? '<span class="lm-small">ממשק: <b>' + (p === 'bahur' ? 'בחור' : 'אברך') + '</b></span> <a href="javascript:void 0" id="qz-sw">החלף ממשק</a>' : '';
+      bar.innerHTML = p ? '<span class="lm-small">ממשק: <b>' + (p === 'bahur' ? 'נער / בחור' : 'אברך') + '</b></span> <a href="javascript:void 0" id="qz-sw">החלף ממשק</a>' : '';
+      bar.appendChild(volBox);
       var sw = $('#qz-sw', bar);
       if (sw) sw.onclick = function () {
         var np = persona() === 'bahur' ? 'avrech' : 'bahur';
@@ -398,7 +560,7 @@
     }
     function drawSnd() {
       var on = Q.soundOn();
-      snd.className = 'qz-snd' + (on ? ' on' : '');
+      snd.className = 'qz-snd' + (on ? ' on' : ''); volBox.style.display = on ? '' : 'none';
       snd.setAttribute('aria-pressed', on ? 'true' : 'false');
       snd.setAttribute('aria-label', on ? 'כיבוי הצלילים' : 'הדלקת הצלילים');
       snd.title = on ? 'כיבוי הצלילים' : 'הדלקת הצלילים';
@@ -407,7 +569,7 @@
     }
     snd.onclick = function () {
       LG.setSetting('qzSnd', !Q.soundOn()); drawSnd();
-      if (Q.soundOn()) { Q.unlockAudio(); Q.sfx('ok'); }
+      if (Q.soundOn()) { Q.unlockAudio(); Q.warm(); setTimeout(function () { Q.sfx('ok'); }, 60); }
     };
 
     /* ---- שתי הדלתות */
@@ -415,15 +577,15 @@
       host.innerHTML = '';
       var c = el('div', 'lm-card qz-doors');
       c.innerHTML = '<h1 class="lm-t" style="margin:0 0 4px">בחן את עצמך</h1><p class="lm-sub">איך נוח לך ללמוד ולהיבחן? אותן שאלות ואותו ניקוד בשני הממשקים, ואפשר להחליף בכל עת.</p>' +
-        '<div class="qz-door-row"><button type="button" class="qz-door bahur" data-p="bahur"><b>בחור</b><span>ממשק צבעוני, צלילים ואנימציות</span></button>' +
+        '<div class="qz-door-row"><button type="button" class="qz-door bahur" data-p="bahur"><b>נער / בחור</b><span>ממשק צבעוני, צלילים ואנימציות</span></button>' +
         '<button type="button" class="qz-door avrech" data-p="avrech"><b>אברך</b><span>ממשק שקט ומכובד, בלי צלילים</span></button></div>';
       host.appendChild(c);
       c.querySelectorAll('.qz-door').forEach(function (b) {
         b.onclick = function () {
           var p = b.getAttribute('data-p');
           LG.setSetting('qzUi', p); LG.setSetting('qzSnd', p === 'bahur');
-          Q.unlockAudio(); applyPersona();
-          if (p === 'bahur') Q.sfx('ok');
+          Q.unlockAudio(); Q.warm(); applyPersona();
+          if (p === 'bahur') setTimeout(function () { Q.sfx('ok'); }, 60);
           next();
         };
       });
@@ -465,6 +627,8 @@
         '<div class="qz-field"><label>רמה</label>' + seg('qz-lv', [[1, 'קל'], [2, 'בינוני'], [3, 'קשה'], [0, 'מעורב']], sel.lvl) + '</div>' +
         '<div class="lm-row" style="margin-top:14px"><button class="lm-btn pri qz-go" id="lm-qm-m" type="button">התחל סבב</button></div>' +
         '<h3 style="margin-top:22px">מסלולים</h3><div class="lm-row">' +
+        '<button class="lm-btn" id="lm-qm-daily" type="button">אתגר יומי: 5 שאלות' + (set.qzDaily === LG.ymd(Date.now()) ? ' ✓' : '') + '</button>' +
+        '<button class="lm-btn" id="lm-qm-blitz" type="button">מבחן בזק: 60 שניות</button>' +
         '<button class="lm-btn" id="lm-qm-due" type="button"' + (due ? '' : ' disabled') + '>החזרות שלי להיום (' + LG.nf(due) + ')</button>' +
         (yb ? '<button class="lm-btn" id="lm-qm-yomi" type="button">הדף של היום: ' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</button>' :
           '<button class="lm-btn" id="lm-qm-yomi" type="button" disabled>הדף של היום: השאלות למסכת ' + E(y.name) + ' בהכנה</button>') + '</div>' +
@@ -481,6 +645,8 @@
       }
       bindSeg('qz-pk', 'perek'); bindSeg('qz-lv', 'lvl');
       $('#lm-qm-due', modes).onclick = function () { start('due', '', 0, 0); };
+      $('#lm-qm-daily', modes).onclick = function () { start('daily', cur, 0, 0); };
+      $('#lm-qm-blitz', modes).onclick = function () { start('blitz', cur, 0, 0); };
       if (yb) $('#lm-qm-yomi', modes).onclick = function () { start('yomi', y.slug, 0, 0); };
       $('#lm-qm-m', modes).onclick = function () { start('m', cur, sel.perek, sel.lvl); };
 
@@ -532,6 +698,10 @@
     function endScreen(r, mode, slug, perek, lvl) {
       var total = r.right + r.wrong, pct = total ? Math.round(100 * r.right / total) : 0;
       var stars = pct >= 90 ? 3 : (pct >= 60 ? 2 : 1);
+      var best0 = LG.settings().qzBest || { pts: 0, streak: 0 }, newRec = r.pts > 0 && r.pts > (best0.pts || 0) && !r.blitz ? true : (r.blitz && r.right > (best0.blitz || 0));
+      var secs = Math.max(1, Math.round((r.ms || 0) / 1000)), tm = Math.floor(secs / 60) + ':' + ('0' + (secs % 60)).slice(-2);
+      LG.setSetting('qzBest', { pts: Math.max(best0.pts || 0, r.blitz ? 0 : r.pts), streak: Math.max(best0.streak || 0, r.best), blitz: Math.max(best0.blitz || 0, r.blitz ? r.right : 0) });
+      if (mode === 'daily') LG.setSetting('qzDaily', LG.ymd(Date.now()));
       var sc = Q.score(), tl = titleLine(sc.total, Q.T_ALL, Q.TITLES_ALL), pers = persona() || 'bahur';
       var c = el('div', 'lm-card qz-end');
       var st = ''; for (var k = 1; k <= 3; k++) st += '<span class="' + (k <= stars ? 'on' : '') + '">★</span>';
@@ -540,7 +710,9 @@
         '<div class="lm-stats"><div class="lm-stat"><b>' + LG.nf(r.right) + '</b><span>נכונות מתוך ' + LG.nf(total) + ' (' + pct + '%)</span></div>' +
         '<div class="lm-stat"><b>' + LG.nf(r.pts) + '</b><span>נקודות הסבב</span></div>' +
         '<div class="lm-stat"><b>' + LG.nf(r.best) + '</b><span>רצף מרבי</span></div>' +
+        '<div class="lm-stat"><b>' + tm + '</b><span>זמן</span></div>' +
         '<div class="lm-stat"><b>' + LG.nf(sc.total) + '</b><span>סך הכול</span></div></div>' +
+        '<p class="qz-best">' + (newRec ? '<b>שיא אישי חדש!</b> ' : '') + (r.blitz ? 'השיא הקודם: ' + LG.nf(best0.blitz || 0) + ' תשובות נכונות בדקה.' : 'שיא הסבב הקודם: ' + LG.nf(best0.pts || 0) + ' נקודות · רצף מרבי קודם: ' + LG.nf(best0.streak || 0) + '.') + '</p>' +
         '<p>התואר הכללי: <b>' + E(tl.name) + '</b>' + (tl.next ? ' · עוד ' + LG.nf(tl.need) + ' נקודות ל' + E(tl.next) : '') + '</p>' +
         (r.missed.length ? '<h4 style="margin:16px 0 6px">השאלות שטעית בהן</h4><div class="qz-missed">' + r.missed.map(function (m) {
           var q = m.q, href = UI.readHref(q.s, q.sd);
@@ -549,14 +721,18 @@
             (href ? '<a href="' + href + '" target="_blank" rel="noopener">למקום בגמרא: ' + E(LG.nameOf(q.s)) + ' ' + E(q.d) + '</a>' : '') + '</div>';
         }).join('') + '</div>' : '<p class="lm-note">לא טעית באף שאלה בסבב הזה.</p>') +
         '<div class="lm-row" style="margin-top:16px"><button class="lm-btn pri" id="lm-again" type="button">סבב נוסף</button>' +
+        '<button class="lm-btn" id="qz-share" type="button">שתף כרטיס תוצאה</button>' +
         (harder ? '<button class="lm-btn" id="qz-harder" type="button">רמה קשה יותר</button>' : '') +
         '<button class="lm-btn ghost" id="lm-qhome" type="button">למסך הראשי</button></div>';
       host.innerHTML = ''; host.appendChild(c);
       $('#lm-again', c).onclick = function () { start(mode, slug, perek, lvl); };
       if (harder) $('#qz-harder', c).onclick = function () { var nl = lvl === 0 || lvl === 2 ? 3 : 2; sel.lvl = nl; start(mode, slug, perek, nl); };
       $('#lm-qhome', c).onclick = home;
-      Q.sfx('fan');
-      if (pct === 100 && total >= 3 && pers === 'bahur') confetti();
+      $('#qz-share', c).onclick = function () { Q.shareCard({ masechet: LG.nameOf(slug || (r.missed[0] && r.missed[0].q.s) || cur), pts: LG.nf(r.pts), right: LG.nf(r.right), total: LG.nf(total), pct: pct, best: LG.nf(r.best), title: tl.name }); };
+      var perfect = pct === 100 && total >= 3;
+      Q.sfx(perfect ? 'perfect' : 'fan');
+      if (newRec) setTimeout(function () { Q.sfx('record'); }, perfect ? 2300 : 1700);
+      if (perfect && pers === 'bahur') confetti(); else if (newRec && pers === 'bahur') confetti();
       $('#lm-again', c).focus({ preventScroll: true });
     }
 
@@ -565,7 +741,8 @@
       var q = await Q.queue(mode, slug, perek, lvl);
       if (!q || !q.length) { host.innerHTML = '<div class="lm-card"><p>' + (q ? 'אין כרגע שאלות לתרגול כאן.' : 'השאלות למסכת זו בהכנה.') + '</p><button class="lm-btn" id="lm-qb0" type="button">חזרה</button></div>'; $('#lm-qb0').onclick = home; return; }
       if (LG.sync && !offline()) LG.sync.heartbeat(slug || q[0].s);
-      Q.run(host, q, {}, function (r) { endScreen(r, mode, slug, perek, lvl); });
+      if (Q.soundOn()) Q.warm();
+      Q.run(host, q, { blitz: mode === 'blitz' }, function (r) { endScreen(r, mode, slug, perek, lvl); });
     }
 
     function enter() {

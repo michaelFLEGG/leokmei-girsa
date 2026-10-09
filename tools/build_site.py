@@ -756,6 +756,13 @@ def _apply_site_edits(pages, slug, qa):
     return {'n': len(edits), 'taken': taken, 'lost': len(lost), 'done': done}
 
 
+# סיווג המכשיר (טלפון / טאבלט / מחשב) לפני הציור הראשון, כדי שהמעטפת לא תקפוץ.
+# זהה ל-classify ב-mobile.js. טלפון: רוחב עד 767, או מגע וצר. טאבלט: מגע וגדול. מחשב: השאר.
+DEV_CLASS_JS = (
+  "(function(){try{var d=document.documentElement,w=innerWidth,h=innerHeight,mn=Math.min(w,h),mx=Math.max(w,h),"
+  "co=matchMedia('(pointer:coarse)').matches,ph=w<768||(co&&mn<500),tb=!ph&&co&&mn>=500&&mx<=1400;"
+  "d.classList.add(ph?'dev-phone':tb?'dev-tab':'dev-desk');d.classList.add(w>h?'land':'port')}catch(e){}})();")
+
 def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=None):
   blocks = json.load(open(json_path, encoding='utf-8'))
   spacing = spacing or {}
@@ -1569,14 +1576,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 
   CSS=r'''
-  @font-face{font-family:'Frank';src:url(fonts/frank.ttf);font-weight:400;font-display:swap}
-  @font-face{font-family:'Vilna';src:url(fonts/vilna-r.otf);font-weight:400;font-display:swap}
-  @font-face{font-family:'Vilna';src:url(fonts/vilna-m.ttf);font-weight:500;font-display:swap}
-  @font-face{font-family:'Vilna';src:url(fonts/vilna-b.otf);font-weight:700;font-display:swap}
-  @font-face{font-family:'Vilna';src:url(fonts/vilna-xb.otf);font-weight:900;font-display:swap}
-  @font-face{font-family:'VilnaG';src:url(fonts/vilna-g.ttf);font-display:swap}
-  @font-face{font-family:'Franknatan';src:url(fonts/franknatan.otf);font-display:swap}
-  @font-face{font-family:'Leukmey';src:url(fonts/leukmey.otf);font-display:swap}
+  @font-face{font-family:'Frank';src:url(fonts/frank.woff2) format('woff2'),url(fonts/frank.ttf);font-weight:400;font-display:swap}
+  @font-face{font-family:'Vilna';src:url(fonts/vilna-r.woff2) format('woff2'),url(fonts/vilna-r.otf);font-weight:400;font-display:swap}
+  @font-face{font-family:'Vilna';src:url(fonts/vilna-m.woff2) format('woff2'),url(fonts/vilna-m.ttf);font-weight:500;font-display:swap}
+  @font-face{font-family:'Vilna';src:url(fonts/vilna-b.woff2) format('woff2'),url(fonts/vilna-b.otf);font-weight:700;font-display:swap}
+  @font-face{font-family:'Vilna';src:url(fonts/vilna-xb.woff2) format('woff2'),url(fonts/vilna-xb.otf);font-weight:900;font-display:swap}
+  @font-face{font-family:'VilnaG';src:url(fonts/vilna-g.woff2) format('woff2'),url(fonts/vilna-g.ttf);font-display:swap}
+  @font-face{font-family:'Franknatan';src:url(fonts/franknatan.woff2) format('woff2'),url(fonts/franknatan.otf);font-display:swap}
+  @font-face{font-family:'Leukmey';src:url(fonts/leukmey.woff2) format('woff2'),url(fonts/leukmey.otf);font-display:swap}
   /* היחס בין גודל האות לרוחב השורה נעול. כל המידות נמדדות ב-em של גוף
      הטקסט, ולכן הגדלה והקטנה משנות הכל יחד ושבירת השורות אינה זזה.
 
@@ -2064,9 +2071,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # שנכתב למעלה. מרווח השורה של כותרות פרק אינו נוגע כאן במתכוון:
   # פתיחת פרק תופסת מקום גם בספר.
   CSS = CSS + ('''
-  @font-face{font-family:'Frank';src:url(fonts/frank-b.ttf);font-weight:700;
+  @font-face{font-family:'Frank';src:url(fonts/frank-b.woff2) format('woff2'),url(fonts/frank-b.ttf);font-weight:700;
              font-display:swap;size-adjust:%.2f%%}
-  @font-face{font-family:'Frank';src:url(fonts/frank-b.ttf);font-weight:900;
+  @font-face{font-family:'Frank';src:url(fonts/frank-b.woff2) format('woff2'),url(fonts/frank-b.ttf);font-weight:900;
              font-display:swap;size-adjust:%.2f%%}
   :root{--k-nose:%.4f;--k-dh:%.4f;--k-mishna:%.4f;--k-ink:%.4f;--mr:%.5f}
   .main.nose,.main.dh,.main.mishna{line-height:var(--lhpx)}
@@ -5566,7 +5573,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   import hashlib as _hl
   UIV=_hl.md5(io.open(os.path.join(_tdir,'ui.css'),'rb').read()).hexdigest()[:8]
   ICON_SPRITE=io.open(os.path.join(_tdir,'ui-icons.svg'),encoding='utf-8').read()
-  GOLD_CSS=".bar .adm-b{display:none}body.adm .bar .adm-b{display:block}.bar .nonadm-b{display:block}body.adm .bar .nonadm-b{display:none}"
+  GOLD_CSS=".skel{max-width:30em;margin:0 auto;padding:1.4em .8em}.skel i{display:block;height:.9em;margin:1em 0;border-radius:.45em;background:linear-gradient(90deg,#ece5d3,#f7f2e6,#ece5d3);background-size:200% 100%;animation:lgsk 1.1s linear infinite}@keyframes lgsk{to{background-position:-200% 0}}@media (prefers-reduced-motion:reduce){.skel i{animation:none}}"+".bar .adm-b{display:none}body.adm .bar .adm-b{display:block}.bar .nonadm-b{display:block}body.adm .bar .nonadm-b{display:none}"
   JS=io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"hdate.js"),encoding="utf-8").read()+chr(10)+JS
   _td=os.path.dirname(os.path.abspath(__file__))
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
@@ -5588,13 +5595,21 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="ממצאי הבקרה בתוך הדף (למנהל בלבד)">בקרה</button>' if has_bakara else ''
   bkpanel=('<div class="panel" id="bkp"><button class="x" onclick="panel(&quot;bkp&quot;)">×</button><h3>בקרת תוכן - הממצאים לפי סוג</h3><div id="bkpb"></div></div>') if has_bakara else ''
 
+  import shutil as _sh
+  _outdir=os.path.dirname(os.path.abspath(out_path))
+  for _f in ('mobile.css','mobile.js'):
+    _sh.copy(os.path.join(_tdir,_f),os.path.join(_outdir,_f))
+  MOBV=_hl.md5(io.open(os.path.join(_tdir,'mobile.css'),'rb').read()+io.open(os.path.join(_tdir,'mobile.js'),'rb').read()).hexdigest()[:8]
+  DEVJS=DEV_CLASS_JS
+  LJV=build_lamed.js_hash()
+  SKEL=''.join('<i style="width:%d%%"></i>'%w for w in (92,100,96,64,98,100,88,72,94,100,90,58))
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Noto+Sans+Hebrew:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="fonts/frank.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/vilna-r.woff2" as="font" type="font/woff2" crossorigin>
+  <script>{DEVJS}</script>
   <script>try{{var _t=localStorage.getItem('lg-theme');document.documentElement.setAttribute('data-theme',_t==='dark'||_t==='auto'?_t:'light')}}catch(e){{document.documentElement.setAttribute('data-theme','light')}}</script>
-  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}
+  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}
   <div class="bar" id="bar">
   <div class="bg loc" data-pri="0"><a href="index.html" class="brand" title="לדף הבית" style="text-decoration:none"><img class="lg" src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"><span class="nm">לאוקמי גירסא</span></a><span class="mn">{masechet}</span>
   <select id="peresel" title="פרק" aria-label="פרק"></select>
@@ -5652,9 +5667,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <div class="panel" id="sg"><button class="x" onclick="panel('sg')">×</button><h3>ההצעות שלי</h3><div id="sgb"></div></div>
   <div class="panel" id="sgq"><button class="x" onclick="panel('sgq')">×</button><h3>הצעות תיקון ממתינות</h3><div id="sgqb"></div></div>
   {bkpanel}
-  <div class="flow" id="flow"></div><div id="srcl" aria-hidden="true"></div>
+  <div class="flow" id="flow"><div class="skel" aria-hidden="true">{SKEL}</div></div><div id="srcl" aria-hidden="true"></div>
   <script>const DATA={J},SLUG="{slug}";</script><script>{JS}</script>
-  <script src="shas.js"></script><script src="lamed.js"></script></body></html>'''
+  <script src="shas.js"></script><script src="lamed.js?v={LJV}"></script><script src="mobile.js?v={MOBV}" defer></script><script>if("serviceWorker"in navigator)addEventListener("load",function(){{navigator.serviceWorker.register("sw.js").catch(function(){{}})}})</script></body></html>'''
 
   open(out_path,'w',encoding='utf-8').write(page)
   # נתוני עזר למערכת הלומד: אורך כל עמוד במילים, ופתיחת כל פרק

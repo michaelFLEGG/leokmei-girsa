@@ -37,15 +37,28 @@ def reader_css():
 
 
 def small_gate(v2):
-    """גרסה קלה של השער לצייר ראשון (כ-360 פיקסל, כמאה קילובייט): הלומד רואה שער תוך שבריר שנייה,
-    והגרסה המלאה מחליפה אותה ברקע (ראו brand.js). נוצרת מהגרסה של 960."""
+    """גרסאות קלות של השער (9.10.2026): webp של 360 פיקסל (גיבוי) ו-AVIF בחמישה רוחבים (360, 560, 960, 1120, 1600),
+    בכרבע מהמשקל. הלומד רואה שער תוך שבריר שנייה, והגרסה המתאימה לרוחב המסך מחליפה אותה ברקע (ראו brand.js).
+    AVIF נתמך ב-Pillow 11 ומעלה; בלעדיו נשארות גרסאות ה-webp בלבד."""
     try:
         from PIL import Image
-        im = Image.open(os.path.join(v2, 'shaar-zohar-960.webp')).convert('RGBA')
-        r = im.resize((360, round(im.height * 360 / im.width)), Image.LANCZOS)
+    except Exception as e:
+        print('אזהרה: אין pillow, השער הקל לא נוצר -', str(e)[:60]); return
+    try:
+        base = Image.open(os.path.join(v2, 'shaar-zohar-960.webp')).convert('RGBA')
+        r = base.resize((360, round(base.height * 360 / base.width)), Image.LANCZOS)
         r.save(os.path.join(v2, 'shaar-zohar-360.webp'), 'WEBP', quality=68, method=6)
     except Exception as e:
         print('אזהרה: השער הקל לא נוצר -', str(e)[:80])
+    n = 0
+    for w, srcname, q in ((360, '960', 58), (560, '560', 58), (960, '960', 56), (1120, '1120', 56), (1600, '1600', 54)):
+        try:
+            im = Image.open(os.path.join(v2, 'shaar-zohar-%s.webp' % srcname)).convert('RGBA')
+            if im.width != w: im = im.resize((w, round(im.height * w / im.width)), Image.LANCZOS)
+            im.save(os.path.join(v2, 'shaar-zohar-%d.avif' % w), 'AVIF', quality=q, speed=6); n += 1
+        except Exception as e:
+            print('אזהרה: AVIF', w, 'לא נוצר -', str(e)[:70])
+    print('שער AVIF: %d' % n)
 
 
 def subset_brand_fonts(fdir):
@@ -98,9 +111,10 @@ def brand(site):
 
 # שער סטטי לדף הבית: מצויר מיד, עוד לפני שהסקריפט רץ. אחר כך lamed.js מאמץ אותו (ui.js: UI.home).
 GATE_PH = 'PLACEHOLDER'
+HEAD_EXTRA = {'home': '<link rel="preload" as="image" href="brand/shaar-v2/shaar-zohar-360.avif" type="image/avif" fetchpriority="high">'}
 PRE = {'home': ('<main class="lm-wrap lm-pre"><section class="gate-hero" aria-label="פתיחה" style="background-image:url(%s)"><h1 class="sr-only">לאוקמי גירסא - קיצור התלמוד הבבלי</h1>'
-                '<a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס"><img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.webp" data-hi="brand/shaar-v2/shaar-zohar-960.webp" data-hi2="brand/shaar-v2/shaar-zohar-1600.webp" '
-                'alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" '
+                '<a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס"><img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.avif" data-hi="brand/shaar-v2/shaar-zohar-960.avif" data-hi2="brand/shaar-v2/shaar-zohar-1600.avif" '
+                'alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onerror="if(!this.getAttribute(\'data-fb\')){this.setAttribute(\'data-fb\',1);this.src=\'brand/shaar-v2/shaar-zohar-360.webp\'}" '
                 'onload="var h=this.closest(\'.gate-hero\');this.classList.add(\'ld\');setTimeout(function(){h.style.backgroundImage=\'none\'},520)"></a></section>'
                 '<div class="ctas"><a class="lm-btn pri" href="shas.html">מפת הש&quot;ס</a></div></main>')}
 
@@ -151,15 +165,14 @@ def build(site):
                 '<meta name="viewport" content="width=device-width,initial-scale=1">'
                 '<meta name="color-scheme" content="light dark"><title>%s</title>'
                 '<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0b1c2a">'
-                '<link rel="preload" href="brand/fonts/vilna-xb.woff2" as="font" type="font/woff2" crossorigin>'
-                '<link rel="preload" href="brand/fonts/vilna-rg.woff2" as="font" type="font/woff2" crossorigin>'
+                '%s'
                 '<script>try{var t=localStorage.getItem("lg-theme");document.documentElement.setAttribute("data-theme",t==="dark"||t==="auto"?t:"light")}catch(e){document.documentElement.setAttribute("data-theme","light")}</script>'
                 '<link rel="stylesheet" href="ui.css?v=%s"><link rel="stylesheet" href="lamed.css?v=%s"></head>'
                 '<body class="lm" data-page="%s">%s<div id="lm-app">%s</div>'
                 '<script src="daf-yomi.js"></script><script src="shas.js"></script>'
                 '<script src="lamed.js?v=%s"></script>'
                 '<script>if("serviceWorker"in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})</script>'
-                '</body></html>') % (title, uiv, hashlib.md5(css.encode('utf-8')).hexdigest()[:8], page, sprite, PRE.get(page, ''), js_hash())
+                '</body></html>') % (title, HEAD_EXTRA.get(page, ''), uiv, hashlib.md5(css.encode('utf-8')).hexdigest()[:8], page, sprite, PRE.get(page, ''), js_hash())
         io.open(os.path.join(site, fn), 'w', encoding='utf-8').write(html)
 
 

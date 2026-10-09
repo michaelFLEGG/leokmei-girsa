@@ -35,7 +35,7 @@
   };
   /* תמונת השער: הגרסה המתאימה לרוחב המסך (טלפון אינו מוריד גרסת מחשב). עד שהיא מגיעה - תמונה מטושטשת זעירה מוטמעת */
   B.gateImg = function () {
-    return '<img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.webp" data-hi="brand/shaar-v2/shaar-zohar-960.webp" data-hi2="brand/shaar-v2/shaar-zohar-1600.webp" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onload="var h=this.closest(\'.gate-hero\');this.classList.add(\'ld\');if(h)setTimeout(function(){h.style.backgroundImage=\'none\'},520)">';
+    return '<img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.avif" data-hi="brand/shaar-v2/shaar-zohar-960.avif" data-hi2="brand/shaar-v2/shaar-zohar-1600.avif" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onload="var h=this.closest(\'.gate-hero\');this.classList.add(\'ld\');if(h)setTimeout(function(){h.style.backgroundImage=\'none\'},520)" onerror="if(!this.getAttribute(\'data-fb\')){this.setAttribute(\'data-fb\',1);this.src=\'brand/shaar-v2/shaar-zohar-360.webp\'}">';
   };
   /* שלב ב': אחרי שהדף נטען והדפדפן בטל, מחליפים את השער הקל בגרסה המתאימה לרוחב המסך ולרשת (רק ברשת מהירה וכשלא ביקשו חיסכון) */
   B.upgrade = function (img) {
@@ -44,7 +44,9 @@
     if (slow) return;
     var w = img.clientWidth * (window.devicePixelRatio || 1), url = w > 1000 && img.getAttribute('data-hi2') ? img.getAttribute('data-hi2') : img.getAttribute('data-hi');
     if (!url) return;
-    var i = new Image(); i.onload = function () { img.src = url; }; i.src = url;
+    var i = new Image(); i.onload = function () { img.src = url; };
+    i.onerror = function () { var f = url.replace('.avif', '.webp'); if (f !== url) { var j = new Image(); j.onload = function () { img.src = f; }; j.src = f; } };
+    i.src = url;
   };
   B.upgradeAll = function () {
     function go() { var im = document.querySelector('.gate-hero .gate-img'); if (im) B.upgrade(im); B.loadCards(); }
@@ -77,7 +79,7 @@
   /* כרטיס-שער: השער הסימטרי השלם כתמונה אחת, והכיתוב בתוך הפתח (8.10.2026) */
   B.card = function (href, title, bodyHtml, extra) {
     var a = document.createElement('a'); a.className = 'gcard'; a.href = href;
-    a.innerHTML = '<img class="gimg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="brand/shaar-v2/shaar-zohar-560.webp" data-srcset="brand/shaar-v2/shaar-zohar-560.webp 560w, brand/shaar-v2/shaar-zohar-1120.webp 1120w" sizes="(max-width:700px) 44vw, 300px" width="560" height="843" alt="" decoding="async">' +
+    a.innerHTML = '<img class="gimg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="brand/shaar-v2/shaar-zohar-560.avif" data-srcset="brand/shaar-v2/shaar-zohar-560.avif 560w, brand/shaar-v2/shaar-zohar-1120.avif 1120w" onerror="if(!this.getAttribute(\'data-fb\')){this.setAttribute(\'data-fb\',1);this.srcset=\'brand/shaar-v2/shaar-zohar-560.webp 560w, brand/shaar-v2/shaar-zohar-1120.webp 1120w\';this.src=\'brand/shaar-v2/shaar-zohar-560.webp\'}" sizes="(max-width:700px) 44vw, 300px" width="560" height="843" alt="" decoding="async">' +
       '<div class="gbody"><h3 class="foil">' + LG.esc(title) + '</h3>' + bodyHtml + '</div>';
     B.upgradeAll();
     return a;

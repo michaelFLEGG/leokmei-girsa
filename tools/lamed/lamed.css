@@ -481,3 +481,5 @@ body.lm{--card2:#173a58}
 @media (prefers-reduced-motion:reduce){.qz-rank{animation:none;transition:none}.qz-mul{transition:none}}
 
 body[data-page=quiz] .lm-foot{padding-bottom:92px}
+/* יעדי מגע בהודעת השמירה (נמצא בבדיקת WebKit, 9.10): הקישורים בתוך המשפט קטנים מ-44 */
+@media (pointer:coarse),(max-width:1100px){.lm-hint a{display:inline-block;min-height:44px;min-width:44px;line-height:44px;padding:0 8px;text-align:center}}

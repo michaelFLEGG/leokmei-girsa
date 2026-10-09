@@ -1,0 +1,338 @@
+{
+ "mobile | בית": {
+  "fcp": 964,
+  "lcp": 2380,
+  "tbt": 55,
+  "requests": 21,
+  "transfer": 848484,
+  "decoded": 1127423,
+  "dom": 2124,
+  "load": 4344,
+  "warm_fcp": 168,
+  "warm_lcp": 1436,
+  "warm_transfer": 49689,
+  "cls": 0,
+  "big": [
+   [
+    "/brand/shaar-v2/shaar-zohar-560.webp",
+    246658,
+    246358
+   ],
+   [
+    "/lamed.js?v=6d8a695e",
+    67986,
+    223918
+   ],
+   [
+    "/brand/shaar-v2/shaar-zohar-560.avif",
+    103578,
+    103278
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89812,
+    89512
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83308,
+    83008
+   ],
+   [
+    "/brand/shaar-v2/shaar-zohar-360.avif",
+    80209,
+    79909
+   ],
+   [
+    "/brand/fonts/vilna-md.woff2",
+    66088,
+    65788
+   ],
+   [
+    "/shas.js",
+    18479,
+    62733
+   ]
+  ]
+ },
+ "mobile | מפת הש\"ס": {
+  "fcp": 980,
+  "lcp": 2504,
+  "tbt": 200,
+  "requests": 15,
+  "transfer": 415953,
+  "decoded": 694134,
+  "dom": 1876,
+  "load": 1886,
+  "warm_fcp": 164,
+  "warm_lcp": 524,
+  "warm_transfer": 0,
+  "cls": 0,
+  "big": [
+   [
+    "/lamed.js?v=6d8a695e",
+    67986,
+    223918
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89812,
+    89512
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83308,
+    83008
+   ],
+   [
+    "/brand/fonts/vilna-md.woff2",
+    66088,
+    65788
+   ],
+   [
+    "/shas.js",
+    18479,
+    62733
+   ],
+   [
+    "/brand/fonts/vilna-rg.woff2",
+    42920,
+    42620
+   ],
+   [
+    "/lamed.css?v=9a36c999",
+    10099,
+    41537
+   ],
+   [
+    "/ui.css?v=694c340b",
+    10456,
+    41234
+   ]
+  ]
+ },
+ "mobile | דף גמרא": {
+  "fcp": 2608,
+  "lcp": 5196,
+  "tbt": 602,
+  "requests": 26,
+  "transfer": 823593,
+  "decoded": 2074839,
+  "dom": 5932,
+  "load": 6188,
+  "warm_fcp": 1156,
+  "warm_lcp": 1156,
+  "warm_transfer": 0,
+  "cls": 0,
+  "big": [
+   [
+    "/lamed.js?v=6d8a695e",
+    67986,
+    223918
+   ],
+   [
+    "/fonts/vilna-xb.woff2",
+    91392,
+    91092
+   ],
+   [
+    "/fonts/vilna-b.woff2",
+    84840,
+    84540
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83308,
+    83008
+   ],
+   [
+    "/shas.js",
+    18479,
+    62733
+   ],
+   [
+    "/fonts/vilna-r.woff2",
+    44908,
+    44608
+   ],
+   [
+    "/ui.css?v=694c340b",
+    10456,
+    41234
+   ],
+   [
+    "/fonts/frank-b.woff2",
+    36784,
+    36484
+   ]
+  ]
+ },
+ "desktop | בית": {
+  "fcp": 1216,
+  "lcp": 2536,
+  "tbt": 0,
+  "requests": 24,
+  "transfer": 1118615,
+  "decoded": 1397254,
+  "dom": 1186,
+  "load": 1886,
+  "warm_fcp": 72,
+  "warm_lcp": 100,
+  "warm_transfer": 0,
+  "cls": 0,
+  "big": [
+   [
+    "/brand/shaar-v2/shaar-zohar-960.avif",
+    270131,
+    269831
+   ],
+   [
+    "/brand/shaar-v2/shaar-zohar-560.webp",
+    246658,
+    246358
+   ],
+   [
+    "/lamed.js?v=6d8a695e",
+    67986,
+    223918
+   ],
+   [
+    "/brand/shaar-v2/shaar-zohar-560.avif",
+    103578,
+    103278
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89812,
+    89512
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83308,
+    83008
+   ],
+   [
+    "/brand/shaar-v2/shaar-zohar-360.avif",
+    80209,
+    79909
+   ],
+   [
+    "/brand/fonts/vilna-md.woff2",
+    66088,
+    65788
+   ]
+  ]
+ },
+ "desktop | מפת הש\"ס": {
+  "fcp": 580,
+  "lcp": 908,
+  "tbt": 0,
+  "requests": 20,
+  "transfer": 415953,
+  "decoded": 694134,
+  "dom": 762,
+  "load": 763,
+  "warm_fcp": 120,
+  "warm_lcp": 120,
+  "warm_transfer": 0,
+  "cls": 0.001,
+  "big": [
+   [
+    "/lamed.js?v=6d8a695e",
+    67986,
+    223918
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89812,
+    89512
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83308,
+    83008
+   ],
+   [
+    "/brand/fonts/vilna-md.woff2",
+    66088,
+    65788
+   ],
+   [
+    "/shas.js",
+    18479,
+    62733
+   ],
+   [
+    "/brand/fonts/vilna-rg.woff2",
+    42920,
+    42620
+   ],
+   [
+    "/lamed.css?v=9a36c999",
+    10099,
+    41537
+   ],
+   [
+    "/ui.css?v=694c340b",
+    10456,
+    41234
+   ]
+  ]
+ },
+ "desktop | דף גמרא": {
+  "fcp": 1432,
+  "lcp": 1432,
+  "tbt": 44,
+  "requests": 31,
+  "transfer": 1022413,
+  "decoded": 2272759,
+  "dom": 1651,
+  "load": 1653,
+  "warm_fcp": 376,
+  "warm_lcp": 408,
+  "warm_transfer": 0,
+  "cls": 0,
+  "big": [
+   [
+    "/lamed.js?v=6d8a695e",
+    67986,
+    223918
+   ],
+   [
+    "/fonts/vilna-xb.woff2",
+    91392,
+    91092
+   ],
+   [
+    "/brand/fonts/vilna-xb.woff2",
+    89812,
+    89512
+   ],
+   [
+    "/fonts/vilna-b.woff2",
+    84840,
+    84540
+   ],
+   [
+    "/brand/fonts/vilna-bd.woff2",
+    83308,
+    83008
+   ],
+   [
+    "/brand/fonts/vilna-md.woff2",
+    0,
+    65788
+   ],
+   [
+    "/shas.js",
+    18479,
+    62733
+   ],
+   [
+    "/fonts/vilna-r.woff2",
+    44908,
+    44608
+   ]
+  ]
+ }
+}

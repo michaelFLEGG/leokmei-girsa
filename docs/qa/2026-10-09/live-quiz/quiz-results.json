@@ -1,0 +1,128 @@
+{
+ "p360x800-portrait": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "p360x800-landscape": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "p390x844-portrait": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "p390x844-landscape": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "p412x915-portrait": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "p412x915-landscape": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "p375x667-portrait": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "p375x667-landscape": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "t-tabA7-portrait": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "t-tabA7-landscape": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "t768x1024-portrait": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "t768x1024-landscape": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "t820x1180-portrait": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "t820x1180-landscape": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "t1024x1366-portrait": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "t1024x1366-landscape": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "d1366x768-desktop": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ },
+ "d1920x1080-desktop": {
+  "door_label": "",
+  "sfx": "ok,ok,streak,bad,ok,rank,ok,level,streak,rank,level,ok,streak,rank,ok,rank,ok,fan,record",
+  "hscroll": true,
+  "best": "שיא אישי חדש! שיא הסבב הקודם: 0 נקודות · רצף מרבי קודם: 0.",
+  "errors": []
+ }
+}

@@ -35,20 +35,39 @@
   };
   /* תמונת השער: הגרסה המתאימה לרוחב המסך (טלפון אינו מוריד גרסת מחשב). עד שהיא מגיעה - תמונה מטושטשת זעירה מוטמעת */
   B.gateImg = function () {
-    return '<img class="gate-img" src="brand/shaar-v2/shaar-zohar-560.webp" srcset="brand/shaar-v2/shaar-zohar-560.webp 560w, brand/shaar-v2/shaar-zohar-960.webp 960w, brand/shaar-v2/shaar-zohar-1600.webp 1600w" sizes="(max-width:520px) 62vw, 460px" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onload="this.classList.add(\'ld\')">';
+    return '<img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.webp" data-hi="brand/shaar-v2/shaar-zohar-960.webp" data-hi2="brand/shaar-v2/shaar-zohar-1600.webp" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onload="var h=this.closest(\'.gate-hero\');this.classList.add(\'ld\');if(h)setTimeout(function(){h.style.backgroundImage=\'none\'},520)">';
+  };
+  /* שלב ב': אחרי שהדף נטען והדפדפן בטל, מחליפים את השער הקל בגרסה המתאימה לרוחב המסך ולרשת (רק ברשת מהירה וכשלא ביקשו חיסכון) */
+  B.upgrade = function (img) {
+    if (!img || img.getAttribute('data-up')) return; img.setAttribute('data-up', '1');
+    var c = navigator.connection || {}, slow = c.saveData || /(^|-)2g|3g/.test(c.effectiveType || '');
+    if (slow) return;
+    var w = img.clientWidth * (window.devicePixelRatio || 1), url = w > 1000 && img.getAttribute('data-hi2') ? img.getAttribute('data-hi2') : img.getAttribute('data-hi');
+    if (!url) return;
+    var i = new Image(); i.onload = function () { img.src = url; }; i.src = url;
+  };
+  B.upgradeAll = function () {
+    function go() { var im = document.querySelector('.gate-hero .gate-img'); if (im) B.upgrade(im); B.loadCards(); }
+    var run = function () { if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 3000 }); else setTimeout(go, 800); };
+    if (document.readyState === 'complete') run(); else window.addEventListener('load', run, { once: true });
+  };
+  /* תמונות כרטיסי השער נטענות אחרי השער עצמו, כדי שלא יתחרו בו על הרשת */
+  B.loadCards = function () {
+    document.querySelectorAll('img.gimg[data-src]').forEach(function (im) { im.src = im.getAttribute('data-src'); if (im.getAttribute('data-srcset')) im.srcset = im.getAttribute('data-srcset'); im.removeAttribute('data-src'); im.removeAttribute('data-srcset'); });
   };
   /* השער הגדול הסימטרי (זהב זוהר) עם הסימן בפתחו, ואור חם בפתח */
   B.hero = function (adopt) {
     if (adopt) {   /* שער סטטי קיים: מוסיפים לו רק את הסימן בפתח */
       if (!adopt.querySelector('.opening')) { var op = document.createElement('div'); op.className = 'opening'; op.innerHTML = B.mark(); (adopt.querySelector('.gate-link') || adopt).appendChild(op); B.arm(adopt); }
-      var im = adopt.querySelector('.gate-img'); if (im && im.complete) im.classList.add('ld');
+      var im = adopt.querySelector('.gate-img'); if (im && im.complete) { im.classList.add('ld'); setTimeout(function () { adopt.style.backgroundImage = 'none'; }, 520); }
+      B.upgradeAll();
       return adopt;
     }
     var s = document.createElement('section'); s.className = 'gate-hero'; s.setAttribute('aria-label', 'פתיחה');
     /* כניסה מיידית: לחיצה על כל אזור בשער מובילה ישר למפת הש"ס, בלי מסך ביניים */
     s.innerHTML = '<h1 class="sr-only">לאוקמי גירסא - קיצור התלמוד הבבלי</h1><a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס">' + B.gateImg() +
       '<div class="opening">' + B.mark() + '</div></a>';
-    B.arm(s);
+    B.arm(s); B.upgradeAll();
     return s;
   };
   /* שער קטן קישוטי (alt ריק): מסכי פתיחה וסיום, הישגים */
@@ -58,8 +77,9 @@
   /* כרטיס-שער: השער הסימטרי השלם כתמונה אחת, והכיתוב בתוך הפתח (8.10.2026) */
   B.card = function (href, title, bodyHtml, extra) {
     var a = document.createElement('a'); a.className = 'gcard'; a.href = href;
-    a.innerHTML = '<img class="gimg" src="brand/shaar-v2/shaar-zohar-560.webp" srcset="brand/shaar-v2/shaar-zohar-560.webp 560w, brand/shaar-v2/shaar-zohar-1120.webp 1120w" sizes="(max-width:700px) 44vw, 300px" width="560" height="843" alt="" loading="lazy" decoding="async">' +
+    a.innerHTML = '<img class="gimg" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="brand/shaar-v2/shaar-zohar-560.webp" data-srcset="brand/shaar-v2/shaar-zohar-560.webp 560w, brand/shaar-v2/shaar-zohar-1120.webp 1120w" sizes="(max-width:700px) 44vw, 300px" width="560" height="843" alt="" decoding="async">' +
       '<div class="gbody"><h3 class="foil">' + LG.esc(title) + '</h3>' + bodyHtml + '</div>';
+    B.upgradeAll();
     return a;
   };
   /* כותרת תחתונה: כחול, שער קטן וקישורים (השורה "תנועת לאוקמי גירסא" הוסרה 8.10.2026) */

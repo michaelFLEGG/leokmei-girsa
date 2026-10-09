@@ -3,7 +3,8 @@
 שימוש: python tools/qa_compare.py docs/qa/2026-10-09"""
 import os, sys, io, json, html
 root = sys.argv[1]
-B, A = os.path.join(root, 'before'), os.path.join(root, 'after')
+BN = sys.argv[2] if len(sys.argv) > 2 else 'before'; AN = sys.argv[3] if len(sys.argv) > 3 else 'after'; OUT = sys.argv[4] if len(sys.argv) > 4 else 'compare.html'
+B, A = os.path.join(root, BN), os.path.join(root, AN)
 def res(d):
     p = os.path.join(d, 'results.json')
     return json.load(io.open(p, encoding='utf-8')) if os.path.exists(p) else {}
@@ -24,9 +25,11 @@ for d in devs:
     for f in pages:
         name = f.rsplit('.', 1)[0]
         bf = os.path.join(B, d, f)
-        out.append('<div><h3>%s</h3><div class="pair"><figure>%s<figcaption>לפני · %s</figcaption></figure><figure><img src="after/%s/%s" loading="lazy"><figcaption>אחרי · %s</figcaption></figure></div></div>' % (
-            html.escape(name), ('<img src="before/%s/%s" loading="lazy">' % (d, f)) if os.path.exists(bf) else '<i>אין</i>', badge(rb.get(d, {}).get(name)), d, f, badge(ra.get(d, {}).get(name))))
+        bimg = ('<img src="%s/%s/%s" loading="lazy">' % (BN, d, f)) if os.path.exists(bf) else '<i>אין</i>'
+        aimg = '<img src="%s/%s/%s" loading="lazy">' % (AN, d, f)
+        out.append('<div><h3>%s</h3><div class="pair"><figure>%s<figcaption>לפני · %s</figcaption></figure><figure>%s<figcaption>אחרי · %s</figcaption></figure></div></div>' % (
+            html.escape(name), bimg, badge(rb.get(d, {}).get(name)), aimg, badge(ra.get(d, {}).get(name))))
     out.append('</div>')
 out.append('</main></body></html>')
-io.open(os.path.join(root, 'compare.html'), 'w', encoding='utf-8').write('\n'.join(out))
+io.open(os.path.join(root, OUT), 'w', encoding='utf-8').write('\n'.join(out))
 print('compare.html', len(devs), 'devices')

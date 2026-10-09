@@ -36,6 +36,39 @@ def reader_css():
     return css[i:]
 
 
+def small_gate(v2):
+    """גרסה קלה של השער לצייר ראשון (כ-360 פיקסל, כמאה קילובייט): הלומד רואה שער תוך שבריר שנייה,
+    והגרסה המלאה מחליפה אותה ברקע (ראו brand.js). נוצרת מהגרסה של 960."""
+    try:
+        from PIL import Image
+        im = Image.open(os.path.join(v2, 'shaar-zohar-960.webp')).convert('RGBA')
+        r = im.resize((360, round(im.height * 360 / im.width)), Image.LANCZOS)
+        r.save(os.path.join(v2, 'shaar-zohar-360.webp'), 'WEBP', quality=68, method=6)
+    except Exception as e:
+        print('אזהרה: השער הקל לא נוצר -', str(e)[:80])
+
+
+def subset_brand_fonts(fdir):
+    """גופני המותג (woff2) מקוצצים לתווים שבשימוש: כחצי מהמשקל. ראו font_woff2.py."""
+    try:
+        from fontTools.ttLib import TTFont
+        from fontTools import subset
+        import brotli  # noqa: F401
+        import font_woff2
+    except Exception as e:
+        print('אזהרה: אין brotli, גופני המותג נשארים מלאים -', str(e)[:60]); return
+    n = 0
+    for f in sorted(os.listdir(fdir)):
+        if not f.endswith('.woff2'): continue
+        p = os.path.join(fdir, f)
+        try:
+            o = subset.Options(); o.flavor = 'woff2'; o.layout_features = ['*']; o.notdef_outline = True; o.name_IDs = ['*']; o.hinting = False
+            t = TTFont(p); sb = subset.Subsetter(o); sb.populate(unicodes=font_woff2.UNI); sb.subset(t); t.flavor = 'woff2'; t.save(p); n += 1
+        except Exception as e:
+            print('אזהרה: קיצוץ', f, 'נכשל -', str(e)[:60])
+    print('גופני מותג מקוצצים: %d' % n)
+
+
 def brand(site):
     """מעתיק את מוטיב השער, החלקים, הגופנים והסמלילים (tools/brand) אל site/brand,
     ואת ה-favicon וה-manifest אל שורש האתר (8.10.2026)."""
@@ -53,6 +86,8 @@ def brand(site):
         for f in os.listdir(os.path.join(src, sub)):
             shutil.copy(os.path.join(src, sub, f), os.path.join(d, f))
     shutil.copy(os.path.join(src, 'icons', 'og-image.png'), os.path.join(dst, 'og-image.png'))
+    small_gate(v2)
+    subset_brand_fonts(os.path.join(dst, 'fonts'))
     shutil.copy(os.path.join(src, 'icons', 'favicon.ico'), os.path.join(site, 'favicon.ico'))
     io.open(os.path.join(site, 'manifest.webmanifest'), 'w', encoding='utf-8').write(json.dumps({
         'name': 'לאוקמי גירסא - קיצור התלמוד הבבלי', 'short_name': 'לאוקמי גירסא', 'lang': 'he', 'dir': 'rtl',
@@ -64,10 +99,9 @@ def brand(site):
 # שער סטטי לדף הבית: מצויר מיד, עוד לפני שהסקריפט רץ. אחר כך lamed.js מאמץ אותו (ui.js: UI.home).
 GATE_PH = 'PLACEHOLDER'
 PRE = {'home': ('<main class="lm-wrap lm-pre"><section class="gate-hero" aria-label="פתיחה" style="background-image:url(%s)"><h1 class="sr-only">לאוקמי גירסא - קיצור התלמוד הבבלי</h1>'
-                '<a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס"><img class="gate-img" src="brand/shaar-v2/shaar-zohar-560.webp" '
-                'srcset="brand/shaar-v2/shaar-zohar-560.webp 560w, brand/shaar-v2/shaar-zohar-960.webp 960w, brand/shaar-v2/shaar-zohar-1600.webp 1600w" '
-                'sizes="(max-width:520px) 62vw, 460px" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" '
-                'onload="this.classList.add(\'ld\')"></a></section>'
+                '<a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס"><img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.webp" data-hi="brand/shaar-v2/shaar-zohar-960.webp" data-hi2="brand/shaar-v2/shaar-zohar-1600.webp" '
+                'alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" '
+                'onload="var h=this.closest(\'.gate-hero\');this.classList.add(\'ld\');setTimeout(function(){h.style.backgroundImage=\'none\'},520)"></a></section>'
                 '<div class="ctas"><a class="lm-btn pri" href="shas.html">מפת הש&quot;ס</a></div></main>')}
 
 

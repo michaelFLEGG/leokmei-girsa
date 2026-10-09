@@ -5601,6 +5601,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     _sh.copy(os.path.join(_tdir,_f),os.path.join(_outdir,_f))
   MOBV=_hl.md5(io.open(os.path.join(_tdir,'mobile.css'),'rb').read()+io.open(os.path.join(_tdir,'mobile.js'),'rb').read()).hexdigest()[:8]
   DEVJS=DEV_CLASS_JS
+  _ic=lambda n:'<svg class="ic" aria-hidden="true"><use href="#i-%s"/></svg>'%n
+  STATIC_M=('<div id="mtop"><button type="button" class="mhome" aria-label="לדף הבית"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"></button>'
+            '<button type="button" class="mttl" id="mttl" aria-label="בחירת פרק ודף"><span>'+masechet+'</span><span class="mdf" id="mdf"></span>'+_ic('down')+'</button>'
+            '<button type="button" class="msr" id="msr" aria-label="חיפוש">'+_ic('search')+'</button></div><div id="mprog"><i></i></div>'
+            '<nav id="mbot" aria-label="ניווט">'+''.join('<button type="button" data-a="%s">%s<span>%s</span></button>'%(a,_ic(i),t) for a,i,t in
+            [('shas','home','הש"ס'),('prev','right','דף קודם'),('next','left','דף הבא'),('perush','book','פירוש'),('more','dots','עוד')])+'</nav>'
+            '<div id="mscrim"></div><div id="msheet" role="dialog" aria-modal="true"></div>')
   LJV=build_lamed.js_hash()
   SKEL=''.join('<i style="width:%d%%"></i>'%w for w in (92,100,96,64,98,100,88,72,94,100,90,58))
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -5609,7 +5616,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <link rel="preload" href="fonts/vilna-r.woff2" as="font" type="font/woff2" crossorigin>
   <script>{DEVJS}</script>
   <script>try{{var _t=localStorage.getItem('lg-theme');document.documentElement.setAttribute('data-theme',_t==='dark'||_t==='auto'?_t:'light')}}catch(e){{document.documentElement.setAttribute('data-theme','light')}}</script>
-  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}
+  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}{STATIC_M}
   <div class="bar" id="bar">
   <div class="bg loc" data-pri="0"><a href="index.html" class="brand" title="לדף הבית" style="text-decoration:none"><img class="lg" src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"><span class="nm">לאוקמי גירסא</span></a><span class="mn">{masechet}</span>
   <select id="peresel" title="פרק" aria-label="פרק"></select>

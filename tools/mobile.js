@@ -16,17 +16,21 @@
   function flow() { return $('#flow'); }
 
   /* ------------------------------------------------------------------ בניית הממשק */
-  var top = document.createElement('div'); top.id = 'mtop';
-  top.innerHTML = '<button type="button" class="mhome" aria-label="לדף הבית"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"></button>' +
-    '<button type="button" class="mttl" id="mttl" aria-label="בחירת פרק ודף"><span>' + esc(D.masechet || '') + '</span><span class="mdf" id="mdf"></span>' + ic('down') + '</button>' +
-    '<button type="button" class="msr" id="msr" aria-label="חיפוש">' + ic('search') + '</button>';
-  var prog = document.createElement('div'); prog.id = 'mprog'; prog.innerHTML = '<i></i>';
-  var bot = document.createElement('nav'); bot.id = 'mbot'; bot.setAttribute('aria-label', 'ניווט');
-  var BTN = [['shas', 'home', 'הש"ס'], ['prev', 'right', 'דף קודם'], ['next', 'left', 'דף הבא'], ['perush', 'book', 'פירוש'], ['more', 'dots', 'עוד']];
-  bot.innerHTML = BTN.map(function (b) { return '<button type="button" data-a="' + b[0] + '">' + ic(b[1]) + '<span>' + b[2] + '</span></button>'; }).join('');
-  var scrim = document.createElement('div'); scrim.id = 'mscrim';
-  var sheet = document.createElement('div'); sheet.id = 'msheet'; sheet.setAttribute('role', 'dialog'); sheet.setAttribute('aria-modal', 'true');
-  B.appendChild(top); B.appendChild(prog); B.appendChild(bot); B.appendChild(scrim); B.appendChild(sheet);
+  /* הסרגלים כבר בקוד ה-HTML (כדי שטקסט יצויר מיד, לפני שהנתונים הגיעו). אם אינם שם - בונים אותם */
+  if (!document.getElementById('mtop')) {
+    var t0 = document.createElement('div'); t0.id = 'mtop';
+    t0.innerHTML = '<button type="button" class="mhome" aria-label="לדף הבית"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"></button>' +
+      '<button type="button" class="mttl" id="mttl" aria-label="בחירת פרק ודף"><span>' + esc(D.masechet || '') + '</span><span class="mdf" id="mdf"></span>' + ic('down') + '</button>' +
+      '<button type="button" class="msr" id="msr" aria-label="חיפוש">' + ic('search') + '</button>';
+    var p0 = document.createElement('div'); p0.id = 'mprog'; p0.innerHTML = '<i></i>';
+    var b0 = document.createElement('nav'); b0.id = 'mbot'; b0.setAttribute('aria-label', 'ניווט');
+    var BTN0 = [['shas', 'home', 'הש"ס'], ['prev', 'right', 'דף קודם'], ['next', 'left', 'דף הבא'], ['perush', 'book', 'פירוש'], ['more', 'dots', 'עוד']];
+    b0.innerHTML = BTN0.map(function (b) { return '<button type="button" data-a="' + b[0] + '">' + ic(b[1]) + '<span>' + b[2] + '</span></button>'; }).join('');
+    var s0 = document.createElement('div'); s0.id = 'mscrim';
+    var h0 = document.createElement('div'); h0.id = 'msheet'; h0.setAttribute('role', 'dialog'); h0.setAttribute('aria-modal', 'true');
+    B.appendChild(t0); B.appendChild(p0); B.appendChild(b0); B.appendChild(s0); B.appendChild(h0);
+  }
+  var top = document.getElementById('mtop'), prog = document.getElementById('mprog'), bot = document.getElementById('mbot'), scrim = document.getElementById('mscrim'), sheet = document.getElementById('msheet');
 
   function flash(el) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); buzz(10); }
 

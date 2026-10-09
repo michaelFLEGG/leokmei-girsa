@@ -5614,6 +5614,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <title>לאוקמי גירסא · {masechet}</title>
   <link rel="preload" href="fonts/frank.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/vilna-r.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/vilna-b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/vilna-xb.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/frank-b.woff2" as="font" type="font/woff2" crossorigin>
   <script>{DEVJS}</script>
   <script>try{{var _t=localStorage.getItem('lg-theme');document.documentElement.setAttribute('data-theme',_t==='dark'||_t==='auto'?_t:'light')}}catch(e){{document.documentElement.setAttribute('data-theme','light')}}</script>
   <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}{STATIC_M}

@@ -83,9 +83,34 @@
     [1, 2].forEach(function (n) { var fsW = (availW - 12) / (31.125 * n + 1.2 * (n - 1) + 1.6), fsH = availH / 44.979, f = Math.min(fsW, fsH); if (f > best + 0.01) { best = f; bn = n; } });
     H.style.setProperty('--mfs', Math.max(9, Math.floor(best * 100) / 100) + 'px'); H.style.setProperty('--mn', bn);
   }
+  /* רוחב הטור הנקי קבוע: 20.75em, כמו בעמוד הספר (60 מ"מ), בכל טלפון וטאבלט.
+     המסך הגדול או הקטן משנה רק את גודל האות (הגדלה יחסית של הטור כולו), ולעולם
+     לא את מקום שבירת השורות. הסכום בטלפון: 20.75 + מסילה 3.1 + רווח .35 + שוליים 1.4 em.
+     בטאבלט הגודל הנקוב 18 הוא כ-6 ס"מ ל-1/160 אינץ' לפיקסל (אנדרואיד); באייפד גדול
+     (132 נקודות לאינץ') הפיקסל גדול יותר, ולכן 15. הגודל שבחר הלומד בכפתורי הגופן גובר. */
+  var autoFs = false, ftm = 0, lastFs = 0;
+  function refit() { clearTimeout(ftm); ftm = setTimeout(function () { try { setDafW(); fitAnchors(); } catch (e) { } }, 90); }
+  function fitCol() {
+    var d = dev(), f = flow();
+    var off = d === 'desk' || !f || f.classList.contains('book') || lsGet('lg-fs');
+    if (off) { if (autoFs) { H.style.removeProperty('--fs'); autoFs = false; refit(); } return; }
+    var fs;
+    if (d === 'phone') fs = Math.min(18, Math.max(12, Math.floor(H.clientWidth / 25.6 * 10) / 10));
+    else {
+      var ipad = /iPad/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+      fs = ipad && Math.min(screen.width, screen.height) >= 810 ? 15 : 18;
+    }
+    /* בגודל הרגיל (18) אין מה לקבוע: כתיבת --fs מבטלת את כל חישובי הסגנון של הדף (נמדד: 19 שניות בטאבלט) */
+    if (fs === 18) { if (autoFs) { H.style.removeProperty('--fs'); autoFs = false; refit(); } return; }
+    if (autoFs && lastFs === fs) return;
+    lastFs = fs; autoFs = true;
+    H.style.setProperty('--fs', fs + 'px');
+    refit();
+  }
   var applying = false;
   function applyMode(keep) {
     if (applying) return; applying = true;
+    fitCol();
     var anchor = keep ? readAnchor() : null;
     var want = wantMode(), cur = curMode(), changed = false;
     try {
@@ -94,7 +119,7 @@
       } else if (want === 'book' && cur !== 'book') { setView('book'); changed = true; }
       fitBook();
     } catch (e) { }
-    setTimeout(function () { if (changed || keep) restoreAnchor(anchor); applying = false; }, 60);
+    setTimeout(function () { fitCol(); if (changed || keep) restoreAnchor(anchor); applying = false; }, 60);
   }
 
   /* ------------------------------------------------------------------ כותרת עליונה והתקדמות */

@@ -48,7 +48,7 @@ html.dev-phone .flow.book,html.dev-tab .flow.book{padding-top:calc(var(--mtop) +
 
 /* ---- טלפון: כותרות הצד בעמודה שמורה (גריד), רוחב מצומצם, ולעולם לא בתוך הטקסט ---- */
 html.dev-phone .flow:not(.book){column-width:auto;column-count:auto;column-rule:0;column-fill:balance;width:auto;padding-inline:.7em;overflow-x:hidden}
-html.dev-phone .flow:not(.book) .row{display:grid;grid-template-columns:[rail] var(--mrail,3.1em) [text] minmax(0,1fr);align-items:baseline;column-gap:.35em;width:auto;max-width:100%;margin:0}
+html.dev-phone .flow:not(.book) .row{display:grid;grid-template-columns:[rail] var(--mrail,3.1em) [text] minmax(0,var(--measure,20.75em));justify-content:center;align-items:baseline;column-gap:.35em;width:auto;max-width:100%;margin:0}
 html.dev-phone .rail{display:grid;grid-template-columns:minmax(0,1fr);grid-column:rail;text-align:right;padding:0;line-height:1.06;min-width:0;overflow-wrap:anywhere}
 html.dev-phone .rail>*{font-size:.78em;line-height:1.05;white-space:normal}
 html.dev-phone .main{grid-column:text;min-width:0}

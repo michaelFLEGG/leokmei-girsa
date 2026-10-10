@@ -88,7 +88,8 @@
   B.footer = function () {
     var f = document.createElement('footer'); f.className = 'lm-foot';
     f.innerHTML = '<div class="lm-foot-in"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="23" height="34"><span class="nm">לאוקמי גירסא</span></div>' +
-      '<div style="margin-top:8px"><a href="shas.html">מפת הש"ס</a><a href="mekorot.html">מקורות</a><a href="about.html">אודות</a><a href="privacy.html">פרטיות</a></div>';
+      '<div style="margin-top:8px"><a href="shas.html">מפת הש"ס</a><a href="mekorot.html">מקורות</a><a href="about.html">אודות</a><a href="privacy.html">פרטיות</a></div>' +
+      '<div class="lm-sister" style="margin-top:10px;font-size:14px;color:var(--cream2)">אתרים נוספים של המכון: <a href="https://nach-hameforash.pages.dev/" target="_blank" rel="noopener">נ"ך המפורש</a><a href="https://xn--8dbacdxfna0hp.com/" target="_blank" rel="noopener">ממלכת הזוהר</a></div>';
     return f;
   };
 })();

@@ -329,7 +329,7 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
  var row=document.createElement('section');row.id='nowrow';var h=document.createElement('h2');h.textContent='נלמדת עכשיו בדף היומי';var g=document.createElement('div');g.className='grid';
  var c=a.cloneNode(true);c.classList.remove('now');c.querySelector('.now-tag').textContent='הדף היום: '+t.daf;g.appendChild(c);row.appendChild(h);row.appendChild(g);var m=document.querySelector('main');m.insertBefore(row,m.firstChild)}}
 }})();
-</script><footer>עודכן <span id="upd" data-ts="{now_ts}"></span> · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a> · <a href="privacy.html" style="color:inherit">פרטיות</a></footer><script>(function(){{var u=document.getElementById('upd');if(u&&window.HD)u.textContent=HD.dateTime(+u.getAttribute('data-ts'))}})()</script></body></html>'''
+</script><footer>עודכן <span id="upd" data-ts="{now_ts}"></span> · האתר נבנה אוטומטית מקובצי הוורד · <a href="mekorot.html" style="color:inherit">מקורות</a> · <a href="privacy.html" style="color:inherit">פרטיות</a><br>אתרים נוספים של המכון: <a href="https://nach-hameforash.pages.dev/" target="_blank" rel="noopener">נ"ך המפורש</a> · <a href="https://xn--8dbacdxfna0hp.com/" target="_blank" rel="noopener">ממלכת הזוהר</a></footer><script>(function(){{var u=document.getElementById('upd');if(u&&window.HD)u.textContent=HD.dateTime(+u.getAttribute('data-ts'))}})()</script></body></html>'''
     # הלוח הישן (כל המסכתות, הגהה ובקרה) עבר ל-masechtot.html. השער החדש
     # (index.html) הוא דף הבית של מערכת הלומד.
     idx = idx.replace('<footer>', '<footer><a href="index.html" style="color:inherit">לדף הבית</a> · ', 1)

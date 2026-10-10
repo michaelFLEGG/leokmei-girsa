@@ -5132,8 +5132,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(i<0){srcBody().innerHTML='<div class="ld">הקטע אינו בגמרא שנטענה.</div>';return}
       SX.lo=SX.hi=i;
       srcBody().innerHTML=srcPageHTML(i);
-      if(!box.querySelector('.srcft')){const f=document.createElement('div');f.className='srcft';
-        f.textContent=j.attribution||'';box.appendChild(f)}
+      /* שורת הרישיון הוסרה מהמגירה (11.10.2026, בעל הפרויקט): הייחוס לספריא מופיע פעם אחת בדף המקורות */
       srcMark(true,false);
       srcBody().addEventListener('scroll',srcScroll,{passive:true});
     }).catch(e=>{srcBody().innerHTML=

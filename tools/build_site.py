@@ -2652,8 +2652,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function amq(i){$('#q').value=D.am[i][0];search(D.am[i][0])}
   function build(){
    setDafW();
-   if(document.fonts&&document.fonts.ready)
-     document.fonts.ready.then(()=>{setDafW();fitAnchors()});
+   /* מדידה חוזרת אחרי טעינת הגופנים נעשית פעם אחת, במטפל המאוחד (again, בנוסף ל-ltFitSoon): מעבר נוסף על כל השורות נמדד ב-100 עד 250 מילישניות בטלפון (10.10.2026) */
    const ds=$('#dafsel');D.pages.forEach((p,i)=>ds.add(new Option(p.label||p.daf,i)));ds.onchange=()=>toDaf(+ds.value);
    const ps=$('#peresel');SEC.forEach((s,i)=>ps.add(new Option((s.perek||'רצף')+(s.perekName?' · '+s.perekName:''),i)));ps.onchange=()=>render(+ps.value);
    let t='',lp=-1;const TL={dh:'ד\u05f4ה',m:'משנה'};
@@ -5612,11 +5611,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   SKEL=''.join('<i style="width:%d%%"></i>'%w for w in (92,100,96,64,98,100,88,72,94,100,90,58))
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
-  <link rel="preload" href="fonts/frank.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/vilna-r.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/vilna-b.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/vilna-xb.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/frank-b.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/frank.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/vilna-r.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/vilna-b.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/vilna-xb.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/frank-b.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
   <script>{DEVJS}</script>
   <script>try{{var _t=localStorage.getItem('lg-theme');document.documentElement.setAttribute('data-theme',_t==='dark'||_t==='auto'?_t:'light')}}catch(e){{document.documentElement.setAttribute('data-theme','light')}}</script>
   <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}{STATIC_M}

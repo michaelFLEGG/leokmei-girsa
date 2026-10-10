@@ -88,7 +88,7 @@ def _ptype(rel):
     parts = rel.replace('\\', '/').strip('/').split('/')
     last = re.sub(r'\.html$', '', parts[-1])
     T = {'index': 'home', 'shas': 'shas', 'masechtot': 'masechtot', 'yomi': 'yomi', 'lamed': 'lamed', 'quiz': 'quiz', 'shiurim': 'shiurim',
-         'about': 'about', 'settings': 'settings', 'done': 'done', 'admin-lamdim': 'admin', 'mekorot': 'mekorot', 'masechet': 'masechet-shell',
+         'about': 'about', 'settings': 'settings', 'done': 'done', 'admin-lamdim': 'admin', 'admin-quiz': 'admin', 'mekorot': 'mekorot', 'masechet': 'masechet-shell',
          'privacy': 'privacy'}
     if len(parts) >= 2:
         return 'daf-static'

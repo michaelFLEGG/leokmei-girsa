@@ -417,6 +417,23 @@ body.lm .lm-foot a{color:var(--gold-300)}
 @media (max-width:400px){.lm-top .lm-date{display:none}.lm-top{padding-inline:10px;gap:6px}.lm-top .lm-brand .nm{font-size:21px}.lm-top .lm-brand .lg{height:34px}.lm-top .dd{margin-inline-start:auto}}
 
 
+/* מסך הנבחנים למנהל (11.10.2026) */
+.nv-filt label{display:inline-flex;gap:6px;align-items:center}
+.nv-filt select{font:inherit;padding:6px 8px;border-radius:6px;border:1px solid var(--line);min-height:40px}
+.nv-tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nv-t{width:100%;border-collapse:collapse;font-size:15px;min-width:640px}
+.nv-t th{text-align:right;font-weight:700;border-bottom:2px solid var(--line);padding:8px 6px;white-space:nowrap}
+.nv-t td{border-bottom:1px solid var(--line);padding:9px 6px;vertical-align:top}
+.nv-t tr[data-p],.nv-t tr[data-s]{cursor:pointer}
+.nv-t tr[data-p]:hover,.nv-t tr[data-s]:hover{background:rgba(209,162,58,.08)}
+.nv-t small{color:var(--tx2)}
+.nv-bar{display:inline-block;width:60px;height:8px;border-radius:4px;background:rgba(0,0,0,.08);vertical-align:middle;overflow:hidden}
+.nv-bar i{display:block;height:100%}
+.nv-days{display:flex;gap:3px;align-items:flex-end;height:140px;direction:ltr}
+.nv-day{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:6px}
+.nv-day i{display:block;width:100%;background:linear-gradient(180deg,#e6bd52,#b8862a);border-radius:3px 3px 0 0}
+.nv-day small{font-size:11px;color:var(--tx2)}
+
 /* ---- בדף הלימוד: שעון, סמן התקדמות, "סיימתי", הדגשת חזרה (מוטמע בדף המסכת) ---- */
 #lm-layer{position:fixed;inset:0;pointer-events:none;z-index:7}
 body:has(.panel.open) #lm-layer #lm-fin,body:has(.modal) #lm-layer #lm-fin,body:has(.sgpop) #lm-layer #lm-fin{display:none!important}

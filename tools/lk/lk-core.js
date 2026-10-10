@@ -21,7 +21,7 @@
   /* ---------------------------------------------------------------- סוג הדף */
   var SLUGS = /^(avodah-zarah|bava-batra|bava-kamma|bava-metzia|beitzah|bekhorot|berakhot|chagigah|chullin|eruvin|gittin|horayot|ketubot|kiddushin|makkot|megillah|moed-katan|nazir|nedarim|niddah|pesachim|rosh-hashanah|sanhedrin|shabbat|shevuot|sotah|sukkah|taanit|temurah|yevamot|yoma|zevachim|meilah|keritot|arakhin|tamid|kinnim|midot|menachot|temura)$/;
   var TYPES = { '': 'home', 'index': 'home', 'shas': 'shas', 'masechtot': 'masechtot', 'yomi': 'yomi', 'hadaf-hayomi': 'yomi-static', 'lamed': 'lamed',
-    'quiz': 'quiz', 'shiurim': 'shiurim', 'about': 'about', 'settings': 'settings', 'done': 'done', 'admin-lamdim': 'admin', 'mekorot': 'mekorot',
+    'quiz': 'quiz', 'shiurim': 'shiurim', 'about': 'about', 'settings': 'settings', 'done': 'done', 'admin-lamdim': 'admin', 'admin-quiz': 'admin', 'mekorot': 'mekorot',
     'masechet': 'masechet-shell', 'admin-texts': 'admin-texts', 'admin-stats': 'admin-stats', 'privacy': 'privacy' };
   var TYPE_HE = { home: 'בית', shas: 'מפת הש"ס', masechtot: 'רשימת מסכתות', yomi: 'הדף היומי', 'yomi-static': 'הדף היומי (סטטי)', lamed: 'המקום שלי', quiz: 'בחן את עצמך',
     shiurim: 'שיעורים', about: 'אודות', settings: 'הגדרות', done: 'סיום מסכת', admin: 'מנהל', 'admin-stats': 'נתוני גלישה', mekorot: 'מקורות', 'masechet-shell': 'מסכת', gemara: 'דף גמרא', 'daf-static': 'דף גמרא (סטטי)',

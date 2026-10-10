@@ -542,6 +542,94 @@
     html += table('זמן ממוצע לעמוד (הארוכים ביותר: מועמדים להידוק)', data.slow.slice(0, 12).map(function (x) { return { l: LG.nameOf(x.s) + ' ' + x.d, v: LG.dur(x.avg) + ' (' + LG.nf(x.n) + ' קריאות)' }; }));
     html += table('עדיפויות עריכה: נלמדים הרבה וטרם נערכו', data.topPages.filter(function (x) { return x.unedited; }).slice(0, 12).map(function (x) { return { l: LG.nameOf(x.s) + ' ' + x.d, v: LG.nf(x.reads) + ' קריאות' }; }));
     box.innerHTML = html;
+    box.insertAdjacentHTML('afterbegin', '<div class="lm-card"><a class="lm-btn pri" href="admin-quiz.html">הנבחנים: מי נבחן, על מה ואיך</a></div>');
     if (!window.__lmDemo && LG.quiz && LG.quiz.adminDrafts) LG.quiz.adminDrafts(box, key);
+  };
+
+  /* ---------------------------------------------------------- נתוני הנבחנים (מנהל, 11.10.2026)
+     מי נבחן, על מה, מתי, באיזה מכשיר ואיך הלך לו. "מי" = כינוי שהלומד בחר, ובלעדיו מספר מכשיר קבוע. */
+  UI.nivhanim = async function (root) {
+    var wrap = el('main', 'lm-wrap'); wrap.innerHTML = '<h1 class="lm-t">הנבחנים</h1><p class="lm-sub">מי נבחן ב"בחן את עצמך", על מה, מתי ואיך הלך לו. למנהל בלבד.</p><div id="nv-f"></div><div id="nv-b">טוען...</div>';
+    root.appendChild(wrap);
+    var box = $('#nv-b', wrap), fbox = $('#nv-f', wrap);
+    var key = ''; try { key = localStorage.getItem('lg-adm') || ''; } catch (e) { }
+    if (!key) { box.innerHTML = '<div class="lm-card"><p>דף זה למנהל בלבד. היכנס קודם ב<a href="admin-lamdim.html">דף המנהל</a> (מילת המנהל), וחזור לכאן.</p></div>'; return; }
+    var st = { days: 30, s: '', pid: '' }, last = null, qtext = {};
+    try { var h = new URLSearchParams(location.hash.slice(1)); st.days = +h.get('d') || 30; st.s = h.get('s') || ''; st.pid = h.get('p') || ''; } catch (e) { }
+    var PERS = { naar: 'נער', bahur: 'בחור', avrech: 'אברך' }, DEV = { m: 'טלפון', t: 'טאבלט', d: 'מחשב' };
+    function who(pid, nick) { return nick ? nick : 'לומד ' + (parseInt(String(pid).slice(0, 4), 36) % 9000 + 1000); }
+    function when(t) { try { return HD.dateTime(t); } catch (e) { return new Date(t).toLocaleString('he-IL'); } }
+    function pc(ok, n) { return n ? Math.round(100 * ok / n) + '%' : '-'; }
+    function bar(ok, n) { var v = n ? ok / n : 0, c = v >= .8 ? '#3d8b4f' : (v >= .55 ? '#c69a2a' : '#b23a2e'); return '<span class="nv-bar" title="' + pc(ok, n) + '"><i style="width:' + Math.round(v * 100) + '%;background:' + c + '"></i></span> ' + pc(ok, n); }
+    function names(slugs) { return String(slugs || '').split(',').filter(Boolean).filter(function (x, i, a) { return a.indexOf(x) === i; }).map(LG.nameOf).join(', '); }
+    async function qText(ids) {
+      var need = {}; ids.forEach(function (x) { if (!qtext[x.qid] && x.slug) need[x.slug] = 1; });
+      await Promise.all(Object.keys(need).map(function (s) { return LG.quiz && LG.quiz.bank ? LG.quiz.bank(s).then(function (b) { if (b) b.q.forEach(function (q) { qtext[q.i] = q.q; }); }) : null; }));
+    }
+    function filters() {
+      var ms = LG.masechtot().filter(function (m) { return m.built; });
+      fbox.innerHTML = '<div class="lm-card nv-filt"><div class="lm-row">' +
+        '<label>תקופה <select id="nv-d">' + [[1, 'היום'], [7, 'שבוע'], [30, 'חודש'], [90, 'שלושה חודשים'], [365, 'שנה']].map(function (x) { return '<option value="' + x[0] + '"' + (st.days === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></label>' +
+        '<label>מסכת <select id="nv-s"><option value="">כל המסכתות</option>' + ms.map(function (m) { return '<option value="' + m.slug + '"' + (st.s === m.slug ? ' selected' : '') + '>' + E(m.name) + '</option>'; }).join('') + '</select></label>' +
+        (st.pid ? '<button type="button" class="lm-btn small" id="nv-all">חזרה לכל הנבחנים</button>' : '') +
+        '<button type="button" class="lm-btn small ghost" id="nv-csv">הורדה לאקסל (CSV)</button></div></div>';
+      $('#nv-d', fbox).onchange = function () { st.days = +this.value; go(); };
+      $('#nv-s', fbox).onchange = function () { st.s = this.value; go(); };
+      var a = $('#nv-all', fbox); if (a) a.onclick = function () { st.pid = ''; go(); };
+      $('#nv-csv', fbox).onclick = csv;
+    }
+    function csv() {
+      if (!last) return;
+      var rows = [['תאריך', 'נבחן', 'מזהה מכשיר', 'דמות', 'מכשיר', 'מקום', 'סוג', 'מסכתות', 'פרקים', 'שאלות', 'נכונות', 'אחוז', 'נקודות', 'דקות', 'הושלם']];
+      last.runs.forEach(function (r) { rows.push([when(r.t), who(r.pid, r.nick), r.pid, PERS[r.persona] || '', DEV[r.dev] || '', r.city || '', r.mode === 'blitz' ? 'מבחן בזק' : 'סבב רגיל', names(r.slugs), r.pereks || '', r.n, r.ok, pc(r.ok, r.n), r.pts, Math.round((r.ms || 0) / 60000), r.done ? 'כן' : 'נקטע']); });
+      var txt = '﻿' + rows.map(function (r) { return r.map(function (c) { c = String(c == null ? '' : c); return /[",\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(','); }).join('\n');
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' })); a.download = 'nivhanim-' + LG.ymd(Date.now()) + '.csv'; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); }, 1000);
+    }
+    async function go() {
+      try { history.replaceState(null, '', '#d=' + st.days + (st.s ? '&s=' + st.s : '') + (st.pid ? '&p=' + st.pid : '')); } catch (e) { }
+      filters(); box.innerHTML = '<div class="lm-card">טוען...</div>';
+      var j;
+      try { j = await LG.sync.api('/qz/runs?days=' + st.days + (st.s ? '&s=' + st.s : '') + (st.pid ? '&pid=' + st.pid : ''), { method: 'GET', headers: { 'x-admin-key': key } }); }
+      catch (e) {
+        if (/הרשאה/.test(e.message || '')) { box.innerHTML = '<div class="lm-card"><p>המפתח השמור אינו תקף במכשיר הזה. היכנס מחדש ב<a href="admin-lamdim.html">דף המנהל</a>.</p></div>'; return; }
+        box.innerHTML = '<div class="lm-card"><p>לא ניתן לטעון כרגע (' + E(e.message || '') + '). אם זו הפעם הראשונה, ייתכן שהשרת עוד לא עודכן.</p></div>'; return;
+      }
+      last = j;
+      var t = j.totals || {}, html = '';
+      if (st.pid) {
+        var me = (j.people || [])[0] || {};
+        html += '<div class="lm-card"><h3>' + E(who(st.pid, me.nick)) + '</h3><p class="lm-note">' + E([PERS[me.persona], DEV[me.dev], me.city].filter(Boolean).join(' · ')) + (me.first ? ' · נבחן לראשונה ' + E(when(me.first)) : '') + '</p></div>';
+      }
+      html += '<div class="lm-card"><div class="lm-stats">' +
+        '<div class="lm-stat"><b>' + LG.nf(t.people || 0) + '</b><span>נבחנים</span></div>' +
+        '<div class="lm-stat"><b>' + LG.nf(t.runs || 0) + '</b><span>סבבי מבחן</span></div>' +
+        '<div class="lm-stat"><b>' + LG.nf(t.answers || 0) + '</b><span>שאלות שנענו</span></div>' +
+        '<div class="lm-stat"><b>' + pc(t.ok || 0, t.answers || 0) + '</b><span>תשובות נכונות</span></div>' +
+        '<div class="lm-stat"><b>' + E(LG.dur(t.ms || 0)) + '</b><span>זמן מבחן כולל</span></div></div></div>';
+      var bd = j.byDay || [];
+      if (bd.length > 1) {
+        var mx = Math.max.apply(null, bd.map(function (d) { return d.answers; }).concat([1]));
+        html += '<div class="lm-card"><h3>שאלות שנענו בכל יום</h3><div class="nv-days">' + bd.map(function (d) { return '<div class="nv-day" title="' + E(d.day) + ': ' + d.answers + ' שאלות, ' + d.people + ' נבחנים"><i style="height:' + Math.max(3, Math.round(100 * d.answers / mx)) + '%"></i><small>' + E(d.day.slice(8)) + '</small></div>'; }).join('') + '</div></div>';
+      }
+      if (!st.pid) {
+        html += '<div class="lm-card"><h3>הנבחנים (' + LG.nf((j.people || []).length) + ')</h3><p class="lm-note">לחיצה על נבחן מציגה את כל מבחניו ותשובותיו.</p><div class="nv-tw"><table class="nv-t"><thead><tr><th>נבחן</th><th>סבבים</th><th>שאלות</th><th>הצלחה</th><th>נקודות</th><th>זמן</th><th>מסכתות</th><th>מכשיר</th><th>לאחרונה</th></tr></thead><tbody>' +
+          (j.people || []).map(function (r) { return '<tr data-p="' + E(r.pid) + '"><td><a href="#">' + E(who(r.pid, r.nick)) + '</a>' + (r.persona ? ' <small>' + E(PERS[r.persona] || '') + '</small>' : '') + '</td><td>' + r.runs + '</td><td>' + r.answers + '</td><td>' + bar(r.ok, r.answers) + '</td><td>' + LG.nf(r.pts || 0) + '</td><td>' + E(LG.dur(r.ms || 0)) + '</td><td>' + E(names(r.slugs)) + '</td><td>' + E([DEV[r.dev], r.city].filter(Boolean).join(' · ')) + '</td><td>' + E(when(r.last)) + '</td></tr>'; }).join('') +
+          '</tbody></table></div>' + ((j.people || []).length ? '' : '<p class="lm-note">עוד לא נבחן אף אחד בתקופה הזאת. הרישום התחיל ב-11.10.2026.</p>') + '</div>';
+        if ((j.bySlug || []).length && !st.s) html += '<div class="lm-card"><h3>לפי מסכת</h3><div class="nv-tw"><table class="nv-t"><thead><tr><th>מסכת</th><th>נבחנים</th><th>סבבים</th><th>שאלות</th><th>הצלחה</th></tr></thead><tbody>' +
+          j.bySlug.map(function (r) { return '<tr data-s="' + E(r.slug) + '"><td><a href="#">' + E(LG.nameOf(r.slug)) + '</a></td><td>' + r.people + '</td><td>' + r.runs + '</td><td>' + r.answers + '</td><td>' + bar(r.ok, r.answers) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+      }
+      var hard = j.hard || [];
+      await qText(hard.concat(j.answers || []));
+      if (hard.length) html += '<div class="lm-card"><h3>השאלות הקשות ביותר (שלוש תשובות לפחות)</h3><p class="lm-note">שאלה שרובם טועים בה: אולי היא לא ברורה, ואולי הסוגיה עצמה דורשת חיזוק.</p><ul class="lm-list">' +
+        hard.slice(0, 25).map(function (q) { return '<li><span class="lm-grow">' + E(qtext[q.qid] || q.qid) + ' <small>(' + E(LG.nameOf(q.slug)) + ')</small></span><span>' + bar(q.ok, q.n) + ' · ' + q.n + ' תשובות</span></li>'; }).join('') + '</ul></div>';
+      html += '<div class="lm-card"><h3>' + (st.pid ? 'כל המבחנים שלו' : 'סבבי המבחן האחרונים') + '</h3><div class="nv-tw"><table class="nv-t"><thead><tr><th>מתי</th>' + (st.pid ? '' : '<th>נבחן</th>') + '<th>על מה</th><th>סוג</th><th>שאלות</th><th>הצלחה</th><th>נקודות</th><th>משך</th><th></th></tr></thead><tbody>' +
+        (j.runs || []).map(function (r) { return '<tr' + (st.pid ? '' : ' data-p="' + E(r.pid) + '"') + '><td>' + E(when(r.t)) + '</td>' + (st.pid ? '' : '<td><a href="#">' + E(who(r.pid, r.nick)) + '</a></td>') + '<td>' + E(names(r.slugs)) + (r.pereks ? ' <small>פרק ' + E(r.pereks) + '</small>' : '') + '</td><td>' + (r.mode === 'blitz' ? 'בזק' : 'רגיל') + '</td><td>' + r.n + '</td><td>' + bar(r.ok, r.n) + '</td><td>' + LG.nf(r.pts || 0) + '</td><td>' + E(LG.dur(r.ms || 0)) + '</td><td>' + (r.done ? '' : '<small>נקטע</small>') + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+      if (st.pid && (j.answers || []).length) html += '<div class="lm-card"><h3>התשובות שלו, שאלה-שאלה</h3><ul class="lm-list">' +
+        j.answers.slice(0, 300).map(function (a) { return '<li><span class="lm-grow">' + (a.ok ? '<b style="color:#3d8b4f">✓</b> ' : '<b style="color:#b23a2e">✗</b> ') + E(qtext[a.qid] || a.qid) + ' <small>(' + E(LG.nameOf(a.slug)) + ')</small></span><span><small>' + E(when(a.t)) + ' · ' + Math.round((a.ms || 0) / 1000) + ' שניות</small></span></li>'; }).join('') + '</ul></div>';
+      box.innerHTML = html;
+      box.querySelectorAll('tr[data-p]').forEach(function (tr) { tr.onclick = function (e) { e.preventDefault(); st.pid = tr.getAttribute('data-p'); go(); scrollTo(0, 0); }; });
+      box.querySelectorAll('tr[data-s]').forEach(function (tr) { tr.onclick = function (e) { e.preventDefault(); st.s = tr.getAttribute('data-s'); go(); scrollTo(0, 0); }; });
+    }
+    go();
   };
 })();

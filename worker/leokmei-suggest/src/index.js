@@ -1416,6 +1416,81 @@ async function statsSummary(req, env, url) {
   return json({ days: list.map((d) => { const o = by[d]; o.minutes = Math.round(o._secs / 60); delete o._secs; return o; }) });
 }
 
+/* ------------------------------------------------------------ נתוני הנבחנים (11.10.2026)
+   בעל הפרויקט ביקש לדעת מי נבחן, על מה ואיך. כל סבב שהסתיים (או נקטע כשהלומד עזב)
+   נרשם כשורה אחת במסד הגלישה (D1 LSTATS), ושאלה-שאלה בטבלה נפרדת. "מי" = מזהה
+   המכשיר האקראי (pid) והכינוי שהלומד בחר בעצמו, אם בחר. אין שם, אין דוא"ל, אין IP.
+   הקריאה: למנהל בלבד, בדף admin-quiz.html. */
+let qzReady = false;
+async function qzEnsure(db) {
+  if (qzReady) return;
+  await db.batch([
+    db.prepare('CREATE TABLE IF NOT EXISTS qz_run (rid TEXT PRIMARY KEY, t INTEGER NOT NULL, day TEXT NOT NULL, pid TEXT NOT NULL, nick TEXT, persona TEXT, mode TEXT, slugs TEXT, pereks TEXT, n INTEGER, ok INTEGER, bad INTEGER, pts INTEGER, ms INTEGER, aids INTEGER, best INTEGER, done INTEGER, dev TEXT, city TEXT)'),
+    db.prepare('CREATE INDEX IF NOT EXISTS qz_run_t ON qz_run (t)'),
+    db.prepare('CREATE INDEX IF NOT EXISTS qz_run_pid ON qz_run (pid)'),
+    db.prepare('CREATE TABLE IF NOT EXISTS qz_ans (rid TEXT NOT NULL, k INTEGER NOT NULL, qid TEXT NOT NULL, slug TEXT, lv INTEGER, ok INTEGER, ms INTEGER, t INTEGER, PRIMARY KEY (rid, k))'),
+    db.prepare('CREATE INDEX IF NOT EXISTS qz_ans_q ON qz_ans (qid)'),
+  ]);
+  qzReady = true;
+}
+async function qzLog(req, env) {
+  if (!env.LSTATS) return json({ ok: false, error: 'no-db' }, 503);
+  if (BOT.test(req.headers.get('user-agent') || '')) return json({ ok: true, skipped: 1 });
+  let b;
+  try { b = JSON.parse(await req.text()); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  if (!b || typeof b !== 'object') return bad('גוף הבקשה אינו JSON');
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  if (burstHit(ip)) return bad('מהיר מדי', 429);
+  const pid = str(b.pid, 20), rid0 = str(b.rid, 40);
+  if (!/^[a-z0-9]{8,20}$/.test(pid) || !/^[a-z0-9-]{6,40}$/.test(rid0)) return bad('חסר מזהה');
+  const rid = pid + ':' + rid0;
+  const num = (v, hi) => Math.max(0, Math.min(hi, Math.round(+v || 0)));
+  const ans = (Array.isArray(b.a) ? b.a : []).slice(0, 120).map((x, k) => ({
+    k, qid: str(String(x && x.q != null ? x.q : ''), 40), slug: slugOk(x && x.s) ? x.s : '', lv: num(x && x.lv, 9), ok: x && x.ok ? 1 : 0, ms: num(x && x.ms, 600000), t: num(x && x.t, 4102444800000),
+  })).filter((x) => x.qid);
+  const slugs = [...new Set((Array.isArray(b.slugs) ? b.slugs : []).filter(slugOk).concat(ans.map((x) => x.slug).filter(Boolean)))].slice(0, 12).join(',');
+  const pereks = (Array.isArray(b.pereks) ? b.pereks : []).map((x) => str(String(x), 12)).slice(0, 12).join(',');
+  const okN = ans.filter((x) => x.ok).length;
+  const cf = req.cf || {};
+  const city = String(cf.country || '').slice(0, 2).toUpperCase() === 'IL' ? str(String(cf.city || ''), 40) : str(String(cf.country || ''), 2);
+  const now = Date.now();
+  const db = env.LSTATS;
+  await qzEnsure(db);
+  const st = [db.prepare(
+    'INSERT INTO qz_run (rid, t, day, pid, nick, persona, mode, slugs, pereks, n, ok, bad, pts, ms, aids, best, done, dev, city) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19) ' +
+    'ON CONFLICT(rid) DO UPDATE SET t=?2, nick=?5, n=?10, ok=?11, bad=?12, pts=?13, ms=?14, aids=?15, best=?16, done=MAX(done, ?17), slugs=?8, pereks=?9'
+  ).bind(rid, now, ilDay(now), pid, nickOk(b.nick) || '', /^(naar|bahur|avrech)$/.test(b.persona || '') ? b.persona : '', b.blitz ? 'blitz' : 'regular',
+    slugs, pereks, ans.length, okN, ans.length - okN, num(b.pts, 100000), num(b.ms, 7200000), num(b.aids, 200), num(b.best, 200), b.done ? 1 : 0,
+    b.dev === 'm' || b.dev === 't' || b.dev === 'd' ? b.dev : '', city)];
+  for (const x of ans) st.push(db.prepare('INSERT OR REPLACE INTO qz_ans (rid, k, qid, slug, lv, ok, ms, t) VALUES (?1,?2,?3,?4,?5,?6,?7,?8)').bind(rid, x.k, x.qid, x.slug, x.lv, x.ok, x.ms, x.t || now));
+  await db.batch(st);
+  return json({ ok: true });
+}
+async function qzRuns(req, env, url) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (!env.LSTATS) return json({ ok: false, error: 'no-db' }, 503);
+  const db = env.LSTATS;
+  await qzEnsure(db);
+  const days = Math.max(1, Math.min(400, parseInt(url.searchParams.get('days'), 10) || 30));
+  const since = Date.now() - days * 86400000;
+  const slug = slugOk(url.searchParams.get('s') || '') ? url.searchParams.get('s') : '';
+  const pid = /^[a-z0-9]{8,20}$/.test(url.searchParams.get('pid') || '') ? url.searchParams.get('pid') : '';
+  const w = 'WHERE r.t >= ?1' + (slug ? " AND (',' || r.slugs || ',') LIKE ?2" : ' AND ?2 = ?2') + (pid ? ' AND r.pid = ?3' : ' AND ?3 = ?3');
+  const args = [since, slug ? '%,' + slug + ',%' : '', pid || ''];
+  const q = (sql) => db.prepare(sql).bind(...args).all().then((x) => x.results || []);
+  const [tot, people, runs, bySlug, byDay, hard] = await Promise.all([
+    q('SELECT COUNT(*) AS runs, COUNT(DISTINCT r.pid) AS people, SUM(r.n) AS answers, SUM(r.ok) AS ok, SUM(r.ms) AS ms, SUM(r.done) AS done FROM qz_run r ' + w),
+    q('SELECT r.pid, MAX(r.nick) AS nick, MAX(r.persona) AS persona, COUNT(*) AS runs, SUM(r.n) AS answers, SUM(r.ok) AS ok, SUM(r.pts) AS pts, SUM(r.ms) AS ms, MIN(r.t) AS first, MAX(r.t) AS last, GROUP_CONCAT(DISTINCT r.slugs) AS slugs, MAX(r.dev) AS dev, MAX(r.city) AS city FROM qz_run r ' + w + ' GROUP BY r.pid ORDER BY last DESC LIMIT 500'),
+    q('SELECT r.rid, r.t, r.pid, r.nick, r.persona, r.mode, r.slugs, r.pereks, r.n, r.ok, r.pts, r.ms, r.aids, r.best, r.done, r.dev, r.city FROM qz_run r ' + w + ' ORDER BY r.t DESC LIMIT 400'),
+    q("SELECT a.slug, COUNT(DISTINCT r.pid) AS people, COUNT(DISTINCT r.rid) AS runs, COUNT(*) AS answers, SUM(a.ok) AS ok FROM qz_ans a JOIN qz_run r ON r.rid = a.rid " + w + " AND a.slug != '' GROUP BY a.slug ORDER BY answers DESC"),
+    q('SELECT r.day, COUNT(*) AS runs, COUNT(DISTINCT r.pid) AS people, SUM(r.n) AS answers, SUM(r.ok) AS ok FROM qz_run r ' + w + ' GROUP BY r.day ORDER BY r.day'),
+    q('SELECT a.qid, MAX(a.slug) AS slug, MAX(a.lv) AS lv, COUNT(*) AS n, SUM(a.ok) AS ok, AVG(a.ms) AS ms FROM qz_ans a JOIN qz_run r ON r.rid = a.rid ' + w + ' GROUP BY a.qid HAVING COUNT(*) >= 3 ORDER BY (1.0 * SUM(a.ok) / COUNT(*)) ASC, n DESC LIMIT 60'),
+  ]);
+  let answers = [];
+  if (pid) answers = (await db.prepare('SELECT a.rid, a.k, a.qid, a.slug, a.lv, a.ok, a.ms, a.t FROM qz_ans a JOIN qz_run r ON r.rid = a.rid WHERE r.pid = ?1 AND r.t >= ?2 ORDER BY a.t DESC LIMIT 1000').bind(pid, since).all()).results || [];
+  return json({ ok: true, days, slug, pid, totals: tot[0] || {}, people, runs, bySlug, byDay, hard, answers });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -1468,6 +1543,8 @@ export default {
       if (p === '/ln/stat' && req.method === 'POST') return await lnStat(req, env);
       if (p === '/ln/stats' && req.method === 'GET') return await lnStats(req, env);
       if (p === '/qz/score' && req.method === 'POST') return await qzScore(req, env);
+      if (p === '/qz/log' && req.method === 'POST') return await qzLog(req, env);
+      if (p === '/qz/runs' && req.method === 'GET') return await qzRuns(req, env, url);
       if (p === '/qz/board' && req.method === 'GET') return await qzBoard(req, env, url);
       if (p === '/qz/proposers' && req.method === 'GET') return await qzProposers(req, env, url);
       if (p === '/qz/dec') return await qzDec(req, env, url);

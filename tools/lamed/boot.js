@@ -131,7 +131,7 @@
     document.body.appendChild(LG.brand.footer());
     function draw(p) {
       var host = document.getElementById('lm-app');
-      var f = { home: UI.home, shas: UI.shas, masechet: UI.masechet, lamed: UI.lamed, yomi: UI.yomi, settings: UI.settings, done: UI.done, admin: UI.admin, shiurim: UI.shiurim, quiz: UI.quiz }[p];
+      var f = { home: UI.home, shas: UI.shas, masechet: UI.masechet, lamed: UI.lamed, yomi: UI.yomi, settings: UI.settings, done: UI.done, admin: UI.admin, nivhanim: UI.nivhanim, shiurim: UI.shiurim, quiz: UI.quiz }[p];
       if (f) f(host);
     }
     /* תזכורת דפדפן: בפתיחת האתר, אם הופעלה ועבר זמנה והדף היומי טרם נלמד */

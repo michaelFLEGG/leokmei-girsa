@@ -13,7 +13,7 @@ HOME_TITLE = 'לאוקמי גירסא · קיצור התלמוד הבבלי, ק�
 HOME_DESC = ('לאוקמי גירסא - קיצור התלמוד הבבלי, דף אחר דף. '
              'קיצור הדף היומי, קיצור הש"ס, ומערכת לימוד אישית. חינם.')
 API = 'https://leokmei-suggest.m7654301.workers.dev'
-NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'masechet.html', 'quiz.html')
+NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'admin-quiz.html', 'masechet.html', 'quiz.html')
 
 ICONS = ('<meta property="og:image" content="%s/brand/og-image.png"><meta property="og:image:width" content="1200">'
          '<meta property="og:image:height" content="630"><meta property="og:image:alt" content="שער לאוקמי גירסא">'

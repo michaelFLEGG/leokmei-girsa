@@ -365,7 +365,11 @@
     var blitz = !!(ctx && ctx.blitz), BSECS = 60, tEnd = blitz ? Date.now() + BSECS * 1000 : 0, over = false, tmr = null;
     var n0 = blitz ? 0 : queue.length, i = 0, res = { right: 0, wrong: 0, pts: 0, streak: 0, best: 0, missed: [], total0: Q.score().total, marks: [], t00: Date.now(), blitz: blitz, mul: 0, aids: 0 };
     var retry = [], t0 = 0, locked = false, advanced = false, modalOpen = false, perm = [], ptsShown = res.total0;
-    function end() { if (tmr) clearInterval(tmr); res.ms = Date.now() - res.t00; Q.syncScore(); document.removeEventListener('keydown', keys); onEnd(res); }
+    /* נתוני הנבחנים למנהל (11.10.2026): כל סבב נרשם, גם אם הלומד עזב באמצע */
+    res.rid = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8); res.log = []; res.pers = pers;
+    var logged = false, onHide = function () { if (!logged && res.log.length) Q.logRun(res, false, true); };
+    window.addEventListener('pagehide', onHide);
+    function end() { if (tmr) clearInterval(tmr); res.ms = Date.now() - res.t00; Q.syncScore(); window.removeEventListener('pagehide', onHide); logged = true; Q.logRun(res, true, false); document.removeEventListener('keydown', keys); onEnd(res); }
     function show() {
       if (i >= queue.length || over) return end();
       var q = queue[i], isRetry = !!q._retry, card = el('div', 'lm-card lm-qz qz-card qz-l' + q.lvl);
@@ -414,6 +418,7 @@
           } else { res.streak = 0; res.mul = 0; res.wrong++; res.missed.push({ q: q, picked: q.o[perm[k]] }); }
           res.marks[Math.min(i, Math.max(0, n0 - 1))] = ok ? 'ok' : 'bad';
           var r = Q.record(q, ok, Date.now() - t0, pts, bn);
+          res.log.push({ q: q.i, s: q.s, p: q.p, lv: q.lvl, ok: ok ? 1 : 0, ms: Math.min(600000, Date.now() - t0), t: Date.now() });
           res.pts += pts;
           var after = Q.score();
           var lA = Q.level(before.total, Q.T_ALL), lB = Q.level(after.total, Q.T_ALL);
@@ -487,6 +492,25 @@
       }, 200);
     }
     show();
+  };
+
+  /* ---------------------------------------------------------- רישום הסבב לנתוני הנבחנים (למנהל בלבד) */
+  Q.logRun = function (res, done, beacon) {
+    try {
+      if (offline() || !shareOk() || !res || !res.log || !res.log.length) return;
+      var set = LG.settings(), id = LG.sync.identity(), w = window.innerWidth || 1000;
+      var touch = false; try { touch = matchMedia('(pointer: coarse)').matches; } catch (e) { }
+      var pereks = []; res.log.forEach(function (x) { if (x.p != null && pereks.indexOf(String(x.p)) < 0) pereks.push(String(x.p)); });
+      var body = JSON.stringify({
+        pid: id.pid, rid: res.rid, nick: set.qzNick || '', persona: res.pers || '', blitz: res.blitz ? 1 : 0, done: done ? 1 : 0,
+        pts: res.pts, ms: res.ms || (Date.now() - res.t00), aids: res.aids, best: res.best, pereks: pereks,
+        dev: w < 700 ? 'm' : (touch ? 't' : 'd'),
+        a: res.log.map(function (x) { return { q: x.q, s: x.s, lv: x.lv, ok: x.ok, ms: x.ms, t: x.t }; })
+      });
+      var url = LG.sync.base + '/qz/log';
+      if (beacon && navigator.sendBeacon) { navigator.sendBeacon(url, new Blob([body], { type: 'text/plain' })); return; }
+      fetch(url, { method: 'POST', body: body, headers: { 'content-type': 'text/plain' }, keepalive: true }).catch(function () { });
+    } catch (e) { }
   };
 
   /* ---------------------------------------------------------- סנכרון הניקוד ולוח המובילים */

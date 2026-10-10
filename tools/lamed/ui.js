@@ -32,7 +32,7 @@
       '<span class="lm-date">' + E(HD.long(now)) + '</span>' +
       '<div class="dd" id="lm-um"><button class="q lm-ib" type="button" aria-label="תפריט משתמש" aria-haspopup="menu" id="lm-umb">' + ic('user') + '</button>' +
       '<div class="menu"><a class="mi" href="settings.html">' + ic('gear') + 'הגדרות</a>' +
-      (adm ? '<a class="mi" href="admin-lamdim.html">' + ic('shield') + 'מנהל: שאלות ולומדים</a>' : '') +
+      (adm ? '<a class="mi" href="admin-lamdim.html">' + ic('shield') + 'מנהל: שאלות ולומדים</a><a class="mi" href="admin-quiz.html">' + ic('shield') + 'מנהל: הנבחנים</a>' : '') +
       (adm ? '<a class="mi" href="admin-texts.html">' + ic('gear') + 'טקסטים ששיניתי</a><a class="mi" href="#" onclick="if(window.LK&&LK.openStats)LK.openStats();return false">' + ic('shield') + 'נתוני גלישה</a>' : '') + '</div></div>';
     document.body.insertBefore(top, document.body.firstChild);
     $('#lm-burger').onclick = function () { $('#lm-nav').classList.toggle('open'); };

@@ -1,0 +1,22 @@
+# leokmei-print - הפקת קובצי PDF של לאוקמי גירסא בדפדפן אחד קבוע (Cloudflare Browser Rendering).
+# נפרד מ-leokmei-suggest: בלי סודות ובלי הרשאות מנהל. המטמון ב-KV המשותף (מפתחות print:v1:*),
+# והרישום בנתוני הגלישה ב-D1 הקיים (טבלת zs_c, שדה print).
+name = "leokmei-print"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+browser = { binding = "BROWSER" }
+
+[[kv_namespaces]]
+binding = "STORE"
+id = "94cebf3b2d294c3d903ee0be904f041c"
+
+[[d1_databases]]
+binding = "LSTATS"
+database_name = "leokmei-stats"
+database_id = "09171730-3be8-40a6-96c3-cee2059ab64a"
+
+[observability]
+enabled = false

@@ -26,6 +26,8 @@ SLUG = dict(zip(ALL, LATIN))
 # הגופנים שקובצי הוורד מבקשים, ושם הקובץ שהם מועתקים אליו באתר.
 # ההתאמה נעשית לפי המפתח הארוך ביותר שנמצא בשם הקובץ, כדי ש"Franknatan" לא ייחשב "frank".
 FONT_MAP = {'vilna-xb.otf': ['ExtraBold'], 'vilna-b.otf': ['Vilna-Bold', 'Vilna Bold'], 'vilna-m.ttf': ['Medium'],
+            # וילנא לייט (11.10.2026): הערות השוליים של התוספות בהדפסה (שני טורים). נטען רק במצב הדפסה.
+            'vilna-l.otf': ['Vilna-Light'],
             'vilna-r.otf': ['Vilna Regular', 'vilna-regular'], 'vilna-g.ttf': ['DBSVILNA'],
             'frank.ttf': ['frank.ttf', 'FrankRuehl'], 'franknatan.otf': ['Franknatan'], 'leukmey.otf': ['Leukmey'],
             # ההדגשה של פרנקריהל נעשית עד כה בידי הדפדפן, והיא קיצונית
@@ -336,6 +338,13 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     open(os.path.join(SITE, 'masechtot.html'), 'w', encoding='utf-8').write(idx)
     shutil.copy(os.path.join(ROOT, 'tools', 'daf_yomi.js'), os.path.join(SITE, 'daf-yomi.js'))
     shutil.copy(os.path.join(ROOT, 'tools', 'hdate.js'), os.path.join(SITE, 'hdate.js'))
+    # מנוע ההדפסה ל-PDF: פרופילי העמוד וספריית ה-QR (נטענים רק בהדפסה)
+    _pp = os.path.join(SITE, 'print-profiles')
+    os.makedirs(_pp, exist_ok=True)
+    for _f in os.listdir(os.path.join(ROOT, 'tools', 'print', 'profiles')):
+        shutil.copy(os.path.join(ROOT, 'tools', 'print', 'profiles', _f), os.path.join(_pp, _f))
+    shutil.copy(os.path.join(ROOT, 'tools', 'print', 'qrcode.js'), os.path.join(SITE, 'print-qr.js'))
+    shutil.copy(os.path.join(ROOT, 'tools', 'print', 'page2.html'), os.path.join(SITE, 'print-page2.html'))
     # צורת הדף: קואורדינטות בלבד (התמונות אינן באתר הציבורי ואינן במאגר)
     _tz = os.path.join(ROOT, 'data', 'tzura')
     if os.path.isdir(_tz):

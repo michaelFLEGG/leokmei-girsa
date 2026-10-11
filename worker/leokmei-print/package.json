@@ -1,0 +1,9 @@
+{
+  "name": "leokmei-print",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@cloudflare/puppeteer": "^1.4.0"
+  }
+}

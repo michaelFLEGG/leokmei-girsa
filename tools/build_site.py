@@ -5781,7 +5781,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   GOLD_CSS=".skel{max-width:30em;margin:0 auto;padding:1.4em .8em}.skel i{display:block;height:.9em;margin:1em 0;border-radius:.45em;background:linear-gradient(90deg,#ece5d3,#f7f2e6,#ece5d3);background-size:200% 100%;animation:lgsk 1.1s linear infinite}@keyframes lgsk{to{background-position:-200% 0}}@media (prefers-reduced-motion:reduce){.skel i{animation:none}}"+".bar .adm-b{display:none}body.adm .bar .adm-b{display:block}.bar .nonadm-b{display:block}body.adm .bar .nonadm-b{display:none}"
   JS=io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"hdate.js"),encoding="utf-8").read()+chr(10)+JS
   _td=os.path.dirname(os.path.abspath(__file__))
-  JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+
+         # מנוע ההדפסה ל-PDF (11.10.2026): קוד משותף לכל המסכתות. במצב ?print=1 הוא מחליף את התצוגה בעמודי A4; אחרת - רק חלון ההדפסה.
+         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   _SHARED_BODY=JS[:JS.rindex(chr(10)+"  build();")]   # הקוד המשותף לכל המסכתות; מה שאחריו (בקרה, צורת הדף, תוספות) פרטי למסכת
   # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
   # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.
@@ -5880,7 +5882,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
     <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
     <button onclick="document.body.classList.toggle('hc');this.classList.toggle('on')" title="ניגודיות גבוהה">ניגודיות</button></div></div>
-  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת והפירוש בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}{tosbtn}<button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
+  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת והפירוש בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}{tosbtn}<button id="prbtn" class="ib" onclick="prnOpen()" title="הדפסה לקובץ PDF בשני טורים על A4: מסכת, פרק, דף או טווח"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg><span class="t">הדפסה</span></button><button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
   <div class="bg dd" data-pri="2" data-label="כלים"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" aria-label="כלים" title="כלים: תוכן עניינים, אמוראים, הדפסה, הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-dots"/></svg><span class="t">כלים</span></button>
     <div class="ddp">
     <button onclick="panel('toc')" title="נושאי הסוגיות"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>תוכן העניינים</button>

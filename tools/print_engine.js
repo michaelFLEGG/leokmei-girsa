@@ -411,6 +411,9 @@
       var pgs=out.querySelectorAll('.pg');
       list.forEach(function(svg,k){var q=pgs[k]&&pgs[k].querySelector('.qr');if(q&&svg)q.innerHTML=svg})};
     await document.fonts.ready;
+    /* מדפיסים רק אחרי שהעמודים צוירו: הדפסה מיידית הניבה קובץ ריק (בלי טקסט) */
+    await new Promise(function(r){requestAnimationFrame(function(){requestAnimationFrame(r)})});
+    await new Promise(function(r){setTimeout(r,300)});
     window.__PRN.state='done';
     document.title='לאוקמי גירסא - '+mname+' - '+QS.get('from')+' - '+(QS.get('to')||QS.get('from'));
   }

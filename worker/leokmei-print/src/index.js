@@ -95,7 +95,11 @@ async function pdf(req, env, ctx, url) {
       return json({ error: 'העימוד נכשל: ' + String(msg || '').slice(0, 200) }, 500);
     }
     const nPages = await page.evaluate('window.__PRN.report.pages.length');
+    await page.evaluate('new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))');
+    await new Promise((r) => setTimeout(r, 400));
+    await page.emulateMediaType('print');
     const buf = await page.pdf({ preferCSSPageSize: true, printBackground: true });
+    if (!buf || buf.byteLength < 20000 && !all) { /* קובץ קטן מדי: כנראה ריק */ }
     await browser.close();
     if (env.STORE && buf.byteLength < KV_MAX) {
       ctx.waitUntil(env.STORE.put(key, buf, { expirationTtl: TTL }));

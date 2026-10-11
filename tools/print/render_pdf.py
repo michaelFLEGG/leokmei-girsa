@@ -139,6 +139,10 @@ def main():
             sys.exit(2)
         if not a.no_pdf:
             page.evaluate('document.fonts.ready')
+            rep['dom'] = page.evaluate("({pg: document.querySelectorAll('.pg').length, txt: (document.querySelector('.pg')||{}).innerText ? document.querySelector('.pg').innerText.length : 0, "
+                                       "body: [].map.call(document.body.children, e => e.tagName + '#' + e.id + ':' + getComputedStyle(e).display).slice(0, 40)})")
+            page.evaluate('new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))')
+            page.wait_for_timeout(400)
             page.emulate_media(media='print')
             page.pdf(path=a.out, prefer_css_page_size=True, print_background=True)
         b.close()

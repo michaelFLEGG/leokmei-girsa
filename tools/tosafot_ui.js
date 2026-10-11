@@ -23,7 +23,8 @@
   var ADM=null;          /* מנהל: {styles,picks,notes} */
   var MOVED={};          /* n -> true: העוגן זז */
   var PLACED={};         /* n -> כלל שהופעל */
-  var byN={};TS.items.forEach(function(it){byN[it.n]=it});
+  /* המספור המוצג הוא מספר סידורי בספרות (הוחלט 11.10.2026); האותיות נשמרות בחיפוש בלבד */
+  var byN={};TS.items.forEach(function(it){it.hnHeb=it.hn;it.hn=String(it.n);byN[it.n]=it});
 
   var sty=document.createElement('style');
   sty.textContent=
@@ -31,6 +32,7 @@
    '.tsm+.tsm::before{content:",";margin-inline-start:-.05em}'+
    '.tsm:hover,.tsm:focus-visible,.tsm.hot{background:var(--blue-soft,#e6edf7);color:#12396b;outline:0}'+
    '.tsm.mv{color:#a83c2f}'+
+   '.tsfoot,.tsn,.tsx,.tsadm,#tospop,#tosmenu,#tospb{color:#2b2620}'+
    '.tsfoot{margin:.9em 0 .5em;padding:.55em .2em 0;border-top:1px solid #d8cfb8;font-size:.82em;line-height:1.55;-webkit-user-select:text;user-select:text}'+
    '.tsfoot .tsh{font-family:Vilna,serif;font-weight:700;color:#7a5a14;font-size:.92em;margin-bottom:.35em}'+
    '.tsn{margin:.4em 0;padding:.25em .35em;border-radius:5px;scroll-margin-top:70px}'+
@@ -283,11 +285,11 @@
   /* ---- חיפוש: "תוס' קל"ד" או מילים מן ההערה ---- */
   window.tsSearchHtml=function(q){
     var nq=normCtx(q||''),out=[];if(nq.length<2)return '';
-    var num=/^תוס[׳']?\s*([א-ת\s"'׳״]+)$/.exec((q||'').trim());
+    var num=/^תוס[׳']?\s*([א-ת0-9\s"'׳״]+)$/.exec((q||'').trim());
     var want=num?num[1].replace(/[\s"'׳״]/g,''):'';
     TS.items.forEach(function(it){
-      var hn=it.hn.replace(/["']/g,'');
-      var hit=(want&&hn===want)||normCtx(it.dh+' '+txt(it)).indexOf(nq)>=0;
+      var hn=(it.hnHeb||'').replace(/["']/g,'');
+      var hit=(want&&(hn===want||String(it.n)===want))||normCtx(it.dh+' '+txt(it)).indexOf(nq)>=0;
       if(hit)out.push(it)});
     if(!out.length)return '';
     return '<div class="n">בתוספות: '+out.length+' תוצאות</div>'+out.slice(0,20).map(function(it){

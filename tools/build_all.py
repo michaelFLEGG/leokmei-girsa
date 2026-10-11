@@ -345,6 +345,7 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
         shutil.copy(os.path.join(ROOT, 'tools', 'print', 'profiles', _f), os.path.join(_pp, _f))
     shutil.copy(os.path.join(ROOT, 'tools', 'print', 'qrcode.js'), os.path.join(SITE, 'print-qr.js'))
     shutil.copy(os.path.join(ROOT, 'tools', 'print', 'page2.html'), os.path.join(SITE, 'print-page2.html'))
+    shutil.copy(os.path.join(ROOT, 'tools', 'print', 'print-board.html'), os.path.join(SITE, 'print-board.html'))
     # צורת הדף: קואורדינטות בלבד (התמונות אינן באתר הציבורי ואינן במאגר)
     _tz = os.path.join(ROOT, 'data', 'tzura')
     if os.path.isdir(_tz):

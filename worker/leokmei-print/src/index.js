@@ -12,8 +12,8 @@ const SITE = 'https://leokmei.com';
 const SUGGEST = 'https://leokmei-suggest.m7654301.workers.dev';
 const CORS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET,OPTIONS',
-  'Access-Control-Allow-Headers': 'content-type',
+  'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+  'Access-Control-Allow-Headers': 'content-type, x-admin-key',
   'Access-Control-Expose-Headers': 'X-Cache,X-Pages,Content-Disposition',
   'Access-Control-Max-Age': '86400',
 };
@@ -67,9 +67,10 @@ async function pdf(req, env, ctx, url) {
   const key = 'print:v1:' + await sha(JSON.stringify([m, all, from, to, tos, duplex, profile, ver, pick]));
   const hn = { kiddushin: 'קידושין' }[m] || m;
   const dfile = (all ? `${hn}.pdf` : `${hn} ${from}${to !== from ? ' - ' + to : ''}.pdf`).replace(/:/g, '꞉');
+  const inline = q.get('inline') === '1';
   const head = {
     'content-type': 'application/pdf',
-    'content-disposition': `attachment; filename="leokmei-${encodeURIComponent(m)}.pdf"; filename*=UTF-8''${encodeURIComponent('לאוקמי גירסא - ' + dfile)}`,
+    'content-disposition': `${inline ? 'inline' : 'attachment'}; filename="leokmei-${encodeURIComponent(m)}.pdf"; filename*=UTF-8''${encodeURIComponent('לאוקמי גירסא - ' + dfile)}`,
     'cache-control': 'private, max-age=300',
     ...CORS,
   };
@@ -95,6 +96,8 @@ async function pdf(req, env, ctx, url) {
       return json({ error: 'העימוד נכשל: ' + String(msg || '').slice(0, 200) }, 500);
     }
     const nPages = await page.evaluate('window.__PRN.report.pages.length');
+    const issues = await page.evaluate('window.__PRN.report.issues || []');
+    const warns = await page.evaluate('window.__PRN.report.warn || []');
     await page.evaluate('new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))');
     await new Promise((r) => setTimeout(r, 400));
     await page.emulateMediaType('print');
@@ -105,6 +108,7 @@ async function pdf(req, env, ctx, url) {
       ctx.waitUntil(env.STORE.put(key, buf, { expirationTtl: TTL }));
     }
     ctx.waitUntil(logPrint(env, `${m}|${all ? 'all' : 'range'}|tos${tos}|new|${Math.ceil(buf.byteLength / 102400) * 100}KB`));
+    if (env.STORE && (issues.length || warns.length)) ctx.waitUntil(saveIssues(env, { m, all, from, to, tos, duplex, profile }, issues, warns));
     return new Response(buf, { headers: { ...head, 'X-Cache': 'MISS', 'X-Pages': String(nPages) } });
   } catch (e) {
     try { if (browser) await browser.close(); } catch (x) { /* */ }
@@ -114,11 +118,52 @@ async function pdf(req, env, ctx, url) {
   }
 }
 
+/* ---- לוח התקלות (למנהל בלבד): מה שהבדיקה האוטומטית של המנוע מצאה בכל הפקה חדשה ---- */
+const ISSUES_KEY = 'print:issues:v1';
+async function saveIssues(env, req, issues, warns) {
+  try {
+    const cur = JSON.parse((await env.STORE.get(ISSUES_KEY)) || '[]');
+    const ts = Date.now();
+    const rows = issues.map((x, i) => ({ id: ts + '-' + i, ts, ...req, ...x }))
+      .concat(warns.map((w, i) => ({ id: ts + '-w' + i, ts, ...req, type: 'אזהרת מנוע', detail: String(w).slice(0, 200) })));
+    // אותה תקלה באותו מקום אינה נרשמת שוב ושוב
+    const seen = new Set(cur.map((x) => [x.m, x.type, x.page, x.daf, x.unit, x.detail].join('|')));
+    const fresh = rows.filter((x) => !seen.has([x.m, x.type, x.page, x.daf, x.unit, x.detail].join('|')));
+    if (!fresh.length) return;
+    await env.STORE.put(ISSUES_KEY, JSON.stringify(fresh.concat(cur).slice(0, 300)));
+  } catch (e) { /* */ }
+}
+async function isAdmin(req) {
+  const k = req.headers.get('x-admin-key') || '';
+  if (!k) return false;
+  try {
+    const r = await fetch(`${SUGGEST}/stats/summary?days=1`, { headers: { 'x-admin-key': k } });
+    return r.ok;
+  } catch (e) { return false; }
+}
+async function issues(req, env) {
+  if (!(await isAdmin(req))) return json({ error: 'למנהל בלבד' }, 403);
+  if (req.method === 'POST') {
+    let b; try { b = await req.json(); } catch (e) { return json({ error: 'גוף הבקשה אינו JSON' }, 400); }
+    const cur = JSON.parse((await env.STORE.get(ISSUES_KEY)) || '[]');
+    const it = cur.find((x) => x.id === String(b.id || ''));
+    if (!it) return json({ error: 'תקלה לא נמצאה' }, 404);
+    if (typeof b.note === 'string') it.note = b.note.slice(0, 1000);
+    if (typeof b.done === 'string') it.done = b.done.slice(0, 300);
+    if (b.dismiss) it.dismissed = true;
+    await env.STORE.put(ISSUES_KEY, JSON.stringify(cur));
+    return json({ ok: true });
+  }
+  const cur = JSON.parse((await env.STORE.get(ISSUES_KEY)) || '[]');
+  return json({ ok: true, issues: cur.filter((x) => !x.dismissed) });
+}
+
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
     if (url.pathname === '/pdf' && req.method === 'GET') return pdf(req, env, ctx, url);
+    if (url.pathname === '/issues') return issues(req, env);
     if (url.pathname === '/health') return json({ ok: true });
     return json({ error: 'לא נמצא' }, 404);
   },

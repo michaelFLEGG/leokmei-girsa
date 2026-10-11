@@ -414,6 +414,7 @@
     /* מדפיסים רק אחרי שהעמודים צוירו: הדפסה מיידית הניבה קובץ ריק (בלי טקסט) */
     await new Promise(function(r){requestAnimationFrame(function(){requestAnimationFrame(r)})});
     await new Promise(function(r){setTimeout(r,300)});
+    try{R.fonts=Array.from(document.fonts).map(function(f){return f.family+" "+f.weight+" "+f.status})}catch(e){}
     window.__PRN.state='done';
     document.title='לאוקמי גירסא - '+mname+' - '+QS.get('from')+' - '+(QS.get('to')||QS.get('from'));
   }

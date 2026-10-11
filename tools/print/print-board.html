@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>לוח תקלות הדפסה</title>
+<style>
+:root{--paper:#fbf8f1;--ink:#1d1a16;--gold:#c9a24a;--line:#d8cfb8;--red:#a83c2f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--paper:#14181f;--ink:#ece6d6;--line:#3a3f4a}}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:'Frank Ruhl Libre',Frank,serif;font-size:17px;line-height:1.5}
+main{max-width:56em;margin:0 auto;padding:16px}
+h1{font-size:1.3em;margin:.2em 0 .6em;color:#7a5a14}
+.row{border:1px solid var(--line);border-radius:8px;padding:.6em .8em;margin:.6em 0}
+.row b{color:var(--red)}
+.meta{color:#7a6f58;font-size:.88em}
+.links a{margin-inline-end:1em}
+textarea{width:100%;box-sizing:border-box;font:inherit;min-height:3.2em;border:1px solid var(--line);border-radius:6px;padding:.4em;background:#fff;color:#000;direction:rtl}
+button{font:inherit;padding:.3em .9em;border-radius:6px;border:1px solid #a98a36;background:#fff;cursor:pointer;min-height:36px}
+button.go{background:var(--gold)}
+.done{color:#2f6b2f}
+#msg{margin:.6em 0;color:var(--red)}
+</style>
+</head>
+<body>
+<main>
+<h1>לוח תקלות הדפסה (למנהל בלבד)</h1>
+<p class="meta">כל תקלה שהבדיקה האוטומטית של המנוע מצאה בהפקה חדשה. לכל תקלה קישור לעמוד ב-PDF ולמקום באתר, ושדה להצעת פתרון שנשמרת ונקראת בעבודה הבאה על המנוע.</p>
+<div id="msg"></div>
+<div id="list">טוען...</div>
+</main>
+<script>
+(function(){
+var API='https://leokmei-print.m7654301.workers.dev';
+function key(){try{return localStorage.getItem('lg-adm')||''}catch(e){return ''}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function pdfLink(it){
+  var q=new URLSearchParams({m:it.m,tos:it.tos||'0',duplex:it.duplex||'0',profile:it.profile||'a4',inline:'1'});
+  if(it.all)q.set('all','1');else{q.set('from',it.from);q.set('to',it.to)}
+  return API+'/pdf?'+q.toString()+'#page='+(it.page||1)}
+function siteLink(it){return '/'+it.m+'.html#daf='+encodeURIComponent(it.daf||it.from||'')}
+function draw(rows){
+  var el=document.getElementById('list');
+  if(!rows.length){el.textContent='אין תקלות פתוחות.';return}
+  el.innerHTML=rows.map(function(it){
+    return '<div class="row" data-id="'+esc(it.id)+'"><div><b>'+esc(it.type)+'</b> '+esc(it.detail||'')+'</div>'+
+      '<div class="meta">מסכת '+esc(it.m)+' · '+(it.all?'מסכת שלמה':esc(it.from)+' עד '+esc(it.to))+(it.page?' · עמוד '+esc(it.page)+' ב-PDF':'')+(it.daf?' · דף '+esc(it.daf):'')+' · '+new Date(it.ts).toLocaleString('he-IL')+'</div>'+
+      '<div class="links">'+(it.page?'<a href="'+esc(pdfLink(it))+'" target="_blank" rel="noopener">פתח את העמוד ב-PDF</a>':'')+'<a href="'+esc(siteLink(it))+'" target="_blank" rel="noopener">פתח את המקום באתר</a></div>'+
+      '<textarea placeholder="הצעת פתרון">'+esc(it.note||'')+'</textarea>'+
+      '<div style="margin-top:.4em"><button class="go" data-a="save">שמור הצעה</button> <button data-a="dismiss">הסר מהלוח</button>'+
+      (it.done?' <span class="done">בוצע: '+esc(it.done)+'</span>':'')+'</div></div>'}).join('')}
+function load(){
+  fetch(API+'/issues',{headers:{'x-admin-key':key()},cache:'no-store'}).then(function(r){
+    if(r.status===403){document.getElementById('list').textContent='הלוח למנהל בלבד. היכנס כמנהל בדף המסכת ופתח אותו שוב.';return null}
+    return r.json()}).then(function(j){if(j&&j.issues)draw(j.issues)}).catch(function(){document.getElementById('list').textContent='שירות ההפקה אינו זמין כרגע.'})}
+document.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('button[data-a]');if(!b)return;
+  var row=b.closest('.row'),id=row.getAttribute('data-id');
+  var body=b.dataset.a==='save'?{id:id,note:row.querySelector('textarea').value}:{id:id,dismiss:true};
+  b.disabled=true;
+  fetch(API+'/issues',{method:'POST',headers:{'x-admin-key':key(),'content-type':'application/json'},body:JSON.stringify(body)})
+    .then(function(r){return r.json()}).then(function(j){b.disabled=false;
+      document.getElementById('msg').textContent=j.ok?'':'לא נשמר';
+      if(j.ok&&body.dismiss)row.remove()}).catch(function(){b.disabled=false;document.getElementById('msg').textContent='לא נשמר'})});
+load();
+})();
+</script>
+</body>
+</html>

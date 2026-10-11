@@ -21,7 +21,7 @@ def main():
     dh = {str(r['n']): r['dh'] for r in count['items']}
     body = {}
     for k, s in styles.items():
-        o = {x: s[x] for x in 'abcde'}
+        o = {x: s[x] for x in 'abcde' if s.get(x)}
         o['dh'] = dh.get(k, '')
         body[k] = o
     r = _api.call('/tos', 'PUT', {'slug': slug, 'styles': body})

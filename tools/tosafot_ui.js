@@ -182,6 +182,7 @@
     if(!a||!a.styles||!a.styles[it.n]){return h+'<div>חמשת הנוסחאות נטענות מנקודת הקליטה...</div></div>'}
     var st=a.styles[it.n],pk=a.picks&&a.picks[it.n],nt=a.notes&&a.notes[it.n];
     STY.forEach(function(s){
+      if(!st[s[0]])return;
       h+='<div class="tsv'+(pk&&pk.p===s[0]?' cur':'')+'"><span class="tsvn">'+ge(s[1])+'</span><span class="tsvt">'+ge(st[s[0]]||'')+'</span>'+
          '<button class="go" data-n="'+it.n+'" data-k="'+s[0]+'" onclick="tosPick(this)">בחר</button></div>'});
     h+='<textarea class="tsedit" data-n="'+it.n+'" aria-label="עריכה חופשית">'+ge(txt(it))+'</textarea>'+

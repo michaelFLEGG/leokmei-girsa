@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>סטטיסטיקות מבקרים · לאוקמי גירסא</title>
+<!-- לוח נתוני הגלישה של לאוקמי גירסא (מנה 9.10.2026). העתקה של לוח הסטטיסטיקות של ממלכת הזוהר: אותם מדורים, אותו סדר, אותם ניסוחים.
+     נשען על /stats/summary ב-Worker של האתר (מנהל בלבד). מנהל אינו נספר, ולכן פתיחת הדף אינה נספרת. -->
+<style>
+:root { --paper:#faf7ef; --card:#fff; --ink:#232323; --ink2:#6b675c; --gold:#a8862c; --line:#e4e1d8; --blue:#1f3a63; }
+@media (prefers-color-scheme: dark) {
+  :root { --paper:#14161c; --card:#1c1f27; --ink:#e8e5dc; --ink2:#9a968a; --line:#2b3140; --blue:#8fb0dd; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Segoe UI", system-ui, sans-serif; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { font-size: 1.5rem; margin: 18px 0 4px; }
+.sub { color: var(--ink2); font-size: .85rem; margin-bottom: 22px; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:26px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+.card b { display:block; font-size:1.7rem; color:var(--blue); }
+.card span { font-size:.78rem; color:var(--ink2); }
+.chart { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:26px; }
+.chart h3 { margin:0 0 12px; font-size:.95rem; }
+.bars { display:flex; align-items:flex-end; gap:3px; height:120px; direction:ltr; }
+.bar { flex:1; background:var(--blue); border-radius:2px 2px 0 0; min-height:2px; position:relative; opacity:.85; }
+.bar:hover { opacity:1; }
+.bar i { position:absolute; bottom:100%; left:50%; transform:translateX(-50%); background:var(--ink);
+  color:var(--paper); font-style:normal; font-size:.68rem; padding:1px 6px; border-radius:5px;
+  white-space:nowrap; display:none; margin-bottom:3px; z-index:2; }
+.bar:hover i, .bar:focus i, .bar.tap i { display:block; }
+.xlab { display:flex; gap:3px; direction:ltr; margin-top:4px; }
+.xlab span { flex:1; text-align:center; font-size:.65rem; color:var(--ink2); }
+.hrow { display:flex; align-items:center; gap:10px; margin:6px 0; font-size:.85rem; }
+.hrow .lbl { min-width:110px; }
+.hrow .trk { flex:1; background:var(--paper); border:1px solid var(--line); border-radius:6px; height:14px; overflow:hidden; }
+.hrow .fil { height:100%; background:var(--blue); border-radius:6px 0 0 6px; }
+.hrow .val { min-width:90px; font-variant-numeric:tabular-nums; color:var(--ink2); font-size:.8rem; }
+.note { font-size:.75rem; color:var(--ink2); margin-top:8px; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:26px 12px; }
+@media (max-width:700px) { .grid2 { grid-template-columns:1fr; gap:0; } .hrow .lbl { min-width:80px; } }
+table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line);
+  border-radius:10px; overflow:hidden; font-size:.85rem; }
+th, td { padding:7px 12px; text-align:right; border-bottom:1px solid var(--line); }
+th { background:var(--paper); color:var(--ink2); font-weight:600; font-size:.78rem; }
+td.n { font-variant-numeric:tabular-nums; }
+#login { text-align:center; margin-top:80px; }
+#login input { font-size:1rem; padding:8px 12px; border:1px solid var(--line); border-radius:8px;
+  background:var(--card); color:var(--ink); text-align:center; }
+#login button { font-size:1rem; padding:8px 18px; margin-inline-start:8px; border:1px solid var(--gold);
+  border-radius:8px; background:var(--card); color:var(--ink); cursor:pointer; }
+.corner-home { position:fixed; top:10px; right:10px; z-index:50; }
+.corner-home a { display:inline-block; width:34px; height:34px; line-height:32px; text-align:center;
+  background:var(--card); border:1px solid var(--line); border-radius:8px; color:var(--ink);
+  text-decoration:none; font-size:17px; }
+.corner-home a:hover { border-color:var(--gold); }
+#err { color:#b3372f; font-size:.85rem; margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="corner-home"><a href="/" title="חזרה לדף הבית">⌂</a></div>
+<div class="wrap">
+  <h1>📊 סטטיסטיקות מבקרים</h1>
+  <div class="sub">נתונים אנונימיים בלבד - בלי כתובות, בלי זיהוי אישי. למנהל בלבד.</div>
+
+  <div id="login" hidden>
+    <p>הצגת הנתונים דורשת התחברות מנהל.</p>
+    <input id="pw" type="password" placeholder="מילת מנהל" autocomplete="off">
+    <button id="go">כניסה</button>
+    <div id="err"></div>
+  </div>
+
+  <div id="dash" hidden>
+    <div class="cards">
+      <div class="card"><b id="cToday">–</b><span>צפיות היום</span></div>
+      <div class="card"><b id="cVisToday">–</b><span>מבקרים היום</span></div>
+      <div class="card"><b id="cNewToday">–</b><span>מבקרים חדשים היום</span></div>
+      <div class="card"><b id="cWeek">–</b><span>צפיות בשבוע האחרון</span></div>
+      <div class="card"><b id="cMonth">–</b><span>צפיות בחודש האחרון</span></div>
+      <div class="card"><b id="cNewMonth">–</b><span>מבקרים חדשים (חודש)</span></div>
+      <div class="card"><b id="cAvg">–</b><span>דקות שהייה ממוצעות למבקר (חודש)</span></div>
+    </div>
+    <div class="chart">
+      <h3>צפיות ביום - 30 הימים האחרונים</h3>
+      <div class="bars" id="bars"></div>
+    </div>
+    <div class="chart">
+      <h3>צפיות לפי איזור (30 יום)</h3>
+      <div id="geoBox"></div>
+      <div class="note">בישראל - לפי עיר (דיוק מקורב: גולשים בסלולר מזוהים לעיתים לפי מרכזיית הספק); בחו"ל - לפי מדינה. בלי שמירת כתובות.</div>
+    </div>
+    <div class="grid2">
+      <div class="chart">
+        <h3>צפיות לפי שעות היממה (30 יום, שעון ישראל)</h3>
+        <div class="bars" id="hourBars"></div>
+        <div class="xlab" id="hourLabs"></div>
+      </div>
+      <div class="chart">
+        <h3>צפיות לפי ימי השבוע (30 יום)</h3>
+        <div class="bars" id="wdBars" style="direction:rtl"></div>
+        <div class="xlab" id="wdLabs" style="direction:rtl"></div>
+      </div>
+    </div>
+    <div class="chart">
+      <h3>נייד או מחשב - כניסות (30 יום)</h3>
+      <div id="devBox"></div>
+    </div>
+    <div class="grid2">
+      <div class="chart">
+        <h3>מאיפה הגיעו (30 יום)</h3>
+        <table id="refTable"><thead><tr><th>מקור</th><th>כניסות</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="chart">
+        <h3>עמודי כניסה (30 יום)</h3>
+        <table id="enTable"><thead><tr><th>עמוד</th><th>כניסות</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+    <div class="chart">
+      <h3>העמודים הנצפים ביותר (30 יום)</h3>
+      <table id="pgTable"><thead><tr><th>עמוד</th><th>צפיות</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="note" id="startNote">כל הפילוחים נאספים מאז ט' בתשרי תשפ"ז (9.10.2026); ימים שלפני כן יופיעו ריקים. מנהל מחובר אינו נספר.</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var CITY_HE = {
+    'jerusalem':'ירושלים','tel aviv':'תל אביב','tel aviv-yafo':'תל אביב','haifa':'חיפה',
+    'bnei brak':'בני ברק','bene beraq':'בני ברק','bnei berak':'בני ברק',
+    'beit shemesh':'בית שמש','bet shemesh':'בית שמש',
+    "modi'in illit":'מודיעין עילית','modiin illit':'מודיעין עילית',
+    'beitar illit':'ביתר עילית','betar illit':'ביתר עילית',
+    'ashdod':'אשדוד','ashkelon':'אשקלון',
+    'petah tikva':'פתח תקווה','petah tiqwa':'פתח תקווה','petach tikva':'פתח תקווה',
+    "el'ad":'אלעד','elad':'אלעד','rehovot':'רחובות','netanya':'נתניה','ramat gan':'רמת גן',
+    'givatayim':'גבעתיים','holon':'חולון','bat yam':'בת ים',
+    'rishon lezion':'ראשון לציון','rishon leziyyon':'ראשון לציון',
+    'beersheba':'באר שבע',"be'er sheva":'באר שבע',
+    'safed':'צפת','zefat':'צפת','tzfat':'צפת','tiberias':'טבריה','lod':'לוד','ramla':'רמלה',
+    'herzliya':'הרצליה','kfar saba':'כפר סבא',"ra'anana":'רעננה','raanana':'רעננה',
+    'kiryat gat':'קריית גת','ofakim':'אופקים','netivot':'נתיבות','arad':'ערד','eilat':'אילת',
+    'afula':'עפולה','nahariya':'נהריה','hadera':'חדרה','acre':'עכו','akko':'עכו',
+    'nazareth':'נצרת','nof hagalil':'נוף הגליל','yavne':'יבנה',
+    'modiin':'מודיעין',"modi'in":'מודיעין',"modi'in-maccabim-re'ut":'מודיעין',
+    'maale adumim':'מעלה אדומים',"ma'ale adumim":'מעלה אדומים',
+    'rosh haayin':'ראש העין',"rosh ha'ayin":'ראש העין',
+    'kiryat ata':'קריית אתא','kiryat bialik':'קריית ביאליק','kiryat motzkin':'קריית מוצקין',
+    'kiryat yam':'קריית ים','kiryat shmona':'קריית שמונה','kiryat malakhi':'קריית מלאכי',
+    'beit shean':'בית שאן','sderot':'שדרות','dimona':'דימונה','yeruham':'ירוחם',
+    "giv'at ze'ev":'גבעת זאב','givat zeev':'גבעת זאב','rekhasim':'רכסים',
+    'immanuel':'עמנואל','emmanuel':'עמנואל','beit el':'בית אל','efrat':'אפרת'
+  };
+  var COUNTRY_HE = {
+    IL:'ישראל',US:'ארה"ב',GB:'בריטניה',FR:'צרפת',BE:'בלגיה',DE:'גרמניה',NL:'הולנד',
+    CH:'שווייץ',AT:'אוסטריה',IT:'איטליה',ES:'ספרד',CA:'קנדה',MX:'מקסיקו',AR:'ארגנטינה',
+    BR:'ברזיל',UY:'אורוגוואי',PA:'פנמה',AU:'אוסטרליה',ZA:'דרום אפריקה',RU:'רוסיה',
+    UA:'אוקראינה',GE:'גאורגיה',HU:'הונגריה',PL:'פולין',CZ:"צ'כיה",RO:'רומניה',MD:'מולדובה',
+    TR:'טורקיה',TH:'תאילנד',IN:'הודו',CN:'סין',JP:'יפן',GR:'יוון',CY:'קפריסין',SE:'שוודיה',
+    NO:'נורווגיה',DK:'דנמרק',FI:'פינלנד',IE:'אירלנד',PT:'פורטוגל',MA:'מרוקו',TN:'תוניסיה',
+    AE:'איחוד האמירויות',EG:'מצרים',JO:'ירדן',KR:'דרום קוריאה'
+  };
+  function geoName(k) {
+    if (k === 'IL') return 'ישראל - עיר לא ידועה';
+    if (k.slice(0, 3) === 'IL:') {
+      var c = k.slice(3);
+      return CITY_HE[c.toLowerCase()] || c + ' (ישראל)';
+    }
+    return COUNTRY_HE[k] || 'חו"ל - ' + k;
+  }
+  function refName(h) {
+    if (h === 'direct') return 'כניסה ישירה';
+    if (h.indexOf('google.') === 0) return 'חיפוש גוגל';
+    if (h === 'bing.com') return 'חיפוש בינג';
+    if (h === 'duckduckgo.com') return 'DuckDuckGo';
+    if (/(^|\.)facebook\.com$/.test(h)) return 'פייסבוק';
+    if (/(^|\.)instagram\.com$/.test(h)) return 'אינסטגרם';
+    if (h === 'twitter.com' || h === 'x.com' || h === 't.co') return 'טוויטר (X)';
+    if (/whatsapp\.com$/.test(h)) return 'וואטסאפ';
+    if (h === 't.me' || /telegram\.org$/.test(h)) return 'טלגרם';
+    if (/(^|\.)youtube\.com$/.test(h) || h === 'youtu.be') return 'יוטיוב';
+    if (h === 'mail.google.com') return "ג'ימייל";
+    if (h === 'outlook.live.com') return 'אאוטלוק';
+    return h;
+  }
+  var WD_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+  function ident(x) { return x; }
+
+  function aggAll(days, field) {
+    var agg = {};
+    days.forEach(function (d) {
+      var o = d[field] || {};
+      Object.keys(o).forEach(function (k) { agg[k] = (agg[k] || 0) + o[k]; });
+    });
+    return agg;
+  }
+  function fillTable(tbodySel, agg, nameFn, limit, emptyMsg) {
+    var tb = document.querySelector(tbodySel);
+    tb.innerHTML = '';
+    var keys = Object.keys(agg).sort(function (a, b) { return agg[b] - agg[a]; }).slice(0, limit);
+    if (!keys.length) {
+      var tr0 = document.createElement('tr');
+      var td0 = document.createElement('td');
+      td0.colSpan = 2; td0.style.color = 'var(--ink2)';
+      td0.textContent = emptyMsg || 'אין עדיין נתונים';
+      tr0.appendChild(td0); tb.appendChild(tr0);
+      return;
+    }
+    keys.forEach(function (k) {
+      var tr = document.createElement('tr');
+      var td1 = document.createElement('td'); td1.textContent = nameFn(k);
+      var td2 = document.createElement('td'); td2.className = 'n'; td2.textContent = agg[k].toLocaleString('he-IL');
+      tr.appendChild(td1); tr.appendChild(td2); tb.appendChild(tr);
+    });
+  }
+  function fillHBars(boxSel, rows, emptyMsg) {
+    var box = document.getElementById(boxSel);
+    box.innerHTML = '';
+    var total = rows.reduce(function (s, r) { return s + r.n; }, 0);
+    if (!total) {
+      var p = document.createElement('div');
+      p.className = 'note'; p.textContent = emptyMsg || 'אין עדיין נתונים';
+      box.appendChild(p);
+      return;
+    }
+    var mx = Math.max.apply(null, rows.map(function (r) { return r.n; }));
+    rows.forEach(function (r) {
+      var row = document.createElement('div'); row.className = 'hrow';
+      var lbl = document.createElement('span'); lbl.className = 'lbl'; lbl.textContent = r.name;
+      var trk = document.createElement('div'); trk.className = 'trk';
+      var fil = document.createElement('div'); fil.className = 'fil';
+      fil.style.width = Math.max(2, Math.round(r.n / mx * 100)) + '%';
+      trk.appendChild(fil);
+      var val = document.createElement('span'); val.className = 'val';
+      val.textContent = r.n.toLocaleString('he-IL') + ' (' + Math.round(r.n / total * 100) + '%)';
+      row.appendChild(lbl); row.appendChild(trk); row.appendChild(val);
+      box.appendChild(row);
+    });
+  }
+  function vBar(container, hPct, tipText) {
+    var b = document.createElement('div');
+    b.className = 'bar';
+    b.tabIndex = 0;
+    b.style.height = hPct + '%';
+    var tip = document.createElement('i');
+    tip.textContent = tipText;
+    b.appendChild(tip);
+    /* בטלפון אין ריחוף: נגיעה בעמודה מציגה את הנתון שלה */
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call(document.querySelectorAll('.bar.tap'), function (x) { if (x !== b) x.classList.remove('tap'); });
+      b.classList.toggle('tap');
+    });
+    container.appendChild(b);
+  }
+
+  var API = 'https://leokmei-suggest.m7654301.workers.dev';
+  /* בדיקה מקומית בלבד: ?api=http://127.0.0.1:PORT */
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) { var qa = /[?&]api=([^&]+)/.exec(location.search); if (qa) API = decodeURIComponent(qa[1]); }
+  function getKey() { try { return localStorage.getItem('lg-adm') || ''; } catch (e) { return ''; } }
+  function load(key) {
+    return fetch(API + '/stats/summary?days=30', { headers: { 'x-admin-key': key || getKey() }, cache: 'no-store' }).then(function (r) {
+      if (r.status === 403) throw new Error('auth');
+      if (!r.ok) throw new Error('srv');
+      return r.json();
+    });
+  }
+  /* תאריך עברי בלבד, כפי שנקבע לכל האתר */
+  function heLetters(n) {
+    if (n === 15) return 'ט״ו';
+    if (n === 16) return 'ט״ז';
+    var T = [[30, 'ל'], [20, 'כ'], [10, 'י'], [9, 'ט'], [8, 'ח'], [7, 'ז'], [6, 'ו'], [5, 'ה'], [4, 'ד'], [3, 'ג'], [2, 'ב'], [1, 'א']], s = '';
+    T.forEach(function (p) { while (n >= p[0]) { s += p[1]; n -= p[0]; } });
+    return s.length > 1 ? s.slice(0, -1) + '״' + s.slice(-1) : s + '׳';
+  }
+  function heDate(day) {
+    try {
+      var parts = new Intl.DateTimeFormat('he-IL-u-ca-hebrew', { day: 'numeric', month: 'long', timeZone: 'UTC' }).formatToParts(new Date(day + 'T12:00:00Z'));
+      var d = 0, m = '';
+      parts.forEach(function (p) { if (p.type === 'day') d = parseInt(p.value, 10); else if (p.type === 'month') m = p.value; });
+      return heLetters(d) + ' ב' + m;
+    } catch (e) { return day.slice(8) + '.' + day.slice(5, 7); }
+  }
+
+  function render(data) {
+    document.getElementById('login').hidden = true;
+    document.getElementById('dash').hidden = false;
+    var days = data.days;                       // [0] = היום
+    var today = days[0];
+    var week = days.slice(0, 7).reduce(function (s, d) { return s + d.views; }, 0);
+    var month = days.reduce(function (s, d) { return s + d.views; }, 0);
+    var mins = days.reduce(function (s, d) { return s + d.minutes; }, 0);
+    var vis = days.reduce(function (s, d) { return s + d.visitors; }, 0);
+    var newToday = today.newv || 0;
+    var newMonth = days.reduce(function (s, d) { return s + (d.newv || 0); }, 0);
+    document.getElementById('cToday').textContent = today.views.toLocaleString('he-IL');
+    document.getElementById('cVisToday').textContent = today.visitors.toLocaleString('he-IL');
+    document.getElementById('cNewToday').textContent = newToday.toLocaleString('he-IL');
+    document.getElementById('cWeek').textContent = week.toLocaleString('he-IL');
+    document.getElementById('cMonth').textContent = month.toLocaleString('he-IL');
+    document.getElementById('cNewMonth').textContent = newMonth.toLocaleString('he-IL');
+    document.getElementById('cAvg').textContent = vis ? (mins / vis).toFixed(1) : '0';
+
+    var bars = document.getElementById('bars');
+    bars.innerHTML = '';
+    var mx = Math.max.apply(null, days.map(function (d) { return d.views; }).concat([1]));
+    days.slice().reverse().forEach(function (d) {
+      vBar(bars, Math.max(2, Math.round(d.views / mx * 100)),
+        heDate(d.day) + ' - ' + d.views + ' צפיות, ' + d.visitors + ' מבקרים' +
+        (d.newv ? ' (' + d.newv + ' חדשים)' : ''));
+    });
+
+    var geo = aggAll(days, 'geo');
+    var geoRows = Object.keys(geo).sort(function (a, b) { return geo[b] - geo[a]; })
+      .slice(0, 20).map(function (k) { return { name: geoName(k), n: geo[k] }; });
+    fillHBars('geoBox', geoRows, 'אין עדיין נתוני-איזור');
+
+    var hours = aggAll(days, 'hours');
+    var hb = document.getElementById('hourBars'), hl = document.getElementById('hourLabs');
+    hb.innerHTML = ''; hl.innerHTML = '';
+    var hmx = Math.max.apply(null, Object.keys(hours).map(function (h) { return hours[h]; }).concat([1]));
+    for (var h = 0; h < 24; h++) {
+      var hv = hours[String(h)] || 0;
+      vBar(hb, Math.max(2, Math.round(hv / hmx * 100)),
+        'בין ' + h + ':00 ל-' + ((h + 1) % 24) + ':00 - ' + hv + ' צפיות');
+      var sp = document.createElement('span');
+      sp.textContent = (h % 3 === 0) ? h : '';
+      hl.appendChild(sp);
+    }
+
+    var wd = [0, 0, 0, 0, 0, 0, 0];
+    days.forEach(function (d) {
+      wd[new Date(d.day + 'T00:00:00Z').getUTCDay()] += d.views;
+    });
+    var wb = document.getElementById('wdBars'), wl = document.getElementById('wdLabs');
+    wb.innerHTML = ''; wl.innerHTML = '';
+    var wmx = Math.max.apply(null, wd.concat([1]));
+    for (var w = 0; w < 7; w++) {
+      vBar(wb, Math.max(2, Math.round(wd[w] / wmx * 100)),
+        'ימי ' + WD_NAMES[w] + ' - ' + wd[w] + ' צפיות');
+      var wsp = document.createElement('span');
+      wsp.textContent = WD_NAMES[w].slice(0, 1) + "'";
+      wl.appendChild(wsp);
+    }
+
+    var dev = aggAll(days, 'dev');
+    fillHBars('devBox', [
+      { name: 'נייד', n: dev.m || 0 },
+      { name: 'מחשב', n: dev.d || 0 },
+    ].filter(function (r) { return r.n || (dev.m || dev.d); }),
+      'אין עדיין נתוני-מכשיר');
+
+    fillTable('#refTable tbody', aggAll(days, 'refs'), refName, 15, 'אין עדיין נתוני-מקור');
+    fillTable('#enTable tbody', aggAll(days, 'entry'), ident, 15, 'אין עדיין נתוני-כניסה');
+    fillTable('#pgTable tbody', aggAll(days, 'pages'), ident, 15);
+  }
+
+  function fail() {
+    document.getElementById('login').hidden = false;
+    document.getElementById('dash').hidden = true;
+  }
+
+  load().then(render).catch(fail);
+  document.getElementById('go').addEventListener('click', function () {
+    var pw = document.getElementById('pw').value.trim();
+    if (!pw) return;
+    fetch(API + '/auth', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ word: pw, label: 'לוח נתוני גלישה' }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok || !j.token) { document.getElementById('err').textContent = 'המילה שגויה או שאינה של מנהל.'; return; }
+        try { localStorage.setItem('lg-adm', j.token); } catch (e) { /* */ }
+        return load(j.token).then(render);
+      })
+      .catch(function () { document.getElementById('err').textContent = 'שגיאת תקשורת.'; });
+  });
+  document.getElementById('pw').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') document.getElementById('go').click();
+  });
+})();
+</script>
+</body>
+</html>

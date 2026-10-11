@@ -1,0 +1,41 @@
+name: משיכת עריכות מנקודת הקליטה
+# מכשיר מוכר של המנהל שומר עריכה בנקודת הקליטה (Cloudflare Worker), והיא
+# מוצגת מיד לכל לומד. כאן, כל חמש דקות, העריכות נאפות לנתוני האתר
+# (data/edits) ונבנות רק המסכתות שהשתנו - בלי מחשב ובלי בעל הפרויקט.
+on:
+  schedule:
+    - cron: '3,8,13,18,23,28,33,38,43,48,53,58 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: pull-edits
+  cancel-in-progress: false
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install lxml fonttools
+      - name: משיכה
+        id: pull
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          python tools/pull_edits.py | tee pull.log
+          grep -E '^CHANGED=.+' pull.log && echo changed=1 >> $GITHUB_OUTPUT || echo changed=0 >> $GITHUB_OUTPUT
+      - name: דחיפה והפעלת הבנייה
+        if: steps.pull.outputs.changed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "leokmei-watcher"
+          git config user.email "watcher@users.noreply.github.com"
+          git add -A data/edits
+          git commit -m "עריכות מנקודת הקליטה [skip ci]" || exit 0
+          git pull --rebase origin main
+          git push
+          gh workflow run edits.yml

@@ -1,0 +1,8637 @@
+{
+ "p360x800-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 3,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 4,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 284x16 \"\""
+    ],
+    "smallCount": 5,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 81x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 94x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 לאוקמי גיר / תצוגה",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "737/800"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 81x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 94x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 לאוקמי גיר / תצוגה",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "715/800"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 81x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 94x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 לאוקמי גיר / תצוגה",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 81x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 94x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 לאוקמי גיר / תצוגה",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 › קודם / ללאעדיןבול",
+     "מרווח 6 הבא ‹ / ללאעדיןבול",
+     "מרווח 6 הבא ‹ / עמעוםקו זה",
+     "מרווח 6 + / ×"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 7,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 3,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 81x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 94x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 לאוקמי גיר / תצוגה",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p360x800-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 0,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 4,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\""
+    ],
+    "smallCount": 4,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 876,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:30\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "149/360"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 876,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:30\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "-1/360"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 874,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 63x30 \"0 ד׳14:31\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 874,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 63x30 \"0 ד׳14:31\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 874,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 3,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 3,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 3,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 874,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 63x30 \"0 ד׳14:31\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p390x844-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 3,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 4,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 314x16 \"\""
+    ],
+    "smallCount": 5,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 13,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 111x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 124x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 13,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "253/844"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 111x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 124x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "676/844"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 111x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 124x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 111x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 124x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 › קודם / ללאעדיןבול",
+     "מרווח 6 › קודם / עמעוםקו זה",
+     "מרווח 6 הבא ‹ / עמעוםקו זה",
+     "מרווח 6 − / ×"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 7,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 3,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 111x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 124x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p390x844-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 0,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     ".on 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 874,
+    "cw": 844,
+    "ok": false
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 63x30 \"0 ד׳14:31\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "187/390"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 874,
+    "cw": 844,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 63x30 \"0 ד׳14:31\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "29/390"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 874,
+    "cw": 844,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 63x30 \"0 ד׳14:31\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 844,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:32\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 844,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     ".on 103x41 \"בחן את עצמך\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 7,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     ".on 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 7,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 844,
+    "ok": false
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:32\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p412x915-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 3,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 14,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 4,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 14,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 336x16 \"\"",
+     ".lm-tile 40x38 \"ב.\"",
+     ".lm-tile 40x38 \"ב:\"",
+     ".lm-tile 40x38 \"ג.\"",
+     ".lm-tile 40x38 \"ג:\"",
+     ".lm-tile 40x38 \"ד.\"",
+     ".lm-tile 40x38 \"ד:\"",
+     ".lm-tile 40x38 \"ה.\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 5 ב. / ב:",
+     "מרווח 5 ב: / ג.",
+     "מרווח 5 ג. / ג:",
+     "מרווח 5 ג: / ד.",
+     "מרווח 5 ד. / ד:",
+     "מרווח 5 ד: / ה."
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 13,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 133x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 146x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 13,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "671/915"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 133x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 146x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "545/915"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 133x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 146x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 133x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 146x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 › קודם / ללאעדיןבול",
+     "מרווח 6 › קודם / עמעוםקו זה",
+     "מרווח 6 הבא ‹ / עמעוםקו זה"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 7,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-g7 58x36 \"שבוע\"",
+     "#lm-g30 59x36 \"חודש\""
+    ],
+    "smallCount": 5,
+    "crowd": [
+     "מרווח 2 שבוע / חודש"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 133x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 146x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף"
+    ],
+    "crowdCount": 16,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p412x915-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 0,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     ".on 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:32\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "314/412"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 6,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:32\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "50/412"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 6,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:32\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "#sp-prev 82x36 \"› דף קודם\"",
+     "#sp-next 78x36 \"דף הבא ‹\"",
+     "#ss-prev 84x36 \"קטע קודם\"",
+     "#ss-next 80x36 \"קטע הבא\""
+    ],
+    "smallCount": 15,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / קטע הבא",
+     "מרווח 6 דף הבא ‹ / צמוד לטקסט",
+     "מרווח 6 קטע קודם / תצוגה ▾",
+     "מרווח 6 קטע קודם / ×"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 6,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:32\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "#sp-prev 82x36 \"› דף קודם\"",
+     "#sp-next 78x36 \"דף הבא ‹\"",
+     "#ss-prev 84x36 \"קטע קודם\"",
+     "#ss-next 80x36 \"קטע הבא\""
+    ],
+    "smallCount": 15,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / קטע הבא",
+     "מרווח 6 דף הבא ‹ / צמוד לטקסט",
+     "מרווח 6 קטע קודם / תצוגה ▾",
+     "מרווח 6 קטע קודם / ×"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 6,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:32\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\""
+    ],
+    "smallCount": 17,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › קודם / עמעוםקו זה",
+     "מרווח 6 הבא ‹ / עמעוםקו זה",
+     "מרווח 6 הבא ‹ / ×"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     ".on 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     ".on 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 6,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:33\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p375x667-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 1,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 4,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 299x16 \"\""
+    ],
+    "smallCount": 5,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 13,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 96x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 13,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף",
+     "מרווח 0 ב.ב:ג.ג:ד. / "
+    ],
+    "crowdCount": 15,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "253/667"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 2,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 96x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף",
+     "מרווח 0 ב.ב:ג.ג:ד. / "
+    ],
+    "crowdCount": 15,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "939/667"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 2,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 96x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף",
+     "מרווח 0 ב.ב:ג.ג:ד. / "
+    ],
+    "crowdCount": 15,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 2,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 96x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף",
+     "מרווח 0 ב.ב:ג.ג:ד. / "
+    ],
+    "crowdCount": 15,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 2,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 › קודם / ללאעדיןבול",
+     "מרווח 6 › קודם / עמעוםקו זה",
+     "מרווח 6 הבא ‹ / עמעוםקו זה",
+     "מרווח 6 − / ×"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 3,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 4,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 126x34 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 3,
+    "crowd": [
+     "מרווח 6  / לאוקמי גיר"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 2,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 96x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 0  / ב.ב:ג.ג:ד.",
+     "מרווח 7  / צורת הדף",
+     "מרווח 0 ב.ב:ג.ג:ד. / "
+    ],
+    "crowdCount": 15,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p375x667-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 0,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 4,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\""
+    ],
+    "smallCount": 4,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 388x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 270x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 6 פרק ראשון  / צורת הדף",
+     "מרווח 6 פרק ראשון  / בחן אותי ע"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "193/375"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 388x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 270x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 6 פרק ראשון  / צורת הדף",
+     "מרווח 6 פרק ראשון  / בחן אותי ע"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "291/375"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 388x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 270x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 6 פרק ראשון  / צורת הדף",
+     "מרווח 6 פרק ראשון  / בחן אותי ע"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 388x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 270x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 6 פרק ראשון  / צורת הדף",
+     "מרווח 6 פרק ראשון  / בחן אותי ע"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 3,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 3,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\""
+    ],
+    "smallCount": 3,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 1,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 108x30 \"לאוקמי גירסא\"",
+     "#peresel 388x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#dafsel 65x30 \"ב.ב:ג.ג:ד.ד:ה.\"",
+     "BUTTON 37x30 \"הדף הבא\"",
+     "#q 270x32 \"חיפוש בברכות\"",
+     ".ddb 42x32 \"תצוגה\"",
+     "#gmbtn 42x32 \"גמרא\"",
+     "#tzbtn 42x32 \"צורת הדף\"",
+     ".ib 42x32 \"בחן אותי על הד\"",
+     ".ddb 42x32 \"כלים\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 6 לאוקמי גיר / פרק ראשון ",
+     "מרווח 7 לאוקמי גיר / ",
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / ",
+     "מרווח 6 פרק ראשון  / תצוגה",
+     "מרווח 6 פרק ראשון  / גמרא",
+     "מרווח 6 פרק ראשון  / צורת הדף",
+     "מרווח 6 פרק ראשון  / בחן אותי ע"
+    ],
+    "crowdCount": 17,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t-tabA7-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [
+     "#lm-ob-ok 63x36 \"בחירה\"",
+     "#lm-ob-skip 49x36 \"דלג\""
+    ],
+    "smallCount": 2,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 31,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 4,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 90,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 420x16 \"\"",
+     ".lm-tile 40x38 \"ב.\"",
+     ".lm-tile 40x38 \"ב:\"",
+     ".lm-tile 40x38 \"ג.\"",
+     ".lm-tile 40x38 \"ג:\"",
+     ".lm-tile 40x38 \"ד.\"",
+     ".lm-tile 40x38 \"ד:\"",
+     ".lm-tile 40x38 \"ה.\""
+    ],
+    "smallCount": 88,
+    "crowd": [
+     "מרווח 5 ב. / ב:",
+     "מרווח 5 ב. / י:",
+     "מרווח 5 ב: / ג.",
+     "מרווח 5 ב: / יא.",
+     "מרווח 5 ג. / ג:",
+     "מרווח 5 ג. / יב.",
+     "מרווח 5 ג: / ד.",
+     "מרווח 5 ג: / יב:"
+    ],
+    "crowdCount": 84,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "342/1334"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "973/1334"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 7,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-g7 58x36 \"שבוע\"",
+     "#lm-g30 59x36 \"חודש\""
+    ],
+    "smallCount": 5,
+    "crowd": [
+     "מרווח 2 שבוע / חודש"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 800,
+    "ok": false
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t-tabA7-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 2,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 27,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     ".on 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 42,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 420x16 \"\"",
+     ".lm-tile 46x42 \"ב.\"",
+     ".lm-tile 46x42 \"ב:\""
+    ],
+    "smallCount": 40,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 5 ב. / ב:",
+     "מרווח 5 ב. / יב:",
+     "מרווח 5 ב: / ג."
+    ],
+    "crowdCount": 34,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 145x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 11,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 4  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "391/800"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 14,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 145x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 4  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "438/800"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 145x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 19,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 4  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / תצוגה ▾",
+     "מרווח 6 › דף קודם / ×"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 145x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 19,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 4  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / תצוגה ▾",
+     "מרווח 6 › דף קודם / ×"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 145x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 21,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 4  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     ".on 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     ".on 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-g7 58x36 \"שבוע\"",
+     "#lm-g30 59x36 \"חודש\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 2 שבוע / חודש"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 145x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:34\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 4  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t768x1024-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 0,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 23,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 4,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 62,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 420x16 \"\"",
+     ".lm-tile 40x38 \"ב.\"",
+     ".lm-tile 40x38 \"ב:\"",
+     ".lm-tile 40x38 \"ג.\"",
+     ".lm-tile 40x38 \"ג:\"",
+     ".lm-tile 40x38 \"ד.\"",
+     ".lm-tile 40x38 \"ד:\"",
+     ".lm-tile 40x38 \"ה.\""
+    ],
+    "smallCount": 60,
+    "crowd": [
+     "מרווח 5 ב. / ב:",
+     "מרווח 5 ב. / י.",
+     "מרווח 5 ב: / ג.",
+     "מרווח 5 ב: / י:",
+     "מרווח 5 ג. / ג:",
+     "מרווח 5 ג. / יא.",
+     "מרווח 5 ג: / ד.",
+     "מרווח 5 ג: / יב."
+    ],
+    "crowdCount": 58,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 768,
+    "ok": false
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "314/1024"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 768,
+    "ok": false
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "663/1024"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 768,
+    "ok": false
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 37x36 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 768,
+    "ok": false
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 37x36 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 768,
+    "ok": false
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 7,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-g7 58x36 \"שבוע\"",
+     "#lm-g30 59x36 \"חודש\""
+    ],
+    "smallCount": 5,
+    "crowd": [
+     "מרווח 2 שבוע / חודש"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 768,
+    "ok": false
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t768x1024-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 2,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     ".on 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 42,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 420x16 \"\"",
+     ".lm-tile 46x42 \"ב.\"",
+     ".lm-tile 46x42 \"ב:\""
+    ],
+    "smallCount": 40,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 5 ב. / ב:",
+     "מרווח 5 ב. / יב.",
+     "מרווח 5 ב: / ג."
+    ],
+    "crowdCount": 35,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "734/768"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 14,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "406/768"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\"",
+     "#sp-prev 82x36 \"› דף קודם\"",
+     "#sp-next 78x36 \"דף הבא ‹\""
+    ],
+    "smallCount": 17,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / קטע הבא",
+     "מרווח 6 דף הבא ‹ / צמוד לטקסט",
+     "מרווח 6 קטע קודם / צמוד לטקסט",
+     "מרווח 6 קטע קודם / תצוגה ▾"
+    ],
+    "crowdCount": 7,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\"",
+     "#sp-prev 82x36 \"› דף קודם\"",
+     "#sp-next 78x36 \"דף הבא ‹\""
+    ],
+    "smallCount": 17,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / קטע הבא",
+     "מרווח 6 דף הבא ‹ / צמוד לטקסט",
+     "מרווח 6 קטע קודם / צמוד לטקסט",
+     "מרווח 6 קטע קודם / תצוגה ▾"
+    ],
+    "crowdCount": 7,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\"",
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\""
+    ],
+    "smallCount": 19,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › קודם / עמעוםקו זה",
+     "מרווח 6 הבא ‹ / עמעוםקו זה",
+     "מרווח 6 הבא ‹ / ×"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     ".on 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     ".on 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-g7 58x36 \"שבוע\"",
+     "#lm-g30 59x36 \"חודש\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 2 שבוע / חודש"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:35\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t820x1180-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 4,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 27,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 4,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 71,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 420x16 \"\"",
+     ".lm-tile 40x38 \"ב.\"",
+     ".lm-tile 40x38 \"ב:\"",
+     ".lm-tile 40x38 \"ג.\"",
+     ".lm-tile 40x38 \"ג:\"",
+     ".lm-tile 40x38 \"ד.\"",
+     ".lm-tile 40x38 \"ד:\"",
+     ".lm-tile 40x38 \"ה.\""
+    ],
+    "smallCount": 69,
+    "crowd": [
+     "מרווח 5 ב. / ב:",
+     "מרווח 5 ב. / י:",
+     "מרווח 5 ב: / ג.",
+     "מרווח 5 ב: / יא.",
+     "מרווח 5 ג. / ג:",
+     "מרווח 5 ג. / יב.",
+     "מרווח 5 ג: / ד.",
+     "מרווח 5 ג: / יב:"
+    ],
+    "crowdCount": 64,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 820,
+    "ok": false
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "538/1180"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 820,
+    "ok": false
+   },
+   "rail": {
+    "n": 5,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "819/1180"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 820,
+    "ok": false
+   },
+   "rail": {
+    "n": 5,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 820,
+    "ok": false
+   },
+   "rail": {
+    "n": 5,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 820,
+    "ok": false
+   },
+   "rail": {
+    "n": 5,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\"",
+     "#tzzo 27x28 \"−\"",
+     "#tzzi 28x28 \"+\"",
+     "#tzz1 44x28 \"התאם\"",
+     "#tztr 71x28 \"מעקב: דלוק\"",
+     "#tzin 62x28 \"ללאעדיןבולט\"",
+     "#tzst 68x28 \"עמעוםקו זהב\"",
+     "#tzcl 28x28 \"×\""
+    ],
+    "smallCount": 9,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 7,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [
+     "#lm-burger 40x40 \"תפריט\"",
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-g7 58x36 \"שבוע\"",
+     "#lm-g30 59x36 \"חודש\""
+    ],
+    "smallCount": 5,
+    "crowd": [
+     "מרווח 2 שבוע / חודש"
+    ],
+    "crowdCount": 1,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 875,
+    "cw": 820,
+    "ok": false
+   },
+   "rail": {
+    "n": 5,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 8,
+    "crowd": [
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 2,
+    "ok": false
+   },
+   "clip": {
+    "items": [
+     "מחוץ למסך: הצע תיקון"
+    ],
+    "count": 1,
+    "ok": false
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t820x1180-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 4,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 27,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     ".on 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 42,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 420x16 \"\"",
+     ".lm-tile 46x42 \"ב.\"",
+     ".lm-tile 46x42 \"ב:\""
+    ],
+    "smallCount": 40,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 5 ב. / ב:",
+     "מרווח 5 ב. / יב:",
+     "מרווח 5 ב: / ג."
+    ],
+    "crowdCount": 34,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "חפיפה פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "626/820"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 14,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 11,
+    "crowd": [
+     "חפיפה פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "458/820"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\"",
+     "#sp-prev 82x36 \"› דף קודם\""
+    ],
+    "smallCount": 18,
+    "crowd": [
+     "חפיפה פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / צמוד לטקסט",
+     "מרווח 6 › דף קודם / תצוגה ▾",
+     "מרווח 6 דף הבא ‹ / ×"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\"",
+     "#sp-prev 82x36 \"› דף קודם\""
+    ],
+    "smallCount": 18,
+    "crowd": [
+     "חפיפה פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / צמוד לטקסט",
+     "מרווח 6 › דף קודם / תצוגה ▾",
+     "מרווח 6 דף הבא ‹ / ×"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 20,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\"",
+     "#tzpv 48x28 \"› קודם\""
+    ],
+    "smallCount": 20,
+    "crowd": [
+     "חפיפה פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › קודם / ×"
+    ],
+    "crowdCount": 4,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     ".on 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     ".on 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-g7 58x36 \"שבוע\"",
+     "#lm-g30 59x36 \"חודש\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 2 שבוע / חודש"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 65x30 \"0 ד׳14:36\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 11,
+    "crowd": [
+     "חפיפה פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t1024x1366-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [
+     "#lm-ob-ok 63x36 \"בחירה\"",
+     "#lm-ob-skip 49x36 \"דלג\""
+    ],
+    "smallCount": 2,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 38,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     ".on 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 110,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 420x16 \"\"",
+     ".lm-tile 46x42 \"ב.\"",
+     ".lm-tile 46x42 \"ב:\""
+    ],
+    "smallCount": 108,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 5 ב. / ב:",
+     "מרווח 5 ב. / יב.",
+     "מרווח 5 ב: / ג."
+    ],
+    "crowdCount": 98,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "168/1366"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 38,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "1004/1366"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 37,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\"",
+     "#sp-prev 82x36 \"› דף קודם\"",
+     "#sp-next 78x36 \"דף הבא ‹\""
+    ],
+    "smallCount": 17,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 דף הבא ‹ / צמוד לטקסט",
+     "מרווח 6 קטע קודם / צמוד לטקסט",
+     "מרווח 6 קטע קודם / תצוגה ▾",
+     "מרווח 6 קטע הבא / תצוגה ▾",
+     "מרווח 6 קטע הבא / ×"
+    ],
+    "crowdCount": 8,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 37,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\"",
+     "#sp-prev 82x36 \"› דף קודם\"",
+     "#sp-next 78x36 \"דף הבא ‹\""
+    ],
+    "smallCount": 17,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 דף הבא ‹ / צמוד לטקסט",
+     "מרווח 6 קטע קודם / צמוד לטקסט",
+     "מרווח 6 קטע קודם / תצוגה ▾",
+     "מרווח 6 קטע הבא / תצוגה ▾",
+     "מרווח 6 קטע הבא / ×"
+    ],
+    "crowdCount": 8,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 37,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\"",
+     "#tzpv 48x28 \"› קודם\"",
+     "#tznx 45x28 \"הבא ‹\""
+    ],
+    "smallCount": 19,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › קודם / עמעוםקו זה",
+     "מרווח 6 הבא ‹ / עמעוםקו זה",
+     "מרווח 6 הבא ‹ / ×"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     ".on 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     ".on 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-g7 58x36 \"שבוע\"",
+     "#lm-g30 59x36 \"חודש\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 2 שבוע / חודש"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 37,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#q 109x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "חפיפה לאוקמי גיר / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t1024x1366-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [
+     "#lm-ob-ok 63x36 \"בחירה\"",
+     "#lm-ob-skip 49x36 \"דלג\""
+    ],
+    "smallCount": 2,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 28,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     ".on 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-jgo 56x36 \"קפוץ\""
+    ],
+    "smallCount": 9,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 67,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-my 153x36 \"הוסף ל\"המסכתות\"",
+     "#lm-sl 420x16 \"\"",
+     ".lm-tile 46x42 \"ב.\"",
+     ".lm-tile 46x42 \"ב:\""
+    ],
+    "smallCount": 65,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 5 ב. / ב:",
+     "מרווח 5 ב. / יב:",
+     "מרווח 5 ב: / ג."
+    ],
+    "crowdCount": 57,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 154x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\""
+    ],
+    "smallCount": 11,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "314/1024"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 19,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 154x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "662/1024"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 19,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 154x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 19,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / תצוגה ▾",
+     "מרווח 6 › דף קודם / ×"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 19,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 154x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 19,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע",
+     "מרווח 6 › דף קודם / תצוגה ▾",
+     "מרווח 6 › דף קודם / ×"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 19,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 154x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 21,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     "A 93x41 \"הלימוד שלי\"",
+     ".on 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "A 47x16 \"מפת הש\"ס\"",
+     "A 31x16 \"מקורות\"",
+     "A 26x16 \"אודות\"",
+     "A 31x16 \"פרטיות\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים"
+    ],
+    "crowdCount": 5,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".lm-brand 148x40 \"לאוקמי גירסא\"",
+     "A 50x41 \"בית\"",
+     "A 87x41 \"מפת הש\"ס\"",
+     "A 84x41 \"הדף היומי\"",
+     ".on 93x41 \"הלימוד שלי\"",
+     "A 103x41 \"בחן את עצמך\"",
+     "A 75x41 \"שיעורים\"",
+     "#lm-umb 40x40 \"תפריט משתמש\"",
+     "#lm-g7 58x36 \"שבוע\"",
+     "#lm-g30 59x36 \"חודש\""
+    ],
+    "smallCount": 10,
+    "crowd": [
+     "מרווח 2 בית / מפת הש\"ס",
+     "מרווח 2 מפת הש\"ס / הדף היומי",
+     "מרווח 2 הדף היומי / הלימוד שלי",
+     "מרווח 2 הלימוד שלי / בחן את עצמ",
+     "מרווח 2 בחן את עצמ / שיעורים",
+     "מרווח 2 שבוע / חודש"
+    ],
+    "crowdCount": 6,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 19,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [
+     ".brand 139x30 \"לאוקמי גירסא\"",
+     "#peresel 171x32 \"פרק ראשון · מא\"",
+     "BUTTON 36x30 \"הדף הקודם\"",
+     "#q 154x32 \"חיפוש בברכות\"",
+     ".ddb 79x32 \"תצוגה\"",
+     "#gmbtn 76x32 \"גמרא\"",
+     "#tzbtn 97x32 \"צורת הדף\"",
+     ".ib 133x32 \"בחן אותי על הד\"",
+     ".ddb 73x32 \"כלים\"",
+     ".lm-clk 64x30 \"0 ד׳14:37\"",
+     "#edbtn 115x32 \"הצע תיקון\"",
+     "BUTTON 109x32 \"סיימתי את העמו\""
+    ],
+    "smallCount": 12,
+    "crowd": [
+     "מרווח 7 פרק ראשון  / ",
+     "מרווח 6 גמרא / צורת הדף",
+     "מרווח 6 צורת הדף / בחן אותי ע"
+    ],
+    "crowdCount": 3,
+    "ok": false
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "d1366x768": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 2,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 42,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "734/768"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 14,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "406/768"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "d1920x1080": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 34,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 76,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 14,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "577/1080"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 23,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 14,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "718/1080"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 22,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 22,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 22,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 23,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 22,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 14,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ }
+}

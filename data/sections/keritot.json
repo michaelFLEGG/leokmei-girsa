@@ -1,0 +1,39 @@
+{
+"masechet": "כריתות",
+"report": {
+"dh": 37,
+"dh_ref": 0,
+"dh_words": 0,
+"dh_none": 0,
+"m_labeled": 29,
+"m_placed": 19,
+"m_missing": 1,
+"dh_unmatched": 0,
+"jumps": 1,
+"dups": 0,
+"total_segs": 1202,
+"no_perush_pages": 0,
+"dh_in_word": 37,
+"m_fuzzy": 8,
+"m_placed_ref": 1
+},
+"unmatched": [],
+"missing": [
+[
+"ז:",
+20,
+"ה",
+0.58
+]
+],
+"jumps": [
+[
+"כה.",
+16,
+"ב",
+"אחרי ד"
+]
+],
+"dups": [],
+"ops": []
+}

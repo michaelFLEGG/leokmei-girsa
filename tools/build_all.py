@@ -208,7 +208,7 @@ def main():
     # כדי שהאתר יבנה תמיד מן הקובץ החי ולא מעותק ישן שנושא שם שנעלם.
     live = None
     lp = os.path.join(IN, 'current-docx.json')
-    if os.path.exists(lp):
+    if os.path.exists(lp) and not os.environ.get('LG_DOCX'):   # הרצה מקומית על תיקייה אחרת: אין רשימת שמות חיה
         names = json.load(open(lp, encoding='utf-8'))
         if len(names) >= 5: live = set(names)
     groups = {}

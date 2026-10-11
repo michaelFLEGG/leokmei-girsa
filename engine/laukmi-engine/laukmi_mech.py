@@ -328,15 +328,18 @@ def run_raw(doc, table, allowed_styles, log):
     """החלפה בלי גבולות מילה - לסימני פיסוק ורווחים."""
     for p in list(doc.paragraphs()):
         if doc.pstyle(p) not in allowed_styles: continue
+        # ביצועים (11.10.2026): הטקסט נמדד פעם אחת לפסקה ומחושב מחדש רק אחרי החלפה בפועל
+        txt, _ = text_map(p)
         for old, new in table.items():
+            if old not in txt: continue
             guard = 0
             while guard < 200:
                 guard += 1
-                txt, _ = text_map(p)
                 i = txt.find(old)
                 if i < 0: break
                 if not tracked_replace(doc, p, i, i + len(old), new): break
                 log[old] = log.get(old, 0) + 1
+                txt, _ = text_map(p)
 
 
 def style_regex(doc, patterns, allowed_styles, style_name, log, group=1):

@@ -33,7 +33,7 @@ NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 ns = {'w': NS}
 W = '{%s}' % NS
 
-DRIVE = r'C:\Users\Owner\Desktop\שיננא לHTML'
+DRIVE = os.environ.get('LG_DRIVE') or r'C:\Users\Owner\Desktop\שיננא לHTML'
 BACKUPS = os.path.join(DRIVE, '_שומר', 'גיבויים')
 
 

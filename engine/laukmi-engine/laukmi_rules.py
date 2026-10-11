@@ -268,6 +268,10 @@ def _load_learned():
     for r in doc.get('rules', []):
         if r.get('status') != 'on' or not r.get('find'):
             continue
+        # תיקון 11.10.2026: כלל מסוג ctx ("תלוי מקום: נרשם בלבד, אינו נטען במנוע") לעולם אינו נטען.
+        # עד כאן הוא נטען כצירוף גולמי, וכלל כמו "הוא" <- "הוא!" הוסיף סימן לכל מופע ללא הגבלה.
+        if r.get('kind') not in ('word', 'raw'):
+            continue
         (words if r.get('kind') == 'word' else raws)[r['find']] = r['repl']
     return raws, words
 

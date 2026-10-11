@@ -1,0 +1,20 @@
+{
+"masechet": "כריתות",
+"report": {
+"labeled": 29,
+"present": 28,
+"no_content": 0,
+"adjacent": 1,
+"proposed": 0,
+"short": 0
+},
+"proposals": [],
+"skipped": [
+[
+"טו:",
+8,
+"ב",
+"היחידה הראשונה בתחום אינה יחידת גוף (m)"
+]
+]
+}

@@ -1,0 +1,20 @@
+{
+"masechet": "מעילה",
+"report": {
+"labeled": 28,
+"present": 27,
+"no_content": 0,
+"adjacent": 1,
+"proposed": 0,
+"short": 0
+},
+"proposals": [],
+"skipped": [
+[
+"י:",
+5,
+"א",
+"היחידה הראשונה בתחום אינה יחידת גוף (m)"
+]
+]
+}

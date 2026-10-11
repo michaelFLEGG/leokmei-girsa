@@ -1688,6 +1688,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .rail.hw:not(:has(.dafmark)) .win{grid-column:1}
   /* ההתאמה של החלונות רצה אחרי הציור הראשון (fitSoon); עד אז הם מוסתרים כדי שלא יקפצו */
   .flow.fitting .rail .win{visibility:hidden}
+  /* זנב הפרק שטרם נפרס (revealTail): בדף, בלי פריסה וציור. display:none ולא
+     content-visibility:hidden - מדידה בתוך תת-עץ נעול כופה פריסה שלו בכל קריאה,
+     ושכבת "מקור" קוראת מידות של כל השורות (נמדד: 13 שניות). */
+  .flow .row.lz{display:none}
   /* דף שאין בו יחידות: הטקסט ריק, והמסילה אינה תופסת גובה. בלי המינימום
      הזה היה ציון הדף נופל על השורה הבאה. */
   .row>.main:empty{min-height:var(--lhpx)}
@@ -2142,6 +2146,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     document.addEventListener('selectionchange',()=>{if(typeof EDIT!=='undefined'&&EDIT)dafSoon()});
     if(f&&window.MutationObserver)new MutationObserver(dafSoon).observe(f,{childList:true})})();
   function toEl(e){const f=$('#flow');
+    if(LZ&&e.closest&&e.closest('.row.lz'))revealTail();   /* היעד בזנב שטרם נפרס: מכאן אי אפשר למדוד מיקום */
     if(f.classList.contains('vert')){e.scrollIntoView({block:'center'});return}
     f.scrollLeft += e.getBoundingClientRect().right - f.getBoundingClientRect().right;}
   /* ---- איחוי שורה יתומה ----
@@ -2320,6 +2325,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function fitAnchors(only){
     const f=$('#flow');if(!f)return;
     if(!only)FITSIG=fitSig();
+    /* זנב הפרק שטרם נפרס אינו נמדד: אין לו פריסה. הוא מותאם כשהוא נפרס (revealTail) */
+    if(!only&&LZ)only=[...f.querySelectorAll('.row:not(.lz)')];
     /* only: רשימת שורות בלבד (אחרי עריכה מקומית); בלעדיה - כל הפרק */
     const rowsList=only?[...only]:[...f.querySelectorAll('.row')];
     const items=[];let dirty=false;
@@ -2376,40 +2383,48 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         if(n>ln&&an)stk.push([o,an])
       }
     }
-    if(!dirty)wRng();
+    /* כל הכתיבות לדף נאספות ומתבצעות בסוף, אחרי מדידת החלונות המורחבים:
+       כתיבה לפני קריאה כופה פריסה מחדש של מכולת-הטורים כולה בכל קריאה
+       (כ-0.7 שנייה בטלפון איטי), והמדידה בסביבת הניסוי אינה מבודדת ממנה
+       (11.10.2026). המדידה רצה על עותקים קלים ועל המצב המחושב בלבד. */
+    const ops=[];
+    if(!dirty)ops.push(wRng);
+    const commit=()=>{for(const fn of ops)fn()};
     if(stk.length){
+      commit();ops.length=0;                 /* הרחבת ערימה נמדדת מן הדף עצמו: נדירה */
       for(const [o,an] of stk){an.innerHTML=an.innerHTML.replace(/<br\s*\/?>/g,' · ');o.a.classList.remove('stk')}
       for(const [o] of stk)o.aw=o.a.getBoundingClientRect().width
     }
-    /* כתיבה ראשונה: צמצום נתיב הדף ליחידה שצריכה זאת. הנתיב המצטמצם מרחיב
+    /* צמצום נתיב הדף ליחידה שצריכה זאת. הנתיב המצטמצם מרחיב
        את נתיב הטקסט בדיוק בהפרש הרוחב, ולכן אין צורך בקריאה חוזרת. */
     const still=[];
     for(const o of items){
       if(o.aw<=o.tw+.5)continue;
       if(o.dm&&!o.dm.classList.contains('rng')){const w=dafWidth(o.dm.textContent.trim());
-        if(w<DAFW-.5){o.r.style.setProperty('--dafw',w.toFixed(1)+'px');o.tw+=DAFW-w;still.push(o);continue}}
+        if(w<DAFW-.5){o.dafw=w.toFixed(1)+'px';ops.push(()=>o.r.style.setProperty('--dafw',o.dafw));o.tw+=DAFW-w;still.push(o);continue}}
       still.push(o);
     }
-    if(!still.length)return;
+    if(!still.length){commit();return}
     const wrapped=[];
     for(const o of still){
       if(o.aw<=o.tw+.5)continue;
       /* כותרת הצד לא תיפגע: אם היא נכנסת במסילה כולה, ציון הדף מועלה מעט ויוצא מן הצפיפות */
       if(o.hw&&o.dm){
-        if(o.aw<=o.full+.5){o.rail.classList.add('dup');continue}}
-      if(o.lines>=2&&!o.a.classList.contains('stk')){o.a.classList.add('w2');wrapped.push(o);continue}
+        if(o.aw<=o.full+.5){ops.push(()=>o.rail.classList.add('dup'));continue}}
+      if(o.lines>=2&&!o.a.classList.contains('stk')){o.w2=true;ops.push(()=>o.a.classList.add('w2'));wrapped.push(o);continue}
       const need=o.tw/o.aw;
       let sc=ASCALE[ASCALE.length-1];
       for(const c of ASCALE)if(c<=need){sc=c;break}
-      o.a.style.fontSize=sc.toFixed(3)+'em';
+      ops.push(()=>{o.a.style.fontSize=sc.toFixed(3)+'em'});
     }
-    if(!wrapped.length)return;
+    if(!wrapped.length){commit();return}
     /* חלון שנפרש נשאר בגבול שתי שורות, ולעולם אינו עולה על מספר שורות
        הטקסט: אחרת הוא בעצמו פוער את השורה הלבנה שבאנו למנוע. הוא מוקטן
        עד שהוא נכנס, ולעולם אינו נחתך. ההקטנה נעשית בסבבים לכל החלונות יחד,
        על עותקי השורות בלבד (פריסה של שורה, לא של הפרק). */
     const inplace=BOOK||PRINTING||f.classList.contains('book')||wrapped.length>60;
     if(inplace){
+      commit();
       let act=wrapped.map(o=>({o,el:o.a,cap:Math.min(2,o.lines)*lhpx+1,sc:1}));
       while(act.length){
         const over=act.filter(x=>x.el.getBoundingClientRect().height>x.cap&&x.sc>0.62);
@@ -2419,24 +2434,64 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       }
       return}
     const box=sbx();
+    /* עותק קל של השורה: מעטפת השורה (מחלקות וסגנון) והמסילה בלבד, בלי טקסט הגוף.
+       גובה החלון תלוי ברוחב המסילה ובגופן בלבד. הכתיבות הממתינות (נתיב הדף
+       המצטמצם, המחלקה w2) מוחלות על העותק בלבד. */
     let act=wrapped.map(o=>{
-      const c=o.r.cloneNode(true);
-      c.removeAttribute('id');c.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+      const c=o.r.cloneNode(false);
+      c.removeAttribute('id');
+      const rc=o.rail.cloneNode(true);
+      rc.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+      c.appendChild(rc);
       c.style.width=o.rw+'px';c.style.margin='0';
+      if(o.dafw!==undefined)c.style.setProperty('--dafw',o.dafw);
+      else if(!dirty&&rngSet.has(o.r))c.style.setProperty('--dafw',rngSet.get(o.r).toFixed(1)+'px');
+      const el=rc.querySelector(':scope > .win');
+      if(o.w2)el.classList.add('w2');
       box.appendChild(c);
-      return {o,el:c.querySelector(':scope > .rail > .win'),cap:Math.min(2,o.lines)*lhpx+1,sc:1}});
+      return {o,el,cap:Math.min(2,o.lines)*lhpx+1,sc:1}});
+    const fin=[];
     while(act.length){
       const over=act.filter(x=>x.el.getBoundingClientRect().height>x.cap&&x.sc>0.62);
       if(!over.length)break;
-      for(const x of over){x.sc-=0.07;const v=x.sc.toFixed(3)+'em';x.el.style.fontSize=v;x.o.a.style.fontSize=v}
+      for(const x of over){x.sc-=0.07;x.el.style.fontSize=x.sc.toFixed(3)+'em';x.o._sc=x.sc}
       act=over;
     }
     box.textContent='';
+    commit();
+    for(const o of wrapped)if(o._sc!==undefined){o.a.style.fontSize=o._sc.toFixed(3)+'em';delete o._sc}
   }
   /* התאמה מושהית לטעינת הפרק (11.10.2026): הפרק מצויר וטקסטו נראה תחילה,
      וההתאמה רצה אחרי הציור הראשון ואחרי טעינת הגופנים - פעם אחת, במקום
      פעם לפני הגופנים ופעם אחריהם. עד אז החלונות שבצד מוסתרים (fitting). */
   let FITW=0,JEL=null,JPOS=null;
+  /* זנב הפרק (11.10.2026): הפריסה של מכולת-טורים אינה מצטברת אלא נעשית כולה
+     מחדש בכל שינוי (כ-0.6 שנייה בפרק גדול בטלפון איטי). לכן רק ראש הפרק
+     נפרס בציור הראשון, ויתר השורות נושאות lz (display:none:
+     הן בדף, אבל בלי פריסה). הזנב נפרס מיד אחרי הציור הראשון. */
+  const HEADN=40;
+  let LZ=false,LZW=0;
+  function revealTail(){
+    const f=$('#flow');LZW=0;
+    if(!f){LZ=false;return}
+    const rows=[...f.querySelectorAll('.row.lz')];
+    LZ=false;
+    if(!rows.length)return;
+    for(const r of rows)r.classList.remove('lz');
+    try{if(!(BOOK||PRINTING))fitAnchors(rows)}catch(e){}
+    /* הפריסה משנה גבהים: מי שקפץ למקום נשאר עליו */
+    try{if(JEL&&JEL.isConnected&&JPOS){const g2=$('#flow');
+      if(Math.abs(g2.scrollLeft-JPOS[0])<3&&Math.abs(g2.scrollTop-JPOS[1])<3){toEl(JEL);JPOS=[g2.scrollLeft,g2.scrollTop]}}}catch(e){}
+  }
+  function revealSoon(ms){
+    if(!LZ||LZW)return;
+    LZW=1;
+    /* אחרי שהציור הראשון באמת הוצג: שתי מסגרות, ואז משימה חדשה */
+    requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>{if(LZW)revealTail()},ms||0)))}
+  /* מקש נלחץ לפני שהזנב נפרס: הוא נפרס מיד, כי המטפלים שאחריו קוראים מיקומים.
+     גלגלת ומגע גוללים בלי תלות בו, ולכן הוא נפרס מיד אחריהם. */
+  addEventListener('keydown',()=>{if(LZ)revealTail()},{passive:true,capture:true});
+  ['wheel','touchstart','pointerdown'].forEach(n=>addEventListener(n,()=>{if(LZ)revealSoon(0)},{passive:true,capture:true}));
   function fitSoon(){
     if(FITW)return;
     const f=$('#flow');if(!f)return;
@@ -2445,6 +2500,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(!FITW)return;FITW=0;
       try{setDafW();fitAnchors()}catch(e){}
       const g=$('#flow');if(g)g.classList.remove('fitting');
+      if(LZ)revealSoon(0);
       /* ההתאמה משנה גבהים: מי שקפץ למקום נשאר עליו */
       try{if(JEL&&JEL.isConnected&&JPOS){const g2=$('#flow');
         if(Math.abs(g2.scrollLeft-JPOS[0])<3&&Math.abs(g2.scrollTop-JPOS[1])<3){toEl(JEL);JPOS=[g2.scrollLeft,g2.scrollTop]}}}catch(e){}
@@ -2593,11 +2649,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   }
   /* ALL: מצב רצף - כל המסכת בטור אחד, מן הדף הראשון עד האחרון בגלילה אחת. */
   let ALL=false;
-  function pagesHTML(from,to){let h='';
+  function pagesHTML(from,to,lazy){let h='',nr=0;
     for(let pi=from;pi<=to;pi++){const p=D.pages[pi];
       if(!p.units.length)continue;   /* ב1: עמוד בלי טקסט אינו נכתב (הבנייה כבר צירפה אותו לטווח) */
       let first=true;
       for(const u of p.units){let uh=unitHTML(u,first?p.daf:null,first?pi:null);first=false;
+        if(lazy&&++nr>HEADN)uh=uh.replace('<div class="row','<div class="row lz');
         /* ב (8.10.2026): פרק חדש בתוך זרימה אחת מסומן chap1, וה-CSS פותח אותו
            בראש טור חדש (טורים) או ברווח ניכר (רצף). הפרק הראשון בזרימה אינו מסומן. */
         if(h&&(u.k==='perek-num'||(u.k==='perek-start'&&(u.op||u.mg))))uh=uh.replace('class="row ','class="row chap1 ');
@@ -2664,8 +2721,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const f=$('#flow');
     f.classList.toggle('book',BOOK);
     if(BOOK)f.style.setProperty('--sheets',sheetsNow());
+    /* ראש הפרק בלבד נפרס בציור הראשון (ראה revealTail) */
+    const lazy=!BOOK&&!PRINTING&&!EDIT&&!f.classList.contains('book');
     const h=BOOK?bookHTML(ALL?0:s.from,ALL?D.pages.length-1:s.to)
-                :(ALL?pagesHTML(0,D.pages.length-1):pagesHTML(s.from,s.to));
+                :(ALL?pagesHTML(0,D.pages.length-1,lazy):pagesHTML(s.from,s.to,lazy));
+    LZ=lazy&&h.indexOf('<div class="row lz')>-1;LZW=0;
     f.innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;
     if(!ALL&&!BOOK){f.scrollTop=0;f.scrollLeft=SGN>0?f.scrollWidth:0}
     if(BOOK){f.scrollTop=0;f.scrollLeft=0}
@@ -3210,10 +3270,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      ושינוי מבנה גם יחד. הסדר חיוני - פיצול נשען על הנוסח שאחרי התיקון.
      מה שכבר נמצא בקובץ הוורד (נקלט) יוצא מן הרשימה; מה שלא אותר מסומן
      "תלוש" ואינו מוחל. */
-  function applyStruct(){
+  /* מחולל: כל עריכה היא נקודת עצירה. בהרצה סינכרונית (applyStruct) המחולל
+     נצרך עד סופו; בהרצה בנקודת הקליטה של הלומד (applyStructAsync) הוא נצרך
+     בפרוסות של כ-18 מילישניות, כדי שמאות עריכות לא יהיו משימה אחת
+     (11.10.2026). */
+  function* applyStructG(){
     let any=false;
     const todo=ED.filter(e=>!e._ap&&!e.done).sort((a,b)=>(a.t||0)-(b.t||0));
     for(const e of todo){
+      yield;
       if(e.op!=='struct'){
         const k=locate(e);
         if(k===null){e.lost=1;continue}
@@ -3260,6 +3325,23 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(ED.some(e=>e.done)){ED=ED.filter(e=>!e.done);saveED()}
     if(any)SLOTS=null;
     return any}
+  let APG=null;
+  function applyStruct(){
+    let any=false;
+    /* ריצה אסינכרונית באמצע: מסיימים אותה, ואחריה ריצה חדשה לעריכות שנוספו */
+    if(APG){const g=APG;let r;do{r=g.next()}while(!r.done);if(APG===g)APG=null;any=!!r.value}
+    const g=applyStructG();let r;do{r=g.next()}while(!r.done);
+    return any||!!r.value}
+  function applyStructAsync(){
+    return new Promise(res=>{
+      if(APG){const w=()=>{APG?setTimeout(w,20):applyStructAsync().then(res)};w();return}
+      const g=APG=applyStructG();
+      const step=()=>{
+        if(APG!==g){res(true);return}      /* נצרך סינכרונית בינתיים */
+        const t0=performance.now();let r;
+        do{r=g.next()}while(!r.done&&performance.now()-t0<18);
+        if(r.done){APG=null;res(!!r.value)}else setTimeout(step,0)};
+      step()})}
 
   /* --- הפעולות עצמן, מן הדף --- */
   function pInfo(el){
@@ -3925,6 +4007,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   document.addEventListener('click',e=>{if(EDIT&&!(e.target.closest&&e.target.closest('#flow')))edCv(500)});
   function setEdit(on){
     const was=EDIT;
+    if(on&&LZ)revealTail();   /* העריכה קוראת מיקומים: הזנב נפרס קודם */
     if(on&&$('#flow').classList.contains('book')){
       alert('בתצוגת ספר אין עריכה, מפני שפסקה אחת עשויה להתחלק בין שני גיליונות. סגור את תצוגת הספר ונסה שוב.');
       return}
@@ -5000,9 +5083,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           else{
             const from=ALL?0:SEC[cur].from,to=ALL?D.pages.length-1:SEC[cur].to,snaps=[];
             for(let i=from;i<=to;i++)snaps.push(snapOf(i));
-            applyStruct();
-            snaps.forEach(sn=>patchPage(sn,true));
-            applyEdits()}
+            const c0=cur,a0=ALL;
+            applyStructAsync().then(()=>{
+              /* הלומד עבר פרק בינתיים: מציירים את הפרק החדש מן הנתונים המתוקנים */
+              if(c0!==cur||a0!==ALL||BOOK||PRINTING){render(cur);return}
+              snaps.forEach(sn=>patchPage(sn,true));
+              applyEdits()})}
         }else render(cur)}}
     catch(e){}}
 

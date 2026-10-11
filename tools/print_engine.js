@@ -114,6 +114,7 @@
         '.pfn .fnum{font-size:'+n.numberScale+'em;line-height:0;position:relative;top:-'+n.numberRise+'em;vertical-align:baseline;margin-left:.18em;font-weight:'+n.numberWeight+';text-decoration:none}'+
         '.pfn .fnn{margin:'+n.betweenMm+'mm 0 0}.pfn .fnn:first-child{margin-top:0}'+
         '.pg .pfn .fnm{font-size:'+n.nameScale+'em;color:'+n.nameColor+'!important;font-weight:'+n.weight+'}'+
+        '.pfn .fnp{font-size:'+(n.pt-n.parenLessPt)+'pt}'+
         '.pg a.tml{position:absolute;display:block;text-decoration:none;color:transparent!important}'+
         '.pg a.fnl,.pg a.dml{text-decoration:none;color:inherit}'+
         '.pnum{font-family:Vilna,serif;font-weight:400;font-size:'+ft.pt+'pt}'+
@@ -313,11 +314,15 @@
     var byN={};items.forEach(function(it){byN[it.n]=it});
     /* שמות המפרשים בתוך ההערה: גופן קטן יותר ואפור. הרשימה סגורה (לא כל "ר'" הוא מפרש: תנאים אינם נכללים) */
     var NAMES=new RegExp('(?<![א-ת"\'׳])((?:[ולבכמשה]{0,3})(?:תוס[\'׳]\\s+)?(?:רש"י|ר"ת|ר"י|ר"מ|ר"ח|רי"ף|רמב"ם|רמב"ן|רשב"א|ריטב"א|רא"ש|רשב"ם|מהר"י|מהר"ם|רבנו תם|רבינו [א-ת]+|ה"ר [א-ת]+|ר[\'׳] (?:נתנאל|ברוך|יהודה מקורבי"ל|יצחק|שמשון|אליעזר|יעקב|פרץ)):?)(?![א-ת"])','g');
+    /* ציון מקור של פסוק (ספר פרק:פסוק) בסוגריים נמחק: ההערות מקוצרות. מקורות גמרא נשארים */
+    var VERSE=/\s*\((?:פסוק\s+)?(?:בראשית|שמות|ויקרא|במדבר|דברים|יהושע|שופטים|שמואל(?: [אב])?|מלכים(?: [אב])?|ישעיה|ירמיה|יחזקאל|הושע|יואל|עמוס|עובדיה|יונה|מיכה|נחום|חבקוק|צפניה|חגי|זכריה|מלאכי|תהלים|משלי|איוב|שיר השירים|רות|איכה|קהלת|אסתר|דניאל|עזרא|נחמיה|דברי הימים(?: [אב])?)\s+[א-ת]{1,3}\s*[:.,]\s*[א-ת]{1,3}(?:\s*[-–]\s*[א-ת]{1,3})?\)/g;
     function noteText(t){
-      t=String(t).replace(/;/g,'.');                  /* אין נקודה-פסיק: נקודה בלבד */
+      t=String(t).replace(/;/g,'.').replace(VERSE,'');   /* אין נקודה-פסיק: נקודה בלבד */
       var o='',last=0,m;NAMES.lastIndex=0;
-      while((m=NAMES.exec(t))){o+=ge(t.slice(last,m.index))+'<span class="fnm">'+ge(m[1])+'</span>';last=m.index+m[0].length}
-      return o+ge(t.slice(last))}
+      /* סוגריים עגולות: קטנות ב-2 נקודות מגופן ההערה */
+      function paren(x){return ge(x).replace(/\([^()]*\)/g,function(q){return '<span class="fnp">'+q+'</span>'})}
+      while((m=NAMES.exec(t))){o+=paren(t.slice(last,m.index))+'<span class="fnm">'+ge(m[1])+'</span>';last=m.index+m[0].length}
+      return o+paren(t.slice(last))}
     function noteHTML(n){
       var it=byN[n];var t=PUBN[n]||it.sum||'';
       var num=prof.notes.numbering==='digits'?String(it.n):tosHeb(it);

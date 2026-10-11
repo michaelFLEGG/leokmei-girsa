@@ -54,6 +54,7 @@
     "markWeight": 400,
     "markRise": 1.15,
     "nameScale": 0.86,
+    "parenLessPt": 2,
     "nameColor": "#6b6b6b",
     "numbering": "digits"
   },

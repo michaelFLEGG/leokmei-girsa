@@ -106,9 +106,10 @@ def main():
     perek = int(perek)
     blocks = convert(docx)
     # --- תחום הפרק: מן ה"פרק" ה-n ועד "סוף פרק" שאחריו
-    starts = [b['i'] for b in blocks if b['style'] == 'פרק']
+    # 11.10.2026: אחרי m8 פתיחת הפרק היא הסגנון "פתיחת פרק" (ולא "פרק"). מעדיפים אותו כשקיים.
+    starts = [b['i'] for b in blocks if b['style'] == 'פתיחת פרק'] or [b['i'] for b in blocks if b['style'] == 'פרק']
     lo = starts[perek - 1]
-    hi = next((b['i'] for b in blocks if b['i'] > lo and b['style'] in ('סוף פרק', 'הדרן עלך')),
+    hi = next((b['i'] for b in blocks if b['i'] > lo and b['style'] in ('סוף פרק', 'הדרן עלך', 'הדרן')),
               starts[perek] if perek < len(starts) else len(blocks))
     lo = max(0, lo - 1) if perek > 1 else 0
     P = [b for b in blocks if lo <= b['i'] <= hi]

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """adv_apply.py - שתילת תוצר המנוע המתקדם (הידוק משפטים ושילוב הסבר) בקובץ ורד, בעקוב אחר שינויים בשם "קלוד".
 
     python adv_apply.py <קובץ.docx> <תיקיית-תוצרים> <פלט.docx> [--dry]
@@ -8,7 +8,7 @@
 כל שינוי נעשה בהחלפה מינימלית ברמת המילה (difflib), כדי שהמחבר יראה בדיוק מה השתנה. פסקה ש"old" שלה אינו זהה לנוסח הנוכחי - מדולגת ומדווחת.
 כללים: בלי מקף ארוך (נדחה), פסקה לא מתרוקנת, אורך חדש אינו עולה על פי 2.2 מן הישן (חריג: נדחה לבדיקה), אין שינוי בפסקה שכבר נושאת שינוי מעקב של אדם אחר.
 """
-import sys, os, re, json, glob, difflib, collections
+import sys, os, re, json, glob, difflib, collections, copy
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import laukmi_mech
 from laukmi_mech import Doc, text_map, tracked_replace, apply_char_style, q
@@ -116,6 +116,7 @@ def apply(path, decdir, out, dry=False):
         ops = plan_edit(cur, plain, expl)
         if dry:
             log['יתוכנן'] += 1; continue
+        backup = copy.deepcopy(p)
         ok = True
         for a, b, txt, rel in sorted(ops, key=lambda x: -x[0]):
             if not tracked_replace(doc, p, a, b, txt):
@@ -125,14 +126,17 @@ def apply(path, decdir, out, dry=False):
                     apply_char_style(doc, p, a + x, a + y, EXPL)
         final, _ = text_map(p)
         if not ok or final != plain:
-            log['אימות נכשל'] += 1; problems.append((i, 'אימות נכשל', plain[:60]))
+            # החזרת הפסקה למצבה (אין שינוי חלקי)
+            p.getparent().replace(p, backup)
+            paras[i] = backup
+            log['אימות נכשל (הוחזר)'] += 1; problems.append((i, 'אימות נכשל', plain[:60]))
         else:
             log['הוחל'] += 1
     if not dry:
         doc.save(out)
     for k, v in sorted(log.items()):
         print('%s: %d' % (k, v))
-    json.dump(problems, open(os.path.join(decdir, 'adv-problems.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    json.dump(problems, open(os.path.join(decdir, 'apply-problems.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return log
 
 
@@ -140,3 +144,4 @@ if __name__ == '__main__':
     sys.stdout.reconfigure(encoding='utf-8')
     a = [x for x in sys.argv[1:] if not x.startswith('--')]
     apply(a[0], a[1], a[2] if len(a) > 2 else None, dry='--dry' in sys.argv)
+

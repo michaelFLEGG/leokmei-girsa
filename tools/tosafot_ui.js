@@ -28,8 +28,9 @@
 
   var sty=document.createElement('style');
   sty.textContent=
-   '.tsm{font-family:Vilna,serif;font-weight:700;font-size:.64em;vertical-align:super;line-height:0;color:#7a5a14;cursor:pointer;margin:0 .12em;padding:0 .08em;-webkit-user-select:none;user-select:none;white-space:nowrap;letter-spacing:.02em;border-radius:3px}'+
-   '.tsm+.tsm::before{content:",";margin-inline-start:-.05em}'+
+   '.tsa{display:inline;width:0;height:0;padding:0;margin:0;border:0}'+
+   '#tsl{position:fixed;left:0;top:0;width:0;height:0;z-index:6;pointer-events:none}'+
+   '.tsm{position:fixed;pointer-events:auto;font-family:Vilna,serif;font-weight:700;font-size:calc(var(--fs,18px) * .56);line-height:1;color:#7a5a14;background:rgba(251,248,241,.94);border:1px solid #d8c68f;border-radius:7px;padding:1px 4px;cursor:pointer;-webkit-user-select:none;user-select:none;white-space:nowrap;letter-spacing:.02em;margin:0;min-width:1.4em;text-align:center;box-sizing:border-box}'+
    '.tsm:hover,.tsm:focus-visible,.tsm.hot{background:var(--blue-soft,#e6edf7);color:#12396b;outline:0}'+
    '.tsm.mv{color:#a83c2f}'+
    '.tsfoot,.tsn,.tsx,.tsadm,#tospop,#tosmenu,#tospb{color:#2b2620}'+
@@ -70,7 +71,7 @@
    '#tospb .tsdaf{font-weight:700;color:#7a5a14;margin:.7em 0 .2em;font-family:Vilna,serif}'+
    '#tospb .tsn{border-bottom:1px solid #eee5cc}'+
    '@media (hover:none){#tospop{display:none!important}}'+
-   '@media print{.tsm,.tsfoot,.tsx,#tosmenu,#tospop{display:none!important}}';
+   '@media print{.tsm,#tsl,.tsa,.tsfoot,.tsx,#tosmenu,#tospop{display:none!important}}';
   document.head.appendChild(sty);
 
   function txt(it){var p=PUB[it.n];return (p&&p.t)||it.sum||''}
@@ -113,14 +114,45 @@
           return idx.map[e]||null}}
       from=k+1}}
 
+  /* עוגן אפס-רוחב בתוך הטקסט (אינו משנה שבירת שורות). הסימן עצמו נצבע בשכבה צפה בין השורות (tsLayer). */
   function mk(it,rule){
-    var s=document.createElement('sup');
-    s.className='tsm'+(rule==='m'?' mv':'');
-    s.setAttribute('data-n',it.n);s.setAttribute('contenteditable','false');
-    s.setAttribute('role','button');s.tabIndex=0;
-    s.setAttribute('title','תוספות '+it.hn+': '+it.dh);
-    s.textContent=it.hn;
+    var s=document.createElement('span');
+    s.className='tsa';s.setAttribute('data-n',it.n);s.setAttribute('data-r',rule);
+    s.setAttribute('contenteditable','false');s.setAttribute('aria-hidden','true');
     return s}
+  function layerEl(){var l=document.getElementById('tsl');
+    if(!l){l=document.createElement('div');l.id='tsl';l.setAttribute('aria-hidden','false');document.body.appendChild(l)}return l}
+  var LQ=0;
+  function tsLayerSoon(){if(LQ)return;LQ=requestAnimationFrame(function(){LQ=0;tsLayer()})}
+  function tsLayer(){
+    var L=layerEl(),f=document.getElementById('flow');if(!f)return;
+    var anchors=[].slice.call(f.querySelectorAll('.tsa'));
+    var have={};[].forEach.call(L.children,function(x){have[x.getAttribute('data-n')]=x});
+    var seen={},fr=f.getBoundingClientRect(),placed=[];
+    anchors.forEach(function(a){
+      var n=a.getAttribute('data-n'),it=byN[n];if(!it)return;seen[n]=1;
+      var el=have[n];
+      if(!el){el=document.createElement('button');el.type='button';el.className='tsm'+(a.getAttribute('data-r')==='m'?' mv':'');
+        el.setAttribute('data-n',n);el.textContent=it.hn;
+        el.setAttribute('title','תוספות '+it.hn+': '+it.dh);L.appendChild(el);have[n]=el}
+      var r=document.createRange();r.selectNode(a);var b=r.getBoundingClientRect();
+      if(!b.height&&!b.width&&!b.top){el.style.display='none';return}
+      var vis=b.bottom>fr.top&&b.top<fr.bottom&&b.left>fr.left-4&&b.left<fr.right+4;
+      if(!vis){el.style.display='none';return}
+      el.style.display='';
+      var w=el.offsetWidth||18,h=el.offsetHeight||12;
+      /* מעל סוף המילה, בתוך הרווח שבין השורות; בצד שמאל של המילה (העברית נקראת מימין) */
+      var left=Math.round(b.left-w*0.5),top=Math.round(b.top-h*0.78);
+      /* סימנים באותו מקום: זה לצד זה, בלי חפיפה */
+      for(var k=0;k<placed.length;k++){var q=placed[k];
+        if(Math.abs(q.top-top)<h&&left<q.left+q.w+2&&left+w>q.left-2){left=q.left-w-2}}
+      placed.push({top:top,left:left,w:w});
+      el.style.left=left+'px';el.style.top=top+'px'});
+    [].forEach.call(L.children,function(x){if(!seen[x.getAttribute('data-n')])x.remove()})}
+  window.tsLayer=tsLayer;
+  addEventListener('resize',tsLayerSoon);
+  document.addEventListener('scroll',tsLayerSoon,true);
+  setInterval(function(){if(document.querySelector('#flow .tsa'))tsLayer()},700);
 
   function lineOf(ref){var m=/\.(\d+)$/.exec(ref||'');return m?+m[1]:0}
   function placeMark(it,rows){
@@ -168,7 +200,8 @@
 
   /* ---- סימון הדף ---- */
   function strip(){
-    document.querySelectorAll('#flow .tsm,#flow .tsfoot,#flow .tsx').forEach(function(x){x.remove()});
+    document.querySelectorAll('#flow .tsa,#flow .tsfoot,#flow .tsx').forEach(function(x){x.remove()});
+    var L=document.getElementById('tsl');if(L)L.innerHTML='';
     PLACED={}}
   function off(){return mode==='off'||(typeof BOOK!=='undefined'&&BOOK)||(typeof PRINTING!=='undefined'&&PRINTING)||(typeof EDIT!=='undefined'&&EDIT)||(typeof SUGM!=='undefined'&&SUGM)}
   var warned=false;
@@ -193,7 +226,7 @@
         last.insertAdjacentElement('afterend',fo)}});
     if(bad.length&&typeof isAdmin==='function'&&isAdmin()&&!warned){warned=true;
       if(typeof toast==='function')toast('אזהרת שלמות בתוספות: '+bad.join('; '),6000)}
-    drawList()};
+    drawList();tsLayerSoon()};
 
   /* ---- פתיחת הערה ---- */
   function hot(n){document.querySelectorAll('.tsm[data-n="'+n+'"]').forEach(function(x){x.classList.add('hot');setTimeout(function(){x.classList.remove('hot')},1800)});
@@ -216,7 +249,7 @@
     if(mode==='list'){panelOpen();hot(n);var q=document.querySelector('#tospb .tsn[data-n="'+n+'"]');if(q)q.scrollIntoView({block:'nearest'});return}
     if(mode==='side'){
       if(narrow()){
-        var row=el.closest('.row');if(!row)return;
+        var an=document.querySelector('#flow .tsa[data-n="'+n+'"]');var row=an&&an.closest('.row');if(!row)return;
         var old=row.nextElementSibling;
         if(old&&old.classList.contains('tsx')&&old.getAttribute('data-n')===String(n)){old.remove();return}
         document.querySelectorAll('#flow .tsx').forEach(function(x){x.remove()});

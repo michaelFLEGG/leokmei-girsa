@@ -159,6 +159,7 @@
     var cur = null; try { cur = LAMED && LAMED.track && LAMED.track.cur && LAMED.track.cur(); } catch (e) { }
     var items = [];
     if ($('#tzbtn')) items.push(['tz', 'page', 'צורת הדף']);
+    if ($('#tosbtn')) items.push(['tos', 'list', 'תוס&#39;']);
     items.push(['quiz', 'quiz', 'בחן את עצמך']);
     items.push(['done', 'check', 'סמן כנלמד']);
     items.push(['sug', 'flag', 'הצע תיקון']);
@@ -198,6 +199,7 @@
     setTimeout(function () {
       var cur = null; try { cur = LAMED.track.cur(); } catch (x) { }
       if (m === 'tz') tzBtn();
+      else if (m === 'tos') tosBtn();
       else if (m === 'quiz') quizDaf();
       else if (m === 'done') { if (cur) { LAMED.track.markDone(SLUG, cur.d, 'manual'); } }
       else if (m === 'sug') suggest();

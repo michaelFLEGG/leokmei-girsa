@@ -2594,6 +2594,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     markEditable();applyEdits();
     if(typeof sqMark==='function')sqMark();
     if(typeof bkMark==='function')bkMark();
+    if(typeof tsMark==='function')tsMark();   /* תוספות (11.10.2026): סימנים והערות שוליים, מוסרים במצב עריכה */
     if(EDIT)setEdit(true);
     if(!BOOK)squeezeRun();
     REFS=null;if(typeof srcSyncSoon==='function')srcSyncSoon();
@@ -2642,6 +2643,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      let h=bar;
      if(sc!=='gm'){h+='<div class="n">בלאוקמי: '+n+' תוצאות</div>'+mine.map((r,i)=>'<div class="res"><a onclick="jumpR('+i+')"><small>'+esc(r.daf)+'</small> …'+esc(r.s)+'<mark>'+esc(r.m)+'</mark>'+esc(r.e)+'…</a></div>').join('')}
      if(sc!=='lk'){h+='<div class="n">'+(gm===null?'בגמרא: טוען…':'בגמרא: '+gn+' תוצאות')+'</div>'+(gm||[]).map((r,i)=>'<div class="res"><a onclick="gmJump('+i+')"><small>'+esc(r.heb)+'</small> …'+esc(r.s)+'<mark>'+esc(r.m)+'</mark>'+esc(r.e)+'…</a></div>').join('')}
+     if(typeof tsSearchHtml==='function')h+=tsSearchHtml(q);
      out.innerHTML=h};
    draw(sc==='lk'?[]:null,0);$('#search').classList.add('open');
    if(sc==='lk')return;
@@ -3842,6 +3844,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       alert('בתצוגת ספר אין עריכה, מפני שפסקה אחת עשויה להתחלק בין שני גיליונות. סגור את תצוגת הספר ונסה שוב.');
       return}
     EDIT=on;document.body.classList.toggle('ed',on);
+    if(typeof tsMark==='function')tsMark();   /* מוסר את סימני התוספות לפני שהטקסט נקרא לעריכה */
     if(!on&&SUGM){sugPush(0);SUGM=false;document.body.classList.remove('sugm')}
     /* המשניות מוצגות מנוקדות, ובמצב עריכה הן חייבות לחזור לנוסח
        הוורד. הבנייה מחדש נעשית לפני סימון המקומות הניתנים לעריכה. */
@@ -5629,6 +5632,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     tz_man=json.load(io.open(_tzm,encoding='utf-8')).get(slug)
   if tz_man:
     JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__TZMAN="+json.dumps(tz_man,ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tzura_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  # תוספות בהערות שוליים (11.10.2026): הקוד והכפתור נכללים רק במסכת שיש לה קובץ tosafot/<slug>/live-*.json.
+  # הנתונים: רק תוספות שנכתב להם סיכום; הספירה הקבועה בקובץ count-*.json, והנוסחים הנבחרים נמשכים מנקודת הקליטה.
+  tos_items=[]
+  for _lf in sorted(_glob.glob(os.path.join(_root,'tosafot',slug,'live-*.json'))):
+    _ld=json.load(io.open(_lf,encoding='utf-8'))
+    tos_items+=_ld.get('items',[])
+  if tos_items:
+    JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__TOS="+json.dumps({'slug':slug,'items':tos_items},ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tosafot_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  tosbtn='<button id="tosbtn" class="ib" onclick="tosBtn()" title="תוספות בהערות שוליים: כל תוספות בהערה נפרדת, ממוספרת"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">תוס&#39;</span></button>' if tos_items else ''
   tzbtn='<button id="tzbtn" class="ib" onclick="tzBtn()" title="צורת הדף: עמוד הגמרא כפי שהוא מודפס (Alt+צ)"><svg class="ic" aria-hidden="true"><use href="#i-page"/></svg><span class="t">צורת הדף</span></button>' if tz_man else ''
   bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="ממצאי הבקרה בתוך הדף (למנהל בלבד)">בקרה</button>' if has_bakara else ''
   bkpanel=('<div class="panel" id="bkp"><button class="x" onclick="panel(&quot;bkp&quot;)">×</button><h3>בקרת תוכן - הממצאים לפי סוג</h3><div id="bkpb"></div></div>') if has_bakara else ''
@@ -5677,7 +5689,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
     <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
     <button onclick="document.body.classList.toggle('hc');this.classList.toggle('on')" title="ניגודיות גבוהה">ניגודיות</button></div></div>
-  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת והפירוש בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}<button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
+  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת והפירוש בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}{tosbtn}<button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
   <div class="bg dd" data-pri="2" data-label="כלים"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" aria-label="כלים" title="כלים: תוכן עניינים, אמוראים, הדפסה, הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-dots"/></svg><span class="t">כלים</span></button>
     <div class="ddp">
     <button onclick="panel('toc')" title="נושאי הסוגיות"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>תוכן העניינים</button>

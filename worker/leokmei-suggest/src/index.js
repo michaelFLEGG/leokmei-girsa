@@ -1491,6 +1491,74 @@ async function qzRuns(req, env, url) {
   return json({ ok: true, days, slug, pid, totals: tot[0] || {}, people, runs, bySlug, byDay, hard, answers });
 }
 
+
+/* ------------------------------------------------------------ תוספות בהערות שוליים (11.10.2026)
+   לכל תוספות (לפי מספרו הסידורי בפרק) יש חמש נוסחאות. המנהל בוחר אחת או עורך,
+   והבחירה מוצגת לכל הלומדים מיד, בלי בנייה מחדש.
+     GET  /tos?slug=        ציבורי: הנוסח הנבחר בלבד, לכל מספר
+     GET  /tos?slug=&adm=1  מנהל: הכול (נוסחאות, בחירות, הערות לקלוד, יומן למידה)
+     PUT  /tos              מנהל: זריעת הנוסחאות {slug, styles:{n:{a..e}}}
+     POST /tos              מנהל: בחירה/עריכה/הערה {slug, n, pick, txt, note}
+   הכול במפתח אחד לכל מסכת: tos:<slug>. */
+const TOS_PICKS = ['a', 'b', 'c', 'd', 'e', 'custom'];
+const TOS_TXT = 4000;
+async function tosApi(req, env, url, method) {
+  const slug = url.searchParams.get('slug') || '';
+  let b = null;
+  if (method === 'PUT' || method === 'POST') {
+    try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  }
+  const sg = method === 'GET' ? slug : str(b && b.slug, 30);
+  if (!slugOk(sg)) return bad('מסכת לא תקינה');
+  const key = 'tos:' + sg;
+  const doc = (await env.STORE.get(key, 'json')) || { slug: sg, styles: {}, picks: {}, notes: {}, log: [] };
+  if (method === 'GET') {
+    if (url.searchParams.get('adm') === '1') {
+      if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+      return json({ ok: true, doc });
+    }
+    const pub = {};
+    for (const n in doc.picks) pub[n] = { p: doc.picks[n].p, t: doc.picks[n].t };
+    return json({ ok: true, pub, t: doc.t || 0 });
+  }
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (method === 'PUT') {
+    let n = 0;
+    for (const k in (b.styles || {})) {
+      if (!/^\d{1,4}$/.test(k)) continue;
+      const o = {};
+      for (const x of ['dh', 'a', 'b', 'c', 'd', 'e']) o[x] = str(b.styles[k][x], TOS_TXT);
+      doc.styles[k] = o;
+      n++;
+    }
+    doc.t = Date.now();
+    await env.STORE.put(key, JSON.stringify(doc));
+    return json({ ok: true, n });
+  }
+  const n = str(String(b.n), 4);
+  if (!/^\d{1,4}$/.test(n)) return bad('מספר תוספות לא תקין');
+  const now = Date.now();
+  if (typeof b.note === 'string') {
+    const t = str(b.note, 2000).trim();
+    if (t) doc.notes[n] = { t, at: now }; else delete doc.notes[n];
+  }
+  if (b.pick !== undefined) {
+    if (b.pick === 'none') delete doc.picks[n];
+    else {
+      if (TOS_PICKS.indexOf(b.pick) < 0) return bad('בחירה לא תקינה');
+      const txt = str(b.txt, TOS_TXT).trim();
+      if (!txt) return bad('נוסח ריק');
+      doc.picks[n] = { p: b.pick, t: txt, at: now };
+      /* יומן למידה: מה נבחר, ואם נערך (custom) - מה היה הנוסח שממנו התחיל */
+      doc.log.push({ n, p: b.pick, t: txt, from: str(b.from, 2) || '', at: now });
+      if (doc.log.length > 500) doc.log = doc.log.slice(-500);
+    }
+  }
+  doc.t = now;
+  await env.STORE.put(key, JSON.stringify(doc));
+  return json({ ok: true, doc: { picks: doc.picks, notes: doc.notes } });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -1533,6 +1601,7 @@ export default {
       if (p === '/live' && req.method === 'GET') return await getEdits(req, env, url, true);
       if (p === '/edits' && req.method === 'PUT') return await putEdits(req, env);
       if (p === '/ingested' && req.method === 'POST') return await ingested(req, env);
+      if (p === '/tos' && (req.method === 'GET' || req.method === 'PUT' || req.method === 'POST')) return await tosApi(req, env, url, req.method);
       if (p === '/bakara/data' && (req.method === 'GET' || req.method === 'PUT')) return await bkData(req, env, url, req.method);
       if (p === '/bakara/dec' && (req.method === 'GET' || req.method === 'POST')) return await bkDec(req, env, url, req.method);
       if (p === '/bakara/stats' && req.method === 'GET') return await bkStats(req, env);

@@ -1,7 +1,7 @@
 {
   "id": "a4",
   "name": "A4 לאורך, שני טורים",
-  "_הערה": "כל המידות והגדלים של ההדפסה נמצאים כאן ולא בקוד. פרופיל B5 יהיה קובץ נוסף באותו מבנה, בלי מנוע חדש.",
+  "_הערה": "כל המידות והגדלים של ההדפסה נמצאים כאן ולא בקוד. פרופיל B5 יהיה קובץ נוסף באותו מבנה, בלי מנוע חדש. הרווח שבין שני הטורים נגזר: רוחב העמוד פחות השוליים פחות שני הטורים.",
   "page": {
     "w": 210,
     "h": 297
@@ -10,20 +10,19 @@
     "top": 15,
     "bottom": 15,
     "right": 20,
-    "left": 20
+    "left": 10
   },
   "duplexInnerExtra": 5,
   "cols": 2,
   "rail": 20,
   "measure": 60,
-  "gap": 10,
   "body": {
     "fsFromMeasure": 20.75,
     "linePt": 11
   },
   "header": {
-    "pt": 9,
-    "topMm": 6.5,
+    "pt": 11,
+    "topMm": 6,
     "family": "Vilna",
     "weight": 900
   },
@@ -33,22 +32,30 @@
     "siteText": "leokmei.com",
     "sitePt": 6,
     "qrMm": 10,
-    "qr": true,
+    "pageQr": false,
+    "bookQr": true,
     "siteUrl": "https://leokmei.com/"
   },
   "notes": {
     "family": "Vilna",
     "weight": 300,
     "dhWeight": 400,
-    "pt": 6.3,
-    "linePt": 7.3,
-    "letterSpacingPt": 0.2,
+    "pt": 5.3,
+    "linePt": 6.3,
+    "letterSpacingPt": 0.15,
     "cols": 2,
     "colGapMm": 2.4,
     "gapAboveMm": 2.6,
-    "numberScale": 1.12,
-    "markScale": 0.62,
-    "numbering": "hebrew"
+    "betweenMm": 0.35,
+    "numberScale": 0.62,
+    "numberRise": 0.45,
+    "numberWeight": 300,
+    "markScale": 0.58,
+    "markWeight": 400,
+    "markRise": 1.15,
+    "nameScale": 0.86,
+    "nameColor": "#6b6b6b",
+    "numbering": "digits"
   },
   "continuationPt": 6.5,
   "widowOrphan": 2,

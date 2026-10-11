@@ -149,7 +149,7 @@ def main():
     rep['seconds'] = round(time.time() - t0, 1)
     rep['console'] = [l for l in logs if not l.startswith('log:')][-15:]
     print(json.dumps({k: rep[k] for k in ('cols', 'lines', 'notes', 'placed', 'moved', 'warn', 'issues', 'loneFixed',
-                                          'msSqueeze', 'msMeasure', 't', 'seconds') if k in rep}, ensure_ascii=False))
+                                          'msSqueeze', 'glued', 'semicolons', 'msMeasure', 't', 'seconds') if k in rep}, ensure_ascii=False))
     json.dump(rep, open(a.report or (a.out + '.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('pages=%d  out=%s' % (len(rep['pages']), a.out))
 

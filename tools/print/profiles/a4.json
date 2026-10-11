@@ -9,16 +9,16 @@
   "margins": {
     "top": 15,
     "bottom": 15,
-    "right": 20,
-    "left": 10
+    "right": 4,
+    "left": 15
   },
-  "duplexInnerExtra": 5,
+  "duplexInnerExtra": 0,
   "cols": 2,
-  "rail": 20,
-  "measure": 60,
+  "rail": 16,
+  "measure": 77.5,
   "body": {
     "fsFromMeasure": 20.75,
-    "linePt": 11
+    "linePt": 14.21
   },
   "header": {
     "pt": 11,
@@ -40,11 +40,11 @@
     "family": "Vilna",
     "weight": 300,
     "dhWeight": 400,
-    "pt": 5.3,
-    "linePt": 6.3,
-    "letterSpacingPt": 0.15,
+    "pt": 6.85,
+    "linePt": 8.14,
+    "letterSpacingPt": 0.19,
     "cols": 2,
-    "colGapMm": 2.4,
+    "colGapMm": 3,
     "gapAboveMm": 2.6,
     "betweenMm": 0.35,
     "numberScale": 0.62,
@@ -58,7 +58,8 @@
     "nameColor": "#6b6b6b",
     "numbering": "digits"
   },
-  "continuationPt": 6.5,
+  "continuationPt": 8.4,
   "widowOrphan": 2,
-  "keepAfterHeading": 2
+  "keepAfterHeading": 2,
+  "_הערה_רוחב": "12.10: גרסה רחבה. שוליים ימין 4 (מסילת הדוברים קרובה לקצה), שמאל 15, מסילה 16, מידה 77.5; הגופנים מוגדלים ביחס 77.5/60 כדי לשמור על 20.75 אותיות בשורה. הגרסה הקודמת: a4-narrow.json"
 }

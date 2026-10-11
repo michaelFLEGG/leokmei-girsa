@@ -1,0 +1,6176 @@
+{
+ "p360x800-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 12,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "704/800"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 12,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "704/800"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 12,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 12,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 360,
+    "cw": 360,
+    "ok": true
+   },
+   "rail": {
+    "n": 12,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p360x800-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 4,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "278/360"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "278/360"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 3,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p390x844-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 15,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "748/844"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 15,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "748/844"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 15,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 15,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 15,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 390,
+    "cw": 390,
+    "ok": true
+   },
+   "rail": {
+    "n": 15,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p390x844-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 5,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "279/390"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "308/390"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 5,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 844,
+    "cw": 844,
+    "ok": true
+   },
+   "rail": {
+    "n": 8,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p412x915-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 14,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 17,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "819/915"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "819/915"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 412,
+    "cw": 412,
+    "ok": true
+   },
+   "rail": {
+    "n": 17,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p412x915-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 6,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "301/412"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 9,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "330/412"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 10,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 9,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 10,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 915,
+    "cw": 915,
+    "ok": true
+   },
+   "rail": {
+    "n": 9,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p375x667-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 11,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "571/667"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "571/667"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 4,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 375,
+    "cw": 375,
+    "ok": true
+   },
+   "rail": {
+    "n": 3,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "p375x667-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 4,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "293/375"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "293/375"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 9,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 9,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 5,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 3,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 667,
+    "cw": 667,
+    "ok": true
+   },
+   "rail": {
+    "n": 7,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t-tabA7-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 31,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 71,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 43,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "1238/1334"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "743/1334"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 800,
+    "cw": 800,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t-tabA7-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 27,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 33,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "562/800"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "533/800"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1334,
+    "cw": 1334,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t768x1024-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 6,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 23,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 48,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 13,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "899/1024"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "603/1024"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 768,
+    "cw": 768,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t768x1024-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 33,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "554/768"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "525/768"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t820x1180-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 27,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 62,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 16,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "1055/1180"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "276/1180"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 9,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 10,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 7,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 820,
+    "cw": 820,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t820x1180-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 27,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 33,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "575/820"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "546/820"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1180,
+    "cw": 1180,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t1024x1366-portrait": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 38,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 95,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 22,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "1241/1366"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "314/1366"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1024,
+    "cw": 1024,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "t1024x1366-landscape": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 28,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 60,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "665/1024"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "636/1024"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 16,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 19,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 17,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 8,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "d1366x768": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 33,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "734/768"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 14,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "406/768"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 14,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 14,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 18,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 14,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 21,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1366,
+    "cw": 1366,
+    "ok": true
+   },
+   "rail": {
+    "n": 14,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ },
+ "d1920x1080": {
+  "01-shaar": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 11,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "02-shas-map": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 34,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "03-masechet-map": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 76,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "04-daf-col": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 60,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 14,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "577/1080"
+   },
+   "errors": []
+  },
+  "05-daf-book": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 23,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 14,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "718/1080"
+   },
+   "errors": []
+  },
+  "06-perush": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 23,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 20,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "06b-perush-full": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 23,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 20,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "07-tzura": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 23,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 23,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "08-quiz-open": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 15,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "09-lamed": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 0,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 12,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  },
+  "10-suggest": {
+   "hscroll": {
+    "sw": 1920,
+    "cw": 1920,
+    "ok": true
+   },
+   "rail": {
+    "n": 23,
+    "overlaps": [],
+    "count": 0,
+    "ok": true
+   },
+   "touch": {
+    "n": 14,
+    "small": [],
+    "smallCount": 0,
+    "crowd": [],
+    "crowdCount": 0,
+    "ok": true
+   },
+   "clip": {
+    "items": [],
+    "count": 0,
+    "ok": true
+   },
+   "lastline": {
+    "ok": true,
+    "info": "לא רלוונטי"
+   },
+   "errors": []
+  }
+ }
+}

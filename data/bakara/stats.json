@@ -1,0 +1,109 @@
+{
+ "when": "2026-10-06T14:35:04",
+ "total": 103,
+ "by": {
+  "abbr": {
+   "ok": 5,
+   "no": 2,
+   "edit": 0,
+   "n": 7
+  },
+  "amor_miss": {
+   "ok": 12,
+   "no": 0,
+   "edit": 0,
+   "n": 12
+  },
+  "aram": {
+   "ok": 10,
+   "no": 5,
+   "edit": 0,
+   "n": 15
+  },
+  "dh_inline": {
+   "ok": 2,
+   "no": 6,
+   "edit": 0,
+   "n": 8
+  },
+  "joined": {
+   "ok": 1,
+   "no": 3,
+   "edit": 0,
+   "n": 4
+  },
+  "orphan": {
+   "ok": 0,
+   "no": 1,
+   "edit": 0,
+   "n": 1
+  },
+  "psuk_bad": {
+   "ok": 2,
+   "no": 1,
+   "edit": 0,
+   "n": 3
+  },
+  "psuk_nik": {
+   "ok": 10,
+   "no": 0,
+   "edit": 0,
+   "n": 10
+  },
+  "punct": {
+   "ok": 1,
+   "no": 0,
+   "edit": 0,
+   "n": 1
+  },
+  "sem_hav": {
+   "ok": 3,
+   "no": 0,
+   "edit": 0,
+   "n": 3
+  },
+  "sem_hsr": {
+   "ok": 2,
+   "no": 0,
+   "edit": 0,
+   "n": 2
+  },
+  "sem_lo": {
+   "ok": 5,
+   "no": 1,
+   "edit": 0,
+   "n": 6
+  },
+  "sem_mil": {
+   "ok": 12,
+   "no": 0,
+   "edit": 2,
+   "n": 14
+  },
+  "sem_sty": {
+   "ok": 3,
+   "no": 1,
+   "edit": 0,
+   "n": 4
+  },
+  "sem_yih": {
+   "ok": 7,
+   "no": 0,
+   "edit": 0,
+   "n": 7
+  },
+  "typo": {
+   "ok": 3,
+   "no": 3,
+   "edit": 0,
+   "n": 6
+  }
+ },
+ "demoted": [
+  "dh_inline"
+ ],
+ "candidates": [
+  "amor_miss",
+  "psuk_nik"
+ ]
+}

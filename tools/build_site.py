@@ -2672,7 +2672,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const off=BOOK||PRINTING;document.body.classList.toggle('srcoff',!!off);
     if(off)return;
     const fr=f.getBoundingClientRect(),rows=f.querySelectorAll('.row[data-ref]'),seen=new Set(),W=44,need=[];
-    for(const r of rows){const m=r.querySelector(':scope > .main');if(!m)continue;
+    for(const r of rows){
+      /* סינון גס לפי תיבת השורה עצמה, לפני שנוגעים בתוכן: במצב עריכה שורות
+         שמחוץ למסך נדלגות (content-visibility, ראה edCvNow) וגודלן ידוע בלי
+         פריסת תוכנן, אבל מדידת .main שבתוכן כופה פריסה של תת-העץ בכל קריאה.
+         נמדד (12.10.2026): 29 שניות במשימה אחת בבכורות, בהאטת מעבד פי 4. */
+      const rb=r.getBoundingClientRect();
+      if(rb.bottom<fr.top||rb.top>fr.bottom||rb.right<fr.left||rb.left>fr.right)continue;
+      const m=r.querySelector(':scope > .main');if(!m)continue;
       const b=m.getBoundingClientRect();
       if(b.bottom<fr.top||b.top>fr.bottom||b.right<fr.left||b.left>fr.right||b.height===0)continue;
       need.push([r,b])}
@@ -4185,7 +4192,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       bar.style.top=Math.max(topMin,Math.min(innerHeight-bh-4,sv.y))+'px';bar.style.bottom='auto';return}
     /* הקצה השמאלי של הטקסט הנראה, כדי שהחלונית לעולם לא תהיה מעל טקסט */
     let L=Infinity;
-    for(const m of document.querySelectorAll('#flow .row .main')){
+    /* תיבת השורה נבדקת קודם: שורה שמחוץ למסך נדלגת בעריכה (content-visibility),
+       ומדידת .main שבתוכה כופה פריסה של תת-העץ בכל קריאה (נמדד: 34 שניות
+       במשימה אחת בבכורות, בהאטת מעבד פי 4) */
+    for(const w of document.querySelectorAll('#flow .row')){
+      const wr=w.getBoundingClientRect();
+      if(!(wr.right>0&&wr.left<innerWidth&&wr.bottom>0&&wr.top<innerHeight))continue;
+      const m=w.querySelector(':scope > .main');if(!m)continue;
       const r=m.getBoundingClientRect();
       if(r.right>0&&r.left<innerWidth&&r.bottom>0&&r.top<innerHeight)L=Math.min(L,r.left)}
     if(!isFinite(L))L=innerWidth;

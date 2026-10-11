@@ -114,7 +114,8 @@ def align(text, voc):
 
 
 def load_data(slug):
-    s = io.open(os.path.join(ROOT, 'site', slug + '.html'), encoding='utf-8').read()
+    import pagedata
+    s = pagedata.read_html(os.path.join(ROOT, 'site', slug + '.html'))
     i = s.find('const DATA=')
     d, _ = json.JSONDecoder().raw_decode(s[i + 11:])
     return d

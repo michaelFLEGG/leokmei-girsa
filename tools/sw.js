@@ -5,7 +5,7 @@
 const V = 'lg-__SWV__';
 const SHELL = ['./', 'index.html', 'shas.html', 'masechet.html', 'lamed.html', 'quiz.html', 'ui.css', 'lamed.css', 'lamed.js', 'shas.js', 'shas.json',
   'daf-yomi.js', 'hdate.js', 'manifest.webmanifest', 'brand/shaar-v2/shaar-zohar-96.webp', 'brand/shaar-v2/shaar-zohar-560.webp',
-  'brand/fonts/vilna-xb.woff2', 'brand/fonts/vilna-rg.woff2', 'brand/fonts/vilna-bd.woff2', 'brand/fonts/vilna-md.woff2', 'brand/fonts/vilna-lt.woff2'];
+  'fonts/vilna-xb.woff2', 'fonts/vilna-r.woff2', 'fonts/vilna-b.woff2', 'fonts/vilna-m.woff2', 'fonts/frank.woff2', 'fonts/frank-b.woff2', 'brand/fonts/vilna-lt.woff2'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => Promise.all(SHELL.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => { })))).then(() => self.skipWaiting()));

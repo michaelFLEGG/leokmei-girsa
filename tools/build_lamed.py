@@ -112,10 +112,10 @@ def brand(site):
 
 # שער סטטי לדף הבית: מצויר מיד, עוד לפני שהסקריפט רץ. אחר כך lamed.js מאמץ אותו (ui.js: UI.home).
 GATE_PH = 'PLACEHOLDER'
-HEAD_EXTRA = {'home': '<link rel="preload" as="image" href="brand/shaar-v2/shaar-zohar-360.avif" type="image/avif" fetchpriority="high">'}
+HEAD_EXTRA = {'home': '<link rel="preload" as="image" imagesrcset="brand/shaar-v2/shaar-zohar-360.avif 360w, brand/shaar-v2/shaar-zohar-560.avif 560w, brand/shaar-v2/shaar-zohar-960.avif 960w, brand/shaar-v2/shaar-zohar-1600.avif 1600w" imagesizes="(max-width:520px) min(440px,100vw), 560px" type="image/avif" fetchpriority="high">'}
 PRE = {'home': ('<main class="lm-wrap lm-pre"><section class="gate-hero" aria-label="פתיחה" style="background-image:url(%s)"><h1 class="sr-only">לאוקמי גירסא - קיצור התלמוד הבבלי</h1>'
-                '<a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס"><img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.avif" data-hi="brand/shaar-v2/shaar-zohar-960.avif" data-hi2="brand/shaar-v2/shaar-zohar-1600.avif" '
-                'alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onerror="if(!this.getAttribute(\'data-fb\')){this.setAttribute(\'data-fb\',1);this.src=\'brand/shaar-v2/shaar-zohar-360.webp\'}" '
+                '<a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס"><img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.avif" srcset="brand/shaar-v2/shaar-zohar-360.avif 360w, brand/shaar-v2/shaar-zohar-560.avif 560w, brand/shaar-v2/shaar-zohar-960.avif 960w, brand/shaar-v2/shaar-zohar-1600.avif 1600w" sizes="(max-width:520px) min(440px,100vw), 560px" '
+                'alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onerror="if(!this.getAttribute(\'data-fb\')){this.setAttribute(\'data-fb\',1);this.removeAttribute(\'srcset\');this.src=\'brand/shaar-v2/shaar-zohar-360.webp\'}" '
                 'onload="var h=this.closest(\'.gate-hero\');this.classList.add(\'ld\');setTimeout(function(){h.style.backgroundImage=\'none\'},520)"></a></section>'
                 '<div class="ctas"><a class="lm-btn pri" href="shas.html">מפת הש&quot;ס</a></div></main>')}
 

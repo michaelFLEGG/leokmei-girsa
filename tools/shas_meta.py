@@ -14,7 +14,8 @@ def words(h):
 
 
 def meta_of(path):
-    h = io.open(path, encoding='utf-8').read()
+    import pagedata
+    h = pagedata.read_html(path)
     i = h.index('const DATA=') + len('const DATA=')
     d = json.JSONDecoder().raw_decode(h[i:])[0]
     dafim, perakim, last = [], [], None

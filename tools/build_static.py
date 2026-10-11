@@ -17,7 +17,7 @@ TAG = re.compile(r'<[^>]+>')
 GEM = {'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'כ': 20, 'ל': 30, 'מ': 40,
        'נ': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'צ': 90, 'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400}
 
-CSS = ('@font-face{font-family:LGVilnaXB;src:url(/brand/fonts/vilna-xb.woff2) format("woff2");font-display:swap}'
+CSS = ('@font-face{font-family:LGVilnaXB;src:url(/fonts/vilna-xb.woff2) format("woff2");font-display:swap}'
        ':root{--foil:linear-gradient(170deg,#fbe7a1,#e6bd52 30%,#c38f2a 55%,#efcf6b 75%,#b07c1f);--glow:drop-shadow(0 1px 0 rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(240,196,90,.45))}'
        'html{background:#060f18}body{margin:0;min-height:100vh;display:flex;flex-direction:column;color:#1d1a16;font:19px/1.75 "Frank Ruhl Libre",Frank,serif;'
        'background:radial-gradient(ellipse 80% 60% at 50% 20%,#102a42,#091827 55%,#060f18);background-color:#060f18}'
@@ -62,7 +62,8 @@ def daf_words(daf):
 
 
 def load_data(path):
-    h = io.open(path, encoding='utf-8').read()
+    import pagedata
+    h = pagedata.read_html(path)
     i = h.find('const DATA=')
     if i < 0:
         return None

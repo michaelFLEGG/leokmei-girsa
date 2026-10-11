@@ -42,7 +42,8 @@ def tid(*parts):
 
 
 def load_data(path):
-    h = io.open(path, encoding='utf-8').read()
+    import pagedata
+    h = pagedata.read_html(path)
     i = h.find('const DATA=')
     if i < 0:
         return None

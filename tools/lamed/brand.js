@@ -35,11 +35,11 @@
   };
   /* תמונת השער: הגרסה המתאימה לרוחב המסך (טלפון אינו מוריד גרסת מחשב). עד שהיא מגיעה - תמונה מטושטשת זעירה מוטמעת */
   B.gateImg = function () {
-    return '<img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.avif" data-hi="brand/shaar-v2/shaar-zohar-960.avif" data-hi2="brand/shaar-v2/shaar-zohar-1600.avif" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onload="var h=this.closest(\'.gate-hero\');this.classList.add(\'ld\');if(h)setTimeout(function(){h.style.backgroundImage=\'none\'},520)" onerror="if(!this.getAttribute(\'data-fb\')){this.setAttribute(\'data-fb\',1);this.src=\'brand/shaar-v2/shaar-zohar-360.webp\'}">';
+    return '<img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.avif" srcset="brand/shaar-v2/shaar-zohar-360.avif 360w, brand/shaar-v2/shaar-zohar-560.avif 560w, brand/shaar-v2/shaar-zohar-960.avif 960w, brand/shaar-v2/shaar-zohar-1600.avif 1600w" sizes="(max-width:520px) min(440px,100vw), 560px" alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onload="var h=this.closest(\'.gate-hero\');this.classList.add(\'ld\');if(h)setTimeout(function(){h.style.backgroundImage=\'none\'},520)" onerror="if(!this.getAttribute(\'data-fb\')){this.setAttribute(\'data-fb\',1);this.removeAttribute(\'srcset\');this.src=\'brand/shaar-v2/shaar-zohar-360.webp\'}">';
   };
   /* שלב ב': אחרי שהדף נטען והדפדפן בטל, מחליפים את השער הקל בגרסה המתאימה לרוחב המסך ולרשת (רק ברשת מהירה וכשלא ביקשו חיסכון) */
   B.upgrade = function (img) {
-    if (!img || img.getAttribute('data-up')) return; img.setAttribute('data-up', '1');
+    if (!img || img.getAttribute('data-up') || img.getAttribute('srcset')) return;   /* srcset בוחר תמונה אחת לפי המסך (11.10.2026) */ img.setAttribute('data-up', '1');
     var c = navigator.connection || {}, slow = c.saveData || /(^|-)2g|3g/.test(c.effectiveType || '');
     if (slow) return;
     var w = img.clientWidth * (window.devicePixelRatio || 1), url = w > 1000 && img.getAttribute('data-hi2') ? img.getAttribute('data-hi2') : img.getAttribute('data-hi');

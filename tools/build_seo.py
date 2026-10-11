@@ -23,7 +23,7 @@ ICONS = ('<meta property="og:image" content="%s/brand/og-image.png"><meta proper
          '<meta name="theme-color" content="#0b1c2a">') % BASE
 
 # מעטפת קטנה לדפי טקסט פשוטים (אודות, מקורות): סרגל כחול עם השער הקטן
-MINI_STYLE = ('@font-face{font-family:LGVilnaXB;src:url(brand/fonts/vilna-xb.woff2) format("woff2");font-display:swap}'
+MINI_STYLE = ('@font-face{font-family:LGVilnaXB;src:url(fonts/vilna-xb.woff2) format("woff2");font-display:swap}'
               'html{background:#060f18}body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:radial-gradient(ellipse 80% 60% at 50% 20%,#102a42,#091827 55%,#060f18);color:#f5edd6;font-family:serif;line-height:1.8}'
               'header.mh{background:#0b1c2a;border-bottom:1px solid #8f6a1e;padding:8px 18px}'
               'header.mh a{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:400 25px/1.1 LGVilnaXB,serif;background:linear-gradient(170deg,#fbe7a1,#e6bd52 30%,#c38f2a 55%,#efcf6b 75%,#b07c1f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(240,196,90,.45))}'

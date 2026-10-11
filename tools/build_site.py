@@ -1686,6 +1686,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .rail.hw.dup .dafmark{transform:translateY(-.95em);white-space:nowrap}
   .rail.hw:not(:has(.dafmark)){grid-template-columns:minmax(0,1fr) 0}
   .rail.hw:not(:has(.dafmark)) .win{grid-column:1}
+  /* ההתאמה של החלונות רצה אחרי הציור הראשון (fitSoon); עד אז הם מוסתרים כדי שלא יקפצו */
+  .flow.fitting .rail .win{visibility:hidden}
   /* דף שאין בו יחידות: הטקסט ריק, והמסילה אינה תופסת גובה. בלי המינימום
      הזה היה ציון הדף נופל על השורה הבאה. */
   .row>.main:empty{min-height:var(--lhpx)}
@@ -2297,37 +2299,61 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      הגופנים מדלגת כשלא השתנתה. שלושה טריגרים הריצו התאמה מלאה כל אחד
      (1.5-2 שניות בטלפון איטי) גם כשדבר לא השתנה (11.10.2026). */
   let FITSIG='';
-  function fitSig(){let n=0;try{if(document.fonts)document.fonts.forEach(f=>{if(f.status==='loaded')n++})}catch(e){}
+  function fitSig(){let n=0;try{if(document.fonts)document.fonts.forEach(f=>{if(f.status==='loaded'&&f.family.indexOf('LG')<0)n++})}catch(e){}
     return n+':'+innerWidth+':'+(document.documentElement.style.getPropertyValue('--fs')||'')}
   function trackW(rail){
     const g=getComputedStyle(rail).gridTemplateColumns.split(' ');
     return parseFloat(g[rail.classList.contains('hw')&&rail.querySelector('.dafmark')?1:0])||0;
   }
+  /* ההתאמה נעשית על מכולת-טורים, ופריסה מחדש שלה כולה עולה כ-0.2 שנייה במחשב
+     ופי ארבע בטלפון. לכן כל הקריאות נעשות על פריסה נקייה לפני כל כתיבה,
+     והתוצאות שהיו נקראות מפריסה חדשה מחושבות (נתיב הדף המצטמצם מרחיב את
+     נתיב הטקסט בדיוק בהפרש), והמדידה היחידה שנשארת - גובה חלון שנפרש - נעשית
+     על עותק של השורה בלבד, מחוץ למכולה (11.10.2026). */
+  let SBX=null;
+  function sbx(){
+    if(SBX&&SBX.isConnected)return SBX;
+    const d=document.createElement('div');d.className='flow';d.setAttribute('aria-hidden','true');
+    d.style.cssText='position:fixed;left:-99999px;top:0;width:3000px;height:auto;overflow:visible;padding:0;margin:0;'+
+      'column-width:auto;column-count:1;column-rule:0;visibility:hidden;pointer-events:none';
+    document.body.appendChild(d);return SBX=d}
   function fitAnchors(only){
     const f=$('#flow');if(!f)return;
     if(!only)FITSIG=fitSig();
-    const items=[];
     /* only: רשימת שורות בלבד (אחרי עריכה מקומית); בלעדיה - כל הפרק */
     const rowsList=only?[...only]:[...f.querySelectorAll('.row')];
-    /* ב1: תווית טווח רחבה מנתיב הדף - הנתיב מורחב לשורה שלה בלבד */
-    for(const r0 of rowsList)for(const d of r0.querySelectorAll('.dafmark.rng')){
-      const r=d.closest('.row');if(!r)continue;
-      const w=dafWidth(d.textContent.trim())*0.74;
-      r.style.setProperty('--dafw',Math.max(w,DAFW).toFixed(1)+'px');
-    }
+    const items=[];let dirty=false;
     for(const r of rowsList){
       const a=r.querySelector(':scope > .rail > .win');
       if(!a||!a.textContent.trim())continue;
-      a.classList.remove('w2');a.style.fontSize='';a.parentElement.classList.remove('dup');
-      if(!r.querySelector('.dafmark.rng'))r.style.removeProperty('--dafw');
-      items.push({r,a,rail:a.parentElement});
+      const rail=a.parentElement,rng=!!r.querySelector('.dafmark.rng');
+      items.push({r,a,rail,rng});
+      if(a.classList.contains('w2')||a.style.fontSize||rail.classList.contains('dup')||(!rng&&r.style.getPropertyValue('--dafw')))dirty=true;
     }
-    if(!items.length)return;
+    /* ב1: תווית טווח רחבה מנתיב הדף - הנתיב מורחב לשורה שלה בלבד */
+    const rngW=[];
+    for(const r0 of rowsList)for(const d of r0.querySelectorAll('.dafmark.rng')){
+      const r=d.closest('.row');if(!r)continue;
+      rngW.push([r,Math.max(dafWidth(d.textContent.trim())*0.74,DAFW)])}
+    const wRng=()=>{for(const [r,w] of rngW)r.style.setProperty('--dafw',w.toFixed(1)+'px')};
+    const wReset=()=>{for(const o of items){
+      o.a.classList.remove('w2');o.a.style.fontSize='';o.rail.classList.remove('dup');
+      if(!o.rng)o.r.style.removeProperty('--dafw')}};
+    /* שורות שכבר הותאמו נאפסות ורק אז נמדדות; בטעינה ראשונה אין מה לאפס,
+       וכל הקריאות באות לפני כל כתיבה */
+    if(dirty){wRng();wReset()}
+    if(!items.length){if(!dirty)wRng();return}
     const lhpx=lhOf(f);
-    /* קריאה */
+    const rngSet=new Map(rngW);
+    /* קריאה. אין כאן אף כתיבה בין קריאה לקריאה: הערימות שנפרשות
+       לשורה אחת נאספות, ונכתבות יחד אחרי כל הקריאות. */
+    const stk=[];
     for(const o of items){
       o.aw=o.a.getBoundingClientRect().width;
       o.tw=trackW(o.rail);
+      /* נתיב הדף הרחב של תווית טווח (נכתב אחרי הקריאות) מצמצם את נתיב הטקסט בהפרש */
+      if(!dirty&&rngSet.has(o.r))o.tw-=(rngSet.get(o.r)-DAFW);
+      o.rw=o.r.getBoundingClientRect().width;
       const m=o.r.querySelector(':scope > .main');
       /* מספר שורות הטקסט נמדד על השורות עצמן ולא על גובה האלמנט: מרווח
          שנגזר מוורד יושב בתוך .main, ופסקה בת שורה אחת עם חצי שורת
@@ -2340,49 +2366,100 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       o.lines=ln;
       o.dm=o.r.querySelector('.dafmark');
       o.hw=o.rail.classList.contains('hw');
+      if(o.hw&&o.dm){const cs=getComputedStyle(o.rail);
+        o.full=o.rail.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0)}
       /* ב2: ערימת חלונות גבוהה מן הטקסט שלה - נפרשת לשורה אחת, עם מפריד,
          כדי שהמסילה לא תגבה על היחידה. */
       if(o.a.classList.contains('stk')){
         const an=o.a.querySelector('.anchor');
         const n=an?an.querySelectorAll('br').length+1:1;
-        if(n>ln&&an){an.innerHTML=an.innerHTML.replace(/<br\s*\/?>/g,' · ');o.a.classList.remove('stk');
-          o.aw=o.a.getBoundingClientRect().width}
+        if(n>ln&&an)stk.push([o,an])
       }
     }
-    /* כתיבה ראשונה: צמצום נתיב הדף ליחידה שצריכה זאת */
+    if(!dirty)wRng();
+    if(stk.length){
+      for(const [o,an] of stk){an.innerHTML=an.innerHTML.replace(/<br\s*\/?>/g,' · ');o.a.classList.remove('stk')}
+      for(const [o] of stk)o.aw=o.a.getBoundingClientRect().width
+    }
+    /* כתיבה ראשונה: צמצום נתיב הדף ליחידה שצריכה זאת. הנתיב המצטמצם מרחיב
+       את נתיב הטקסט בדיוק בהפרש הרוחב, ולכן אין צורך בקריאה חוזרת. */
     const still=[];
     for(const o of items){
       if(o.aw<=o.tw+.5)continue;
       if(o.dm&&!o.dm.classList.contains('rng')){const w=dafWidth(o.dm.textContent.trim());
-        if(w<DAFW-.5){o.r.style.setProperty('--dafw',w.toFixed(1)+'px');still.push(o);continue}}
+        if(w<DAFW-.5){o.r.style.setProperty('--dafw',w.toFixed(1)+'px');o.tw+=DAFW-w;still.push(o);continue}}
       still.push(o);
     }
     if(!still.length)return;
-    /* קריאה שנייה, ואז ההכרעה */
-    for(const o of still)o.tw=trackW(o.rail);
     const wrapped=[];
     for(const o of still){
       if(o.aw<=o.tw+.5)continue;
       /* כותרת הצד לא תיפגע: אם היא נכנסת במסילה כולה, ציון הדף מועלה מעט ויוצא מן הצפיפות */
-      if(o.hw&&o.dm){const cs=getComputedStyle(o.rail),full=o.rail.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0);
-        if(o.aw<=full+.5){o.rail.classList.add('dup');continue}}
+      if(o.hw&&o.dm){
+        if(o.aw<=o.full+.5){o.rail.classList.add('dup');continue}}
       if(o.lines>=2&&!o.a.classList.contains('stk')){o.a.classList.add('w2');wrapped.push(o);continue}
       const need=o.tw/o.aw;
       let sc=ASCALE[ASCALE.length-1];
       for(const c of ASCALE)if(c<=need){sc=c;break}
       o.a.style.fontSize=sc.toFixed(3)+'em';
     }
+    if(!wrapped.length)return;
     /* חלון שנפרש נשאר בגבול שתי שורות, ולעולם אינו עולה על מספר שורות
        הטקסט: אחרת הוא בעצמו פוער את השורה הלבנה שבאנו למנוע. הוא מוקטן
-       עד שהוא נכנס, ולעולם אינו נחתך. */
-    for(const o of wrapped){
-      const cap=Math.min(2,o.lines)*lhpx+1;
-      let sc=1;
-      while(o.a.getBoundingClientRect().height>cap&&sc>0.62){
-        sc-=0.07;o.a.style.fontSize=sc.toFixed(3)+'em';
+       עד שהוא נכנס, ולעולם אינו נחתך. ההקטנה נעשית בסבבים לכל החלונות יחד,
+       על עותקי השורות בלבד (פריסה של שורה, לא של הפרק). */
+    const inplace=BOOK||PRINTING||f.classList.contains('book')||wrapped.length>60;
+    if(inplace){
+      let act=wrapped.map(o=>({o,el:o.a,cap:Math.min(2,o.lines)*lhpx+1,sc:1}));
+      while(act.length){
+        const over=act.filter(x=>x.el.getBoundingClientRect().height>x.cap&&x.sc>0.62);
+        if(!over.length)break;
+        for(const x of over){x.sc-=0.07;x.el.style.fontSize=x.sc.toFixed(3)+'em'}
+        act=over;
       }
+      return}
+    const box=sbx();
+    let act=wrapped.map(o=>{
+      const c=o.r.cloneNode(true);
+      c.removeAttribute('id');c.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+      c.style.width=o.rw+'px';c.style.margin='0';
+      box.appendChild(c);
+      return {o,el:c.querySelector(':scope > .rail > .win'),cap:Math.min(2,o.lines)*lhpx+1,sc:1}});
+    while(act.length){
+      const over=act.filter(x=>x.el.getBoundingClientRect().height>x.cap&&x.sc>0.62);
+      if(!over.length)break;
+      for(const x of over){x.sc-=0.07;const v=x.sc.toFixed(3)+'em';x.el.style.fontSize=v;x.o.a.style.fontSize=v}
+      act=over;
     }
+    box.textContent='';
   }
+  /* התאמה מושהית לטעינת הפרק (11.10.2026): הפרק מצויר וטקסטו נראה תחילה,
+     וההתאמה רצה אחרי הציור הראשון ואחרי טעינת הגופנים - פעם אחת, במקום
+     פעם לפני הגופנים ופעם אחריהם. עד אז החלונות שבצד מוסתרים (fitting). */
+  let FITW=0,JEL=null,JPOS=null;
+  function fitSoon(){
+    if(FITW)return;
+    const f=$('#flow');if(!f)return;
+    f.classList.add('fitting');FITW=1;
+    const run=()=>{
+      if(!FITW)return;FITW=0;
+      try{setDafW();fitAnchors()}catch(e){}
+      const g=$('#flow');if(g)g.classList.remove('fitting');
+      /* ההתאמה משנה גבהים: מי שקפץ למקום נשאר עליו */
+      try{if(JEL&&JEL.isConnected&&JPOS){const g2=$('#flow');
+        if(Math.abs(g2.scrollLeft-JPOS[0])<3&&Math.abs(g2.scrollTop-JPOS[1])<3){toEl(JEL);JPOS=[g2.scrollLeft,g2.scrollTop]}}}catch(e){}
+    };
+    /* ממתינים לגופני הטקסט עצמם (לא לגופני הממשק): מדידה לפני שנטענו נותנת
+       מספרים שגויים ודורשת מעבר שני על כל הפרק */
+    requestAnimationFrame(()=>setTimeout(()=>{
+      if(document.fonts&&document.fonts.load){
+        const fp=['400 1em Frank','700 1em Frank','400 1em Vilna','500 1em Vilna','700 1em Vilna','900 1em Vilna'];
+        Promise.race([Promise.all(fp.map(x=>document.fonts.load(x,'א').catch(()=>0))),
+                      new Promise(r=>setTimeout(r,1800))]).then(run,run)}
+      else run()},0));
+    setTimeout(run,3500);
+  }
+  function jumpMark(e){JEL=e;const g=$('#flow');JPOS=g?[g.scrollLeft,g.scrollTop]:null}
   /* ---- ד6: ההדפסה עוברת כולה במנוע הגיליונות ----
      רק הוא יודע לעמד בזהירות (כותרת אינה נפרדת מן התוכן שאחריה) ולתת
      כותרת רצה. שני הכפתורים וגם Ctrl+P של הדפדפן עוברים דרכו. */
@@ -2588,7 +2665,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].label||D.pages[s.from].daf;$('#dafsel').value=s.from;
     document.title=`לאוקמי גירסא · ${D.masechet} · ${ALL?'רצף':(s.perekName||s.perek||D.pages[s.from].daf)}`;
     location.hash=`p=${cur}`;
-    fitAnchors();
+    if(BOOK||PRINTING)fitAnchors();else fitSoon();
     markEditable();applyEdits();
     if(typeof sqMark==='function')sqMark();
     if(typeof bkMark==='function')bkMark();
@@ -2600,7 +2677,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){DAFNAV=Date.now();const si=secOf(pi);if(si!==cur)render(si);
-    setTimeout(()=>{const e=$('#d'+pi);if(e)toEl(e);$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi},20)}
+    setTimeout(()=>{const e=$('#d'+pi);if(e){toEl(e);jumpMark(e)}$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi},20)}
   function dafYomi(){const t=window.LGDaf&&LGDaf.today();if(!t)return;
     if(t.slug===SLUG){const pi=D.pages.findIndex(p=>p.daf===t.daf);
       if(pi<0){alert('הדף '+t.daf+' אינו במסכת '+D.masechet);return}
@@ -2655,7 +2732,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* תוצאה בגמרא: פותחת את הגמרא במקום, בלי לצאת מהחיפוש */
   function gmJump(i){const r=GRES[i];if(!r)return;SRCMODE=SRCMODE||srcDefault();openSrc(r.ref)}
   function jump(pi,id,q){DAFNAV=Date.now();const si=secOf(pi);render(si,q);
-    setTimeout(()=>{const e=$('#u'+id);if(e){e.classList.add('hit');toEl(e)}$('#dafsel').value=pi;$('#curdaf').textContent=D.pages[pi].daf},20)}
+    setTimeout(()=>{const e=$('#u'+id);if(e){e.classList.add('hit');toEl(e);jumpMark(e)}$('#dafsel').value=pi;$('#curdaf').textContent=D.pages[pi].daf},20)}
   function amq(i){$('#q').value=D.am[i][0];search(D.am[i][0])}
   function build(){
    setDafW();
@@ -5619,6 +5696,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   JS=io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"hdate.js"),encoding="utf-8").read()+chr(10)+JS
   _td=os.path.dirname(os.path.abspath(__file__))
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  _SHARED_BODY=JS[:JS.rindex(chr(10)+"  build();")]   # הקוד המשותף לכל המסכתות; מה שאחריו (בקרה, צורת הדף, תוספות) פרטי למסכת
   # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
   # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.
   import glob as _glob
@@ -5660,9 +5738,35 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
             [('shas','home','הש"ס'),('prev','right','דף קודם'),('next','left','דף הבא'),('perush','book','פירוש'),('more','dots','עוד')])+'</nav>'
             '<div id="mscrim"></div><div id="msheet" role="dialog" aria-modal="true"></div>')
   LJV=build_lamed.js_hash()
+  # קוד ונתונים מחוץ לדף (11.10.2026): הדף היה 1.1MB מוטבעים ולא נשמרו במטמון.
+  # הקוד המשותף (mas.js) זהה בכל המסכתות ונשמר פעם אחת; הנתונים (<מסכת>.data.js)
+  # משתנים רק כשהתוכן משתנה; הזנב הפרטי למסכת (בקרה, צורת הדף, תוספות) קטן.
+  # הגרסה בכתובת (?v=) היא תוכן הקובץ, ו-sw.js שומר כל כתובת כזאת במטמון לצמיתות.
+  assert JS.startswith(_SHARED_BODY)
+  _tail=JS[len(_SHARED_BODY):]
+  def _wr(name,text):
+    fp=os.path.join(_outdir,name)
+    b=text.encode('utf-8')
+    try:
+      if os.path.exists(fp) and io.open(fp,'rb').read()==b:return
+    except OSError:pass
+    io.open(fp,'wb').write(b)
+    return
+  _data_js='const DATA='+J+',SLUG="'+slug+'";'
+  _wr(slug+'.data.js',_data_js); _wr('mas.js',_SHARED_BODY+chr(10))
+  _DV=_hl.md5(_data_js.encode('utf-8')).hexdigest()[:8]
+  _MV=_hl.md5((_SHARED_BODY+chr(10)).encode('utf-8')).hexdigest()[:8]
+  _tail_s=_tail.strip()
+  if len(_tail_s)>64:
+    _wr(slug+'.x.js',_tail+chr(10)); _XV=_hl.md5((_tail+chr(10)).encode('utf-8')).hexdigest()[:8]
+    TAILJS='<script src="%s.x.js?v=%s"></script>'%(slug,_XV)
+  else:
+    TAILJS='<script>'+_tail_s+'</script>'
+  PRELOAD_JS='<link rel="preload" href="%s.data.js?v=%s" as="script"><link rel="preload" href="mas.js?v=%s" as="script">'%(slug,_DV,_MV)
   SKEL=''.join('<i style="width:%d%%"></i>'%w for w in (92,100,96,64,98,100,88,72,94,100,90,58))
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
+  {PRELOAD_JS}
   <link rel="preload" href="fonts/frank.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/vilna-r.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/vilna-b.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
@@ -5729,7 +5833,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <div class="panel" id="sgq"><button class="x" onclick="panel('sgq')">×</button><h3>הצעות תיקון ממתינות</h3><div id="sgqb"></div></div>
   {bkpanel}
   <div class="flow" id="flow"><div class="skel" aria-hidden="true">{SKEL}</div></div><div id="srcl" aria-hidden="true"></div>
-  <script>const DATA={J},SLUG="{slug}";</script><script>{JS}</script>
+  <script src="{slug}.data.js?v={_DV}"></script><script src="mas.js?v={_MV}"></script>{TAILJS}
   <script src="shas.js"></script><script src="lamed.js?v={LJV}"></script><script src="mobile.js?v={MOBV}" defer></script><script>if("serviceWorker"in navigator)addEventListener("load",function(){{navigator.serviceWorker.register("sw.js").catch(function(){{}})}})</script></body></html>'''
 
   open(out_path,'w',encoding='utf-8').write(page)

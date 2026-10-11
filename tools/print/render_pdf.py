@@ -74,6 +74,7 @@ def main():
     ap.add_argument('--dev', action='store_true')
     ap.add_argument('--tos-dir', default=os.path.join(ROOT, 'tosafot'), help='תיקיית נתוני התוספות (live-*.json) לבדיקה')
     ap.add_argument('--no-pdf', action='store_true')
+    ap.add_argument('--report', default='', help='נתיב קובץ הדוח (JSON); בלעדיו הדוח נכתב ליד הקובץ')
     a = ap.parse_args()
     from playwright.sync_api import sync_playwright
 
@@ -145,7 +146,7 @@ def main():
     rep['console'] = [l for l in logs if not l.startswith('log:')][-15:]
     print(json.dumps({k: rep[k] for k in ('cols', 'lines', 'notes', 'placed', 'moved', 'warn', 'issues', 'loneFixed',
                                           'msSqueeze', 'msMeasure', 't', 'seconds') if k in rep}, ensure_ascii=False))
-    json.dump(rep, open(a.out + '.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    json.dump(rep, open(a.report or (a.out + '.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('pages=%d  out=%s' % (len(rep['pages']), a.out))
 
 

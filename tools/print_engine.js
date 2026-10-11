@@ -459,8 +459,11 @@
       '.tocr .td{flex:1;border-bottom:1px dotted #000;transform:translateY(-3px)}.tocr .tp{font-weight:900}'+
       '@media print{.pg{break-inside:avoid}}';
     document.head.appendChild(st);
-    setTimeout(function(){runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};
-      try{console.error('[print] '+e)}catch(x){}})},0);
+    /* ההרצה אחרי טעינת כל הסקריפטים (הזנב הפרטי של המסכת, build ושאר הקוד של הדף): קודם לכן נתוני התוספות עדיין אינם קיימים,
+       וקוד אחר של הדף עלול לשנות את גוף המסמך אחרי העימוד */
+    var go=function(){setTimeout(function(){runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};
+      try{console.error('[print] '+e)}catch(x){}})},100)};
+    if(document.readyState==='complete')go();else window.addEventListener('load',go);
   }
 
   /* ---------- חלון ההדפסה (הלומד) ---------- */
@@ -625,7 +628,7 @@
     function prnGo(){
       var r=prnRange(),go=document.getElementById('prn-go'),bar=document.getElementById('prn-bar'),err=document.getElementById('prn-err');
       var q=prnQuery(r);q.delete('print');q.set('m',SLUG);
-      var fname='לאוקמי גירסא - '+D.masechet+(r.t==='all'?'':' '+r.from+(r.to!==r.from?' - '+r.to:''))+'.pdf';
+      var fname=('לאוקמי גירסא - '+D.masechet+(r.t==='all'?'':' '+r.from+(r.to!==r.from?' - '+r.to:''))+'.pdf').replace(/:/g,'꞉');   /* נקודותיים אסורות בשם קובץ בוינדוס */
       go.disabled=true;bar.style.display='block';err.hidden=true;
       go.textContent='מכין את הקובץ...';
       var t0=Date.now(),iv=setInterval(function(){go.textContent='מכין את הקובץ... '+Math.round((Date.now()-t0)/1000)+' שניות'},1000);

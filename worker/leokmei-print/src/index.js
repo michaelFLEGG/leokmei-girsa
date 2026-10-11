@@ -65,7 +65,8 @@ async function pdf(req, env, ctx, url) {
     try { const t = await (await fetch(`${SUGGEST}/tos?slug=${encodeURIComponent(m)}`, { cf: { cacheTtl: 30 } })).json(); pick = String(t && t.t || ''); } catch (e) { pick = 'x'; }
   }
   const key = 'print:v1:' + await sha(JSON.stringify([m, all, from, to, tos, duplex, profile, ver, pick]));
-  const dfile = all ? `${m}.pdf` : `${m}-${from}-${to}.pdf`;
+  const hn = { kiddushin: 'קידושין' }[m] || m;
+  const dfile = (all ? `${hn}.pdf` : `${hn} ${from}${to !== from ? ' - ' + to : ''}.pdf`).replace(/:/g, '꞉');
   const head = {
     'content-type': 'application/pdf',
     'content-disposition': `attachment; filename="leokmei-${encodeURIComponent(m)}.pdf"; filename*=UTF-8''${encodeURIComponent('לאוקמי גירסא - ' + dfile)}`,

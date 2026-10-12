@@ -268,7 +268,7 @@
     document.querySelectorAll('.decosel').forEach(x=>x.classList.remove('decosel'));DECO.el=null}
   document.addEventListener('mousedown',e=>{
     if(!EDIT)return;
-    if(e.target.closest&&e.target.closest('#decobar'))return;
+    if(e.target.closest&&e.target.closest('#decobar,#tspop'))return;
     const h=e.target.closest&&e.target.closest('.row.hatz .main.hatz,.main.mishna p.hatz');
     if(h){e.preventDefault();decoShow(h);return}
     decoHide()},true);

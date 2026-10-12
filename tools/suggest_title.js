@@ -191,24 +191,29 @@
       const cl={sug,fin:title,i:P.editing,dec:title!==sug?1:0};
       const mode=P.mode,head=P.head,el=P.el,h=P.h;
       close();
-      if(mode==='deco')applyDeco(head,title,cl);
+      if(mode==='deco')applyDeco(head,title,cl,el);
       else if(mode==='head')applyHead(el,title,cl);
       else applyLine(el,title,cl)}
     /* עיטור -> כותרת: אותו מסלול של "החלף בכותרת", ואז הטקסט נכתב בה ונרשם */
-    function applyDeco(head,title,cl){
+    function applyDeco(head,title,cl,decoEl){
+      /* לחיצה בחלונית ההצעות מוחקת את סימון העיטור (מטפל העכבר של העורך), ולכן הוא מוחזר כאן */
+      DECO.el=decoEl;
       const t=decoDo('hrep',head);
-      if(!t){return}
-      setTimeout(()=>{
+      if(!t){flash('הכותרת לא נכנסה: העיטור לא אותר או שהוא בתוך משנה. סמן אותו שוב ונסה שוב');return}
+      let tries=0;
+      const go=()=>{
         const key='u'+t+'.0';
         const el=$('#flow').querySelector('[data-ek="'+key+'"]');
         let u=null;D.pages.forEach(p=>p.units.forEach(x=>{if(x.id===t)u=x}));
+        if((!el||!u||!u.hph)&&++tries<40){setTimeout(go,100);return}     /* דף כבד: ממתינים עד ארבע שניות */
         if(!el||!u||!u.hph){flash('הכותרת לא נכנסה: רענן את הדף ונסה שוב');return}
         u.hph.cl=cl;
         el.textContent=title;
         u.s=((u.s||'')+' prop').trim();el.classList.add('prop');
         hrepCapture(el);
         placeCaret(key,title.length);
-        flash('הכותרת נכנסה: '+title+'. לביטול: "העריכות שלי"')},60)}
+        flash('הכותרת נכנסה: '+title+'. לביטול: "העריכות שלי"')};
+      setTimeout(go,30)}
     /* כותרת קיימת: מחליפים את הנוסח (עריכת טקסט רגילה) */
     function applyHead(el,title,cl){
       el.focus();

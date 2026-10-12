@@ -4161,8 +4161,26 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(EDIT){setEdit(false);return}
     if(isAdmin()&&(admKey()||ONGESHER)){SUGM=false;setEdit(true);return}
     return edChoose()}
+  /* חלון קלט בתוך הדף. prompt() של הדפדפן נחסם או אינו מוצג בדפדפנים משובצים
+     ובחלק מהדפדפנים בטלפון, ואז כניסת המנהל "לא נפתחת" בלי שום הודעה (12.10.2026). */
+  function askWord(title,msg,def){
+    return new Promise(res=>{
+      const old=document.getElementById('askword');if(old)old.remove();
+      const m=document.createElement('div');m.className='modal sgmodal';m.id='askword';
+      m.innerHTML='<div class="box"><h3></h3><p style="margin:4px 0 8px;white-space:pre-line"></p>'+
+        '<input type="password" id="aw-in" autocomplete="off" style="width:100%;font:inherit;padding:8px;box-sizing:border-box" dir="rtl">'+
+        '<div class="btns"><button id="aw-ok" style="font-weight:700">אישור</button><button id="aw-x">ביטול</button></div></div>';
+      m.querySelector('h3').textContent=title;m.querySelector('p').textContent=msg;
+      document.body.appendChild(m);
+      const inp=m.querySelector('#aw-in');inp.value=def||'';
+      const done=v=>{m.remove();res(v)};
+      m.querySelector('#aw-ok').onclick=()=>done(inp.value);
+      m.querySelector('#aw-x').onclick=()=>done(null);
+      m.addEventListener('click',e=>{if(e.target===m)done(null)});
+      inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')done(inp.value);if(e.key==='Escape')done(null)});
+      setTimeout(()=>inp.focus(),30)})}
   async function askAdminWord(){
-    const a=prompt('מילת המנהל (מוקלדת פעם אחת בלבד בכל מכשיר):');
+    const a=await askWord('מילת המנהל','מוקלדת פעם אחת בלבד בכל מכשיר.');
     if(a===null||!a.trim())return;
     try{
       const dev=(/iPad|Tablet|Android|Mobile/i.test(navigator.userAgent)?'טאבלט או טלפון':'מחשב')+' · '+HD.date(Date.now());
@@ -5062,9 +5080,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       sqBadge();netInit(true);return true
     }catch(e){
       alert(/נכונה/.test(e.message||'')?'המילה אינה נכונה.':'לא ניתן להתחבר כרגע: '+(e.message||'שגיאה'));return false}}
-  function admKeyAsk(){
+  async function admKeyAsk(){
     const cur=admKey();
-    const v=prompt('מילת המנהל של לאוקמי גירסא (פעם אחת בכל מכשיר).\n\nאפשר גם להדביק את המפתח הארוך. נשמר רק בדפדפן הזה.\nלהסרה - מחק את התוכן ולחץ אישור.',/[^\x00-\xff]/.test(cur)?'':'');
+    const v=await askWord('מילת המנהל של לאוקמי גירסא','פעם אחת בכל מכשיר. אפשר גם להדביק את המפתח הארוך. נשמר רק בדפדפן הזה. להסרה - מחק את התוכן ולחץ אישור.',/[^\x00-\xff]/.test(cur)?'':'');
     if(v===null)return Promise.resolve(false);
     const t=v.trim();
     if(!t){try{localStorage.removeItem(ADMKEY)}catch(e){}sqBadge();return Promise.resolve(false)}

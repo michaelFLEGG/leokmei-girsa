@@ -22,7 +22,7 @@ def call(model, system, user, thinking=0, effort=None, timeout=1200):
     if effort:
         cmd += ['--effort', effort]
     t0 = time.time()
-    r = subprocess.run(cmd, input=user, capture_output=True, text=True, cwd=EMPTY, env=env, timeout=timeout)
+    r = subprocess.run(cmd, input=user, capture_output=True, text=True, encoding='utf-8', cwd=EMPTY, env=env, timeout=timeout)
     ms = int((time.time() - t0) * 1000)
     if r.returncode != 0:
         raise RuntimeError('claude -p נכשל (%s): %s' % (r.returncode, (r.stderr or r.stdout)[:400]))

@@ -1,5 +1,5 @@
 {
- "total": 522744,
+ "total": 674655,
  "calls": [
   {
    "kind": "write",
@@ -605,6 +605,226 @@
    "think": 5402,
    "ms": 30102,
    "cost": 0.0039307
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "2a",
+   "in": 6661,
+   "out": 545,
+   "think": 0,
+   "ms": 16709,
+   "cost": 0.06418
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "2a",
+   "in": 7278,
+   "out": 612,
+   "think": 0,
+   "ms": 19381,
+   "cost": 0.070456
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "2b",
+   "in": 6854,
+   "out": 632,
+   "think": 0,
+   "ms": 19634,
+   "cost": 0.067464
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "2b",
+   "in": 7464,
+   "out": 669,
+   "think": 0,
+   "ms": 20155,
+   "cost": 0.073084
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "3a",
+   "in": 6561,
+   "out": 388,
+   "think": 0,
+   "ms": 15372,
+   "cost": 0.034032
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "3a",
+   "in": 7178,
+   "out": 505,
+   "think": 0,
+   "ms": 17347,
+   "cost": 0.036511
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "3b",
+   "in": 5745,
+   "out": 117,
+   "think": 0,
+   "ms": 13253,
+   "cost": 0.022084
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "3b",
+   "in": 6363,
+   "out": 121,
+   "think": 0,
+   "ms": 14097,
+   "cost": 0.022311
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "4a",
+   "in": 6167,
+   "out": 296,
+   "think": 0,
+   "ms": 16300,
+   "cost": 0.029040000000000003
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "4a",
+   "in": 6777,
+   "out": 316,
+   "think": 0,
+   "ms": 16706,
+   "cost": 0.029523
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "4b",
+   "in": 6734,
+   "out": 342,
+   "think": 0,
+   "ms": 17274,
+   "cost": 0.034496
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "4b",
+   "in": 7346,
+   "out": 376,
+   "think": 0,
+   "ms": 16774,
+   "cost": 0.035275
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "5a",
+   "in": 8634,
+   "out": 473,
+   "think": 0,
+   "ms": 17896,
+   "cost": 0.052316
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "5a",
+   "in": 9245,
+   "out": 502,
+   "think": 0,
+   "ms": 18223,
+   "cost": 0.052987
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "5b",
+   "in": 5977,
+   "out": 235,
+   "think": 0,
+   "ms": 17429,
+   "cost": 0.0263
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "5b",
+   "in": 6589,
+   "out": 290,
+   "think": 0,
+   "ms": 15500,
+   "cost": 0.027499000000000003
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "6a",
+   "in": 7692,
+   "out": 409,
+   "think": 0,
+   "ms": 17099,
+   "cost": 0.0435
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "6a",
+   "in": 8310,
+   "out": 479,
+   "think": 0,
+   "ms": 17510,
+   "cost": 0.045047000000000004
+  },
+  {
+   "kind": "write",
+   "engine": "old",
+   "slug": "sukkah",
+   "daf": "6b",
+   "in": 7684,
+   "out": 477,
+   "think": 0,
+   "ms": 17091,
+   "cost": 0.044796
+  },
+  {
+   "kind": "write",
+   "engine": "new",
+   "slug": "sukkah",
+   "daf": "6b",
+   "in": 8291,
+   "out": 577,
+   "think": 0,
+   "ms": 17178,
+   "cost": 0.046855
   }
  ]
 }

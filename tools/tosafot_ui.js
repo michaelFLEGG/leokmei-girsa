@@ -299,7 +299,7 @@
     var m=document.getElementById('tosmenu');
     if(!m){m=document.createElement('div');m.id='tosmenu';document.body.appendChild(m)}
     m.innerHTML=MODES.map(function(x){return '<button type="button" data-m="'+x[0]+'" class="'+(x[0]===mode?'on':'')+'" onclick="tosSet(this.dataset.m)">'+ge(x[1])+'<small>'+ge(x[2])+'</small></button>'}).join('')+
-      ((window.tosTestOpen&&typeof isAdmin==='function'&&isAdmin())?'<button type="button" onclick="tosTestOpen()">מבחן מנועים<small>למנהל בלבד: בחירה עיוורת בין חמש אופציות לכל תוספות</small></button>':'');
+      ((window.tosTestOpen&&typeof isAdmin==='function'&&isAdmin())?((window.__TOSTEST&&window.__TOSTEST.rounds)||[{label:'מבחן מנועים'}]).map(function(rd,i){return '<button type="button" onclick="tosTestOpen('+i+')">'+ge(rd.label||'מבחן מנועים')+'<small>למנהל בלבד: בחירה עיוורת בין אופציות לכל תוספות</small></button>'}).join(''):'');
     var b=document.getElementById('tosbtn'),r=b.getBoundingClientRect();
     m.classList.toggle('open');
     /* בטלפון הכפתור מוסתר בסרגל ונפתח מתפריט "עוד": התפריט מוצג במרכז המסך */

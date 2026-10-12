@@ -11,6 +11,7 @@
   (function(){
   var T=window.__TOSTEST||null;
   if(!T)return;
+  var CUR={file:T.file,reveal:T.reveal},LOADEDF=null,VERIFY=null;
   var LET=['a','b','c','d','e'],HE={a:'א',b:'ב',c:'ג',d:'ד',e:'ה'};
   var SINCE=0,ITEMS=null,ORDER=[],DOC={picks:{},notes:{}},IDX=0,PAIR=null,EDITFROM=null,FACE=false,OPEN=false,LOADING=false;
   function ge(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -57,6 +58,7 @@
     if(!e){e=document.createElement('div');e.id='tostest';e.setAttribute('dir','rtl');e.setAttribute('role','dialog');e.setAttribute('aria-label','מבחן מנועים');document.body.appendChild(e)}return e}
 
   /* ---- מצב כרטיס ---- */
+  function lets(it){return LET.filter(function(L){return it.options&&it.options[L]!=null})}
   function kk(k){return String(ITEMS[k].key)}
   function noteOf(k){var n=DOC.notes&&DOC.notes[kk(k)];return (n&&n.at>=SINCE&&n.t)||''}
   function parseNote(t){
@@ -115,7 +117,7 @@
       h+='<div class="ttf">'+f+' <a href="'+ge(it.url||'#')+'" target="_blank" rel="noopener">בספריא</a></div>'}
     if(it.laukmi)h+='<div class="ttl">שורת הלאוקמי שבה התוספות מעוגן: '+ge(it.laukmi)+'</div>';
     h+='<div class="tto-wrap">';
-    LET.forEach(function(L,ix){
+    lets(it).forEach(function(L,ix){
       var cur=(st.kind==='one'&&st.pick&&st.pick.p===L)||(st.kind==='two'&&(HE[L]===st.a||HE[L]===st.b));
       var pr=PAIR&&PAIR.indexOf(L)>=0;
       h+='<div class="tto'+(cur?' cur':'')+(pr?' pr':'')+'"><span class="tl">'+HE[L]+'</span><span class="tt">'+ge(it.options[L])+'</span>'+
@@ -129,7 +131,7 @@
       h+='<div class="ttx" style="display:block"><label>עריכה חופשית (מבוסס על אופציה '+HE[EDITFROM]+')</label><textarea id="ttedit">'+ge(st.kind==='custom'&&st.pick?st.pick.t:base)+'</textarea>'+
          '<button type="button" class="go" data-a="saveedit">שמור את הנוסח שערכתי</button> <button type="button" data-a="canceledit">בטל</button></div>'}
     h+='<div class="ttx" style="display:block"><label for="ttnote">הערה לקלוד על התוספות הזה</label><input type="text" id="ttnote" value="'+ge(st.free||'')+'" placeholder="למשל: חסר התירוץ השני"> <button type="button" data-a="savenote">שמור הערה</button></div></div>';
-    h+='<div class="ttb">מקשים: 1 עד 5 בחירה · חץ שמאלה הבא · חץ ימינה הקודם</div>';
+    h+='<div class="ttb">מקשים: 1 עד '+lets(it).length+' בחירה · חץ שמאלה הבא · חץ ימינה הקודם</div>';
     return h}
   function render(){
     if(!OPEN)return;
@@ -163,7 +165,7 @@
     var tg=ev.target&&ev.target.tagName;
     if(ev.key==='Escape'){close();return}
     if(tg==='TEXTAREA'||tg==='INPUT')return;
-    if(/^[1-5]$/.test(ev.key)){pickOne(ORDER[IDX],LET[+ev.key-1]);ev.preventDefault();return}
+    if(/^[1-5]$/.test(ev.key)){var _it=ITEMS&&ITEMS[ORDER[IDX]],_ls=_it?lets(_it):[];if(_ls[+ev.key-1]){pickOne(ORDER[IDX],_ls[+ev.key-1]);ev.preventDefault()}return}
     if(ev.key==='ArrowLeft'){go(1);ev.preventDefault();return}
     if(ev.key==='ArrowRight'){go(-1);ev.preventDefault()}});
 
@@ -174,7 +176,8 @@
     var done=doneCount(),tot=ORDER.length;
     if(done<tot&&!force){
       if(!window.confirm('נבחרו '+done+' מתוך '+tot+'. לחשוף את התוצאות לפני שסיימת? אחרי החשיפה קשה יהיה להמשיך בלי הטיה.'))return}
-    fetch(T.reveal,{cache:'no-store'}).then(function(r){return r.json()}).then(function(R){
+    if(!CUR.reveal){say('קובץ החשיפה של הסבב הזה עדיין אינו באתר (יועלה אחרי שתסיים לבחור)',5000);return}
+    fetch(CUR.reveal,{cache:'no-store'}).then(function(r){return r.json()}).then(function(R){
       api('/tos?slug='+encodeURIComponent(SLUG)+'&adm=1').then(function(j){
         if(j&&j.doc){DOC.picks=j.doc.picks||{};DOC.notes=j.doc.notes||{}}
         showResults(R)}).catch(function(){showResults(R)})
@@ -195,6 +198,11 @@
           var fl=(rv[e]||[]).length>0;
           if(keep[e]){if(fl)flagsOnKept++}
           else{rejectedTotal++;if(fl)rejectedFlagged++}})}});
+    if(R.verify){
+      var nw=won[R.verify.new]||0,od=won[R.verify.old]||0,tw=(tie[R.verify.new]||0);
+      el().innerHTML='<div class="ttw ttr"><div class="tth"><h2>תוצאות אימות הפרופיל</h2><button type="button" data-a="back">חזרה לכרטיסים</button><button type="button" data-a="close">סגור</button></div>'+
+        '<div class="ttrec">הפרומפט החדש נבחר '+nw+' פעמים, הישן '+od+' פעמים, ושתיים טובות באותה מידה '+tw+' פעמים, מתוך '+ORDER.length+' תוספות. נבחרו עם תיקון: חדש '+(edited[R.verify.new]||0)+', ישן '+(edited[R.verify.old]||0)+'.</div></div>';
+      return}
     var n=ORDER.length,PR=R.prices||{},SHAS=R.shas||27000;
     var rows=engines.map(function(e){
       var t=R.tokens[e],nt=Math.max(1,t.ntos),ia=t.in/nt,oa=t.out/nt;
@@ -216,16 +224,19 @@
     el().innerHTML=h}
 
   /* ---- טעינה ופתיחה ---- */
-  window.tosTestOpen=function(){
+  window.tosTestOpen=function(ri){
     if(!adm()){say('המבחן זמין לכניסת מנהל בלבד');return}
+    var rd=(T.rounds&&T.rounds[ri||0])||{file:T.file,reveal:T.reveal};
+    CUR={file:rd.file,reveal:rd.reveal};
+    if(LOADEDF!==CUR.file){ITEMS=null;ORDER=[];DOC={picks:{},notes:{}};IDX=0}
     var m=document.getElementById('tosmenu');if(m)m.classList.remove('open');
     if(LOADING)return;
     OPEN=true;
     var e=el();e.classList.add('open');e.innerHTML='<div class="ttw"><p>טוען...</p></div>';
     if(ITEMS){load2();return}
     LOADING=true;
-    fetch(T.file,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){
-      SINCE=j.since||0;ITEMS=j.items;Object.keys(ITEMS).forEach(function(k){ITEMS[k].id=k});
+    fetch(CUR.file,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){
+      SINCE=j.since||0;ITEMS=j.items;LOADEDF=CUR.file;Object.keys(ITEMS).forEach(function(k){ITEMS[k].id=k});
       ORDER=Object.keys(ITEMS).sort(function(a,b){return ITEMS[a].key-ITEMS[b].key});
       LOADING=false;load2()}).catch(function(){LOADING=false;OPEN=false;e.classList.remove('open');say('לא נטען קובץ המבחן',4000)})};
   function load2(){

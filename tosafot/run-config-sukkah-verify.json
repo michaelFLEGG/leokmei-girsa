@@ -1,0 +1,72 @@
+{
+ "_comment": "סבב אימות פרופיל התוספות (12.10.2026): פרומפט ישן מול חדש, על מנוע אחד (אופוס 5.5). המנוע האחד נשאר ללא שם בממשק; האות בלבד.",
+ "prompt": "tosafot/תוס-פרומפט-שורה-אחת.md",
+ "mode": "direct",
+ "budgetTokens": 3000000,
+ "packSuffix": "-verify1",
+ "engines": [
+  {
+   "id": "old",
+   "model": "claude-opus-5-5",
+   "thinking": 0,
+   "label": "פרומפט ישן",
+   "effort": "low",
+   "prompt": "tosafot/תוס-פרומפט-שורה-אחת.md"
+  },
+  {
+   "id": "new",
+   "model": "claude-opus-5-5",
+   "thinking": 0,
+   "label": "פרומפט חדש",
+   "effort": "low",
+   "prompt": "tosafot/תוס-פרומפט-שורה-אחת-ב.md"
+  }
+ ],
+ "scope": [
+  {
+   "slug": "sukkah",
+   "perek": 1,
+   "dafs": [
+    "2a",
+    "2b",
+    "3a",
+    "3b",
+    "4a",
+    "4b",
+    "5a",
+    "5b",
+    "6a",
+    "6b"
+   ]
+  }
+ ],
+ "prices": {
+  "fable": {
+   "in": 5,
+   "out": 25
+  },
+  "opus": {
+   "in": 2,
+   "out": 10
+  },
+  "sonnet": {
+   "in": 1,
+   "out": 5
+  },
+  "haiku": {
+   "in": 0.05,
+   "out": 0.25
+  },
+  "sonnet-think": {
+   "in": 1,
+   "out": 5
+  }
+ },
+ "pricesChecked": "12.10.2026",
+ "shas": 27000,
+ "roundLabel": "אימות פרופיל: סוכה ב. עד ו:",
+ "verify": {
+  "new": "new",
+  "old": "old"
+ }
+}

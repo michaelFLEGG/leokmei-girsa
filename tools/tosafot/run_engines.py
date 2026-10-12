@@ -115,6 +115,7 @@ def record(u, kind, engine, slug, daf, j):
 
 def do_run(cfg):
     system = io.open(os.path.join(ROOT, cfg['prompt']), encoding='utf-8').read()
+    eprompt = {e['id']: io.open(os.path.join(ROOT, e.get('prompt', cfg['prompt'])), encoding='utf-8').read() for e in cfg['engines']}
     pages = collect(cfg)
     if cfg.get('mode') == 'batch':
         out = []
@@ -122,7 +123,7 @@ def do_run(cfg):
             for e in cfg['engines']:
                 out.append({'custom_id': '%s--%s--%s' % (e['id'], slug, daf), 'params': {
                     'model': e['model'], 'max_tokens': 4000,
-                    'system': [{'type': 'text', 'text': system_text(system, tos), 'cache_control': {'type': 'ephemeral'}}],
+                    'system': [{'type': 'text', 'text': system_text(eprompt[e['id']], tos), 'cache_control': {'type': 'ephemeral'}}],
                     'messages': [{'role': 'user', 'content': user_msg(daf, tos)}]}})
         p = os.path.join(ROOT, 'tosafot', 'batch-requests.jsonl')
         with io.open(p, 'w', encoding='utf-8') as f:
@@ -147,7 +148,7 @@ def do_run(cfg):
         want = [r['id'] for r in tos]
         tries = []
         for attempt in (1, 2):
-            j = llm.call(e['model'], system_text(system, tos), user_msg(daf, tos), thinking=e['thinking'], effort=e.get('effort'))
+            j = llm.call(e['model'], system_text(eprompt[e['id']], tos), user_msg(daf, tos), thinking=e['thinking'], effort=e.get('effort'))
             tries.append({k: j[k] for k in ('in', 'out', 'think', 'ms', 'cost')})
             try:
                 got = parse_json(j['text'])
@@ -199,7 +200,7 @@ def shuffled(slug, rid, engines):
     rnd = random.Random('tos-blind-%s-%s' % (slug, rid))
     ids = [e['id'] for e in engines]
     rnd.shuffle(ids)
-    return {'abcde'[i]: eid for i, eid in enumerate(ids)}
+    return {'abcde'[i]: eid for i, eid in enumerate(ids)}   # כמה אופציות: כמספר המנועים
 
 
 def do_review(cfg):
@@ -216,14 +217,14 @@ def do_review(cfg):
             m = shuffled(slug, r['id'], cfg['engines'])
             maps[r['id']] = m
             blocks.append('### מזהה: %s\nפנים התוספות:\n%s\n\nאופציות:\n%s' % (
-                r['id'], r['text'], '\n'.join('%s. %s' % (k, opts[(slug, r['id'])][m[k]]) for k in 'abcde')))
+                r['id'], r['text'], '\n'.join('%s. %s' % (k, opts[(slug, r['id'])][m[k]]) for k in 'abcde'[:len(cfg['engines'])])))
         j = llm.call(cfg['reviewer']['model'], REVIEW_SYS, '\n\n'.join(blocks), thinking=cfg['reviewer']['thinking'])
         got = parse_json(j['text'])
         out = {}
         for r in tos:
             g = got.get(r['id'], {})
             m = maps[r['id']]
-            out[r['id']] = {m[k]: g.get(k, []) for k in 'abcde'}      # מפתח = מנוע (המיפוי נשאר פנימי)
+            out[r['id']] = {m[k]: g.get(k, []) for k in 'abcde'[:len(cfg['engines'])]}      # מפתח = מנוע (המיפוי נשאר פנימי)
         jdump(fp, {'daf': daf, 'slug': slug, 'tries': [{k: j[k] for k in ('in', 'out', 'think', 'ms', 'cost')}], 'ntos': len(tos), 'flags': out})
         return slug, daf, j
 
@@ -244,7 +245,7 @@ def do_pack(cfg):
             m = shuffled(slug, r['id'], cfg['engines'])
             key = r['n'] if slug == 'kiddushin' else r['perek'] * 1000 + r['n']      # זהה ל-make_live.ukey
             pub = {'key': key, 'n': r['n'], 'perek': r['perek'], 'hn': r['hn'], 'daf': r['dafKey'], 'dh': r['dh'], 'text': r['text'], 'url': r['url'],
-                   'laukmi': r['laukmi'], 'options': {k: opts[(slug, r['id'])][m[k]] for k in 'abcde'}}
+                   'laukmi': r['laukmi'], 'options': {k: opts[(slug, r['id'])][m[k]] for k in 'abcde'[:len(cfg['engines'])]}}
             by_slug.setdefault(slug, {'items': {}, 'map': {}, 'tokens': {}, 'review': {}})
             by_slug[slug]['items'][r['id']] = pub
             by_slug[slug]['map'][r['id']] = m
@@ -271,13 +272,14 @@ def do_pack(cfg):
         d = os.path.join(ROOT, 'tosafot', slug)
         # since: בחירות והערות שנשמרו לפני רגע האריזה (למשל בחירות הנוסח הישנות בקידושין) אינן נחשבות בחירה במבחן
         import time
-        jdump(os.path.join(d, 'test-options.json'), {'slug': slug, 'since': int(time.time() * 1000), 'items': o['items'], 'engines': [chr(97 + i) for i in range(5)]})
-        jdump(os.path.join(d, 'test-reveal.json'), {'slug': slug, 'map': o['map'], 'tokens': tok, 'review': rev, 'prices': cfg.get('prices', {}),
-                                                   'pricesChecked': cfg.get('pricesChecked', ''), 'pricesNote': cfg.get('pricesNote', ''), 'shas': cfg.get('shas', 27000)})
+        suf = cfg.get('packSuffix', '')
+        jdump(os.path.join(d, 'test-options%s.json' % suf), {'slug': slug, 'since': int(time.time() * 1000), 'label': cfg.get('roundLabel', ''), 'items': o['items'], 'engines': [chr(97 + i) for i in range(len(cfg['engines']))]})
+        jdump(os.path.join(d, 'test-reveal%s.json' % suf), {'slug': slug, 'map': o['map'], 'tokens': tok, 'review': rev, 'prices': cfg.get('prices', {}),
+                                                   'pricesChecked': cfg.get('pricesChecked', ''), 'pricesNote': cfg.get('pricesNote', ''), 'verify': cfg.get('verify'), 'shas': cfg.get('shas', 27000)})
         print(slug, 'נכתבו test-options.json ו-test-reveal.json:', len(o['items']), 'תוספות')
         # נוסח ברירת המחדל ללומד עד שהמנהל בוחר: אופציית פייבל (styles-<פרק>.json, שממנו make_live בונה את live). לא בקידושין:
         # שם הבחירות הקיימות של המנהל כבר מוצגות, וקובץ ה-live הקיים אינו נכתב מחדש.
-        if slug != 'kiddushin':
+        if slug != 'kiddushin' and not suf:
             per = {}
             for rid, it in o['items'].items():
                 eng = o['map'][rid]

@@ -73,6 +73,10 @@ def split_dh(t):
     m = re.search(r'[.:]\s', t)
     if m and len(t[:m.start()].split(' ')) <= 10:
         return t[:m.start()].strip(), t[m.end():].strip(), 'נקודה'
+    # 12.10.2026: דיבור ארוך שנסגר בנקודה אחרי יותר מעשר מילים (ציטוט מן הגמרא): עד הנקודה, ולא ארבע מילים בלבד
+    m = re.search(r'[.:]\s', t)
+    if m and len(t[:m.start()].split(' ')) <= 40:
+        return t[:m.start()].strip(), t[m.end():].strip(), 'נקודה ארוכה (לבדיקה)'
     return ' '.join(words[:4]), t, 'ארבע מילים (לבדיקה)'
 
 
@@ -80,11 +84,19 @@ def main():
     slug, perek = sys.argv[1], int(sys.argv[2])
     base = os.path.join(ROOT, 'tosafot')
     raw = json.load(io.open(os.path.join(base, 'raw', slug + '.json'), encoding='utf-8'))
-    wiki = json.load(io.open(os.path.join(base, 'raw', '_wikisource-' + slug + '.json'), encoding='utf-8'))
+    # מקור שני (ויקיטקסט) אופציונלי: כשהוא חסר, הדוח אומר זאת במפורש והספירה אינה מסומנת מאומתת (12.10.2026)
+    wpath = os.path.join(base, 'raw', '_wikisource-' + slug + '.json')
+    wiki = json.load(io.open(wpath, encoding='utf-8')) if os.path.exists(wpath) else None
     chap = json.load(io.open(os.path.join(base, slug, 'chapters.json'), encoding='utf-8'))
     ch = [c for c in chap['chapters'] if c['n'] == perek][0]
-    lo, hi = daf_order(ch['from']), daf_order(ch['to'])
-    items = [i for i in raw['items'] if lo <= daf_order(i['daf']) <= hi]
+    # גבול הפרק יכול להיות בתוך עמוד: fromLine/toLine הם שורת הגמרא (ספריא) הראשונה והאחרונה של הפרק בעמוד הגבול
+    lo = (daf_order(ch['from']), ch.get('fromLine', 0))
+    hi = (daf_order(ch['to']), ch.get('toLine', 10 ** 6))
+    # הספירה מוגבלת למה שנמשך בפועל מספריא (countedThrough), כשהפרק ארוך ממנו
+    ct = ch.get('countedThrough')
+    if ct:
+        hi = min(hi, (daf_order(ct), 10 ** 6))
+    items = [i for i in raw['items'] if lo <= (daf_order(i['daf']), i['line']) <= hi]
     items.sort(key=lambda i: (daf_order(i['daf']), i['line'], i['seg']))
     kept, removed, seen = [], [], {}
     for it in items:
@@ -108,7 +120,8 @@ def main():
         r['dafKey'] = daf_key(r['daf'])
         r['url'] = 'https://www.sefaria.org/' + r['ref'].replace(' ', '_').replace(':', '.')
     out = {'slug': slug, 'masechet': chap['masechet'], 'perek': perek, 'perekName': ch['name'],
-           'from': ch['from'], 'to': ch['to'], 'verifiedThrough': ch.get('verifiedThrough', ''),
+           'from': ch['from'], 'fromLine': ch.get('fromLine', 0), 'to': ch['to'], 'toLine': ch.get('toLine', 0),
+           'countedThrough': ct or '', 'verifiedThrough': ch.get('verifiedThrough', ''),
            'source': raw['source'], 'total': len(kept),
            'removed': removed,
            'note': 'הספירה קבועה: אין לחשב מחדש בכל טעינה. שינוי בה נעשה רק בכלי הזה, עם רישום ב-removed.',
@@ -118,6 +131,18 @@ def main():
         json.dump(out, f, ensure_ascii=False, indent=1)
 
     # אימות מול המקור השני
+    if wiki is None:
+        lines = ['# אימות ספירת תוספות - %s פרק %d' % (chap['masechet'], perek), '',
+                 'מקור הספירה: ' + raw['source'] + '.',
+                 '**אין מקור שני.** ויקיטקסט ודיקטה חסומים מסביבת הענן (שער היציאה של הרשת דחה את הבקשות), ולכן הספירה אינה מאומתת מול מקור עצמאי.',
+                 'סך הכול אחרי הסרת כפילויות: **%d**. הוסרו: %d.' % (len(kept), len(removed)), '']
+        for r in removed:
+            lines.append('- הוסר %s (שורת גמרא %d): %s... - %s' % (r['daf'], r['line'], r['dh'], r['reason']))
+        with io.open(os.path.join(d, 'verification-%d.md' % perek), 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines) + '\n')
+        print('נבנה: %d דיבורים, הוסרו %d, ללא מקור שני' % (len(kept), len(removed)))
+        return
+
     def paras(w):
         return [norm(re.sub(r"\{\{[^}]*\}\}|\[\[|\]\]|'''|''", '', p)) for p in re.split(r'\n\s*\n', (w or '').strip()) if p.strip()]
     lines = ['# אימות ספירת תוספות - %s פרק %d (%s עד %s)' % (chap['masechet'], perek, ch['from'], ch['to']), '',

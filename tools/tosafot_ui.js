@@ -24,7 +24,7 @@
   var MOVED={};          /* n -> true: העוגן זז */
   var PLACED={};         /* n -> כלל שהופעל */
   /* המספור המוצג הוא מספר סידורי בספרות (הוחלט 11.10.2026); האותיות נשמרות בחיפוש בלבד */
-  var byN={};TS.items.forEach(function(it){it.hnHeb=it.hn;it.hn=String(it.n);byN[it.n]=it});
+  var byN={};TS.items.forEach(function(it){it.hnHeb=it.hn;it.hn=String(it.disp||it.n);byN[it.n]=it});
 
   var sty=document.createElement('style');
   sty.textContent=
@@ -39,7 +39,7 @@
    '.tsn{margin:.4em 0;padding:.25em .35em;border-radius:5px;scroll-margin-top:70px}'+
    '.tsn.hot{background:#fff4d6;transition:background .3s}'+
    '.tsn .tsnum{font-family:Vilna,serif;font-weight:900;font-size:1.05em;color:#000;margin-inline-end:.35em}'+
-   '.tsn .tsdh{font-size:.78em;color:#7a5a14;margin-inline-end:.4em}'+
+   '.tsn .tsdh{font-size:.78em;font-weight:700;color:#7a5a14;margin-inline-end:.4em}'+
    '.tsn .tstx{display:inline}'+
    '.tsn .tsin{font:inherit;font-size:.78em;margin-inline-start:.5em;padding:0 .55em;border:1px solid #c9bfa6;border-radius:10px;background:#faf6ea;color:#5a4a1e;cursor:pointer}'+
    '.tsn .tsin:hover{background:#f2ead2}'+
@@ -179,7 +179,7 @@
   function admHTML(it){
     if(!(typeof isAdmin==='function'&&isAdmin()))return '';
     var a=ADM,h='<div class="tsadm"><div class="tsah">למנהל בלבד · מיקום הסימן: '+ge(RULE[PLACED[it.n]||String(it.rule||'1')]||'')+(MOVED[it.n]?' <span class="tsw">(העוגן זז - לאשר או לתקן)</span>':'')+'</div>';
-    if(!a||!a.styles||!a.styles[it.n]){return h+'<div>חמשת הנוסחאות נטענות מנקודת הקליטה...</div></div>'}
+    if(!a||!a.styles||!a.styles[it.n]){return h+(window.__TOSTEST?'<div>הנוסח נבחר במסך "מבחן מנועים" שבתפריט תוס\'.</div>':'<div>חמשת הנוסחאות נטענות מנקודת הקליטה...</div>')+'</div>'}
     var st=a.styles[it.n],pk=a.picks&&a.picks[it.n],nt=a.notes&&a.notes[it.n];
     STY.forEach(function(s){
       if(!st[s[0]])return;
@@ -298,7 +298,8 @@
   window.tosBtn=function(){
     var m=document.getElementById('tosmenu');
     if(!m){m=document.createElement('div');m.id='tosmenu';document.body.appendChild(m)}
-    m.innerHTML=MODES.map(function(x){return '<button type="button" data-m="'+x[0]+'" class="'+(x[0]===mode?'on':'')+'" onclick="tosSet(this.dataset.m)">'+ge(x[1])+'<small>'+ge(x[2])+'</small></button>'}).join('');
+    m.innerHTML=MODES.map(function(x){return '<button type="button" data-m="'+x[0]+'" class="'+(x[0]===mode?'on':'')+'" onclick="tosSet(this.dataset.m)">'+ge(x[1])+'<small>'+ge(x[2])+'</small></button>'}).join('')+
+      ((window.tosTestOpen&&typeof isAdmin==='function'&&isAdmin())?'<button type="button" onclick="tosTestOpen()">מבחן מנועים<small>למנהל בלבד: בחירה עיוורת בין חמש אופציות לכל תוספות</small></button>':'');
     var b=document.getElementById('tosbtn'),r=b.getBoundingClientRect();
     m.classList.toggle('open');
     /* בטלפון הכפתור מוסתר בסרגל ונפתח מתפריט "עוד": התפריט מוצג במרכז המסך */
@@ -344,6 +345,8 @@
       if(ADM.picks)Object.keys(ADM.picks).forEach(function(n){PUB[n]={p:ADM.picks[n].p,t:ADM.picks[n].t}});
       tsMark()}).catch(function(){})}
   function post(body){return api('/tos',{method:'POST',body:JSON.stringify(Object.assign({slug:SLUG},body))})}
+  /* מסך מבחן המנועים מעדכן את הנוסחים הנבחרים בלי לטעון מחדש */
+  window.tosPubSet=function(m){PUB=m||{};tsMark()};
   function applyDoc(j){if(j&&j.doc){ADM=ADM||{styles:{},picks:{},notes:{}};ADM.picks=j.doc.picks||{};ADM.notes=j.doc.notes||{};
       PUB={};Object.keys(ADM.picks).forEach(function(n){PUB[n]={p:ADM.picks[n].p,t:ADM.picks[n].t}})}
     reopenKeep()}

@@ -16,9 +16,50 @@ NAMES = {'a': 'שורה אחת', 'b': 'מהודק ומובן', 'c': 'קושיה 
          'custom': 'ערוך ידנית'}
 
 
+def blind_section(slug, doc):
+    """מבחן המנועים העיוור (12.10.2026): מפענח אותיות לפי tosafot/<slug>/test-reveal.json ורושם לכל תוספות מה נבחר, מה נערך ומה ההערה.
+    מופעל רק כשקיים קובץ החשיפה. האותיות א-ה בשרת הן אותיות הסדר המוגרל לכל תוספות; המיפוי למנוע נמצא בקובץ החשיפה."""
+    d = os.path.join(ROOT, 'tosafot', slug)
+    po, pr = os.path.join(d, 'test-options.json'), os.path.join(d, 'test-reveal.json')
+    if not (os.path.exists(po) and os.path.exists(pr)):
+        return None
+    opt = json.load(io.open(po, encoding='utf-8'))['items']
+    rev = json.load(io.open(pr, encoding='utf-8'))
+    bykey = {str(it['key']): (rid, it) for rid, it in opt.items()}
+    picks, notes = doc.get('picks', {}), doc.get('notes', {})
+    last = {}
+    for l in doc.get('log', []):
+        last[str(l['n'])] = l
+    L = ['## מבחן המנועים העיוור (%s)' % slug, '']
+    for key in sorted(bykey, key=int):
+        rid, it = bykey[key]
+        m = rev['map'][rid]
+        pk, nt = picks.get(key), (notes.get(key) or {}).get('t', '')
+        if not pk and not nt:
+            L += ['### פרק %s תוספות %s (%s): טרם נבחר' % (it['perek'], it['n'], it['dh']), '']
+            continue
+        L.append('### פרק %s תוספות %s (%s)' % (it['perek'], it['n'], it['dh']))
+        if pk:
+            if pk['p'] == 'custom':
+                fr = (last.get(key) or {}).get('from', '')
+                L.append('- נבחר: **נוסח שנערך** (מבוסס על %s)' % rev['tokens'].get(m.get(fr, ''), {}).get('label', fr))
+                L.append('- הנוסח שערך המנהל: ' + pk['t'])
+                if fr in it['options']:
+                    L.append('- הנוסח המקורי של אותו מנוע: ' + it['options'][fr])
+            else:
+                L.append('- נבחר: **%s**' % rev['tokens'].get(m.get(pk['p'], ''), {}).get('label', pk['p']))
+        elif nt.startswith('[אף אחת]'):
+            L.append('- **אף אחת מחמש האופציות לא טובה**')
+        if nt:
+            L.append('- הערה: ' + nt)
+        L.append('')
+    return L
+
+
 def main():
     slug = sys.argv[1]
     doc = _api.call('/tos?slug=%s&adm=1' % slug).get('doc') or {}
+    bl = blind_section(slug, doc)
     styles = doc.get('styles', {})
     picks = doc.get('picks', {})
     notes = doc.get('notes', {})
@@ -47,7 +88,9 @@ def main():
         lines += ['## הערות על תוספות שטרם נבחר להם נוסח', '']
         for n in sorted(nn, key=int):
             lines.append('- תוספות %s: %s' % (n, notes[n]['t']))
-    out = os.path.join(ROOT, 'tosafot', 'תוס-למידה.md')
+    if bl:
+        lines += [''] + bl
+    out = os.path.join(ROOT, 'tosafot', 'תוס-למידה.md' if slug == 'kiddushin' else 'תוס-למידה-%s.md' % slug)
     with io.open(out, 'w', encoding='utf-8') as f:
         f.write('\n'.join(lines) + '\n')
     print('נכתב', out, '-', len(picks), 'בחירות')

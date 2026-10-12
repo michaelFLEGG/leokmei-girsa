@@ -1,0 +1,104 @@
+{
+ "_comment": "הגדרת מבחן המנועים העיוור (12.10.2026). שינוי הגדרה בלבד מעביר את הקוד למנוע אחד, ל-Batch API ולמסכת אחרת: engines (רשימת מנועים), mode (direct = קריאות ישירות; batch = הכנת קובץ בקשות ל-Batch API בלבד), scope (מסכת, פרק, עמודים).",
+ "prompt": "tosafot/תוס-פרומפט-שורה-אחת.md",
+ "mode": "direct",
+ "budgetTokens": 3000000,
+ "engines": [
+  {
+   "id": "fable",
+   "model": "claude-fable-5-1",
+   "thinking": 0,
+   "label": "פייבל 5.1"
+  },
+  {
+   "id": "opus",
+   "model": "claude-opus-5-5",
+   "thinking": 0,
+   "label": "אופוס 5.5",
+   "effort": "low"
+  },
+  {
+   "id": "sonnet",
+   "model": "claude-sonnet-5-5",
+   "thinking": 0,
+   "label": "סונט 5.5"
+  },
+  {
+   "id": "haiku",
+   "model": "claude-haiku-5-5",
+   "thinking": 0,
+   "label": "הייקו 5.5",
+   "effort": "low"
+  },
+  {
+   "id": "sonnet-think",
+   "model": "claude-sonnet-5-5",
+   "thinking": 2000,
+   "label": "סונט 5.5 עם חשיבה מורחבת (במקום ג'מיני: אין מפתח GEMINI_API_KEY בסביבה)",
+   "effort": "xhigh"
+  }
+ ],
+ "reviewer": {
+  "model": "claude-haiku-5-5",
+  "thinking": 0
+ },
+ "scope": [
+  {
+   "slug": "sukkah",
+   "perek": 3,
+   "dafs": [
+    "42a",
+    "42b"
+   ]
+  },
+  {
+   "slug": "sukkah",
+   "perek": 4,
+   "dafs": [
+    "42b",
+    "43a",
+    "43b",
+    "44a",
+    "44b"
+   ]
+  },
+  {
+   "slug": "kiddushin",
+   "perek": 1,
+   "dafs": [
+    "14b"
+   ],
+   "examplesFrom": [
+    138,
+    139,
+    141,
+    142
+   ]
+  }
+ ],
+ "prices": {
+  "fable": {
+   "in": 5,
+   "out": 25
+  },
+  "opus": {
+   "in": 2,
+   "out": 10
+  },
+  "sonnet": {
+   "in": 1,
+   "out": 5
+  },
+  "haiku": {
+   "in": 0.05,
+   "out": 0.25
+  },
+  "sonnet-think": {
+   "in": 1,
+   "out": 5
+  }
+ },
+ "pricesChecked": "12.10.2026",
+ "pricesNote": "נבדק מול דף המחירון הרשמי (platform.claude.com/docs/en/about-claude/pricing, טבלת Batch): ללא שינוי מהמחירים שבמנה. הייקו: עד 100 אלף טוקנים בפרומפט",
+ "shas": 27000
+}

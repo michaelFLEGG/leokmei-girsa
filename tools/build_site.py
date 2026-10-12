@@ -5820,6 +5820,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     tos_items+=_ld.get('items',[])
   if tos_items:
     JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__TOS="+json.dumps({'slug':slug,'items':tos_items},ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tosafot_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  # מבחן מנועים עיוור לתוספות (12.10.2026): הקוד נכלל רק במסכת שיש לה tosafot/<slug>/test-options.json, ופעיל רק בכניסת מנהל.
+  # הקבצים עצמם (האופציות, והחשיפה) נטענים בנפרד לפי צורך ואינם בתוך הדף; שם המנוע אינו נטען עד "חשוף את התוצאות".
+  _tt_opt=os.path.join(_root,'tosafot',slug,'test-options.json')
+  _tt_rev=os.path.join(_root,'tosafot',slug,'test-reveal.json')
+  has_tostest=bool(tos_items) and os.path.exists(_tt_opt) and os.path.exists(_tt_rev)
+  if has_tostest:
+    JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__TOSTEST="+json.dumps({'file':'tos-test-'+slug+'.json','reveal':'tos-reveal-'+slug+'.json'},ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tosafot_test_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   tosbtn='<button id="tosbtn" class="ib" onclick="tosBtn()" title="תוספות בהערות שוליים: כל תוספות בהערה נפרדת, ממוספרת"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">תוס&#39;</span></button>' if tos_items else ''
   tzbtn='<button id="tzbtn" class="ib" onclick="tzBtn()" title="צורת הדף: עמוד הגמרא כפי שהוא מודפס (Alt+צ)"><svg class="ic" aria-hidden="true"><use href="#i-page"/></svg><span class="t">צורת הדף</span></button>' if tz_man else ''
   bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="ממצאי הבקרה בתוך הדף (למנהל בלבד)">בקרה</button>' if has_bakara else ''
@@ -5829,6 +5836,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _outdir=os.path.dirname(os.path.abspath(out_path))
   for _f in ('mobile.css','mobile.js'):
     _sh.copy(os.path.join(_tdir,_f),os.path.join(_outdir,_f))
+  if has_tostest:
+    _sh.copy(_tt_opt,os.path.join(_outdir,'tos-test-'+slug+'.json'))
+    _sh.copy(_tt_rev,os.path.join(_outdir,'tos-reveal-'+slug+'.json'))
   MOBV=_hl.md5(io.open(os.path.join(_tdir,'mobile.css'),'rb').read()+io.open(os.path.join(_tdir,'mobile.js'),'rb').read()).hexdigest()[:8]
   DEVJS=DEV_CLASS_JS
   _ic=lambda n:'<svg class="ic" aria-hidden="true"><use href="#i-%s"/></svg>'%n

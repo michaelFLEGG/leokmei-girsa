@@ -10,6 +10,12 @@ import os, sys, json, io
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
+def ukey(slug, perek, n):
+    """המפתח היחיד של תוספות במסכת (בדף, בנקודת הקליטה). בקידושין נשאר n כמות שהוא (הבחירות הקיימות); בשאר המסכתות
+    perek*1000+n, כדי שמספר 5 בפרק ג ומספר 5 בפרק ד לא יתנגשו. המספר שמוצג ללומד (disp) הוא מספר התוספות בפרק."""
+    return n if slug == 'kiddushin' else perek * 1000 + n
+
+
 def main():
     slug, perek = sys.argv[1], int(sys.argv[2])
     d = os.path.join(ROOT, 'tosafot', slug)
@@ -29,7 +35,7 @@ def main():
             raise SystemExit('עצירה: עוגן %s על עמוד %s אך התוספות בעמוד %s' % (k, a['daf'], r['dafKey']))
         s = styles[k]
         # page: העמוד באתר שבו יושב הטקסט (כשהוא שונה מעמוד התוספות; ראה anchors-N.json)
-        items.append({'n': r['n'], 'hn': r['hn'], 'daf': a.get('page', r['dafKey']), 'dh': r['dh'], 'line': r['line'],
+        items.append({'n': ukey(slug, perek, r['n']), 'disp': r['n'], 'perek': perek, 'hn': r['hn'], 'daf': a.get('page', r['dafKey']), 'dh': r['dh'], 'line': r['line'],
                       'ref': r['ref'], 'url': r['url'], 'text': r['text'],
                       'sum': s.get('a') or s['b'], 't': a['t'], 'occ': a.get('occ', 1), 'rule': a.get('rule', 1)})
     if missing:

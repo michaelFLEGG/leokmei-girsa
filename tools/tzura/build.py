@@ -16,21 +16,17 @@ from lib import *
 from PIL import Image
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-HOME = r'C:\Users\Owner\Desktop\שיננא לHTML\צורת הדף'
 
-
-def find_pdf(slug, src):
-    heb = src.get('masechet') or ''
-    for d in glob.glob(os.path.join(HOME, '*')):
-        if os.path.isdir(d) and os.path.basename(d).strip() == heb.strip():
-            fs = sorted(glob.glob(os.path.join(d, 'צורת הדף*.pdf')))
-            if fs:
-                return fs[0]
-    return None
+LAB = re.compile(r'[א-ת]{1,3}[.:]')
 
 
 def head_label(words):
     top = [w for w in words if w[2] < 12 and w[5] > 20]
+    # מהדורות שבהן הסימן והנקודה באותו טוקן ("ב:"): מזהים לפי הטוקן עצמו
+    for w in top:
+        t = NIK.sub('', w[0])
+        if LAB.fullmatch(t) and t[:-1] != 'פרק':
+            return t
     for p in top:
         if p[0] in ('.', ':'):
             best = None
@@ -89,7 +85,7 @@ def main():
     ap.add_argument('--noimg', action='store_true')
     a = ap.parse_args()
     src = json.load(open(os.path.join(ROOT, 'data', 'sources', a.slug + '.json'), encoding='utf8'))
-    pdf = a.pdf or find_pdf(a.slug, src)
+    pdf = a.pdf or find_pdf(src)
     if not pdf:
         sys.exit('לא נמצא קובץ צורת הדף למסכת ' + a.slug)
     d = fitz.open(pdf)
@@ -111,6 +107,9 @@ def main():
         if only and daf not in only:
             continue
         page = d[pn]
+        # קובצי מקור שבהם תיבת החיתוך גדולה מתיבת העמוד (סוכה, ביצה: 842x1191 סביב 538x808): מיישרים לתיבת העמוד
+        if tuple(page.cropbox) != tuple(page.mediabox):
+            page.set_cropbox(page.mediabox)
         W, H = page.rect.width, page.rect.height
         words = page_words(page)
         lab = head_label(words)

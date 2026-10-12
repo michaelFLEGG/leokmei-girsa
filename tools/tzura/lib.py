@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
 """כלי משותף: חילוץ מילים עם מיקום מ-PDF צורת הדף, ויישור מול נוסח הגמרא שבקובץ המקורות."""
-import re, json, difflib, unicodedata, fitz
+import re, json, os, glob, difflib, unicodedata, fitz
+
+HOME = r'C:\Users\Owner\Desktop\שיננא לHTML\צורת הדף'
+
+
+def find_pdf(src):
+    """הקובץ הקבוע של מסכת: HOME\\<שם המסכת בעברית>\\צורת הדף*.pdf"""
+    heb = (src.get('masechet') or '').strip()
+    for d in glob.glob(os.path.join(HOME, '*')):
+        if os.path.isdir(d) and os.path.basename(d).strip() == heb:
+            fs = sorted(glob.glob(os.path.join(d, 'צורת הדף*.pdf')))
+            if fs:
+                return fs[0]
+    return None
 
 NIK = re.compile('[\u0591-\u05c7]')
 FINAL = str.maketrans('ךםןףץ', 'כמנפצ')

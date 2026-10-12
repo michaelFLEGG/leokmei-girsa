@@ -164,7 +164,7 @@ def _deco_apply(pages, e):
     res = e.get('res') or []
     if not res or not res[0] or res[0][0] not in ('nose', 'dh'):
         return False
-    nu = {'k': res[0][0], 'a': res[0][1], 'l': [], 'id': e['t'], 's': ''}
+    nu = {'k': res[0][0], 'a': res[0][1], 'l': [], 'id': e['t'], 's': 'prop' if e.get('cl') else ''}
     p['units'][p['units'].index(u)] = nu
     return True
 
@@ -1635,8 +1635,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .bar .edonly{display:none}
   body.ed .bar .edonly{display:flex}
   body.ed .bar .bg:not(.loc):not(.edonly):not(.edsw){display:none!important}
-  body.ed .bar .loc .seg,body.ed .bar .loc #peresel{display:none}
-  body.ed .bar .loc #curdaf{display:inline}
+  body.ed .bar .loc .seg>button:not(.pkb),body.ed .bar .loc #peresel{display:none}
+  body.ed .bar .loc #curdaf{display:none}
   #curdaf{font-family:'VilnaG','Vilna',serif;font-size:19px}
   /* --lhpx הוא גובה שורת הגוף במידה מוחלטת. פריטי המסילה זקוקים לו:
      line-height שהוא מספר מתייחס לגודל האות של האלמנט עצמו, ולכן ציון דף
@@ -1951,7 +1951,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
        display:flex;flex-direction:column;font-size:17px;line-height:1.75}
   .src.peek{left:0;right:0;bottom:0;height:var(--srch,38vh)}
   .src.split{left:0;top:var(--barH,52px);bottom:0;width:var(--srcw,50vw);box-shadow:2px 0 18px rgba(0,0,0,.22)}
-  .src.full{left:0;right:0;top:0;bottom:0}
+  /* מצב מלא: מתחת לסרגל העליון ולא מאחוריו, כדי שכפתור הסגירה ותפריט התצוגה יישארו נגישים (12.10.2026) */
+  .src.full{left:0;right:0;top:var(--barH,52px);bottom:0}
   body.splitsrc .flow{width:calc(100vw - var(--srcw,50vw));margin-left:auto}
   .srchd{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:7px 14px;background:#2b2620;color:#f1ead9;font-size:14px;flex:0 0 auto}
   .srchd b{font-family:'VilnaG','Vilna',serif;font-size:17px;font-weight:400}
@@ -3981,7 +3982,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון פסקה: כותרת נושא (שוב - חוזרת לגוף)'],
       ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון פסקה: כותרת ד"ה משנה (שוב - חוזרת לגוף)'],['Ctrl+6','סגנון תו: ד"ה משנה בתוך שורה'],['Ctrl+7','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+H','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
       ['Ctrl+L (או Ctrl+Shift+L)','טאב יישור לשמאל: מה שאחרי הסמן נדחף לקצה השמאלי של השורה, כמו טאב שמאלי בוורד'],
-      ['Alt+N','פנל ניווט: רשימת הפרקים והדפים; לחיצה קופצת לדף בלי לצאת מהעריכה ובלי לאבד שינויים'],
+      ['Alt+N','רשימת כל דפי המסכת (כמו לחיצה על הדף בסרגל): קפיצה בלי לצאת מהעריכה ובלי לאבד שינויים'],['Ctrl+Alt+K','הצע כותרת: שלוש הצעות לכותרת על הקטע שאחרי המקום (על עיטור, או על שורה)'],
       ['עיטור (***)','לחיצה על העיטור מסמנת אותו: Delete או "מחק עיטור" מוחקים, "החלף בכותרת" הופך לשורה ריקה בסגנון נושא או ד"ה משנה'],
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
@@ -4242,6 +4243,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       rare+=CSTY.filter(c=>ST_C.indexOf(c[0])<0).map(cb).join('')}
     if(isHeadEl(el))h+='<div class="stgrp"><span class="ttl">'+(el.classList.contains('nose')?'נושא משנה':'ד"ה משנה')+'</span>'+
       btn(false,'headBody()','הפוך לגוף','Ctrl+Q','הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים')+'</div>';
+    if(isTxt(el)&&isAdmin()&&typeof tsOpen==='function')h+='<div class="stgrp"><span class="ttl">כותרת</span>'+btn(false,'tsOpen()','הצע כותרת','Ctrl+Alt+K','שלוש הצעות לכותרת על הקטע שאחרי המקום')+'</div>';
     if(el.tagName==='P'){
       const now=pcls(el);
       const pb=p=>btn(p[0]==='sp'?el.classList.contains('sp'):now===p[0],
@@ -4625,7 +4627,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     return JSON.stringify({v:1,slug:SLUG,masechet:D.masechet,
       when:new Date().toISOString(),sty:D.sty,
       edits:ED.filter(e=>!e.lost).map(e=>e.op==='struct'
-        ? {op:'struct',kind:e.kind,ins:e.ins,where:e.where,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,
+        ? {op:'struct',kind:e.kind,ins:e.ins,where:e.where,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,cl:e.cl,
            daf:e.daf,t:e.t}
         : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
            ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t})},null,1)}
@@ -5114,7 +5116,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* שינוי מבנה (פיצול/איחוי) אין לו מפתח מקום, ומפתחו לסנכרון נגזר מזמנו */
   function edKeys(){ED.forEach(e=>{if(e.op==='struct'&&!e.k)e.k='s'+e.t})}
   function edOut(){edKeys();return ED.filter(e=>!e.lost).map(e=>e.op==='struct'
-      ? {k:e.k,op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,daf:e.daf,t:e.t,by:e.by,ins:e.ins,where:e.where}
+      ? {k:e.k,op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,cl:e.cl,daf:e.daf,t:e.t,by:e.by,ins:e.ins,where:e.where}
       : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
          ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t,by:e.by,sg:e.sg}).concat(TOMB)}
   function mergeIn(list){edKeys();let changed=false;const by={};ED.forEach(e=>by[e.k]=e);
@@ -5878,7 +5880,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _td=os.path.dirname(os.path.abspath(__file__))
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+
          # מנוע ההדפסה ל-PDF (11.10.2026): קוד משותף לכל המסכתות. במצב ?print=1 הוא מחליף את התצוגה בעמודי A4; אחרת - רק חלון ההדפסה.
-         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   _SHARED_BODY=JS[:JS.rindex(chr(10)+"  build();")]   # הקוד המשותף לכל המסכתות; מה שאחריו (בקרה, צורת הדף, תוספות) פרטי למסכת
   # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
   # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.
@@ -5925,6 +5927,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _outdir=os.path.dirname(os.path.abspath(out_path))
   for _f in ('mobile.css','mobile.js'):
     _sh.copy(os.path.join(_tdir,_f),os.path.join(_outdir,_f))
+  # הצעות כותרת מוכנות מראש (12.10.2026): data/titlesug/<מסכת>.json -> titlesug-<מסכת>.json. נטען רק במצב מנהל.
+  _tsrc=os.path.join(os.path.dirname(_tdir),'data','titlesug',slug+'.json')
+  if os.path.exists(_tsrc):
+    _sh.copy(_tsrc,os.path.join(_outdir,'titlesug-'+slug+'.json'))
   if has_tostest:
     _sh.copy(_tt_opt,os.path.join(_outdir,'tos-test-'+slug+'.json'))
     _sh.copy(_tt_rev,os.path.join(_outdir,'tos-reveal-'+slug+'.json'))
@@ -5938,7 +5944,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   DEVJS=DEV_CLASS_JS
   _ic=lambda n:'<svg class="ic" aria-hidden="true"><use href="#i-%s"/></svg>'%n
   STATIC_M=('<div id="mtop"><button type="button" class="mhome" aria-label="לדף הבית"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"></button>'
-            '<button type="button" class="mttl" id="mttl" aria-label="בחירת פרק ודף"><span>'+masechet+'</span><span class="mdf" id="mdf"></span>'+_ic('down')+'</button>'
+            '<button type="button" class="mttl" id="mttl" aria-label="בחירת מסכת או דף"><span class="mmn">'+masechet+'</span><span class="mdf" id="mdf"></span>'+_ic('down')+'</button>'
             '<button type="button" class="msr" id="msr" aria-label="חיפוש">'+_ic('search')+'</button></div><div id="mprog"><i></i></div>'
             '<nav id="mbot" aria-label="ניווט">'+''.join('<button type="button" data-a="%s">%s<span>%s</span></button>'%(a,_ic(i),t) for a,i,t in
             [('shas','home','הש"ס'),('prev','right','דף קודם'),('next','left','דף הבא'),('perush','book','פירוש'),('more','dots','עוד')])+'</nav>'
@@ -5982,9 +5988,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <script>try{{var _t=localStorage.getItem('lg-theme');document.documentElement.setAttribute('data-theme',_t==='dark'||_t==='auto'?_t:'light')}}catch(e){{document.documentElement.setAttribute('data-theme','light')}}</script>
   <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}{STATIC_M}
   <div class="bar" id="bar">
-  <div class="bg loc" data-pri="0"><a href="index.html" class="brand" title="לדף הבית" style="text-decoration:none"><img class="lg" src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"><span class="nm">לאוקמי גירסא</span></a><span class="mn">{masechet}</span>
+  <div class="bg loc" data-pri="0"><a href="index.html" class="brand" title="לדף הבית" style="text-decoration:none"><img class="lg" src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"><span class="nm">לאוקמי גירסא</span></a><button type="button" class="mn pkb" id="pkmas" aria-haspopup="listbox" aria-expanded="false" title="מעבר למסכת אחרת">{masechet}<i class="pkar"></i></button>
   <select id="peresel" title="פרק" aria-label="פרק"></select>
-  <div class="seg nav" role="group" aria-label="ניווט בין דפים"><button onclick="goDaf(-1)" aria-label="הדף הקודם" title="הדף הקודם (Ctrl+חץ ימינה)"><svg class="ic" aria-hidden="true"><use href="#i-right"/></svg></button><select id="dafsel" title="קפיצה לדף" aria-label="דף"></select><button onclick="goDaf(1)" aria-label="הדף הבא" title="הדף הבא (Ctrl+חץ שמאלה)"><svg class="ic" aria-hidden="true"><use href="#i-left"/></svg></button></div><span class="daf" id="curdaf" hidden></span></div>
+  <div class="seg nav" role="group" aria-label="ניווט בין דפים"><button onclick="goDaf(-1)" aria-label="הדף הקודם" title="הדף הקודם (Ctrl+חץ ימינה)"><svg class="ic" aria-hidden="true"><use href="#i-right"/></svg></button><select id="dafsel" title="קפיצה לדף" aria-label="דף" hidden></select><button type="button" class="pkb pkd" id="pkdaf" aria-haspopup="listbox" aria-expanded="false" title="רשימת כל הדפים של המסכת"><span id="pkdl"></span><i class="pkar"></i></button><button onclick="goDaf(1)" aria-label="הדף הבא" title="הדף הבא (Ctrl+חץ שמאלה)"><svg class="ic" aria-hidden="true"><use href="#i-left"/></svg></button></div><span class="daf" id="curdaf" hidden></span></div>
   <div class="bg sr" data-pri="0"><label class="sfield"><svg class="ic sm" aria-hidden="true"><use href="#i-search"/></svg><input id="q" type="search" placeholder="חיפוש ב{masechet}" aria-label="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)" title="חיפוש בכל המסכת"></label></div>
   <div class="bg dd" data-pri="1" data-label="תצוגה"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" title="אופן התצוגה, גודל הגופן והניקוד"><svg class="ic" aria-hidden="true"><use href="#i-view"/></svg><span class="t">תצוגה</span></button>
     <div class="ddp"><div class="sml">אופן התצוגה</div>
@@ -6021,7 +6027,6 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <div class="bg edonly dd" id="edstat" data-pri="0"><button class="ddb ib" id="edpubbtn" onclick="ddToggle(this)" aria-haspopup="menu" title="מצב הפרסום. התיקונים נשמרים מיד ומתפרסמים יחד, לכל היותר כל חמש דקות"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg><span id="edpub" class="edpub"></span></button><span id="edn" hidden></span>
     <div class="ddp"><button id="edpushbtn" class="primary" onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>
     <button onclick="panel('ed')" title="רשימת העריכות שלי">העריכות שלי</button>
-    <button onclick="navOpen()" id="navbtn" title="פנל ניווט: פרקים ודפים, בלי לצאת מהעריכה (Alt+N)">ניווט</button>
     <button onclick="keysCard()" title="קיצורי מקשים (Ctrl+/)">קיצורי מקשים</button>
     <button id="ntedit" class="adm-b" onmousedown="event.preventDefault()" onclick="ntAdd()" title="הערה פרטית לקלוד, גלויה רק לך (Ctrl+Alt+H)">הערה לקלוד</button>
     <button id="mineedit" style="display:none" onclick="mineOpen()" title="כל ההצעות ששלחת">ההצעות שלי</button></div>

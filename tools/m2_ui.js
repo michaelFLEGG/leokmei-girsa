@@ -139,7 +139,7 @@
   function navFold(){document.body.classList.toggle('navc');setTimeout(()=>{try{fitAnchors()}catch(e){}},60)}
   document.addEventListener('keydown',e=>{
     if(!EDIT||e.ctrlKey||e.metaKey||!e.altKey||e.shiftKey||e.code!=='KeyN')return;
-    e.preventDefault();navOpen()});
+    e.preventDefault();if(window.lkPick&&$('#pkdaf'))lkPick('daf',$('#pkdaf'));else navOpen()});
   /* הכפתור בסרגל העריכה, וסגירה ביציאה ממצב עריכה */
   const _edToolsDrawNav=null;
 
@@ -187,7 +187,7 @@
       h.u.l.splice(h.j,1);delete h.u.lv;return true}
     if(e.kind==='hdel'){us.splice(us.indexOf(h.u),1);return true}
     const r=(e.res||[])[0];if(!r||(r[0]!=='nose'&&r[0]!=='dh'))return false;
-    us[us.indexOf(h.u)]={k:r[0],a:r[1],l:[],id:e.t,s:''};return true}
+    us[us.indexOf(h.u)]={k:r[0],a:r[1],l:[],id:e.t,s:e.cl?'prop':''};return true}
   /* האלמנט שנלחץ -> מקומו בנתונים */
   function decoOfEl(el){
     const row=el.closest('.row');if(!row)return null;
@@ -219,7 +219,8 @@
     snp.forEach(s=>patchPage(s));
     if(kind==='hrep')setTimeout(()=>placeCaret('u'+t+'.0',0),30);
     drawEd();pubSoon();syncSoon();
-    flash(kind==='hdel'?'העיטור נמחק (Ctrl+Z מבטל)':'העיטור הוחלף בשורה ריקה: כתוב את הכותרת')}
+    flash(kind==='hdel'?'העיטור נמחק (Ctrl+Z מבטל)':'העיטור הוחלף בשורה ריקה: כתוב את הכותרת');
+    return t}
   /* כותרת שהחליפה עיטור: כשנכתב בה טקסט היא נרשמת, וכשהתרוקנה היא חוזרת להיות מצב עבודה */
   function hrepCapture(el){
     const k=el.dataset&&el.dataset.ek||'';const m=/^u(\d+)\.0$/.exec(k);if(!m)return false;
@@ -234,8 +235,9 @@
     if(!ph.se){
       const se={op:'struct',kind:'hrep',texts:ph.texts,head:ph.head,res:[[ph.head,nowH]],resT:[nowT],psw:wsty(ph.head),
                 daf:ph.daf,t:u.id,pub:0,_ap:1};
+      if(ph.cl)se.cl=ph.cl;     /* כותרת מתוך "הצע כותרת": ההצעה והנוסח הסופי (12.10.2026) */
       ph.se=se;ED.push(se)}
-    else{ph.se.res=[[ph.head,nowH]];ph.se.resT=[nowT];ph.se.pub=0;ph.se.t=ph.se.t}
+    else{ph.se.res=[[ph.head,nowH]];ph.se.resT=[nowT];ph.se.pub=0;ph.se.t=ph.se.t;if(ph.cl)ph.se.cl=ph.cl}
     saveED();drawEd();pubSoon();syncSoon();return true}
   /* הסרגל הקטן שמעל עיטור מסומן */
   const DECO={el:null};
@@ -252,10 +254,12 @@
     if(!b){b=document.createElement('div');b.id='decobar';
       b.innerHTML='<button type="button" onmousedown="event.preventDefault()" onclick="decoDo(\'hdel\')" title="מוחק את העיטור (Delete)">מחק עיטור</button>'+
         '<button type="button" data-h="nose" onmousedown="event.preventDefault()" onclick="decoDo(\'hrep\',\'nose\')" title="במקום העיטור: שורה ריקה בסגנון נושא">החלף בכותרת נושא</button>'+
-        '<button type="button" data-h="dh" onmousedown="event.preventDefault()" onclick="decoDo(\'hrep\',\'dh\')" title="במקום העיטור: שורה ריקה בסגנון ד&quot;ה משנה">החלף בד"ה משנה</button>';
+        '<button type="button" data-h="dh" onmousedown="event.preventDefault()" onclick="decoDo(\'hrep\',\'dh\')" title="במקום העיטור: שורה ריקה בסגנון ד&quot;ה משנה">החלף בד"ה משנה</button>'+
+        '<button type="button" class="tsb" onmousedown="event.preventDefault()" onclick="tsOpen()" title="שלוש הצעות לכותרת על הקטע שאחרי העיטור (Ctrl+Alt+K)">הצע כותרת</button>';
       document.body.appendChild(b)}
     const inM=!!el.closest('.main.mishna');
     b.querySelectorAll('button[data-h]').forEach(x=>{x.style.display=(inM||!PSTY.some(p=>p[0]===x.dataset.h))?'none':''});
+    const tb=b.querySelector('.tsb');if(tb)tb.style.display=isAdmin()?'':'none';
     b.style.display='flex';
     const rc=el.getBoundingClientRect();
     b.style.top=Math.max(8,rc.top-38)+'px';

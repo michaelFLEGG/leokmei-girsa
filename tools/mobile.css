@@ -154,3 +154,6 @@ html.dev-tab .flow.book.bkz{font-size:calc(var(--mfs,16px) * 1.7)!important;over
 /* טאבלט לרוחב: הקונסולה בצד, ולכן המגירות יושבות על תחתית המסך */
 html.dev-tab.land #srcx.src,html.dev-tab.land .tzx.split{bottom:0!important}
 html.dev-tab.land #srcx.src{max-height:calc(100dvh - var(--mtop) - 12px)}
+
+/* בוררי מסכת ודף (12.10.2026): שם המסכת בכותרת הטלפון פותח את רשימת המסכתות, והשאר את רשימת הדפים; שטח לחיצה לפחות 44 */
+html.dev-phone #mttl .mmn,html.dev-tab #mttl .mmn{padding:12px 10px;margin:-12px -4px;border-radius:10px}

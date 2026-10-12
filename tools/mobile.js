@@ -20,7 +20,7 @@
   if (!document.getElementById('mtop')) {
     var t0 = document.createElement('div'); t0.id = 'mtop';
     t0.innerHTML = '<button type="button" class="mhome" aria-label="לדף הבית"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"></button>' +
-      '<button type="button" class="mttl" id="mttl" aria-label="בחירת פרק ודף"><span>' + esc(D.masechet || '') + '</span><span class="mdf" id="mdf"></span>' + ic('down') + '</button>' +
+      '<button type="button" class="mttl" id="mttl" aria-label="בחירת פרק ודף"><span class="mmn">' + esc(D.masechet || '') + '</span><span class="mdf" id="mdf"></span>' + ic('down') + '</button>' +
       '<button type="button" class="msr" id="msr" aria-label="חיפוש">' + ic('search') + '</button>';
     var p0 = document.createElement('div'); p0.id = 'mprog'; p0.innerHTML = '<i></i>';
     var b0 = document.createElement('nav'); b0.id = 'mbot'; b0.setAttribute('aria-label', 'ניווט');
@@ -245,7 +245,7 @@
   top.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return; flash(b);
     if (b.classList.contains('mhome')) location.href = 'index.html';
-    else if (b.id === 'mttl') pickSheet();
+    else if (b.id === 'mttl') { if (window.lkPick) window.lkPick(e.target.closest('.mmn') ? 'mas' : 'daf', b); else pickSheet(); }
     else if (b.id === 'msr') openSearch();
   });
   function syncPerush() { B.classList.toggle('msrcopen', !!$('#srcx')); var b = $('#mbot [data-a="perush"]'); if (b) b.classList.toggle('on', !!$('#srcx')); }

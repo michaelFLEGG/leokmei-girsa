@@ -692,6 +692,44 @@ async function decide(req, env) {
   return json({ ok: true });
 }
 
+/* ------------------------------------------------------------ הצעת כותרת חיה (12.10.2026)
+   למנהל בלבד. קורא ל-Claude דרך המפתח הסודי ANTHROPIC_API_KEY (secret ב-Worker, לעולם לא בדפדפן).
+   בלי המפתח: 503 והדפדפן מציג הודעה ברורה. המודל: TITLE_MODEL, ברירת מחדל קלה. */
+async function titleSuggest(req, env) {
+  if (!(await isAdmin(req, env))) return json({ error: 'אין הרשאה' }, 403);
+  if (!env.ANTHROPIC_API_KEY) return json({ error: 'שירות ההצעות החי טרם הופעל' }, 503);
+  let b; try { b = await req.json(); } catch (e) { return json({ error: 'בקשה פגומה' }, 400); }
+  const ctx = str(b.ctx, 1500);
+  if (ctx.length < 20) return json({ error: 'אין קטע להציע עליו' }, 400);
+  const ex = (Array.isArray(b.examples) ? b.examples : []).slice(0, 14).map((x) => str(x, 80)).filter(Boolean);
+  const n = Math.max(1, Math.min(6, +b.n || 3));
+  const avoid = (Array.isArray(b.avoid) ? b.avoid : []).slice(0, 12).map((x) => str(x, 80)).filter(Boolean);
+  const NL = String.fromCharCode(10);
+  const prompt = ['כתוב ' + n + ' הצעות כותרת לקטע הגמרא הבא.',
+    'כללים: ניסוח תורני מסורתי ומהודק, 2 עד 6 מילים, רק החידוש של הקטע (ההלכה, השאלה או המחלוקת), לא תיאור כללי. ' +
+    'בלי ניקוד, בלי נקודה בסוף, בלי מקף ארוך (רק מקף רגיל). ההצעות שונות זו מזו.',
+    ex.length ? 'דוגמאות לסגנון הרצוי (כותרות קיימות במסכת):' + NL + '- ' + ex.join(NL + '- ') : '',
+    avoid.length ? 'אל תחזור על אלה:' + NL + '- ' + avoid.join(NL + '- ') : '',
+    'הקטע:' + NL + ctx,
+    'פלט: מערך JSON של מחרוזות בלבד.'].filter(Boolean).join(NL + NL);
+  let r;
+  try {
+    r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: env.TITLE_MODEL || 'claude-haiku-5-5', max_tokens: 400, messages: [{ role: 'user', content: prompt }] }),
+    });
+  } catch (e) { return json({ error: 'השירות אינו זמין כרגע' }, 502); }
+  if (!r.ok) return json({ error: 'השירות החזיר שגיאה (' + r.status + ')' }, 502);
+  const j = await r.json();
+  const txt = ((j.content || [])[0] || {}).text || '';
+  let arr = [];
+  try { arr = JSON.parse(txt.slice(txt.indexOf('['), txt.lastIndexOf(']') + 1)); } catch (e) { /* ריק */ }
+  arr = arr.filter((x) => typeof x === 'string').map((x) => x.replace(/[–—]/g, '-').trim()).filter(Boolean).slice(0, n);
+  if (!arr.length) return json({ error: 'לא התקבלו הצעות' }, 502);
+  return json({ ok: true, s: arr, usage: j.usage || null });
+}
+
 /* ------------------------------------------------------------ עריכות */
 function cleanEdit(e) {
   /* שינוי מבנה (פיצול או איחוי פסקה) אין לו מפתח מקום; מפתחו נגזר מזמנו */
@@ -706,6 +744,8 @@ function cleanEdit(e) {
   }
   if (e.ctx) out.ctx = { b: str(e.ctx.b, 60), a: str(e.ctx.a, 60) };
   if (e.ing) out.ing = e.ing;
+  /* כותרת שנבחרה מתוך הצעות המערכת (12.10.2026): ההצעה המקורית והנוסח הסופי, חומר למידה */
+  if (e.cl && typeof e.cl === 'object') out.cl = { sug: str(e.cl.sug, 200), fin: str(e.cl.fin, 200), i: +e.cl.i || 0, dec: e.cl.dec ? 1 : 0 };
   return out;
 }
 
@@ -1600,6 +1640,7 @@ export default {
       if (p === '/edits' && req.method === 'GET') return await getEdits(req, env, url, false);
       if (p === '/live' && req.method === 'GET') return await getEdits(req, env, url, true);
       if (p === '/edits' && req.method === 'PUT') return await putEdits(req, env);
+      if (p === '/title' && req.method === 'POST') return await titleSuggest(req, env);
       if (p === '/ingested' && req.method === 'POST') return await ingested(req, env);
       if (p === '/tos' && (req.method === 'GET' || req.method === 'PUT' || req.method === 'POST')) return await tosApi(req, env, url, req.method);
       if (p === '/bakara/data' && (req.method === 'GET' || req.method === 'PUT')) return await bkData(req, env, url, req.method);

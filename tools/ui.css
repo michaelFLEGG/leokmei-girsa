@@ -509,3 +509,10 @@ body .lm-btn[disabled]{opacity:.5;filter:grayscale(.4)}
 .gate-hero .gate-img{opacity:0;transition:opacity .45s ease}
 .gate-hero .gate-img.ld{opacity:1}
 @media (prefers-reduced-motion:reduce){.gate-hero .gate-img{transition:none}}
+
+/* בוררי מסכת ודף (12.10.2026): בקבוצת המיקום, בורר הדף לעולם אינו נדחס. כשאין מקום, קבוצות הכלים עוברות לתפריט "עוד" (barFit). בלי זה, ברוחב 1366 ומטה נדחס בורר הדף לשני פיקסלים. (barFit אינו פועל: אין בדף #morebg.) */
+.bar .bg.loc{flex:0 0 auto}
+@media (max-width:700px){.bar .bg.loc{flex:1 1 100%}}
+/* ברוחב בינוני תוויות הכפתורים נעלמות (הסמל והרמז נשארים), כדי שהסרגל לא יגלוש; מתחת ל-1400 גם בתצוגה ובכלים */
+@media (min-width:701px) and (max-width:1800px){.bar .quick .ib .t,.bar #lm-clock{display:none}}
+@media (min-width:701px) and (max-width:1400px){.bar .ib .t{display:none}}

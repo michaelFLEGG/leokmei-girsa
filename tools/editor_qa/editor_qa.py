@@ -252,6 +252,10 @@ def main():
                 R.check('יציאה מעריכה מחזירה את תצוגת הקריאה (טורים, שורות grid, אותן מידות)',
                         before['cw'] == after['cw'] and before['vert'] == after['vert'] and before['disp'] == after['disp'] == 'grid'
                         and before['boxes'] == after['boxes'], {'לפני': before['cw'], 'אחרי': after['cw'], 'תצוגה': after['disp']})
+                # כניסת מנהל חייבת להיפתח בכל דפדפן (חלון בתוך הדף, לא prompt של הדפדפן)
+                pg2.evaluate("()=>{askAdminWord()}"); pg2.wait_for_timeout(400)
+                R.check('כניסת מנהל נפתחת: חלון מילת המנהל בתוך הדף',
+                        pg2.evaluate("()=>!!document.getElementById('askword')&&document.getElementById('aw-in')!==null"))
                 pg2.close()
             br.close()
     bad = [r for r in R.rows if not r[1]]

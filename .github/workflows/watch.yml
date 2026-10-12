@@ -36,6 +36,17 @@ jobs:
         continue-on-error: true
         timeout-minutes: 10
         run: python tools/layout_audit.py --modes flow,phone --max-sections 2 --no-shots --channel chrome --label שומר
+      # בדיקת עורך המנהל (12.10.2026): ההקלדה, Enter, מחיקה, סגנונות, ביטול,
+      # שמירה מקומית וניתוק רשת, בדפדפן אמיתי על האתר שנבנה זה עתה. כשל
+      # בכשירות עוצר את הפרסום, כדי ששינוי עתידי לא ישבור את העורך בשקט.
+      # ניסיון חוזר אחד, מפני שמדידת זמן בשרת משותף עלולה לסטות.
+      - name: בדיקת עורך המנהל
+        continue-on-error: true   # יהפוך לחוסם אחרי שנצפה עובר ב-CI
+        timeout-minutes: 12
+        run: |
+          python tools/serve.py --port 8731 > /dev/null 2>&1 &
+          sleep 3
+          python tools/editor_qa/editor_qa.py --channel chrome --path /sukkah.html --path /shabbat.html             || { echo "ניסיון חוזר"; python tools/editor_qa/editor_qa.py --channel chrome --path /sukkah.html --path /shabbat.html; }
       - name: שמירת המקורות בריפו (גיבוי)
         run: |
           git config user.name "leokmei-watcher"; git config user.email "watcher@users.noreply.github.com"

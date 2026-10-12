@@ -1695,6 +1695,28 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* דף שאין בו יחידות: הטקסט ריק, והמסילה אינה תופסת גובה. בלי המינימום
      הזה היה ציון הדף נופל על השורה הבאה. */
   .row>.main:empty{min-height:var(--lhpx)}
+  /* עורך המנהל (12.10.2026): בעריכה השורה היא flex ולא grid. נמדד בדפדפן:
+     כל הקשה בפסקה אחת כופה פריסה מחדש של כל גריד-שורה בעמוד, ובשבת פרק
+     שלם עלה 24 מילישניות לפריסה (בפרק ללא טורים). עם flex, אותה פריסה
+     עולה 3.5. הגיאומטריה זהה (נבדק במבחן העורך: tools/editor_qa). בקריאה
+     השורה נשארת grid, ולכן שום דבר במראה הקריאה אינו משתנה. */
+  @media screen{
+    html body.ed .flow:not(.book) .row{display:flex;align-items:baseline;grid-template-columns:none;
+      width:calc(var(--rail) + var(--measure))}
+    html body.ed .flow:not(.book) .row>.rail{flex:0 0 var(--rail);min-width:0}
+    html body.ed .flow:not(.book) .row>.main{flex:1 1 0;min-width:0;box-sizing:border-box}
+    html.dev-phone body.ed .flow:not(.book) .row{flex-direction:row;align-items:baseline;column-gap:.35em;
+      width:calc(var(--mrail,3.1em) + .35em + var(--measure,20.75em));max-width:100%;margin:0 auto}
+    html.dev-phone body.ed .flow:not(.book) .row>.rail{flex:0 0 var(--mrail,3.1em)}
+    html.dev-phone body.ed .flow .row.hatz,html.dev-phone body.ed .flow .row.perek-num,html.dev-phone body.ed .flow .row.perek-name{
+      flex-direction:column;align-items:stretch;width:auto;margin:0}
+    html.dev-phone body.ed .flow .row.hatz>.rail,html.dev-phone body.ed .flow .row.perek-num>.rail,html.dev-phone body.ed .flow .row.perek-name>.rail,
+    html.dev-phone body.ed .flow .row.hatz>.main,html.dev-phone body.ed .flow .row.perek-num>.main,html.dev-phone body.ed .flow .row.perek-name>.main{flex:0 0 auto}
+  }
+  @media screen and (max-width:760px){
+    html:not(.dev-phone) body.ed .flow:not(.book) .row{flex-direction:column;align-items:stretch;width:auto}
+    html:not(.dev-phone) body.ed .flow:not(.book) .row>.rail,html:not(.dev-phone) body.ed .flow:not(.book) .row>.main{flex:0 0 auto}
+  }
   .main{text-align:justify;text-align-last:right}
   .main p{margin:0} .main p:empty::before{content:'\200b'} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
   /* פסקה מוזחת (פיסקת תשובה, וסעיפי רשימה): הזחה תלויה, כמו בוורד */
@@ -2759,7 +2781,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const v=Math.max(12,Math.min(60,parseFloat(getComputedStyle(r).getPropertyValue('--fs'))+d));setFs(v)}
   function setFs(v){document.documentElement.style.setProperty('--fs',v+'px');localStorage.setItem('lg-fs',v);sizeBtns(v);setDafW();fitAnchors()}
   function sizeBtns(v){document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',+b.dataset.fs===+v))}
-  function vert_(){const v=$('#flow').classList.toggle('vert');
+  function vert_(){const v=$('#flow').classList.toggle('vert');EDVERT=false;
     ALL=v;localStorage.setItem('lg-vert',v?'1':'');$('#vbtn').classList.toggle('on',v);
     const keep=+$('#dafsel').value||0;render(cur);
     if(v)setTimeout(()=>{const e=$('#d'+keep);if(e)e.scrollIntoView({block:'start'})},30)}
@@ -3998,13 +4020,45 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const f=$('#flow');if(!f)return;
     const rows=[...f.children];
     rows.forEach(r=>{r.style.contentVisibility='';r.style.containIntrinsicSize=''});
-    if(!EDIT||f.classList.contains('book'))return;
+    /* ברצף אנכי אין טורים שהחלוקה שלהם יכולה לזוז, ולכן אין צורך במדידת כל
+       השורות אחרי כל שינוי מבנה (נמדד: עשרות מילישניות בכל פעם, פי ארבעה
+       במחשב חלש). הפריסה הרציפה כבר מקומית לשורה שנערכה. */
+    if(!EDIT||f.classList.contains('book')||f.classList.contains('vert'))return;
     const hs=rows.map(r=>[...r.getClientRects()].reduce((a,b)=>a+b.height,0));
     rows.forEach((r,i)=>{if(hs[i]>0){r.style.contentVisibility='auto';r.style.containIntrinsicSize='auto '+hs[i].toFixed(2)+'px'}})}
   function edCv(ms){clearTimeout(CVT);CVT=setTimeout(edCvNow,ms==null?250:ms)}
   (function(){const f=$('#flow');if(f&&window.MutationObserver)new MutationObserver(()=>{if(EDIT)edCv(300)}).observe(f,{childList:true})})();
   addEventListener('resize',()=>{if(EDIT)edCv(400)});
   document.addEventListener('click',e=>{if(EDIT&&!(e.target.closest&&e.target.closest('#flow')))edCv(500)});
+  /* פריסת עריכה (12.10.2026): בתצוגת הטורים (multicol) כל הקשה כופה חלוקה
+     מחדש של כל הפרק לטורים: 12 עד 20 מילישניות בכל תו, גם כשהפרק קטן
+     (נמדד בדפדפן, ראה docs/אבחון-עורך-המנהל.md). בעריכה הפרק מוצג ברצף
+     אנכי, כמו בוורד, ובשובה לקריאה חוזרים לטורים באותו מקום. הפרק עצמו
+     אינו משתנה: אותן שורות, ללא טעינת המסכת כולה. */
+  let EDVERT=false;
+  function edFirstRow(f){
+    const fr=f.getBoundingClientRect();
+    for(const r of f.querySelectorAll(':scope>.row')){
+      if(r.classList.contains('lz'))continue;
+      const b=r.getBoundingClientRect();
+      if(b.height&&b.bottom>fr.top&&b.top<fr.bottom&&b.right>fr.left&&b.left<fr.right)return r}
+    return null}
+  function edLayout(on){
+    const f=$('#flow');if(!f||BOOK||f.classList.contains('book'))return;
+    if(on){
+      if(f.classList.contains('vert'))return;
+      if(getComputedStyle(f).columnWidth==='auto')return;   /* טלפון וטאבלט: כבר רצף */
+      const keep=edFirstRow(f);
+      f.classList.add('vert');EDVERT=true;
+      if($('#vbtn'))$('#vbtn').classList.add('on');if($('#cbtn'))$('#cbtn').classList.remove('on');
+      if(keep)keep.scrollIntoView({block:'start'});
+      fitSoon()}
+    else if(EDVERT){
+      const keep=edFirstRow(f);
+      f.classList.remove('vert');EDVERT=false;
+      if($('#vbtn'))$('#vbtn').classList.remove('on');if($('#cbtn'))$('#cbtn').classList.add('on');
+      if(keep){const r1=f.getBoundingClientRect(),r2=keep.getBoundingClientRect();f.scrollLeft+=r2.right-r1.right}
+      fitSoon()}}
   function setEdit(on){
     const was=EDIT;
     if(on&&LZ)revealTail();   /* העריכה קוראת מיקומים: הזנב נפרס קודם */
@@ -4012,6 +4066,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       alert('בתצוגת ספר אין עריכה, מפני שפסקה אחת עשויה להתחלק בין שני גיליונות. סגור את תצוגת הספר ונסה שוב.');
       return}
     EDIT=on;document.body.classList.toggle('ed',on);
+    edLayout(on);
     if(typeof tsMark==='function')tsMark();   /* מוסר את סימני התוספות לפני שהטקסט נקרא לעריכה */
     if(!on&&SUGM){sugPush(0);SUGM=false;document.body.classList.remove('sugm')}
     /* המשניות מוצגות מנוקדות, ובמצב עריכה הן חייבות לחזור לנוסח
@@ -4184,6 +4239,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     return h+'</div>'}
   function styCollapse(on){lsSet(SCOL,on?'1':'0');STYSIG='';showSty()}
   function stySavedPos(){try{const j=JSON.parse(lsGet(SPOS)||'null');return j&&isFinite(j.x)&&isFinite(j.y)?j:null}catch(e){return null}}
+  /* השורות שנמדדות למיקום החלונית. ברצף אנכי כל השורות נושאות אותו שוליים,
+     ולכן די בשורות שליד הסמן (נמדד: 42 מילישניות בכל פעולה בהאטת פי 4, כשכל
+     שורות הפרק נמדדו אחרי כל שינוי). בטורים נמדדות כולן. */
+  function styRows(el){
+    const f=$('#flow'),row=el&&el.closest&&el.closest('.row');
+    if(!f||!row||!f.classList.contains('vert'))return f?f.querySelectorAll('.row'):[];
+    const out=[row];let a=row,b=row;
+    for(let i=0;i<8;i++){a=a&&a.previousElementSibling;b=b&&b.nextElementSibling;if(a)out.push(a);if(b)out.push(b)}
+    return out}
   function styPlace(bar,el){
     document.body.classList.remove('stystrip');bar.classList.remove('strip');
     const bw=bar.offsetWidth,bh=bar.offsetHeight,sv=stySavedPos();
@@ -4195,7 +4259,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* תיבת השורה נבדקת קודם: שורה שמחוץ למסך נדלגת בעריכה (content-visibility),
        ומדידת .main שבתוכה כופה פריסה של תת-העץ בכל קריאה (נמדד: 34 שניות
        במשימה אחת בבכורות, בהאטת מעבד פי 4) */
-    for(const w of document.querySelectorAll('#flow .row')){
+    for(const w of styRows(el)){
       const wr=w.getBoundingClientRect();
       if(!(wr.right>0&&wr.left<innerWidth&&wr.bottom>0&&wr.top<innerHeight))continue;
       const m=w.querySelector(':scope > .main');if(!m)continue;

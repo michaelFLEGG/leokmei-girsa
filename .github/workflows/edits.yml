@@ -54,7 +54,6 @@ jobs:
           fi
       # בדיקת עורך המנהל על המסכת הראשונה שנבנתה (ראה watch.yml).
       - name: בדיקת עורך המנהל
-        continue-on-error: true   # יהפוך לחוסם אחרי שנצפה עובר ב-CI
         timeout-minutes: 8
         run: |
           pip install playwright

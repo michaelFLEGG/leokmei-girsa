@@ -52,6 +52,16 @@ jobs:
           else
             python tools/build_all.py
           fi
+      # בדיקת עורך המנהל על המסכת הראשונה שנבנתה (ראה watch.yml).
+      - name: בדיקת עורך המנהל
+        timeout-minutes: 8
+        run: |
+          pip install playwright
+          S=$(echo "${{ steps.which.outputs.slugs }}" | cut -d, -f1); [ -n "$S" ] || S=sukkah
+          [ -f "site/$S.html" ] || S=sukkah
+          python tools/serve.py --port 8731 > /dev/null 2>&1 &
+          sleep 3
+          python tools/editor_qa/editor_qa.py --channel chrome --path "/$S.html"             || { echo "ניסיון חוזר"; python tools/editor_qa/editor_qa.py --channel chrome --path "/$S.html"; }
       # העבודה הזאת אינה שומרת את מה שבנתה. בנייה חלקית אינה מריצה את
       # סוכן סריקת התצוגה, ולכן חסר בה site/layout-audit.json - ואם
       # היא היתה נשמרת, הפרסום הבא היה משחזר עותק בלי הקובץ ולוח

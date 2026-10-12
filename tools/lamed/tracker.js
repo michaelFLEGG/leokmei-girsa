@@ -351,7 +351,7 @@
       var t = ev === 'scroll' ? $('#flow') : document;
       t.addEventListener(ev, act, { passive: true, capture: true });
     });
-    $('#flow').addEventListener('scroll', function () { G.dirty = true; drawFin(); }, { passive: true });
+    $('#flow').addEventListener('scroll', function () { G.dirty = true; if (!document.body.classList.contains('ed')) drawFin(); }, { passive: true });
     document.addEventListener('visibilitychange', function () {
       if (document.visibilityState === 'hidden') { T.savePos(); flush(true); }
       else { G.lastTick = Date.now(); G.act = Date.now(); }
@@ -359,7 +359,11 @@
     addEventListener('pagehide', function () { T.savePos(); flush(true); });
     addEventListener('resize', function () { G.dirty = true; });
     setInterval(tick, 1000);
-    setInterval(function () { if (G.dirty) updateCur(); drawClock(); drawFin(); }, 1500);
+    setInterval(function () {
+      /* בעריכת מנהל אין "מקום קריאה" לצייר: הציור כופה פריסה (נמדד 12.10.2026) */
+      if (document.body.classList.contains('ed')) return;
+      if (G.dirty) updateCur(); drawClock(); drawFin();
+    }, 1500);
     G.lastTick = Date.now();
     setTimeout(function () { updateCur(); resumeFromHash(); drawClock(); setTimeout(function () { G.dirty = true; }, 600); }, 400);
     LG.onChange(function () { drawClock(); drawPbar(); });

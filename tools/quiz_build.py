@@ -360,13 +360,35 @@ def run(site):
     # שאלות ממתינות (13.10.2026): data/quiz/pending-<slug>.json. אינן בבנק הלומדים. הן עולות רק לתור האישור
     # של המנהל (quiz/drafts.json + quiz/<slug>-draft.json), ונכנסות לבנק לאחר "אשר" (הכרעה בנקודת הקליטה).
     drafts = {}
+    pend = {}
     for fn in sorted(os.listdir(ddir)):
         if not (fn.startswith('pending-') and fn.endswith('.json')):
             continue
         pdoc = json.load(io.open(os.path.join(ddir, fn), encoding='utf-8'))
         pslug = pdoc.get('slug') or fn[len('pending-'):-len('.json')]
-        pq = [{'i': x['i'], 'p': x.get('p', 0), 'd': x['d'], 'lvl': x['lvl'], 'q': x['q'], 'o': x['o'], 'a': x.get('a', 0), 'x': x.get('x', '')}
-              for x in pdoc.get('items', []) if x.get('st', 'ממתין') == 'ממתין']
+        pend.setdefault(pslug, []).extend(
+            {'i': x['i'], 'p': x.get('p', 0), 'd': x['d'], 'lvl': x['lvl'], 'q': x['q'], 'o': x['o'], 'a': x.get('a', 0), 'x': x.get('x', '')}
+            for x in pdoc.get('items', []) if x.get('st', 'ממתין') == 'ממתין')
+    # שאלות תוכן פתוחות של בית החרושת לתוספות (13.10.2026): data/quiz/tos-<slug>.json. אותו תור אישור, בלי מסיחים:
+    # o[0] = התשובה (הלקוח מציג "הצג תשובה" ואז "ידעתי" או "לא ידעתי"), open=1, dh = הדיבור המתחיל, tos = מפתח התוספות.
+    for fn in sorted(os.listdir(ddir)):
+        if not (fn.startswith('tos-') and fn.endswith('.json')):
+            continue
+        tdoc = json.load(io.open(os.path.join(ddir, fn), encoding='utf-8'))
+        tslug = tdoc.get('slug') or fn[len('tos-'):-len('.json')]
+        for x in tdoc.get('items', []):
+            if x.get('st', 'ממתין') != 'ממתין':
+                continue
+            dk = x['daf']
+            n = re.sub(r'[^א-ת]', '', dk)
+            d = '%s ע"%s' % (n, 'א' if dk.endswith('.') else 'ב')
+            if not DAF_RE.match(d):
+                sys.exit('שגיאה: דף לא בתבנית בשאלת תוספות %s: %r' % (x['i'], dk))
+            if any(c in (x['q'] + x['a']) for c in '–—'):
+                sys.exit('שגיאה: קו מפריד ארוך בשאלת תוספות %s' % x['i'])
+            pend.setdefault(tslug, []).append({'i': x['i'], 'p': x['p'], 'd': d, 'lvl': x['lvl'], 'q': x['q'], 'o': [x['a'], '', '', ''], 'a': 0,
+                                               'x': '', 'open': 1, 'dh': x.get('d', ''), 'tos': x.get('tos', 0), 'type': x.get('type', '')})
+    for pslug, pq in pend.items():
         io.open(os.path.join(qdir, pslug + '-draft.json'), 'w', encoding='utf-8').write(
             json.dumps({'slug': pslug, 'status': 'ממתין', 'q': pq}, ensure_ascii=False, separators=(',', ':')))
         drafts[pslug] = len(pq)

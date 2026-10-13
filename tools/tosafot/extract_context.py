@@ -19,7 +19,10 @@ def plain(h):
 
 
 def main():
-    slug, dafs = sys.argv[1], sys.argv[2:]
+    tolerant = '--tolerant' in sys.argv      # בית החרושת: עמוד שאינו בבנייה אינו עוצר את השאר; הרשימה נשמרת וגלויה
+    argv = [a for a in sys.argv[1:] if a != '--tolerant']
+    slug, dafs = argv[0], argv[1:]
+    missing = []
     js = os.path.join(ROOT, 'site', slug + '.data.js')
     if not os.path.exists(js):
         raise SystemExit('עצירה: אין site/%s.data.js. הרץ קודם בנייה מקומית של המסכת' % slug)
@@ -30,7 +33,15 @@ def main():
     res = {}
     for d in dafs:
         if d not in pages:
+            if tolerant:
+                missing.append(d)
+                continue
             raise SystemExit('עצירה: העמוד %s אינו בבנייה' % d)
+        if d not in src:
+            if tolerant:
+                missing.append(d)
+                continue
+            raise SystemExit('עצירה: העמוד %s אינו בקובץ המקורות' % d)
         lines = []
         for ui, u in enumerate(pages[d]['units']):
             for x in u['l']:
@@ -44,6 +55,10 @@ def main():
     old.update(res)
     with io.open(path, 'w', encoding='utf-8') as f:
         json.dump(old, f, ensure_ascii=False, indent=1)
+    if tolerant:
+        with io.open(os.path.join(ROOT, 'tosafot', slug, 'context-missing.json'), 'w', encoding='utf-8') as f:
+            json.dump({'missing': missing}, f, ensure_ascii=False, indent=1)
+        print('עמודים שאינם בבנייה (ללא הקשר, התוספות שלהם יסומנו למנהל):', missing)
 
 
 if __name__ == '__main__':

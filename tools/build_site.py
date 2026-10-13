@@ -5902,8 +5902,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   for _lf in sorted(_glob.glob(os.path.join(_root,'tosafot',slug,'live-*.json'))):
     _ld=json.load(io.open(_lf,encoding='utf-8'))
     tos_items+=_ld.get('items',[])
+  # פנים התוספות וקישור ספריא מחוץ לדף (13.10.2026): כשמסכת שלמה נכנסת, הם היו מוסיפים מאות קילובייט לזנב הדף.
+  # הם נשמרים ב-tos-face-<מסכת>.json ונטענים בעצלתיים בלחיצה על "פנים". לא נכנס לשום קובץ אחר.
+  tos_face={}
+  for _it in tos_items:
+    tos_face[str(_it['n'])]={'text':_it.pop('text',''),'url':_it.pop('url','')}
+    _it.pop('ref',None)
+  tos_face_v=_hl.md5(json.dumps(tos_face,ensure_ascii=False,sort_keys=True).encode('utf-8')).hexdigest()[:8] if tos_face else ''
   if tos_items:
-    JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__TOS="+json.dumps({'slug':slug,'items':tos_items},ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tosafot_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+    JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__TOS="+json.dumps({'slug':slug,'items':tos_items,'face':'tos-face-'+slug+'.json?v='+tos_face_v},ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tosafot_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   # מבחן מנועים עיוור לתוספות (12.10.2026): הקוד נכלל רק במסכת שיש לה tosafot/<slug>/test-options.json, ופעיל רק בכניסת מנהל.
   # הקבצים עצמם (האופציות, והחשיפה) נטענים בנפרד לפי צורך ואינם בתוך הדף; שם המנוע אינו נטען עד "חשוף את התוצאות".
   _tt_opt=os.path.join(_root,'tosafot',slug,'test-options.json')
@@ -5940,6 +5947,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _tsrc=os.path.join(os.path.dirname(_tdir),'data','titlesug',slug+'.json')
   if os.path.exists(_tsrc):
     _sh.copy(_tsrc,os.path.join(_outdir,'titlesug-'+slug+'.json'))
+  if tos_face:
+    io.open(os.path.join(_outdir,'tos-face-'+slug+'.json'),'w',encoding='utf-8').write(json.dumps(tos_face,ensure_ascii=False,separators=(',',':')))
   if has_tostest:
     _sh.copy(_tt_opt,os.path.join(_outdir,'tos-test-'+slug+'.json'))
     _sh.copy(_tt_rev,os.path.join(_outdir,'tos-reveal-'+slug+'.json'))

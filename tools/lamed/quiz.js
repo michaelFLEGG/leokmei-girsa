@@ -46,6 +46,11 @@
             if (!v || v.st !== 'ok') return;
             var o = q.o.slice(), a = q.a, t = q.q;
             if (v.e && v.e.o && v.e.o.length === 4) { o = v.e.o; a = v.e.a | 0; t = v.e.q || t; }
+            if (q.open) {   /* שאלת תוכן פתוחה (תוספות): התשובה, ואם נערכה, מפוצלת על פני ארבע משבצות */
+              var ans = (v.e && v.e.o && v.e.o.length === 4) ? v.e.o.join(' ').replace(/\s+/g, ' ').trim() : q.o[0];
+              b.q.push({ i: q.i, p: q.p, d: q.d, lvl: q.lvl, q: t, o: [ans, '', '', ''], a: 0, x: '', open: 1, dh: q.dh || '', tos: q.tos || 0 });
+              return;
+            }
             var right = o[a], rest = o.filter(function (_, k) { return k !== a; });
             b.q.push({ i: q.i, p: q.p, d: q.d, lvl: q.lvl, q: t, o: [right].concat(rest), a: 0, x: q.x || '' });
           });
@@ -397,6 +402,13 @@
       var track = '';
       if (!blitz) for (var k = 0; k < n0; k++) track += '<li class="' + (res.marks[k] || (k === i ? 'cur' : '')) + '" aria-label="שאלה ' + (k + 1) + '">★</li>';
       var opts = perm.map(function (pi, k) { return '<button type="button" class="qz-opt qz-c' + k + '" data-k="' + k + '"><b>' + (k + 1) + '</b><span>' + E(q.o[pi]) + '</span></button>'; }).join('');
+      var open = !!q.open;
+      if (open) {   /* שאלת תוכן פתוחה: "הצג תשובה" ואז "ידעתי" או "לא ידעתי". ארבע משבצות מוסתרות שומרות על מנגנון הניקוד */
+        opts = perm.map(function (pi, k) { return '<button type="button" class="qz-opt qz-c' + k + '" data-k="' + k + '" hidden aria-hidden="true"></button>'; }).join('') +
+          '<div class="qz-open"><button type="button" class="lm-btn pri" id="qz-rev">הצג תשובה</button>' +
+          '<div class="qz-ans" id="qz-ans" hidden><p class="qz-ansp">' + (q.dh ? '<b class="qz-dh" style="font-family:Vilna,serif;font-weight:700">' + E(q.dh) + '</b> - ' : '') + E(q.o[0]) + '</p>' +
+          '<div class="lm-row"><button type="button" class="lm-btn pri" id="qz-knew">ידעתי</button><button type="button" class="lm-btn" id="qz-dont">לא ידעתי</button></div></div></div>';
+      }
       card.innerHTML =
         '<div class="qz-hud"><div class="qz-pts" aria-live="off"><small>נקודות</small><b id="qz-pts">' + LG.nf(ptsShown) + '</b></div>' +
         '<div class="qz-mul' + (res.mul > 1 ? ' on' : '') + '" id="qz-mul" title="מכפיל בונוס הרצף" aria-live="polite">' + (res.mul > 1 ? '×' + res.mul : '') + '</div>' +
@@ -408,10 +420,16 @@
         '<div class="qz-meta"><span class="qz-chip qz-lv' + q.lvl + '">' + Q.LVL[q.lvl].n + ' · ' + Q.LVL[q.lvl].pts + ' נקודות</span>' +
         '<span class="lm-small">שאלה ' + Math.min(i + 1, queue.length) + ' מתוך ' + queue.length + ' · ' + E(LG.nameOf(q.s)) + ' פרק ' + E(PEREK[q.p] || q.p) + (isRetry ? ' · ניסיון חוזר (בלי ניקוד)' : '') + '</span></div>' +
         '<h3 class="lm-qq">' + E(q.q) + '</h3><div class="qz-opts" role="group" aria-label="תשובות">' + opts + '</div>' +
-        (isRetry || blitz ? '' : '<div class="qz-aids"><button type="button" class="lm-btn small ghost" id="qz-5050" title="מוחק שתי תשובות שגויות, ומוריד 3 נקודות מהשאלה">חמישים-חמישים (עולה 3 נקודות)</button></div>') +
+        (isRetry || blitz || open ? '' : '<div class="qz-aids"><button type="button" class="lm-btn small ghost" id="qz-5050" title="מוחק שתי תשובות שגויות, ומוריד 3 נקודות מהשאלה">חמישים-חמישים (עולה 3 נקודות)</button></div>') +
         '<div class="qz-fb" aria-live="polite"></div>';
       host.innerHTML = ''; host.appendChild(card);
       card.querySelectorAll('.qz-opt').forEach(function (b) { b.onclick = function () { pick(+b.getAttribute('data-k')); }; });
+      if (open) {
+        var rev = $('#qz-rev', card), ansBox = $('#qz-ans', card);
+        rev.onclick = function () { Q.unlockAudio(); rev.hidden = true; ansBox.hidden = false; $('#qz-knew', card).focus({ preventScroll: true }); };
+        $('#qz-knew', card).onclick = function () { pick(correctAt); };
+        $('#qz-dont', card).onclick = function () { pick((correctAt + 1) % 4); };
+      }
       var aided = false;
       var a5 = $('#qz-5050', card);
       if (a5) a5.onclick = function () {
@@ -464,11 +482,12 @@
           var mulE2 = $('#qz-mul', card); if (mulE2) { mulE2.textContent = ''; mulE2.classList.remove('on'); }
           $('#qz-str b', card).textContent = 0; $('#qz-str', card).classList.remove('hot');
         }
-        var msg = ok ? '<b class="lm-okt">נכון!</b>' + (pts ? ' +' + pts + ' נקודות' + (bn ? ' (כולל בונוס רצף ' + bn + '+)' : '') : '') :
-          '<b class="lm-badt">לא נכון.</b> התשובה: <b>' + E(q.o[0]) + '</b>';
+        var msg = open ? (ok ? '<b class="lm-okt">ידעת!</b>' + (pts ? ' +' + pts + ' נקודות' + (bn ? ' (כולל בונוס רצף ' + bn + '+)' : '') : '') : '<b class="lm-badt">נרשם לחזרה.</b>') :
+          (ok ? '<b class="lm-okt">נכון!</b>' + (pts ? ' +' + pts + ' נקודות' + (bn ? ' (כולל בונוס רצף ' + bn + '+)' : '') : '') :
+          '<b class="lm-badt">לא נכון.</b> התשובה: <b>' + E(q.o[0]) + '</b>');
         fb.innerHTML = '<p class="qz-msg">' + msg + '</p>' +
           (q.x ? '<p class="qz-exp' + (ok ? ' small' : '') + '">' + E(q.x) + '</p>' : '') +
-          (href ? '<p class="lm-note"><a class="lm-btn small ghost qz-togm" href="' + href + '" target="_blank" rel="noopener">לשורה בגמרא: ' + E(LG.nameOf(q.s)) + ' ' + E(q.d) + '</a></p>' : '') +
+          (href ? '<p class="lm-note"><a class="lm-btn small ghost qz-togm" href="' + href + (open && q.tos ? '&tos=' + q.tos : '') + '" target="_blank" rel="noopener">' + (open ? 'לפנים התוספות: ' : 'לשורה בגמרא: ') + E(LG.nameOf(q.s)) + ' ' + E(q.d) + '</a></p>' : '') +
           '<div class="lm-row"><button type="button" class="lm-btn pri" id="qz-next">הבא</button></div>';
         if (!ok && !isRetry && !blitz) retry.push(Object.assign({}, q, { _retry: 1 }));
         var nx = $('#qz-next', card);
@@ -498,6 +517,11 @@
       if (!host.isConnected) { document.removeEventListener('keydown', keys); return; }
       var card = host.querySelector('.qz-card');
       if (!card || modalOpen || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (card.querySelector('.qz-open')) {   /* שאלה פתוחה: אין בחירה במספרים */
+        if (!locked && (e.key === 'Enter' || e.key === ' ')) { var rv = card.querySelector('#qz-rev'); if (rv && !rv.hidden) { e.preventDefault(); rv.click(); } }
+        else if (e.key === 'Enter' && locked) { e.preventDefault(); card._go(); }
+        return;
+      }
       if (e.key >= '1' && e.key <= '4' && !locked) { e.preventDefault(); card._pick(+e.key - 1); }
       else if (e.key === 'Enter' && locked) { e.preventDefault(); card._go(); }
     }
@@ -831,7 +855,8 @@
       if (dl.length > 1 || FD) h += '<p>דף: <select id="lm-qdf"><option value="">כל הדפים</option>' + dl.map(function (g) { return '<option value="' + E(g) + '"' + (g === FD ? ' selected' : '') + '>' + E(g) + '</option>'; }).join('') + '</select></p>';
       pend.slice(0, 8).forEach(function (q, n) {
         h += '<div class="lm-qdi" data-n="' + n + '" style="border-top:1px solid var(--line);padding:10px 0"><div class="lm-small">' + E(LG.nameOf(q.s)) + ' · עמוד ' + E(q.d) + '</div>' +
-          '<div><b>' + E(q.q) + '</b></div><ol style="margin:6px 0">' + q.o.map(function (o, k) { return '<li' + (k === q.a ? ' style="color:var(--green);font-weight:700"' : '') + '>' + E(o) + '</li>'; }).join('') + '</ol>' +
+          '<div><b>' + E(q.q) + '</b></div>' + (q.open ? '<p style="margin:6px 0;color:var(--green)"><b style="font-family:Vilna,serif">' + E(q.dh || '') + '</b> - ' + E(q.o[0]) + '</p><div class="lm-small">שאלת תוכן פתוחה (תוספות' + (q.type ? ', ' + E(q.type) : '') + ')</div>' :
+            '<ol style="margin:6px 0">' + q.o.map(function (o, k) { return '<li' + (k === q.a ? ' style="color:var(--green);font-weight:700"' : '') + '>' + E(o) + '</li>'; }).join('') + '</ol>') +
           '<div class="lm-row"><button class="lm-btn small" data-a="ok" type="button">אשר</button><button class="lm-btn small ghost" data-a="edit" type="button">ערוך</button><button class="lm-btn small ghost" data-a="no" type="button">דחה</button></div></div>';
       });
       if (pend.length > 8) h += '<p class="lm-note">ועוד ' + LG.nf(pend.length - 8) + ' בהמשך.</p>';
@@ -848,6 +873,17 @@
         row.querySelector('[data-a=no]').onclick = function () { save('no'); };
         row.querySelector('[data-a=edit]').onclick = function () {
           var f = el('div'); f.style.marginTop = '8px';
+          if (q.open) {   /* עריכת שאלה פתוחה: השאלה והתשובה (התשובה נשמרת בארבע משבצות של עד 120 תווים) */
+            f.innerHTML = '<textarea rows="2" style="width:100%" id="eq">' + E(q.q) + '</textarea><textarea rows="3" style="width:100%" id="ea">' + E(q.o[0]) + '</textarea>' +
+              '<div class="lm-row"><button class="lm-btn small" id="esv" type="button">שמור ואשר</button></div>';
+            row.appendChild(f);
+            f.querySelector('#esv').onclick = function () {
+              var words = f.querySelector('#ea').value.trim().split(/\s+/), parts = ['', '', '', ''], k = 0;
+              words.forEach(function (w) { if ((parts[k] + ' ' + w).trim().length > 118 && k < 3) k++; parts[k] = (parts[k] + ' ' + w).trim(); });
+              save('ok', { q: f.querySelector('#eq').value.trim(), o: parts, a: 0 });
+            };
+            return;
+          }
           f.innerHTML = '<textarea rows="2" style="width:100%" id="eq">' + E(q.q) + '</textarea>' + q.o.map(function (o, k) { return '<div><label><input type="radio" name="ea" value="' + k + '"' + (k === q.a ? ' checked' : '') + '> </label><input class="eo" value="' + E(o) + '" style="width:85%"></div>'; }).join('') +
             '<div class="lm-row"><button class="lm-btn small" id="esv" type="button">שמור ואשר</button></div>';
           row.appendChild(f);

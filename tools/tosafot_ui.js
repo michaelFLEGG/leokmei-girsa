@@ -39,7 +39,9 @@
    '.tsn{margin:.4em 0;padding:.25em .35em;border-radius:5px;scroll-margin-top:70px}'+
    '.tsn.hot{background:#fff4d6;transition:background .3s}'+
    '.tsn .tsnum{font-family:Vilna,serif;font-weight:900;font-size:1.05em;color:#000;margin-inline-end:.35em}'+
-   '.tsn .tsdh{font-size:.78em;font-weight:700;color:#7a5a14;margin-inline-end:.4em}'+
+   '.tsn .tsdh{font-family:Vilna,serif;font-size:1em;font-weight:700;color:#2b2620;margin-inline-end:.4em}'+
+   '.tsn .tsug{display:none;font-size:.78em;margin-inline-end:.4em;padding:0 .5em;border:1px solid #c98a3a;border-radius:9px;background:#fff1dc;color:#8a4b00;white-space:nowrap}'+
+   'body.adm .tsn .tsug{display:inline-block}'+
    '.tsn .tstx{display:inline}'+
    '.tsn .tsin{font:inherit;font-size:.78em;margin-inline-start:.5em;padding:0 .55em;border:1px solid #c9bfa6;border-radius:10px;background:#faf6ea;color:#5a4a1e;cursor:pointer}'+
    '.tsn .tsin:hover{background:#f2ead2}'+
@@ -172,13 +174,29 @@
     PLACED[it.n]='m';MOVED[it.n]=true;return true}
 
   /* ---- בניית הערה ---- */
+  /* פנים התוספות וקישור ספריא נטענים בעצלתיים מקובץ נפרד (tos-face-<מסכת>.json), כדי שהדף לא יישא מאות קילובייט */
+  var FACE=null,FACEQ=[];
+  function faceLoad(cb){
+    if(FACE){cb();return}
+    FACEQ.push(cb);if(FACEQ.length>1)return;
+    var src=TS.face;if(!src){FACE={};FACEQ.splice(0).forEach(function(f){f()});return}
+    fetch(src).then(function(r){return r.json()}).then(function(j){FACE=j||{}}).catch(function(){FACE={}}).then(function(){FACEQ.splice(0).forEach(function(f){f()})})}
   function faceHTML(it){
-    var t=it.text||'',i=t.indexOf(' - '),h=ge(t);
+    var f=(FACE&&FACE[it.n])||{},t=f.text||it.text||'',i=t.indexOf(' - '),h=ge(t);
     if(i>0&&i<120)h='<b>'+ge(t.slice(0,i))+'</b> - '+ge(t.slice(i+3));
-    return h+' <a href="'+ge(it.url||'#')+'" target="_blank" rel="noopener">בספריא</a>'}
+    var u=f.url||it.url||(f.ref?'https://www.sefaria.org/'+f.ref.replace(/ /g,'_').replace(/:/g,'.'):'#');
+    return h+' <a href="'+ge(u)+'" target="_blank" rel="noopener">בספריא</a>'}
   function admHTML(it){
     if(!(typeof isAdmin==='function'&&isAdmin()))return '';
     var a=ADM,h='<div class="tsadm"><div class="tsah">למנהל בלבד · מיקום הסימן: '+ge(RULE[PLACED[it.n]||String(it.rule||'1')]||'')+(MOVED[it.n]?' <span class="tsw">(העוגן זז - לאשר או לתקן)</span>':'')+'</div>';
+    if(it.g&&!(a&&a.styles&&a.styles[it.n])){
+      var pk0=a&&a.picks&&a.picks[it.n],nt0=a&&a.notes&&a.notes[it.n];
+      return h+'<div>'+(pk0?'הוגה על ידך.':'נכתב בבית החרושת ועדיין לא הוגה.')+'</div>'+
+        '<textarea class="tsedit" data-n="'+it.n+'" aria-label="עריכה חופשית">'+ge(txt(it))+'</textarea>'+
+        (pk0?'':'<button class="go" data-n="'+it.n+'" onclick="tosApprove(this)">אישור ללא שינוי</button> ')+
+        '<button data-n="'+it.n+'" onclick="tosSaveText(this)">שמור את הנוסח שערכתי</button> '+
+        '<input class="tsnote" data-n="'+it.n+'" placeholder="הערה לקלוד על התוספות הזה" value="'+ge((nt0&&nt0.t)||'')+'">'+
+        '<button data-n="'+it.n+'" onclick="tosSaveNote(this)">שמור הערה</button></div>'}
     if(!a||!a.styles||!a.styles[it.n]){return h+(window.__TOSTEST?'<div>הנוסח נבחר במסך "מבחן מנועים" שבתפריט תוס\'.</div>':'<div>חמשת הנוסחאות נטענות מנקודת הקליטה...</div>')+'</div>'}
     var st=a.styles[it.n],pk=a.picks&&a.picks[it.n],nt=a.notes&&a.notes[it.n];
     STY.forEach(function(s){
@@ -192,11 +210,16 @@
     return h}
   function noteHTML(it){
     return '<div class="tsn" data-n="'+it.n+'"><span class="tsnum">'+ge(it.hn)+'</span><span class="tsdh">'+ge(it.dh)+'</span>'+
+      (it.g&&!(ADM&&ADM.picks&&ADM.picks[it.n])?'<span class="tsug" title="נכתב בבית החרושת ועדיין לא עבר עיון של המנהל">לא הוגה</span>':'')+
       '<span class="tstx">'+ge(txt(it))+'</span>'+
       '<button class="tsin" type="button" onclick="tosFace(this)" aria-expanded="false">פנים</button>'+
-      '<div class="tsface" hidden>'+faceHTML(it)+'</div>'+admHTML(it)+'</div>'}
+      '<div class="tsface" hidden></div>'+admHTML(it)+'</div>'}
   window.tosFace=function(b){var f=b.parentElement.querySelector('.tsface');if(!f)return;
-    var open=f.hasAttribute('hidden');if(open)f.removeAttribute('hidden');else f.setAttribute('hidden','');
+    var open=f.hasAttribute('hidden');
+    if(open){
+      var n=+b.parentElement.getAttribute('data-n');
+      faceLoad(function(){var it=byN[n];if(it&&!f.getAttribute('data-ok')){f.innerHTML=faceHTML(it);f.setAttribute('data-ok','1')}});
+      f.removeAttribute('hidden')}else f.setAttribute('hidden','');
     b.setAttribute('aria-expanded',open?'true':'false');b.textContent=open?'סגור':'פנים'};
 
   /* ---- סימון הדף ---- */
@@ -357,6 +380,11 @@
     b.disabled=true;
     post({n:n,pick:k,txt:t,from:k}).then(function(j){applyDoc(j);if(typeof toast==='function')toast('הנוסח נבחר ויוצג לכל הלומדים מיד')})
       .catch(function(e){b.disabled=false;if(typeof toast==='function')toast('לא נשמר: '+(e&&e.message||''),5000)})};
+  window.tosApprove=function(b){
+    var n=+b.getAttribute('data-n'),it=byN[n];if(!it)return;
+    b.disabled=true;
+    post({n:n,pick:'a',txt:(PUB[n]&&PUB[n].t)||it.sum,from:'a'}).then(function(j){applyDoc(j);if(typeof toast==='function')toast('השורה הוגתה ללא שינוי')})
+      .catch(function(e){b.disabled=false;if(typeof toast==='function')toast('לא נשמר: '+(e&&e.message||''),5000)})};
   window.tosSaveText=function(b){
     var n=+b.getAttribute('data-n'),ta=b.parentElement.querySelector('textarea.tsedit');if(!ta)return;
     var v=ta.value.trim();if(!v)return;
@@ -376,4 +404,7 @@
       if(j&&j.ok&&j.pub){var any=false;Object.keys(j.pub).forEach(function(n){if(byN[n]&&j.pub[n].t){PUB[n]=j.pub[n];any=true}});
         if(any&&!off())tsMark()}}).catch(function(){})}
   if(typeof isAdmin==='function'&&isAdmin()&&mode!=='off')setTimeout(admLoad,50);
+  /* קישור מכרטיס שאלה: slug.html#daf=...&tos=<מפתח> פותח את התוספות בהערות שוליים (13.10.2026) */
+  try{var hp=new URLSearchParams(location.hash.slice(1)),tn=hp.get('tos');
+    if(tn&&byN[tn])setTimeout(function(){tosGo(+tn)},1200)}catch(e){}
   })();

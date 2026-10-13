@@ -1,0 +1,42 @@
+name: בית החרושת לתוספות - הכנה (קוד בלבד, בלי מודל ובלי מפתח)
+# שלב ההכנה למסכת: משיכת התוספות מספריא, הספירה הקבועה והאימות, ובנייה של האתר כדי לחלץ את שורות הלאוקמי גירסא לכל עמוד.
+# התוצר נדחף לריפו: tosafot/<מסכת>/ ו-tosafot/raw/.
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'מסכת (sukkah או berakhot)'
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: tosafot-prep
+  cancel-in-progress: false
+jobs:
+  prep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install lxml fonttools brotli pillow
+      - name: משיכת התוספות והספירה
+        run: python tools/tosafot/factory_prep.py "${{ inputs.slug }}" --fetch
+      - name: הורדה מהדרייב
+        run: python tools/fetch.py
+      - name: בנייה (להקשר הלאוקמי גירסא)
+        run: python tools/build_all.py
+      - name: הקשר לכל עמוד
+        run: python tools/tosafot/factory_prep.py "${{ inputs.slug }}" --context
+      - name: דחיפה
+        run: |
+          git config user.name "tosafot-factory"; git config user.email "factory@users.noreply.github.com"
+          git add -A tosafot
+          if git diff --cached --quiet; then echo "אין שינוי"; else
+            git commit -m "בית החרושת לתוספות: הכנה ל${{ inputs.slug }} (ספירה, אימות והקשר)"
+            for i in 1 2 3 4; do
+              if git pull --rebase -q && git push -q; then break; fi
+              sleep $((i * 7))
+            done
+          fi

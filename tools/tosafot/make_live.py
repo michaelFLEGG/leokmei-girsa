@@ -35,9 +35,12 @@ def main():
             raise SystemExit('עצירה: עוגן %s על עמוד %s אך התוספות בעמוד %s' % (k, a['daf'], r['dafKey']))
         s = styles[k]
         # page: העמוד באתר שבו יושב הטקסט (כשהוא שונה מעמוד התוספות; ראה anchors-N.json)
-        items.append({'n': ukey(slug, perek, r['n']), 'disp': r['n'], 'perek': perek, 'hn': r['hn'], 'daf': a.get('page', r['dafKey']), 'dh': r['dh'], 'line': r['line'],
-                      'ref': r['ref'], 'url': r['url'], 'text': r['text'],
-                      'sum': s.get('a') or s['b'], 't': a['t'], 'occ': a.get('occ', 1), 'rule': a.get('rule', 1)})
+        it = {'n': ukey(slug, perek, r['n']), 'disp': r['n'], 'perek': perek, 'hn': r['hn'], 'daf': a.get('page', r['dafKey']), 'dh': r['dh'], 'line': r['line'],
+              'ref': r['ref'], 'url': r['url'], 'text': r['text'],
+              'sum': s.get('a') or s['b'], 't': a['t'], 'occ': a.get('occ', 1), 'rule': a.get('rule', 1)}
+        if s.get('gen'):
+            it['g'] = 1      # נכתב בבית החרושת (13.10.2026): במצב מנהל מסומן "לא הוגה" עד שהמנהל מאשר או עורך
+        items.append(it)
     if missing:
         raise SystemExit('עצירה: אין עוגן לתוספות: %s' % ', '.join(missing))
     out = {'slug': slug, 'perek': perek, 'total': count['total'], 'items': items}

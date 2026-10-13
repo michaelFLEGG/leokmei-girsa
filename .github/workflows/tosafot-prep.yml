@@ -35,8 +35,13 @@ jobs:
           git add -A tosafot
           if git diff --cached --quiet; then echo "אין שינוי"; else
             git commit -m "בית החרושת לתוספות: הכנה ל${{ inputs.slug }} (ספירה, אימות והקשר)"
-            for i in 1 2 3 4; do
-              if git pull --rebase -q && git push -q; then break; fi
+            OK=0
+            for i in 1 2 3 4 5; do
+              git stash -q --include-untracked 2>/dev/null || true
+              if git pull --rebase -q && git push -q; then OK=1; fi
+              git stash pop -q 2>/dev/null || true
+              if [ "$OK" = "1" ]; then break; fi
               sleep $((i * 7))
             done
+            if [ "$OK" != "1" ]; then echo "::error::הדחיפה נכשלה אחרי חמישה ניסיונות"; exit 1; fi
           fi

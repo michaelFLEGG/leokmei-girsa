@@ -36,8 +36,20 @@ def masechet_name(slug):
 
 
 def mk_req(cid, model, system_text, user, max_tokens):
-    return {'custom_id': cid, 'params': {'model': model, 'max_tokens': max_tokens, 'system': F.sys_blocks(system_text),
-                                         'messages': [{'role': 'user', 'content': user}]}}
+    """בקשה אחת ל-Batch. החשיבה לפי תיעוד המודלים (13.10.2026): סונט 5.5 אינו מקבל thinking disabled (400), ולכן between_tools
+    (חשיבה רק בין כלים: בלי כלים, אין חשיבה) בדרגת מאמץ low; הייקו 5.5: disabled מותר עד דרגה high; פייבל 5.1: החשיבה תמיד דולקת,
+    מכוונים בדרגת מאמץ (medium), ומרחיבים את max_tokens כי החשיבה נספרת בו. אין temperature ואין tool_choice (נדחים ב-400)."""
+    p = {'model': model, 'max_tokens': max_tokens, 'system': F.sys_blocks(system_text), 'messages': [{'role': 'user', 'content': user}]}
+    if 'sonnet' in model:
+        p['thinking'] = {'type': 'between_tools'}
+        p['output_config'] = {'effort': 'low'}
+    elif 'haiku' in model:
+        p['thinking'] = {'type': 'disabled'}
+        p['output_config'] = {'effort': 'low'}
+    elif 'fable' in model:
+        p['output_config'] = {'effort': 'medium'}
+        p['max_tokens'] = max_tokens + 6000
+    return {'custom_id': cid, 'params': p}
 
 
 def make_rec(slug, perek, r, dafKey, daf):

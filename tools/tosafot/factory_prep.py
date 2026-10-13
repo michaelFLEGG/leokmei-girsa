@@ -20,7 +20,10 @@ from build_count import heb_num, daf_key, daf_order
 from fetch_tosafot import dafim
 from fetch_sources import get
 
-BOOKS = {'sukkah': ('סוכה', 'Sukkah'), 'berakhot': ('ברכות', 'Berakhot')}
+import factory as _F
+from sefaria_map import SEFARIA as _SEF
+# מכל מסכת בתור: שם עברי ושם בספריא (לפי מפת המסכתות של האתר)
+BOOKS = {sl: (he, _SEF[he]) for sl, he in _F.SLUG2HE.items() if he in _SEF}
 UA = {'User-Agent': 'leokmei-girsa/1.0 (torah study site; github.com/michaelFLEGG/leokmei-girsa)'}
 
 

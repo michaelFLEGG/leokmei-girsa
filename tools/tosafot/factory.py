@@ -71,6 +71,32 @@ def cfg():
     return jload(fp(FDIR, 'config.json'))
 
 
+# סדר המסכתות בתוך האתר (כמו build_all.py), לתרגום שם עברי ל-slug ולשם בספריא
+_HE = ['ברכות', 'שבת', 'עירובין', 'פסחים', 'שקלים', 'יומא', 'סוכה', 'ביצה', 'ראש השנה', 'תענית', 'מגילה', 'מועד קטן', 'חגיגה',
+       'יבמות', 'כתובות', 'נדרים', 'נזיר', 'סוטה', 'גיטין', 'קידושין', 'בבא קמא', 'בבא מציעא', 'בבא בתרא', 'סנהדרין', 'מכות', 'שבועות',
+       'עבודה זרה', 'הוריות', 'זבחים', 'מנחות', 'חולין', 'בכורות', 'ערכין', 'תמורה', 'כריתות', 'מעילה', 'תמיד', 'נדה']
+_LAT = ['berakhot', 'shabbat', 'eruvin', 'pesachim', 'shekalim', 'yoma', 'sukkah', 'beitzah', 'rosh-hashanah', 'taanit', 'megillah', 'moed-katan',
+        'chagigah', 'yevamot', 'ketubot', 'nedarim', 'nazir', 'sotah', 'gittin', 'kiddushin', 'bava-kamma', 'bava-metzia', 'bava-batra',
+        'sanhedrin', 'makkot', 'shevuot', 'avodah-zarah', 'horayot', 'zevachim', 'menachot', 'chullin', 'bekhorot', 'arakhin', 'temurah',
+        'keritot', 'meilah', 'tamid', 'niddah']
+HE2SLUG = dict(zip(_HE, _LAT))
+SLUG2HE = dict(zip(_LAT, _HE))
+
+
+def queue():
+    """סדר המסכתות לפי tosafot/תור-מסכתות.md (שורות "1. סוכה"); המנהל מוסיף שם מסכת בשורה חדשה. נסיגה: config.json."""
+    p = fp('תור-מסכתות.md')
+    out = []
+    if os.path.exists(p):
+        for ln in io.open(p, encoding='utf-8').read().split('\n'):
+            m = re.match(r'^\s*\d+\.\s*(.+?)\s*(?:\(.*\))?\s*$', ln)
+            if m and m.group(1).strip() in HE2SLUG:
+                sl = HE2SLUG[m.group(1).strip()]
+                if sl not in out:
+                    out.append(sl)
+    return out or cfg()['queue']
+
+
 def state(slug):
     return jload(fp(FDIR, 'state-%s.json' % slug)) or {'slug': slug, 'perakim': {}, 'created': now_iso()}
 
@@ -220,7 +246,41 @@ def mock_answer(req):
     return {'ok': True, 'text': json.dumps(out, ensure_ascii=False), 'model': model, 'usage': u}
 
 
+class Local:
+    """ניסוי חד-פעמי על תת-קבוצה קטנה (FACTORY_LOCAL=1), דרך `claude -p` בהתחברות המקומית: לא לייצור, ולא מחליף את הענן.
+    משמש לאימות איכות הפרומפט והשערים כשאין מפתח API. כל בקשה רצה בנפרד, ללא כלים וללא הקשר (llm.py)."""
+
+    def __init__(self):
+        self.dir = fp(FDIR, '_local')
+        os.makedirs(self.dir, exist_ok=True)
+
+    def submit(self, reqs):
+        import llm
+        bid = 'local-%s' % hashlib.sha1(json.dumps([r['custom_id'] for r in reqs]).encode()).hexdigest()[:10]
+        out = {}
+        for r in reqs:
+            p = r['params']
+            sysT = ''.join(b['text'] for b in p['system'])
+            try:
+                j = llm.call(p['model'], sysT, p['messages'][0]['content'], thinking=0, effort='low')
+                out[r['custom_id']] = {'ok': True, 'text': j['text'], 'model': p['model'],
+                                       'usage': {'in': j['in'], 'cw': 0, 'cr': 0, 'out': j['out']}}
+            except Exception as e:
+                out[r['custom_id']] = {'ok': False, 'err': 'local:' + str(e)[:200]}
+            print('  local', r['custom_id'], 'ok' if out[r['custom_id']]['ok'] else out[r['custom_id']]['err'], flush=True)
+        jdump(os.path.join(self.dir, bid + '.json'), out)
+        return bid
+
+    def status(self, bid):
+        return 'ended', {}
+
+    def results(self, bid):
+        return jload(os.path.join(self.dir, bid + '.json'))
+
+
 def get_client():
+    if os.environ.get('FACTORY_LOCAL'):
+        return Local()
     if MOCK:
         return Mock()
     if not os.environ.get('ANTHROPIC_API_KEY'):

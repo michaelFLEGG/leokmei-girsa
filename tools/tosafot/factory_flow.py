@@ -55,7 +55,10 @@ def build_write(slug, perek, c, work):
     meta = {'masechet': masechet_name(slug)}
     sysT = F.system_prompt()
     reqs = []
-    for dafKey, daf, recs in F.pages_of(slug, perek):
+    lim = int(os.environ.get('FACTORY_PILOT_PAGES', '0') or 0)     # ניסוי: מספר עמודים מוגבל
+    for pi, (dafKey, daf, recs) in enumerate(F.pages_of(slug, perek)):
+        if lim and pi >= lim:
+            break
         if dafKey not in ctxj:
             raise Halt('אין הקשר לעמוד %s (%s) בקובץ ההקשר' % (dafKey, slug))
         ctxp = ctxj[dafKey]
@@ -80,7 +83,7 @@ def build_write(slug, perek, c, work):
 def build_calibration(slug, perek, c, work, sysT):
     """שמירה מפני סחיפה: 3 עד 5 תוספות שהמנהל כבר הכריע בהם נכתבות מחדש בכל אצווה (כיול נסתר)."""
     pool = []
-    for sl in c['queue']:
+    for sl in F.queue():
         dec = F.decided_map(sl)
         if not dec:
             continue
@@ -446,6 +449,11 @@ def notify(slug, perek, res, c):
         io.open(p, 'w', encoding='utf-8').write('# הודעות בית החרושת לתוספות\n\nכל שורה: פרק שהושלם, עבר ביקורת ופורסם. המנהל מעיין ומתקן בזמן שהעבודה ממשיכה.\n\n')
     with io.open(p, 'a', encoding='utf-8') as f:
         f.write(line + '\n')
+    sp = os.path.join(F.ROOT, 'docs', 'ענן', 'STATUS.md')
+    if not os.path.exists(sp):
+        io.open(sp, 'w', encoding='utf-8').write('# מצב משימות הענן\n\n## בית החרושת לתוספות\n\n')
+    with io.open(sp, 'a', encoding='utf-8') as f:
+        f.write(line + '\n')
     log('הודעה: ' + line)
 
 
@@ -555,7 +563,8 @@ def tick():
     st_all = {}
     progressed = False
     summary = []
-    for slug in c['queue']:
+    all_done = True
+    for slug in F.queue():
         st = state(slug)
         st_all[slug] = st
         if st.get('halt'):
@@ -564,11 +573,17 @@ def tick():
             break      # הסדר בתור: לא ממשיכים למסכת הבאה מעל מסכת עצורה
         pers = counted_perakim(slug)
         if not pers:
-            summary.append('%s: אין ספירה (שלב ההכנה טרם רץ)' % slug)
+            # מסכת חדשה בתור: מבקשים הכנה (הצעד האחרון של ה-workflow מפעיל את tosafot-prep). קוד בלבד, בלי עלות.
+            open(fp(FDIR, '.need-prep'), 'w').write(slug)
+            summary.append('%s: ממתין להכנה (ספירה והקשר)' % slug)
             break
         todo = [p for p in pers if st['perakim'].get(str(p), {}).get('status') != 'published']
+        if todo:
+            all_done = False
         if not todo:
-            st['done'] = now_iso()
+            if not st.get('done'):
+                st['done'] = now_iso()
+                write_report(slug)
             save_state(slug, st)
             summary.append('%s: הושלמה' % slug)
             continue
@@ -591,27 +606,104 @@ def tick():
             summary.append('%s: עצור - %s' % (slug, e))
         save_state(slug, st)
         break
-    beat = jload(fp(FDIR, 'דופק.json')) or {'ticks': 0, 'stalls': 0}
-    beat['ticks'] += 1
-    beat['last'] = now_iso()
-    beat['summary'] = summary
-    beat['spent'] = F.ledger()['total']
-    beat['left'] = round(F.budget_left(), 2)
+    # שומר הדופק: נרשם כשיש התקדמות, כשהסיכום השתנה, או אחת לשעה (פעימות שקטות אינן מייצרות קומיט)
+    bp = fp(FDIR, 'דופק.json')
+    beat = jload(bp) or {'ticks': 0, 'stalls': 0, 'last': '', 'summary': []}
+    if all_done and F.queue() and not any('עצור' in x or 'מפתח' in x or 'הכנה' in x for x in summary):
+        if not beat.get('queueDone'):
+            beat['queueDone'] = now_iso()
+            sp = os.path.join(F.ROOT, 'docs', 'ענן', 'STATUS.md')
+            os.makedirs(os.path.dirname(sp), exist_ok=True)
+            with io.open(sp, 'a', encoding='utf-8') as f:
+                f.write('- %s | בית החרושת לתוספות סיים את כל המסכתות שבתור (%s). להמשך: להוסיף שורה חדשה ל-tosafot/תור-מסכתות.md.\n'
+                        % (datetime.datetime.utcnow().strftime('%d.%m.%Y %H:%M'), ', '.join(F.SLUG2HE[x] for x in F.queue())))
+            log('התור הסתיים: ממתין להוראה על סדר המסכתות הבאות')
+            progressed = True
+    else:
+        beat.pop('queueDone', None)
+    beat['ticks'] = beat.get('ticks', 0) + 1
     beat['stalls'] = 0 if progressed else beat.get('stalls', 0) + 1
-    jdump(fp(FDIR, 'דופק.json'), beat)
-    # נעילת משימה לפי כלל הנעילה של הריפו (.locks): מתחדשת בכל פעימה
-    lk = os.path.join(F.ROOT, '.locks', 'tosafot-factory.lock')
-    os.makedirs(os.path.dirname(lk), exist_ok=True)
-    io.open(lk, 'w', encoding='utf-8').write('ענן: tosafot-factory, %s\n' % now_iso())
+    old_age = 10 ** 9
+    try:
+        old_age = (datetime.datetime.utcnow() - datetime.datetime.strptime(beat.get('last', ''), '%Y-%m-%dT%H:%M:%SZ')).total_seconds()
+    except Exception:
+        pass
+    if progressed or beat.get('summary') != summary or old_age > 3600:
+        beat['summary'] = summary
+        beat['last'] = now_iso()
+        beat['spent'] = F.ledger()['total']
+        beat['left'] = round(F.budget_left(), 2)
+        jdump(bp, beat)
+        # נעילת משימה לפי כלל הנעילה של הריפו (.locks), כשיש עבודה פעילה
+        lk = os.path.join(F.ROOT, '.locks', 'tosafot-factory.lock')
+        active = any(('ממתין' not in x) and ('הושלמה' not in x) and ('עצור' not in x) for x in summary)
+        if active:
+            os.makedirs(os.path.dirname(lk), exist_ok=True)
+            io.open(lk, 'w', encoding='utf-8').write('ענן: tosafot-factory, %s\n' % now_iso())
+        elif os.path.exists(lk):
+            os.remove(lk)
+    if beat['stalls'] >= 12:
+        log('אזהרה: שתים עשרה פעימות רצופות בלי התקדמות. %s' % summary)
     print('סיכום פעימה:', summary)
     return 0
+
+
+def write_report(slug):
+    """דוח סיום מסכת (סעיף ז.ג של המנה): מספר התוספות, פסילות, שאלות, עלות, שמירה מפני סחיפה, ומה פתוח.
+    נכתב ל-docs/ענן/דוח-בית-החרושת-<מסכת>.md; מהעותק הזה נכתב הדוח בדרייב."""
+    st = state(slug)
+    name = masechet_name(slug)
+    L = F.ledger()
+    toks = L['tokens'].get(slug, {})
+    rows = []
+    tot = {'gen': 0, 'dec': 0, 'flag': 0, 'q': 0}
+    flagged_all, dropped_q = [], []
+    for p in counted_perakim(slug):
+        a = jload(fp(slug, 'factory-%d.json' % p))
+        if not a:
+            continue
+        tot['gen'] += a['generated']
+        tot['dec'] += a['decided']
+        tot['flag'] += len(a['flagged'])
+        tot['q'] += a['questions']
+        flagged_all += [dict(x, perek=p) for x in a['flagged']]
+        for r in a['recs'].values():
+            for d in r.get('q_drop', []):
+                dropped_q.append((p, r['rid'], r['dh'], d['why']))
+        rows.append('- פרק %d: נכתבו %d, מוכרעים (נשארו כנוסח המנהל) %d, סומנו למנהל %d, שאלות %d' % (p, a['generated'], a['decided'], len(a['flagged']), a['questions']))
+    cal = st.get('calibration') or []
+    n_tos = tot['gen'] + tot['dec'] + tot['flag']
+    cost = L['bySlug'].get(slug, 0)
+    lines = ["# דוח - בית החרושת לתוס', %s (%s)" % (name, datetime.date.today().strftime('%d.%m.%Y')), '',
+             '## מספרים', '',
+             '- תוספות במסכת: %d (נכתבו בבית החרושת %d, כנוסח המנהל %d, סומנו למנהל ולא פורסמו %d)' % (n_tos, tot['gen'], tot['dec'], tot['flag']),
+             '- שאלות תוכן שנכנסו לתור האישור: %d. שאלות שנפסלו ולא פורסמו: %d' % (tot['q'], len(dropped_q)), ''] + rows + ['',
+             '## עלות', '',
+             '- סך הוצאה על המסכת: $%.2f. עלות ממוצעת לתוספות: $%.4f' % (cost, cost / max(1, tot['gen'])),
+             '- טוקנים: קלט %d, כתיבת מטמון %d, קריאת מטמון %d, פלט %d' % (toks.get('in', 0), toks.get('cw', 0), toks.get('cr', 0), toks.get('out', 0)),
+             '- יתרת קרדיט מוערכת: $%.2f' % F.budget_left(), '',
+             '## שמירה מפני סחיפה (כיול נסתר על תוספות שהמנהל הכריע בהן)', '']
+    for c in cal:
+        lines.append('- פרק %s: התאמה ממוצעת %.2f (%d תוספות)' % (c['perek'], c['mean'], c['n']))
+    if not cal:
+        lines.append('- לא נמדד')
+    lines += ['', '## מה נפסל ולמה', '']
+    for x in flagged_all[:80]:
+        lines.append('- פרק %d, %s (%s): %s' % (x['perek'], x['rid'], x['dh'], '; '.join(str(y) for y in x['why'])))
+    if not flagged_all:
+        lines.append('- כלום')
+    lines += ['', '## מה נשאר פתוח', '', '- המנהל מעיין בשורות המסומנות "לא הוגה" ובשאלות שבתור האישור.']
+    p = os.path.join(F.ROOT, 'docs', 'ענן', 'דוח-בית-החרושת-%s.md' % slug)
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    io.open(p, 'w', encoding='utf-8').write('\n'.join(lines) + '\n')
+    log('נכתב דוח מסכת ' + p)
 
 
 def status_cmd():
     c = cfg()
     L = F.ledger()
     print('תקציב: הוצאה $%.2f, יתרה מוערכת $%.2f (רצפה $%d, פג תוקף %s)' % (L['total'], F.budget_left(), c['budget']['floor'], c['budget']['expires']))
-    for slug in c['queue']:
+    for slug in F.queue():
         st = state(slug)
         pers = counted_perakim(slug)
         print('%s: פרקים בספירה %s' % (slug, pers), '| עצור:', st.get('halt'), '| חסום:', st.get('blocked'))
@@ -649,7 +741,7 @@ def estimate_cmd(slug):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=['tick', 'status', 'estimate', 'reset-halt'])
+    ap.add_argument('cmd', choices=['tick', 'status', 'estimate', 'reset-halt', 'report'])
     ap.add_argument('slug', nargs='?')
     a = ap.parse_args()
     if a.cmd == 'tick':
@@ -659,6 +751,8 @@ def main():
     if a.cmd == 'estimate':
         for s in ([a.slug] if a.slug else cfg()['queue']):
             estimate_cmd(s)
+    if a.cmd == 'report':
+        write_report(a.slug)
     if a.cmd == 'reset-halt':
         st = state(a.slug)
         st.pop('halt', None)

@@ -1,9 +1,9 @@
 {
- "ticks": 1,
- "stalls": 1,
- "last": "2026-10-13T15:12:29Z",
+ "ticks": 2,
+ "stalls": 0,
+ "last": "2026-10-13T15:50:53Z",
  "summary": [
-  "sukkah: ממתין למפתח"
+  "sukkah פרק 1: writing"
  ],
  "spent": 0.0,
  "left": 196.0

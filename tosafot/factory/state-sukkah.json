@@ -1,7 +1,14 @@
 {
  "slug": "sukkah",
- "perakim": {},
+ "perakim": {
+  "1": {
+   "status": "writing",
+   "batch": "msgbatch_018epzsCGaTVnpnQsXYNKSW4",
+   "batchPhase": "write",
+   "submitted": "2026-10-13T15:50:53Z",
+   "nreq": 44
+  }
+ },
  "created": "2026-10-13T15:12:29Z",
- "blocked": "חסר מפתח ANTHROPIC_API_KEY (Secret בריפו)",
- "updated": "2026-10-13T15:12:29Z"
+ "updated": "2026-10-13T15:50:53Z"
 }

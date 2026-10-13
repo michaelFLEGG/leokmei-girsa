@@ -35,6 +35,24 @@
   Q.bank = function (slug) {
     if (banks[slug]) return banks[slug];
     banks[slug] = fetch('quiz/' + slug + '.json').then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (b) {
+      /* שאלות ממתינות שהמנהל אישר (13.10.2026): נטענות מ-quiz/<slug>-draft.json ומההכרעות בנקודת הקליטה.
+         שאלה שלא אושרה לעולם אינה נכנסת; שאלה שהמנהל ערך - נכנסת בנוסח שערך. */
+      return fetch('quiz/' + slug + '-draft.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (dr) {
+        if (!dr || !dr.q || !dr.q.length || !LG.sync || !LG.sync.api) return b;
+        return LG.sync.api('/qz/dec?s=' + encodeURIComponent(slug), { method: 'GET' }).then(function (j) {
+          var dec = (j && j.dec) || {};
+          dr.q.forEach(function (q) {
+            var v = dec[q.i];
+            if (!v || v.st !== 'ok') return;
+            var o = q.o.slice(), a = q.a, t = q.q;
+            if (v.e && v.e.o && v.e.o.length === 4) { o = v.e.o; a = v.e.a | 0; t = v.e.q || t; }
+            var right = o[a], rest = o.filter(function (_, k) { return k !== a; });
+            b.q.push({ i: q.i, p: q.p, d: q.d, lvl: q.lvl, q: t, o: [right].concat(rest), a: 0, x: q.x || '' });
+          });
+          return b;
+        }).catch(function () { return b; });
+      }).catch(function () { return b; });
+    }).then(function (b) {
       var by = {}; b.q.forEach(function (q) { q.sd = siteDaf(q.d); by[q.i] = q; });
       return { slug: slug, name: b.name, q: b.q, by: by };
     }).catch(function () { return null; });
@@ -803,9 +821,14 @@
       } catch (e) { }
     }
     function stat() { var ok = 0, no = 0, pend = 0; all.forEach(function (q) { var v = decs[q.s][q.i]; if (!v) pend++; else if (v.st === 'ok') ok++; else no++; }); return { ok: ok, no: no, pend: pend }; }
+    var FD = '';
     function draw() {
       var st = stat(), pend = all.filter(function (q) { return !decs[q.s][q.i]; });
+      /* סינון לפי דף (13.10.2026): השאלות הממתינות מתויגות 'כה ע"א' */
+      var dl = []; pend.forEach(function (q) { var g = String(q.d || '').split(' ')[0]; if (g && dl.indexOf(g) < 0) dl.push(g); });
+      if (FD) pend = pend.filter(function (q) { return String(q.d || '').split(' ')[0] === FD; });
       var h = '<p><b>' + LG.nf(st.pend) + '</b> ממתינות · ' + LG.nf(st.ok) + ' אושרו · ' + LG.nf(st.no) + ' נדחו</p>';
+      if (dl.length > 1 || FD) h += '<p>דף: <select id="lm-qdf"><option value="">כל הדפים</option>' + dl.map(function (g) { return '<option value="' + E(g) + '"' + (g === FD ? ' selected' : '') + '>' + E(g) + '</option>'; }).join('') + '</select></p>';
       pend.slice(0, 8).forEach(function (q, n) {
         h += '<div class="lm-qdi" data-n="' + n + '" style="border-top:1px solid var(--line);padding:10px 0"><div class="lm-small">' + E(LG.nameOf(q.s)) + ' · עמוד ' + E(q.d) + '</div>' +
           '<div><b>' + E(q.q) + '</b></div><ol style="margin:6px 0">' + q.o.map(function (o, k) { return '<li' + (k === q.a ? ' style="color:var(--green);font-weight:700"' : '') + '>' + E(o) + '</li>'; }).join('') + '</ol>' +
@@ -814,6 +837,7 @@
       if (pend.length > 8) h += '<p class="lm-note">ועוד ' + LG.nf(pend.length - 8) + ' בהמשך.</p>';
       if (!pend.length) h += '<p class="lm-note">אין שאלות ממתינות.</p>';
       list.innerHTML = h;
+      var fs = list.querySelector('#lm-qdf'); if (fs) fs.onchange = function () { FD = fs.value; draw(); };
       list.querySelectorAll('.lm-qdi').forEach(function (row) {
         var q = pend[+row.getAttribute('data-n')];
         function save(st, e) {

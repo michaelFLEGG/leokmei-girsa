@@ -1599,6 +1599,33 @@ async function tosApi(req, env, url, method) {
   return json({ ok: true, doc: { picks: doc.picks, notes: doc.notes } });
 }
 
+/* ---- נוסחאות חלופיות למנהל "בחר נוסח" (13.10.2026) ----
+   מנהל בלבד. POST: רושם הכרעה ביומן (הנוסח שנבחר, החלופות, ואם נערך). GET: מחזיר את היומן והבחירות,
+   ממנו לומד המנוע (tools/bkh/alts_learn.py). הבחירה עצמה מתפרסמת כעריכת מנהל רגילה, לא דרך כאן. */
+async function altApi(req, env, url, method) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b = null;
+  if (method === 'POST') {
+    try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  }
+  const sg = method === 'GET' ? (url.searchParams.get('slug') || '') : str(b && b.slug, 30);
+  if (!slugOk(sg)) return bad('מסכת לא תקינה');
+  const key = 'alt:' + sg;
+  const doc = (await env.STORE.get(key, 'json')) || { slug: sg, picks: {}, log: [] };
+  if (method === 'GET') return json({ ok: true, doc });
+  const id = str(b.id, 40);
+  if (!/^[A-Za-z0-9_\-]{1,40}$/.test(id)) return bad('מזהה נקודה לא תקין');
+  const now = Date.now();
+  const vs = Array.isArray(b.variants) ? b.variants.slice(0, 4).map((x) => ({ t: str(x && x.t, 40), x: str(x && x.x, 1500) })) : [];
+  const rec = { id, v: Number.isInteger(b.v) ? b.v : -1, tag: str(b.tag, 40), txt: str(b.txt, 1500), edited: !!b.edited, daf: str(b.daf, 12), variants: vs, at: now };
+  doc.picks[id] = { v: rec.v, tag: rec.tag, txt: rec.txt, edited: rec.edited, at: now };
+  doc.log.push(rec);
+  if (doc.log.length > 800) doc.log = doc.log.slice(-800);
+  doc.t = now;
+  await env.STORE.put(key, JSON.stringify(doc));
+  return json({ ok: true, n: doc.log.length });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -1643,6 +1670,7 @@ export default {
       if (p === '/title' && req.method === 'POST') return await titleSuggest(req, env);
       if (p === '/ingested' && req.method === 'POST') return await ingested(req, env);
       if (p === '/tos' && (req.method === 'GET' || req.method === 'PUT' || req.method === 'POST')) return await tosApi(req, env, url, req.method);
+      if (p === '/alt' && (req.method === 'GET' || req.method === 'POST')) return await altApi(req, env, url, req.method);
       if (p === '/bakara/data' && (req.method === 'GET' || req.method === 'PUT')) return await bkData(req, env, url, req.method);
       if (p === '/bakara/dec' && (req.method === 'GET' || req.method === 'POST')) return await bkDec(req, env, url, req.method);
       if (p === '/bakara/stats' && req.method === 'GET') return await bkStats(req, env);

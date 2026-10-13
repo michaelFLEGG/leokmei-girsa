@@ -5918,6 +5918,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       _xl=json.load(io.open(_xf,encoding='utf-8')).get('label','סבב אימות')
       _rounds.append({'file':'tos-test-'+slug+_sfx+'.json','reveal':('tos-reveal-'+slug+_sfx+'.json') if os.path.exists(_xr) else '','label':_xl})
     JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__TOSTEST="+json.dumps({'file':'tos-test-'+slug+'.json','reveal':'tos-reveal-'+slug+'.json','rounds':_rounds},ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tosafot_test_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  # נוסחאות חלופיות למנהל "בחר נוסח" (13.10.2026): נכללות רק במסכת שיש לה data/alts/<slug>.json
+  alts_doc=None
+  _alf=os.path.join(_root,'data','alts',slug+'.json')
+  if os.path.exists(_alf):
+    alts_doc=json.load(io.open(_alf,encoding='utf-8'))
+    if alts_doc.get('items'):
+      alts_doc['slug']=slug
+      JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__ALTS="+json.dumps(alts_doc,ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"alts_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+  altbtn='<button id="altgo" class="ib" style="display:none" onclick="altPanel()" title="נוסחאות חלופיות לבחירה (למנהל בלבד)"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">נוסחאות</span></button><style>body.adm #altgo{display:inline-flex!important}</style>' if (alts_doc and alts_doc.get('items')) else ''
   tosbtn='<button id="tosbtn" class="ib" onclick="tosBtn()" title="תוספות בהערות שוליים: כל תוספות בהערה נפרדת, ממוספרת"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">תוס&#39;</span></button>' if tos_items else ''
   tzbtn='<button id="tzbtn" class="ib" onclick="tzBtn()" title="צורת הדף: עמוד הגמרא כפי שהוא מודפס (Alt+צ)"><svg class="ic" aria-hidden="true"><use href="#i-page"/></svg><span class="t">צורת הדף</span></button>' if tz_man else ''
   bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="ממצאי הבקרה בתוך הדף (למנהל בלבד)">בקרה</button>' if has_bakara else ''
@@ -6006,7 +6015,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
     <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
     <button onclick="document.body.classList.toggle('hc');this.classList.toggle('on')" title="ניגודיות גבוהה">ניגודיות</button></div></div>
-  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת והפירוש בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}{tosbtn}<button id="prbtn" class="ib" onclick="prnOpen()" title="הדפסה לקובץ PDF בשני טורים על A4: מסכת, פרק, דף או טווח"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg><span class="t">הדפסה</span></button><button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
+  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת והפירוש בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}{tosbtn}{altbtn}<button id="prbtn" class="ib" onclick="prnOpen()" title="הדפסה לקובץ PDF בשני טורים על A4: מסכת, פרק, דף או טווח"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg><span class="t">הדפסה</span></button><button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
   <div class="bg dd" data-pri="2" data-label="כלים"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" aria-label="כלים" title="כלים: תוכן עניינים, אמוראים, הדפסה, הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-dots"/></svg><span class="t">כלים</span></button>
     <div class="ddp">
     <button onclick="panel('toc')" title="נושאי הסוגיות"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>תוכן העניינים</button>

@@ -357,7 +357,21 @@ def run(site):
         total += len(qs)
         print('  %s: %d שאלות מוגהות' % (slug, len(qs)))
     io.open(os.path.join(qdir, 'index.json'), 'w', encoding='utf-8').write(json.dumps(idx, ensure_ascii=False))
-    io.open(os.path.join(qdir, 'drafts.json'), 'w', encoding='utf-8').write('{}')
+    # שאלות ממתינות (13.10.2026): data/quiz/pending-<slug>.json. אינן בבנק הלומדים. הן עולות רק לתור האישור
+    # של המנהל (quiz/drafts.json + quiz/<slug>-draft.json), ונכנסות לבנק לאחר "אשר" (הכרעה בנקודת הקליטה).
+    drafts = {}
+    for fn in sorted(os.listdir(ddir)):
+        if not (fn.startswith('pending-') and fn.endswith('.json')):
+            continue
+        pdoc = json.load(io.open(os.path.join(ddir, fn), encoding='utf-8'))
+        pslug = pdoc.get('slug') or fn[len('pending-'):-len('.json')]
+        pq = [{'i': x['i'], 'p': x.get('p', 0), 'd': x['d'], 'lvl': x['lvl'], 'q': x['q'], 'o': x['o'], 'a': x.get('a', 0), 'x': x.get('x', '')}
+              for x in pdoc.get('items', []) if x.get('st', 'ממתין') == 'ממתין']
+        io.open(os.path.join(qdir, pslug + '-draft.json'), 'w', encoding='utf-8').write(
+            json.dumps({'slug': pslug, 'status': 'ממתין', 'q': pq}, ensure_ascii=False, separators=(',', ':')))
+        drafts[pslug] = len(pq)
+        print('  %s: %d שאלות ממתינות לאישור' % (pslug, len(pq)))
+    io.open(os.path.join(qdir, 'drafts.json'), 'w', encoding='utf-8').write(json.dumps(drafts, ensure_ascii=False))
     print('שאלות: %d מסכתות, %d שאלות מוגהות' % (len(idx), total))
     return idx
 

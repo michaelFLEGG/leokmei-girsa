@@ -1,2 +1,4 @@
 [2026-10-13 15:12:29] sukkah: חסר מפתח ANTHROPIC_API_KEY. הצנרת מוכנה וממתינה.
 [2026-10-13 15:50:53] נשלח Batch msgbatch_018epzsCGaTVnpnQsXYNKSW4 (write) sukkah פרק 1: 44 בקשות
+[2026-10-13 17:06:05] sukkah פרק 1: כתיבה הסתיימה {'ok': 108, 'bad': 3, 'api': 0}, עלות $1.589
+[2026-10-13 17:06:05] נשלח Batch msgbatch_01SCdcFSCvGTPqPPxazppBLq (review) sukkah פרק 1: 31 בקשות

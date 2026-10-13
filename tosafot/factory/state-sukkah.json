@@ -2,13 +2,21 @@
  "slug": "sukkah",
  "perakim": {
   "1": {
-   "status": "writing",
-   "batch": "msgbatch_018epzsCGaTVnpnQsXYNKSW4",
-   "batchPhase": "write",
-   "submitted": "2026-10-13T15:50:53Z",
-   "nreq": 44
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-13T17:06:05Z",
+   "nreq": 31,
+   "batch": "msgbatch_01SCdcFSCvGTPqPPxazppBLq"
   }
  },
  "created": "2026-10-13T15:12:29Z",
- "updated": "2026-10-13T15:50:53Z"
+ "updated": "2026-10-13T17:06:05Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.331,
+   "n": 4,
+   "at": "2026-10-13T17:06:05Z"
+  }
+ ]
 }

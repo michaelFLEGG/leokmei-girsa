@@ -1,0 +1,51 @@
+{
+ "total": 1.588555,
+ "bySlug": {
+  "sukkah": 1.588555
+ },
+ "byPhase": {
+  "write": 1.588555
+ },
+ "batches": [
+  {
+   "at": "2026-10-13T17:06:05Z",
+   "slug": "sukkah",
+   "perek": 1,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 34,
+   "usage": {
+    "in": 103176,
+    "cw": 14153,
+    "cr": 467049,
+    "out": 29844,
+    "n": 34
+   },
+   "cost": 0.304054
+  },
+  {
+   "at": "2026-10-13T17:06:05Z",
+   "slug": "sukkah",
+   "perek": 1,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 10,
+   "usage": {
+    "in": 36116,
+    "cw": 70770,
+    "cr": 70770,
+    "out": 15495,
+    "n": 10
+   },
+   "cost": 1.284501
+  }
+ ],
+ "tokens": {
+  "sukkah": {
+   "in": 139292,
+   "cw": 84923,
+   "cr": 537819,
+   "out": 45339
+  }
+ }
+}

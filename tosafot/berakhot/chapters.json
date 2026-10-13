@@ -1,0 +1,87 @@
+{
+ "masechet": "ברכות",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "מאימתי",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "13a",
+   "toLine": 15,
+   "countedThrough": "13a"
+  },
+  {
+   "n": 2,
+   "name": "היה קורא",
+   "from": "13a",
+   "fromLine": 16,
+   "to": "17b",
+   "toLine": 11,
+   "countedThrough": "17b"
+  },
+  {
+   "n": 3,
+   "name": "מי שמתו",
+   "from": "17b",
+   "fromLine": 12,
+   "to": "26a",
+   "toLine": 10,
+   "countedThrough": "26a"
+  },
+  {
+   "n": 4,
+   "name": "תפלת השחר",
+   "from": "26a",
+   "fromLine": 11,
+   "to": "30b",
+   "toLine": 13,
+   "countedThrough": "30b"
+  },
+  {
+   "n": 5,
+   "name": "אין עומדין",
+   "from": "30b",
+   "fromLine": 14,
+   "to": "34b",
+   "toLine": 32,
+   "countedThrough": "34b"
+  },
+  {
+   "n": 6,
+   "name": "כיצד מברכין",
+   "from": "35a",
+   "fromLine": 1,
+   "to": "45a",
+   "toLine": 3,
+   "countedThrough": "45a"
+  },
+  {
+   "n": 7,
+   "name": "שלשה שאכלו",
+   "from": "45a",
+   "fromLine": 4,
+   "to": "51b",
+   "toLine": 10,
+   "countedThrough": "51b"
+  },
+  {
+   "n": 8,
+   "name": "אלו דברים",
+   "from": "51b",
+   "fromLine": 11,
+   "to": "53b",
+   "toLine": 33,
+   "countedThrough": "53b"
+  },
+  {
+   "n": 9,
+   "name": "הרואה",
+   "from": "54a",
+   "fromLine": 1,
+   "to": "64a",
+   "toLine": 15,
+   "countedThrough": "64a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 5a, 22a, 32a, 56a, 56b, 57a, 58a, 60a, 62b, 63a, 63b, 64a."
+}

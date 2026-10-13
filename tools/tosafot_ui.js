@@ -319,6 +319,8 @@
 
   /* ---- כפתור ותפריט ---- */
   window.tosBtn=function(){
+    /* כבוי: לחיצה אחת פותחת את התוספות מיד (הערות שוליים). כשהן פתוחות: התפריט, לבחירת אופן או לכיבוי (13.10.2026) */
+    if(mode==='off'){tosSet('foot');return}
     var m=document.getElementById('tosmenu');
     if(!m){m=document.createElement('div');m.id='tosmenu';document.body.appendChild(m)}
     m.innerHTML=MODES.map(function(x){return '<button type="button" data-m="'+x[0]+'" class="'+(x[0]===mode?'on':'')+'" onclick="tosSet(this.dataset.m)">'+ge(x[1])+'<small>'+ge(x[2])+'</small></button>'}).join('')+

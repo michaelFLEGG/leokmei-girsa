@@ -36,7 +36,7 @@ jobs:
           PREP=""
           if [ -f tosafot/factory/.need-prep ]; then PREP=$(cat tosafot/factory/.need-prep); rm -f tosafot/factory/.need-prep; fi
           git config user.name "tosafot-factory"; git config user.email "factory@users.noreply.github.com"
-          git add -A tosafot data/quiz docs/ענן .locks
+          for d in tosafot data/quiz docs/ענן .locks; do [ -e "$d" ] && git add -A -- "$d"; done; true
           if git diff --cached --quiet; then
             echo "אין שינוי"
           else

@@ -28,7 +28,12 @@ def main():
         raise SystemExit('עצירה: אין site/%s.data.js. הרץ קודם בנייה מקומית של המסכת' % slug)
     code = "const fs=require('fs');const D=new Function(fs.readFileSync(%s,'utf8')+';return DATA')();process.stdout.write(JSON.stringify(D.pages.filter(p=>%s.includes(p.daf)).map(p=>({daf:p.daf,perek:p.perek,units:p.units.map(u=>({ref:u.ref||null,l:(u.l||[]).map(x=>x[1])}))}))))" % (json.dumps(js), json.dumps(dafs, ensure_ascii=False))
     out = subprocess.run(['node', '-e', code], capture_output=True, text=True, encoding='utf-8', check=True).stdout
-    pages = {p['daf']: p for p in json.loads(out)}
+    pages, dups = {}, []
+    for p_ in json.loads(out):
+        if p_['daf'] in pages:
+            dups.append(p_['daf'])          # תווית דף כפולה בקובץ הוורד: כמו בדפדפן (pageIdx), נשמר הדף הראשון
+            continue
+        pages[p_['daf']] = p_
     src = json.load(io.open(os.path.join(ROOT, 'data', 'sources', slug + '.json'), encoding='utf-8'))['pages']
     res = {}
     for d in dafs:
@@ -57,8 +62,8 @@ def main():
         json.dump(old, f, ensure_ascii=False, indent=1)
     if tolerant:
         with io.open(os.path.join(ROOT, 'tosafot', slug, 'context-missing.json'), 'w', encoding='utf-8') as f:
-            json.dump({'missing': missing}, f, ensure_ascii=False, indent=1)
-        print('עמודים שאינם בבנייה (ללא הקשר, התוספות שלהם יסומנו למנהל):', missing)
+            json.dump({'missing': missing, 'duplicateLabels': sorted(set(dups))}, f, ensure_ascii=False, indent=1)
+        print('עמודים שאינם בבנייה (ללא הקשר, ההנחה לפי השכנים):', missing, '| תוויות דף כפולות בקובץ הוורד:', sorted(set(dups)))
 
 
 if __name__ == '__main__':

@@ -57,6 +57,14 @@ def make_rec(slug, perek, r, dafKey, daf):
             'daf': daf, 'dafKey': dafKey, 'line': r['line'], 'ref': r['ref'], 'url': r.get('url', ''), 'text': r['text'], 'tries': 1}
 
 
+def ctx_page(ctxj, dafKey, daf, slug):
+    if dafKey in ctxj:
+        return ctxj[dafKey]
+    src = jload(os.path.join(F.ROOT, 'data', 'sources', slug + '.json'), {}) or {}
+    g = ((src.get('pages') or {}).get(daf) or {}).get('gemara') or []
+    return {'daf': daf, 'gemara': g, 'lines': [], 'missing': True}
+
+
 def counted_perakim(slug):
     return [ch['n'] for ch in F.chapters(slug) if os.path.exists(fp(slug, 'count-%d.json' % ch['n']))]
 
@@ -71,15 +79,9 @@ def build_write(slug, perek, c, work):
     for pi, (dafKey, daf, recs) in enumerate(F.pages_of(slug, perek)):
         if lim and pi >= lim:
             break
-        if dafKey not in ctxj:
-            # עמוד שאינו בקובץ הלאוקמי גירסא של המסכת (context-missing.json): אי אפשר לעגן. לא עוצרים את הפרק:
-            # התוספות של העמוד מסומנים למנהל (לא מפורסמים) והסיבה גלויה בדוח.
-            for r in recs:
-                rr = make_rec(slug, perek, r, dafKey, daf)
-                rr.update({'s': None, 'a': None, 'q': [], 'bad_s': ['אין עמוד %s בקובץ הלאוקמי גירסא (אין הקשר לעיגון)' % dafKey], 'bad_a': True, 'tries': 2})
-                work['recs'][rr['rid']] = rr
-            continue
-        ctxp = ctxj[dafKey]
+        # עמוד שאינו בקובץ הלאוקמי גירסא (context-missing.json): השורה נכתבת בכל זאת, ללא שורות לאוקמי; הסימן יונח לפי
+        # השכנים (factory_place.py), בסוף השורה שלפני כן. אין עצירה ואין השמטה.
+        ctxp = ctx_page(ctxj, dafKey, daf, slug)
         normal, hard = [], []
         for r in recs:
             rr = make_rec(slug, perek, r, dafKey, daf)
@@ -186,7 +188,7 @@ def ingest_write(slug, perek, c, work, results):
                 work['recs'][i].update({'bad_s': ['פלט לא JSON'], 'bad_a': True, 'q': [], 'bad_q': {}})
                 stats['bad'] += 1
             continue
-        ctxp = ctxj[meta['dafKey']]
+        ctxp = ctx_page(ctxj, meta['dafKey'], work['reqs'][cid].get('daf', ''), slug)
         idx = idxs.setdefault(meta['dafKey'], norm_idx(ctxp['lines']))
         for i in meta['ids']:
             rec = work['recs'][i]
@@ -198,7 +200,7 @@ def ingest_write(slug, perek, c, work, results):
             rec['s'] = str(g.get('s', '')).strip()
             rec['bad_s'] = F.check_line(rec['s'], rec, c)
             rec['a'] = F.resolve_anchor(g.get('a'), ctxp, idx)
-            rec['bad_a'] = rec['a'] is None
+            rec['bad_a'] = False          # עוגן שלא נמצא אינו כשל: הסימן יונח לפי השכנים (factory_place.py)
             qs = g.get('q')
             rec['q'] = [tidy_q(q) for q in qs] if isinstance(qs, list) else []
             rec['q'] = F.cap_questions(rec['q'], rec, c)
@@ -278,7 +280,7 @@ def build_rewrite(slug, perek, c, work):
     sysT = F.system_prompt()
     byd = {}
     for r in work['recs'].values():
-        if r.get('tries', 1) >= 2 or not has_fail(r) or r['dafKey'] not in ctxj:
+        if r.get('tries', 1) >= 2 or not has_fail(r):
             continue
         byd.setdefault(r['dafKey'], []).append(r)
     reqs = []
@@ -304,7 +306,7 @@ def build_rewrite(slug, perek, c, work):
                     why.append('שאלה %d (מבקר): %s' % (int(k) + 1, v))
                 prev = {'s': r.get('s'), 'q': r.get('q')}
                 notes.append('מזהה %s - נפסל: %s\nהגרסה הקודמת: %s' % (r['rid'], '; '.join(why) or 'כללי', json.dumps(prev, ensure_ascii=False)))
-            um = F.page_user_msg(slug, perek, dk, {'masechet': masechet_name(slug)}, g, ctxj[dk], F.REWRITE_NOTE + '\n\n' + '\n\n'.join(notes))
+            um = F.page_user_msg(slug, perek, dk, {'masechet': masechet_name(slug)}, g, ctx_page(ctxj, dk, g[0]['daf'], slug), F.REWRITE_NOTE + '\n\n' + '\n\n'.join(notes))
             cid = 'rw-%s-p%d-%s-%d' % (slug, perek, g[0]['daf'], gi // per)
             reqs.append(mk_req(cid, c['engines']['rewrite'], sysT, um, c['maxTokens']['perTos'] * len(g) + 800))
             work['rwreqs'][cid] = {'ids': [r['rid'] for r in g], 'dafKey': dk}
@@ -328,7 +330,7 @@ def ingest_rewrite(slug, perek, c, work, results):
             got = F.parse_json(res['text'])
         except Exception:
             continue
-        ctxp = ctxj[meta['dafKey']]
+        ctxp = ctx_page(ctxj, meta['dafKey'], work['recs'][meta['ids'][0]]['daf'], slug)
         idx = norm_idx(ctxp['lines'])
         for i in meta['ids']:
             rec = work['recs'][i]
@@ -342,9 +344,9 @@ def ingest_rewrite(slug, perek, c, work, results):
                 rec['s'] = str(g.get('s', '')).strip()
                 rec['bad_s'] = F.check_line(rec['s'], rec, c)
                 rec['rv_s'] = ''
-            if a_failed:
+            if a_failed or rec.get('a') is None:
                 rec['a'] = F.resolve_anchor(g.get('a'), ctxp, idx)
-                rec['bad_a'] = rec['a'] is None
+            rec['bad_a'] = False
             if q_failed:
                 qs = g.get('q')
                 rec['q'] = F.cap_questions([tidy_q(q) for q in qs] if isinstance(qs, list) else [], rec, c)
@@ -358,7 +360,7 @@ def finalize(work):
     """אחרי כתיבה מחדש וביקורת חוזרת: מה שעדיין נכשל מסומן למנהל ואינו מתפרסם."""
     flagged = []
     for r in work['recs'].values():
-        s_bad = bool(r.get('bad_s') or r.get('rv_s') or r.get('bad_a') or r.get('s') is None)
+        s_bad = bool(r.get('bad_s') or r.get('rv_s') or r.get('s') is None)
         r['status'] = 'flagged' if s_bad else 'ok'
         keep, drop = [], []
         for k, q in enumerate(r.get('q') or []):
@@ -371,7 +373,7 @@ def finalize(work):
         r['q_keep'], r['q_drop'] = keep, drop
         if s_bad:
             flagged.append({'rid': r['rid'], 'dh': r['dh'], 'daf': r['daf'],
-                            'why': list(r.get('bad_s') or []) + ([r['rv_s']] if r.get('rv_s') else []) + (['עוגן'] if r.get('bad_a') else [])})
+                            'why': list(r.get('bad_s') or []) + ([r['rv_s']] if r.get('rv_s') else [])})
     return flagged
 
 
@@ -408,9 +410,8 @@ def publish(slug, perek, c, work, flagged):
             if dec[key].get('dh') and norm_ctx(dec[key]['dh']) != norm_ctx(r['dh']):
                 skipped.append((k, 'הכרעת המנהל על ד"ה אחר (%s) מול הספירה (%s): לא מפורסם עד בדיקה' % (dec[key]['dh'], r['dh'])))
                 continue
-            if k not in anchors:
-                skipped.append((k, 'מוכרע ללא עוגן'))
-                continue
+            if k not in anchors:      # אין עוגן: מונח לפי השכנים (factory_place.py)
+                anchors[k] = {'daf': r['dafKey'], 't': '', 'occ': 1, 'rule': 3, 'why': 'ממתין להנחה לפי סדר המספרים'}
             st = styles.get(k, {})
             st.setdefault('dh', r['dh'])
             if not (st.get('a') or st.get('b')):
@@ -424,7 +425,7 @@ def publish(slug, perek, c, work, flagged):
             skipped.append((k, 'לא עבר ביקורת'))
             continue
         styles[k] = {'dh': r['dh'], 'a': w['s'], 'b': w['s'], 'gen': True, 'engine': w.get('engine', ''), 'tries': w.get('tries', 1)}
-        a = dict(w['a'])
+        a = dict(w['a']) if w.get('a') else {'t': '', 'occ': 1, 'rule': 3, 'why': 'ממתין להנחה לפי סדר המספרים'}
         a['daf'] = r['dafKey']
         anchors[k] = a
         n_gen += 1
@@ -434,6 +435,12 @@ def publish(slug, perek, c, work, flagged):
                            'ref': r['ref'], 'st': 'ממתין'})
     jdump(sp, styles)
     jdump(ap, anchors)
+    # הנחת כל הסימנים בסדר המספרים והשער (רציפות וסדר): כשל עוצר את הפרסום
+    import factory_place
+    rep = factory_place.place_masechet(slug)
+    if not rep['ok']:
+        raise Halt('שער הסדר נכשל: ' + '; '.join(rep['errors'][:5]))
+    anchors = jload(ap) or anchors
     r = subprocess.run([sys.executable, os.path.join(HERE, 'make_live.py'), slug, str(perek)], capture_output=True, text=True, encoding='utf-8')
     if r.returncode != 0:
         raise Halt('make_live נכשל: ' + (r.stderr or r.stdout)[-400:])

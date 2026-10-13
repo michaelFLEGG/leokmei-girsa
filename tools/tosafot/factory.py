@@ -364,7 +364,7 @@ REWRITE_NOTE = ('\n\n## תיקון\nהגרסה הקודמת נפסלה. הסיב
 
 
 def page_user_msg(slug, perek, dafKey, ctx, recs, ctxp, extra=''):
-    lines = '\n'.join('%d. %s' % (i + 1, l) for i, l in enumerate(ctxp['lines']))
+    lines = '\n'.join('%d. %s' % (i + 1, l) for i, l in enumerate(ctxp['lines'])) or '(אין שורות לאוקמי גירסא לעמוד זה. החזר "a": null.)'
     gem = '\n'.join('%d. %s' % (i + 1, NIK.sub('', g)) for i, g in enumerate(ctxp['gemara']))
     blocks = []
     for r in recs:

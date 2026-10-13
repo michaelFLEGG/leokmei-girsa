@@ -72,7 +72,13 @@ def build_write(slug, perek, c, work):
         if lim and pi >= lim:
             break
         if dafKey not in ctxj:
-            raise Halt('אין הקשר לעמוד %s (%s) בקובץ ההקשר' % (dafKey, slug))
+            # עמוד שאינו בקובץ הלאוקמי גירסא של המסכת (context-missing.json): אי אפשר לעגן. לא עוצרים את הפרק:
+            # התוספות של העמוד מסומנים למנהל (לא מפורסמים) והסיבה גלויה בדוח.
+            for r in recs:
+                rr = make_rec(slug, perek, r, dafKey, daf)
+                rr.update({'s': None, 'a': None, 'q': [], 'bad_s': ['אין עמוד %s בקובץ הלאוקמי גירסא (אין הקשר לעיגון)' % dafKey], 'bad_a': True, 'tries': 2})
+                work['recs'][rr['rid']] = rr
+            continue
         ctxp = ctxj[dafKey]
         normal, hard = [], []
         for r in recs:
@@ -272,7 +278,7 @@ def build_rewrite(slug, perek, c, work):
     sysT = F.system_prompt()
     byd = {}
     for r in work['recs'].values():
-        if r.get('tries', 1) >= 2 or not has_fail(r):
+        if r.get('tries', 1) >= 2 or not has_fail(r) or r['dafKey'] not in ctxj:
             continue
         byd.setdefault(r['dafKey'], []).append(r)
     reqs = []

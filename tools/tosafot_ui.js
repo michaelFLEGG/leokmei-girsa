@@ -30,12 +30,21 @@
   sty.textContent=
    '.tsa{display:inline;width:0;height:0;padding:0;margin:0;border:0}'+
    '#tsl{position:fixed;left:0;top:0;width:0;height:0;z-index:6;pointer-events:none}'+
-   '.tsm{position:fixed;pointer-events:auto;font-family:Vilna,serif;font-weight:700;font-size:calc(var(--fs,18px) * .56);line-height:1;color:#7a5a14;background:rgba(251,248,241,.94);border:1px solid #d8c68f;border-radius:7px;padding:1px 4px;cursor:pointer;-webkit-user-select:none;user-select:none;white-space:nowrap;letter-spacing:.02em;margin:0;min-width:1.4em;text-align:center;box-sizing:border-box}'+
+   '.tsm{position:fixed;pointer-events:auto;font-family:Vilna,serif;font-weight:700;font-size:calc(var(--fs,18px) * .66);line-height:1.1;color:#7a5a14;background:rgba(251,248,241,.97);border:1px solid #c9b46f;border-radius:7px;padding:1px 5px;cursor:pointer;-webkit-user-select:none;user-select:none;white-space:nowrap;letter-spacing:.02em;margin:0;min-width:1.7em;text-align:center;box-sizing:border-box}'+
    '.tsm:hover,.tsm:focus-visible,.tsm.hot{background:var(--blue-soft,#e6edf7);color:#12396b;outline:0}'+
    '.tsm.mv{color:#a83c2f}'+
    '.tsfoot,.tsn,.tsx,.tsadm,#tospop,#tosmenu,#tospb{color:#2b2620}'+
-   '.tsfoot{margin:.9em 0 .5em;padding:.55em .2em 0;border-top:1px solid #d8cfb8;font-size:.82em;line-height:1.55;-webkit-user-select:text;user-select:text}'+
-   '.tsfoot .tsh{font-family:Vilna,serif;font-weight:700;color:#7a5a14;font-size:.92em;margin-bottom:.35em}'+
+   '.tsfoot{margin:1.5em 0 .7em;padding:.6em .5em .3em;border-top:2px solid #b9a56a;background:#faf6ea;border-radius:0 0 6px 6px;font-size:.82em;line-height:1.6;-webkit-user-select:text;user-select:text}'+
+   '.tsfoot .tsh{font-family:Vilna,serif;font-weight:700;color:#7a5a14;font-size:.98em;margin-bottom:.45em}'+
+   '.tsfoot .tsn{margin:.15em 0;padding:.4em .35em;border-bottom:1px dotted #d3c79c}'+
+   '.tsfoot .tsn:last-child{border-bottom:0}'+
+   '.tsn .tsnum{cursor:pointer}'+
+   '.tsn .tsnum:hover,.tsn .tsnum:focus-visible{text-decoration:underline;outline:0}'+
+   '#tosbtn .tsst{font-size:.72em;font-weight:700;margin-inline-start:.35em;opacity:.8}'+
+   '#tosbtn .tsst::before{content:"כבוי"}'+
+   '#tosbtn.on .tsst::before{content:"דלוק"}'+
+   '.tsmb{display:none}'+
+   '#tosbtn.on + .tsmb{display:inline-flex}'+
    '.tsn{margin:.4em 0;padding:.25em .35em;border-radius:5px;scroll-margin-top:70px}'+
    '.tsn.hot{background:#fff4d6;transition:background .3s}'+
    '.tsn .tsnum{font-family:Vilna,serif;font-weight:900;font-size:1.05em;color:#000;margin-inline-end:.35em}'+
@@ -284,7 +293,7 @@
     var m=ev.target.closest&&ev.target.closest('.tsm');
     if(m){ev.preventDefault();ev.stopPropagation();openNote(+m.getAttribute('data-n'),m);return}
     var menu=document.getElementById('tosmenu');
-    if(menu&&menu.classList.contains('open')&&!ev.target.closest('#tosmenu,#tosbtn'))menu.classList.remove('open');
+    if(menu&&menu.classList.contains('open')&&!ev.target.closest('#tosmenu,#tosbtn,#tosmb'))menu.classList.remove('open');
     var pop=document.getElementById('tospop');
     if(pop&&pop.classList.contains('open')&&!ev.target.closest('#tospop'))pop.classList.remove('open')},true);
   document.addEventListener('keydown',function(ev){
@@ -318,29 +327,43 @@
   function panelOpen(){ensurePanel();var p=document.getElementById('tosp');if(p&&!p.classList.contains('open'))panel('tosp')}
 
   /* ---- כפתור ותפריט ---- */
-  window.tosBtn=function(){
-    /* כבוי: לחיצה אחת פותחת את התוספות מיד (הערות שוליים). כשהן פתוחות: התפריט, לבחירת אופן או לכיבוי (13.10.2026) */
-    if(mode==='off'){tosSet('foot');return}
+  /* לחיצה אחת מדליקה ומכבה (13.10.2026). הדלקה חוזרת לאופן האחרון שנבחר (ברירת מחדל: הערות שוליים).
+     בחירת אופן אחר: הכפתור הקטן שליד הכפתור הראשי ('אופן'), הנראה רק כשהתוספות דלוקות. */
+  function lastOn(){var l=lsGet('lg-tos-last','foot');return /^(foot|side|list)$/.test(l)?l:'foot'}
+  function syncBtns(){
+    var on=mode!=='off';
+    var b=document.getElementById('tosbtn');
+    if(b){b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')}
+    var mb=document.querySelector('#mbot [data-a="tos"]');
+    if(mb){mb.classList.toggle('on',on);mb.setAttribute('aria-pressed',on?'true':'false')}}
+  window.tosBtn=function(){tosSet(mode==='off'?lastOn():'off')};
+  window.tosModes=function(){
     var m=document.getElementById('tosmenu');
     if(!m){m=document.createElement('div');m.id='tosmenu';document.body.appendChild(m)}
-    m.innerHTML=MODES.map(function(x){return '<button type="button" data-m="'+x[0]+'" class="'+(x[0]===mode?'on':'')+'" onclick="tosSet(this.dataset.m)">'+ge(x[1])+'<small>'+ge(x[2])+'</small></button>'}).join('')+
-      ((window.tosTestOpen&&typeof isAdmin==='function'&&isAdmin())?((window.__TOSTEST&&window.__TOSTEST.rounds)||[{label:'מבחן מנועים'}]).map(function(rd,i){return '<button type="button" onclick="tosTestOpen('+i+')">'+ge(rd.label||'מבחן מנועים')+'<small>למנהל בלבד: בחירה עיוורת בין אופציות לכל תוספות</small></button>'}).join(''):'');
-    var b=document.getElementById('tosbtn'),r=b.getBoundingClientRect();
+    m.innerHTML=MODES.filter(function(x){return x[0]!=='off'}).map(function(x){return '<button type="button" data-m="'+x[0]+'" class="'+(x[0]===mode?'on':'')+'" onclick="tosSet(this.dataset.m)">'+ge(x[1])+'<small>'+ge(x[2])+'</small></button>'}).join('')+
+      '<button type="button" data-m="off" onclick="tosSet(this.dataset.m)">כבוי<small>בלי סימנים כלל</small></button>'+
+      ((window.tosTestOpen&&typeof isAdmin==='function'&&isAdmin())?((window.__TOSTEST&&window.__TOSTEST.rounds)||[{label:'מבחן מנועים'}]).map(function(rd,i){return '<button type="button" onclick="tosTestOpen('+i+')">'+ge(rd.label||'מבחן מנועים')+'<small>למנהל בלבד</small></button>'}).join(''):'');
+    var b=document.getElementById('tosmb')||document.getElementById('tosbtn'),r=b.getBoundingClientRect();
     m.classList.toggle('open');
-    /* בטלפון הכפתור מוסתר בסרגל ונפתח מתפריט "עוד": התפריט מוצג במרכז המסך */
     if(!r.width){m.style.top='22vh';m.style.left=Math.max(8,(innerWidth-m.offsetWidth)/2)+'px';return}
     m.style.top=(r.bottom+6)+'px';
     m.style.left=Math.max(8,Math.min(r.left,innerWidth-m.offsetWidth-8))+'px'};
   window.tosSet=function(v){
-    mode=v;lsSet(TS_KEY,v);
+    mode=v;lsSet(TS_KEY,v);if(v!=='off')lsSet('lg-tos-last',v);
     var m=document.getElementById('tosmenu');if(m)m.classList.remove('open');
-    var b=document.getElementById('tosbtn');if(b)b.classList.toggle('on',v!=='off');
+    syncBtns();
     tosClose();
     var p=document.getElementById('tosp');if(p&&v!=='list')p.classList.remove('open');
     tsMark();
     if(v==='list')panelOpen();
     if(v==='foot'||v==='side'||v==='list'){if(typeof isAdmin==='function'&&isAdmin())admLoad()}};
-  (function(){var b=document.getElementById('tosbtn');if(b)b.classList.toggle('on',mode!=='off')})();
+  syncBtns();
+  /* חזרה מן ההערה אל הסימן שבטקסט: לחיצה על מספר ההערה */
+  document.addEventListener('click',function(ev){
+    var nm=ev.target.closest&&ev.target.closest('.tsn .tsnum');
+    if(!nm)return;
+    var n=nm.parentElement.getAttribute('data-n'),mk0=document.querySelector('.tsm[data-n="'+n+'"]');
+    if(mk0){ev.preventDefault();mk0.scrollIntoView({block:'center',behavior:'smooth'});hot(+n)}},false);
 
   /* ---- חיפוש: "תוס' קל"ד" או מילים מן ההערה ---- */
   window.tsSearchHtml=function(q){

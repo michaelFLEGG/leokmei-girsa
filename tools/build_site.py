@@ -796,14 +796,25 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   K_INK    = I_body / I_v700
   K_MISHNA = K_INK * MISHNA_PT / 9.0
   K_DH     = I_body / I_v900 * MISHNA_PT / 9.0      # ד"ה משנה = משנה
-  K_NOSE   = min(I_body / I_v700 * 10.0 / 9.0, K_DH)  # נושא <= ד"ה משנה
-  assert K_NOSE <= K_DH + 1e-9 and abs(K_DH - K_MISHNA * I_v700 / I_v900) < 1e-9
+  assert abs(K_DH - K_MISHNA * I_v700 / I_v900) < 1e-9
   # ההדגשה שהדפדפן מייצר מפרנקריהל קיצונית ומכוערת, ולכן ההדגשה היא
   # גופן ממש: PFT_Frank Bold. הוא גדול בהרבה ליחידת em (1.196 מול
   # 0.933), ו-size-adjust מקטין אותו בדיוק כך שגובה האותיות יהיה כשל
   # הגוף. בלי זה כל מילה מודגשת היתה קופצת בגודל. המספר נמדד ואינו
   # נבחר: זהו בדיוק ה"שתיים פחות" שבעל הפרויקט ראה בעין (7 מול 9).
   K_BOLD   = I_body / I_fb
+  # כותרת נושא (13.10.2026, הכרעת בעל הפרויקט): ממורכזת, בגופן PFT Frank
+  # מודגש, באותו מספר גופן כמו הטקסט הרץ (9 ב-PFT, שבבסיסו גדול חזותית
+  # בכשני מספרים מפרנקריהל). הפנים 'Frank' 700 כבר מכויל ב-size-adjust
+  # לגובה האותיות של הגוף, ולכן כאן המקדם הוא היחס הטבעי (1/K_BOLD) -
+  # אך כלל קבוע: נושא לעולם אינו גדול חזותית מד"ה משנה (M/9), וכשהוא
+  # יוצא גדול - מוקטן עד שווה. היחס נמדד ונרשם בהדפסת הבנייה.
+  K_NOSE_NATURAL = 1.0 / K_BOLD
+  K_NOSE   = min(K_NOSE_NATURAL, MISHNA_PT / 9.0)    # ביחידות גובה-הדיו של הגוף
+  K_NOSE_CAPPED = K_NOSE < K_NOSE_NATURAL - 1e-9
+  assert K_NOSE <= MISHNA_PT / 9.0 + 1e-9
+  print('נושא: PFT Frank מודגש, גובה דיו %.3f מגוף (טבעי %.3f, ד"ה משנה %.3f)%s' % (
+      K_NOSE, K_NOSE_NATURAL, MISHNA_PT / 9.0, ' - הוקטן כדי שלא יעלה על ד"ה משנה' if K_NOSE_CAPPED else ''))
 
   # ---------- ג3: רשת השורות ----------
   # כל מרווח אנכי בדף נגזר מ-w:spacing של הסגנון בוורד, ולא ממספר
@@ -1723,7 +1734,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main p.in{padding-right:.9em;text-indent:-.9em}
   /* פסקה שהוחלף סגנונה לכותרת מן האתר וטרם עלתה מן הוורד: נראית ככותרת מיד */
   .main p.nose,.main p.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif}
-  .main p.nose{font-weight:700;font-size:calc(var(--k-nose) * 1em)}
+  .main p.nose{font-family:'Frank','Frank Ruhl Libre',serif;font-weight:700;font-size:calc(var(--k-nose) * 1em)}
   .main p.dh{font-weight:900;font-size:calc(var(--k-dh) * 1em)}
   .dafmark{grid-column:2;justify-self:end;font-family:'Vilna',serif;font-weight:900;
            font-size:1.197em;color:#000;margin:0}
@@ -1767,7 +1778,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       -webkit-print-color-adjust:exact;print-color-adjust:exact}
   /* כותרת שקלוד ניסח (חום בוורד): חומה גם באתר, במצב מנהל בלבד, כדי להבחין ולהכריע */
   body.adm .main.prop,body.adm .main.prop *{color:#7B3F00!important}
-  .main.nose{text-align:center;text-align-last:center;font-family:'Vilna',serif;font-weight:700;
+  .main.nose{text-align:center;text-align-last:center;font-family:'Frank','Frank Ruhl Libre',serif;font-weight:700;
         font-size:calc(var(--k-nose) * 1em);margin:0;color:var(--ink)}
   /* ב. הכוכביות אינן כוכביות: בגופני וילנא יש שרשרת ליגטורות ב-rlig,
      וכל מספר כוכביות נותן עיטור אחר. letter-spacing ביטל אותה, ולכן
@@ -2110,6 +2121,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      (11 נקודות) אין צורך, והרשת שלהן נשארת. */
   @media screen{.flow:not(.book) .main.dh,.flow:not(.book) .main.mishna{line-height:calc(var(--fs) * 1.2)}}
   .main.hatz{line-height:calc(var(--lhpx) * %.4f)}
+  /* ד"ה משנה וכותרת נושא (13.10.2026): תמיד ממורכזים, ולפניהם חצי שורה בדיוק
+     (לא שורה לבנה, ולא הערך שבוורד). הרווח אינו מצטבר: בראש טור הדפדפן קוצץ
+     אותו, ואחרי שורת פתיחת פרק או אחרי חציצה הוא מבוטל. */
+  .row>.main.dh,.row>.main.nose{text-align:center;text-align-last:center;margin-top:calc(var(--lhpx) * .5)}
+  :is(.perek-num,.perek-name,.perek-range,.perek-start,.hatz)+.row>:is(.main.dh,.main.nose),
+  .row:has(>.main>p.hatz:last-child)+.row>:is(.main.dh,.main.nose){margin-top:0}
+  /* מסכת בלי תוספות: הכפתור נראה אפור ואינו מוביל לשכבה ריקה (13.10.2026) */
+  #tosbtn.tosnone{opacity:.5;cursor:default}
+  /* הודעה בראש הדפסה רגילה של מבקר (13.10.2026) */
+  #prnnote{display:none}
+  @media print{#prnnote{display:block;font:11px/1.4 Frank,serif;color:#555;text-align:center;border-bottom:1px solid #ccc;margin:0 0 4px;padding:2px 0}}
   ''' % (K_BOLD * 100, K_BOLD * 100, K_NOSE, K_DH, K_MISHNA, K_INK, 9.0 / MISHNA_PT, line_ratio('hatz')))
 
   JS=r'''
@@ -2549,10 +2571,31 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     setTimeout(()=>{PRINTING=1;window.print();PRINTING=0;
                     BOOK=wasB;ALL=wasA;render(cur)},700);
   }
-  function toPdf(){printNow(true)}
+  function toPdf(){printNow(isAdmin())}
   function printPerek(){printNow(false)}
-  addEventListener('beforeprint',()=>{if(!PRINTING&&!BOOK){PREBOOK=1;BOOK=true;render(cur)}});
-  addEventListener('afterprint',()=>{if(PREBOOK){PREBOOK=0;BOOK=false;render(cur)}});
+  /* הדפסה רגילה מן הדפדפן (Ctrl+P), 13.10.2026: מבקר שאינו מנהל מדפיס רק את
+     הפרק שעליו הוא עומד, גם אם התצוגה היא "רצף" של כל המסכת. לאחר ההדפסה
+     התצוגה חוזרת למה שהיתה. למנהל אין הגבלה. */
+  let PRENA=0;
+  function prnNote(on){
+    let n=document.getElementById('prnnote');
+    if(!on){if(n)n.remove();return}
+    if(!n){n=document.createElement('div');n.id='prnnote';
+      n.textContent='מודפס הפרק הנוכחי בלבד. להדפסה מסודרת (טווח לבחירה, עם תוספות או בלעדיהן) יש כפתור הדפסה בסרגל העליון.';
+      document.body.insertBefore(n,document.body.firstChild)}}
+  addEventListener('beforeprint',()=>{
+    let chg=false;
+    if(!PRINTING&&!BOOK){PREBOOK=1;BOOK=true;chg=true}
+    if(!isAdmin()){
+      if(ALL){PRENA=1;ALL=false;chg=true}
+      if(!PRINTING)prnNote(true)}
+    if(chg)render(cur)});
+  addEventListener('afterprint',()=>{
+    let chg=false;
+    if(PREBOOK){PREBOOK=0;BOOK=false;chg=true}
+    if(PRENA){PRENA=0;ALL=true;chg=true}
+    prnNote(false);
+    if(chg)render(cur)});
   /* ב1: ציון הדף שמוצג הוא התווית - טווח כשציון קודם נשאר בלי טקסט -
      וציון הדף האמיתי נשמר ב-data-daf, שממנו קוראים העריכה וההצעות. */
   function dafMark(pi){const p=D.pages[pi];const lab=p.label||p.daf;
@@ -5934,7 +5977,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       alts_doc['slug']=slug
       JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__ALTS="+json.dumps(alts_doc,ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"alts_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   altbtn='<button id="altgo" class="ib" style="display:none" onclick="altPanel()" title="נוסחאות חלופיות לבחירה (למנהל בלבד)"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">נוסחאות</span></button><style>body.adm #altgo{display:inline-flex!important}</style>' if (alts_doc and alts_doc.get('items')) else ''
-  tosbtn='<button id="tosbtn" class="ib" onclick="tosBtn()" title="תוספות בהערות שוליים: כל תוספות בהערה נפרדת, ממוספרת"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">תוס&#39;</span></button>' if tos_items else ''
+  tosbtn=('<button id="tosbtn" class="ib" aria-pressed="false" onclick="tosBtn()" title="תוספות בהערות שוליים: לחיצה אחת מדליקה ומכבה"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">תוס&#39;</span><span class="tsst" aria-hidden="true"></span></button>'
+          '<button id="tosmb" class="ib tsmb" onclick="tosModes()" aria-label="אופן תצוגת התוספות" title="אופן התצוגה: הערות שוליים, בצד, רשימה"><span class="t">אופן</span></button>') if tos_items else \
+          ('<button id="tosbtn" class="ib tosnone" aria-disabled="true" onclick="try{toast(&quot;עדיין אין תוס&#39; במסכת זו&quot;,3500)}catch(e){}" title="עדיין אין תוס&#39; במסכת זו"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">תוס&#39;</span></button>')
   tzbtn='<button id="tzbtn" class="ib" onclick="tzBtn()" title="צורת הדף: עמוד הגמרא כפי שהוא מודפס (Alt+צ)"><svg class="ic" aria-hidden="true"><use href="#i-page"/></svg><span class="t">צורת הדף</span></button>' if tz_man else ''
   bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="ממצאי הבקרה בתוך הדף (למנהל בלבד)">בקרה</button>' if has_bakara else ''
   bkpanel=('<div class="panel" id="bkp"><button class="x" onclick="panel(&quot;bkp&quot;)">×</button><h3>בקרת תוכן - הממצאים לפי סוג</h3><div id="bkpb"></div></div>') if has_bakara else ''
@@ -5965,7 +6010,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
             '<button type="button" class="mttl" id="mttl" aria-label="בחירת מסכת או דף"><span class="mmn">'+masechet+'</span><span class="mdf" id="mdf"></span>'+_ic('down')+'</button>'
             '<button type="button" class="msr" id="msr" aria-label="חיפוש">'+_ic('search')+'</button></div><div id="mprog"><i></i></div>'
             '<nav id="mbot" aria-label="ניווט">'+''.join('<button type="button" data-a="%s">%s<span>%s</span></button>'%(a,_ic(i),t) for a,i,t in
-            [('shas','home','הש"ס'),('prev','right','דף קודם'),('next','left','דף הבא'),('perush','book','פירוש'),('more','dots','עוד')])+'</nav>'
+            [('shas','home','הש"ס'),('prev','right','דף קודם'),('next','left','דף הבא'),('perush','book','פירוש'),('tos','list','תוס&#39;'),('more','dots','עוד')])+'</nav>'
             '<div id="mscrim"></div><div id="msheet" role="dialog" aria-modal="true"></div>')
   LJV=build_lamed.js_hash()
   # קוד ונתונים מחוץ לדף (11.10.2026): הדף היה 1.1MB מוטבעים ולא נשמרו במטמון.
@@ -5984,6 +6029,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     return
   _data_js='const DATA='+J+',SLUG="'+slug+'";'
   _wr(slug+'.data.js',_data_js); _wr('mas.js',_SHARED_BODY+chr(10))
+  # גבולות הפרקים להדפסה (13.10.2026): ה-Worker של ההדפסה קורא אותם כדי לדחות
+  # בקשה של מבקר שחורגת מפרק אחד. מפתח הפרק זהה לזה שבחלון ההדפסה (perek|perekName).
+  _wr(slug+'.prn.json',json.dumps({'v':1,'pages':[[pg.get('daf',''),(pg.get('perek') or '')+'|'+(pg.get('perekName') or '')] for pg in pages]},ensure_ascii=False))
   _DV=_hl.md5(_data_js.encode('utf-8')).hexdigest()[:8]
   _MV=_hl.md5((_SHARED_BODY+chr(10)).encode('utf-8')).hexdigest()[:8]
   _tail_s=_tail.strip()
@@ -6030,7 +6078,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     <button onclick="panel('toc')" title="נושאי הסוגיות"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>תוכן העניינים</button>
     <button onclick="panel('am')" title="אמוראים ותנאים לפי הסימון בקובץ"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>אמוראים</button>
     <button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>הדפס פרק</button>
-    <button onclick="toPdf()" title="כל המסכת: בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>כל המסכת ל-PDF</button>
+    <button class="adm-b" onclick="toPdf()" title="כל המסכת (למנהל בלבד): בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>כל המסכת ל-PDF</button>
     <button id="dybtn" onclick="dafYomi()" title="פותח את הדף של היום לפי לוח הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg>הדף היומי</button>
     <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך"><svg class="ic" aria-hidden="true"><use href="#i-inbox"/></svg>הצעות ממתינות</button>
     <button onclick="suggest()" title="שאלה, הערה או מקור: סמן טקסט בדף, או לחץ כאן ובחר קטע">שאלה, הערה או מקור</button>

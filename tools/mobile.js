@@ -24,7 +24,7 @@
       '<button type="button" class="msr" id="msr" aria-label="חיפוש">' + ic('search') + '</button>';
     var p0 = document.createElement('div'); p0.id = 'mprog'; p0.innerHTML = '<i></i>';
     var b0 = document.createElement('nav'); b0.id = 'mbot'; b0.setAttribute('aria-label', 'ניווט');
-    var BTN0 = [['shas', 'home', 'הש"ס'], ['prev', 'right', 'דף קודם'], ['next', 'left', 'דף הבא'], ['perush', 'book', 'פירוש'], ['more', 'dots', 'עוד']];
+    var BTN0 = [['shas', 'home', 'הש"ס'], ['prev', 'right', 'דף קודם'], ['next', 'left', 'דף הבא'], ['perush', 'book', 'פירוש'], ['tos', 'list', 'תוס&#39;'], ['more', 'dots', 'עוד']];
     b0.innerHTML = BTN0.map(function (b) { return '<button type="button" data-a="' + b[0] + '">' + ic(b[1]) + '<span>' + b[2] + '</span></button>'; }).join('');
     var s0 = document.createElement('div'); s0.id = 'mscrim';
     var h0 = document.createElement('div'); h0.id = 'msheet'; h0.setAttribute('role', 'dialog'); h0.setAttribute('aria-modal', 'true');
@@ -159,7 +159,6 @@
     var cur = null; try { cur = LAMED && LAMED.track && LAMED.track.cur && LAMED.track.cur(); } catch (e) { }
     var items = [];
     if ($('#tzbtn')) items.push(['tz', 'page', 'צורת הדף']);
-    if ($('#tosbtn')) items.push(['tos', 'list', 'תוס&#39;']);
     items.push(['quiz', 'quiz', 'בחן את עצמך']);
     items.push(['done', 'check', 'סמן כנלמד']);
     items.push(['sug', 'flag', 'הצע תיקון']);
@@ -240,6 +239,10 @@
     else if (a === 'prev') goDaf(-1);
     else if (a === 'next') goDaf(1);
     else if (a === 'perush') { gemaraBtn(); setTimeout(syncPerush, 120); }
+    else if (a === 'tos') {
+      if (typeof tosBtn === 'function') { tosBtn(); }
+      else { try { toast('עדיין אין תוס\' במסכת זו', 3500); } catch (x) { } }
+    }
     else if (a === 'more') moreSheet();
   });
   top.addEventListener('click', function (e) {

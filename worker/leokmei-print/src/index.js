@@ -17,6 +17,7 @@ const CORS = {
   'Access-Control-Expose-Headers': 'X-Cache,X-Pages,Content-Disposition',
   'Access-Control-Max-Age': '86400',
 };
+const ONE_MSG = 'ניתן להדפיס פרק אחד בכל פעם';
 const SLUG_RE = /^[a-z][a-z-]{1,30}$/;
 const DAF_RE = /^[א-ת]{1,3}[.:]$/;
 const TTL = 60 * 60 * 24 * 14;
@@ -41,6 +42,24 @@ async function logPrint(env, key) {
   } catch (e) { /* הרישום אינו מעכב את ההפקה */ }
 }
 
+/* גבולות הפרקים: <מסכת>.prn.json שהבנייה כותבת ({pages:[[דף, מפתח-פרק],...]}).
+   true = כל הדפים שבטווח באותו פרק; false = חוצה גבול או דף לא מוכר; null = הקובץ אינו זמין. */
+async function oneChapter(m, from, to) {
+  let d;
+  try {
+    const r = await fetch(`${SITE}/${m}.prn.json`, { cf: { cacheTtl: 300 } });
+    if (!r.ok) return null;
+    d = await r.json();
+  } catch (e) { return null; }
+  const pg = d && d.pages;
+  if (!Array.isArray(pg) || !pg.length) return null;
+  const a = pg.findIndex((x) => x[0] === from);
+  const b = pg.findIndex((x) => x[0] === to);
+  if (a < 0 || b < 0 || b < a) return false;
+  for (let i = a + 1; i <= b; i++) if (pg[i][1] !== pg[a][1]) return false;
+  return true;
+}
+
 async function pdf(req, env, ctx, url) {
   const q = url.searchParams;
   const m = q.get('m') || '';
@@ -52,6 +71,16 @@ async function pdf(req, env, ctx, url) {
   const tos = q.get('tos') === '1' ? '1' : '0';
   const duplex = q.get('duplex') === '1' ? '1' : '0';
   const profile = /^[a-z0-9]{2,8}$/.test(q.get('profile') || '') ? q.get('profile') : 'a4';
+
+  /* הגבלת ההדפסה (13.10.2026): מבקר רגיל - פרק אחד לכל היותר בכל הפקה. מנהל (x-admin-key תקף) - בלי הגבלה.
+     האכיפה כאן, ולא בממשק בלבד: בקשה ישירה לכתובת נבדקת כמו כל בקשה. הבדיקה קודמת למטמון, כדי ש-PDF
+     רחב שהפיק מנהל לא יוגש למבקר. אם גבולות הפרקים אינם זמינים - נכשלים סגור. */
+  if (!(await isAdmin(req))) {
+    if (all) return json({ error: ONE_MSG }, 403);
+    const one = await oneChapter(m, from, to);
+    if (one === null) return json({ error: 'ההדפסה אינה זמינה כרגע, נסה שוב בעוד רגע' }, 503);
+    if (!one) return json({ error: ONE_MSG }, 403);
+  }
 
   /* גרסת התוכן: דף המסכת באתר, ונוסחי התוספות שנבחרו */
   let ver = '';

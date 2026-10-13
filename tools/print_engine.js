@@ -561,6 +561,12 @@
 
   /* ---------- חלון ההדפסה (הלומד) ---------- */
   var PRINT_API='https://leokmei-print.m7654301.workers.dev';
+  /* הגבלת הדפסה (13.10.2026): מבקר רגיל מדפיס פרק אחד לכל היותר בכל הפקה, עם תוספות או בלעדיהן;
+     מנהל - בלי הגבלה. האכיפה האמיתית ב-Worker; כאן רק הממשק, שאינו מציג למבקר אפשרות שתיחסם. */
+  var ONE_MSG='ניתן להדפיס פרק אחד בכל פעם';
+  function isAdm(){try{return typeof isAdmin==='function'&&!!isAdmin()}catch(e){return false}}
+  function admHdr(){try{var k=localStorage.getItem('lg-adm')||'';return (k&&!/[^\x00-\xff]/.test(k))?{'x-admin-key':k}:{}}catch(e){return {}}}
+  function perekKey(p){return (p.perek||'')+'|'+(p.perekName||'')}
   if(!ON){
     function dafParts(key){var m=/^(.*?)([.:])$/.exec(key||'');return m?{base:m[1],amud:m[2]===':'?'ב':'א',mark:m[2]}:null}
     function textPages(){var o=[];D.pages.forEach(function(p,i){if(p.units&&p.units.length)o.push(i)});return o}
@@ -591,22 +597,25 @@
       prnCss();
       var tp=textPages();
       if(!tp.length)return;
+      var ADM=isAdm();
+      if(PRD&&PRD.getAttribute('data-adm')!==(ADM?'1':'0')){PRD.remove();PRD=null}
       if(!PRD){
-        PRD=document.createElement('div');PRD.id='prnd';
+        PRD=document.createElement('div');PRD.id='prnd';PRD.setAttribute('data-adm',ADM?'1':'0');
         PRD.innerHTML=
           '<div class="pbox" role="dialog" aria-modal="true" aria-label="הדפסה ל-PDF">'+
           '<h2>הדפסה לקובץ PDF (A4, שני טורים)</h2>'+
           '<div class="pr" id="prn-type">'+
-            '<label><input type="radio" name="prt" value="all">מסכת שלמה</label>'+
-            '<label><input type="radio" name="prt" value="perek">פרק</label>'+
+            (ADM?'<label><input type="radio" name="prt" value="all">מסכת שלמה</label>':'')+
+            '<label><input type="radio" name="prt" value="perek">'+(ADM?'פרק':'פרק שלם')+'</label>'+
             '<label><input type="radio" name="prt" value="daf">דף אחד (שני עמודיו)</label>'+
             '<label><input type="radio" name="prt" value="amud">עמוד אחד</label>'+
-            '<label><input type="radio" name="prt" value="range">מדף ועמוד עד דף ועמוד</label></div>'+
+            '<label><input type="radio" name="prt" value="range">'+(ADM?'מדף ועמוד עד דף ועמוד':'חלק מן הפרק: מדף ועמוד עד דף ועמוד')+'</label></div>'+
           '<div class="pr" id="prn-perek"><label>פרק <select id="prn-p"></select></label></div>'+
           '<div class="pr" id="prn-from"><label>מדף <select id="prn-fd"></select></label><label>עמוד <select id="prn-fa"></select></label></div>'+
           '<div class="pr" id="prn-to"><label>עד דף <select id="prn-td"></select></label><label>עמוד <select id="prn-ta"></select></label></div>'+
-          '<div class="pr"><label id="prn-tl"><input type="checkbox" id="prn-tos">עם תוספות (הערות שוליים)</label>'+
-            '<label><input type="checkbox" id="prn-dup">דו-צדדי (שוליים פנימיים רחבים יותר לכריכה)</label></div>'+
+          '<div class="pr" id="prn-tl"><label><input type="radio" name="prtos" id="prn-tos-n" value="0" checked>בלי תוס\'</label>'+
+            '<label><input type="radio" name="prtos" id="prn-tos-y" value="1">עם תוס\' (הערות שוליים)</label></div>'+
+          '<div class="pr"><label><input type="checkbox" id="prn-dup">דו-צדדי (שוליים פנימיים רחבים יותר לכריכה)</label></div>'+
           '<div class="pnote" id="prn-tn"></div>'+
           '<div class="pcnt" id="prn-cnt"></div>'+
           '<div class="pbar" id="prn-bar"><i></i></div>'+
@@ -628,6 +637,14 @@
         if(o.indexOf(pp.base)>-1){fd.value=pp.base;prnAmud(fd,fa);fa.value=pp.amud;
           var td=document.getElementById('prn-td'),ta=document.getElementById('prn-ta');
           td.value=pp.base;prnAmud(td,ta);ta.value=pp.amud}}
+      if(!ADM){      /* בחירת הפרק הנוכחי, ורשימות הדפים מוגבלות אליו */
+        var cp=D.pages[cur]?perekKey(D.pages[cur]):'';
+        var ps=document.getElementById('prn-p');
+        if(cp&&[].slice.call(ps.options).some(function(o){return o.value===cp}))ps.value=cp;
+        prnDafs();
+        if(pp&&dafInPerek(pp.base+pp.mark,ps.value)){
+          var fd2=document.getElementById('prn-fd'),fa2=document.getElementById('prn-fa'),td2=document.getElementById('prn-td'),ta2=document.getElementById('prn-ta');
+          fd2.value=pp.base;prnAmud(fd2,fa2);fa2.value=pp.amud;td2.value=pp.base;prnAmud(td2,ta2);ta2.value=pp.amud}}
       var r=PRD.querySelector('input[name=prt][value=amud]');if(r)r.checked=true;
       PRD.classList.add('open');
       prnSync()};
@@ -640,11 +657,27 @@
       prnAmud(document.getElementById('prn-fd'),document.getElementById('prn-fa'));
       prnAmud(document.getElementById('prn-td'),document.getElementById('prn-ta'));
       var seenP={},ps=[];
-      tp.forEach(function(i){var p=D.pages[i],k=p.perek||'';if(k&&!seenP[k]){seenP[k]=1;ps.push([k,(p.perek||'')+(p.perekName?' - '+p.perekName:'')])}});
-      document.getElementById('prn-p').innerHTML=ps.map(function(x){return '<option value="'+ge(x[0])+'">'+ge(x[1])+'</option>'}).join('')}
+      tp.forEach(function(i){var p=D.pages[i],k=perekKey(p);if((p.perek||p.perekName)&&!seenP[k]){seenP[k]=1;ps.push([k,(p.perek||'')+(p.perekName?' - '+p.perekName:'')])}});
+      document.getElementById('prn-p').innerHTML=ps.map(function(x){return '<option value="'+ge(x[0])+'">'+ge(x[1])+'</option>'}).join('');
+      if(!isAdm())document.getElementById('prn-p').addEventListener('change',function(){prnDafs();prnSync()})}
+    /* דף (בסיס) ששייך לפרק: מבקר רגיל בוחר דפים רק מתוך הפרק שנבחר */
+    function dafInPerek(key,pk){
+      var i=pageIdxOf(key);return i>-1&&perekKey(D.pages[i])===pk}
+    function prnDafs(){
+      var pk=document.getElementById('prn-p').value,dafs=[],seen={};
+      textPages().forEach(function(i){var q=dafParts(D.pages[i].daf);
+        if(q&&perekKey(D.pages[i])===pk&&!seen[q.base]){seen[q.base]=1;dafs.push(q.base)}});
+      ['prn-fd','prn-td'].forEach(function(id){var s=document.getElementById(id);s.innerHTML=dafs.map(function(d){return '<option>'+ge(d)+'</option>'}).join('')});
+      prnAmud(document.getElementById('prn-fd'),document.getElementById('prn-fa'));
+      prnAmud(document.getElementById('prn-td'),document.getElementById('prn-ta'));
+      var tdl=document.getElementById('prn-td'),tal=document.getElementById('prn-ta');
+      if(tdl.options.length){tdl.selectedIndex=tdl.options.length-1;prnAmud(tdl,tal);if(tal.options.length)tal.selectedIndex=tal.options.length-1}}
     function prnAmud(daf,am){
       var b=daf.value,av=[];
-      textPages().forEach(function(i){var q=dafParts(D.pages[i].daf);if(q&&q.base===b&&av.indexOf(q.amud)<0)av.push(q.amud)});
+      var pkSel=isAdm()?null:(document.getElementById('prn-p')||{}).value;
+      textPages().forEach(function(i){var q=dafParts(D.pages[i].daf);
+        if(pkSel&&perekKey(D.pages[i])!==pkSel)return;
+        if(q&&q.base===b&&av.indexOf(q.amud)<0)av.push(q.amud)});
       av.sort();
       am.innerHTML=av.map(function(a){return '<option>'+a+'</option>'}).join('')}
     function keyOf(d,a){return d+(a==='א'?'.':':')}
@@ -657,11 +690,12 @@
       if(t==='all'){from=first;to=last}
       else if(t==='perek'){
         var pk=document.getElementById('prn-p').value,a=-1,b=-1;
-        tp.forEach(function(i){if(D.pages[i].perek===pk){if(a<0)a=i;b=i}});
+        tp.forEach(function(i){if(perekKey(D.pages[i])===pk){if(a<0)a=i;b=i}});
         from=D.pages[a].daf;to=D.pages[b].daf}
       else if(t==='daf'){
         var f1=keyOf(fd,'א'),f2=keyOf(fd,'ב');
-        var has1=pageIdxOf(f1)>-1,has2=pageIdxOf(f2)>-1;
+        var pk2=isAdm()?null:document.getElementById('prn-p').value;
+        var has1=pk2?dafInPerek(f1,pk2):pageIdxOf(f1)>-1,has2=pk2?dafInPerek(f2,pk2):pageIdxOf(f2)>-1;
         from=has1?f1:f2;to=has2?f2:f1}
       else if(t==='amud'){from=keyOf(fd,fa);to=from}
       else{from=keyOf(fd,fa);to=keyOf(td,ta)}
@@ -669,14 +703,14 @@
     function prnQuery(r,extra){
       var q=new URLSearchParams();q.set('print','1');
       if(r.t==='all')q.set('all','1');else{q.set('from',r.from);q.set('to',r.to)}
-      q.set('tos',document.getElementById('prn-tos').checked?'1':'0');
+      q.set('tos',tosOn()?'1':'0');
       q.set('duplex',document.getElementById('prn-dup').checked?'1':'0');
       if(extra)for(var k in extra)q.set(k,extra[k]);
       return q}
     var DRYT=0;
     function prnSync(){
       var t=PRD.querySelector('input[name=prt]:checked').value;
-      document.getElementById('prn-perek').style.display=t==='perek'?'':'none';
+      document.getElementById('prn-perek').style.display=(t==='perek'||!isAdm())?'':'none';
       document.getElementById('prn-from').style.display=(t==='daf'||t==='amud'||t==='range')?'':'none';
       document.getElementById('prn-fa').parentElement.style.display=(t==='daf')?'none':'';
       document.getElementById('prn-to').style.display=t==='range'?'':'none';
@@ -685,22 +719,24 @@
       var a=pageIdxOf(r.from),b=pageIdxOf(r.to);
       if(a<0||b<0||b<a){cnt.textContent='';go.disabled=true;
         err.textContent=(a>-1&&b>-1&&b<a)?'סוף הטווח צריך להיות אחרי תחילתו':'הדף שנבחר אינו במסכת';err.hidden=false;return}
+      if(!isAdm()){          /* לעולם לא יותר מפרק אחד, גם אם נבחר טווח שחוצה גבול */
+        var k0=perekKey(D.pages[a]),multi=false;
+        for(var j=a;j<=b;j++)if(perekKey(D.pages[j])!==k0){multi=true;break}
+        if(multi){cnt.textContent='';go.disabled=true;err.textContent=ONE_MSG;err.hidden=false;return}}
       go.disabled=false;
       var inR={};for(var i=a;i<=b;i++)inR[D.pages[i].daf]=1;
       var n=tosItems().filter(function(it){return inR[it.daf]}).length;
-      var tos=document.getElementById('prn-tos'),tl=document.getElementById('prn-tl'),tn=document.getElementById('prn-tn');
-      tos.disabled=!n;tl.style.opacity=n?'':'.55';
-      if(!n){tos.checked=false;tn.textContent="תוס' עדיין לא נכתבו לדפים אלה"}
-      else{
-        if(PRSEL.tosTouched!==true&&PRSEL.autoTos!==true){tos.checked=true;PRSEL.autoTos=true}
-        tn.textContent='בטווח הזה '+n+' תוספות'}
+      var tosY=document.getElementById('prn-tos-y'),tosN=document.getElementById('prn-tos-n'),tl=document.getElementById('prn-tl'),tn=document.getElementById('prn-tn');
+      tosY.disabled=!n;tl.style.opacity=n?'':'.55';
+      if(!n){tosN.checked=true;tn.textContent="תוס' עדיין לא נכתבו לדפים אלה"}
+      else tn.textContent='בטווח הזה '+n+' תוספות';
       cnt.textContent='מחשב את מספר העמודים...';
       clearTimeout(DRYT);
       DRYT=setTimeout(function(){prnDry(r).then(function(rep){
         if(rep&&rep.pages)cnt.textContent='מספר העמודים הצפוי: '+rep.pages.length;
         else cnt.textContent='';
       }).catch(function(){cnt.textContent=''})},350)}
-    document.addEventListener('change',function(e){if(e.target&&e.target.id==='prn-tos')PRSEL.tosTouched=true},true);
+    function tosOn(){var y=document.getElementById('prn-tos-y');return !!(y&&y.checked&&!y.disabled)}
     var DRYFR=null;
     function prnDry(r){
       return new Promise(function(ok,no){
@@ -720,13 +756,17 @@
           if(Date.now()-t0>90000){clearInterval(iv);f.remove();DRYFR=null;no()}},300)})}
     function prnGo(){
       var r=prnRange(),go=document.getElementById('prn-go'),bar=document.getElementById('prn-bar'),err=document.getElementById('prn-err');
+      if(!isAdm()){
+        var a0=pageIdxOf(r.from),b0=pageIdxOf(r.to),bad=r.t==='all'||a0<0||b0<a0;
+        for(var j0=a0+1;!bad&&j0<=b0;j0++)if(perekKey(D.pages[j0])!==perekKey(D.pages[a0]))bad=true;
+        if(bad){err.textContent=ONE_MSG;err.hidden=false;return}}
       var q=prnQuery(r);q.delete('print');q.set('m',SLUG);
       var fname=('לאוקמי גירסא - '+D.masechet+(r.t==='all'?'':' '+r.from+(r.to!==r.from?' - '+r.to:''))+'.pdf').replace(/:/g,'꞉');   /* נקודותיים אסורות בשם קובץ בוינדוס */
       go.disabled=true;bar.style.display='block';err.hidden=true;
       go.textContent='מכין את הקובץ...';
       var t0=Date.now(),iv=setInterval(function(){go.textContent='מכין את הקובץ... '+Math.round((Date.now()-t0)/1000)+' שניות'},1000);
       var ctrl=new AbortController();PRSEL.xhr={abort:function(){ctrl.abort()}};
-      fetch(PRINT_API+'/pdf?'+q.toString(),{signal:ctrl.signal}).then(function(res){
+      fetch(PRINT_API+'/pdf?'+q.toString(),{signal:ctrl.signal,headers:admHdr()}).then(function(res){
         if(!res.ok){return res.text().then(function(t){var m='';try{m=JSON.parse(t).error||''}catch(e){}throw new Error(m||('קוד '+res.status))})}
         return res.blob()}).then(function(blob){
         var a=document.createElement('a'),u=URL.createObjectURL(blob);

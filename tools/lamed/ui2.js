@@ -269,6 +269,8 @@
     var ok = function (i) { return i.st === 'done' || i.st === 'ext'; };
     return ok(i1) && ok(i2) ? 'done' : (ok(i1) || ok(i2) || i1.st === 'prog' || i2.st === 'prog' ? 'part' : 'none');
   }
+  /* חץ קטן לניווט בין חודשים; right=1 מצביע ימינה (אחורה בעברית) */
+  function CHV(right) { return '<svg viewBox="0 0 10 16" width="9" height="14" aria-hidden="true"><path d="' + (right ? 'M2 2l6 6-6 6' : 'M8 2L2 8l6 6') + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
   UI.yomi = function (root) {
     var S = LG.state(), set = S.settings, now = Date.now(), today = LG.ymd(now), wrap = el('main', 'lm-wrap');
     var y = LGDaf.forStr(today), m = LG.masechet(y.slug), built = m && m.built;
@@ -304,20 +306,21 @@
     while (hkey(lT + ONE) === hk) lT += ONE;
     var wd = new Date(fT).getUTCDay();
     var dim = Math.round((lT - fT) / ONE) + 1;
-    var cal = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;direction:rtl">' + LG.WD.map(function (w) { return '<div class="lm-small" style="text-align:center">' + w.slice(0, 3) + '</div>'; }).join('');
-    for (var i = 0; i < wd; i++) cal += '<div></div>';
+    /* 13.10.2026: הלוח נבנה במחלקות (lm-dy) במקום צבעים בשורה - הטקסט היה כהה על לוחית כהה */
+    var cal = '<div class="lm-dycal">' + LG.WD.map(function (w) { return '<div class="wd">' + w.slice(0, 3) + '</div>'; }).join('');
+    for (var i = 0; i < wd; i++) cal += '<div class="pad"></div>';
     for (var dday = 0; dday < dim; dday++) {
       var tt = fT + dday * ONE, ds = LG.ymd(tt), inf = LGDaf.forStr(ds), st2 = ds > today ? 'future' : dayStatus(inf, ds);
-      var bg = st2 === 'done' ? 'linear-gradient(180deg,#e9c35a,#c8942c)' : st2 === 'part' ? 'var(--prog)' : st2 === 'future' ? 'transparent' : 'rgba(23,58,88,.45)';
-      var fg = st2 === 'done' ? '#2a1c04' : 'var(--ink)';
-      cal += '<button type="button" class="lm-cal" data-d="' + ds + '" style="background:' + bg + ';color:' + fg + ';border:1px solid ' + (ds === today ? 'var(--gold-300);box-shadow:0 0 0 1px var(--gold-300)' : 'var(--line)') + ';border-radius:6px;padding:4px 2px;font:inherit;font-size:13px;cursor:pointer;line-height:1.25">' +
-        '<b style="font-size:14px">' + E(HD.q(HD.parts(tt).d)) + '</b><br><span style="font-size:11px">' + E(inf.name.slice(0, 7)) + ' ' + E(LG.hebq(inf.n)) + '</span></button>';
+      cal += '<button type="button" class="lm-cal lm-dy ' + st2 + (ds === today ? ' today' : '') + '" data-d="' + ds + '" title="' + E(inf.name + ' ' + LG.hebq(inf.n)) + '">' +
+        '<b>' + E(HD.q(HD.parts(tt).d)) + '</b><span>' + E(inf.name) + ' ' + E(LG.hebq(inf.n)) + '</span>' +
+        (st2 === 'done' ? '<i aria-hidden="true">✓</i>' : '') + '</button>';
     }
     cal += '</div>';
     var prev = LG.ymd(fT - ONE), next = LG.ymd(lT + ONE), hpm = HD.parts(fT);
     var c3 = el('div', 'lm-card');
-    c3.innerHTML = '<div class="lm-row" style="justify-content:space-between"><h3 style="margin:0">' + E(hpm.m + ' ' + HD.q(hpm.y % 1000)) + '</h3><span><a href="?hd=' + prev + '">‹ הקודם</a> · <a href="?hd=' + next + '">הבא ›</a></span></div>' + cal +
-      '<div class="lm-legend"><span><em style="background:var(--c2)"></em>נלמד</span><span><em style="background:var(--prog)"></em>חלקי</span><span><em style="background:var(--card2)"></em>חסר</span></div>';
+    c3.className = 'lm-card lm-dycard';
+    c3.innerHTML = '<div class="lm-dyhead"><a class="lm-dynav" href="?hd=' + prev + '" aria-label="החודש הקודם">' + CHV(1) + '<span>הקודם</span></a><h3>' + E(hpm.m + ' ' + HD.q(hpm.y % 1000)) + '</h3><a class="lm-dynav" href="?hd=' + next + '" aria-label="החודש הבא"><span>הבא</span>' + CHV(0) + '</a></div>' + cal +
+      '<div class="lm-dylegend"><span><em class="done"></em>נלמד</span><span><em class="part"></em>חלקי</span><span><em class="none"></em>חסר</span><span><em class="today"></em>היום</span></div>';
     wrap.appendChild(c3);
 
     /* השלמת פערים */

@@ -500,3 +500,46 @@ body.lm{--card2:#173a58}
 body[data-page=quiz] .lm-foot{padding-bottom:92px}
 /* יעדי מגע בהודעת השמירה (נמצא בבדיקת WebKit, 9.10): הקישורים בתוך המשפט קטנים מ-44 */
 @media (pointer:coarse),(max-width:1100px){.lm-hint a{display:inline-block;min-height:44px;min-width:44px;line-height:44px;padding:0 8px;text-align:center}}
+
+/* ---- 13.10.2026: שורש התקלה - הכינויים הישנים (--ink וכו') נפתרו מול הנייר הבהיר ב-:root,
+   ולכן בתוך הלוחיות הכחולות יצא דיו שחור על כחול. מגדירים אותם מחדש בתחום הכחול. ---- */
+body.lm,.lm-card,.lm-box,.lm-pick,.lm-vol,.qz-card{--ink:var(--tx);--ink2:var(--tx2);--ink3:var(--tx2);--card:var(--sheet);--bg:var(--parch)}
+
+/* ---- לוח החודש בדף היומי (13.10.2026). הבוררים ארוכים בכוונה: כלל הכפתורים הכללי ב-ui.css
+   (:is(...,.stybar .stmore) button) חזק מ-body.lm .lm-dycal button.lm-dy.done ודרס את הרקע - זה מה שהחשיך את הלוח. ---- */
+.lm-dyhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px}
+.lm-dyhead h3{margin:0;flex:1;text-align:center;font-family:'Vilna','Frank',serif;font-weight:900;font-size:26px;color:var(--gold-300);letter-spacing:.02em;text-shadow:0 1px 0 #06111b,0 0 12px rgba(233,195,90,.25)}
+body.lm .lm-dyhead a.lm-dynav{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 14px;border-radius:999px;border:1px solid var(--gold-700,#8f6a1e);color:var(--gold-300);font-size:15px;font-weight:600;background:rgba(6,17,27,.35);text-decoration:none;transition:border-color .15s,background .15s}
+body.lm .lm-dyhead a.lm-dynav:hover{border-color:var(--gold-300);background:rgba(233,195,90,.1);text-decoration:none}
+.lm-dycal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;direction:rtl}
+.lm-dycal .wd{text-align:center;font-family:'Vilna','Frank',serif;font-weight:700;font-size:16px;color:var(--gold-300);padding-bottom:4px;border-bottom:1px solid rgba(209,162,58,.3)}
+body.lm .lm-dycal button.lm-dy{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:62px;padding:6px 4px;
+  border-radius:6px;border:1px solid rgba(209,162,58,.35);background:linear-gradient(180deg,#1a4064,#122f4b);color:#f5edd6;
+  font-family:var(--ui);cursor:pointer;line-height:1.2;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 1px 2px rgba(0,0,0,.35);transition:transform .12s,border-color .15s,box-shadow .15s}
+body.lm .lm-dycal button.lm-dy b{font-family:'Vilna','Frank',serif;font-weight:900;font-size:19px;color:#f9e08a}
+body.lm .lm-dycal button.lm-dy span{font-size:13px;color:#e6dcbf;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.lm .lm-dycal button.lm-dy:hover{border-color:var(--gold-300);transform:translateY(-1px);box-shadow:0 0 0 1px rgba(233,195,90,.4),0 4px 10px rgba(0,0,0,.4)}
+body.lm .lm-dycal button.lm-dy:focus-visible{outline:2px solid var(--gold-300);outline-offset:2px}
+/* נלמד: לוחית זהב, דיו כהה */
+body.lm .lm-dycal button.lm-dy.done{background:linear-gradient(180deg,#f0cf6e,#c8942c);border-color:#f9e08a;color:#2a1c04}
+body.lm .lm-dycal button.lm-dy.done b,body.lm .lm-dycal button.lm-dy.done span{color:#2a1c04}
+body.lm .lm-dycal button.lm-dy.done i{position:absolute;top:3px;inset-inline-start:6px;font-style:normal;font-size:12px;font-weight:800;color:#2a1c04}
+/* חלקי: ירוק עמום, דיו בהיר */
+body.lm .lm-dycal button.lm-dy.part{background:linear-gradient(180deg,#3f5d45,#2c4532);border-color:#8cc7a0}
+body.lm .lm-dycal button.lm-dy.part b{color:#f9e08a}body.lm .lm-dycal button.lm-dy.part span{color:#e3f0e8}
+/* עתידי: שקוף ועמום אך קריא */
+body.lm .lm-dycal button.lm-dy.future{background:rgba(6,17,27,.28);border-style:dashed;border-color:rgba(209,162,58,.28);box-shadow:none}
+body.lm .lm-dycal button.lm-dy.future b{color:#c7bc9c}body.lm .lm-dycal button.lm-dy.future span{color:#a99f84}
+/* היום: טבעת זהב זוהרת */
+body.lm .lm-dycal button.lm-dy.today{border:2px solid #f9e08a;box-shadow:0 0 0 2px rgba(249,224,138,.25),0 0 14px rgba(240,196,90,.45)}
+.lm-dylegend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:16px 0 0;font-size:15px;color:#e6dcbf}
+.lm-dylegend span{display:inline-flex;align-items:center;gap:6px}
+.lm-dylegend em{display:inline-block;width:16px;height:16px;border-radius:4px;border:1px solid rgba(209,162,58,.5)}
+.lm-dylegend em.done{background:linear-gradient(180deg,#f0cf6e,#c8942c)}
+.lm-dylegend em.part{background:linear-gradient(180deg,#3f5d45,#2c4532);border-color:#8cc7a0}
+.lm-dylegend em.none{background:linear-gradient(180deg,#1a4064,#122f4b)}
+.lm-dylegend em.today{background:transparent;border:2px solid #f9e08a}
+@media (max-width:600px){
+  .lm-dycal{gap:4px}body.lm .lm-dycal button.lm-dy{min-height:46px;padding:4px 2px}body.lm .lm-dycal button.lm-dy b{font-size:17px}body.lm .lm-dycal button.lm-dy span{display:none}
+  .lm-dyhead h3{font-size:21px}.lm-dyhead a.lm-dynav span{display:none}.lm-dyhead a.lm-dynav{padding:4px 12px}
+}

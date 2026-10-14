@@ -2,46 +2,64 @@
  "slug": "berakhot",
  "perakim": {
   "1": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T10:06:16Z",
    "nreq": 21,
-   "batch": "msgbatch_01HUpqxJuuDpZqn5WvEg46SR"
+   "published": "2026-10-14T10:13:50Z",
+   "result": {
+    "generated": 30,
+    "decided": 0,
+    "flagged": 45,
+    "questions": 4
+   }
   },
   "2": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T09:59:00Z",
-   "nreq": 13,
-   "batch": "msgbatch_016h9RntVNz9TAgCJYiZEC6p"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T10:13:52Z",
+   "nreq": 10,
+   "batch": "msgbatch_015g6XiojiAzpsqhGZWwPpof"
   },
   "3": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T10:06:18Z",
-   "nreq": 19,
-   "batch": "msgbatch_01J4KQE77AeEG5GNbSVphjqc"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T10:13:53Z",
+   "nreq": 17,
+   "batch": "msgbatch_01SPA47zk5oFcJ6DHwixQ1WL"
   },
   "4": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T10:06:19Z",
    "nreq": 11,
-   "batch": "msgbatch_01K4VJpPp4NHfBVK1YkbvYYB"
+   "published": "2026-10-14T10:13:55Z",
+   "result": {
+    "generated": 26,
+    "decided": 0,
+    "flagged": 18,
+    "questions": 5
+   }
   },
   "5": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T10:06:21Z",
    "nreq": 8,
-   "batch": "msgbatch_01UfRw8H74HYBhgAezFgxjrH"
+   "published": "2026-10-14T10:13:56Z",
+   "result": {
+    "generated": 17,
+    "decided": 0,
+    "flagged": 16,
+    "questions": 0
+   }
   },
   "6": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T10:06:23Z",
-   "nreq": 34,
-   "batch": "msgbatch_01TU9mxs4oSFAhhxbt2TEjVJ"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T10:13:58Z",
+   "nreq": 23,
+   "batch": "msgbatch_01Qe4Hd2REKKbT19bBfGLbA6"
   },
   "7": {
    "status": "rereviewing",
@@ -51,22 +69,22 @@
    "batch": "msgbatch_014pGmCenibXRLKQXAYTfe5o"
   },
   "8": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T09:59:07Z",
-   "nreq": 6,
-   "batch": "msgbatch_01G7ztMVKNzHGR4AvLJBXc86"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T10:13:59Z",
+   "nreq": 4,
+   "batch": "msgbatch_018EwCvsT1FtuD179q3MaUoh"
   },
   "9": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T10:06:26Z",
-   "nreq": 13,
-   "batch": "msgbatch_01UPBrLiDJcvUpBKwA1NAxmH"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T10:14:01Z",
+   "nreq": 12,
+   "batch": "msgbatch_01ThkxZePaAFC1xmoYA93nNw"
   }
  },
  "created": "2026-10-14T09:44:43Z",
- "updated": "2026-10-14T10:10:05Z",
+ "updated": "2026-10-14T10:14:01Z",
  "calibration": [
   {
    "perek": 1,

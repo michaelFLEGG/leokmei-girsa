@@ -1,14 +1,14 @@
 {
- "total": 26.053589,
+ "total": 35.137561,
  "bySlug": {
-  "sukkah": 16.291097,
-  "berakhot": 9.762492
+  "sukkah": 19.154131,
+  "berakhot": 15.98343
  },
  "byPhase": {
   "write": 9.748955,
   "review": 0.052119,
-  "rewrite": 16.245722,
-  "rereview": 0.006793
+  "rewrite": 25.31217,
+  "rereview": 0.024317
  },
  "batches": [
   {
@@ -810,20 +810,212 @@
     "n": 19
    },
    "cost": 1.441936
+  },
+  {
+   "at": "2026-10-14T10:13:45Z",
+   "slug": "sukkah",
+   "perek": 2,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 21,
+   "usage": {
+    "in": 49097,
+    "cw": 0,
+    "cr": 12012,
+    "out": 9641,
+    "n": 21
+   },
+   "cost": 0.004925
+  },
+  {
+   "at": "2026-10-14T10:13:46Z",
+   "slug": "sukkah",
+   "perek": 3,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 31,
+   "usage": {
+    "in": 148525,
+    "cw": 0,
+    "cr": 438774,
+    "out": 82218,
+    "n": 31
+   },
+   "cost": 2.852922
+  },
+  {
+   "at": "2026-10-14T10:13:47Z",
+   "slug": "sukkah",
+   "perek": 4,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 13,
+   "usage": {
+    "in": 29984,
+    "cw": 0,
+    "cr": 7436,
+    "out": 6943,
+    "n": 13
+   },
+   "cost": 0.003272
+  },
+  {
+   "at": "2026-10-14T10:13:48Z",
+   "slug": "sukkah",
+   "perek": 5,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 11,
+   "usage": {
+    "in": 15778,
+    "cw": 0,
+    "cr": 6292,
+    "out": 4378,
+    "n": 11
+   },
+   "cost": 0.001915
+  },
+  {
+   "at": "2026-10-14T10:13:50Z",
+   "slug": "berakhot",
+   "perek": 1,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 21,
+   "usage": {
+    "in": 32676,
+    "cw": 0,
+    "cr": 12012,
+    "out": 9855,
+    "n": 21
+   },
+   "cost": 0.004158
+  },
+  {
+   "at": "2026-10-14T10:13:51Z",
+   "slug": "berakhot",
+   "perek": 2,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 13,
+   "usage": {
+    "in": 68096,
+    "cw": 0,
+    "cr": 184002,
+    "out": 22799,
+    "n": 13
+   },
+   "cost": 0.933455
+  },
+  {
+   "at": "2026-10-14T10:13:52Z",
+   "slug": "berakhot",
+   "perek": 3,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 19,
+   "usage": {
+    "in": 102433,
+    "cw": 0,
+    "cr": 268926,
+    "out": 34590,
+    "n": 19
+   },
+   "cost": 1.410531
+  },
+  {
+   "at": "2026-10-14T10:13:54Z",
+   "slug": "berakhot",
+   "perek": 4,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 11,
+   "usage": {
+    "in": 15801,
+    "cw": 0,
+    "cr": 6292,
+    "out": 3522,
+    "n": 11
+   },
+   "cost": 0.001702
+  },
+  {
+   "at": "2026-10-14T10:13:56Z",
+   "slug": "berakhot",
+   "perek": 5,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 8,
+   "usage": {
+    "in": 12185,
+    "cw": 0,
+    "cr": 4576,
+    "out": 3679,
+    "n": 8
+   },
+   "cost": 0.001552
+  },
+  {
+   "at": "2026-10-14T10:13:57Z",
+   "slug": "berakhot",
+   "perek": 6,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 34,
+   "usage": {
+    "in": 171897,
+    "cw": 0,
+    "cr": 481236,
+    "out": 67303,
+    "n": 34
+   },
+   "cost": 2.602215
+  },
+  {
+   "at": "2026-10-14T10:13:59Z",
+   "slug": "berakhot",
+   "perek": 8,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 6,
+   "usage": {
+    "in": 29212,
+    "cw": 0,
+    "cr": 84924,
+    "out": 11347,
+    "n": 6
+   },
+   "cost": 0.44035
+  },
+  {
+   "at": "2026-10-14T10:14:00Z",
+   "slug": "berakhot",
+   "perek": 9,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 13,
+   "usage": {
+    "in": 65170,
+    "cw": 0,
+    "cr": 184002,
+    "out": 19125,
+    "n": 13
+   },
+   "cost": 0.826975
   }
  ],
  "tokens": {
   "sukkah": {
-   "in": 1255911,
+   "in": 1499295,
    "cw": 638073,
-   "cr": 3019414,
-   "out": 412452
+   "cr": 3483928,
+   "out": 515632
   },
   "berakhot": {
-   "in": 1354020,
+   "in": 1851490,
    "cw": 170992,
-   "cr": 3682317,
-   "out": 352516
+   "cr": 4908287,
+   "out": 524736
   }
  }
 }

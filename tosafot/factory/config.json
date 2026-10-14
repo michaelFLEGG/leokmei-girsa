@@ -1,6 +1,9 @@
 {
  "_comment": "הגדרות בית החרושת לתוספות (13.10.2026). מחירי Batch נבדקו מול מחירון Anthropic הרשמי ב-13.10.2026 (platform.claude.com/docs/en/about-claude/pricing): $ למיליון טוקנים, כבר עם הנחת ה-Batch של 50%. cw = כתיבת מטמון לשעה, cr = קריאת מטמון.",
- "queue": ["sukkah", "berakhot"],
+ "queue": [
+  "sukkah",
+  "berakhot"
+ ],
  "siteBase": "https://leokmei.com",
  "engines": {
   "write": "claude-sonnet-5-5",
@@ -10,25 +13,61 @@
  },
  "engineChoice": "סונט 5.5 הוא המנוע הזול ביותר שעמד ברף: במבחן העיוור 4 מ-27 שורות סומנו בידי המבקר (אופוס 9, הייקו 14, פייבל 5, סונט עם חשיבה 1), והמנהל לא הראה העדפה מובהקת לאף מנוע (חמישה מנועים, כ-20% כל אחד). פייבל לתוספות קשה ולכתיבה מחדש.",
  "prices": {
-  "fable": {"in": 5, "cw": 10, "cr": 0.125, "out": 25},
-  "opus": {"in": 2, "cw": 4, "cr": 0.1, "out": 10},
-  "sonnet": {"in": 1, "cw": 2, "cr": 0.05, "out": 5},
-  "haiku": {"in": 0.05, "cw": 0.1, "cr": 0.005, "out": 0.25}
+  "fable": {
+   "in": 5,
+   "cw": 10,
+   "cr": 0.125,
+   "out": 25
+  },
+  "opus": {
+   "in": 2,
+   "cw": 4,
+   "cr": 0.1,
+   "out": 10
+  },
+  "sonnet": {
+   "in": 1,
+   "cw": 2,
+   "cr": 0.05,
+   "out": 5
+  },
+  "haiku": {
+   "in": 0.05,
+   "cw": 0.1,
+   "cr": 0.005,
+   "out": 0.25
+  }
  },
  "pricesChecked": "13.10.2026",
  "budget": {
-  "credit": 196,
+  "credit": 406,
   "expires": "2026-11-07",
   "floor": 15,
   "topup": 20,
-  "reservedOther": 0,
-  "note": "הקרדיט (כ-196 דולר, פג ב-7.11.2026) משותף לכל מה שרץ במפתח של אותו ארגון, כולל בית החרושת לנ\"ך. reservedOther = כמה להפחית מהיתרה בגלל שימוש חיצוני לבית החרושת הזה. אין אמצעי תשלום רשום."
+  "reservedOther": 150,
+  "note": "14.10.2026: יתרה אמיתית 266.25 דולר בחשבון Anthropic (משותף עם בית החרושת לנ\"ך) ועוד הוצאה שנרשמה כאן 140.42 דולר, סה\"כ 406. reservedOther: 150 דולר שמורים לסיום הנ\"ך המפורש (עדיפות עליונה), והתוספות רצות במקביל על היתרה. לעדכן כשהנ\"ך מתקדם. מגבלת הוצאה חודשית בחשבון: 500 דולר, מתאפסת ב-1.11."
  },
  "reviewerV2": true,
  "maxPerRequest": 6,
- "maxTokens": {"perTos": 500, "review": 2500, "expectOut": 260},
- "hard": {"words": 300, "markers": 4},
- "line": {"minWords": 4, "maxWords": 48, "longExtra": 20},
- "question": {"maxAnswerWords": 45},
- "calibration": {"perBatch": 4, "dropAlert": 0.15}
+ "maxTokens": {
+  "perTos": 500,
+  "review": 2500,
+  "expectOut": 260
+ },
+ "hard": {
+  "words": 300,
+  "markers": 4
+ },
+ "line": {
+  "minWords": 4,
+  "maxWords": 48,
+  "longExtra": 20
+ },
+ "question": {
+  "maxAnswerWords": 45
+ },
+ "calibration": {
+  "perBatch": 4,
+  "dropAlert": 0.15
+ }
 }

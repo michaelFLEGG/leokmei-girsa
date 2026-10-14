@@ -9,18 +9,18 @@
    "nreq": 57
   },
   "2": {
-   "status": "writing",
-   "batch": "msgbatch_01EtRoDMddDzvcowv33yeDmV",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T13:30:54Z",
-   "nreq": 42
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T13:44:59Z",
+   "nreq": 25,
+   "batch": "msgbatch_017EQgG3GGrEk1aogZ2jsF3k"
   },
   "3": {
-   "status": "writing",
-   "batch": "msgbatch_01DdJvWsBC6CQZYpy3cPHL38",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T13:30:54Z",
-   "nreq": 33
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T13:45:01Z",
+   "nreq": 18,
+   "batch": "msgbatch_011E7DSqYnJLRhRS5xEQdnbZ"
   },
   "4": {
    "status": "reviewing",
@@ -30,18 +30,18 @@
    "batch": "msgbatch_018nCvgTB5cvga6MUws7D5rv"
   },
   "5": {
-   "status": "writing",
-   "batch": "msgbatch_019piY4iGDDr9PtWJPJ2b67z",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T13:30:56Z",
-   "nreq": 32
-  },
-  "6": {
    "status": "reviewing",
    "batchPhase": "review",
-   "submitted": "2026-10-14T13:37:53Z",
-   "nreq": 15,
-   "batch": "msgbatch_01Y8LvYbAQHcswqfv5mgqwVo"
+   "submitted": "2026-10-14T13:45:04Z",
+   "nreq": 18,
+   "batch": "msgbatch_01PrfjeCup7nFUP41YMkgMJy"
+  },
+  "6": {
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T13:45:06Z",
+   "nreq": 22,
+   "batch": "msgbatch_015a5ikktjY6dQWfWsdoShCC"
   },
   "7": {
    "status": "writing",
@@ -51,11 +51,11 @@
    "nreq": 73
   },
   "8": {
-   "status": "writing",
-   "batch": "msgbatch_01KVtqbqhqHXJVFCNeZyudG4",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T13:30:59Z",
-   "nreq": 31
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T13:45:08Z",
+   "nreq": 18,
+   "batch": "msgbatch_01AWriT8nDoa8uaZ2GgpcGrD"
   },
   "9": {
    "status": "writing",
@@ -73,7 +73,7 @@
   }
  },
  "created": "2026-10-14T13:30:52Z",
- "updated": "2026-10-14T13:41:29Z",
+ "updated": "2026-10-14T13:45:09Z",
  "calibration": [
   {
    "perek": 6,
@@ -86,6 +86,37 @@
    "mean": 0.41,
    "n": 4,
    "at": "2026-10-14T13:41:27Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.558,
+   "n": 4,
+   "at": "2026-10-14T13:44:59Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.621,
+   "n": 4,
+   "at": "2026-10-14T13:45:01Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.36,
+   "n": 4,
+   "at": "2026-10-14T13:45:03Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.537,
+   "n": 4,
+   "at": "2026-10-14T13:45:07Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.284,
+   "n": 4,
+   "at": "2026-10-14T13:45:09Z"
   }
- ]
+ ],
+ "halt": "סחיפה: התאמת הכיול לנוסח המנהל ירדה ל-0.28 (בסיס 0.46). האצווה נעצרה, ממתינה להכרעת מנהל"
 }

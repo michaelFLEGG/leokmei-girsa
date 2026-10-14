@@ -1,13 +1,13 @@
 {
- "total": 43.486598,
+ "total": 48.676305,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
-  "bava-kamma": 1.431246
+  "bava-kamma": 6.620952
  },
  "byPhase": {
-  "write": 11.180201,
-  "review": 0.052119,
+  "write": 16.360706,
+  "review": 0.06132,
   "rewrite": 32.024183,
   "rereview": 0.230095
  },
@@ -1243,6 +1243,182 @@
     "n": 6
    },
    "cost": 0.511916
+  },
+  {
+   "at": "2026-10-14T13:44:59Z",
+   "slug": "bava-kamma",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 34,
+   "usage": {
+    "in": 109756,
+    "cw": 0,
+    "cr": 481202,
+    "out": 31994,
+    "n": 34
+   },
+   "cost": 0.293786
+  },
+  {
+   "at": "2026-10-14T13:44:59Z",
+   "slug": "bava-kamma",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 8,
+   "usage": {
+    "in": 26616,
+    "cw": 70770,
+    "cr": 42462,
+    "out": 13182,
+    "n": 8
+   },
+   "cost": 1.175638
+  },
+  {
+   "at": "2026-10-14T13:45:01Z",
+   "slug": "bava-kamma",
+   "perek": 3,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 25,
+   "usage": {
+    "in": 95801,
+    "cw": 0,
+    "cr": 353825,
+    "out": 26584,
+    "n": 25
+   },
+   "cost": 0.246412
+  },
+  {
+   "at": "2026-10-14T13:45:01Z",
+   "slug": "bava-kamma",
+   "perek": 3,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 8,
+   "usage": {
+    "in": 25807,
+    "cw": 56616,
+    "cr": 56616,
+    "out": 12562,
+    "n": 8
+   },
+   "cost": 1.016322
+  },
+  {
+   "at": "2026-10-14T13:45:03Z",
+   "slug": "bava-kamma",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 26,
+   "usage": {
+    "in": 92236,
+    "cw": 0,
+    "cr": 367978,
+    "out": 24348,
+    "n": 26
+   },
+   "cost": 0.232375
+  },
+  {
+   "at": "2026-10-14T13:45:03Z",
+   "slug": "bava-kamma",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 6,
+   "usage": {
+    "in": 19335,
+    "cw": 42462,
+    "cr": 42462,
+    "out": 10610,
+    "n": 6
+   },
+   "cost": 0.791853
+  },
+  {
+   "at": "2026-10-14T13:45:05Z",
+   "slug": "bava-kamma",
+   "perek": 6,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 15,
+   "usage": {
+    "in": 23196,
+    "cw": 70198,
+    "cr": 0,
+    "out": 4087,
+    "n": 15
+   },
+   "cost": 0.009201
+  },
+  {
+   "at": "2026-10-14T13:45:07Z",
+   "slug": "bava-kamma",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 27,
+   "usage": {
+    "in": 104683,
+    "cw": 14153,
+    "cr": 367978,
+    "out": 26130,
+    "n": 27
+   },
+   "cost": 0.282038
+  },
+  {
+   "at": "2026-10-14T13:45:07Z",
+   "slug": "bava-kamma",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 4,
+   "usage": {
+    "in": 17951,
+    "cw": 28308,
+    "cr": 28308,
+    "out": 6913,
+    "n": 4
+   },
+   "cost": 0.549199
+  },
+  {
+   "at": "2026-10-14T13:45:09Z",
+   "slug": "bava-kamma",
+   "perek": 10,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 20,
+   "usage": {
+    "in": 74392,
+    "cw": 14153,
+    "cr": 268907,
+    "out": 15986,
+    "n": 20
+   },
+   "cost": 0.196073
+  },
+  {
+   "at": "2026-10-14T13:45:09Z",
+   "slug": "bava-kamma",
+   "perek": 10,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 2,
+   "usage": {
+    "in": 7411,
+    "cw": 28308,
+    "cr": 0,
+    "out": 3067,
+    "n": 2
+   },
+   "cost": 0.39681
   }
  ],
  "tokens": {
@@ -1259,10 +1435,10 @@
    "out": 557908
   },
   "bava-kamma": {
-   "in": 228001,
-   "cw": 42461,
-   "cr": 863341,
-   "out": 68612
+   "in": 825185,
+   "cw": 367429,
+   "cr": 2873079,
+   "out": 244075
   }
  }
 }

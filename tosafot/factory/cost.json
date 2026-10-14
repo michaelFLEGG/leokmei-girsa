@@ -1,14 +1,14 @@
 {
- "total": 35.140664,
+ "total": 35.157882,
  "bySlug": {
-  "sukkah": 19.154131,
-  "berakhot": 15.986533
+  "sukkah": 19.160633,
+  "berakhot": 15.997249
  },
  "byPhase": {
   "write": 9.748955,
   "review": 0.052119,
   "rewrite": 25.31217,
-  "rereview": 0.02742
+  "rereview": 0.044638
  },
  "batches": [
   {
@@ -1018,20 +1018,100 @@
     "n": 13
    },
    "cost": 0.003103
+  },
+  {
+   "at": "2026-10-14T10:21:01Z",
+   "slug": "sukkah",
+   "perek": 3,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 25,
+   "usage": {
+    "in": 67190,
+    "cw": 0,
+    "cr": 14300,
+    "out": 12284,
+    "n": 25
+   },
+   "cost": 0.006502
+  },
+  {
+   "at": "2026-10-14T10:21:03Z",
+   "slug": "berakhot",
+   "perek": 2,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 10,
+   "usage": {
+    "in": 15997,
+    "cw": 0,
+    "cr": 5720,
+    "out": 4145,
+    "n": 10
+   },
+   "cost": 0.001865
+  },
+  {
+   "at": "2026-10-14T10:21:04Z",
+   "slug": "berakhot",
+   "perek": 3,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 17,
+   "usage": {
+    "in": 25207,
+    "cw": 0,
+    "cr": 9724,
+    "out": 6446,
+    "n": 17
+   },
+   "cost": 0.00292
+  },
+  {
+   "at": "2026-10-14T10:21:06Z",
+   "slug": "berakhot",
+   "perek": 6,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 23,
+   "usage": {
+    "in": 48201,
+    "cw": 0,
+    "cr": 13156,
+    "out": 10800,
+    "n": 23
+   },
+   "cost": 0.005176
+  },
+  {
+   "at": "2026-10-14T10:21:07Z",
+   "slug": "berakhot",
+   "perek": 8,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 4,
+   "usage": {
+    "in": 6425,
+    "cw": 0,
+    "cr": 2288,
+    "out": 1691,
+    "n": 4
+   },
+   "cost": 0.000755
   }
  ],
  "tokens": {
   "sukkah": {
-   "in": 1499295,
+   "in": 1566485,
    "cw": 638073,
-   "cr": 3483928,
-   "out": 515632
+   "cr": 3498228,
+   "out": 527916
   },
   "berakhot": {
-   "in": 1883545,
+   "in": 1979375,
    "cw": 170992,
-   "cr": 4915723,
-   "out": 530589
+   "cr": 4946611,
+   "out": 553671
   }
  }
 }

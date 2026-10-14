@@ -28,11 +28,17 @@
    }
   },
   "3": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T10:13:47Z",
    "nreq": 25,
-   "batch": "msgbatch_01KwNdWSnRLE2XXTreUcVidL"
+   "published": "2026-10-14T10:21:01Z",
+   "result": {
+    "generated": 68,
+    "decided": 8,
+    "flagged": 53,
+    "questions": 26
+   }
   },
   "4": {
    "status": "published",
@@ -62,7 +68,7 @@
   }
  },
  "created": "2026-10-13T15:12:29Z",
- "updated": "2026-10-14T10:13:49Z",
+ "updated": "2026-10-14T10:21:01Z",
  "calibration": [
   {
    "perek": 1,

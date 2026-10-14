@@ -15,18 +15,30 @@
    }
   },
   "2": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T10:13:52Z",
    "nreq": 10,
-   "batch": "msgbatch_015g6XiojiAzpsqhGZWwPpof"
+   "published": "2026-10-14T10:21:03Z",
+   "result": {
+    "generated": 28,
+    "decided": 0,
+    "flagged": 19,
+    "questions": 2
+   }
   },
   "3": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T10:13:53Z",
    "nreq": 17,
-   "batch": "msgbatch_01SPA47zk5oFcJ6DHwixQ1WL"
+   "published": "2026-10-14T10:21:05Z",
+   "result": {
+    "generated": 30,
+    "decided": 0,
+    "flagged": 34,
+    "questions": 10
+   }
   },
   "4": {
    "status": "published",
@@ -55,11 +67,17 @@
    }
   },
   "6": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T10:13:58Z",
    "nreq": 23,
-   "batch": "msgbatch_01Qe4Hd2REKKbT19bBfGLbA6"
+   "published": "2026-10-14T10:21:06Z",
+   "result": {
+    "generated": 63,
+    "decided": 0,
+    "flagged": 52,
+    "questions": 11
+   }
   },
   "7": {
    "status": "published",
@@ -75,11 +93,17 @@
    }
   },
   "8": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T10:13:59Z",
    "nreq": 4,
-   "batch": "msgbatch_018EwCvsT1FtuD179q3MaUoh"
+   "published": "2026-10-14T10:21:07Z",
+   "result": {
+    "generated": 12,
+    "decided": 0,
+    "flagged": 5,
+    "questions": 1
+   }
   },
   "9": {
    "status": "rereviewing",
@@ -90,7 +114,7 @@
   }
  },
  "created": "2026-10-14T09:44:43Z",
- "updated": "2026-10-14T10:17:32Z",
+ "updated": "2026-10-14T10:21:07Z",
  "calibration": [
   {
    "perek": 1,

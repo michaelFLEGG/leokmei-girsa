@@ -443,7 +443,7 @@ def publish(slug, perek, c, work, flagged):
     sp, ap = os.path.join(d, 'styles-%d.json' % perek), os.path.join(d, 'anchors-%d.json' % perek)
     styles = jload(sp) or {}
     anchors = jload(ap) or {'_comment': 'עוגן הסימן לכל תוספות: t = קטע טקסט, occ = מספר המופע בדף, rule = 1 המילה בטקסט, 2 מילה מקבילה, 3 סוף שורת הגמרא. העוגן אינו מספר תו.'}
-    n_gen = n_dec = 0
+    n_gen = n_dec = n_unc = 0
     qitems = []
     skipped = []
     for r in count['items']:
@@ -464,6 +464,19 @@ def publish(slug, perek, c, work, flagged):
             n_dec += 1
             continue
         w = work['recs'].get(rid(perek, r['n']))
+        if w and w.get('status') != 'ok' and (w.get('s') or '').strip():
+            # 14.10.2026, הוראת בעל הפרויקט: אין תוספות חסר. מה שנפסל מתפרסם בסימון "טרם נבדק" (unc) וממתין להכרעתו.
+            if k in styles and not styles[k].get('gen_ok'):
+                if styles[k].get('unc') or styles[k].get('dec'):
+                    continue      # כבר מוצג (ריצה קודמת או הכרעת מנהל)
+            line = re.sub(r'\s*;\s*$', '.', (w['s'] or '').strip())
+            line = re.sub(r'\s*;\s*', '. ', line)
+            styles[k] = {'dh': r['dh'], 'a': line, 'b': line, 'gen': True, 'engine': w.get('engine', ''), 'unc': True}
+            a = dict(w['a']) if w.get('a') else {'t': '', 'occ': 1, 'rule': 3, 'why': 'ממתין להנחה לפי סדר המספרים'}
+            a['daf'] = r['dafKey']
+            anchors[k] = a
+            n_unc += 1
+            continue
         if not w or w.get('status') != 'ok':
             skipped.append((k, 'לא עבר ביקורת'))
             continue
@@ -503,7 +516,7 @@ def publish(slug, perek, c, work, flagged):
              'questions': len(qitems), 'calibration': work.get('cal', []),
              'recs': {k: {x: v for x, v in w.items() if x not in ('text',)} for k, w in work['recs'].items()}}
     jdump(fp(slug, 'factory-%d.json' % perek), audit)
-    return {'generated': n_gen, 'decided': n_dec, 'flagged': len(flagged), 'questions': len(qitems), 'skipped': skipped}
+    return {'generated': n_gen, 'decided': n_dec, 'unchecked': n_unc, 'flagged': len(flagged), 'questions': len(qitems), 'skipped': skipped}
 
 
 def notify(slug, perek, res, c):
@@ -551,7 +564,15 @@ def step_perek(client, slug, perek, st, c):
     work = load_work(slug, perek)
     status = ps['status']
     if status == 'published':
-        return False
+        if slug in ('sukkah', 'berakhot') or ps.get('unc_done'):
+            return False
+        # 14.10.2026: פרק שפורסם לפני שהפסולות נכנסו לפרסום (בסימון טרם נבדק): משלימים פעם אחת
+        res = publish(slug, perek, c, work, finalize(work))
+        ps['unc_done'] = True
+        ps['result'] = {k: v for k, v in res.items() if k != 'skipped'}
+        save_work(slug, perek, work)
+        log('%s פרק %d: הושלם פרסום %d תוספות בסימון טרם נבדק' % (slug, perek, res.get('unchecked', 0)))
+        return True
     if status == 'pending':
         reqs = build_write(slug, perek, c, work)
         if not reqs:

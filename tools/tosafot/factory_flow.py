@@ -703,6 +703,21 @@ def tick():
         log('קובץ "עצור" קיים: הפעימה מדלגת.')
         return 0
     client = F.get_client()
+    # 14.10.2026: השלמת פרסום "טרם נבדק" לפרקים שפורסמו קודם. בלי מודל ובלי עלות, ולכן רץ גם כשהקרדיט נגמר.
+    for slug0 in F.queue():
+        if slug0 in ('sukkah', 'berakhot'):
+            continue
+        st0 = state(slug0)
+        ch0 = False
+        for pk0, ps0 in st0.get('perakim', {}).items():
+            if ps0.get('status') == 'published' and not ps0.get('unc_done'):
+                try:
+                    step_perek(client, slug0, int(pk0), st0, c)
+                    ch0 = True
+                except Exception as e:
+                    log('השלמת טרם-נבדק נכשלה %s פרק %s: %s' % (slug0, pk0, e))
+        if ch0:
+            save_state(slug0, st0)
     st_all = {}
     progressed = False
     summary = []

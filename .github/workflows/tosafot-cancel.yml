@@ -1,0 +1,19 @@
+name: ביטול חד-פעמי של Batch יתומים
+on: workflow_dispatch
+jobs:
+  c:
+    runs-on: ubuntu-latest
+    steps:
+      - run: pip install anthropic
+      - env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python - <<'PY'
+          import anthropic
+          c = anthropic.Anthropic()
+          for b in ['msgbatch_014fG866CYvx2MpdZpdNSnJ2', 'msgbatch_015uEQnAjfnTGzT9KQakPQXK', 'msgbatch_017EJ4AWPfhSXTiujmvpqwz1', 'msgbatch_017nRb8CfmR6STBW8fMnzwQx', 'msgbatch_01A6qa8DMFkDJheqEHGGi5Yn', 'msgbatch_01Dbn7meCptnLZTC3Gf5xRqn', 'msgbatch_01EinTwPHLBvHMyEcwgi4TTs', 'msgbatch_01JiNbvdyfREb354T5617ocN', 'msgbatch_01K7c4Uca4nwbMwpQSiFRaYq', 'msgbatch_01L9toHLP51ch3qSkwk3uiXU', 'msgbatch_01Qiyo2YtzkMfHVY7zNQ5PKZ', 'msgbatch_01TyVgmYeFo3MgDGTXemS8NG', 'msgbatch_01WySkG4mhzf2bNsk6ruKeCH']:
+              try:
+                  print(b, c.messages.batches.cancel(b).processing_status)
+              except Exception as e:
+                  print(b, 'ERR', e)
+          PY

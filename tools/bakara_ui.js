@@ -112,6 +112,7 @@
     const H={'bk-todo':new Highlight(),'bk-cur':new Highlight()};Object.keys(SKT).forEach(k=>{H['bk-t'+k]=new Highlight()});
     if(BK.ON&&f&&!f.classList.contains('book')){
       for(const fd of BK.ord){
+        if(SK.mode&&fd.id!==BK.curId)continue;
         const st=bkStatus(fd);if(st!=='pending'&&st!=='todo')continue;
         const r=bkDomRange(fd);if(!r)continue;
         BK.R.push({f:fd,range:r.range,el:r.el});
@@ -119,13 +120,13 @@
         if(fd.id===BK.curId)H['bk-cur'].add(r.range)}}
     for(const k in H){if(H[k].size)CSS.highlights.set(k,H[k]);else CSS.highlights.delete(k)}}
   let BKT=null;function bkSoon(){if(!BK.ON)return;clearTimeout(BKT);BKT=setTimeout(()=>{bkRefresh()},220)}
-  function bkRefresh(){if(!BK.loaded)return;bkLocateAll();bkHL();bkCount();if($('#bkp')&&$('#bkp').classList.contains('open'))skDrawPanel();bkBarDraw()}
+  function bkRefresh(){if(!BK.loaded)return;bkLocateAll();bkHL();bkCount();if($('#bkp')&&$('#bkp').classList.contains('open'))skDrawPanel();if(SK.mode)skPassDraw();else bkBarDraw();if(window.skAutoSoon)skAutoSoon()}
   window.bkMark=function(){if(BK.loaded&&BK.ON){bkLocateAll();bkHL();bkCount();bkBarDraw()}};
   (function(){const f=document.getElementById('flow');if(!f||!window.MutationObserver)return;
     new MutationObserver(()=>bkSoon()).observe(f,{childList:true,subtree:true,characterData:true})})();
 
   /* ---- טעינה: רק למכשיר שהוכר כמנהל ---- */
-  function bkPend(f){return bkStatus(f)==='pending'}
+  function bkPend(f){return bkStatus(f)==='pending'&&!(SK.autoQ&&SK.autoQ.has(f.id))}
   function bkCount(){
     const b=$('#bkbtn2');if(!b)return;
     if(!isAdmin()||!BK.has){b.style.display='none';return}
@@ -142,7 +143,8 @@
     if(!isAdmin()||!admKey()||BK.busy)return;BK.busy=true;
     try{
       const d=await api('/bakara/data?slug='+SLUG),c=await api('/bakara/dec?slug='+SLUG);
-      BK.CH=[];BK.F=[];BK.CAT={};BK.byId={};
+      const prevIds=BK.loaded?new Set(Object.keys(BK.byId)):null;
+      BK.CH=[];BK.F=[];BK.CAT={};BK.byId={};BK.AUTOLOG=[];
       const pk=(d.doc&&d.doc.perakim)||{};
       for(const p of Object.keys(pk).sort((a,b)=>a-b)){
         const ch=pk[p];/* ד"ה משנה בתוך שורה אינו ממצא (הכרעה 6.10.2026): הוא נשאר בשורה, בסגנון ד"ה משנה לא ממורכז */
@@ -150,14 +152,16 @@
         BK.CH.push({perek:+p,range:ch.range,n:fl.length});
         (ch.catalog||[]).forEach(x=>{BK.CAT[x[0]]=x});
         if(ch.rules)BK.RULES=ch.rules;if(ch.costs)BK.COSTS=ch.costs;
+        (ch.auto||[]).forEach(x=>BK.AUTOLOG.push(x));
         for(const f of fl){f.perek=+p;BK.F.push(f);BK.byId[f.id]=f}}
       BK.has=BK.F.length>0;
       BK.DEC=(c.doc&&c.doc.dec)||{};
       /* הכרעות שטרם נשלחו (אין חיבור): חדשות מן השרת גוברות רק אם מאוחרות */
       for(const it of bkOutbox()){const o=BK.DEC[it.id];if(!o||(o.t||0)<=it.t){if(it.d==='pending')delete BK.DEC[it.id];else BK.DEC[it.id]=it}}
       BK.loaded=true;BK.err='';bkFlush();
+      BK.prevIds=prevIds;
     }catch(e){BK.err=e.message||'שגיאה';if(/אין הרשאה/.test(BK.err)){BK.has=BK.has||false}}
-    BK.busy=false;bkCount();if(BK.ON)bkRefresh()}
+    BK.busy=false;bkCount();if(BK.ON)bkRefresh();if(window.skAfterLoad)skAfterLoad()}
   function bkOutbox(){try{return JSON.parse(localStorage.getItem(BK.OUT)||'[]')}catch(e){return[]}}
   function bkOutSave(a){try{localStorage.setItem(BK.OUT,JSON.stringify(a.slice(-500)))}catch(e){}}
   async function bkFlush(){
@@ -166,9 +170,11 @@
       const left=bkOutbox().filter(x=>!a.some(y=>y.id===x.id&&y.t===x.t));bkOutSave(left)}
     catch(e){/* יישלח בפעם הבאה */}}
   /* רישום הכרעה: מיד במכשיר, ובנקודת הקליטה בצד */
-  function bkPut(f,d,txt,now){
+  function bkPut(f,d,txt,now,auto){
     const it={id:f.id,d,txt:txt||'',det:f.det,kind:f.kind,now:now||'',t:Date.now()};
-    if(BK.rs){it.rs=BK.rs;BK.rs=''}
+    if(BK.autoNext){auto=BK.autoNext;BK.autoNext=''}
+    if(auto){it.auto=1;it.rs=typeof auto==='string'?auto:'auto'}
+    else if(BK.rs){it.rs=BK.rs;BK.rs=''}
     {const rp=bkRep(f);const sg=rp?rp.y:(f.fix||'');if(sg&&d!=='pending')it.sug=String(sg).slice(0,900)}
     if(d==='pending')delete BK.DEC[f.id];else BK.DEC[f.id]=it;
     const a=bkOutbox().filter(x=>x.id!==f.id);a.push(it);bkOutSave(a);return it}
@@ -181,7 +187,7 @@
       Promise.resolve(admKeyAsk()).then(ok=>{if(ok&&admKey())bkLoad().then(()=>{if(BK.loaded)bkToggle()})});return}}
     if(!BK.loaded){bkLoad().then(()=>{if(BK.loaded)bkToggle();else toast('לא ניתן לטעון את ממצאי הבקרה: '+(BK.err||'שגיאה'),5000)});return}
     BK.ON=!BK.ON;bkCss();
-    if(!BK.ON){bkHideCard(true);const m=$('#bkbar');if(m)m.remove();bkHL();bkCount();return}
+    if(!BK.ON){bkHideCard(true);const m=$('#bkbar');if(m)m.remove();{const x=$('#skpass');if(x)x.remove();SK.mode=''}bkHL();bkCount();return}
     bkRefresh();bkBarDraw();
     if(!BK.ord.length)toast('אין הערות סקירה למסכת הזאת. אפשר לבקש סקירה מהחלונית.')}
   window.bkToggle=bkToggle;
@@ -193,9 +199,9 @@
       if(L.pi>=sec.from&&L.pi<=sec.to)ns++;if(D.pages[L.pi]&&D.pages[L.pi].daf===dafN)nd++}
     const lost=BK.F.filter(f=>bkPend(f)&&!BK.loc[f.id]).length;
     m.innerHTML='<b>סקירה</b><span>בדף: '+nd+' · בפרק: '+ns+' · בכל המסכת: '+na+(lost?' · לא אותרו: '+lost:'')+'</span>'+
-      '<button class="go" onclick="bkNext(1)" title="לממצא הבא שטרם הוכרע (Alt+חץ למטה)">לממצא הבא ↓</button>'+
-      '<button onclick="bkNext(-1)" title="לקודם (Alt+חץ למעלה)">↑</button>'+
-      '<button onclick="bkPanel()">רשימה</button><button onclick="bkToggle()">סיום</button><span class="kk" style="font-size:11px;opacity:.7" title="Enter קבל · Delete דחה · ←/→ הבאה/קודמת · E ערוך · C שוחח · S דלג · Ctrl+Z ביטול">Enter קבל · Del דחה · ←→ · E · C · S</span>';if(window.skBarExtra)skBarExtra(m)}
+      skNextBtnHtml()+
+      '<button onclick="bkNext(-1)" title="להערה הקודמת (רק בלחיצה מפורשת)">↑ הקודמת</button>'+
+      '<button onclick="bkPanel()">רשימה</button><button onclick="bkToggle()">סיום</button><span class="kk" style="font-size:11px;opacity:.7" title="Enter קבל · Delete דחה · ←/→ הבאה/קודמת · E ערוך · C שוחח · S דלג · Ctrl+Z ביטול">Enter קבל · Del דחה · ←→ · E · C · S</span>';if(window.skBarExtra)skBarExtra(m);if(window.skBarEnd)skBarEnd(m)}
   function bkDafNow(){return (($('#curdaf')||{}).textContent||'').trim()}
 
   /* ---- כרטיס צף ---- */
@@ -204,6 +210,7 @@
     if(BK.pin&&!force)return;
     c.remove();BK.pin=false;BK.cardId=''}
   function bkShowCard(f,pin,rect){
+    if(SK.mode&&!window.SKCARD){return}
     const old=$('#bkcard');if(old&&old.dataset.id===f.id&&(!pin||BK.pin)){return}
     if(old)old.remove();
     const c=document.createElement('div');c.className='bkcard';c.id='bkcard';c.dataset.id=f.id;
@@ -281,11 +288,7 @@
     const st=bkStatus(f);return (st==='pending'||st==='todo')?f:null}
   function bkBlurText(){const a=document.activeElement;if(a&&a!==document.body&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT|BUTTON|A)$/.test(a.tagName)))a.blur()}
   /* אחרי הכרעה: לממצא הבא שטרם הוכרע בפרק הפתוח, בלי לחזור להתחלה */
-  function bkAdvance(){
-    bkBlurText();BK.kb=true;
-    const sec=SEC[cur]||{from:0,to:0},co=bkCurOrd();
-    const nx=BK.ord.filter(bkPend).find(x=>{const L=BK.loc[x.id];return L&&L.ord>co&&L.pi>=sec.from&&L.pi<=sec.to});
-    if(nx){bkGo(nx.id,true)}else{BK.curId='';bkHideCard(true);bkHL();toast('אין עוד ממצאים בפרק.')}}
+  function bkAdvance(){bkBlurText();BK.kb=true;skNext(1)}
   async function bkKbDecide(f,d){
     const id=f.id,st=bkStatus(f);
     if(d==='edit-ok'){BK.editId='';await bkDecide(id,'edit',false,true)}
@@ -318,9 +321,12 @@
   addEventListener('scroll',()=>{if(!BK.pin)bkHideCard(true)},true);
   addEventListener('resize',()=>{if(BK.ON)bkSoon()});
 
-  /* ---- ניווט: לממצא הבא שטרם הוכרע, לפי סדר הדף ---- */
+  /* ---- ניווט (14.10.2026): מעבר אחד קדימה לפי סדר הטקסט. "הבא" הוא תמיד ההערה שאחרי הנוכחית,
+     לעולם לא ההערה הפתוחה הראשונה. דילוג הוא החלטה: ההערה נדחית לסוף ואינה חוזרת במעבר הזה. ---- */
   function bkCurOrd(){
-    const f=BK.byId[BK.curId];if(f&&BK.loc[f.id])return BK.loc[f.id].ord;
+    const f=BK.byId[BK.curId]||BK.byId[SK.last];
+    if(f&&BK.loc[f.id])return BK.loc[f.id].ord;
+    if(SK.lastOrd!=null&&(SK.lastOrd>=0||SK.fromTop))return SK.lastOrd;
     /* אין נקודת עמידה: הממצא הראשון שנראה במסך, ואחרת תחילת הפרק */
     const fr=$('#flow').getBoundingClientRect();
     for(const r of BK.R){const q=r.range.getClientRects()[0];if(q&&q.bottom>fr.top&&q.top<fr.bottom&&q.right>fr.left&&q.left<fr.right)return BK.loc[r.f.id].ord-1}
@@ -328,26 +334,22 @@
   function bkNext(dir){
     if(!BK.loaded){return}
     if(!BK.ON){bkToggle();return}
-    let P=BK.ord.filter(bkPend);if(!P.length){toast('אין עוד ממצאים שטרם הוכרעו.');return}
-    if(BK.SKIP&&BK.SKIP.size){const P2=P.filter(f=>!BK.SKIP.has(f.id));if(P2.length)P=P2;else BK.SKIP.clear()}
-    const co=bkCurOrd();let pick;
-    if(dir>0){pick=P.find(f=>BK.loc[f.id].ord>co);if(!pick){pick=P[0];toast('הגעת לסוף המסכת. חוזר להתחלה.')}}
-    else{const b=P.filter(f=>BK.loc[f.id].ord<co);pick=b.length?b[b.length-1]:P[P.length-1]}
-    bkGo(pick.id,true)}
+    skNext(dir)}
   window.bkNext=bkNext;
   function bkGo(id,card){
     const f=BK.byId[id];if(!f)return;const L=BK.loc[id];
     if(!L){toast('הממצא לא אותר: הטקסט השתנה מאז.');return}
-    BK.curId=id;
+    BK.curId=id;SK.last=id;SK.lastOrd=L.ord;SK.fromTop=false;skSavePos();
     const have=!!$('#flow').querySelector('[data-ek="'+L.k+'"]');
     if(!have)jump(L.pi,L.s.id);
     setTimeout(()=>{
-      bkLocateAll();bkHL();
+      if(!SK.mode||!have)bkLocateAll();
+      bkHL();
       const r=BK.R.find(x=>x.f.id===id);
       if(r){const fl=$('#flow');
         if(fl.classList.contains('vert'))r.el.scrollIntoView({block:'center'});else toEl(r.el);
         setTimeout(()=>{bkHL();if(card)bkShowCard(f,true,bkRectOf(f))},60)}
-      bkBarDraw();if(window.skAfterGo)skAfterGo(f)},have?10:90)}
+      if(SK.mode)skPassDraw();else bkBarDraw();if(window.skAfterGo)skAfterGo(f)},have?0:90)}
   window.bkGo=bkGo;
 
   /* ---- ההכרעות ---- */
@@ -394,7 +396,7 @@
     const f=BK.byId[id];if(!f)return;
     const wi=$('#bkwhy'),why=wi?wi.value.trim():'';
     let now='',msg='';
-    if(d==='pending'){bkPut(f,'pending');bkSave();bkHideCard(true);bkRefresh();toast('הממצא חזר לממתינים.');return}
+    if(d==='pending'){bkPut(f,'pending');bkSave();bkHideCard(true);bkRefreshAfter();toast('הממצא חזר לממתינים.');return}
     if(d==='ok'&&!done){
       const act=bkAction(f);
       if(act==='rep'){
@@ -404,8 +406,8 @@
       else if(act==='am'||act==='plain'){
         if(!EDIT)setEdit(true);if(!EDIT)return;
         const L=BK.loc[f.id];if(!L){toast('הממצא לא אותר בטקסט הנוכחי.');return}
-        bkGo(id,false);
-        await new Promise(r=>setTimeout(r,160));
+        if(!(SK.mode&&BK.curId===id&&$('#flow').querySelector('[data-ek="'+L.k+'"]'))){bkGo(id,false);
+          await new Promise(r=>setTimeout(r,160))}
         const el=$('#flow').querySelector('[data-ek="'+L.k+'"]');
         if(el){el.focus();if(!bkSel(f)){toast('לא נמצא הקטע לסימון. אפשר ללחוץ "ערוך".');return}
           setCs(act==='am'?'am':'');msg=act==='am'?'סגנון אמוראים הוחל.':'הסגנון הוסר.'}
@@ -413,14 +415,18 @@
       else{
         /* הוראה, לא החלפה: עריכה ממוקדת על השורה, והכרעה "אושר - לביצוע" */
         if(!bkFocusEdit(f))return;
-        bkPut(f,'todo',why);bkSave();bkHideCard(true);bkRefresh();toast('אושר לביצוע. הסמן על הקטע: ערוך כרצונך.',5000);return}}
+        bkPut(f,'todo',why);bkSave();bkHideCard(true);bkRefreshAfter();toast('אושר לביצוע. הסמן על הקטע: ערוך כרצונך.',5000);return}}
     if(d==='ok'&&done){/* "בוצע" אחרי עריכה ידנית */}
     if(d==='edit'){if(!nofocus&&!bkFocusEdit(f))return;msg='עריכה על הקטע. מה שתכתוב גובר על ההצעה.'}
     if(d==='no'){msg='נדחה.'}
-    bkPut(f,d,why,now);bkSave();bkHideCard(true);bkRefresh();
-    if(msg)toast(msg,4000);
+    bkPut(f,d,why,now);bkSave();bkHideCard(true);bkRefreshAfter();
+    if(msg&&!SK.mode)toast(msg,4000);
     if(d==='no'&&BK.ON)setTimeout(()=>{},0)}
   window.bkDecide=bkDecide;
+  /* במצב מעבר מהיר: בלי חישוב מיקומים ובלי ציור חלונית בכל הכרעה (הדגשה וספירה בלבד) */
+  function bkRefreshAfter(){
+    if(!SK.mode){bkRefresh();return}
+    bkCount();skPassDraw();bkSoon()}
   /* עריכה ממוקדת: מצב עריכה דלוק, הסמן בסוף הקטע המסומן */
   function bkFocusEdit(f){
     if(!EDIT)setEdit(true);if(!EDIT)return false;
@@ -433,15 +439,18 @@
     if(have)go();else setTimeout(()=>{if(!EDIT)setEdit(true);go()},120);return true}
   let BKSV=null;function bkSave(){clearTimeout(BKSV);BKSV=setTimeout(bkFlush,300)}
   /* ביטול ההכרעה האחרונה שהוחלה כהחלפה (Ctrl+Z מחוץ לעריכה) */
-  function bkUndo(){
-    const u=BK.undo;if(!u)return false;BK.undo=null;
+  function bkUndoRec(u){
     if(u.k){const cur=ED.find(x=>x.k===u.k&&!x.fz);
       if(cur){edKeys();tomb(cur.k);ED=ED.filter(x=>x!==cur)}
       if(u.prev)ED.push(u.prev);
       dataSet(u.k,u.wasH);SLOTS=null;saveED();
       const el=$('#flow').querySelector('[data-ek="'+u.k+'"]');if(el)setHTML(el,u.wasH);
       drawEd();pubSoon();syncSoon()}
-    bkPut(u.f,'pending');bkSave();bkRefresh();toast('הפעולה בוטלה והממצא חזר לממתינים.');return true}
+    bkPut(u.f,'pending');bkSave()}
+  window.bkUndoRec=bkUndoRec;
+  function bkUndo(){
+    const u=BK.undo;if(!u)return false;BK.undo=null;
+    bkUndoRec(u);bkRefresh();toast('הפעולה בוטלה והממצא חזר לממתינים.');return true}
   document.addEventListener('keydown',e=>{
     if(!BK.ON||!BK.undo||!(e.ctrlKey&&!e.altKey&&e.code==='KeyZ'))return;
     const t=e.target;if(t&&t.isContentEditable)return;

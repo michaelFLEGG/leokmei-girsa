@@ -898,6 +898,7 @@ async function bkDec(req, env, url, method) {
                     now: str(it.now, 1000), t };
     if (it.rs) doc.dec[id].rs = str(it.rs, 20);        /* סיבת דחייה מהירה (סקירה, 13.10.2026) */
     if (it.sug) doc.dec[id].sug = str(it.sug, 1000);   /* ההצעה שהוצגה, ליד מה שהמחבר כתב */
+    if (it.auto) doc.dec[id].auto = 1;                  /* הוכרע או תוקן אוטומטית (סקירה חכמה, 14.10.2026) */
     n++;
   }
   doc.t = Date.now();
@@ -924,7 +925,7 @@ async function bkStats(req, env) {
    שדרוג הבקרה: תור בקשות סקירה, שרשורי "שוחח", וכללים נלמדים. הכול למנהל בלבד.
      GET  /skira/queue           התור (בקשות ממתינות והושלמו)
      POST /skira/queue           בקשה חדשה {slug, from, to, depth:'fast'|'full', note, est}
-     POST /skira/queue/update    עדכון בידי הווקר {id, status, result}
+     POST /skira/queue/update    עדכון בידי הווקר {id, status, result, prog:{done,total,next,eta}}
      GET  /skira/thread          שרשור של ממצא (slug, id)
      POST /skira/thread          הודעה {slug, id, who:'m'|'c', txt}; הווקר כותב who='c'
      GET  /skira/threads         שרשורים שהמחבר כתב בהם אחרון ולא נענו (slug)
@@ -944,6 +945,12 @@ async function skQueue(req, env, url, method, sub) {
     if (!it) return bad('בקשה לא נמצאה', 404);
     if (SK_STATUS.indexOf(b.status) >= 0) it.status = b.status;
     if (b.result) it.result = str(b.result, 2000);
+    /* התקדמות בדיקת התוכן, מוצגת בפס המצב של הדף (14.10.2026) */
+    if (b.prog && typeof b.prog === 'object') {
+      it.prog = { done: +b.prog.done || 0, total: +b.prog.total || 0, next: str(b.prog.next, 12),
+                  eta: +b.prog.eta || 0, notes: +b.prog.notes || 0 };
+    }
+    if (b.quick !== undefined) it.quick = +b.quick || 0;
     it.t2 = Date.now();
     await env.STORE.put('sk:q', JSON.stringify(doc));
     return json({ ok: true, doc });
@@ -954,6 +961,8 @@ async function skQueue(req, env, url, method, sub) {
   const it = { id: Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), slug,
                from: str(b.from, 12), to: str(b.to, 12), depth, note: str(b.note, 300),
                est: +b.est || 0, status: 'pending', t: Date.now() };
+  if (b.prio === 'now' || b.prio === 'prefetch') it.prio = b.prio;
+  if (b.quick !== undefined) it.quick = +b.quick || 0;
   doc.items.push(it);
   if (doc.items.length > 200) doc.items = doc.items.slice(-200);
   await env.STORE.put('sk:q', JSON.stringify(doc));

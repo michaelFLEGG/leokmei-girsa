@@ -6,6 +6,10 @@
     uv run python tools/skira/queue.py done <מזהה> "תוצאה"
     uv run python tools/skira/queue.py fail <מזהה> "סיבה"
     uv run python tools/skira/queue.py replies           שרשורי "שוחח" שהמחבר כתב בהם אחרון
+    uv run python tools/skira/queue.py prefetch <מסכת> [מספר-דפים]
+                                                         מזמין מראש סקירה מהירה לדפים שאחרי מה שנסקר לאחרונה (הכנה מראש)
+    uv run python tools/skira/queue.py progress <מזהה> <הושלמו> <סה"כ> [דף-הבא] [דקות]
+                                                         מעדכן את פס המצב שבדף ("הושלמו 3 דפים מתוך 11")
 
 הפקודה בווקר "הרץ סקירות ממתינות" מבצעת את docs/skira/הפעלה.md, שמתחיל כאן.
 """
@@ -33,6 +37,31 @@ def main():
         res = sys.argv[3] if len(sys.argv) > 3 else ''
         r = _api.call('/skira/queue/update', 'POST', {'id': sys.argv[2], 'status': st, 'result': res})
         print('עודכן:', st)
+        return
+    if cmd == 'prefetch':
+        slug = sys.argv[2]
+        n = int(sys.argv[3]) if len(sys.argv) > 3 else 6
+        src = C.jload(os.path.join(C.ROOT, 'data', 'sources', slug + '.json'), {})
+        pages = list((src.get('pages') or {}).keys())
+        done = [x for x in items() if x.get('slug') == slug and x.get('status') in ('done', 'pending', 'running')]
+        last = done[-1]['to'] if done else None
+        i = pages.index(last) + 1 if last in pages else 0
+        rng = pages[i:i + n]
+        if not rng:
+            print('אין דפים להכנה מראש.')
+            return
+        r = _api.call('/skira/queue', 'POST', {'slug': slug, 'from': rng[0], 'to': rng[-1], 'depth': 'fast',
+                                               'note': 'הכנה מראש', 'est': 12000 + 9000 * len(rng), 'prio': 'prefetch'})
+        print('נרשמה הכנה מראש:', slug, rng[0], 'עד', rng[-1], r['item']['id'])
+        return
+    if cmd == 'progress':
+        i = sys.argv[2]
+        done, total = int(sys.argv[3]), int(sys.argv[4])
+        nxt = sys.argv[5] if len(sys.argv) > 5 else ''
+        eta = int(sys.argv[6]) if len(sys.argv) > 6 else 0
+        _api.call('/skira/queue/update', 'POST', {'id': i, 'status': 'running',
+                                                  'prog': {'done': done, 'total': total, 'next': nxt, 'eta': eta}})
+        print('התקדמות עודכנה: %d/%d' % (done, total))
         return
     if cmd == 'replies':
         for s in C.slugs_with_findings():

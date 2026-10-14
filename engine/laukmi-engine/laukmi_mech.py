@@ -405,3 +405,50 @@ def unstyle_words(doc, words, allowed_styles, style_name, log):
         for a, b in sorted(set(hits), reverse=True):
             if remove_char_style(doc, p, a, b, style_name):
                 log["הוסר"] = log.get("הוסר", 0) + 1
+
+
+def run_verse_quotes(doc, allowed_styles, log):
+    """ציטוט פסוק (14.10.2026, סקירה חכמה): משלים גרש פותח או סוגר רק כשמקומו מוכח מול נוסח המקרא
+    (tools/skira/verse_quote.py). ציטוט שלם אינו נוגע. כל תיקון נרשם כעקוב אחר שינויים."""
+    import os, sys
+    here = os.path.dirname(os.path.abspath(__file__))
+    sk = os.path.join(os.path.dirname(os.path.dirname(here)), "tools", "skira")
+    tl = os.path.dirname(sk)
+    for d in (tl, sk):
+        if d not in sys.path:
+            sys.path.insert(0, d)
+    import verse_quote as VQ
+    cand = re.compile(r"[דובכלמשה]'[א-ת]|[א-ת]{4,}'(?![א-ת'])")
+    for p in list(doc.paragraphs()):
+        if doc.pstyle(p) not in allowed_styles:
+            continue
+        guard = 0
+        tried = set()
+        while guard < 12:
+            guard += 1
+            txt, _ = text_map(p)
+            done = False
+            for m in cand.finditer(txt):
+                mark = m.group(0)
+                r = VQ.classify(txt, mark)
+                if r.get("kind") not in ("open_only", "close_only") or not r.get("sure"):
+                    continue
+                key = (r["kind"], r["x"])
+                if key in tried:
+                    continue
+                tried.add(key)
+                if r["kind"] == "open_only":
+                    w = r["x"].split()[-1]
+                    a = r["at"]
+                    ok = tracked_replace(doc, p, a - len(w), a, w + "'")
+                else:
+                    w0 = r["x"].split()[0]
+                    a = r["at"] - (1 if r.get("prefix") else 0)
+                    new = (w0[0] + "'" + w0[1:]) if r.get("prefix") else ("'" + w0)
+                    ok = tracked_replace(doc, p, a, a + len(w0), new)
+                if ok:
+                    log["ציטוט פסוק"] = log.get("ציטוט פסוק", 0) + 1
+                    done = True
+                break
+            if not done:
+                break

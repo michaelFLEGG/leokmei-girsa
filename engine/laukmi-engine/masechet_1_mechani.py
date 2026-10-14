@@ -48,6 +48,9 @@ run("גרש נעשה גרשיים", run_raw, GERESH, ALL)
 run("גרש נעשה גרשיים", run_rx, GERESH_RX, ALL)
 run("גרש כפול", run_rx, DOUBLE_GERESH, ALL | HEADS)
 run("רווח אחרי גרש", run_rx, QUOTE_SPACE, ALL)
+_l = {}
+laukmi_mech.run_verse_quotes(doc, BODY, _l)
+log["ציטוט פסוק: גרש חסר לפי נוסח המקרא"] += sum(_l.values())
 run("רווח שנבלע", run_raw, SPACES, ALL)
 run("רווח אחרי פיסוק", run_rx, SPACE_RX, ALL)
 n = 0

@@ -5931,7 +5931,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _root=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
   has_bakara=bool(_glob.glob(os.path.join(_root,'data','bakara',slug+'-*.json')))
   if has_bakara:
-    JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"bakara_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"skira_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+    JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"bakara_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"skira_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"skira_pass.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   # צורת הדף (8.10.2026): הקוד והכפתור נכללים רק במסכת שיש לה צורת דף במניפסט. אחרת - כלום.
   _tzm=os.path.join(_root,'data','tzura','manifest.json')
   tz_man=None

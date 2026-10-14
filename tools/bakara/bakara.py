@@ -446,8 +446,17 @@ def main():
     for f in ded:
         if f['det'] in demoted:
             f['sev'] = 'קל'
+    # 14.10.2026 (סקירה חכמה, חלק א): גרש של ציטוט פסוק מוכרע בקוד מול נוסח המקרא ואינו נשאל
+    auto_log = []
+    try:
+        sys.path.insert(0, os.path.join(REPO, 'tools', 'skira'))
+        import verse_quote as VQ
+        ded, auto_log = VQ.apply(ded)
+        print('גרש ציטוט הוכרע בקוד: %d שלמים, %d הושלמו' % (len(auto_log), sum(1 for f in ded if f.get('auto'))))
+    except ImportError:
+        pass
     json.dump({'perek': perek, 'range': [lo, hi], 'n_blocks': len(P), 'catalog': cat,
-               'candidates': st.get('candidates') or [], 'findings': ded},
+               'candidates': st.get('candidates') or [], 'findings': ded, 'auto': auto_log},
               open(out_p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     c = collections.Counter((f['layer'], f['kind']) for f in ded)
     for k_, v in sorted(c.items()):

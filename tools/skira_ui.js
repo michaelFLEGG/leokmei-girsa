@@ -6,7 +6,10 @@
      גלוי למנהל בלבד: הכול נטען רק אחרי שהמכשיר הוכר ובקשות ה-API מוגנות במפתח. */
   const SK={tab:'notes',FIL:{typ:'',sev:'',conf:'',daf:'',st:'pend'},TH:{},LR:null,Q:null,rpt:{},
             split:(function(){try{return localStorage.getItem('lg-sk-split')||''}catch(e){return ''}})()};
-  BK.SKIP=new Set();
+  /* דילוג הוא החלטה ונשמר (14.10.2026): ההערה נדחית לסוף ואינה חוזרת במעבר הנוכחי */
+  BK.SKIPKEY='lg-sk-skip-'+SLUG;
+  BK.SKIP=new Set((function(){try{return JSON.parse(localStorage.getItem('lg-sk-skip-'+SLUG)||'[]')}catch(e){return []}})());
+  function skSkipSave(){try{localStorage.setItem(BK.SKIPKEY,JSON.stringify(Array.from(BK.SKIP).slice(-800)))}catch(e){}}
   function skGet(path){return api(path)}
   function skPost(path,body,method){return api(path,{method:method||'POST',body:JSON.stringify(body)})}
   function skCss(){if(document.getElementById('skcss'))return;
@@ -40,7 +43,10 @@
     if(w&&i&&!i.value.trim())i.value=w[1];
     bkKbDecide(f,'no')};
   window.skSkip=function(id){
-    BK.SKIP.add(id);bkHideCard(true);bkHL();bkAdvance()};
+    if(!id)return;
+    BK.SKIP.add(id);skSkipSave();
+    const L=BK.loc[id];if(L){SK.last=id;SK.lastOrd=L.ord;BK.curId=id;skSavePos()}
+    bkHideCard(true);if(!SK.mode)bkHL();bkAdvance()};
 
   /* ---- שוחח ---- */
   async function skThreadLoad(id){
@@ -106,7 +112,7 @@
     m.insertAdjacentHTML('beforeend','<span class="sksrc"><span class="dim">מקור:</span>'+
       has.map(x=>'<button class="'+(SK.split===x[0]?'on':'')+'" onclick="skSplit(\''+x[0]+'\')">'+x[1]+'</button>').join('')+
       (SK.split?'<button onclick="skSplit(\'off\')" title="סגירת המסך המפוצל">×</button>':'')+'</span>'+
-      '<button onclick="skTab(\'req\')" title="בקשת סקירה לטווח">בקש סקירה</button>')};
+      '<button onclick="skTab(\'req\')" title="בקשת סקירה לטווח: הבדיקות המהירות מוכנות מיד">סקור עכשיו</button>')};
 
   /* ---- מקלדת: Enter קבל, Delete דחה, חצים, E ערוך, C שוחח, Ctrl+Z ביטול ---- */
   function skTyping(t){return t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))}
@@ -123,7 +129,7 @@
     if(c==='Enter'||c==='NumpadEnter'){
       if(e.target&&/^(BUTTON|A)$/.test(e.target.tagName))return;
       e.preventDefault();e.stopPropagation();bkKbDecide(f,'ok');return}
-    if(c==='Delete'||c==='Backspace'){e.preventDefault();e.stopPropagation();skRejectOpen(f.id);return}
+    if(c==='Delete'||c==='Backspace'){e.preventDefault();e.stopPropagation();if(SK.mode&&!e.shiftKey){BK.rs='';bkKbDecide(f,'no')}else skRejectOpen(f.id);return}
     if(c==='KeyE'){e.preventDefault();e.stopPropagation();bkDecide(f.id,'edit');return}
     if(c==='KeyC'){e.preventDefault();e.stopPropagation();skChat(f.id);return}
     if(c==='KeyS'){e.preventDefault();e.stopPropagation();skSkip(f.id);return}
@@ -138,18 +144,19 @@
   function skDafs(){const o=[],seen={};(D.pages||[]).forEach((p,i)=>{const d=p.daf;if(d&&!seen[d]){seen[d]=1;o.push([d,i])}});return o}
   function skItem(f){const st=bkStatus(f),sn=bkSplitNote(f),dec=BK.DEC[f.id];
     const lab={ok:'התקבל',no:'נדחה',edit:'נערך',todo:'לביצוע'}[dec&&dec.d];
-    return '<div class="it'+(f.id===BK.curId?' cur':'')+'" onclick="bkGo(\''+f.id+'\',true)"><small>'+esc(f.daf||'')+' · '+esc(f.sev||'')+(f.conf?' · '+esc(f.conf):'')+(st!=='pending'&&lab?' · '+lab:'')+(BK.SKIP.has(f.id)?' · דולג':'')+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span><br><small>'+esc(sn.n.slice(0,110))+'</small></div>'}
+    return '<div class="it'+(f.id===BK.curId?' cur':'')+'" onclick="bkGo(\''+f.id+'\',true)"><small>'+esc(f.daf||'')+' · '+esc(f.sev||'')+(f.conf?' · '+esc(f.conf):'')+(st!=='pending'&&lab?' · '+lab:'')+(BK.SKIP.has(f.id)?' · נדחתה לסוף':'')+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span><br><small>'+esc(sn.n.slice(0,110))+'</small></div>'}
   function skNotesHtml(){
     const F=SK.FIL;
     const opt=(a,cur)=>a.map(o=>'<option value="'+esc(o[0])+'"'+(cur===o[0]?' selected':'')+'>'+esc(o[1])+'</option>').join('');
     const dafs=[['','כל הדפים']].concat(skDafs().map(x=>[x[0],'דף '+x[0]]));
-    let h='<div class="skf"><select onchange="SK.FIL.st=this.value;skDrawPanel()">'+opt([['pend','שטרם הוכרעו'],['todo','אושרו לביצוע'],['done','הוכרעו'],['all','הכל']],F.st)+'</select>'+
+    let h='<div class="skf"><select onchange="SK.FIL.st=this.value;skDrawPanel()">'+opt([['pend','שטרם הוכרעו'],['skipped','שדילגתי'],['todo','אושרו לביצוע'],['done','הוכרעו'],['all','הכל']],F.st)+'</select>'+
       '<select onchange="SK.FIL.typ=this.value;skDrawPanel()">'+opt([['','כל הסוגים']].concat(Object.keys(SKT).map(k=>[k,SKT[k][0]])),F.typ)+'</select>'+
       '<select onchange="SK.FIL.sev=this.value;skDrawPanel()">'+opt([['','כל החומרות'],['חמור','חמור'],['בינוני','בינוני'],['קל','קל']],F.sev)+'</select>'+
       '<select onchange="SK.FIL.conf=this.value;skDrawPanel()">'+opt([['','כל רמות הוודאות'],['גבוה','ודאי'],['בינוני','סביר'],['נמוך','ספק']],F.conf)+'</select>'+
       '<select onchange="SK.FIL.daf=this.value;skDrawPanel()">'+opt(dafs,F.daf)+'</select></div>';
     const pass=f=>{const st=bkStatus(f);
-      if(F.st==='pend'&&st!=='pending')return false;if(F.st==='todo'&&st!=='todo')return false;
+      if(F.st==='pend'&&(st!=='pending'||(SK.autoQ&&SK.autoQ.has(f.id))))return false;if(F.st==='todo'&&st!=='todo')return false;
+      if(F.st==='skipped'&&!(st==='pending'&&BK.SKIP.has(f.id)))return false;
       if(F.st==='done'&&(st==='pending'||st==='todo'))return false;
       if(F.typ&&bkTyp(f)!==F.typ)return false;if(F.sev&&f.sev!==F.sev)return false;
       if(F.conf&&(f.conf||'')!==F.conf)return false;if(F.daf&&(f.daf||'').trim()!==F.daf)return false;return true};
@@ -243,10 +250,11 @@
   async function skLrLoad(){try{const r=await skGet('/skira/learned');SK.LR=r.doc}catch(e){}}
   window.skDrawPanel=function(){
     const box=$('#bkpb');if(!box)return;
-    const T=[['notes','הערות'],['req','בקש סקירה'],['learn','מה למדתי']];
-    let h='<div class="sktabs">'+T.map(t=>'<button class="'+(SK.tab===t[0]?'on':'')+'" onclick="skTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div>';
-    if(SK.tab==='notes')h+=skNotesHtml();
-    else if(SK.tab==='req'){h+=skReqHtml()+skQHtml();
+    const T=[['notes','הערות'],['req','סקור עכשיו'],['auto','תוקן אוטומטית'],['learn','מה למדתי']];
+    let h=(window.skHeadHtml?skHeadHtml():'')+'<div class="sktabs">'+T.map(t=>'<button class="'+(SK.tab===t[0]?'on':'')+'" onclick="skTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div>';
+    if(SK.tab==='auto')h+=skAutoHtml();
+    else if(SK.tab==='notes')h+=(window.skTypesHtml?skTypesHtml():'')+skNotesHtml();
+    else if(SK.tab==='req'){h+=skReqNowHtml()+skQHtml();
       if(SK.Q===null)skQLoad().then(()=>{if(SK.tab==='req')skDrawPanel()})}
     else{h+=skLearnHtml();if(SK.LR===null)skLrLoad().then(()=>{if(SK.tab==='learn')skDrawPanel()})}
     box.innerHTML=h;

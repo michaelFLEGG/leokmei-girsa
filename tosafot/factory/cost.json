@@ -1,19 +1,20 @@
 {
- "total": 173.133311,
+ "total": 181.80489,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
   "bava-kamma": 41.682478,
-  "bava-metzia": 42.99484,
-  "bava-batra": 36.029377,
-  "gittin": 7.866402,
-  "kiddushin": 2.504864
+  "bava-metzia": 43.018038,
+  "bava-batra": 36.17366,
+  "gittin": 7.963414,
+  "kiddushin": 2.539185,
+  "yevamot": 8.372765
  },
  "byPhase": {
-  "write": 56.947832,
-  "review": 0.487349,
+  "write": 65.320598,
+  "review": 0.618682,
   "rewrite": 115.148351,
-  "rereview": 0.549781
+  "rereview": 0.717262
  },
  "batches": [
   {
@@ -3999,6 +4000,806 @@
     "n": 49
    },
    "cost": 1.904638
+  },
+  {
+   "at": "2026-10-14T17:57:56Z",
+   "slug": "bava-metzia",
+   "perek": 1,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 37,
+   "usage": {
+    "in": 85667,
+    "cw": 163116,
+    "cr": 0,
+    "out": 10414,
+    "n": 37
+   },
+   "cost": 0.023198
+  },
+  {
+   "at": "2026-10-14T17:57:59Z",
+   "slug": "bava-batra",
+   "perek": 1,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 27,
+   "usage": {
+    "in": 57552,
+    "cw": 123662,
+    "cr": 0,
+    "out": 8000,
+    "n": 27
+   },
+   "cost": 0.017244
+  },
+  {
+   "at": "2026-10-14T17:58:01Z",
+   "slug": "bava-batra",
+   "perek": 2,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 28,
+   "usage": {
+    "in": 67380,
+    "cw": 126306,
+    "cr": 4317,
+    "out": 9126,
+    "n": 28
+   },
+   "cost": 0.018303
+  },
+  {
+   "at": "2026-10-14T17:58:03Z",
+   "slug": "bava-batra",
+   "perek": 3,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 62,
+   "usage": {
+    "in": 160224,
+    "cw": 266470,
+    "cr": 4310,
+    "out": 23395,
+    "n": 62
+   },
+   "cost": 0.040529
+  },
+  {
+   "at": "2026-10-14T17:58:05Z",
+   "slug": "bava-batra",
+   "perek": 4,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 19,
+   "usage": {
+    "in": 36713,
+    "cw": 74349,
+    "cr": 4849,
+    "out": 6109,
+    "n": 19
+   },
+   "cost": 0.010822
+  },
+  {
+   "at": "2026-10-14T17:58:07Z",
+   "slug": "bava-batra",
+   "perek": 6,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 21,
+   "usage": {
+    "in": 35095,
+    "cw": 81844,
+    "cr": 4155,
+    "out": 5146,
+    "n": 21
+   },
+   "cost": 0.011246
+  },
+  {
+   "at": "2026-10-14T17:58:09Z",
+   "slug": "bava-batra",
+   "perek": 9,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 38,
+   "usage": {
+    "in": 85699,
+    "cw": 159904,
+    "cr": 0,
+    "out": 13737,
+    "n": 38
+   },
+   "cost": 0.02371
+  },
+  {
+   "at": "2026-10-14T17:58:11Z",
+   "slug": "bava-batra",
+   "perek": 10,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 33,
+   "usage": {
+    "in": 92314,
+    "cw": 137460,
+    "cr": 3516,
+    "out": 16204,
+    "n": 33
+   },
+   "cost": 0.02243
+  },
+  {
+   "at": "2026-10-14T17:58:14Z",
+   "slug": "gittin",
+   "perek": 1,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 27,
+   "usage": {
+    "in": 42059,
+    "cw": 125197,
+    "cr": 0,
+    "out": 6050,
+    "n": 27
+   },
+   "cost": 0.016135
+  },
+  {
+   "at": "2026-10-14T17:58:16Z",
+   "slug": "gittin",
+   "perek": 2,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 20,
+   "usage": {
+    "in": 24580,
+    "cw": 90976,
+    "cr": 0,
+    "out": 4490,
+    "n": 20
+   },
+   "cost": 0.011449
+  },
+  {
+   "at": "2026-10-14T17:58:17Z",
+   "slug": "gittin",
+   "perek": 3,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 16,
+   "usage": {
+    "in": 25235,
+    "cw": 75904,
+    "cr": 0,
+    "out": 3582,
+    "n": 16
+   },
+   "cost": 0.009748
+  },
+  {
+   "at": "2026-10-14T17:58:19Z",
+   "slug": "gittin",
+   "perek": 4,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 31,
+   "usage": {
+    "in": 36239,
+    "cw": 130298,
+    "cr": 3432,
+    "out": 6302,
+    "n": 31
+   },
+   "cost": 0.016434
+  },
+  {
+   "at": "2026-10-14T17:58:21Z",
+   "slug": "gittin",
+   "perek": 5,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 25,
+   "usage": {
+    "in": 28716,
+    "cw": 117799,
+    "cr": 0,
+    "out": 6299,
+    "n": 25
+   },
+   "cost": 0.01479
+  },
+  {
+   "at": "2026-10-14T17:58:23Z",
+   "slug": "gittin",
+   "perek": 6,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 8,
+   "usage": {
+    "in": 7589,
+    "cw": 36486,
+    "cr": 0,
+    "out": 1578,
+    "n": 8
+   },
+   "cost": 0.004423
+  },
+  {
+   "at": "2026-10-14T17:58:24Z",
+   "slug": "gittin",
+   "perek": 7,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 17,
+   "usage": {
+    "in": 13505,
+    "cw": 70695,
+    "cr": 0,
+    "out": 2181,
+    "n": 17
+   },
+   "cost": 0.00829
+  },
+  {
+   "at": "2026-10-14T17:58:26Z",
+   "slug": "gittin",
+   "perek": 8,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 10,
+   "usage": {
+    "in": 12661,
+    "cw": 45769,
+    "cr": 0,
+    "out": 2172,
+    "n": 10
+   },
+   "cost": 0.005753
+  },
+  {
+   "at": "2026-10-14T17:58:27Z",
+   "slug": "gittin",
+   "perek": 9,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 17,
+   "usage": {
+    "in": 21504,
+    "cw": 82114,
+    "cr": 0,
+    "out": 2813,
+    "n": 17
+   },
+   "cost": 0.00999
+  },
+  {
+   "at": "2026-10-14T17:58:29Z",
+   "slug": "kiddushin",
+   "perek": 1,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 68,
+   "usage": {
+    "in": 79054,
+    "cw": 270198,
+    "cr": 28826,
+    "out": 12819,
+    "n": 68
+   },
+   "cost": 0.034321
+  },
+  {
+   "at": "2026-10-14T17:58:35Z",
+   "slug": "yevamot",
+   "perek": 1,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 23,
+   "usage": {
+    "in": 59979,
+    "cw": 0,
+    "cr": 325542,
+    "out": 35606,
+    "n": 23
+   },
+   "cost": 1.230738
+  },
+  {
+   "at": "2026-10-14T17:58:35Z",
+   "slug": "yevamot",
+   "perek": 1,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 43,
+   "usage": {
+    "in": 138287,
+    "cw": 14153,
+    "cr": 594426,
+    "out": 43162,
+    "n": 43
+   },
+   "cost": 0.412124
+  },
+  {
+   "at": "2026-10-14T17:58:36Z",
+   "slug": "yevamot",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 4,
+   "usage": {
+    "in": 12640,
+    "cw": 0,
+    "cr": 56616,
+    "out": 5638,
+    "n": 4
+   },
+   "cost": 0.211227
+  },
+  {
+   "at": "2026-10-14T17:58:36Z",
+   "slug": "yevamot",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 26,
+   "usage": {
+    "in": 89055,
+    "cw": 14153,
+    "cr": 353825,
+    "out": 23042,
+    "n": 26
+   },
+   "cost": 0.250262
+  },
+  {
+   "at": "2026-10-14T17:58:38Z",
+   "slug": "yevamot",
+   "perek": 3,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 26,
+   "usage": {
+    "in": 87132,
+    "cw": 0,
+    "cr": 367978,
+    "out": 25892,
+    "n": 26
+   },
+   "cost": 0.234991
+  },
+  {
+   "at": "2026-10-14T17:58:38Z",
+   "slug": "yevamot",
+   "perek": 3,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 6,
+   "usage": {
+    "in": 16549,
+    "cw": 0,
+    "cr": 84924,
+    "out": 10168,
+    "n": 6
+   },
+   "cost": 0.34756
+  },
+  {
+   "at": "2026-10-14T17:58:40Z",
+   "slug": "yevamot",
+   "perek": 4,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 44,
+   "usage": {
+    "in": 143879,
+    "cw": 14153,
+    "cr": 608579,
+    "out": 39614,
+    "n": 44
+   },
+   "cost": 0.400684
+  },
+  {
+   "at": "2026-10-14T17:58:40Z",
+   "slug": "yevamot",
+   "perek": 4,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 11,
+   "usage": {
+    "in": 36099,
+    "cw": 0,
+    "cr": 155694,
+    "out": 18854,
+    "n": 11
+   },
+   "cost": 0.671307
+  },
+  {
+   "at": "2026-10-14T17:58:42Z",
+   "slug": "yevamot",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 14,
+   "usage": {
+    "in": 40240,
+    "cw": 14153,
+    "cr": 183989,
+    "out": 10253,
+    "n": 14
+   },
+   "cost": 0.12901
+  },
+  {
+   "at": "2026-10-14T17:58:42Z",
+   "slug": "yevamot",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 1,
+   "usage": {
+    "in": 1751,
+    "cw": 0,
+    "cr": 14154,
+    "out": 1624,
+    "n": 1
+   },
+   "cost": 0.051124
+  },
+  {
+   "at": "2026-10-14T17:58:44Z",
+   "slug": "yevamot",
+   "perek": 6,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 33,
+   "usage": {
+    "in": 115346,
+    "cw": 14153,
+    "cr": 452896,
+    "out": 30362,
+    "n": 33
+   },
+   "cost": 0.318107
+  },
+  {
+   "at": "2026-10-14T17:58:44Z",
+   "slug": "yevamot",
+   "perek": 6,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 13,
+   "usage": {
+    "in": 44607,
+    "cw": 0,
+    "cr": 184002,
+    "out": 18215,
+    "n": 13
+   },
+   "cost": 0.70141
+  },
+  {
+   "at": "2026-10-14T17:58:45Z",
+   "slug": "yevamot",
+   "perek": 7,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 3,
+   "usage": {
+    "in": 9776,
+    "cw": 0,
+    "cr": 42462,
+    "out": 4319,
+    "n": 3
+   },
+   "cost": 0.162163
+  },
+  {
+   "at": "2026-10-14T17:58:45Z",
+   "slug": "yevamot",
+   "perek": 7,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 15,
+   "usage": {
+    "in": 42861,
+    "cw": 14153,
+    "cr": 198142,
+    "out": 12755,
+    "n": 15
+   },
+   "cost": 0.144849
+  },
+  {
+   "at": "2026-10-14T17:58:47Z",
+   "slug": "yevamot",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 43,
+   "usage": {
+    "in": 140186,
+    "cw": 14153,
+    "cr": 594426,
+    "out": 41532,
+    "n": 43
+   },
+   "cost": 0.405873
+  },
+  {
+   "at": "2026-10-14T17:58:47Z",
+   "slug": "yevamot",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 8,
+   "usage": {
+    "in": 16830,
+    "cw": 0,
+    "cr": 113232,
+    "out": 11863,
+    "n": 8
+   },
+   "cost": 0.394879
+  },
+  {
+   "at": "2026-10-14T17:58:50Z",
+   "slug": "yevamot",
+   "perek": 9,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 11,
+   "usage": {
+    "in": 34478,
+    "cw": 0,
+    "cr": 155683,
+    "out": 10366,
+    "n": 11
+   },
+   "cost": 0.094092
+  },
+  {
+   "at": "2026-10-14T17:58:50Z",
+   "slug": "yevamot",
+   "perek": 9,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 1,
+   "usage": {
+    "in": 3699,
+    "cw": 0,
+    "cr": 14154,
+    "out": 1978,
+    "n": 1
+   },
+   "cost": 0.069714
+  },
+  {
+   "at": "2026-10-14T17:58:52Z",
+   "slug": "yevamot",
+   "perek": 10,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 6,
+   "usage": {
+    "in": 17078,
+    "cw": 0,
+    "cr": 84924,
+    "out": 6588,
+    "n": 6
+   },
+   "cost": 0.260705
+  },
+  {
+   "at": "2026-10-14T17:58:52Z",
+   "slug": "yevamot",
+   "perek": 10,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 28,
+   "usage": {
+    "in": 95406,
+    "cw": 14153,
+    "cr": 382131,
+    "out": 26482,
+    "n": 28
+   },
+   "cost": 0.275229
+  },
+  {
+   "at": "2026-10-14T17:58:53Z",
+   "slug": "yevamot",
+   "perek": 11,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 14,
+   "usage": {
+    "in": 40028,
+    "cw": 14153,
+    "cr": 183989,
+    "out": 9620,
+    "n": 14
+   },
+   "cost": 0.125633
+  },
+  {
+   "at": "2026-10-14T17:58:53Z",
+   "slug": "yevamot",
+   "perek": 11,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 1,
+   "usage": {
+    "in": 4552,
+    "cw": 0,
+    "cr": 14154,
+    "out": 2270,
+    "n": 1
+   },
+   "cost": 0.081279
+  },
+  {
+   "at": "2026-10-14T17:58:55Z",
+   "slug": "yevamot",
+   "perek": 12,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 20,
+   "usage": {
+    "in": 65230,
+    "cw": 14153,
+    "cr": 268907,
+    "out": 16841,
+    "n": 20
+   },
+   "cost": 0.191186
+  },
+  {
+   "at": "2026-10-14T17:58:55Z",
+   "slug": "yevamot",
+   "perek": 12,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 4,
+   "usage": {
+    "in": 14595,
+    "cw": 0,
+    "cr": 56616,
+    "out": 5532,
+    "n": 4
+   },
+   "cost": 0.218352
+  },
+  {
+   "at": "2026-10-14T17:58:57Z",
+   "slug": "yevamot",
+   "perek": 13,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 18,
+   "usage": {
+    "in": 63654,
+    "cw": 14153,
+    "cr": 240601,
+    "out": 15361,
+    "n": 18
+   },
+   "cost": 0.180795
+  },
+  {
+   "at": "2026-10-14T17:58:57Z",
+   "slug": "yevamot",
+   "perek": 13,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 1,
+   "usage": {
+    "in": 3206,
+    "cw": 0,
+    "cr": 14154,
+    "out": 2366,
+    "n": 1
+   },
+   "cost": 0.076949
+  },
+  {
+   "at": "2026-10-14T17:58:58Z",
+   "slug": "yevamot",
+   "perek": 14,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 9,
+   "usage": {
+    "in": 23228,
+    "cw": 14153,
+    "cr": 113224,
+    "out": 4721,
+    "n": 9
+   },
+   "cost": 0.0808
+  },
+  {
+   "at": "2026-10-14T17:58:58Z",
+   "slug": "yevamot",
+   "perek": 14,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 2,
+   "usage": {
+    "in": 7029,
+    "cw": 0,
+    "cr": 28308,
+    "out": 2849,
+    "n": 2
+   },
+   "cost": 0.109909
+  },
+  {
+   "at": "2026-10-14T17:59:00Z",
+   "slug": "yevamot",
+   "perek": 15,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 15,
+   "usage": {
+    "in": 50203,
+    "cw": 0,
+    "cr": 212295,
+    "out": 13958,
+    "n": 15
+   },
+   "cost": 0.130608
+  },
+  {
+   "at": "2026-10-14T17:59:00Z",
+   "slug": "yevamot",
+   "perek": 15,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 4,
+   "usage": {
+    "in": 12070,
+    "cw": 0,
+    "cr": 56616,
+    "out": 5782,
+    "n": 4
+   },
+   "cost": 0.211977
+  },
+  {
+   "at": "2026-10-14T17:59:01Z",
+   "slug": "yevamot",
+   "perek": 16,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 12,
+   "usage": {
+    "in": 39773,
+    "cw": 0,
+    "cr": 169836,
+    "out": 8673,
+    "n": 12
+   },
+   "cost": 0.09163
+  },
+  {
+   "at": "2026-10-14T17:59:01Z",
+   "slug": "yevamot",
+   "perek": 16,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 2,
+   "usage": {
+    "in": 4682,
+    "cw": 0,
+    "cr": 28308,
+    "out": 3226,
+    "n": 2
+   },
+   "cost": 0.107598
   }
  ],
  "tokens": {
@@ -4021,28 +4822,34 @@
    "out": 1343553
   },
   "bava-metzia": {
-   "in": 4503273,
-   "cw": 1802074,
+   "in": 4588940,
+   "cw": 1965190,
    "cr": 12962482,
-   "out": 1435988
+   "out": 1446402
   },
   "bava-batra": {
-   "in": 3701688,
-   "cw": 1468798,
-   "cr": 13541614,
-   "out": 1290179
+   "in": 4236665,
+   "cw": 2438793,
+   "cr": 13562761,
+   "out": 1371896
   },
   "gittin": {
-   "in": 1272956,
-   "cw": 0,
-   "cr": 5293318,
-   "out": 416496
+   "in": 1485044,
+   "cw": 775238,
+   "cr": 5296750,
+   "out": 451963
   },
   "kiddushin": {
-   "in": 226264,
-   "cw": 0,
-   "cr": 1924857,
-   "out": 135197
+   "in": 305318,
+   "cw": 270198,
+   "cr": 1953683,
+   "out": 148016
+  },
+  "yevamot": {
+   "in": 1474128,
+   "cw": 169836,
+   "cr": 6354787,
+   "out": 469512
   }
  }
 }

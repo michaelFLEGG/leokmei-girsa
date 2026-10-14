@@ -15,6 +15,18 @@
             curId:'',pin:false,FIL:{st:'pend',sev:'',det:''},undo:null,busy:false,R:[],
             OUT:'lg-bk-out-'+SLUG};
   const BKSEV={'חמור':['#c0392b','bk-hi'],'בינוני':['#c9770f','bk-mid'],'קל':['#6f7f9a','bk-lo']};
+  /* סוגי הערות קבועים (סקירה, 13.10.2026): כל ממצא שייך לסוג אחד. typ מפורש גובר; אחרת לפי הגלאי */
+  const SKT={a:['טעות בפשט','#b3261e'],b:['חסר שלב','#c9770f'],c:['לא מובן','#8a5a00'],d:['כותרת','#2e5b8a'],
+             e:['ניסוח','#6a4c93'],f:['מבנה','#2e6b3f'],g:['מכני','#6f7f9a'],h:['שאלה למחבר','#0b7285'],i:['בחר נוסח','#a0527c']};
+  const SKMAP={sem_hav:'a',sem_yih:'a',sem_hsr:'b',sem_lo:'c',cl_head:'d',nose_long:'d',
+    aram:'e',cl_aram:'e',sem_hash:'e',hash:'e',amor_long:'e',cl_adv:'e',
+    cl_mnum:'f',cl_hdr:'f',anchor:'f',cl_src:'f',cl_daf:'f',dafpos:'f',
+    joined:'g',split:'g',dbl:'g',typo:'g',orphan:'g',punct:'g',abbr:'g',amor_miss:'g',psuk_bad:'g',psuk_nik:'g',psuk_miss:'g',
+    sem_mil:'g',sem_sty:'g',cl_sty:'g',cl_cit:'g',cl_txt:'g',cl_bug:'g',alt:'i'};
+  function bkTyp(f){return f.typ&&SKT[f.typ]?f.typ:(SKMAP[f.det]||'g')}
+  /* סוגים שמותר לאשר בגורף: רק מכני ומבנה. בסוגים א-ג אין אישור גורף */
+  const SKBULK={f:1,g:1};
+  const SKWHY=[['no_err','לא טעות'],['my_way','כך אני כותב'],['unimp','לא חשוב'],['not_get','קלוד לא הבין את הסוגיה'],['not_here','נכון אבל לא כאן']];
   const BKX=/[֑-ׇ\s◄​-‏‪-‮]/;
   function bkCompact(t){let c='';const m=[];t=t||'';for(let i=0;i<t.length;i++){const ch=t[i];if(BKX.test(ch))continue;c+=ch;m.push(i)}return {c,m}}
   const BKCC=new Map();
@@ -76,9 +88,7 @@
   function bkCss(){if(document.getElementById('bkcss'))return;
     const st=document.createElement('style');st.id='bkcss';
     st.textContent=
-      '::highlight(bk-hi){text-decoration:underline;text-decoration-color:#c0392b;text-decoration-thickness:2px;text-underline-offset:3px}'+
-      '::highlight(bk-mid){text-decoration:underline;text-decoration-color:#c9770f;text-decoration-thickness:2px;text-underline-offset:3px}'+
-      '::highlight(bk-lo){text-decoration:underline;text-decoration-color:#6f7f9a;text-decoration-thickness:1px;text-underline-offset:3px}'+
+      Object.keys(SKT).map(k=>'::highlight(bk-t'+k+'){text-decoration:underline;text-decoration-color:'+SKT[k][1]+';text-decoration-thickness:'+(k==='g'?1:2)+'px;text-underline-offset:3px}').join('')+
       '::highlight(bk-todo){text-decoration:underline dotted;text-decoration-color:#2e5b8a;text-decoration-thickness:2px;text-underline-offset:3px}'+
       '::highlight(bk-cur){background-color:rgba(201,162,74,.38)}'+
       '#bkbtn2.on{background:#2e5b8a;color:#fff}#bkbtn2 .bkn{background:#c0392b;color:#fff;border-radius:9px;padding:0 6px;margin-right:4px;font-size:12px}'+
@@ -99,17 +109,17 @@
   function bkHL(){
     const f=$('#flow');BK.R=[];
     if(!window.CSS||!CSS.highlights||typeof Highlight==='undefined')return;
-    const H={'bk-hi':new Highlight(),'bk-mid':new Highlight(),'bk-lo':new Highlight(),'bk-todo':new Highlight(),'bk-cur':new Highlight()};
+    const H={'bk-todo':new Highlight(),'bk-cur':new Highlight()};Object.keys(SKT).forEach(k=>{H['bk-t'+k]=new Highlight()});
     if(BK.ON&&f&&!f.classList.contains('book')){
       for(const fd of BK.ord){
         const st=bkStatus(fd);if(st!=='pending'&&st!=='todo')continue;
         const r=bkDomRange(fd);if(!r)continue;
         BK.R.push({f:fd,range:r.range,el:r.el});
-        H[st==='todo'?'bk-todo':(BKSEV[fd.sev]||BKSEV['קל'])[1]].add(r.range);
+        H[st==='todo'?'bk-todo':'bk-t'+bkTyp(fd)].add(r.range);
         if(fd.id===BK.curId)H['bk-cur'].add(r.range)}}
     for(const k in H){if(H[k].size)CSS.highlights.set(k,H[k]);else CSS.highlights.delete(k)}}
   let BKT=null;function bkSoon(){if(!BK.ON)return;clearTimeout(BKT);BKT=setTimeout(()=>{bkRefresh()},220)}
-  function bkRefresh(){if(!BK.loaded)return;bkLocateAll();bkHL();bkCount();if($('#bkp')&&$('#bkp').classList.contains('open'))bkDrawPanel();bkBarDraw()}
+  function bkRefresh(){if(!BK.loaded)return;bkLocateAll();bkHL();bkCount();if($('#bkp')&&$('#bkp').classList.contains('open'))skDrawPanel();bkBarDraw()}
   window.bkMark=function(){if(BK.loaded&&BK.ON){bkLocateAll();bkHL();bkCount();bkBarDraw()}};
   (function(){const f=document.getElementById('flow');if(!f||!window.MutationObserver)return;
     new MutationObserver(()=>bkSoon()).observe(f,{childList:true,subtree:true,characterData:true})})();
@@ -120,12 +130,12 @@
     const b=$('#bkbtn2');if(!b)return;
     if(!isAdmin()||!BK.has){b.style.display='none';return}
     b.style.display='';
-    if(!admKey()){b.textContent='בקרה - הזן מפתח';return}
-    if(!BK.loaded){b.textContent=BK.err?'בקרה (שגיאה)':'בקרה…';b.title=BK.err||'';return}
+    if(!admKey()){b.textContent='סקירה - הזן מפתח';return}
+    if(!BK.loaded){b.textContent=BK.err?'סקירה (שגיאה)':'סקירה…';b.title=BK.err||'';return}
     const sec=SEC[cur]||{from:0,to:0};
     let nSec=0,nAll=0;
     for(const f of BK.F){if(!bkPend(f))continue;nAll++;const L=BK.loc[f.id];if(L&&L.pi>=sec.from&&L.pi<=sec.to)nSec++}
-    b.innerHTML='בקרה'+(nSec?'<span class="bkn">'+nSec+'</span>':'');
+    b.innerHTML='סקירה'+(nSec?'<span class="bkn">'+nSec+'</span>':'');
     b.title='ממצאי בקרה: '+nSec+' ממתינים בפרק הפתוח, '+nAll+' בכל המסכת';
     b.classList.toggle('on',BK.ON)}
   async function bkLoad(){
@@ -158,6 +168,8 @@
   /* רישום הכרעה: מיד במכשיר, ובנקודת הקליטה בצד */
   function bkPut(f,d,txt,now){
     const it={id:f.id,d,txt:txt||'',det:f.det,kind:f.kind,now:now||'',t:Date.now()};
+    if(BK.rs){it.rs=BK.rs;BK.rs=''}
+    {const rp=bkRep(f);const sg=rp?rp.y:(f.fix||'');if(sg&&d!=='pending')it.sug=String(sg).slice(0,900)}
     if(d==='pending')delete BK.DEC[f.id];else BK.DEC[f.id]=it;
     const a=bkOutbox().filter(x=>x.id!==f.id);a.push(it);bkOutSave(a);return it}
 
@@ -171,7 +183,7 @@
     BK.ON=!BK.ON;bkCss();
     if(!BK.ON){bkHideCard(true);const m=$('#bkbar');if(m)m.remove();bkHL();bkCount();return}
     bkRefresh();bkBarDraw();
-    if(!BK.ord.length)toast('אין ממצאי בקרה למסכת הזאת.')}
+    if(!BK.ord.length)toast('אין הערות סקירה למסכת הזאת. אפשר לבקש סקירה מהחלונית.')}
   window.bkToggle=bkToggle;
   function bkBarDraw(){
     if(!BK.ON)return;let m=$('#bkbar');
@@ -180,10 +192,10 @@
     for(const f of BK.F){if(!bkPend(f))continue;na++;const L=BK.loc[f.id];if(!L)continue;
       if(L.pi>=sec.from&&L.pi<=sec.to)ns++;if(D.pages[L.pi]&&D.pages[L.pi].daf===dafN)nd++}
     const lost=BK.F.filter(f=>bkPend(f)&&!BK.loc[f.id]).length;
-    m.innerHTML='<b>בקרה</b><span>בדף: '+nd+' · בפרק: '+ns+' · בכל המסכת: '+na+(lost?' · לא אותרו: '+lost:'')+'</span>'+
+    m.innerHTML='<b>סקירה</b><span>בדף: '+nd+' · בפרק: '+ns+' · בכל המסכת: '+na+(lost?' · לא אותרו: '+lost:'')+'</span>'+
       '<button class="go" onclick="bkNext(1)" title="לממצא הבא שטרם הוכרע (Alt+חץ למטה)">לממצא הבא ↓</button>'+
       '<button onclick="bkNext(-1)" title="לקודם (Alt+חץ למעלה)">↑</button>'+
-      '<button onclick="bkPanel()">רשימה</button><button onclick="bkToggle()">סיום</button><span class="kk" style="font-size:11px;opacity:.7" title="Enter / Alt+1 אשר · Alt+Delete / Alt+2 דחה · Alt+3 ערוך · Alt+Enter אשר תמיד">Alt+↑↓ · Enter אשר · Alt+Del דחה · Alt+3 ערוך</span>'}
+      '<button onclick="bkPanel()">רשימה</button><button onclick="bkToggle()">סיום</button><span class="kk" style="font-size:11px;opacity:.7" title="Enter קבל · Delete דחה · ←/→ הבאה/קודמת · E ערוך · C שוחח · S דלג · Ctrl+Z ביטול">Enter קבל · Del דחה · ←→ · E · C · S</span>';if(window.skBarExtra)skBarExtra(m)}
   function bkDafNow(){return (($('#curdaf')||{}).textContent||'').trim()}
 
   /* ---- כרטיס צף ---- */
@@ -195,22 +207,26 @@
     const old=$('#bkcard');if(old&&old.dataset.id===f.id&&(!pin||BK.pin)){return}
     if(old)old.remove();
     const c=document.createElement('div');c.className='bkcard';c.id='bkcard';c.dataset.id=f.id;
-    const sv=BKSEV[f.sev]||BKSEV['קל'],st=bkStatus(f),sn=bkSplitNote(f),rp=bkRep(f);
+    const sv=[SKT[bkTyp(f)][1]],st=bkStatus(f),sn=bkSplitNote(f),rp=bkRep(f);
     const dec=BK.DEC[f.id];
     let fx='';
     if(rp)fx='<div class="fx"><del>'+esc(rp.x)+'</del> ⟵ <ins>'+esc(rp.y)+'</ins>'+(rp.unsure?' <span class="dim">(המערכת אינה בטוחה)</span>':'')+'</div>';
     else if(f.fix)fx='<div class="fx">'+esc(f.fix)+'</div>';
-    c.innerHTML='<div class="h"><span class="bkchip" style="background:'+sv[0]+'">'+esc(f.kind)+'</span><span class="dim">'+esc(f.sev)+' · '+esc(f.layer||'')+(f.conf?' · ביטחון '+esc(f.conf):'')+' · דף '+esc(f.daf||'')+'</span>'+
+    c.innerHTML='<div class="h"><span class="bkchip" style="background:'+sv[0]+'">'+esc(SKT[bkTyp(f)][0])+' · '+esc(f.kind)+'</span><span class="dim">'+esc(f.sev)+' · '+esc(f.layer||'')+(f.conf?' · ביטחון '+esc(f.conf):'')+' · דף '+esc(f.daf||'')+'</span>'+
       '<button class="x" onmousedown="event.preventDefault()" onclick="bkHideCard(true)" aria-label="סגירה">×</button></div>'+
       '<div class="nt">'+esc(sn.n)+'</div>'+(sn.e?'<div class="ev">בגמרא: '+esc(sn.e)+'</div>':'')+fx+
       (st==='pending'||st==='todo'?
-        '<div class="bt"><button class="ok" onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'ok\')" title="'+esc(BKACT[bkAction(f)])+' - Enter / Alt+1">אשר <small class="kk">Enter</small></button>'+
-        '<button class="no" onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'no\')" title="דחה - Alt+Delete / Alt+2">דחה <small class="kk">Alt+Del</small></button>'+
-        '<button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'edit\')" title="ערוך - Alt+3 (אחר כך Alt+Enter לאישור, Escape לחזרה)">ערוך <small class="kk">Alt+3</small></button>'+
+        '<div class="bt"><button class="ok" onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'ok\')" title="'+esc(BKACT[bkAction(f)])+' - Enter">קבל <small class="kk">Enter</small></button>'+
+        '<button class="no" onmousedown="event.preventDefault()" onclick="skRejectOpen(\''+f.id+'\')" title="דחה - Delete">דחה <small class="kk">Del</small></button>'+
+        '<button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'edit\')" title="ערוך וקבל - E (אחר כך Alt+Enter)">ערוך וקבל <small class="kk">E</small></button>'+
+        '<button onmousedown="event.preventDefault()" onclick="skChat(\''+f.id+'\')" title="שוחח על ההערה - C">שוחח <small class="kk">C</small></button>'+
+        '<button onmousedown="event.preventDefault()" onclick="skSkip(\''+f.id+'\')" title="דלג - מעבר להערה הבאה בלי הכרעה">דלג</button>'+
         (st==='todo'?'<button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'ok\',1)">בוצע</button>':'')+'</div>'+
-        '<input type="text" id="bkwhy" maxlength="300" placeholder="נימוק (לא חובה)" aria-label="נימוק">'+
+        '<div id="skwhy" class="skwhy" style="display:none">'+SKWHY.map(w=>'<button onmousedown="event.preventDefault()" onclick="skReject(\''+f.id+'\',\''+w[0]+'\')">'+w[1]+'</button>').join('')+
+        '<input type="text" id="bkwhy" maxlength="300" placeholder="סיבה חופשית (לא חובה) ואז Enter" aria-label="נימוק" onkeydown="if(event.key===\'Enter\'){event.preventDefault();skReject(\''+f.id+'\',\'free\')}"></div>'+
+        '<div id="skchat" class="skchat" style="display:none"></div>'+
         (st==='todo'?'<div class="dim">אושר לביצוע: הוראה שטרם בוצעה.</div>':'')
-      :'<div class="dim">'+(dec?({ok:'אושר',no:'נדחה',edit:'נערך',todo:'אושר לביצוע'}[dec.d]||''):'')+(dec&&dec.txt?' · '+esc(dec.txt):'')+'</div><div class="bt"><button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'pending\')">החזר לממתינים</button></div>');
+      :'<div class="dim">'+(dec?({ok:'התקבל',no:'נדחה',edit:'נערך',todo:'אושר לביצוע'}[dec.d]||''):'')+(dec&&dec.txt?' · '+esc(dec.txt):'')+'</div><div class="bt"><button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'pending\')">החזר לממתינים</button><button onmousedown="event.preventDefault()" onclick="skChat(\''+f.id+'\')">שוחח</button></div><div id="skchat" class="skchat" style="display:none"></div>');
     document.body.appendChild(c);BK.pin=!!pin;BK.cardId=f.id;
     bkPlace(c,rect||bkRectOf(f));
     c.addEventListener('pointerenter',()=>{clearTimeout(BK.hideT)});
@@ -307,7 +323,8 @@
   function bkNext(dir){
     if(!BK.loaded){return}
     if(!BK.ON){bkToggle();return}
-    const P=BK.ord.filter(bkPend);if(!P.length){toast('אין עוד ממצאים שטרם הוכרעו.');return}
+    let P=BK.ord.filter(bkPend);if(!P.length){toast('אין עוד ממצאים שטרם הוכרעו.');return}
+    if(BK.SKIP&&BK.SKIP.size){const P2=P.filter(f=>!BK.SKIP.has(f.id));if(P2.length)P=P2;else BK.SKIP.clear()}
     const co=bkCurOrd();let pick;
     if(dir>0){pick=P.find(f=>BK.loc[f.id].ord>co);if(!pick){pick=P[0];toast('הגעת לסוף המסכת. חוזר להתחלה.')}}
     else{const b=P.filter(f=>BK.loc[f.id].ord<co);pick=b.length?b[b.length-1]:P[P.length-1]}
@@ -325,7 +342,7 @@
       if(r){const fl=$('#flow');
         if(fl.classList.contains('vert'))r.el.scrollIntoView({block:'center'});else toEl(r.el);
         setTimeout(()=>{bkHL();if(card)bkShowCard(f,true,bkRectOf(f))},60)}
-      bkBarDraw()},have?10:90)}
+      bkBarDraw();if(window.skAfterGo)skAfterGo(f)},have?10:90)}
   window.bkGo=bkGo;
 
   /* ---- ההכרעות ---- */
@@ -426,57 +443,17 @@
     e.preventDefault();bkUndo()},true);
 
   /* ---- חלונית "בקרה": ממצאים לפי סוג, סינון והכרעה גורפת ---- */
-  function bkPanel(){if(!BK.ON)bkToggle();else{panel('bkp');if($('#bkp').classList.contains('open'))bkDrawPanel()}}
+  function bkPanel(){if(!BK.ON)bkToggle();else{panel('bkp');if($('#bkp').classList.contains('open'))skDrawPanel()}}
   window.bkPanel=bkPanel;
-  function bkDrawPanel(){
-    const box=$('#bkpb');if(!box)return;
-    const FIL=BK.FIL;
-    const sts=[['pend','שטרם הוכרעו'],['todo','אושרו לביצוע'],['done','הוכרעו'],['all','הכל']];
-    const opt=(a,cur)=>a.map(o=>'<option value="'+esc(o[0])+'"'+(cur===o[0]?' selected':'')+'>'+esc(o[1])+'</option>').join('');
-    let h='<div><select onchange="BK.FIL.st=this.value;bkDrawPanel()">'+opt(sts,FIL.st)+'</select>'+
-      '<select onchange="BK.FIL.sev=this.value;bkDrawPanel()">'+opt([['','כל החומרות'],['חמור','חמורים'],['בינוני','בינוניים'],['קל','קלים']],FIL.sev)+'</select>'+
-      '<select onchange="BK.FIL.det=this.value;bkDrawPanel()">'+opt([['','כל הסוגים']].concat(Object.keys(BK.CAT).map(k=>[k,BK.CAT[k][1]])),FIL.det)+'</select></div>';
-    const pass=f=>{const st=bkStatus(f);
-      if(FIL.st==='pend'&&st!=='pending')return false;if(FIL.st==='todo'&&st!=='todo')return false;
-      if(FIL.st==='done'&&(st==='pending'||st==='todo'))return false;
-      if(FIL.sev&&f.sev!==FIL.sev)return false;if(FIL.det&&f.det!==FIL.det)return false;return true};
-    const lost=BK.F.filter(f=>!BK.loc[f.id]&&pass(f));
-    const groups={};BK.F.filter(f=>BK.loc[f.id]&&pass(f)).sort((a,b)=>BK.loc[a.id].ord-BK.loc[b.id].ord).forEach(f=>{(groups[f.det]=groups[f.det]||[]).push(f)});
-    const keys=Object.keys(groups).sort((a,b)=>{const ca=BK.CAT[a]||[],cb=BK.CAT[b]||[];
-      const w=x=>({'חמור':0,'בינוני':1,'קל':2}[x]);return (!!(ca[5])-!!(cb[5]))||(w(ca[3])-w(cb[3]))||groups[b].length-groups[a].length});
-    if(!keys.length&&!lost.length)h+='<div class="edsum">אין ממצאים בסינון הזה.</div>';
-    const total=BK.F.length,pend=BK.F.filter(bkPend).length;
-    h='<div class="edsum">'+pend+' ממתינים מתוך '+total+' · <button onclick="bkNext(1)" class="b">לממצא הבא ↓ (Alt+חץ למטה)</button></div>'+h;
-    for(const k of keys){const c=BK.CAT[k]||[k,k,'','קל',''],g=groups[k],col=c[5];
-      const pn=g.filter(bkPend).length;
-      h+='<details class="grp"'+(col?'':' open')+'><summary>'+esc(c[1])+' <span class="n">('+pn+' ממתינים מתוך '+g.length+')</span> <small style="color:'+(BKSEV[c[3]]||BKSEV['קל'])[0]+'">'+esc(c[3])+(col?' · מקופל: נדחה לרוב':'')+'</small></summary><div class="gb">'+
-        '<div class="dim" style="font-size:12px;color:#8a7d66">'+esc(c[4]||'')+'</div>'+
-        (pn?'<div class="gbt"><button onclick="bkBulk(\''+k+'\',\'ok\')">אשר את כל הסוג</button><button onclick="bkBulk(\''+k+'\',\'no\')">דחה את כל הסוג</button></div>':'')+
-        g.map(f=>bkItem(f)).join('')+'</div></details>'}
-    if(lost.length)h+='<h3>שלא אותרו ('+lost.length+')</h3><div class="dim">הטקסט השתנה מאז הבקרה. אינם נתלים בשורה אחרת.</div>'+
-      lost.map(f=>'<div class="it" onclick="bkShowLost(\''+f.id+'\')"><small>'+esc(f.daf||'')+' · '+esc(f.kind)+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span></div>').join('');
-    h+=bkInfoHtml();
-    box.innerHTML=h}
-  /* אזור המנהל: מה למדה הבקרה מהכרעותיך, וכמה עלה כל פרק (הנתונים נטענים רק למנהל) */
-  function bkInfoHtml(){let h='';
-    const R=BK.RULES&&BK.RULES.rules;
-    if(R&&R.length)h+='<details class="grp"><summary>כללים שנלמדו מהכרעותיך <span class="n">('+R.length+')</span></summary><div class="gb">'+
-      '<div class="dim" style="font-size:12px;color:#8a7d66">'+esc(BK.RULES.threshold||'')+'</div>'+
-      R.map(x=>'<div class="it" style="cursor:default"><b>'+esc(x.id)+' · '+esc(x.status)+'</b> <small>('+x.n+' הכרעות)</small><br>'+esc(x.text)+'<br><small>'+esc(x.effect)+'</small></div>').join('')+'</div></details>';
-    const C=BK.COSTS&&BK.COSTS.rows;
-    if(C&&C.length)h+='<details class="grp"><summary>עלות הבקרה לפי פרק</summary><div class="gb">'+
-      C.map(x=>'<div class="it" style="cursor:default">'+esc(x.slug)+' פרק '+x.perek+' · '+esc(x.model)+' · '+Number(x.tokens).toLocaleString('he-IL')+' טוקנים'+(x.usd!=null?' · כ-$'+Number(x.usd).toFixed(2):'')+' <small>('+esc(x.kind)+')</small>'+(x.note?'<br><small>'+esc(x.note)+'</small>':'')+'</div>').join('')+'</div></details>';
-    return h}
-  function bkItem(f){const st=bkStatus(f),sn=bkSplitNote(f);
-    const dec=BK.DEC[f.id];
-    return '<div class="it'+(f.id===BK.curId?' cur':'')+'" onclick="bkGo(\''+f.id+'\',true)"><small>'+esc(f.daf||'')+(st!=='pending'?' · '+({ok:'אושר',no:'נדחה',edit:'נערך',todo:'לביצוע'}[dec&&dec.d]||''):'')+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span><br><small>'+esc(sn.n.slice(0,110))+'</small></div>'}
+  /* bkDrawPanel, bkInfoHtml ו-bkItem הועברו ל-skira_ui.js (סקירה, 13.10.2026) */
   function bkShowLost(id){const f=BK.byId[id];if(!f)return;
     toast('לא אותר. הקשר: '+(f.context||f.text||'').slice(0,70)+' · '+(f.fix||''),7000)}
   window.bkShowLost=bkShowLost;
   /* הכרעה גורפת לסוג שלם: החלפות ברורות מוחלות כעריכה, הוראות נרשמות "אושר לביצוע" */
   async function bkBulk(det,d){
-    const list=BK.F.filter(f=>f.det===det&&bkPend(f)&&BK.loc[f.id]);if(!list.length)return;
-    const c=BK.CAT[det]||[det,det];
+    const byT=det.indexOf('typ:')===0,tp=byT?det.slice(4):'';const list=BK.F.filter(f=>(byT?bkTyp(f)===tp:f.det===det)&&bkPend(f)&&BK.loc[f.id]);if(!list.length)return;
+    if(d!=='no'&&!SKBULK[bkTyp(list[0])]){toast('בסוגים טעות בפשט, חסר שלב ולא מובן אין אישור גורף: כל הערה בנפרד.',5000);return}
+    const c=byT?[det,SKT[tp][0]]:(BK.CAT[det]||[det,det]);
     if(d==='no'){
       const why=prompt('דחיית כל '+list.length+' הממצאים מסוג "'+c[1]+'". נימוק (לא חובה):','');if(why===null)return;
       list.forEach(f=>bkPut(f,'no',why));bkSave();bkRefresh();toast('נדחו '+list.length+' ממצאים.');return}

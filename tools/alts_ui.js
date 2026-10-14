@@ -230,5 +230,6 @@
   window.altPanel=function(){pgEnsure();altPgDraw();var p=document.getElementById('altpg');if(p&&!p.classList.contains('open'))panel('altpg')};
   /* סימון לאחר כל רינדור: ה-flow נבנה מחדש בעת מעבר בין דפים */
   window.altMark=layerSoon;
+  window.altDecided=function(id){return !!DEC[id]};   /* סקירה (13.10.2026): חלונית ההערות מציגה את הנקודות כסוג "בחר נוסח" */
   setTimeout(layerSoon,400);
   })();

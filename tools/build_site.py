@@ -5931,7 +5931,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _root=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
   has_bakara=bool(_glob.glob(os.path.join(_root,'data','bakara',slug+'-*.json')))
   if has_bakara:
-    JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"bakara_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+    JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"bakara_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"skira_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   # צורת הדף (8.10.2026): הקוד והכפתור נכללים רק במסכת שיש לה צורת דף במניפסט. אחרת - כלום.
   _tzm=os.path.join(_root,'data','tzura','manifest.json')
   tz_man=None
@@ -5981,8 +5981,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           '<button id="tosmb" class="ib tsmb" onclick="tosModes()" aria-label="אופן תצוגת התוספות" title="אופן התצוגה: הערות שוליים, בצד, רשימה"><span class="t">אופן</span></button>') if tos_items else \
           ('<button id="tosbtn" class="ib tosnone" aria-disabled="true" onclick="try{toast(&quot;עדיין אין תוס&#39; במסכת זו&quot;,3500)}catch(e){}" title="עדיין אין תוס&#39; במסכת זו"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">תוס&#39;</span></button>')
   tzbtn='<button id="tzbtn" class="ib" onclick="tzBtn()" title="צורת הדף: עמוד הגמרא כפי שהוא מודפס (Alt+צ)"><svg class="ic" aria-hidden="true"><use href="#i-page"/></svg><span class="t">צורת הדף</span></button>' if tz_man else ''
-  bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="ממצאי הבקרה בתוך הדף (למנהל בלבד)">בקרה</button>' if has_bakara else ''
-  bkpanel=('<div class="panel" id="bkp"><button class="x" onclick="panel(&quot;bkp&quot;)">×</button><h3>בקרת תוכן - הממצאים לפי סוג</h3><div id="bkpb"></div></div>') if has_bakara else ''
+  bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="הערות הסקירה של קלוד בתוך הדף (למנהל בלבד)">סקירה</button>' if has_bakara else ''
+  bkpanel=('<div class="panel" id="bkp"><button class="x" onclick="panel(&quot;bkp&quot;)">×</button><h3>סקירת קלוד</h3><div id="bkpb"></div></div>') if has_bakara else ''
 
   import shutil as _sh
   _outdir=os.path.dirname(os.path.abspath(out_path))

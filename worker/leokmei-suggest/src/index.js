@@ -896,6 +896,8 @@ async function bkDec(req, env, url, method) {
     if (it.d === 'pending') { delete doc.dec[id]; n++; continue; }
     doc.dec[id] = { d: it.d, txt: str(it.txt, 1000), det: str(it.det, 20), kind: str(it.kind, 40),
                     now: str(it.now, 1000), t };
+    if (it.rs) doc.dec[id].rs = str(it.rs, 20);        /* סיבת דחייה מהירה (סקירה, 13.10.2026) */
+    if (it.sug) doc.dec[id].sug = str(it.sug, 1000);   /* ההצעה שהוצגה, ליד מה שהמחבר כתב */
     n++;
   }
   doc.t = Date.now();
@@ -916,6 +918,114 @@ async function bkStats(req, env) {
     }
   }
   return json({ ok: true, total, by });
+}
+
+/* ------------------------------------------------------------ סקירת קלוד (13.10.2026)
+   שדרוג הבקרה: תור בקשות סקירה, שרשורי "שוחח", וכללים נלמדים. הכול למנהל בלבד.
+     GET  /skira/queue           התור (בקשות ממתינות והושלמו)
+     POST /skira/queue           בקשה חדשה {slug, from, to, depth:'fast'|'full', note, est}
+     POST /skira/queue/update    עדכון בידי הווקר {id, status, result}
+     GET  /skira/thread          שרשור של ממצא (slug, id)
+     POST /skira/thread          הודעה {slug, id, who:'m'|'c', txt}; הווקר כותב who='c'
+     GET  /skira/threads         שרשורים שהמחבר כתב בהם אחרון ולא נענו (slug)
+     GET  /skira/learned         הכללים הנלמדים וביטולי המנהל
+     PUT  /skira/learned         החלפת הכללים (בידי הכלי, לא בדפדפן)
+     POST /skira/learned         ביטול או החזרת כלל {id, off}
+     POST /skira/ask             תשובה מיידית: פעילה רק אם הוגדר מפתח ב-env, ובתקרה חודשית */
+const SK_STATUS = ['pending', 'running', 'done', 'failed', 'cancelled'];
+async function skQueue(req, env, url, method, sub) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  const doc = (await env.STORE.get('sk:q', 'json')) || { items: [] };
+  if (method === 'GET') return json({ ok: true, doc });
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  if (sub === 'update') {
+    const it = doc.items.find(x => x.id === str(b.id, 20));
+    if (!it) return bad('בקשה לא נמצאה', 404);
+    if (SK_STATUS.indexOf(b.status) >= 0) it.status = b.status;
+    if (b.result) it.result = str(b.result, 2000);
+    it.t2 = Date.now();
+    await env.STORE.put('sk:q', JSON.stringify(doc));
+    return json({ ok: true, doc });
+  }
+  const slug = str(b.slug, 30);
+  if (!slugOk(slug)) return bad('מסכת לא תקינה');
+  const depth = b.depth === 'full' ? 'full' : 'fast';
+  const it = { id: Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), slug,
+               from: str(b.from, 12), to: str(b.to, 12), depth, note: str(b.note, 300),
+               est: +b.est || 0, status: 'pending', t: Date.now() };
+  doc.items.push(it);
+  if (doc.items.length > 200) doc.items = doc.items.slice(-200);
+  await env.STORE.put('sk:q', JSON.stringify(doc));
+  return json({ ok: true, item: it, doc });
+}
+async function skThread(req, env, url, method, all) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b = null;
+  if (method === 'POST') { try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); } }
+  const sl = b ? str(b.slug, 30) : (url.searchParams.get('slug') || '');
+  if (!slugOk(sl)) return bad('מסכת לא תקינה');
+  const key = 'sk:th:' + sl;
+  const doc = (await env.STORE.get(key, 'json')) || { slug: sl, th: {} };
+  if (method === 'GET') {
+    if (all) {
+      const open = {};
+      for (const id in doc.th) { const m = doc.th[id]; if (m.length && m[m.length - 1].who === 'm') open[id] = m; }
+      return json({ ok: true, open, n: Object.keys(doc.th).length });
+    }
+    const id = url.searchParams.get('id') || '';
+    return json({ ok: true, msgs: doc.th[id] || [] });
+  }
+  const id = str(b.id, 24);
+  if (!/^[0-9a-f]{6,24}$/.test(id)) return bad('מזהה לא תקין');
+  const who = b.who === 'c' ? 'c' : 'm';
+  const m = doc.th[id] || (doc.th[id] = []);
+  m.push({ who, txt: str(b.txt, 2000), t: Date.now() });
+  if (m.length > 60) m.splice(0, m.length - 60);
+  await env.STORE.put(key, JSON.stringify(doc));
+  return json({ ok: true, msgs: m });
+}
+async function skLearned(req, env, method) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  const doc = (await env.STORE.get('sk:lr', 'json')) || { rules: [], off: {}, rates: {} };
+  if (method === 'GET') return json({ ok: true, doc });
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  if (method === 'PUT') {
+    if (Array.isArray(b.rules)) doc.rules = b.rules.slice(0, 300);
+    if (b.rates && typeof b.rates === 'object') doc.rates = b.rates;
+  } else {
+    const id = str(b.id, 24);
+    if (!id) return bad('מזהה כלל חסר');
+    if (b.off) doc.off[id] = Date.now(); else delete doc.off[id];
+  }
+  doc.t = Date.now();
+  await env.STORE.put('sk:lr', JSON.stringify(doc));
+  return json({ ok: true, doc });
+}
+async function skAsk(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (!env.ANTHROPIC_API_KEY) return json({ ok: true, immediate: false, why: 'no-key' });
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const mon = new Date().toISOString().slice(0, 7), ck = 'sk:cost:' + mon;
+  const spent = +((await env.STORE.get(ck)) || 0), cap = +(env.SKIRA_CAP_USD || 20);
+  if (spent >= cap) return json({ ok: true, immediate: false, why: 'cap', spent, cap });
+  const sys = 'אתה סוקר של לאוקמי גירסא (ביאור לגמרא). המחבר שואל על הערה שהצעת. ענה בעברית, בקצרה (עד חמישה משפטים), בלי מקף ארוך, והודה אם טעית.';
+  const msg = 'ההערה: ' + str(b.note, 600) + '\nהקשר: ' + str(b.ctx, 900) + '\nשרשור:\n' +
+    (Array.isArray(b.msgs) ? b.msgs.slice(-8).map(m => (m.who === 'm' ? 'המחבר: ' : 'קלוד: ') + str(m.txt, 600)).join('\n') : '');
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-5-5', max_tokens: 500, system: sys, messages: [{ role: 'user', content: msg }] })
+  });
+  if (!r.ok) return json({ ok: true, immediate: false, why: 'api-' + r.status });
+  const j = await r.json();
+  const u = j.usage || {};
+  const usd = ((u.input_tokens || 0) * 3 + (u.output_tokens || 0) * 15) / 1e6;
+  await env.STORE.put(ck, String(spent + usd));
+  const txt = ((j.content || []).find(c => c.type === 'text') || {}).text || '';
+  return json({ ok: true, immediate: true, txt, spent: spent + usd, cap });
 }
 
 async function exportAll(req, env) {
@@ -1674,6 +1784,12 @@ export default {
       if (p === '/bakara/data' && (req.method === 'GET' || req.method === 'PUT')) return await bkData(req, env, url, req.method);
       if (p === '/bakara/dec' && (req.method === 'GET' || req.method === 'POST')) return await bkDec(req, env, url, req.method);
       if (p === '/bakara/stats' && req.method === 'GET') return await bkStats(req, env);
+      if (p === '/skira/queue' && (req.method === 'GET' || req.method === 'POST')) return await skQueue(req, env, url, req.method, '');
+      if (p === '/skira/queue/update' && req.method === 'POST') return await skQueue(req, env, url, 'POST', 'update');
+      if (p === '/skira/thread' && (req.method === 'GET' || req.method === 'POST')) return await skThread(req, env, url, req.method, false);
+      if (p === '/skira/threads' && req.method === 'GET') return await skThread(req, env, url, 'GET', true);
+      if (p === '/skira/learned' && (req.method === 'GET' || req.method === 'PUT' || req.method === 'POST')) return await skLearned(req, env, req.method);
+      if (p === '/skira/ask' && req.method === 'POST') return await skAsk(req, env);
       if (p === '/export' && req.method === 'GET') return await exportAll(req, env);
       if (p === '/ln/sync' && req.method === 'POST') return await lnSync(req, env);
       if (p === '/ln/code' && req.method === 'POST') return await lnCode(req, env);

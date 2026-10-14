@@ -68,13 +68,27 @@ CATALOG += [
     ('cl_txt',   'תיקון טקסט',              'מודל', 'קל',    'תיקון כתיב או הקלדה שאינו ודאי'),
     ('cl_bug',   'באג באתר',                'קוד',  'בינוני', 'תקלה שנמצאה בתצוגה או בבנייה'),
 ]
+# 13.10.2026 (סקירה): סוגי הממצא שהסוקר החזק כותב לפי הסוגים הקבועים של המנה (tools/skira)
+CATALOG += [
+    ('sk_pshat', 'טעות בפשט',     'מודל', 'חמור',  'הפיכת דין, ייחוס שגוי, הבנה שגויה של הסוגיה לפי פירוש הגמרא'),
+    ('sk_step',  'חסר שלב',       'מודל', 'בינוני', 'קושיא בלי תירוץ, מסקנה שנשמטה, ראיה או תנאי שבלעדיהם הסוגיה לא מובנת'),
+    ('sk_lo',    'לא מובן (סקירה)', 'מודל', 'קל',   'קיצור סתום, כינוי בלי נושא, עוגן וגוף שאינם נקראים ברצף'),
+    ('sk_head',  'כותרת (סקירה)', 'מודל', 'קל',    'הצעת כותרת נושא, או תיקון כותרת קיימת (2 עד 6 מילים)'),
+    ('sk_word',  'ניסוח',         'מודל', 'קל',    'מיותר, כפילות, כלל מכללי המחבר שנשבר; אפשר 1-2 נוסחים חלופיים'),
+    ('sk_struct', 'מבנה',         'מודל', 'קל',    'ד"ה משנה חסר, משנה בלי מספר, הדרן חסר, רווח לפני בפתיחת סוגיה'),
+    ('sk_mech',  'מכני (סקירה)',  'מודל', 'קל',    'כתיב, פיסוק, סגנון חסר, ציון דף, מקף ארוך'),
+    ('sk_q',     'שאלה למחבר',    'מודל', 'קל',    'הסוקר אינו בטוח ואינו מציע תיקון, אלא שואל (אינו נספר כממצא)'),
+]
 CAT = {c[0]: c for c in CATALOG}
 SEMKIND = {'קיצור לפי #': 'sem_hash', 'שגיאת הבנה': 'sem_hav', 'ייחוס שגוי': 'sem_yih', 'מילה משובשת': 'sem_mil',
            'חסר מהלך': 'sem_hsr', 'לא מובן': 'sem_lo', 'סגנון שגוי': 'sem_sty',
            'כותרת נוסח קלוד': 'cl_head', 'ארמית שלא תורגמה': 'cl_aram', 'ציטוט בספק': 'cl_cit',
            'שם בהדרן שונה מן הפתיחה': 'cl_hdr', 'ד"ה משנה / מספור': 'cl_mnum', 'הצמדת מקור': 'cl_src',
            'רציפות דפים': 'cl_daf', 'סגנון בספק': 'cl_sty', 'מנוע מתקדם': 'cl_adv', 'תיקון טקסט': 'cl_txt',
-           'באג באתר': 'cl_bug'}
+           'באג באתר': 'cl_bug',
+           'טעות בפשט': 'sk_pshat', 'חסר שלב': 'sk_step', 'לא מובן (סקירה)': 'sk_lo', 'כותרת': 'sk_head',
+           'כותרת (סקירה)': 'sk_head', 'ניסוח': 'sk_word', 'מבנה': 'sk_struct', 'מכני': 'sk_mech',
+           'מכני (סקירה)': 'sk_mech', 'שאלה למחבר': 'sk_q'}
 
 
 _PACKS = {}
@@ -396,9 +410,29 @@ def main():
     dp = os.path.join(bdir, 'decisions-%s.json' % slug)
     if os.path.exists(dp):
         decided = json.load(open(dp, encoding='utf-8'))
+        xp = os.path.join(REPO, 'data', 'skira', 'external-%s.json' % slug)   # 13.10.2026: תיקונים שפורסמו מחוץ לסקירה
+        if os.path.exists(xp):
+            decided.update(json.load(open(xp, encoding='utf-8')))
         before = len(ded)
         ded = [f for f in ded if f['id'] not in decided]
         print('הוכרעו בעבר ואינם חוזרים:', before - len(ded))
+    # 13.10.2026 (סקירה): "לא להעיר על זה שוב" (דפוס שהמחבר דחה) וסוגי מודל מושתקים (דחייה מעל 80%)
+    try:
+        sys.path.insert(0, os.path.join(REPO, 'tools', 'skira'))
+        import skira_common as SKC
+        sp = os.path.join(REPO, 'data', 'skira', 'suppress.json')
+        sup = json.load(open(sp, encoding='utf-8')) if os.path.exists(sp) else {}
+        pats = set(sup.get('patterns') or [])
+        muted = set(sup.get('muted') or [])
+        n0 = len(ded)
+        ded = [f for f in ded if (f['det'] + '|' + SKC.norm(f.get('mark', ''))) not in pats
+               and not (f['det'] in muted and f['layer'] == 'מודל')]
+        if n0 != len(ded):
+            print('הושתקו לפי למידה מהכרעות:', n0 - len(ded))
+        for f in ded:
+            f['typ'] = SKC.typ_of(f)
+    except ImportError:
+        pass
     stp = os.path.join(bdir, 'stats.json')
     st = json.load(open(stp, encoding='utf-8')) if os.path.exists(stp) else {}
     demoted = set(st.get('demoted') or [])

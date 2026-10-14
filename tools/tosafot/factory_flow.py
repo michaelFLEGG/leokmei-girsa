@@ -270,6 +270,21 @@ def ingest_review(slug, perek, c, work, results):
                 work['recs'][i]['rv_s'] = 'פלט ביקורת לא JSON'
                 work['recs'][i]['rv_done'] = True
             continue
+        if isinstance(got, list):   # 14.10: המבקר החדש מחזיר לפעמים רשימה במקום מילון
+            m = {}
+            for pos, x in enumerate(got):
+                if not isinstance(x, dict):
+                    continue
+                k = x.get('id') or x.get('rid') or x.get('מזהה')
+                if k is None and len(x) == 1 and isinstance(next(iter(x.values())), dict):
+                    m.update(x)
+                elif k is not None:
+                    m[str(k)] = x
+                elif pos < len(ids):
+                    m[ids[pos]] = x
+            got = m
+        if not isinstance(got, dict):
+            got = {}
         for i in ids:
             rec = work['recs'][i]
             rec['rv_s'], rec['rv_q'], rec['rv_done'] = '', {}, True

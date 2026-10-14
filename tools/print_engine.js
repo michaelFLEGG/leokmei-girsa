@@ -326,7 +326,7 @@
     function noteHTML(n){
       var it=byN[n];var t=PUBN[n]||it.sum||'';
       var num=prof.notes.numbering==='digits'?String(it.n):tosHeb(it);
-      return '<div class="fnn" id="fn-'+it.n+'"><a class="fnl" href="#tm-'+it.n+'"><span class="fnum">'+ge(num)+'</span></a> <span class="fdh">'+noteText(it.dh)+'</span> - '+noteText(t)+'</div>'}
+      return '<div class="fnn" id="fn-'+it.n+'"><a class="fnl" href="#tm-'+it.n+'"><span class="fnum">'+ge(num)+'</span></a> <span class="fdh">'+noteText(it.dhs||it.dh)+'</span> - '+noteText(t)+'</div>'}
     var meas=document.createElement('div');meas.id='prnmeas';document.body.appendChild(meas);
     var fcache={};
     function fnBox(ids){

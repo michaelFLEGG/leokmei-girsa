@@ -339,11 +339,35 @@ def run(site):
         os.remove(os.path.join(qdir, fn))
     ddir = os.path.join(ROOT, 'data', 'quiz')
     idx, total = {}, 0
+    # שאלות תוספות מפורסמות (14.10.2026): st = 'מפורסם' נכנסות ישר לבנק הלומדים, לפי דף, בלי תור אישור. ההגהה בדיעבד.
+    # מנהל שהסתיר (st = 'מוסתר') או מחק: לא מפורסמת. 'ממתין' (ישן) ממשיכה לתור האישור, כפי שהיה.
+    tos_pub = {}
     for fn in sorted(os.listdir(ddir)):
-        if not fn.endswith('.reviewed.txt'):
+        if not (fn.startswith('tos-') and fn.endswith('.json')):
             continue
-        slug = fn[:-len('.reviewed.txt')]
-        qs = parse_reviewed(slug, os.path.join(ddir, fn))
+        tdoc = json.load(io.open(os.path.join(ddir, fn), encoding='utf-8'))
+        tslug = tdoc.get('slug') or fn[len('tos-'):-len('.json')]
+        for x in tdoc.get('items', []):
+            if x.get('st') != 'מפורסם':
+                continue
+            dk = x['daf']
+            n = re.sub(r'[^א-ת]', '', dk)
+            d = '%s ע"%s' % (n, 'א' if dk.endswith('.') else 'ב')
+            if not DAF_RE.match(d):
+                sys.exit('שגיאה: דף לא בתבנית בשאלת תוספות %s: %r' % (x['i'], dk))
+            if any(c in (x['q'] + x['a']) for c in '–—'):
+                sys.exit('שגיאה: קו מפריד ארוך בשאלת תוספות %s' % x['i'])
+            if ';' in (x['q'] + x['a']):
+                sys.exit('שגיאה: תו ; בשאלת תוספות %s (כלל: נקודה)' % x['i'])
+            tos_pub.setdefault(tslug, []).append({'i': x['i'], 'p': x['p'], 'd': d, 'lvl': x['lvl'], 'q': x['q'], 'o': [x['a'], '', '', ''], 'a': 0,
+                                                  'x': '', 'open': 1, 'dh': x.get('ds') or x.get('d', ''), 'tos': x.get('tos', 0), 'type': x.get('type', '')})
+    done_bank = set()
+    names = sorted(os.listdir(ddir))
+    reviewed = [fn[:-len('.reviewed.txt')] for fn in names if fn.endswith('.reviewed.txt')]
+    for slug in reviewed + [s_ for s_ in sorted(tos_pub) if s_ not in reviewed]:
+        fn = slug + '.reviewed.txt'
+        qs = parse_reviewed(slug, os.path.join(ddir, fn)) if slug in reviewed else []
+        qs = qs + tos_pub.get(slug, [])
         name = slug
         hp = os.path.join(site, slug + '.html')
         if os.path.exists(hp):

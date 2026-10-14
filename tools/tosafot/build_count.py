@@ -16,6 +16,8 @@
     uv run python tools/tosafot/build_count.py kiddushin 1
 """
 import os, sys, re, json, io
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import dhshort
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 NIK = re.compile('[֑-ׇ]')
@@ -67,6 +69,10 @@ def norm(t):
 def split_dh(t):
     """דיבור המתחיל: עד ' - ' בתוך ארבע עשרה המילים הראשונות; אחרת עד הנקודה או הנקודתיים הראשונים."""
     words = t.split(' ')
+    # 14.10.2026: מקף צמוד למילה ("וכו' -בירושלמי") הוא גבול ד"ה, כשאין מקף רגיל לפניו
+    tight, why = dhshort.fix_dh_split(t, '')
+    if tight:
+        return tight, t[len(tight):].lstrip(' -').strip(), why
     m = re.search(r' - ', t)
     if m and len(t[:m.start()].split(' ')) <= 14:
         return t[:m.start()].strip(), t[m.end():].strip(), 'מקף'
@@ -119,6 +125,9 @@ def main():
         r['hn'] = heb_num(n)
         r['dafKey'] = daf_key(r['daf'])
         r['url'] = 'https://www.sefaria.org/' + r['ref'].replace(' ', '_').replace(':', '.')
+    un = dhshort.unique_shorts(kept, key=lambda it: it['dafKey'])
+    for r in kept:
+        r['dhs'] = un[id(r)]      # הד"ה המוצג (מקוצר); dh נשאר המלא
     out = {'slug': slug, 'masechet': chap['masechet'], 'perek': perek, 'perekName': ch['name'],
            'from': ch['from'], 'fromLine': ch.get('fromLine', 0), 'to': ch['to'], 'toLine': ch.get('toLine', 0),
            'countedThrough': ct or '', 'verifiedThrough': ch.get('verifiedThrough', ''),

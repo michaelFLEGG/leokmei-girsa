@@ -434,7 +434,7 @@ def publish(slug, perek, c, work, flagged):
         for qi, q in enumerate(w.get('q_keep') or []):
             qitems.append({'i': 't:%s:%s:%d' % (slug, key, qi), 'kind': 'o', 'tos': int(key), 'p': perek, 'n': r['n'], 'daf': r['dafKey'],
                            'd': r['dh'], 'type': q['t'], 'lvl': {'קל': 1, 'בינוני': 2, 'קשה': 3}.get(q['lvl'], 2), 'q': q['q'], 'a': q['a'],
-                           'ref': r['ref'], 'st': 'ממתין'})
+                           'ref': r['ref'], 'st': 'מפורסם', 'ds': r.get('dhs') or r['dh'], 'rv': 0})
     jdump(sp, styles)
     jdump(ap, anchors)
     # הנחת כל הסימנים בסדר המספרים והשער (רציפות וסדר): כשל עוצר את הפרסום
@@ -446,13 +446,14 @@ def publish(slug, perek, c, work, flagged):
     r = subprocess.run([sys.executable, os.path.join(HERE, 'make_live.py'), slug, str(perek)], capture_output=True, text=True, encoding='utf-8')
     if r.returncode != 0:
         raise Halt('make_live נכשל: ' + (r.stderr or r.stdout)[-400:])
-    # שאלות: קובץ אחד למסכת, בתור האישור של המנהל (סטטוס ממתין). מיזוג לפי מזהה: שאלה שהמנהל ערך אינה נדרסת.
+    # שאלות (14.10.2026): קובץ אחד למסכת. שאלה שעברה את השערים והמבקר מתפרסמת מיד (סטטוס מפורסם), וההגהה בדיעבד:
+    # rv=0 מסמן למנהל "לא הוגה עדיין". מיזוג לפי מזהה: שאלה שהמנהל ערך, הסתיר או מחק אינה נדרסת.
     qp = os.path.join(F.ROOT, 'data', 'quiz', 'tos-%s.json' % slug)
-    qdoc = jload(qp) or {'slug': slug, 'kind': 'open', 'status': 'ממתין', 'style': 'tosafot-factory', 'items': []}
+    qdoc = jload(qp) or {'slug': slug, 'kind': 'open', 'status': 'מפורסם', 'style': 'tosafot-factory', 'items': []}
     have = {x['i']: x for x in qdoc['items']}
     for x in qitems:
-        if x['i'] in have and have[x['i']].get('st') != 'ממתין':
-            continue
+        if x['i'] in have:
+            continue      # קיימת: אינה נדרסת (הגהת המנהל, הסתרה או עריכה)
         have[x['i']] = x
     qdoc['items'] = sorted(have.values(), key=lambda x: (x['p'], x['n'], x['i']))
     jdump(qp, qdoc)
@@ -468,7 +469,7 @@ def notify(slug, perek, res, c):
     name = masechet_name(slug)
     ch = [x for x in F.chapters(slug) if x['n'] == perek][0]
     base = c['siteBase']
-    line = '- %s | %s פרק %d (%s): %d תוספות חדשות באתר, %d שאלות ממתינות, %d סומנו למנהל. קישור: %s/%s.html (בכניסת מנהל: תוס\' ← הערות שוליים; כל שורה מסומנת "לא הוגה").' % (
+    line = '- %s | %s פרק %d (%s): %d תוספות חדשות באתר, %d שאלות פורסמו, %d סומנו למנהל. קישור: %s/%s.html (בכניסת מנהל: תוס\' ← הערות שוליים; כל שורה מסומנת "לא הוגה").' % (
         datetime.datetime.utcnow().strftime('%d.%m.%Y %H:%M'), name, perek, ch['name'], res['generated'], res['questions'], res['flagged'], base, slug)
     p = os.path.join(F.ROOT, 'docs', 'ענן', 'תוס-הודעות.md')
     os.makedirs(os.path.dirname(p), exist_ok=True)

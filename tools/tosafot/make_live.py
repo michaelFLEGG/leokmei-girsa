@@ -35,7 +35,7 @@ def main():
             raise SystemExit('עצירה: עוגן %s על עמוד %s אך התוספות בעמוד %s' % (k, a['daf'], r['dafKey']))
         s = styles[k]
         # page: העמוד באתר שבו יושב הטקסט (כשהוא שונה מעמוד התוספות; ראה anchors-N.json)
-        it = {'n': ukey(slug, perek, r['n']), 'disp': r['n'], 'perek': perek, 'hn': r['hn'], 'daf': a.get('page', r['dafKey']), 'dh': r['dh'], 'line': r['line'],
+        it = {'n': ukey(slug, perek, r['n']), 'disp': r['n'], 'perek': perek, 'hn': r['hn'], 'daf': a.get('page', r['dafKey']), 'dh': r['dh'], 'dhs': r.get('dhs') or r['dh'], 'line': r['line'],
               'ref': r['ref'], 'url': r['url'], 'text': r['text'],
               'sum': s.get('a') or s['b'], 't': a['t'], 'occ': a.get('occ', 1), 'rule': a.get('rule', 1)}
         if s.get('gen'):

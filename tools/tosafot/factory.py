@@ -420,6 +420,8 @@ def check_line(s, rec, c):
         return ['ריקה']
     if DASH.search(s):
         bad.append('קו ארוך')
+    if ';' in s:
+        bad.append('תו ; (כלל 14.10.2026: נקודה)')
     if NIK.search(s):
         bad.append('ניקוד')
     if '\n' in s.strip():
@@ -457,6 +459,8 @@ def check_q(q, rec, c):
         if DASH.search(txt):
             bad.append('קו ארוך')
             break
+    if ';' in qq or ';' in aa:
+        bad.append('תו ; (כלל 14.10.2026: נקודה)')
     for ph in BAN_PHRASES:
         if ph in qq:
             bad.append('ביטוי אסור: ' + ph)

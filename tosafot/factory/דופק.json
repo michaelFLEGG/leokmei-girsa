@@ -1,12 +1,32 @@
 {
- "ticks": 30,
- "stalls": 1,
- "last": "2026-10-14T14:42:05Z",
+ "ticks": 31,
+ "stalls": 0,
+ "last": "2026-10-14T16:07:48Z",
  "summary": [
   "sukkah: הושלמה",
   "berakhot: הושלמה",
-  "bava-kamma: עצור - סחיפה: התאמת הכיול לנוסח המנהל ירדה ל-0.28 (בסיס 0.46). האצווה נעצרה, ממתינה להכרעת מנהל"
+  "bava-kamma פרק 1: reviewing",
+  "bava-kamma פרק 2: rewriting",
+  "bava-kamma פרק 3: rewriting",
+  "bava-kamma פרק 4: rewriting",
+  "bava-kamma פרק 5: rewriting",
+  "bava-kamma פרק 6: rereviewing",
+  "bava-kamma פרק 7: reviewing",
+  "bava-kamma פרק 8: rewriting",
+  "bava-kamma פרק 9: reviewing",
+  "bava-kamma פרק 10: reviewing",
+  "bava-metzia פרק 1: writing",
+  "bava-metzia פרק 2: writing",
+  "bava-metzia פרק 3: writing",
+  "bava-metzia פרק 4: writing",
+  "bava-metzia פרק 5: writing",
+  "bava-metzia פרק 6: writing",
+  "bava-metzia פרק 7: writing",
+  "bava-metzia פרק 8: writing",
+  "bava-metzia פרק 9: writing",
+  "bava-metzia פרק 10: writing",
+  "bava-batra: ממתין להכנה (ספירה והקשר)"
  ],
- "spent": 48.676305,
- "left": 147.32
+ "spent": 61.786547,
+ "left": 134.21
 }

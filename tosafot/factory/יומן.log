@@ -180,3 +180,33 @@
 [2026-10-14 16:05:42] נשלח Batch msgbatch_01MjD9Qeib4KeTxHFY5L61Hz (rewrite) bava-kamma פרק 2: 32 בקשות
 [2026-10-14 16:05:43] bava-kamma פרק 3: ביקורת הסתיימה, עלות $0.011, לכתיבה מחדש: 31 בקשות
 [2026-10-14 16:05:44] נשלח Batch msgbatch_01Sdhket26YZ3Rqvt2bWQZnG (rewrite) bava-kamma פרק 3: 31 בקשות
+[2026-10-14 16:07:27] bava-kamma פרק 1: כתיבה הסתיימה {'ok': 125, 'bad': 84, 'api': 0}, עלות $1.607
+[2026-10-14 16:07:27] נשלח Batch msgbatch_01SnYpi4SayA4HGufqkc6sDX (review) bava-kamma פרק 1: 34 בקשות
+[2026-10-14 16:07:28] bava-kamma פרק 2: ביקורת הסתיימה, עלות $0.014, לכתיבה מחדש: 32 בקשות
+[2026-10-14 16:07:29] נשלח Batch msgbatch_018uxYP4qHagRbUeKVJBZuSc (rewrite) bava-kamma פרק 2: 32 בקשות
+[2026-10-14 16:07:30] bava-kamma פרק 3: ביקורת הסתיימה, עלות $0.011, לכתיבה מחדש: 31 בקשות
+[2026-10-14 16:07:30] נשלח Batch msgbatch_01DuidX19P5wSmDZhDKE3t7Y (rewrite) bava-kamma פרק 3: 31 בקשות
+[2026-10-14 16:07:31] bava-kamma פרק 4: ביקורת הסתיימה, עלות $0.008, לכתיבה מחדש: 35 בקשות
+[2026-10-14 16:07:32] נשלח Batch msgbatch_016RtsQiP5EBavVq5Wx6dGJH (rewrite) bava-kamma פרק 4: 35 בקשות
+[2026-10-14 16:07:33] bava-kamma פרק 5: ביקורת הסתיימה, עלות $0.011, לכתיבה מחדש: 30 בקשות
+[2026-10-14 16:07:33] נשלח Batch msgbatch_01C4iMeVVA6YXp7Mf1Brbgdz (rewrite) bava-kamma פרק 5: 30 בקשות
+[2026-10-14 16:07:34] bava-kamma פרק 6: כתיבה מחדש הסתיימה, עלות $1.506
+[2026-10-14 16:07:35] נשלח Batch msgbatch_01WeEczQMbgtuantgcSyndtw (rereview) bava-kamma פרק 6: 15 בקשות
+[2026-10-14 16:07:36] bava-kamma פרק 7: כתיבה הסתיימה {'ok': 101, 'bad': 100, 'api': 0}, עלות $3.909
+[2026-10-14 16:07:36] נשלח Batch msgbatch_01534cCwLHbFxmxneaBA2588 (review) bava-kamma פרק 7: 39 בקשות
+[2026-10-14 16:07:38] bava-kamma פרק 8: ביקורת הסתיימה, עלות $0.010, לכתיבה מחדש: 31 בקשות
+[2026-10-14 16:07:38] נשלח Batch msgbatch_01HBnJyxfaA6XnyJ8EPmqGsK (rewrite) bava-kamma פרק 8: 31 בקשות
+[2026-10-14 16:07:39] bava-kamma פרק 9: כתיבה הסתיימה {'ok': 83, 'bad': 100, 'api': 0}, עלות $2.177
+[2026-10-14 16:07:40] נשלח Batch msgbatch_01A5dhGhTx9rAEnm5hrW1314 (review) bava-kamma פרק 9: 33 בקשות
+[2026-10-14 16:07:41] bava-kamma פרק 10: כתיבה הסתיימה {'ok': 43, 'bad': 16, 'api': 0}, עלות $0.593
+[2026-10-14 16:07:41] נשלח Batch msgbatch_01FVmkDjeaEJN3WeeAbhe4w3 (review) bava-kamma פרק 10: 15 בקשות
+[2026-10-14 16:07:42] נשלח Batch msgbatch_01PaTaxXVvB1Pm7VDsyN1rXq (write) bava-metzia פרק 1: 65 בקשות
+[2026-10-14 16:07:43] נשלח Batch msgbatch_0135o5QpnaBbdhvKHWRyENge (write) bava-metzia פרק 2: 48 בקשות
+[2026-10-14 16:07:43] נשלח Batch msgbatch_01RmbzXpJFJ5BBvUkUR9F4wJ (write) bava-metzia פרק 3: 35 בקשות
+[2026-10-14 16:07:44] נשלח Batch msgbatch_01SbUv7jFLok4ZdGytEdVDDh (write) bava-metzia פרק 4: 55 בקשות
+[2026-10-14 16:07:45] נשלח Batch msgbatch_013NQ5x8UkQJMPUvcPuZLXkN (write) bava-metzia פרק 5: 54 בקשות
+[2026-10-14 16:07:45] נשלח Batch msgbatch_01SyUXwzxvp9BX3k7BpTMUka (write) bava-metzia פרק 6: 29 בקשות
+[2026-10-14 16:07:46] נשלח Batch msgbatch_013RUM895LQb62UuNj3FXx7e (write) bava-metzia פרק 7: 37 בקשות
+[2026-10-14 16:07:46] נשלח Batch msgbatch_01ANzgJVZRJN8U9UN8TG61dw (write) bava-metzia פרק 8: 36 בקשות
+[2026-10-14 16:07:47] נשלח Batch msgbatch_01CgL1kzzgSBRYUxSB6hwemb (write) bava-metzia פרק 9: 49 בקשות
+[2026-10-14 16:07:48] נשלח Batch msgbatch_0192CSvar9kipAHB4GNAUKa6 (write) bava-metzia פרק 10: 10 בקשות

@@ -1,0 +1,150 @@
+{
+ "masechet": "יבמות",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "חמש עשרה נשים",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "17a",
+   "toLine": 10,
+   "countedThrough": "17a"
+  },
+  {
+   "n": 2,
+   "name": "כיצד אשת אחיו",
+   "from": "17a",
+   "fromLine": 11,
+   "to": "26a",
+   "toLine": 14,
+   "countedThrough": "26a"
+  },
+  {
+   "n": 3,
+   "name": "ארבעה אחין",
+   "from": "26a",
+   "fromLine": 15,
+   "to": "35a",
+   "toLine": 11,
+   "countedThrough": "35a"
+  },
+  {
+   "n": 4,
+   "name": "החולץ",
+   "from": "35b",
+   "fromLine": 1,
+   "to": "50a",
+   "toLine": 5,
+   "countedThrough": "50a"
+  },
+  {
+   "n": 5,
+   "name": "רבן גמליאל",
+   "from": "50a",
+   "fromLine": 6,
+   "to": "53b",
+   "toLine": 7,
+   "countedThrough": "53b"
+  },
+  {
+   "n": 6,
+   "name": "הבא על יבמתו",
+   "from": "53b",
+   "fromLine": 8,
+   "to": "66a",
+   "toLine": 3,
+   "countedThrough": "66a"
+  },
+  {
+   "n": 7,
+   "name": "אלמנה לכהן גדול",
+   "from": "66a",
+   "fromLine": 4,
+   "to": "70a",
+   "toLine": 11,
+   "countedThrough": "70a"
+  },
+  {
+   "n": 8,
+   "name": "הערל",
+   "from": "70a",
+   "fromLine": 12,
+   "to": "84a",
+   "toLine": 4,
+   "countedThrough": "84a"
+  },
+  {
+   "n": 9,
+   "name": "יש מותרות",
+   "from": "84a",
+   "fromLine": 5,
+   "to": "87b",
+   "toLine": 8,
+   "countedThrough": "87b"
+  },
+  {
+   "n": 10,
+   "name": "האישה רבה",
+   "from": "87b",
+   "fromLine": 9,
+   "to": "97a",
+   "toLine": 8,
+   "countedThrough": "97a"
+  },
+  {
+   "n": 11,
+   "name": "נושאין על האנוסה",
+   "from": "97a",
+   "fromLine": 9,
+   "to": "101a",
+   "toLine": 8,
+   "countedThrough": "101a"
+  },
+  {
+   "n": 12,
+   "name": "מצות חליצה",
+   "from": "101a",
+   "fromLine": 9,
+   "to": "106b",
+   "toLine": 14,
+   "countedThrough": "106b"
+  },
+  {
+   "n": 13,
+   "name": "בית שמאי",
+   "from": "107a",
+   "fromLine": 1,
+   "to": "112b",
+   "toLine": 4,
+   "countedThrough": "112b"
+  },
+  {
+   "n": 14,
+   "name": "חרש שנשא",
+   "from": "112b",
+   "fromLine": 5,
+   "to": "114b",
+   "toLine": 10,
+   "countedThrough": "114b"
+  },
+  {
+   "n": 15,
+   "name": "האשה שלום",
+   "from": "114b",
+   "fromLine": 11,
+   "to": "118b",
+   "toLine": 19,
+   "countedThrough": "118b"
+  },
+  {
+   "n": 16,
+   "name": "האשה בתרא",
+   "from": "119a",
+   "fromLine": 1,
+   "to": "122b",
+   "toLine": 12,
+   "countedThrough": "122b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: אין."
+}

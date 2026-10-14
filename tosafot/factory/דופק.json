@@ -1,11 +1,21 @@
 {
- "ticks": 25,
- "stalls": 1,
- "last": "2026-10-14T13:18:22Z",
+ "ticks": 26,
+ "stalls": 0,
+ "last": "2026-10-14T13:31:01Z",
  "summary": [
   "sukkah: הושלמה",
   "berakhot: הושלמה",
-  "bava-kamma: ממתין להכנה (ספירה והקשר)"
+  "bava-kamma פרק 1: writing",
+  "bava-kamma פרק 2: writing",
+  "bava-kamma פרק 3: writing",
+  "bava-kamma פרק 4: writing",
+  "bava-kamma פרק 5: writing",
+  "bava-kamma פרק 6: writing",
+  "bava-kamma פרק 7: writing",
+  "bava-kamma פרק 8: writing",
+  "bava-kamma פרק 9: writing",
+  "bava-kamma פרק 10: writing",
+  "bava-metzia: ממתין להכנה (ספירה והקשר)"
  ],
  "spent": 42.055352,
  "left": 153.94

@@ -1,0 +1,28 @@
+{
+ "slug": "makkot",
+ "perakim": {
+  "1": {
+   "status": "writing",
+   "batch": "msgbatch_01RQjWmUvRMsy31v9aPNVBm8",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:23:07Z",
+   "nreq": 21
+  },
+  "2": {
+   "status": "writing",
+   "batch": "msgbatch_015N3q9M15Df2t7uUn3Hy3R1",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:23:09Z",
+   "nreq": 17
+  },
+  "3": {
+   "status": "writing",
+   "batch": "msgbatch_014vfBkcJqk8yJoefe1cdxz1",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:23:15Z",
+   "nreq": 31
+  }
+ },
+ "created": "2026-10-14T18:23:06Z",
+ "updated": "2026-10-14T18:23:15Z"
+}

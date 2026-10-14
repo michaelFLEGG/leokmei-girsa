@@ -72,11 +72,11 @@
    "nreq": 25
   },
   "11": {
-   "status": "writing",
-   "batch": "msgbatch_0111Fp2neuFDiQU8oMGZfwgW",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:06Z",
-   "nreq": 23
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T18:11:36Z",
+   "nreq": 11,
+   "batch": "msgbatch_01KqLHeHMzj6ERtVJwFGN1gj"
   },
   "12": {
    "status": "writing",
@@ -94,5 +94,13 @@
   }
  },
  "created": "2026-10-14T18:02:57Z",
- "updated": "2026-10-14T18:03:07Z"
+ "updated": "2026-10-14T18:11:37Z",
+ "calibration": [
+  {
+   "perek": 11,
+   "mean": 0.3,
+   "n": 4,
+   "at": "2026-10-14T18:11:36Z"
+  }
+ ]
 }

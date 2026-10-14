@@ -9,11 +9,18 @@
    "batch": "msgbatch_01JUhQSE9W2RNgKLvvRBMmbP"
   },
   "2": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:02:44Z",
    "nreq": 22,
-   "batch": "msgbatch_01Tcq6uPDpo5qAuuXN21cVa6"
+   "published": "2026-10-14T18:11:05Z",
+   "result": {
+    "generated": 101,
+    "decided": 0,
+    "unchecked": 7,
+    "flagged": 7,
+    "questions": 69
+   }
   },
   "3": {
    "status": "rereviewing",
@@ -23,11 +30,18 @@
    "batch": "msgbatch_013dA4LLBhVbVYs3xb2GuFPX"
   },
   "4": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:02:46Z",
    "nreq": 33,
-   "batch": "msgbatch_01XvL2xTHC3y2aTe9oAf8LEw"
+   "published": "2026-10-14T18:11:07Z",
+   "result": {
+    "generated": 95,
+    "decided": 0,
+    "unchecked": 58,
+    "flagged": 58,
+    "questions": 59
+   }
   },
   "5": {
    "status": "rereviewing",
@@ -37,11 +51,18 @@
    "batch": "msgbatch_01Vw9HHRgYm4dJg94XQ3bapQ"
   },
   "6": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:02:48Z",
    "nreq": 9,
-   "batch": "msgbatch_01Eyi1eZZdjifwHjwAETvjDe"
+   "published": "2026-10-14T18:11:08Z",
+   "result": {
+    "generated": 43,
+    "decided": 0,
+    "unchecked": 7,
+    "flagged": 7,
+    "questions": 23
+   }
   },
   "7": {
    "status": "rereviewing",
@@ -51,22 +72,36 @@
    "batch": "msgbatch_017qmkVat2eAmHntWJ6oYaGN"
   },
   "8": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:02:49Z",
    "nreq": 11,
-   "batch": "msgbatch_014VA1mabJ11dbxdm7v2sZX8"
+   "published": "2026-10-14T18:11:10Z",
+   "result": {
+    "generated": 30,
+    "decided": 0,
+    "unchecked": 24,
+    "flagged": 24,
+    "questions": 16
+   }
   },
   "9": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:02:51Z",
    "nreq": 19,
-   "batch": "msgbatch_016kMNtDFGhJaJmwCuj8Ue1a"
+   "published": "2026-10-14T18:11:11Z",
+   "result": {
+    "generated": 77,
+    "decided": 0,
+    "unchecked": 16,
+    "flagged": 16,
+    "questions": 33
+   }
   }
  },
  "created": "2026-10-14T16:45:20Z",
- "updated": "2026-10-14T18:06:56Z",
+ "updated": "2026-10-14T18:11:11Z",
  "calibration": [
   {
    "perek": 1,

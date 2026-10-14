@@ -228,3 +228,22 @@
 [2026-10-14 16:14:52] נשלח Batch msgbatch_01HdRdgPCswVqhtDz7Rjtv5G (review) bava-metzia פרק 8: 18 בקשות
 [2026-10-14 16:14:53] bava-metzia פרק 10: כתיבה הסתיימה {'ok': 15, 'bad': 6, 'api': 0}, עלות $0.104
 [2026-10-14 16:14:54] נשלח Batch msgbatch_01HbSG8FC8D9JYuaywqtGcJj (review) bava-metzia פרק 10: 6 בקשות
+[2026-10-14 16:18:24] bava-kamma פרק 1: ביקורת הסתיימה, עלות $0.005, לכתיבה מחדש: 51 בקשות
+[2026-10-14 16:18:25] נשלח Batch msgbatch_01GbDHtCnDVavqWYYGw2gVHq (rewrite) bava-kamma פרק 1: 51 בקשות
+[2026-10-14 16:18:27] bava-kamma פרק 6: ביקורת חוזרת הסתיימה, עלות $0.010
+[2026-10-14 16:18:27] הודעה: - 14.10.2026 16:18 | בבא קמא פרק 6 (הכונס): 66 תוספות חדשות באתר, 35 שאלות פורסמו, 15 סומנו למנהל. קישור: https://leokmei.com/bava-kamma.html (בכניסת מנהל: תוס' ← הערות שוליים; כל שורה מסומנת "לא הוגה").
+[2026-10-14 16:18:28] bava-kamma פרק 7: ביקורת הסתיימה, עלות $0.021, לכתיבה מחדש: 60 בקשות
+[2026-10-14 16:18:29] נשלח Batch msgbatch_01XDeo31hLYoivhqP47auNiK (rewrite) bava-kamma פרק 7: 60 בקשות
+[2026-10-14 16:18:30] bava-kamma פרק 9: ביקורת הסתיימה, עלות $0.018, לכתיבה מחדש: 54 בקשות
+[2026-10-14 16:18:32] נשלח Batch msgbatch_01Mvrdyt4VUdZz4d8RBzrFoX (rewrite) bava-kamma פרק 9: 54 בקשות
+[2026-10-14 16:18:32] bava-kamma פרק 10: ביקורת הסתיימה, עלות $0.008, לכתיבה מחדש: 17 בקשות
+[2026-10-14 16:18:33] נשלח Batch msgbatch_01JNtTPrfAVYopTNZsi3Y6SP (rewrite) bava-kamma פרק 10: 17 בקשות
+[2026-10-14 16:18:34] bava-metzia פרק 3: כתיבה הסתיימה {'ok': 45, 'bad': 51, 'api': 0}, עלות $0.729
+[2026-10-14 16:18:35] נשלח Batch msgbatch_01Aj43kEtpyfDfnRkWEkkaZ9 (review) bava-metzia פרק 3: 17 בקשות
+[2026-10-14 16:18:36] bava-metzia פרק 6: כתיבה הסתיימה {'ok': 39, 'bad': 29, 'api': 0}, עלות $0.613
+[2026-10-14 16:18:36] נשלח Batch msgbatch_011KYcv1U5riiaNkE341inT7 (review) bava-metzia פרק 6: 12 בקשות
+[2026-10-14 16:18:37] bava-metzia פרק 7: כתיבה הסתיימה {'ok': 64, 'bad': 39, 'api': 0}, עלות $0.789
+[2026-10-14 16:18:38] נשלח Batch msgbatch_01HFk6ZqgvMJto9BeVdBr6hV (review) bava-metzia פרק 7: 23 בקשות
+[2026-10-14 16:18:39] bava-metzia פרק 9: כתיבה הסתיימה {'ok': 66, 'bad': 47, 'api': 0}, עלות $1.097
+[2026-10-14 16:18:39] אזהרת כיול (לא עוצר, מדגם קטן): bava-metzia פרק 9 ממוצע 0.26
+[2026-10-14 16:18:39] נשלח Batch msgbatch_01SwTx2mJ2p3smuec7bjS2UP (review) bava-metzia פרק 9: 24 בקשות

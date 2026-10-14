@@ -16,11 +16,11 @@
    "nreq": 48
   },
   "3": {
-   "status": "writing",
-   "batch": "msgbatch_01RmbzXpJFJ5BBvUkUR9F4wJ",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:07:43Z",
-   "nreq": 35
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:18:35Z",
+   "nreq": 17,
+   "batch": "msgbatch_01Aj43kEtpyfDfnRkWEkkaZ9"
   },
   "4": {
    "status": "reviewing",
@@ -37,18 +37,18 @@
    "batch": "msgbatch_01DoMXBKBN72LTMmCVJunBdm"
   },
   "6": {
-   "status": "writing",
-   "batch": "msgbatch_01SyUXwzxvp9BX3k7BpTMUka",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:07:45Z",
-   "nreq": 29
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:18:36Z",
+   "nreq": 12,
+   "batch": "msgbatch_011KYcv1U5riiaNkE341inT7"
   },
   "7": {
-   "status": "writing",
-   "batch": "msgbatch_013RUM895LQb62UuNj3FXx7e",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:07:46Z",
-   "nreq": 37
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:18:38Z",
+   "nreq": 23,
+   "batch": "msgbatch_01HFk6ZqgvMJto9BeVdBr6hV"
   },
   "8": {
    "status": "reviewing",
@@ -58,11 +58,11 @@
    "batch": "msgbatch_01HdRdgPCswVqhtDz7Rjtv5G"
   },
   "9": {
-   "status": "writing",
-   "batch": "msgbatch_01CgL1kzzgSBRYUxSB6hwemb",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:07:47Z",
-   "nreq": 49
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:18:39Z",
+   "nreq": 24,
+   "batch": "msgbatch_01SwTx2mJ2p3smuec7bjS2UP"
   },
   "10": {
    "status": "reviewing",
@@ -73,7 +73,7 @@
   }
  },
  "created": "2026-10-14T16:07:41Z",
- "updated": "2026-10-14T16:14:54Z",
+ "updated": "2026-10-14T16:18:40Z",
  "calibration": [
   {
    "perek": 4,
@@ -98,6 +98,30 @@
    "mean": 0.415,
    "n": 4,
    "at": "2026-10-14T16:14:53Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.447,
+   "n": 4,
+   "at": "2026-10-14T16:18:34Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.395,
+   "n": 4,
+   "at": "2026-10-14T16:18:36Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.361,
+   "n": 4,
+   "at": "2026-10-14T16:18:37Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.255,
+   "n": 4,
+   "at": "2026-10-14T16:18:39Z"
   }
  ]
 }

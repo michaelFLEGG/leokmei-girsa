@@ -1,10 +1,11 @@
 {
- "total": 8.456456,
+ "total": 11.385361,
  "bySlug": {
-  "sukkah": 8.456456
+  "sukkah": 10.366474,
+  "berakhot": 1.018887
  },
  "byPhase": {
-  "write": 1.588555,
+  "write": 4.517458,
   "review": 0.007873,
   "rewrite": 6.853236,
   "rereview": 0.006793
@@ -89,14 +90,244 @@
     "n": 29
    },
    "cost": 0.006793
+  },
+  {
+   "at": "2026-10-14T09:51:48Z",
+   "slug": "sukkah",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 25,
+   "usage": {
+    "in": 78491,
+    "cw": 0,
+    "cr": 353825,
+    "out": 22019,
+    "n": 25
+   },
+   "cost": 0.206277
+  },
+  {
+   "at": "2026-10-14T09:51:48Z",
+   "slug": "sukkah",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 7,
+   "usage": {
+    "in": 24552,
+    "cw": 28308,
+    "cr": 70770,
+    "out": 11342,
+    "n": 7
+   },
+   "cost": 0.698236
+  },
+  {
+   "at": "2026-10-14T09:51:49Z",
+   "slug": "sukkah",
+   "perek": 4,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 17,
+   "usage": {
+    "in": 51524,
+    "cw": 0,
+    "cr": 240601,
+    "out": 12679,
+    "n": 17
+   },
+   "cost": 0.126949
+  },
+  {
+   "at": "2026-10-14T09:51:49Z",
+   "slug": "sukkah",
+   "perek": 4,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 4,
+   "usage": {
+    "in": 13991,
+    "cw": 28308,
+    "cr": 28308,
+    "out": 6679,
+    "n": 4
+   },
+   "cost": 0.523548
+  },
+  {
+   "at": "2026-10-14T09:51:51Z",
+   "slug": "sukkah",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 17,
+   "usage": {
+    "in": 51668,
+    "cw": 0,
+    "cr": 240601,
+    "out": 9181,
+    "n": 17
+   },
+   "cost": 0.109603
+  },
+  {
+   "at": "2026-10-14T09:51:51Z",
+   "slug": "sukkah",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 2,
+   "usage": {
+    "in": 6159,
+    "cw": 14154,
+    "cr": 14154,
+    "out": 2852,
+    "n": 2
+   },
+   "cost": 0.245404
+  },
+  {
+   "at": "2026-10-14T09:51:52Z",
+   "slug": "berakhot",
+   "perek": 1,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 3,
+   "usage": {
+    "in": 9078,
+    "cw": 14154,
+    "cr": 28308,
+    "out": 4768,
+    "n": 3
+   },
+   "cost": 0.309669
+  },
+  {
+   "at": "2026-10-14T09:51:52Z",
+   "slug": "berakhot",
+   "perek": 1,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 26,
+   "usage": {
+    "in": 97243,
+    "cw": 0,
+    "cr": 367978,
+    "out": 20264,
+    "n": 26
+   },
+   "cost": 0.216962
+  },
+  {
+   "at": "2026-10-14T09:51:53Z",
+   "slug": "berakhot",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 16,
+   "usage": {
+    "in": 60945,
+    "cw": 0,
+    "cr": 226448,
+    "out": 11757,
+    "n": 16
+   },
+   "cost": 0.131052
+  },
+  {
+   "at": "2026-10-14T09:51:53Z",
+   "slug": "berakhot",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 1,
+   "usage": {
+    "in": 5078,
+    "cw": 0,
+    "cr": 14154,
+    "out": 1741,
+    "n": 1
+   },
+   "cost": 0.070684
+  },
+  {
+   "at": "2026-10-14T09:51:55Z",
+   "slug": "berakhot",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 13,
+   "usage": {
+    "in": 54106,
+    "cw": 0,
+    "cr": 183989,
+    "out": 8327,
+    "n": 13
+   },
+   "cost": 0.10494
+  },
+  {
+   "at": "2026-10-14T09:51:55Z",
+   "slug": "berakhot",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 1,
+   "usage": {
+    "in": 3852,
+    "cw": 0,
+    "cr": 14154,
+    "out": 1850,
+    "n": 1
+   },
+   "cost": 0.067279
+  },
+  {
+   "at": "2026-10-14T09:51:57Z",
+   "slug": "berakhot",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 8,
+   "usage": {
+    "in": 26636,
+    "cw": 0,
+    "cr": 113224,
+    "out": 5380,
+    "n": 8
+   },
+   "cost": 0.059197
+  },
+  {
+   "at": "2026-10-14T09:51:57Z",
+   "slug": "berakhot",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 1,
+   "usage": {
+    "in": 2807,
+    "cw": 0,
+    "cr": 14154,
+    "out": 1732,
+    "n": 1
+   },
+   "cost": 0.059104
   }
  ],
  "tokens": {
   "sukkah": {
-   "in": 448914,
-   "cw": 496533,
-   "cr": 655919,
-   "out": 150476
+   "in": 675299,
+   "cw": 567303,
+   "cr": 1604178,
+   "out": 215228
+  },
+  "berakhot": {
+   "in": 259745,
+   "cw": 14154,
+   "cr": 962409,
+   "out": 55819
   }
  }
 }

@@ -2,18 +2,18 @@
  "slug": "berakhot",
  "perakim": {
   "1": {
-   "status": "writing",
-   "batch": "msgbatch_011C2J6pYt3pTkXHFkNNFvmx",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:44Z",
-   "nreq": 29
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:51:53Z",
+   "nreq": 22,
+   "batch": "msgbatch_01CpBquLm2hPMqKYaK5sCFCq"
   },
   "2": {
-   "status": "writing",
-   "batch": "msgbatch_01CLBWJ1xQWZNPkkesmkyuG3",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:45Z",
-   "nreq": 17
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:51:54Z",
+   "nreq": 12,
+   "batch": "msgbatch_01WnwsXveP7VQMbaQH7SniUB"
   },
   "3": {
    "status": "writing",
@@ -30,11 +30,11 @@
    "nreq": 19
   },
   "5": {
-   "status": "writing",
-   "batch": "msgbatch_01Aj2cB6c7GEmLUQB9vWez9V",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:48Z",
-   "nreq": 14
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:51:56Z",
+   "nreq": 9,
+   "batch": "msgbatch_01AZSw9CsA3V3kH5gxj1HnMy"
   },
   "6": {
    "status": "writing",
@@ -51,11 +51,11 @@
    "nreq": 25
   },
   "8": {
-   "status": "writing",
-   "batch": "msgbatch_01LAuyFND93pWTkZF66Eznku",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:51Z",
-   "nreq": 9
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:51:58Z",
+   "nreq": 4,
+   "batch": "msgbatch_01QaAbpUBTvoMnhCwFCTovw8"
   },
   "9": {
    "status": "writing",
@@ -66,5 +66,31 @@
   }
  },
  "created": "2026-10-14T09:44:43Z",
- "updated": "2026-10-14T09:44:51Z"
+ "updated": "2026-10-14T09:51:58Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.195,
+   "n": 4,
+   "at": "2026-10-14T09:51:52Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.377,
+   "n": 4,
+   "at": "2026-10-14T09:51:53Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.408,
+   "n": 4,
+   "at": "2026-10-14T09:51:55Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.75,
+   "n": 4,
+   "at": "2026-10-14T09:51:57Z"
+  }
+ ]
 }

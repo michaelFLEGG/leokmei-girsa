@@ -15,11 +15,11 @@
    }
   },
   "2": {
-   "status": "writing",
-   "batch": "msgbatch_01UJV3B35vh7x6tNhQ29Dc9c",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:41Z",
-   "nreq": 32
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:51:48Z",
+   "nreq": 22,
+   "batch": "msgbatch_0178rEqk5jNCr7aSyHPUS5Pj"
   },
   "3": {
    "status": "writing",
@@ -29,28 +29,46 @@
    "nreq": 44
   },
   "4": {
-   "status": "writing",
-   "batch": "msgbatch_01SyMMc4hudnoGiQGFcwkBFZ",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:43Z",
-   "nreq": 21
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:51:50Z",
+   "nreq": 12,
+   "batch": "msgbatch_01EtrW7gvJ6UvcooRaMP4SGu"
   },
   "5": {
-   "status": "writing",
-   "batch": "msgbatch_01Vsbkxc4A7uiAKYKckfgS4n",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:43Z",
-   "nreq": 19
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:51:51Z",
+   "nreq": 13,
+   "batch": "msgbatch_01AHnoP3L7HUxaTKeEtvdS8J"
   }
  },
  "created": "2026-10-13T15:12:29Z",
- "updated": "2026-10-14T09:44:43Z",
+ "updated": "2026-10-14T09:51:51Z",
  "calibration": [
   {
    "perek": 1,
    "mean": 0.331,
    "n": 4,
    "at": "2026-10-13T17:06:05Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.432,
+   "n": 4,
+   "at": "2026-10-14T09:51:48Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.658,
+   "n": 4,
+   "at": "2026-10-14T09:51:49Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.581,
+   "n": 4,
+   "at": "2026-10-14T09:51:51Z"
   }
  ]
 }

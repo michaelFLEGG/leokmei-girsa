@@ -21,3 +21,17 @@
 [2026-10-14 09:44:50] נשלח Batch msgbatch_01JuucfCtaqvYa9HnzbeY5dq (write) berakhot פרק 7: 25 בקשות
 [2026-10-14 09:44:51] נשלח Batch msgbatch_01LAuyFND93pWTkZF66Eznku (write) berakhot פרק 8: 9 בקשות
 [2026-10-14 09:44:51] נשלח Batch msgbatch_01VYbqLxMQ5nhXTqWvFma1wp (write) berakhot פרק 9: 16 בקשות
+[2026-10-14 09:51:48] sukkah פרק 2: כתיבה הסתיימה {'ok': 69, 'bad': 11, 'api': 0}, עלות $0.905
+[2026-10-14 09:51:48] נשלח Batch msgbatch_0178rEqk5jNCr7aSyHPUS5Pj (review) sukkah פרק 2: 22 בקשות
+[2026-10-14 09:51:49] sukkah פרק 4: כתיבה הסתיימה {'ok': 38, 'bad': 7, 'api': 0}, עלות $0.650
+[2026-10-14 09:51:50] נשלח Batch msgbatch_01EtrW7gvJ6UvcooRaMP4SGu (review) sukkah פרק 4: 12 בקשות
+[2026-10-14 09:51:51] sukkah פרק 5: כתיבה הסתיימה {'ok': 30, 'bad': 0, 'api': 0}, עלות $0.355
+[2026-10-14 09:51:51] נשלח Batch msgbatch_01AHnoP3L7HUxaTKeEtvdS8J (review) sukkah פרק 5: 13 בקשות
+[2026-10-14 09:51:52] berakhot פרק 1: כתיבה הסתיימה {'ok': 67, 'bad': 8, 'api': 0}, עלות $0.527
+[2026-10-14 09:51:53] נשלח Batch msgbatch_01CpBquLm2hPMqKYaK5sCFCq (review) berakhot פרק 1: 22 בקשות
+[2026-10-14 09:51:53] berakhot פרק 2: כתיבה הסתיימה {'ok': 46, 'bad': 1, 'api': 0}, עלות $0.202
+[2026-10-14 09:51:54] נשלח Batch msgbatch_01WnwsXveP7VQMbaQH7SniUB (review) berakhot פרק 2: 12 בקשות
+[2026-10-14 09:51:55] berakhot פרק 5: כתיבה הסתיימה {'ok': 31, 'bad': 2, 'api': 0}, עלות $0.172
+[2026-10-14 09:51:56] נשלח Batch msgbatch_01AZSw9CsA3V3kH5gxj1HnMy (review) berakhot פרק 5: 9 בקשות
+[2026-10-14 09:51:57] berakhot פרק 8: כתיבה הסתיימה {'ok': 16, 'bad': 1, 'api': 0}, עלות $0.118
+[2026-10-14 09:51:58] נשלח Batch msgbatch_01QaAbpUBTvoMnhCwFCTovw8 (review) berakhot פרק 8: 4 בקשות

@@ -277,3 +277,22 @@
 [2026-10-14 16:26:07] נשלח Batch msgbatch_01UHmQQFhEQnzrGkX75odvVh (rewrite) bava-metzia פרק 4: 49 בקשות
 [2026-10-14 16:26:09] bava-metzia פרק 8: ביקורת הסתיימה, עלות $0.011, לכתיבה מחדש: 27 בקשות
 [2026-10-14 16:26:10] נשלח Batch msgbatch_01Hmqc2TuYkhDcrA874XcpGF (rewrite) bava-metzia פרק 8: 27 בקשות
+[2026-10-14 16:29:42] bava-metzia פרק 2: ביקורת הסתיימה, עלות $0.014, לכתיבה מחדש: 37 בקשות
+[2026-10-14 16:29:43] נשלח Batch msgbatch_01KF7d6AvE4hKsfsQf9U1Ujq (rewrite) bava-metzia פרק 2: 37 בקשות
+[2026-10-14 16:29:44] bava-metzia פרק 3: ביקורת הסתיימה, עלות $0.009, לכתיבה מחדש: 29 בקשות
+[2026-10-14 16:29:46] נשלח Batch msgbatch_01NxZXEKwxTWizVGMGjg83Rc (rewrite) bava-metzia פרק 3: 29 בקשות
+[2026-10-14 16:29:47] bava-metzia פרק 6: ביקורת הסתיימה, עלות $0.007, לכתיבה מחדש: 20 בקשות
+[2026-10-14 16:29:48] נשלח Batch msgbatch_01K28Rcezt8f1hgbskBksWdp (rewrite) bava-metzia פרק 6: 20 בקשות
+[2026-10-14 16:29:49] bava-metzia פרק 7: ביקורת הסתיימה, עלות $0.013, לכתיבה מחדש: 30 בקשות
+[2026-10-14 16:29:50] נשלח Batch msgbatch_01MfKCfVjXtjEcJS8idz3KEx (rewrite) bava-metzia פרק 7: 30 בקשות
+[2026-10-14 16:29:51] bava-metzia פרק 9: ביקורת הסתיימה, עלות $0.014, לכתיבה מחדש: 40 בקשות
+[2026-10-14 16:29:52] נשלח Batch msgbatch_017RXXB1ZQk1uwxBm4RBQ41k (rewrite) bava-metzia פרק 9: 40 בקשות
+[2026-10-14 16:29:53] bava-metzia פרק 10: כתיבה מחדש הסתיימה, עלות $0.395
+[2026-10-14 16:29:53] נשלח Batch msgbatch_01MQtUGQLtgB2howd5Wizy8b (rereview) bava-metzia פרק 10: 5 בקשות
+[2026-10-14 16:29:56] bava-batra פרק 5: כתיבה הסתיימה {'ok': 78, 'bad': 59, 'api': 0}, עלות $0.785
+[2026-10-14 16:29:56] נשלח Batch msgbatch_01Ja11AZteww4Fx4Vkp7zcWi (review) bava-batra פרק 5: 32 בקשות
+[2026-10-14 16:29:58] bava-batra פרק 7: כתיבה הסתיימה {'ok': 15, 'bad': 12, 'api': 0}, עלות $0.240
+[2026-10-14 16:29:58] אזהרת כיול (לא עוצר, מדגם קטן): bava-batra פרק 7 ממוצע 0.34
+[2026-10-14 16:29:59] נשלח Batch msgbatch_01DvJBEQhD4XPK5ctwhszRxK (review) bava-batra פרק 7: 7 בקשות
+[2026-10-14 16:30:00] bava-batra פרק 8: כתיבה הסתיימה {'ok': 66, 'bad': 80, 'api': 0}, עלות $1.279
+[2026-10-14 16:30:00] נשלח Batch msgbatch_01QEA5WWR7YoaDiHLcv8TFTQ (review) bava-batra פרק 8: 41 בקשות

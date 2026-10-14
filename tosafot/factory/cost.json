@@ -1,15 +1,16 @@
 {
- "total": 79.534983,
+ "total": 82.290901,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
   "bava-kamma": 29.983559,
-  "bava-metzia": 7.49607
+  "bava-metzia": 7.947875,
+  "bava-batra": 2.304112
  },
  "byPhase": {
-  "write": 35.313898,
-  "review": 0.260585,
-  "rewrite": 43.655258,
+  "write": 37.61801,
+  "review": 0.317495,
+  "rewrite": 44.050154,
   "rereview": 0.305241
  },
  "batches": [
@@ -2348,6 +2349,198 @@
     "n": 18
    },
    "cost": 0.010595
+  },
+  {
+   "at": "2026-10-14T16:29:42Z",
+   "slug": "bava-metzia",
+   "perek": 2,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 27,
+   "usage": {
+    "in": 28421,
+    "cw": 114804,
+    "cr": 4631,
+    "out": 5709,
+    "n": 27
+   },
+   "cost": 0.014352
+  },
+  {
+   "at": "2026-10-14T16:29:43Z",
+   "slug": "bava-metzia",
+   "perek": 3,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 17,
+   "usage": {
+    "in": 16101,
+    "cw": 73086,
+    "cr": 3266,
+    "out": 4196,
+    "n": 17
+   },
+   "cost": 0.009179
+  },
+  {
+   "at": "2026-10-14T16:29:47Z",
+   "slug": "bava-metzia",
+   "perek": 6,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 12,
+   "usage": {
+    "in": 17559,
+    "cw": 51780,
+    "cr": 4155,
+    "out": 3397,
+    "n": 12
+   },
+   "cost": 0.006926
+  },
+  {
+   "at": "2026-10-14T16:29:49Z",
+   "slug": "bava-metzia",
+   "perek": 7,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 23,
+   "usage": {
+    "in": 23098,
+    "cw": 99948,
+    "cr": 4258,
+    "out": 6482,
+    "n": 23
+   },
+   "cost": 0.012791
+  },
+  {
+   "at": "2026-10-14T16:29:51Z",
+   "slug": "bava-metzia",
+   "perek": 9,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 24,
+   "usage": {
+    "in": 30631,
+    "cw": 100618,
+    "cr": 7332,
+    "out": 8127,
+    "n": 24
+   },
+   "cost": 0.013662
+  },
+  {
+   "at": "2026-10-14T16:29:53Z",
+   "slug": "bava-metzia",
+   "perek": 10,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 6,
+   "usage": {
+    "in": 28106,
+    "cw": 0,
+    "cr": 84924,
+    "out": 9750,
+    "n": 6
+   },
+   "cost": 0.394896
+  },
+  {
+   "at": "2026-10-14T16:29:56Z",
+   "slug": "bava-batra",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 43,
+   "usage": {
+    "in": 130761,
+    "cw": 0,
+    "cr": 608579,
+    "out": 35062,
+    "n": 43
+   },
+   "cost": 0.3365
+  },
+  {
+   "at": "2026-10-14T16:29:56Z",
+   "slug": "bava-batra",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 8,
+   "usage": {
+    "in": 23876,
+    "cw": 0,
+    "cr": 113232,
+    "out": 12586,
+    "n": 8
+   },
+   "cost": 0.448184
+  },
+  {
+   "at": "2026-10-14T16:29:58Z",
+   "slug": "bava-batra",
+   "perek": 7,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 13,
+   "usage": {
+    "in": 29377,
+    "cw": 0,
+    "cr": 183989,
+    "out": 8422,
+    "n": 13
+   },
+   "cost": 0.080686
+  },
+  {
+   "at": "2026-10-14T16:29:58Z",
+   "slug": "bava-batra",
+   "perek": 7,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 3,
+   "usage": {
+    "in": 7848,
+    "cw": 0,
+    "cr": 42462,
+    "out": 4593,
+    "n": 3
+   },
+   "cost": 0.159373
+  },
+  {
+   "at": "2026-10-14T16:30:00Z",
+   "slug": "bava-batra",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 60,
+   "usage": {
+    "in": 165556,
+    "cw": 0,
+    "cr": 849180,
+    "out": 41600,
+    "n": 60
+   },
+   "cost": 0.416015
+  },
+  {
+   "at": "2026-10-14T16:30:00Z",
+   "slug": "bava-batra",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 15,
+   "usage": {
+    "in": 44238,
+    "cw": 0,
+    "cr": 212310,
+    "out": 24625,
+    "n": 15
+   },
+   "cost": 0.863354
   }
  ],
  "tokens": {
@@ -2370,10 +2563,16 @@
    "out": 999780
   },
   "bava-metzia": {
-   "in": 1343574,
-   "cw": 392018,
-   "cr": 4961382,
-   "out": 386326
+   "in": 1487490,
+   "cw": 832254,
+   "cr": 5069948,
+   "out": 423987
+  },
+  "bava-batra": {
+   "in": 401656,
+   "cw": 0,
+   "cr": 2009752,
+   "out": 126888
   }
  }
 }

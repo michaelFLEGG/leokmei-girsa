@@ -1,20 +1,7 @@
 {
  "slug": "berakhot",
- "shown": 252,
- "moved": [
-  {
-   "perek": 8,
-   "n": 7,
-   "to": "נב:",
-   "was": ""
-  },
-  {
-   "perek": 8,
-   "n": 10,
-   "to": "נב:",
-   "was": ""
-  }
- ],
+ "shown": 263,
+ "moved": [],
  "errors": [],
  "ok": true
 }

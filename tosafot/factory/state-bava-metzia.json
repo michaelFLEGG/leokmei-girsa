@@ -2,67 +2,115 @@
  "slug": "bava-metzia",
  "perakim": {
   "1": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T16:33:34Z",
-   "nreq": 36,
-   "batch": "msgbatch_017T51JteEsnWa6V9jMsvnf1"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T16:44:55Z",
+   "nreq": 54,
+   "batch": "msgbatch_011SCxDMawQWLtaEu6k92HrH"
   },
   "2": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:37:23Z",
    "nreq": 27,
-   "batch": "msgbatch_01Jq7B1rUMvzycNWF8L13ca9"
+   "published": "2026-10-14T16:44:57Z",
+   "result": {
+    "generated": 95,
+    "decided": 0,
+    "flagged": 34,
+    "questions": 54
+   }
   },
   "3": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:37:25Z",
    "nreq": 22,
-   "batch": "msgbatch_01HdccRMQ2XwZRTDkQV7ZQap"
+   "published": "2026-10-14T16:44:58Z",
+   "result": {
+    "generated": 67,
+    "decided": 0,
+    "flagged": 29,
+    "questions": 39
+   }
   },
   "4": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:33:36Z",
    "nreq": 33,
-   "batch": "msgbatch_01Fv77nLQjpeY7NgidMz24bX"
+   "published": "2026-10-14T16:44:59Z",
+   "result": {
+    "generated": 133,
+    "decided": 0,
+    "flagged": 33,
+    "questions": 66
+   }
   },
   "5": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:33:37Z",
    "nreq": 31,
-   "batch": "msgbatch_0152EhKdSFnRDGkvvY87yqcY"
+   "published": "2026-10-14T16:45:01Z",
+   "result": {
+    "generated": 80,
+    "decided": 0,
+    "flagged": 42,
+    "questions": 57
+   }
   },
   "6": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:37:27Z",
    "nreq": 15,
-   "batch": "msgbatch_01XwevtWb9aPQbjsPb7tBBVx"
+   "published": "2026-10-14T16:45:02Z",
+   "result": {
+    "generated": 51,
+    "decided": 0,
+    "flagged": 17,
+    "questions": 29
+   }
   },
   "7": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:37:28Z",
    "nreq": 22,
-   "batch": "msgbatch_01WsAu2oW3udcMuMEGggp9Xc"
+   "published": "2026-10-14T16:45:04Z",
+   "result": {
+    "generated": 61,
+    "decided": 0,
+    "flagged": 42,
+    "questions": 27
+   }
   },
   "8": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:33:40Z",
    "nreq": 19,
-   "batch": "msgbatch_014U8oGY6iLhf5Dxk4rqniQr"
+   "published": "2026-10-14T16:45:05Z",
+   "result": {
+    "generated": 44,
+    "decided": 0,
+    "flagged": 41,
+    "questions": 30
+   }
   },
   "9": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:33:41Z",
    "nreq": 29,
-   "batch": "msgbatch_01JHsSU2uwCVkZC2vaTptu52"
+   "published": "2026-10-14T16:45:06Z",
+   "result": {
+    "generated": 75,
+    "decided": 0,
+    "flagged": 38,
+    "questions": 49
+   }
   },
   "10": {
    "status": "published",
@@ -79,7 +127,7 @@
   }
  },
  "created": "2026-10-14T16:07:41Z",
- "updated": "2026-10-14T16:37:30Z",
+ "updated": "2026-10-14T16:45:06Z",
  "calibration": [
   {
    "perek": 4,

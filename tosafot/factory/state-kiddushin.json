@@ -1,0 +1,14 @@
+{
+ "slug": "kiddushin",
+ "perakim": {
+  "1": {
+   "status": "writing",
+   "batch": "msgbatch_01AYaEP29PGbH5kfjKZwbp4J",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:27Z",
+   "nreq": 137
+  }
+ },
+ "created": "2026-10-14T16:45:25Z",
+ "updated": "2026-10-14T16:45:27Z"
+}

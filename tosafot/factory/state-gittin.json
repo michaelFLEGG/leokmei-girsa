@@ -1,0 +1,70 @@
+{
+ "slug": "gittin",
+ "perakim": {
+  "1": {
+   "status": "writing",
+   "batch": "msgbatch_01R6JtXjp4W1KxBMNFELe6hf",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:21Z",
+   "nreq": 58
+  },
+  "2": {
+   "status": "writing",
+   "batch": "msgbatch_018cDhnhposjgTE6vPVjJuKQ",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:21Z",
+   "nreq": 43
+  },
+  "3": {
+   "status": "writing",
+   "batch": "msgbatch_01FTj3aai9ca6tCergCa4Viw",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:22Z",
+   "nreq": 34
+  },
+  "4": {
+   "status": "writing",
+   "batch": "msgbatch_01JidG9uJPD1qE6XQpLjD5pQ",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:23Z",
+   "nreq": 58
+  },
+  "5": {
+   "status": "writing",
+   "batch": "msgbatch_01JKHbdQCJuHDNPWo2G5Wto2",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:23Z",
+   "nreq": 42
+  },
+  "6": {
+   "status": "writing",
+   "batch": "msgbatch_01Fd3fDusLoXHxbFP4asS1dj",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:24Z",
+   "nreq": 20
+  },
+  "7": {
+   "status": "writing",
+   "batch": "msgbatch_0184u7iFiGn7CSdBuWYxYvzW",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:24Z",
+   "nreq": 29
+  },
+  "8": {
+   "status": "writing",
+   "batch": "msgbatch_01DaWuDze1wfANUmQtCVLUGG",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:25Z",
+   "nreq": 23
+  },
+  "9": {
+   "status": "writing",
+   "batch": "msgbatch_01SeAJ9xGmujTQm2KvvBu9FC",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:45:25Z",
+   "nreq": 28
+  }
+ },
+ "created": "2026-10-14T16:45:20Z",
+ "updated": "2026-10-14T16:45:25Z"
+}

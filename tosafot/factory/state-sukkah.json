@@ -2,15 +2,14 @@
  "slug": "sukkah",
  "perakim": {
   "1": {
-   "status": "rereviewing",
+   "status": "ready",
    "batchPhase": "rereview",
    "submitted": "2026-10-13T23:51:22Z",
-   "nreq": 29,
-   "batch": "msgbatch_01FyoRRMD7KHRknnyuYFDUEN"
+   "nreq": 29
   }
  },
  "created": "2026-10-13T15:12:29Z",
- "updated": "2026-10-13T23:51:22Z",
+ "updated": "2026-10-14T03:30:33Z",
  "calibration": [
   {
    "perek": 1,

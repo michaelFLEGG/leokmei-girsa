@@ -1,12 +1,13 @@
 {
- "total": 8.449663,
+ "total": 8.456456,
  "bySlug": {
-  "sukkah": 8.449663
+  "sukkah": 8.456456
  },
  "byPhase": {
   "write": 1.588555,
   "review": 0.007873,
-  "rewrite": 6.853236
+  "rewrite": 6.853236,
+  "rereview": 0.006793
  },
  "batches": [
   {
@@ -72,14 +73,30 @@
     "n": 35
    },
    "cost": 6.853236
+  },
+  {
+   "at": "2026-10-14T03:30:33Z",
+   "slug": "sukkah",
+   "perek": 1,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 29,
+   "usage": {
+    "in": 70158,
+    "cw": 572,
+    "cr": 16016,
+    "out": 12591,
+    "n": 29
+   },
+   "cost": 0.006793
   }
  ],
  "tokens": {
   "sukkah": {
-   "in": 378756,
-   "cw": 495961,
-   "cr": 639903,
-   "out": 137885
+   "in": 448914,
+   "cw": 496533,
+   "cr": 655919,
+   "out": 150476
   }
  }
 }

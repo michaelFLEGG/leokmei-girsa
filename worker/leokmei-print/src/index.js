@@ -14,7 +14,7 @@ const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
   'Access-Control-Allow-Headers': 'content-type, x-admin-key',
-  'Access-Control-Expose-Headers': 'X-Cache,X-Pages,Content-Disposition',
+  'Access-Control-Expose-Headers': 'X-Cache,X-Pages,X-Overlaps,Content-Disposition',
   'Access-Control-Max-Age': '86400',
 };
 const ONE_MSG = 'ניתן להדפיס פרק אחד בכל פעם';
@@ -116,6 +116,8 @@ async function pdf(req, env, ctx, url) {
     browser = await puppeteer.launch(env.BROWSER);
     const page = await browser.newPage();
     await page.setViewport({ width: 794, height: 1123 });
+    // 14.10.2026: העימוד נמדד באותה מדיה שבה הקובץ מופק (print). מדידה במסך והפקה בהדפסה נתנו לתיבת המשנה גובה שונה וחפיפות.
+    await page.emulateMediaType('print');
     await page.goto(`${SITE}/${m}.html?${target.toString()}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForFunction("window.__PRN && (window.__PRN.state==='done' || window.__PRN.state==='error')", { timeout: 150000 });
     const st = await page.evaluate('window.__PRN.state');
@@ -127,6 +129,7 @@ async function pdf(req, env, ctx, url) {
     const nPages = await page.evaluate('window.__PRN.report.pages.length');
     const issues = await page.evaluate('window.__PRN.report.issues || []');
     const warns = await page.evaluate('window.__PRN.report.warn || []');
+    const nOverlaps = await page.evaluate("((window.__PRN.report.overlaps||[]).length + (window.__PRN.report.bounds||[]).length)");
     await page.evaluate('new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))');
     await new Promise((r) => setTimeout(r, 400));
     await page.emulateMediaType('print');
@@ -138,7 +141,7 @@ async function pdf(req, env, ctx, url) {
     }
     ctx.waitUntil(logPrint(env, `${m}|${all ? 'all' : 'range'}|tos${tos}|new|${Math.ceil(buf.byteLength / 102400) * 100}KB`));
     if (env.STORE && (issues.length || warns.length)) ctx.waitUntil(saveIssues(env, { m, all, from, to, tos, duplex, profile }, issues, warns));
-    return new Response(buf, { headers: { ...head, 'X-Cache': 'MISS', 'X-Pages': String(nPages) } });
+    return new Response(buf, { headers: { ...head, 'X-Cache': 'MISS', 'X-Pages': String(nPages), 'X-Overlaps': String(nOverlaps) } });
   } catch (e) {
     try { if (browser) await browser.close(); } catch (x) { /* */ }
     const msg = String(e && e.message || e);

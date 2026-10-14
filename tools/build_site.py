@@ -1020,7 +1020,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       cur['perek']=perek; cur['perekName']=perekName
       # חציצה צמודה לכותרת (לפניה או אחריה) אינה מוצגת. זהו כלל תצוגה לכל
       # המסכתות; קובץ הוורד לא נגע.
-      if r=='hatz' and t and (prev_role(bi) in HEADR or next_role(bi) in HEADR):
+      # ו (14.10.2026): גם חציצה שלפני תיבת משנה (כשהקודמת אינה משנה) או שאחריה (כשהבאה אינה משנה) אינה מוצגת:
+      # התיבה המוצללת היא ההפרדה. חציצה בין שתי פסקאות של אותה משנה (א5) נשארת.
+      if r=='hatz' and t and (prev_role(bi) in HEADR or next_role(bi) in HEADR
+                              or (next_role(bi)=='mishna' and prev_role(bi)!='mishna')
+                              or (prev_role(bi)=='mishna' and next_role(bi)!='mishna')):
           n_hatz_head+=1; continue
       # חלון הכותרת הוא מסגרת צפה בוורד, והוא מצביע על מה שאחריו. עד כאן
       # הוא פתח מיד יחידה משלו, וכשאחריו באה כותרת "נושא" נשארה בדף שורה
@@ -1509,6 +1513,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # ואם זז - התאמה אחת ויחידה של הנוסח שהיה, בטווח דף אחד לכל צד.
   # תיקון שאיבד את עוגנו אינו מוחל בשקט: הוא נשאר בקובץ ונאמר בבקרה.
   ed_stat=_apply_site_edits(pages,os.path.basename(out_path)[:-5],qa)
+  # ט, י, יא (14.10.2026): ד"ה משנה חסר/כפול, וסגנון "תנאי המשנה" לשמות התנאים. אחרי תיקוני האתר (כדי שלא
+  # לשבור עיגון של תיקון בטקסט) ולפני הניקוד (שנגזר מפסקאות המשנה).
+  try:
+      import mishna_semantics
+      mishna_semantics.apply(pages,toc,qa)
+      mishna_semantics.check_daf_order(pages,qa)
+  except Exception as _e:
+      qa.append(('סמנטיקת משנה','לא רצה: %s'%_e))
   mbt=mishna_box.table(pages)     # מחדש: תיקון מספר משנה שנעשה באתר משנה את הטבלה
 
   # ג-ג: בדיקות בקרה נוספות, עם קישור למקום המדויק (tools/qa_checks.py)
@@ -1828,7 +1840,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* גם כשהמספר כתוב בוורד (סגנון התו "מספר קטע" בתחילת הד"ה): בהצבה מוחלטת, כדי
      שהד"ה יישאר ממורכז */
   .main.dh:has(>.mk:first-child){padding-inline:1.5em}
-  .main.dh>.mk:first-child{position:absolute;right:.1em;top:0;white-space:nowrap}
+  /* י3 (14.10.2026): אות הקטע של ד"ה משנה - קטנה, בתוך עיגול דק ובקצה השמאלי של השורה, רחוק ממקום אותיות הרשימה
+     (א. ב. ג.) שבמסילה (בקצה הימני), כדי שלא יתבלבלו */
+  .main.dh>.mk:first-child{position:absolute;right:auto;left:.1em;top:.12em;white-space:nowrap;
+     font-size:calc(.6em * var(--mr));line-height:1.35;padding:0 .35em;border:1px solid currentColor;border-radius:.9em;font-weight:700}
   .mk{font-family:'Vilna',serif;font-weight:700;font-size:calc(.78em * var(--mr));color:#7a5a14;letter-spacing:.02em}
   /* סגנונות תו בתוך משנה. 1 נקודה = --fs / 9 (הגוף 9 נקודות), ובגופן המשנה
      (וילנא מודגש) מוכפלת במקדם הדיו --k-ink. היחסים קבועים (הכרעה 6.10.2026,
@@ -1836,6 +1851,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      נושא משנה = M בדרגת עובי אחת מעליה (700 -> 900), תנאי המשנה = M פחות
      שתי נקודות, הסבר במשנה = M פחות נקודה. כשהמשנה תשתנה, הם זזים איתה.
      פסקה שכולה "נושא משנה" ממורכזת ככותרת; שורה שחלקה בלבד - נשארת במקומה. */
+  /* ד"ה משנה שנוסף אוטומטית בבנייה (14.10.2026): מסומן בקו נקודות, כדי שהמנהל יבחין בינו לבין ד"ה שנכתב בוורד */
+  .main.dh.dhauto,.main.dh.dhauto>*:not(.mk){text-decoration:underline dotted;text-underline-offset:.22em}
   .main.mishna .ns{font-weight:900}
   .main.mishna p.nsc{text-align:center;text-align-last:center}
   .main.mishna .am{font-weight:700;font-size:calc(1em - var(--k-ink) * var(--fs) * 2 / 9)}
@@ -2454,7 +2471,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(const o of still){
       if(o.aw<=o.tw+.5)continue;
       /* כותרת הצד לא תיפגע: אם היא נכנסת במסילה כולה, ציון הדף מועלה מעט ויוצא מן הצפיפות */
-      if(o.hw&&o.dm){
+      /* בהדפסת PDF (14.10.2026) ציון הדף המועלה (dup) נחבט בכותרת הצד של השורה שמעליו: שם הוא מוקטן/נפרש במקום */
+      if(o.hw&&o.dm&&!window.__PRN_ON){
         if(o.aw<=o.full+.5){ops.push(()=>o.rail.classList.add('dup'));continue}}
       if(o.lines>=2&&!o.a.classList.contains('stk')){o.w2=true;ops.push(()=>o.a.classList.add('w2'));wrapped.push(o);continue}
       const need=o.tw/o.aw;

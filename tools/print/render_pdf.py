@@ -74,6 +74,7 @@ def main():
     ap.add_argument('--dev', action='store_true')
     ap.add_argument('--tos-dir', default=os.path.join(ROOT, 'tosafot'), help='תיקיית נתוני התוספות (live-*.json) לבדיקה')
     ap.add_argument('--no-pdf', action='store_true')
+    ap.add_argument('--probe', default='', help='קובץ JS לבדיקת ה-DOM אחרי העימוד (אבחון); התוצאה מודפסת')
     ap.add_argument('--report', default='', help='נתיב קובץ הדוח (JSON); בלעדיו הדוח נכתב ליד הקובץ')
     a = ap.parse_args()
     from playwright.sync_api import sync_playwright
@@ -122,10 +123,13 @@ def main():
             route.fulfill(status=500, body=b'')
 
     with sync_playwright() as p:
-        b = p.chromium.launch()
+        # PRINT_CHROMIUM: נתיב לדפדפן מותקן (כשגרסת playwright אינה תואמת לדפדפן שבמחשב)
+        b = p.chromium.launch(executable_path=os.environ.get('PRINT_CHROMIUM') or None)
         ctx = b.new_context(viewport={'width': 794, 'height': 1123})
         ctx.route('**/*', handler)
         page = ctx.new_page()
+        # העימוד נמדד באותה מדיה שבה הקובץ מופק (כמו ב-Worker): מדידה במסך והפקה בהדפסה נתנו גבהים שונים
+        page.emulate_media(media='print')
         page.on('console', lambda m: logs.append('%s: %s' % (m.type, m.text)))
         page.on('pageerror', lambda e: logs.append('pageerror: %s' % e))
         page.goto(url, wait_until='domcontentloaded', timeout=180000)
@@ -137,6 +141,10 @@ def main():
             print('\n'.join(logs[-12:]))
             b.close()
             sys.exit(2)
+        if a.probe:
+            page.emulate_media(media='print')
+            # בדיקת DOM אחרי העימוד (אבחון): מדפיס את תוצאת הסקריפט
+            print('PROBE', json.dumps(page.evaluate(open(a.probe, encoding='utf-8').read()), ensure_ascii=False))
         if not a.no_pdf:
             page.evaluate('document.fonts.ready')
             rep['dom'] = page.evaluate("({pg: document.querySelectorAll('.pg').length, txt: (document.querySelector('.pg')||{}).innerText ? document.querySelector('.pg').innerText.length : 0, "
@@ -152,6 +160,15 @@ def main():
                                           'msSqueeze', 'glued', 'semicolons', 'msMeasure', 't', 'seconds') if k in rep}, ensure_ascii=False))
     json.dump(rep, open(a.report or (a.out + '.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('pages=%d  out=%s' % (len(rep['pages']), a.out))
+    # בודק החפיפות (14.10.2026): חפיפה או חריגה מהשוליים = כשל, אין קובץ "תקין"
+    ov, bd = rep.get('overlaps') or [], rep.get('bounds') or []
+    print('חפיפות=%d  חריגות_שוליים=%d' % (len(ov), len(bd)))
+    for o in ov[:20]:
+        print('  חפיפה: עמוד %s (%s): %s <> %s (%s מ"מ)' % (o['page'], o['daf'], o['a'], o['b'], o['mm']))
+    for o in bd[:20]:
+        print('  חריגה: עמוד %s (%s): %s - %s' % (o['page'], o['daf'], o['el'], o['why']))
+    if ov or bd:
+        sys.exit(3)
 
 
 if __name__ == '__main__':

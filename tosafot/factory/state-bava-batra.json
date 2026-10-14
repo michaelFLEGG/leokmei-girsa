@@ -44,11 +44,17 @@
    "batch": "msgbatch_01HexWeaGGUShbSbWfbeZvLR"
   },
   "7": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:41:20Z",
    "nreq": 10,
-   "batch": "msgbatch_01Ah4sCeWqEetB9uzWgvXt3k"
+   "published": "2026-10-14T16:49:00Z",
+   "result": {
+    "generated": 18,
+    "decided": 0,
+    "flagged": 9,
+    "questions": 13
+   }
   },
   "8": {
    "status": "rereviewing",
@@ -73,7 +79,7 @@
   }
  },
  "created": "2026-10-14T16:22:25Z",
- "updated": "2026-10-14T16:45:20Z",
+ "updated": "2026-10-14T16:49:01Z",
  "calibration": [
   {
    "perek": 5,

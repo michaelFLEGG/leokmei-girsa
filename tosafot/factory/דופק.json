@@ -1,30 +1,19 @@
 {
- "ticks": 40,
+ "ticks": 41,
  "stalls": 0,
- "last": "2026-10-14T16:45:27Z",
+ "last": "2026-10-14T16:49:03Z",
  "summary": [
   "sukkah: הושלמה",
   "berakhot: הושלמה",
-  "bava-kamma פרק 1: published",
-  "bava-kamma פרק 7: published",
-  "bava-kamma פרק 9: published",
-  "bava-kamma פרק 10: published",
+  "bava-kamma: הושלמה",
   "bava-metzia פרק 1: rewriting",
-  "bava-metzia פרק 2: published",
-  "bava-metzia פרק 3: published",
-  "bava-metzia פרק 4: published",
-  "bava-metzia פרק 5: published",
-  "bava-metzia פרק 6: published",
-  "bava-metzia פרק 7: published",
-  "bava-metzia פרק 8: published",
-  "bava-metzia פרק 9: published",
   "bava-batra פרק 1: rewriting",
   "bava-batra פרק 2: rewriting",
   "bava-batra פרק 3: rewriting",
   "bava-batra פרק 4: rewriting",
   "bava-batra פרק 5: rereviewing",
   "bava-batra פרק 6: rewriting",
-  "bava-batra פרק 7: rereviewing",
+  "bava-batra פרק 7: published",
   "bava-batra פרק 8: rereviewing",
   "bava-batra פרק 9: rewriting",
   "bava-batra פרק 10: rewriting",
@@ -40,6 +29,6 @@
   "kiddushin פרק 1: writing",
   "yevamot: ממתין להכנה (ספירה והקשר)"
  ],
- "spent": 127.70203,
- "left": 68.3
+ "spent": 127.706717,
+ "left": 68.29
 }

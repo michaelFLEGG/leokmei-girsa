@@ -151,3 +151,5 @@
 [2026-10-14 13:30:59] נשלח Batch msgbatch_01KVtqbqhqHXJVFCNeZyudG4 (write) bava-kamma פרק 8: 31 בקשות
 [2026-10-14 13:31:00] נשלח Batch msgbatch_01FyVUkN6geT6qLxkopxyFf8 (write) bava-kamma פרק 9: 60 בקשות
 [2026-10-14 13:31:01] נשלח Batch msgbatch_016HUKi7vF53zorxVp8xfKBH (write) bava-kamma פרק 10: 22 בקשות
+[2026-10-14 13:37:52] bava-kamma פרק 6: כתיבה הסתיימה {'ok': 46, 'bad': 35, 'api': 0}, עלות $0.642
+[2026-10-14 13:37:53] נשלח Batch msgbatch_01Y8LvYbAQHcswqfv5mgqwVo (review) bava-kamma פרק 6: 15 בקשות

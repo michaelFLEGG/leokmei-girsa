@@ -2,11 +2,11 @@
  "slug": "bava-batra",
  "perakim": {
   "1": {
-   "status": "writing",
-   "batch": "msgbatch_01CepHCNu8XtZjeY5cvq7SgN",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:22:25Z",
-   "nreq": 50
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:33:43Z",
+   "nreq": 32,
+   "batch": "msgbatch_01Aov2vB7iEXM5XQesngZmry"
   },
   "2": {
    "status": "writing",
@@ -16,18 +16,18 @@
    "nreq": 50
   },
   "3": {
-   "status": "writing",
-   "batch": "msgbatch_018tBHZQHUugrE5YqvmryMBL",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:22:27Z",
-   "nreq": 96
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:33:45Z",
+   "nreq": 50,
+   "batch": "msgbatch_01RjDAgC6Exo63vXXLyoRvaw"
   },
   "4": {
-   "status": "writing",
-   "batch": "msgbatch_017oKqN4HHxdvimj8U8UULBP",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:22:28Z",
-   "nreq": 34
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:33:47Z",
+   "nreq": 21,
+   "batch": "msgbatch_01Gy4GUNeFZ7tEVJBbGmvgYy"
   },
   "5": {
    "status": "reviewing",
@@ -37,11 +37,11 @@
    "batch": "msgbatch_01Ja11AZteww4Fx4Vkp7zcWi"
   },
   "6": {
-   "status": "writing",
-   "batch": "msgbatch_01KjovLvvZzGstWaeJXUCA3i",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:22:30Z",
-   "nreq": 29
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:33:49Z",
+   "nreq": 19,
+   "batch": "msgbatch_01Ln3TwmzHpRMpqsAd6ibPW2"
   },
   "7": {
    "status": "reviewing",
@@ -58,11 +58,11 @@
    "batch": "msgbatch_01QEA5WWR7YoaDiHLcv8TFTQ"
   },
   "9": {
-   "status": "writing",
-   "batch": "msgbatch_01MyVie9u2WwgQqv5DdjmuBq",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:22:33Z",
-   "nreq": 65
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:33:51Z",
+   "nreq": 35,
+   "batch": "msgbatch_0151VcxMCH3VAkgLNFZz1hVS"
   },
   "10": {
    "status": "writing",
@@ -73,7 +73,7 @@
   }
  },
  "created": "2026-10-14T16:22:25Z",
- "updated": "2026-10-14T16:30:01Z",
+ "updated": "2026-10-14T16:33:51Z",
  "calibration": [
   {
    "perek": 5,
@@ -92,6 +92,36 @@
    "mean": 0.476,
    "n": 4,
    "at": "2026-10-14T16:30:00Z"
+  },
+  {
+   "perek": 1,
+   "mean": 0.479,
+   "n": 4,
+   "at": "2026-10-14T16:33:43Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.399,
+   "n": 4,
+   "at": "2026-10-14T16:33:45Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.237,
+   "n": 4,
+   "at": "2026-10-14T16:33:46Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.643,
+   "n": 4,
+   "at": "2026-10-14T16:33:48Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.863,
+   "n": 4,
+   "at": "2026-10-14T16:33:50Z"
   }
  ]
 }

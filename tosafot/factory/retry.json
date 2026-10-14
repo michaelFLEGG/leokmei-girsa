@@ -1,0 +1,15 @@
+{
+ "items": [
+  [
+   "sukkah",
+   1
+  ],
+  [
+   "sukkah",
+   2
+  ]
+ ],
+ "dry": true,
+ "rewriter": "claude-fable-5-1",
+ "reviewer": "claude-sonnet-5-5"
+}

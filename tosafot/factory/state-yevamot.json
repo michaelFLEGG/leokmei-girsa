@@ -10,10 +10,11 @@
    "result": {
     "generated": 135,
     "decided": 0,
-    "unchecked": 42,
+    "unchecked": 0,
     "flagged": 42,
     "questions": 88
-   }
+   },
+   "unc_done": true
   },
   "2": {
    "status": "published",
@@ -24,10 +25,11 @@
    "result": {
     "generated": 67,
     "decided": 0,
-    "unchecked": 22,
+    "unchecked": 0,
     "flagged": 22,
     "questions": 40
-   }
+   },
+   "unc_done": true
   },
   "3": {
    "status": "published",
@@ -38,10 +40,11 @@
    "result": {
     "generated": 78,
     "decided": 0,
-    "unchecked": 25,
+    "unchecked": 0,
     "flagged": 25,
     "questions": 36
-   }
+   },
+   "unc_done": true
   },
   "4": {
    "status": "published",
@@ -52,10 +55,11 @@
    "result": {
     "generated": 123,
     "decided": 0,
-    "unchecked": 43,
+    "unchecked": 0,
     "flagged": 43,
     "questions": 66
-   }
+   },
+   "unc_done": true
   },
   "5": {
    "status": "published",
@@ -66,10 +70,11 @@
    "result": {
     "generated": 29,
     "decided": 0,
-    "unchecked": 7,
+    "unchecked": 0,
     "flagged": 7,
     "questions": 15
-   }
+   },
+   "unc_done": true
   },
   "6": {
    "status": "published",
@@ -80,10 +85,11 @@
    "result": {
     "generated": 104,
     "decided": 0,
-    "unchecked": 24,
+    "unchecked": 0,
     "flagged": 24,
     "questions": 59
-   }
+   },
+   "unc_done": true
   },
   "7": {
    "status": "published",
@@ -94,17 +100,25 @@
    "result": {
     "generated": 22,
     "decided": 0,
-    "unchecked": 24,
+    "unchecked": 0,
     "flagged": 24,
     "questions": 10
-   }
+   },
+   "unc_done": true
   },
   "8": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:15:16Z",
    "nreq": 30,
-   "batch": "msgbatch_01RdqZjDfRZUez7HxNgPAPEP"
+   "published": "2026-10-14T18:26:58Z",
+   "result": {
+    "generated": 125,
+    "decided": 0,
+    "unchecked": 44,
+    "flagged": 45,
+    "questions": 54
+   }
   },
   "9": {
    "status": "published",
@@ -115,17 +129,25 @@
    "result": {
     "generated": 9,
     "decided": 0,
-    "unchecked": 20,
+    "unchecked": 0,
     "flagged": 23,
     "questions": 2
-   }
+   },
+   "unc_done": true
   },
   "10": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:18:58Z",
    "nreq": 18,
-   "batch": "msgbatch_01V3jkfCnYGVUPLW3Nq8b2xH"
+   "published": "2026-10-14T18:26:59Z",
+   "result": {
+    "generated": 83,
+    "decided": 0,
+    "unchecked": 15,
+    "flagged": 15,
+    "questions": 51
+   }
   },
   "11": {
    "status": "published",
@@ -136,10 +158,11 @@
    "result": {
     "generated": 25,
     "decided": 0,
-    "unchecked": 14,
+    "unchecked": 0,
     "flagged": 14,
     "questions": 5
-   }
+   },
+   "unc_done": true
   },
   "12": {
    "status": "published",
@@ -150,10 +173,11 @@
    "result": {
     "generated": 51,
     "decided": 0,
-    "unchecked": 14,
+    "unchecked": 0,
     "flagged": 14,
     "questions": 22
-   }
+   },
+   "unc_done": true
   },
   "13": {
    "status": "published",
@@ -164,10 +188,11 @@
    "result": {
     "generated": 49,
     "decided": 0,
-    "unchecked": 8,
+    "unchecked": 0,
     "flagged": 8,
     "questions": 24
-   }
+   },
+   "unc_done": true
   },
   "14": {
    "status": "published",
@@ -178,10 +203,11 @@
    "result": {
     "generated": 9,
     "decided": 0,
-    "unchecked": 8,
+    "unchecked": 0,
     "flagged": 8,
     "questions": 3
-   }
+   },
+   "unc_done": true
   },
   "15": {
    "status": "published",
@@ -192,10 +218,11 @@
    "result": {
     "generated": 31,
     "decided": 0,
-    "unchecked": 19,
+    "unchecked": 0,
     "flagged": 19,
     "questions": 16
-   }
+   },
+   "unc_done": true
   },
   "16": {
    "status": "published",
@@ -206,14 +233,15 @@
    "result": {
     "generated": 22,
     "decided": 0,
-    "unchecked": 11,
+    "unchecked": 0,
     "flagged": 11,
     "questions": 9
-   }
+   },
+   "unc_done": true
   }
  },
  "created": "2026-10-14T17:50:45Z",
- "updated": "2026-10-14T18:22:59Z",
+ "updated": "2026-10-14T18:26:59Z",
  "calibration": [
   {
    "perek": 1,

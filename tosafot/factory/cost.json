@@ -1,5 +1,5 @@
 {
- "total": 232.407099,
+ "total": 233.546772,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
@@ -8,14 +8,14 @@
   "bava-batra": 36.17366,
   "gittin": 25.919076,
   "kiddushin": 8.229778,
-  "yevamot": 32.227629,
-  "ketubot": 3.10109
+  "yevamot": 32.256738,
+  "ketubot": 4.211654
  },
  "byPhase": {
-  "write": 68.415787,
-  "review": 0.754432,
+  "write": 69.511026,
+  "review": 0.769757,
   "rewrite": 162.233095,
-  "rereview": 1.003788
+  "rereview": 1.032897
  },
  "batches": [
   {
@@ -6033,6 +6033,86 @@
     "n": 5
    },
    "cost": 0.276596
+  },
+  {
+   "at": "2026-10-14T18:26:57Z",
+   "slug": "yevamot",
+   "perek": 8,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 30,
+   "usage": {
+    "in": 68669,
+    "cw": 119894,
+    "cr": 15936,
+    "out": 9875,
+    "n": 30
+   },
+   "cost": 0.017971
+  },
+  {
+   "at": "2026-10-14T18:26:58Z",
+   "slug": "yevamot",
+   "perek": 10,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 18,
+   "usage": {
+    "in": 44106,
+    "cw": 76507,
+    "cr": 3509,
+    "out": 5058,
+    "n": 18
+   },
+   "cost": 0.011138
+  },
+  {
+   "at": "2026-10-14T18:27:00Z",
+   "slug": "ketubot",
+   "perek": 1,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 38,
+   "usage": {
+    "in": 129962,
+    "cw": 0,
+    "cr": 537814,
+    "out": 42922,
+    "n": 38
+   },
+   "cost": 0.371463
+  },
+  {
+   "at": "2026-10-14T18:27:00Z",
+   "slug": "ketubot",
+   "perek": 1,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 12,
+   "usage": {
+    "in": 36684,
+    "cw": 0,
+    "cr": 169848,
+    "out": 20765,
+    "n": 12
+   },
+   "cost": 0.723776
+  },
+  {
+   "at": "2026-10-14T18:27:02Z",
+   "slug": "ketubot",
+   "perek": 3,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 26,
+   "usage": {
+    "in": 39867,
+    "cw": 112435,
+    "cr": 7794,
+    "out": 8196,
+    "n": 26
+   },
+   "cost": 0.015325
   }
  ],
  "tokens": {
@@ -6079,16 +6159,16 @@
    "out": 338464
   },
   "yevamot": {
-   "in": 3767063,
-   "cw": 2045466,
-   "cr": 11796342,
-   "out": 1197977
+   "in": 3879838,
+   "cw": 2241867,
+   "cr": 11815787,
+   "out": 1212910
   },
   "ketubot": {
-   "in": 530972,
-   "cw": 47012,
-   "cr": 2066374,
-   "out": 160244
+   "in": 737485,
+   "cw": 159447,
+   "cr": 2781830,
+   "out": 232127
   }
  }
 }

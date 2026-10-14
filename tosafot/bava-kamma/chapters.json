@@ -1,0 +1,96 @@
+{
+ "masechet": "בבא קמא",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "ארבעה אבות",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "17a",
+   "toLine": 12,
+   "countedThrough": "17a"
+  },
+  {
+   "n": 2,
+   "name": "כיצד הרגל",
+   "from": "17a",
+   "fromLine": 13,
+   "to": "27a",
+   "toLine": 12,
+   "countedThrough": "27a"
+  },
+  {
+   "n": 3,
+   "name": "המניח",
+   "from": "27a",
+   "fromLine": 13,
+   "to": "36a",
+   "toLine": 8,
+   "countedThrough": "36a"
+  },
+  {
+   "n": 4,
+   "name": "שור שנגח ד' וה'",
+   "from": "36a",
+   "fromLine": 9,
+   "to": "46a",
+   "toLine": 6,
+   "countedThrough": "46a"
+  },
+  {
+   "n": 5,
+   "name": "שור שנגח את הפרה",
+   "from": "46a",
+   "fromLine": 7,
+   "to": "55a",
+   "toLine": 16,
+   "countedThrough": "55a"
+  },
+  {
+   "n": 6,
+   "name": "הכונס",
+   "from": "55b",
+   "fromLine": 1,
+   "to": "62b",
+   "toLine": 6,
+   "countedThrough": "62b"
+  },
+  {
+   "n": 7,
+   "name": "מרובה",
+   "from": "62b",
+   "fromLine": 7,
+   "to": "83a",
+   "toLine": 12,
+   "countedThrough": "83a"
+  },
+  {
+   "n": 8,
+   "name": "החובל",
+   "from": "83b",
+   "fromLine": 1,
+   "to": "93a",
+   "toLine": 20,
+   "countedThrough": "93a"
+  },
+  {
+   "n": 9,
+   "name": "הגוזל עצים",
+   "from": "93b",
+   "fromLine": 1,
+   "to": "111a",
+   "toLine": 21,
+   "countedThrough": "111a"
+  },
+  {
+   "n": 10,
+   "name": "הגוזל בתרא",
+   "from": "111b",
+   "fromLine": 1,
+   "to": "119b",
+   "toLine": 21,
+   "countedThrough": "119b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 119a, 119b."
+}

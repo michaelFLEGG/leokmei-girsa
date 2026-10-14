@@ -2,11 +2,18 @@
  "slug": "gittin",
  "perakim": {
   "1": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:06:50Z",
    "nreq": 32,
-   "batch": "msgbatch_01JUhQSE9W2RNgKLvvRBMmbP"
+   "published": "2026-10-14T18:15:10Z",
+   "result": {
+    "generated": 144,
+    "decided": 0,
+    "unchecked": 44,
+    "flagged": 44,
+    "questions": 85
+   }
   },
   "2": {
    "status": "published",
@@ -17,17 +24,25 @@
    "result": {
     "generated": 101,
     "decided": 0,
-    "unchecked": 7,
+    "unchecked": 0,
     "flagged": 7,
     "questions": 69
-   }
+   },
+   "unc_done": true
   },
   "3": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:06:52Z",
    "nreq": 16,
-   "batch": "msgbatch_013dA4LLBhVbVYs3xb2GuFPX"
+   "published": "2026-10-14T18:15:11Z",
+   "result": {
+    "generated": 59,
+    "decided": 0,
+    "unchecked": 32,
+    "flagged": 32,
+    "questions": 39
+   }
   },
   "4": {
    "status": "published",
@@ -38,17 +53,25 @@
    "result": {
     "generated": 95,
     "decided": 0,
-    "unchecked": 58,
+    "unchecked": 0,
     "flagged": 58,
     "questions": 59
-   }
+   },
+   "unc_done": true
   },
   "5": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:06:54Z",
    "nreq": 26,
-   "batch": "msgbatch_01Vw9HHRgYm4dJg94XQ3bapQ"
+   "published": "2026-10-14T18:15:12Z",
+   "result": {
+    "generated": 84,
+    "decided": 0,
+    "unchecked": 45,
+    "flagged": 45,
+    "questions": 45
+   }
   },
   "6": {
    "status": "published",
@@ -59,17 +82,25 @@
    "result": {
     "generated": 43,
     "decided": 0,
-    "unchecked": 7,
+    "unchecked": 0,
     "flagged": 7,
     "questions": 23
-   }
+   },
+   "unc_done": true
   },
   "7": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T18:06:56Z",
    "nreq": 17,
-   "batch": "msgbatch_017qmkVat2eAmHntWJ6oYaGN"
+   "published": "2026-10-14T18:15:13Z",
+   "result": {
+    "generated": 64,
+    "decided": 0,
+    "unchecked": 16,
+    "flagged": 16,
+    "questions": 38
+   }
   },
   "8": {
    "status": "published",
@@ -80,10 +111,11 @@
    "result": {
     "generated": 30,
     "decided": 0,
-    "unchecked": 24,
+    "unchecked": 0,
     "flagged": 24,
     "questions": 16
-   }
+   },
+   "unc_done": true
   },
   "9": {
    "status": "published",
@@ -94,14 +126,15 @@
    "result": {
     "generated": 77,
     "decided": 0,
-    "unchecked": 16,
+    "unchecked": 0,
     "flagged": 16,
     "questions": 33
-   }
+   },
+   "unc_done": true
   }
  },
  "created": "2026-10-14T16:45:20Z",
- "updated": "2026-10-14T18:11:11Z",
+ "updated": "2026-10-14T18:15:13Z",
  "calibration": [
   {
    "perek": 1,

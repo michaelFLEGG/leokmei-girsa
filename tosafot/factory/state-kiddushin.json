@@ -10,14 +10,15 @@
    "result": {
     "generated": 263,
     "decided": 0,
-    "unchecked": 86,
+    "unchecked": 0,
     "flagged": 86,
     "questions": 168
-   }
+   },
+   "unc_done": true
   }
  },
  "created": "2026-10-14T16:45:25Z",
- "updated": "2026-10-14T18:11:12Z",
+ "updated": "2026-10-14T18:15:13Z",
  "calibration": [
   {
    "perek": 1,
@@ -25,5 +26,6 @@
    "n": 4,
    "at": "2026-10-14T17:50:44Z"
   }
- ]
+ ],
+ "done": "2026-10-14T18:15:13Z"
 }

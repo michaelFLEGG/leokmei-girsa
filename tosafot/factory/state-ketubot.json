@@ -65,11 +65,11 @@
    "nreq": 25
   },
   "10": {
-   "status": "writing",
-   "batch": "msgbatch_01W9LVWhxVYfhLELFZK3Lv3a",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:06Z",
-   "nreq": 25
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T18:15:23Z",
+   "nreq": 11,
+   "batch": "msgbatch_014cw47xYEQ4rmAYmMQ2QASZ"
   },
   "11": {
    "status": "reviewing",
@@ -79,11 +79,11 @@
    "batch": "msgbatch_01KqLHeHMzj6ERtVJwFGN1gj"
   },
   "12": {
-   "status": "writing",
-   "batch": "msgbatch_01HXamQXP5eyCkAmEGxQTBHY",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:07Z",
-   "nreq": 13
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T18:15:25Z",
+   "nreq": 6,
+   "batch": "msgbatch_01Marb21vCbJpMeAygBsDyuZ"
   },
   "13": {
    "status": "writing",
@@ -94,13 +94,25 @@
   }
  },
  "created": "2026-10-14T18:02:57Z",
- "updated": "2026-10-14T18:11:37Z",
+ "updated": "2026-10-14T18:15:25Z",
  "calibration": [
   {
    "perek": 11,
    "mean": 0.3,
    "n": 4,
    "at": "2026-10-14T18:11:36Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.286,
+   "n": 4,
+   "at": "2026-10-14T18:15:23Z"
+  },
+  {
+   "perek": 12,
+   "mean": 0.478,
+   "n": 4,
+   "at": "2026-10-14T18:15:24Z"
   }
  ]
 }

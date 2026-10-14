@@ -1,17 +1,18 @@
 {
- "total": 127.706717,
+ "total": 128.866565,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
   "bava-kamma": 41.682478,
   "bava-metzia": 27.584702,
-  "bava-batra": 16.384184
+  "bava-batra": 16.421533,
+  "gittin": 1.122499
  },
  "byPhase": {
-  "write": 46.576567,
+  "write": 47.699066,
   "review": 0.487349,
   "rewrite": 80.130369,
-  "rereview": 0.512432
+  "rereview": 0.549781
  },
  "batches": [
   {
@@ -3437,6 +3438,70 @@
     "n": 10
    },
    "cost": 0.004687
+  },
+  {
+   "at": "2026-10-14T16:52:34Z",
+   "slug": "bava-batra",
+   "perek": 5,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 30,
+   "usage": {
+    "in": 61780,
+    "cw": 109156,
+    "cr": 19728,
+    "out": 8529,
+    "n": 30
+   },
+   "cost": 0.016235
+  },
+  {
+   "at": "2026-10-14T16:52:36Z",
+   "slug": "bava-batra",
+   "perek": 8,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 49,
+   "usage": {
+    "in": 86245,
+    "cw": 133080,
+    "cr": 66640,
+    "out": 12644,
+    "n": 49
+   },
+   "cost": 0.021114
+  },
+  {
+   "at": "2026-10-14T16:52:38Z",
+   "slug": "gittin",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 28,
+   "usage": {
+    "in": 94181,
+    "cw": 0,
+    "cr": 396284,
+    "out": 26106,
+    "n": 28
+   },
+   "cost": 0.244525
+  },
+  {
+   "at": "2026-10-14T16:52:38Z",
+   "slug": "gittin",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 15,
+   "usage": {
+    "in": 46637,
+    "cw": 0,
+    "cr": 212310,
+    "out": 24730,
+    "n": 15
+   },
+   "cost": 0.877974
   }
  ],
  "tokens": {
@@ -3465,10 +3530,16 @@
    "out": 1031096
   },
   "bava-batra": {
-   "in": 2304608,
-   "cw": 1226562,
-   "cr": 9010890,
-   "out": 756725
+   "in": 2452633,
+   "cw": 1468798,
+   "cr": 9097258,
+   "out": 777898
+  },
+  "gittin": {
+   "in": 140818,
+   "cw": 0,
+   "cr": 608594,
+   "out": 50836
   }
  }
 }

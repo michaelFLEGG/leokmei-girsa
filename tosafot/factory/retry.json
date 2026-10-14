@@ -1,1 +1,19 @@
-{"items": [["sukkah", 1], ["sukkah", 2]], "dry": false, "rewriter": "claude-fable-5-1", "reviewer": "claude-sonnet-5-5"}
+{
+ "items": [
+  [
+   "sukkah",
+   1
+  ],
+  [
+   "sukkah",
+   2
+  ]
+ ],
+ "dry": false,
+ "rewriter": "claude-fable-5-1",
+ "reviewer": "claude-sonnet-5-5",
+ "done": [
+  "sukkah:1",
+  "sukkah:2"
+ ]
+}

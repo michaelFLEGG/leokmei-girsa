@@ -2,29 +2,37 @@
  "slug": "sukkah",
  "perakim": {
   "1": {
-   "status": "published",
-   "batchPhase": "rereview",
-   "submitted": "2026-10-13T23:51:22Z",
-   "nreq": 29,
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T11:14:05Z",
+   "nreq": 32,
    "published": "2026-10-14T09:01:00Z",
    "result": {
     "generated": 52,
     "decided": 37,
     "flagged": 59,
     "questions": 19
+   },
+   "batch": "msgbatch_0196Xjzx614KXK3N5NMQDjGo",
+   "retry": {
+    "reviewer": "claude-sonnet-5-5"
    }
   },
   "2": {
-   "status": "published",
-   "batchPhase": "rereview",
-   "submitted": "2026-10-14T10:06:09Z",
-   "nreq": 21,
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T11:14:05Z",
+   "nreq": 22,
    "published": "2026-10-14T10:13:45Z",
    "result": {
     "generated": 38,
     "decided": 0,
     "flagged": 42,
     "questions": 11
+   },
+   "batch": "msgbatch_019ChPE3JBdVZsPLgQ9aemEu",
+   "retry": {
+    "reviewer": "claude-sonnet-5-5"
    }
   },
   "3": {
@@ -68,7 +76,7 @@
   }
  },
  "created": "2026-10-13T15:12:29Z",
- "updated": "2026-10-14T10:24:34Z",
+ "updated": "2026-10-14T11:14:06Z",
  "calibration": [
   {
    "perek": 1,

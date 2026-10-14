@@ -1,9 +1,10 @@
 {
- "ticks": 19,
- "stalls": 1,
- "last": "2026-10-14T11:13:04Z",
+ "ticks": 20,
+ "stalls": 2,
+ "last": "2026-10-14T11:14:06Z",
  "summary": [
-  "sukkah: הושלמה",
+  "sukkah פרק 1: rewriting",
+  "sukkah פרק 2: rewriting",
   "berakhot: הושלמה",
   "bava-kamma: ממתין להכנה (ספירה והקשר)"
  ],

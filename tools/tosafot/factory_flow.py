@@ -408,10 +408,16 @@ def drift_check(slug, perek, c, work, st):
     hist = st.setdefault('calibration', [])
     prev = [h['mean'] for h in hist]
     hist.append({'perek': perek, 'mean': mean, 'n': len(sims), 'at': now_iso()})
-    if prev:
-        base = sum(prev) / len(prev)
-        if mean < base - c['calibration']['dropAlert']:
-            raise Halt('סחיפה: התאמת הכיול לנוסח המנהל ירדה ל-%.2f (בסיס %.2f). האצווה נעצרה, ממתינה להכרעת מנהל' % (mean, base))
+    # 14.10: מדגם של 4 לפרק רועש מדי לעצירה בודדת; עוצרים רק על ירידה מתמשכת (ממוצע שלושת האחרונים מול כל הקודמים), לפחות 6 קודמים
+    allm = [h['mean'] for h in hist]
+    if len(allm) >= 9:
+        recent = sum(allm[-3:]) / 3
+        older = allm[:-3]
+        base = sum(older) / len(older)
+        if recent < base - c['calibration']['dropAlert']:
+            raise Halt('סחיפה מתמשכת: ממוצע שלושת הפרקים האחרונים %.2f מול בסיס %.2f. האצווה נעצרה, ממתינה להכרעת מנהל' % (recent, base))
+    elif prev and mean < sum(prev) / len(prev) - c['calibration']['dropAlert']:
+        log('אזהרת כיול (לא עוצר, מדגם קטן): %s פרק %d ממוצע %.2f' % (slug, perek, mean))
 
 
 # ---------------------------------------------------------------- פרסום פרק

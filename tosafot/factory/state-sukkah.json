@@ -15,36 +15,36 @@
    }
   },
   "2": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T09:51:48Z",
-   "nreq": 22,
-   "batch": "msgbatch_0178rEqk5jNCr7aSyHPUS5Pj"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T09:58:53Z",
+   "nreq": 27,
+   "batch": "msgbatch_014LVg6m3JPfyCWMEVdEY3DK"
   },
   "3": {
-   "status": "writing",
-   "batch": "msgbatch_01WfQBJGM3wouCs8j24qCcEi",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:42Z",
-   "nreq": 44
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:58:54Z",
+   "nreq": 27,
+   "batch": "msgbatch_01JXVyAL8WpWSBztEiMaenTb"
   },
   "4": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T09:51:50Z",
-   "nreq": 12,
-   "batch": "msgbatch_01EtrW7gvJ6UvcooRaMP4SGu"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T09:58:56Z",
+   "nreq": 18,
+   "batch": "msgbatch_01Bo9htN9tGziXxk4HAdtGfc"
   },
   "5": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T09:51:51Z",
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T09:58:57Z",
    "nreq": 13,
-   "batch": "msgbatch_01AHnoP3L7HUxaTKeEtvdS8J"
+   "batch": "msgbatch_01GmmYYKfpcpFJFVZfaFZGHi"
   }
  },
  "created": "2026-10-13T15:12:29Z",
- "updated": "2026-10-14T09:51:51Z",
+ "updated": "2026-10-14T09:58:57Z",
  "calibration": [
   {
    "perek": 1,
@@ -69,6 +69,12 @@
    "mean": 0.581,
    "n": 4,
    "at": "2026-10-14T09:51:51Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.48,
+   "n": 4,
+   "at": "2026-10-14T09:58:54Z"
   }
  ]
 }

@@ -2,25 +2,25 @@
  "slug": "berakhot",
  "perakim": {
   "1": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T09:51:53Z",
-   "nreq": 22,
-   "batch": "msgbatch_01CpBquLm2hPMqKYaK5sCFCq"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T09:58:58Z",
+   "nreq": 29,
+   "batch": "msgbatch_01SEWhG3qbdoe1sukod5AMmn"
   },
   "2": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T09:51:54Z",
-   "nreq": 12,
-   "batch": "msgbatch_01WnwsXveP7VQMbaQH7SniUB"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T09:59:00Z",
+   "nreq": 13,
+   "batch": "msgbatch_016h9RntVNz9TAgCJYiZEC6p"
   },
   "3": {
-   "status": "writing",
-   "batch": "msgbatch_01Ra8xuSUey53d9KWsZUiVdo",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:46Z",
-   "nreq": 29
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:59:01Z",
+   "nreq": 17,
+   "batch": "msgbatch_01FfejguuiZhMQpsQSzhrjp7"
   },
   "4": {
    "status": "reviewing",
@@ -30,43 +30,43 @@
    "batch": "msgbatch_01AaGRtDvLmMjvsFPjSTqsdh"
   },
   "5": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T09:51:56Z",
-   "nreq": 9,
-   "batch": "msgbatch_01AZSw9CsA3V3kH5gxj1HnMy"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T09:59:03Z",
+   "nreq": 12,
+   "batch": "msgbatch_01EjzCmu7x9cDEf7kCXNXZpg"
   },
   "6": {
-   "status": "writing",
-   "batch": "msgbatch_019GKUJFJ2EXYwgBEAZCxGjF",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:49Z",
-   "nreq": 35
-  },
-  "7": {
-   "status": "writing",
-   "batch": "msgbatch_01JuucfCtaqvYa9HnzbeY5dq",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:50Z",
-   "nreq": 25
-  },
-  "8": {
    "status": "reviewing",
    "batchPhase": "review",
-   "submitted": "2026-10-14T09:51:58Z",
-   "nreq": 4,
-   "batch": "msgbatch_01QaAbpUBTvoMnhCwFCTovw8"
+   "submitted": "2026-10-14T09:59:04Z",
+   "nreq": 25,
+   "batch": "msgbatch_01Xp8gtxuXrJfVzT4roNTPXK"
+  },
+  "7": {
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:59:05Z",
+   "nreq": 17,
+   "batch": "msgbatch_01FB7aQzfCzh1npDzwqEFJyr"
+  },
+  "8": {
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T09:59:07Z",
+   "nreq": 6,
+   "batch": "msgbatch_01G7ztMVKNzHGR4AvLJBXc86"
   },
   "9": {
-   "status": "writing",
-   "batch": "msgbatch_01VYbqLxMQ5nhXTqWvFma1wp",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T09:44:51Z",
-   "nreq": 16
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T09:59:08Z",
+   "nreq": 12,
+   "batch": "msgbatch_01A8pmGGVuWmCwN9xPoTjbXT"
   }
  },
  "created": "2026-10-14T09:44:43Z",
- "updated": "2026-10-14T09:55:28Z",
+ "updated": "2026-10-14T09:59:08Z",
  "calibration": [
   {
    "perek": 1,
@@ -97,6 +97,30 @@
    "mean": 0.484,
    "n": 4,
    "at": "2026-10-14T09:55:26Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.503,
+   "n": 4,
+   "at": "2026-10-14T09:59:01Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.437,
+   "n": 4,
+   "at": "2026-10-14T09:59:03Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.689,
+   "n": 4,
+   "at": "2026-10-14T09:59:05Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.421,
+   "n": 4,
+   "at": "2026-10-14T09:59:07Z"
   }
  ]
 }

@@ -1,0 +1,87 @@
+{
+ "masechet": "גיטין",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "המביא קמא",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "15a",
+   "toLine": 7,
+   "countedThrough": "15a"
+  },
+  {
+   "n": 2,
+   "name": "המביא בתרא",
+   "from": "15a",
+   "fromLine": 8,
+   "to": "24a",
+   "toLine": 15,
+   "countedThrough": "24a"
+  },
+  {
+   "n": 3,
+   "name": "כל הגט",
+   "from": "24a",
+   "fromLine": 16,
+   "to": "32a",
+   "toLine": 2,
+   "countedThrough": "32a"
+  },
+  {
+   "n": 4,
+   "name": "השולח",
+   "from": "32a",
+   "fromLine": 3,
+   "to": "48b",
+   "toLine": 5,
+   "countedThrough": "48b"
+  },
+  {
+   "n": 5,
+   "name": "הניזקין",
+   "from": "48b",
+   "fromLine": 6,
+   "to": "62a",
+   "toLine": 17,
+   "countedThrough": "62a"
+  },
+  {
+   "n": 6,
+   "name": "האומר התקבל",
+   "from": "62b",
+   "fromLine": 1,
+   "to": "67b",
+   "toLine": 8,
+   "countedThrough": "67b"
+  },
+  {
+   "n": 7,
+   "name": "מי שאחזו",
+   "from": "67b",
+   "fromLine": 9,
+   "to": "77a",
+   "toLine": 9,
+   "countedThrough": "77a"
+  },
+  {
+   "n": 8,
+   "name": "הזורק גט",
+   "from": "77a",
+   "fromLine": 10,
+   "to": "82a",
+   "toLine": 6,
+   "countedThrough": "82a"
+  },
+  {
+   "n": 9,
+   "name": "המגרש",
+   "from": "82a",
+   "fromLine": 7,
+   "to": "90b",
+   "toLine": 8,
+   "countedThrough": "90b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 57a, 68b, 69b."
+}

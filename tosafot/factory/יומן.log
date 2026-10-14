@@ -555,3 +555,38 @@
 [2026-10-14 17:59:00] נשלח Batch msgbatch_01P7NzjbFU1X9nUjZXTEYSKS (review) yevamot פרק 15: 9 בקשות
 [2026-10-14 17:59:01] yevamot פרק 16: כתיבה הסתיימה {'ok': 17, 'bad': 16, 'api': 0}, עלות $0.199
 [2026-10-14 17:59:02] נשלח Batch msgbatch_01QSxTompPXY6ABtMEkNRY7A (review) yevamot פרק 16: 7 בקשות
+[2026-10-14 18:02:39] bava-metzia פרק 1: הושלם פרסום 0 תוספות בסימון טרם נבדק
+[2026-10-14 18:02:40] bava-batra פרק 1: הושלם פרסום 0 תוספות בסימון טרם נבדק
+[2026-10-14 18:02:40] bava-batra פרק 2: הושלם פרסום 0 תוספות בסימון טרם נבדק
+[2026-10-14 18:02:40] bava-batra פרק 3: הושלם פרסום 0 תוספות בסימון טרם נבדק
+[2026-10-14 18:02:41] bava-batra פרק 4: הושלם פרסום 0 תוספות בסימון טרם נבדק
+[2026-10-14 18:02:41] bava-batra פרק 6: הושלם פרסום 0 תוספות בסימון טרם נבדק
+[2026-10-14 18:02:42] bava-batra פרק 9: הושלם פרסום 0 תוספות בסימון טרם נבדק
+[2026-10-14 18:02:42] bava-batra פרק 10: הושלם פרסום 0 תוספות בסימון טרם נבדק
+[2026-10-14 18:02:42] נכתב דוח מסכת /home/runner/work/leokmei-girsa/leokmei-girsa/docs/ענן/דוח-בית-החרושת-bava-metzia.md
+[2026-10-14 18:02:42] נכתב דוח מסכת /home/runner/work/leokmei-girsa/leokmei-girsa/docs/ענן/דוח-בית-החרושת-bava-batra.md
+[2026-10-14 18:02:44] gittin פרק 2: כתיבה מחדש הסתיימה, עלות $2.057
+[2026-10-14 18:02:44] נשלח Batch msgbatch_01Tcq6uPDpo5qAuuXN21cVa6 (rereview) gittin פרק 2: 22 בקשות
+[2026-10-14 18:02:46] gittin פרק 4: כתיבה מחדש הסתיימה, עלות $3.115
+[2026-10-14 18:02:46] נשלח Batch msgbatch_01XvL2xTHC3y2aTe9oAf8LEw (rereview) gittin פרק 4: 33 בקשות
+[2026-10-14 18:02:47] gittin פרק 6: כתיבה מחדש הסתיימה, עלות $1.004
+[2026-10-14 18:02:48] נשלח Batch msgbatch_01Eyi1eZZdjifwHjwAETvjDe (rereview) gittin פרק 6: 9 בקשות
+[2026-10-14 18:02:49] gittin פרק 8: כתיבה מחדש הסתיימה, עלות $1.107
+[2026-10-14 18:02:49] נשלח Batch msgbatch_014VA1mabJ11dbxdm7v2sZX8 (rereview) gittin פרק 8: 11 בקשות
+[2026-10-14 18:02:50] gittin פרק 9: כתיבה מחדש הסתיימה, עלות $1.468
+[2026-10-14 18:02:51] נשלח Batch msgbatch_016kMNtDFGhJaJmwCuj8Ue1a (rereview) gittin פרק 9: 19 בקשות
+[2026-10-14 18:02:53] kiddushin פרק 1: כתיבה מחדש הסתיימה, עלות $5.643
+[2026-10-14 18:02:53] נשלח Batch msgbatch_016W354vwvnAicjjqagjr8f6 (rereview) kiddushin פרק 1: 76 בקשות
+[2026-10-14 18:02:58] נשלח Batch msgbatch_01Rhkk2QWx6KZhrLyWykuZ3R (write) ketubot פרק 1: 50 בקשות
+[2026-10-14 18:02:58] נשלח Batch msgbatch_01WMMN9BTsAykZz78hVm3etR (write) ketubot פרק 2: 51 בקשות
+[2026-10-14 18:03:01] נשלח Batch msgbatch_01S8sXixpuxgvbWSPJ19oQRz (write) ketubot פרק 3: 58 בקשות
+[2026-10-14 18:03:02] נשלח Batch msgbatch_01M5AT6w8r59pak1tCiqoKe1 (write) ketubot פרק 4: 49 בקשות
+[2026-10-14 18:03:02] נשלח Batch msgbatch_016C19HLj7m4c95vXTXLzCxi (write) ketubot פרק 5: 42 בקשות
+[2026-10-14 18:03:03] נשלח Batch msgbatch_01EopfVDdAnq8idEVRrW7xGb (write) ketubot פרק 6: 16 בקשות
+[2026-10-14 18:03:04] נשלח Batch msgbatch_01Awai3FGDirHyWgJGTTMeC4 (write) ketubot פרק 7: 28 בקשות
+[2026-10-14 18:03:05] נשלח Batch msgbatch_013ZnXFW5ZKDnBSoR7hkq3rB (write) ketubot פרק 8: 18 בקשות
+[2026-10-14 18:03:05] נשלח Batch msgbatch_01TVUtWfoUpsDU7Zsoz7S3Ei (write) ketubot פרק 9: 25 בקשות
+[2026-10-14 18:03:06] נשלח Batch msgbatch_01W9LVWhxVYfhLELFZK3Lv3a (write) ketubot פרק 10: 25 בקשות
+[2026-10-14 18:03:06] נשלח Batch msgbatch_0111Fp2neuFDiQU8oMGZfwgW (write) ketubot פרק 11: 23 בקשות
+[2026-10-14 18:03:07] נשלח Batch msgbatch_01HXamQXP5eyCkAmEGxQTBHY (write) ketubot פרק 12: 13 בקשות
+[2026-10-14 18:03:07] נשלח Batch msgbatch_01VwxQpwjXQYBPs6mq7CEUEc (write) ketubot פרק 13: 27 בקשות

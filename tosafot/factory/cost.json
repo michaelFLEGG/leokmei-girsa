@@ -1,19 +1,19 @@
 {
- "total": 181.80489,
+ "total": 196.198283,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
   "bava-kamma": 41.682478,
   "bava-metzia": 43.018038,
   "bava-batra": 36.17366,
-  "gittin": 7.963414,
-  "kiddushin": 2.539185,
+  "gittin": 16.713516,
+  "kiddushin": 8.182476,
   "yevamot": 8.372765
  },
  "byPhase": {
   "write": 65.320598,
   "review": 0.618682,
-  "rewrite": 115.148351,
+  "rewrite": 129.541744,
   "rereview": 0.717262
  },
  "batches": [
@@ -4800,6 +4800,102 @@
     "n": 2
    },
    "cost": 0.107598
+  },
+  {
+   "at": "2026-10-14T18:02:44Z",
+   "slug": "gittin",
+   "perek": 2,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 31,
+   "usage": {
+    "in": 137814,
+    "cw": 0,
+    "cr": 438774,
+    "out": 52512,
+    "n": 31
+   },
+   "cost": 2.056717
+  },
+  {
+   "at": "2026-10-14T18:02:46Z",
+   "slug": "gittin",
+   "perek": 4,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 47,
+   "usage": {
+    "in": 211783,
+    "cw": 0,
+    "cr": 665238,
+    "out": 78910,
+    "n": 47
+   },
+   "cost": 3.11482
+  },
+  {
+   "at": "2026-10-14T18:02:47Z",
+   "slug": "gittin",
+   "perek": 6,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 17,
+   "usage": {
+    "in": 65170,
+    "cw": 0,
+    "cr": 240618,
+    "out": 25937,
+    "n": 17
+   },
+   "cost": 1.004352
+  },
+  {
+   "at": "2026-10-14T18:02:49Z",
+   "slug": "gittin",
+   "perek": 8,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 17,
+   "usage": {
+    "in": 79180,
+    "cw": 0,
+    "cr": 240618,
+    "out": 27221,
+    "n": 17
+   },
+   "cost": 1.106502
+  },
+  {
+   "at": "2026-10-14T18:02:50Z",
+   "slug": "gittin",
+   "perek": 9,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 25,
+   "usage": {
+    "in": 105651,
+    "cw": 0,
+    "cr": 353850,
+    "out": 35809,
+    "n": 25
+   },
+   "cost": 1.467711
+  },
+  {
+   "at": "2026-10-14T18:02:53Z",
+   "slug": "kiddushin",
+   "perek": 1,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 112,
+   "usage": {
+    "in": 291392,
+    "cw": 0,
+    "cr": 1585248,
+    "out": 159527,
+    "n": 112
+   },
+   "cost": 5.643291
   }
  ],
  "tokens": {
@@ -4834,16 +4930,16 @@
    "out": 1371896
   },
   "gittin": {
-   "in": 1485044,
+   "in": 2084642,
    "cw": 775238,
-   "cr": 5296750,
-   "out": 451963
+   "cr": 7235848,
+   "out": 672352
   },
   "kiddushin": {
-   "in": 305318,
+   "in": 596710,
    "cw": 270198,
-   "cr": 1953683,
-   "out": 148016
+   "cr": 3538931,
+   "out": 307543
   },
   "yevamot": {
    "in": 1474128,

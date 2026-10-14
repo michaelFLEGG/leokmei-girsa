@@ -2,15 +2,15 @@
  "slug": "kiddushin",
  "perakim": {
   "1": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:33Z",
-   "nreq": 112,
-   "batch": "msgbatch_01JaUMEAvXABvk28mPGcdqNz"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:02:53Z",
+   "nreq": 76,
+   "batch": "msgbatch_016W354vwvnAicjjqagjr8f6"
   }
  },
  "created": "2026-10-14T16:45:25Z",
- "updated": "2026-10-14T17:58:33Z",
+ "updated": "2026-10-14T18:02:53Z",
  "calibration": [
   {
    "perek": 1,

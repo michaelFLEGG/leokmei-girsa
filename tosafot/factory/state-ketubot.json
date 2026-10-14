@@ -1,0 +1,98 @@
+{
+ "slug": "ketubot",
+ "perakim": {
+  "1": {
+   "status": "writing",
+   "batch": "msgbatch_01Rhkk2QWx6KZhrLyWykuZ3R",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:02:58Z",
+   "nreq": 50
+  },
+  "2": {
+   "status": "writing",
+   "batch": "msgbatch_01WMMN9BTsAykZz78hVm3etR",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:02:58Z",
+   "nreq": 51
+  },
+  "3": {
+   "status": "writing",
+   "batch": "msgbatch_01S8sXixpuxgvbWSPJ19oQRz",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:01Z",
+   "nreq": 58
+  },
+  "4": {
+   "status": "writing",
+   "batch": "msgbatch_01M5AT6w8r59pak1tCiqoKe1",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:02Z",
+   "nreq": 49
+  },
+  "5": {
+   "status": "writing",
+   "batch": "msgbatch_016C19HLj7m4c95vXTXLzCxi",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:02Z",
+   "nreq": 42
+  },
+  "6": {
+   "status": "writing",
+   "batch": "msgbatch_01EopfVDdAnq8idEVRrW7xGb",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:03Z",
+   "nreq": 16
+  },
+  "7": {
+   "status": "writing",
+   "batch": "msgbatch_01Awai3FGDirHyWgJGTTMeC4",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:04Z",
+   "nreq": 28
+  },
+  "8": {
+   "status": "writing",
+   "batch": "msgbatch_013ZnXFW5ZKDnBSoR7hkq3rB",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:05Z",
+   "nreq": 18
+  },
+  "9": {
+   "status": "writing",
+   "batch": "msgbatch_01TVUtWfoUpsDU7Zsoz7S3Ei",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:05Z",
+   "nreq": 25
+  },
+  "10": {
+   "status": "writing",
+   "batch": "msgbatch_01W9LVWhxVYfhLELFZK3Lv3a",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:06Z",
+   "nreq": 25
+  },
+  "11": {
+   "status": "writing",
+   "batch": "msgbatch_0111Fp2neuFDiQU8oMGZfwgW",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:06Z",
+   "nreq": 23
+  },
+  "12": {
+   "status": "writing",
+   "batch": "msgbatch_01HXamQXP5eyCkAmEGxQTBHY",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:07Z",
+   "nreq": 13
+  },
+  "13": {
+   "status": "writing",
+   "batch": "msgbatch_01VwxQpwjXQYBPs6mq7CEUEc",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T18:03:07Z",
+   "nreq": 27
+  }
+ },
+ "created": "2026-10-14T18:02:57Z",
+ "updated": "2026-10-14T18:03:07Z"
+}

@@ -9,11 +9,11 @@
    "batch": "msgbatch_018sEqzTE9zTW6WaJiHBEz8D"
   },
   "2": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:16Z",
-   "nreq": 31,
-   "batch": "msgbatch_015XfTDfMzjpVfvgnZ3R1Zbu"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:02:44Z",
+   "nreq": 22,
+   "batch": "msgbatch_01Tcq6uPDpo5qAuuXN21cVa6"
   },
   "3": {
    "status": "rewriting",
@@ -23,11 +23,11 @@
    "batch": "msgbatch_016HBAfSpq3snqfgbMtH1zTX"
   },
   "4": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:20Z",
-   "nreq": 47,
-   "batch": "msgbatch_018sSpZ1u8ncnQuShA3z7ZVC"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:02:46Z",
+   "nreq": 33,
+   "batch": "msgbatch_01XvL2xTHC3y2aTe9oAf8LEw"
   },
   "5": {
    "status": "rewriting",
@@ -37,11 +37,11 @@
    "batch": "msgbatch_01PR2ZnKyeAztgFe5L6mfv1f"
   },
   "6": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:23Z",
-   "nreq": 17,
-   "batch": "msgbatch_01UuQjQYeZ5AjckHZa8BQhmc"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:02:48Z",
+   "nreq": 9,
+   "batch": "msgbatch_01Eyi1eZZdjifwHjwAETvjDe"
   },
   "7": {
    "status": "rewriting",
@@ -51,22 +51,22 @@
    "batch": "msgbatch_018jBeRxwX3z534vEYUufdHL"
   },
   "8": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:26Z",
-   "nreq": 17,
-   "batch": "msgbatch_01NqRXhXoe1xei4b51BDB9uz"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:02:49Z",
+   "nreq": 11,
+   "batch": "msgbatch_014VA1mabJ11dbxdm7v2sZX8"
   },
   "9": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:28Z",
-   "nreq": 25,
-   "batch": "msgbatch_01LfktNBLTjBD2J9iy3bMhhA"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:02:51Z",
+   "nreq": 19,
+   "batch": "msgbatch_016kMNtDFGhJaJmwCuj8Ue1a"
   }
  },
  "created": "2026-10-14T16:45:20Z",
- "updated": "2026-10-14T17:58:28Z",
+ "updated": "2026-10-14T18:02:51Z",
  "calibration": [
   {
    "perek": 1,

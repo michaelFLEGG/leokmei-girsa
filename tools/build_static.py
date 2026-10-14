@@ -81,7 +81,11 @@ def head(title, desc, url, ld):
             '<meta property="og:description" content="%s"><meta property="og:url" content="%s">'
             '<meta name="twitter:card" content="summary_large_image"><meta property="og:image" content="https://leokmei.com/brand/og-image.png">'
             '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/brand/icons/favicon-32.png">'
+            '<link rel="icon" type="image/svg+xml" href="/brand/icons/favicon.svg"><link rel="mask-icon" href="/brand/icons/mask-icon.svg" color="#0b1c2a">'
+            '<meta property="og:image" content="https://leokmei.com/brand/icons/lamed-600.png"><meta property="og:image:width" content="600"><meta property="og:image:height" content="600">'
             '<link rel="apple-touch-icon" href="/brand/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#0b1c2a">'
+            '<script>(function(){var h=location.hash;if(h.slice(0,3)!=="#go")return;'
+            'document.addEventListener("DOMContentLoaded",function(){var a=document.querySelector("a.cta");if(a)location.replace(a.getAttribute("href")+h.slice(3))})})()</script>'
             '<script type="application/ld+json">%s</script><style>%s</style></head><body>'
             '<header><a class="lg" href="/"><img src="/brand/shaar-v2/shaar-zohar-96.webp" alt="">%s</a><a href="/yomi.html">הדף היומי</a><a href="/masechtot.html">כל המסכתות</a></header>'
             % (esc(title), esc(desc), url, NAME, esc(title), esc(desc), url, json.dumps(ld, ensure_ascii=False), CSS, NAME))

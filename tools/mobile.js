@@ -164,7 +164,7 @@
     items.push(['sug', 'flag', 'הצע תיקון']);
     items.push(['search', 'search', 'חיפוש']);
     items.push(['my', 'clock', 'המקום שלי וההספק']);
-    items.push(['share', 'upload', 'שיתוף הדף']);
+    items.push(['share', 'share', 'שיתוף הדף']);
     if ($('#prbtn')) items.push(['prn', 'print', 'הדפסה ל-PDF']);
     items.push(['toc', 'list', 'תוכן עניינים']);
     items.push(['full', 'gear', 'כלים מתקדמים']);
@@ -212,10 +212,8 @@
     }, 120);
   });
   function share() {
-    var d = ($('#mdf') && $('#mdf').textContent) || '', url = location.href.split('#')[0] + '#daf=' + encodeURIComponent(d);
-    var data = { title: 'לאוקמי גירסא · ' + (D.masechet || '') + ' ' + d, url: url };
-    if (navigator.share) navigator.share(data).catch(function () { });
-    else if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { try { LAMED.track.toast('הקישור הועתק'); } catch (e) { } });
+    /* חלונית השיתוף שלנו בלבד (lk-share.js): בלי navigator.share, שמציגה גם רשתות חברתיות */
+    if (window.LKShare) LKShare.page();
   }
   function openSearch() {
     var p = $('#search'); if (!p) return;

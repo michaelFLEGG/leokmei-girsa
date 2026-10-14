@@ -377,7 +377,6 @@
     var blob = await new Promise(function (res) { cv.toBlob(res, 'image/png'); });
     if (!blob) return;
     var file = new File([blob], 'leokmei-result.png', { type: 'image/png' });
-    try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'לאוקמי גירסא · בחן את עצמך' }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
     var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'leokmei-result.png'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
   };
 
@@ -787,13 +786,15 @@
             (href ? '<a href="' + href + '" target="_blank" rel="noopener">למקום בגמרא: ' + E(LG.nameOf(q.s)) + ' ' + E(q.d) + '</a>' : '') + '</div>';
         }).join('') + '</div>' : '<p class="lm-note">לא טעית באף שאלה בסבב הזה.</p>') +
         '<div class="lm-row" style="margin-top:16px"><button class="lm-btn pri" id="lm-again" type="button">סבב נוסף</button>' +
-        '<button class="lm-btn" id="qz-share" type="button">שתף כרטיס תוצאה</button>' +
+        '<button class="lm-btn" id="qz-link" type="button">שתף את התוצאה</button>' +
+        '<button class="lm-btn" id="qz-share" type="button">הורד כרטיס תוצאה</button>' +
         (harder ? '<button class="lm-btn" id="qz-harder" type="button">רמה קשה יותר</button>' : '') +
         '<button class="lm-btn ghost" id="lm-qhome" type="button">למסך הראשי</button></div>';
       host.innerHTML = ''; host.appendChild(c);
       $('#lm-again', c).onclick = function () { start(mode, slug, perek, lvl); };
       if (harder) $('#qz-harder', c).onclick = function () { var nl = lvl === 0 || lvl === 2 ? 3 : 2; sel.lvl = nl; start(mode, slug, perek, nl); };
       $('#lm-qhome', c).onclick = home;
+      $('#qz-link', c).onclick = function () { if (window.LKShare) LKShare.quiz({ slug: slug || (r.missed[0] && r.missed[0].q.s) || cur, masechet: LG.nameOf(slug || (r.missed[0] && r.missed[0].q.s) || cur), right: LG.nf(r.right), total: LG.nf(total) }); };
       $('#qz-share', c).onclick = function () { Q.shareCard({ masechet: LG.nameOf(slug || (r.missed[0] && r.missed[0].q.s) || cur), pts: LG.nf(r.pts), right: LG.nf(r.right), total: LG.nf(total), pct: pct, best: LG.nf(r.best), title: tl.name }); };
       var perfect = pct === 100 && total >= 3;
       Q.sfx(perfect ? 'perfect' : 'fan');

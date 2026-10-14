@@ -39,7 +39,8 @@ def build_assets(site):
     cfg = config()
     core = _read(os.path.join(LK, 'lk-core.js'))
     pencil = _read(os.path.join(LK, 'lk-pencil.js'))
-    v = hashlib.md5((core + pencil + json.dumps(cfg, sort_keys=True)).encode('utf-8')).hexdigest()[:8]
+    share = _read(os.path.join(LK, 'lk-share.js'))
+    v = hashlib.md5((core + pencil + share + json.dumps(cfg, sort_keys=True)).encode('utf-8')).hexdigest()[:8]
     cfg = dict(cfg, v=v)
     m = re.search(r'/\*LK_CFG\*/.*?/\*END_CFG\*/', core, re.S)
     if not m:
@@ -47,6 +48,7 @@ def build_assets(site):
     core = core[:m.start()] + '/*LK_CFG*/' + json.dumps(cfg, ensure_ascii=False) + '/*END_CFG*/' + core[m.end():]
     _write(os.path.join(site, 'lk-core.js'), core)
     _write(os.path.join(site, 'lk-pencil.js'), pencil)
+    _write(os.path.join(site, 'lk-share.js'), share)
     _write(os.path.join(site, 'admin-texts.html'), _read(os.path.join(LK, 'admin-texts.html')))
     _write(os.path.join(site, 'admin-stats.html'), _read(os.path.join(LK, 'admin-stats.html')))
     reg = os.path.join(LK, 'texts-registry.json')
@@ -56,7 +58,7 @@ def build_assets(site):
 
 
 def inject_pages(site, v):
-    tag = '<script defer src="/lk-core.js?v=%s"></script>' % v
+    tag = '<script defer src="/lk-core.js?v=%s"></script><script defer src="/lk-share.js?v=%s"></script>' % (v, v)
     n = same = 0
     for root, dirs, files in os.walk(site):
         dirs[:] = [d for d in dirs if d not in SKIPDIRS]
@@ -66,7 +68,7 @@ def inject_pages(site, v):
             p = os.path.join(root, f)
             t = _read(p)
             if MARK in t:
-                new = re.sub(r'<script defer src="/lk-core\.js\?v=[^"]*"></script>', lambda _m: tag, t)
+                new = re.sub(r'<script defer src="/lk-core\.js\?v=[^"]*"></script>(<script defer src="/lk-share\.js\?v=[^"]*"></script>)?', lambda _m: tag, t)
                 if new != t:
                     _write(p, new); n += 1
                 else:

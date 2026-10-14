@@ -1492,7 +1492,7 @@ async function txRevert(req, env) {
    שהמכסה היומית שלו קטנה. בלי כתובת, בלי דפדפן ובלי עוגייה: האיזור נלקח מ-req.cf וכתובת ה-IP אינה נשמרת.
    POST /stats/hit      ציבורי. גוף (text/plain עם JSON): {p, s, t, e, n, r, d}
    GET  /stats/summary  מנהל בלבד (x-admin-key): ?days=30, באותו מבנה של הזוהר. */
-const ST_MAX = { pages: 200, entry: 200, geo: 300, refs: 100, hours: 24, dev: 4 };
+const ST_MAX = { pages: 200, entry: 200, geo: 300, refs: 100, hours: 24, dev: 4, share: 80 };
 const ST_MAX_SIDS = 4000;
 let stReady = false;
 async function stEnsure(db) {
@@ -1521,6 +1521,14 @@ async function statsHit(req, env) {
   let b;
   try { b = JSON.parse(await req.text()); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
   if (!b || typeof b !== 'object') return bad('גוף הבקשה אינו JSON');
+  if (b.ev) {
+    /* שיתוף או התקנה (14.10.2026): מונה אנונימי לפי ערוץ ומה שותף, לא נספר כצפייה */
+    const ev = String(b.ev).replace(/[^֐-׿a-zA-Z0-9 |'_-]/g, '').slice(0, 40);
+    if (!ev || ev.indexOf('|') < 1) return bad('חסר');
+    await stEnsure(env.LSTATS);
+    await env.LSTATS.batch([stBump(env.LSTATS, new Date().toISOString().slice(0, 10), 'share', ev, 1)]);
+    return json({ ok: true });
+  }
   const page = String(b.p || '').slice(0, 80);
   const sid = String(b.s || '').replace(/[^A-Za-z0-9]/g, '').slice(0, 24);
   const secs = Math.max(0, Math.min(7200, parseInt(b.t, 10) || 0));
@@ -1563,7 +1571,7 @@ async function statsSummary(req, env, url) {
   const rows = (await db.prepare('SELECT day, f, k, n FROM zs_c WHERE day >= ?1').bind(since).all()).results || [];
   const sids = (await db.prepare('SELECT day, COUNT(*) AS c FROM zs_s WHERE day >= ?1 GROUP BY day').bind(since).all()).results || [];
   const by = {};
-  list.forEach((d) => { by[d] = { day: d, views: 0, visitors: 0, minutes: 0, pages: {}, newv: 0, geo: {}, hours: {}, dev: {}, refs: {}, entry: {}, _secs: 0 }; });
+  list.forEach((d) => { by[d] = { day: d, views: 0, visitors: 0, minutes: 0, pages: {}, newv: 0, geo: {}, hours: {}, dev: {}, refs: {}, entry: {}, share: {}, _secs: 0 }; });
   rows.forEach((r) => {
     const o = by[r.day]; if (!o) return;
     if (r.f === 'views') o.views = r.n;

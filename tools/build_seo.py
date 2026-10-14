@@ -16,11 +16,14 @@ API = 'https://leokmei-suggest.m7654301.workers.dev'
 NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'admin-quiz.html', 'masechet.html', 'quiz.html')
 
 ICONS = ('<meta property="og:image" content="%s/brand/og-image.png"><meta property="og:image:width" content="1200">'
-         '<meta property="og:image:height" content="630"><meta property="og:image:alt" content="שער לאוקמי גירסא">'
+         '<meta property="og:image:height" content="630"><meta property="og:image:alt" content="לאוקמי גירסא - קיצור התלמוד הבבלי">'
+         '<meta property="og:image" content="%s/brand/icons/lamed-600.png"><meta property="og:image:width" content="600">'
+         '<meta property="og:image:height" content="600">'
          '<meta name="twitter:card" content="summary_large_image">'
          '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/brand/icons/favicon-32.png">'
+         '<link rel="icon" type="image/svg+xml" href="/brand/icons/favicon.svg"><link rel="mask-icon" href="/brand/icons/mask-icon.svg" color="#0b1c2a">'
          '<link rel="apple-touch-icon" href="/brand/icons/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest">'
-         '<meta name="theme-color" content="#0b1c2a">') % BASE
+         '<meta name="theme-color" content="#0b1c2a">') % (BASE, BASE)
 
 # מעטפת קטנה לדפי טקסט פשוטים (אודות, מקורות): סרגל כחול עם השער הקטן
 MINI_STYLE = ('@font-face{font-family:LGVilnaXB;src:url(fonts/vilna-xb.woff2) format("woff2");font-display:swap}'
@@ -28,13 +31,15 @@ MINI_STYLE = ('@font-face{font-family:LGVilnaXB;src:url(fonts/vilna-xb.woff2) fo
               'header.mh{background:#0b1c2a;border-bottom:1px solid #8f6a1e;padding:8px 18px}'
               'header.mh a{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:400 25px/1.1 LGVilnaXB,serif;background:linear-gradient(170deg,#fbe7a1,#e6bd52 30%,#c38f2a 55%,#efcf6b 75%,#b07c1f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(240,196,90,.45))}'
               'header.mh img{height:34px;width:auto}main{flex:1 0 auto;box-sizing:border-box;width:100%;max-width:640px;margin:0 auto;padding:30px 18px}h1{font-size:28px;color:#f9e08a}a{color:#e9c35a}')
-MINI_HEADER = '<header class="mh"><a href="index.html"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="">לאוקמי גירסא</a></header>'
+MINI_HEADER = ('<header class="mh"><a href="index.html"><img src="brand/shaar-v2/shaar-zohar-96.webp" alt="">לאוקמי גירסא</a>'
+               '<button type="button" class="mhsh lk-sh-btn" id="lkshbtn" onclick="if(window.LKShare)LKShare.site()" aria-label="שיתוף האתר" title="שיתוף האתר">שיתוף</button></header>')
 
 
 def about_html():
     """דף האודות נבנה מהתבנית tools/about_template.html (8.10.2026). עדכון תוכן - רק בתבנית."""
     t = io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'about_template.html'), encoding='utf-8').read()
-    hdr_style = ('header.mh{background:#0b1c2a;border-bottom:1px solid #8f6a1e;padding:8px 18px}'
+    hdr_style = ('header.mh{background:#0b1c2a;border-bottom:1px solid #8f6a1e;padding:8px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}'
+                 'header.mh .mhsh{background:none;border:1px solid #8f6a1e;border-radius:6px;color:#f9e08a;font:700 15px serif;padding:6px 14px;min-height:40px;cursor:pointer}'
                  'header.mh a{display:inline-flex;align-items:center;gap:10px;color:#f9e08a;text-decoration:none;font:400 24px LGVilnaTitle,serif}'
                  'header.mh img{height:32px;width:auto}')
     return t.replace('/*MINI_STYLE*/', hdr_style).replace('<!--MINI_HEADER-->', MINI_HEADER)

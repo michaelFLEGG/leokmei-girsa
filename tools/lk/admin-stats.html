@@ -118,6 +118,10 @@ td.n { font-variant-numeric:tabular-nums; }
       </div>
     </div>
     <div class="chart">
+      <h3>שיתופים והתקנות (30 יום): ערוץ | מה שותף</h3>
+      <table id="shTable"><thead><tr><th>ערוץ ומה שותף</th><th>פעמים</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="chart">
       <h3>העמודים הנצפים ביותר (30 יום)</h3>
       <table id="pgTable"><thead><tr><th>עמוד</th><th>צפיות</th></tr></thead><tbody></tbody></table>
     </div>
@@ -354,6 +358,7 @@ td.n { font-variant-numeric:tabular-nums; }
     fillTable('#refTable tbody', aggAll(days, 'refs'), refName, 15, 'אין עדיין נתוני-מקור');
     fillTable('#enTable tbody', aggAll(days, 'entry'), ident, 15, 'אין עדיין נתוני-כניסה');
     fillTable('#pgTable tbody', aggAll(days, 'pages'), ident, 15);
+    fillTable('#shTable tbody', aggAll(days, 'share'), function (k) { return k.replace('|', ' | '); }, 20, 'אין עדיין שיתופים');
   }
 
   function fail() {

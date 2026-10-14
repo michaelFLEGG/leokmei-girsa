@@ -30,6 +30,7 @@
       '<a class="lm-brand" href="index.html" title="לדף הבית"><img class="lg" src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="27" height="40"><span class="nm">לאוקמי גירסא</span></a>' +
       '<nav id="lm-nav" aria-label="ניווט ראשי">' + NAV.map(function (a) { return '<a href="' + a[1] + '"' + (page === a[0] ? ' class="on" aria-current="page"' : '') + '>' + a[2] + '</a>'; }).join('') + '</nav>' +
       '<span class="lm-date">' + E(HD.long(now)) + '</span>' +
+      '<button class="q lm-ib lk-sh-btn" type="button" id="lkshbtn" aria-label="שיתוף האתר" title="שיתוף האתר: ווטסאפ, הודעה, מייל, טלגרם, קישור וקוד QR" onclick="if(window.LKShare)LKShare.site()">' + ic('share') + '</button>' +
       '<div class="dd" id="lm-um"><button class="q lm-ib" type="button" aria-label="תפריט משתמש" aria-haspopup="menu" id="lm-umb">' + ic('user') + '</button>' +
       '<div class="menu"><a class="mi" href="settings.html">' + ic('gear') + 'הגדרות</a>' +
       (adm ? '<a class="mi" href="admin-lamdim.html">' + ic('shield') + 'מנהל: שאלות ולומדים</a><a class="mi" href="admin-quiz.html">' + ic('shield') + 'מנהל: הנבחנים</a>' : '') +

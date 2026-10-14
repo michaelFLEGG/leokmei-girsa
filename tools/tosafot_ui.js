@@ -320,6 +320,7 @@
       '<span class="tstx">'+ge(txt(it))+'</span>'+
       '<span class="tsbt"><button class="tsin" type="button" onclick="tosFace(this)" aria-expanded="false" aria-label="פנים התוספות">פנים</button>'+
       '<button type="button" onclick="tosCopy(this)" aria-label="העתק">העתק</button>'+
+      '<button type="button" class="tssh lk-sh-btn" onclick="tosShare(this)" aria-label="שתף את התוספות הזה" title="שיתוף התוספות הזה: ווטסאפ, הודעה, מייל, טלגרם, קישור וקוד QR">שתף</button>'+
       '<button type="button" onclick="tosSg(this)" aria-label="הצע תיקון על התוספות">הצע תיקון</button></span>'+
       '<div class="tsface" hidden></div><div class="tssgbox" hidden></div>'+
       (sent?'<span class="tssent">הצעתך התקבלה לעיון</span>':'')+admHTML(it)+'</div>'}
@@ -332,6 +333,10 @@
       f.removeAttribute('hidden')}else f.setAttribute('hidden','');
     b.setAttribute('aria-expanded',open?'true':'false');b.textContent=open?'סגור':'פנים'}
   window.tosFace=function(b){var box=noteOf(b);if(!box)return;var f=box.querySelector('.tsface');faceOpen(box,f.hasAttribute('hidden'))};
+  /* שיתוף תוס' (14.10.2026): חלונית lk-share.js, קישור שפותח את הדף ואת הכרטיס הזה */
+  window.tosShare=function(b){
+    var box=noteOf(b),n=+box.getAttribute('data-n'),it=byN[n];if(!it||!window.LKShare)return;
+    LKShare.tos({n:n,daf:it.daf,dh:dispDh(it),sum:txt(it)})};
   window.tosCopy=function(b){
     var box=noteOf(b),n=+box.getAttribute('data-n'),it=byN[n];if(!it)return;
     var f=box.querySelector('.tsface');

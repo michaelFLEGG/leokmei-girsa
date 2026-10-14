@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """make_icons.py - favicon, אייקון לטלפון ותמונת שיתוף מהשער הסימטרי (8.10.2026).
 המקור: shaar-v2/shaar-symmetri-master.png (שקוף, סימטרי עד הפיקסל). הרצה: uv run --with pillow --with playwright python make_icons.py (מתוך tools/brand)."""
-import os
+import os, sys
+print("עצירה: הסמל הוחלף ב-ל' (14.10.2026). הרץ icon/make_lamed_icon.py. הסקריפט הזה דורס אותו בשער הישן."); sys.exit(1)
 from PIL import Image
 from playwright.sync_api import sync_playwright
 HERE = os.path.dirname(os.path.abspath(__file__)); os.chdir(HERE)

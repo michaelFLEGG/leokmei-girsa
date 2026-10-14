@@ -104,10 +104,12 @@ def brand(site):
     subset_brand_fonts(os.path.join(dst, 'fonts'))
     shutil.copy(os.path.join(src, 'icons', 'favicon.ico'), os.path.join(site, 'favicon.ico'))
     io.open(os.path.join(site, 'manifest.webmanifest'), 'w', encoding='utf-8').write(json.dumps({
-        'name': 'לאוקמי גירסא - קיצור התלמוד הבבלי', 'short_name': 'לאוקמי גירסא', 'lang': 'he', 'dir': 'rtl',
-        'start_url': '/', 'display': 'standalone', 'background_color': '#0b1c2a', 'theme_color': '#0b1c2a',
-        'icons': [{'src': '/brand/icons/icon-192.png', 'sizes': '192x192', 'type': 'image/png'},
-                  {'src': '/brand/icons/icon-512.png', 'sizes': '512x512', 'type': 'image/png'}]}, ensure_ascii=False, indent=1))
+        'name': 'לאוקמי גירסא', 'short_name': 'לאוקמי', 'description': 'לאוקמי גירסא - קיצור התלמוד הבבלי',
+        'lang': 'he', 'dir': 'rtl', 'id': '/', 'scope': '/', 'start_url': '/', 'display': 'standalone',
+        'background_color': '#0b1c2a', 'theme_color': '#0b1c2a',
+        'icons': [{'src': '/brand/icons/icon-192.png', 'sizes': '192x192', 'type': 'image/png', 'purpose': 'any'},
+                  {'src': '/brand/icons/icon-512.png', 'sizes': '512x512', 'type': 'image/png', 'purpose': 'any'},
+                  {'src': '/brand/icons/icon-maskable-512.png', 'sizes': '512x512', 'type': 'image/png', 'purpose': 'maskable'}]}, ensure_ascii=False, indent=1))
 
 
 # שער סטטי לדף הבית: מצויר מיד, עוד לפני שהסקריפט רץ. אחר כך lamed.js מאמץ אותו (ui.js: UI.home).

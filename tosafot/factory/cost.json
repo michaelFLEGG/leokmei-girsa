@@ -1,17 +1,17 @@
 {
- "total": 128.866565,
+ "total": 132.719099,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
   "bava-kamma": 41.682478,
-  "bava-metzia": 27.584702,
+  "bava-metzia": 31.437237,
   "bava-batra": 16.421533,
   "gittin": 1.122499
  },
  "byPhase": {
   "write": 47.699066,
   "review": 0.487349,
-  "rewrite": 80.130369,
+  "rewrite": 83.982904,
   "rereview": 0.549781
  },
  "batches": [
@@ -3502,6 +3502,22 @@
     "n": 15
    },
    "cost": 0.877974
+  },
+  {
+   "at": "2026-10-14T16:56:06Z",
+   "slug": "bava-metzia",
+   "perek": 1,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 54,
+   "usage": {
+    "in": 245284,
+    "cw": 0,
+    "cr": 764316,
+    "out": 101223,
+    "n": 54
+   },
+   "cost": 3.852534
   }
  ],
  "tokens": {
@@ -3524,10 +3540,10 @@
    "out": 1343553
   },
   "bava-metzia": {
-   "in": 3522137,
+   "in": 3767421,
    "cw": 1802074,
-   "cr": 9905218,
-   "out": 1031096
+   "cr": 10669534,
+   "out": 1132319
   },
   "bava-batra": {
    "in": 2452633,

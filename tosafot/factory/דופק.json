@@ -1,17 +1,14 @@
 {
- "ticks": 47,
+ "ticks": 48,
  "stalls": 0,
- "last": "2026-10-14T18:15:25Z",
+ "last": "2026-10-14T18:19:05Z",
  "summary": [
   "sukkah: הושלמה",
   "berakhot: הושלמה",
   "bava-kamma: הושלמה",
   "bava-metzia: הושלמה",
   "bava-batra: הושלמה",
-  "gittin פרק 1: published",
-  "gittin פרק 3: published",
-  "gittin פרק 5: published",
-  "gittin פרק 7: published",
+  "gittin: הושלמה",
   "kiddushin: הושלמה",
   "yevamot פרק 1: rereviewing",
   "yevamot פרק 2: rereviewing",
@@ -22,7 +19,7 @@
   "yevamot פרק 7: rereviewing",
   "yevamot פרק 8: rereviewing",
   "yevamot פרק 9: rereviewing",
-  "yevamot פרק 10: rewriting",
+  "yevamot פרק 10: rereviewing",
   "yevamot פרק 11: rereviewing",
   "yevamot פרק 12: rereviewing",
   "yevamot פרק 13: rereviewing",
@@ -31,7 +28,7 @@
   "yevamot פרק 16: rereviewing",
   "ketubot פרק 1: writing",
   "ketubot פרק 2: writing",
-  "ketubot פרק 3: writing",
+  "ketubot פרק 3: reviewing",
   "ketubot פרק 4: writing",
   "ketubot פרק 5: writing",
   "ketubot פרק 6: writing",
@@ -44,6 +41,6 @@
   "ketubot פרק 13: writing",
   "makkot: ממתין להכנה (ספירה והקשר)"
  ],
- "spent": 228.726597,
- "left": 27.27
+ "spent": 231.805773,
+ "left": 24.19
 }

@@ -10,10 +10,11 @@
    "result": {
     "generated": 144,
     "decided": 0,
-    "unchecked": 44,
+    "unchecked": 0,
     "flagged": 44,
     "questions": 85
-   }
+   },
+   "unc_done": true
   },
   "2": {
    "status": "published",
@@ -39,10 +40,11 @@
    "result": {
     "generated": 59,
     "decided": 0,
-    "unchecked": 32,
+    "unchecked": 0,
     "flagged": 32,
     "questions": 39
-   }
+   },
+   "unc_done": true
   },
   "4": {
    "status": "published",
@@ -68,10 +70,11 @@
    "result": {
     "generated": 84,
     "decided": 0,
-    "unchecked": 45,
+    "unchecked": 0,
     "flagged": 45,
     "questions": 45
-   }
+   },
+   "unc_done": true
   },
   "6": {
    "status": "published",
@@ -97,10 +100,11 @@
    "result": {
     "generated": 64,
     "decided": 0,
-    "unchecked": 16,
+    "unchecked": 0,
     "flagged": 16,
     "questions": 38
-   }
+   },
+   "unc_done": true
   },
   "8": {
    "status": "published",
@@ -134,7 +138,7 @@
   }
  },
  "created": "2026-10-14T16:45:20Z",
- "updated": "2026-10-14T18:15:13Z",
+ "updated": "2026-10-14T18:18:54Z",
  "calibration": [
   {
    "perek": 1,
@@ -190,5 +194,6 @@
    "n": 4,
    "at": "2026-10-14T17:50:41Z"
   }
- ]
+ ],
+ "done": "2026-10-14T18:18:54Z"
 }

@@ -1,5 +1,5 @@
 {
- "total": 228.726597,
+ "total": 231.805773,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
@@ -8,13 +8,13 @@
   "bava-batra": 36.17366,
   "gittin": 25.919076,
   "kiddushin": 8.229778,
-  "yevamot": 30.391873,
-  "ketubot": 1.256344
+  "yevamot": 32.101838,
+  "ketubot": 2.625555
  },
  "byPhase": {
-  "write": 66.576942,
+  "write": 67.946153,
   "review": 0.748531,
-  "rewrite": 160.52313,
+  "rewrite": 162.233095,
   "rereview": 0.877997
  },
  "batches": [
@@ -5713,6 +5713,54 @@
     "n": 11
    },
    "cost": 0.095888
+  },
+  {
+   "at": "2026-10-14T18:18:58Z",
+   "slug": "yevamot",
+   "perek": 10,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 27,
+   "usage": {
+    "in": 111174,
+    "cw": 0,
+    "cr": 382158,
+    "out": 44253,
+    "n": 27
+   },
+   "cost": 1.709965
+  },
+  {
+   "at": "2026-10-14T18:19:02Z",
+   "slug": "ketubot",
+   "perek": 3,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 41,
+   "usage": {
+    "in": 140520,
+    "cw": 0,
+    "cr": 580273,
+    "out": 44021,
+    "n": 41
+   },
+   "cost": 0.389639
+  },
+  {
+   "at": "2026-10-14T18:19:02Z",
+   "slug": "ketubot",
+   "perek": 3,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 17,
+   "usage": {
+    "in": 53059,
+    "cw": 0,
+    "cr": 240618,
+    "out": 27368,
+    "n": 17
+   },
+   "cost": 0.979572
   }
  ],
  "tokens": {
@@ -5759,16 +5807,16 @@
    "out": 338464
   },
   "yevamot": {
-   "in": 3172907,
+   "in": 3284081,
    "cw": 1199676,
-   "cr": 11335863,
-   "out": 1087044
+   "cr": 11718021,
+   "out": 1131297
   },
   "ketubot": {
-   "in": 217504,
+   "in": 411083,
    "cw": 0,
-   "cr": 863347,
-   "out": 61830
+   "cr": 1684238,
+   "out": 133219
   }
  }
 }

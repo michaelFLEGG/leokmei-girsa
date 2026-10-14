@@ -16,11 +16,11 @@
    "nreq": 51
   },
   "3": {
-   "status": "writing",
-   "batch": "msgbatch_01S8sXixpuxgvbWSPJ19oQRz",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:01Z",
-   "nreq": 58
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T18:19:03Z",
+   "nreq": 26,
+   "batch": "msgbatch_01Ccz5fDEd33vxSqEbdwX473"
   },
   "4": {
    "status": "writing",
@@ -94,7 +94,7 @@
   }
  },
  "created": "2026-10-14T18:02:57Z",
- "updated": "2026-10-14T18:15:25Z",
+ "updated": "2026-10-14T18:19:05Z",
  "calibration": [
   {
    "perek": 11,
@@ -113,6 +113,12 @@
    "mean": 0.478,
    "n": 4,
    "at": "2026-10-14T18:15:24Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.342,
+   "n": 4,
+   "at": "2026-10-14T18:19:02Z"
   }
  ]
 }

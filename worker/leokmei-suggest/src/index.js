@@ -1678,7 +1678,8 @@ async function tosApi(req, env, url, method) {
     }
     const pub = {};
     for (const n in doc.picks) pub[n] = { p: doc.picks[n].p, t: doc.picks[n].t };
-    return json({ ok: true, pub, t: doc.t || 0 });
+    /* מסך הבדיקה (14.10.2026): רק מספרים. ok = אושרה (מסיר "טרם נבדק" ומציג מוסתרת), no = הוסרה מהאתר */
+    return json({ ok: true, pub, t: doc.t || 0, tok: (doc.tri && doc.tri.ok) || [], tno: (doc.tri && doc.tri.no) || [] });
   }
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   if (method === 'PUT') {
@@ -1745,6 +1746,65 @@ async function altApi(req, env, url, method) {
   return json({ ok: true, n: doc.log.length });
 }
 
+
+/* ---- מסך בדיקת תוספות שנפסלו (14.10.2026) ----
+   מנהל בלבד. מסמך tostri:<מסכת>: items = מה שנפסל (טקסט התוספות, השורה, נימוק המבקר), dec = הכרעות המנהל.
+   המספרים בלבד (אושרה / הוסרה) נכנסים ל-tos:<מסכת>.tri ומוגשים בציבורי, כדי שהאתר יסיר סימון או יסתיר, בלי בנייה.
+   הנימוקים והטקסטים אינם בציבורי. הכרעות הן מאגר הדוגמאות של המבקר (tools/tosafot/triage_sync.py). */
+async function triApi(req, env, url, method) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  const key = (sg) => 'tostri:' + sg;
+  if (method === 'GET') {
+    const sg = url.searchParams.get('slug') || '';
+    if (!slugOk(sg)) return bad('מסכת לא תקינה');
+    const doc = (await env.STORE.get(key(sg), 'json')) || { slug: sg, items: {}, dec: {} };
+    return json({ ok: true, doc });
+  }
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const sg = str(b.slug, 30);
+  if (!slugOk(sg)) return bad('מסכת לא תקינה');
+  const doc = (await env.STORE.get(key(sg), 'json')) || { slug: sg, items: {}, dec: {} };
+  const main = (await env.STORE.get('tos:' + sg, 'json')) || { slug: sg, styles: {}, picks: {}, notes: {}, log: [] };
+  main.tri = main.tri || { ok: [], no: [] };
+  const now = Date.now();
+  if (b.op === 'seed') {
+    let n = 0;
+    for (const k in (b.items || {})) {
+      if (!/^\d{1,5}$/.test(k)) continue;
+      const it = b.items[k] || {};
+      doc.items[k] = { perek: it.perek | 0, n: it.n | 0, daf: str(it.daf, 12), dh: str(it.dh, 200), text: str(it.text, 9000), line: str(it.line, 1500),
+        orig: str(it.orig, 1500), removed: (it.removed || []).slice(0, 8).map((x) => str(x, 200)), why: (it.why || []).slice(0, 8).map((x) => str(x, 1500)),
+        cls: str(it.cls, 2), held: !!it.held };
+      n++;
+    }
+    await env.STORE.put(key(sg), JSON.stringify(doc));
+    return json({ ok: true, n });
+  }
+  if (b.op === 'dec') {
+    const k = str(String(b.n), 5);
+    if (!/^\d{1,5}$/.test(k)) return bad('מספר לא תקין');
+    const ans = b.ans;
+    if (ans !== 'yes' && ans !== 'no') return bad('הכרעה לא תקינה');
+    doc.dec[k] = { ans, note: str(b.note, 2000), at: now, line: (doc.items[k] && doc.items[k].line) || '' };
+    main.tri.ok = main.tri.ok.filter((x) => String(x) !== k);
+    main.tri.no = main.tri.no.filter((x) => String(x) !== k);
+    (ans === 'yes' ? main.tri.ok : main.tri.no).push(Number(k));
+    main.t = now;
+    await env.STORE.put(key(sg), JSON.stringify(doc));
+    await env.STORE.put('tos:' + sg, JSON.stringify(main));
+    return json({ ok: true, dec: doc.dec[k] });
+  }
+  if (b.op === 'note') {
+    const k = str(String(b.n), 5);
+    if (!doc.dec[k]) doc.dec[k] = { ans: '', note: '', at: now };
+    doc.dec[k].note = str(b.note, 2000);
+    await env.STORE.put(key(sg), JSON.stringify(doc));
+    return json({ ok: true });
+  }
+  return bad('פעולה לא מוכרת');
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -1788,6 +1848,7 @@ export default {
       if (p === '/edits' && req.method === 'PUT') return await putEdits(req, env);
       if (p === '/title' && req.method === 'POST') return await titleSuggest(req, env);
       if (p === '/ingested' && req.method === 'POST') return await ingested(req, env);
+      if (p === '/tri' && (req.method === 'GET' || req.method === 'POST')) return await triApi(req, env, url, req.method);
       if (p === '/tos' && (req.method === 'GET' || req.method === 'PUT' || req.method === 'POST')) return await tosApi(req, env, url, req.method);
       if (p === '/alt' && (req.method === 'GET' || req.method === 'POST')) return await altApi(req, env, url, req.method);
       if (p === '/bakara/data' && (req.method === 'GET' || req.method === 'PUT')) return await bkData(req, env, url, req.method);

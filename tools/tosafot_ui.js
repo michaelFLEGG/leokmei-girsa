@@ -30,6 +30,7 @@
   try{var c0=JSON.parse(lsGet(CFG_KEY,'{}'));if(c0&&typeof c0==='object')Object.keys(CFG).forEach(function(k){if(c0[k]!==undefined)CFG[k]=c0[k]})}catch(e){}
   function cfgSave(){lsSet(CFG_KEY,JSON.stringify(CFG))}
   var PUB={};            /* n -> {p,t}: הנוסח שנבחר (מנקודת הקליטה) */
+  var TOK={},TNO={};     /* מסך בדיקת התוספות: n -> true. TOK = אושרה (מסיר "טרם נבדק" ומציג מוסתרת), TNO = הוסרה מהאתר */
   var ADM=null;          /* מנהל: {styles,picks,notes} */
   var SUGS={};           /* מנהל: n -> [הצעות ממתינות על תוספות] */
   var MOVED={};          /* n -> true: העוגן זז */
@@ -37,7 +38,16 @@
   var RANGES={};         /* n -> Range של המילים המעוגנות (להדגשה) */
   /* המספור המוצג הוא מספר סידורי בספרות (הוחלט 11.10.2026); האותיות נשמרות בחיפוש בלבד */
   var byN={};TS.items.forEach(function(it){it.hnHeb=it.hn;it.hn=String(it.disp||it.n);byN[it.n]=it});
+  var ALLITEMS=TS.items.slice();
+  function triHide(it){return TNO[it.n]||(it.h&&!TOK[it.n])}
+  function triApply(){
+    TS.items.length=0;ALLITEMS.forEach(function(it){if(!triHide(it))TS.items.push(it)});
+    byN={};TS.items.forEach(function(it){byN[it.n]=it});
+    SORTED.length=0;TS.items.slice().sort(function(a,b){return a.n-b.n}).forEach(function(it){SORTED.push(it)})}
   var SORTED=TS.items.slice().sort(function(a,b){return a.n-b.n});
+  triApply0();
+  function triApply0(){TS.items.length=0;ALLITEMS.forEach(function(it){if(!it.h)TS.items.push(it)});
+    byN={};TS.items.forEach(function(it){byN[it.n]=it});SORTED.length=0;TS.items.slice().sort(function(a,b){return a.n-b.n}).forEach(function(it){SORTED.push(it)})}
 
   var sty=document.createElement('style');
   sty.textContent=
@@ -306,6 +316,7 @@
     var sent=sentMap()[it.n];
     return '<div class="tsn" data-n="'+it.n+'"><span class="tsnum" role="button" tabindex="0" aria-label="חזרה למקום בטקסט, תוספות '+ge(it.hn)+'">'+ge(it.hn)+'</span><span class="tsdh">'+ge(dispDh(it))+'</span>'+
       (it.g&&!(ADM&&ADM.picks&&ADM.picks[it.n])?'<span class="tsug" title="נכתב בבית החרושת ועדיין לא עבר עיון של המנהל">לא הוגה</span>':'')+
+      (it.u&&!TOK[it.n]?'<span class="tsug" title="נפסל בביקורת האוטומטית ופורסם עד עיון של המנהל. הכרעה: תפריט תוס\' ← בדיקת תוספות">טרם נבדק</span>':'')+
       '<span class="tstx">'+ge(txt(it))+'</span>'+
       '<span class="tsbt"><button class="tsin" type="button" onclick="tosFace(this)" aria-expanded="false" aria-label="פנים התוספות">פנים</button>'+
       '<button type="button" onclick="tosCopy(this)" aria-label="העתק">העתק</button>'+
@@ -694,6 +705,7 @@
     if(!m){m=document.createElement('div');m.id='tosmenu';document.body.appendChild(m)}
     m.innerHTML=MODES.filter(function(x){return x[0]!=='off'}).map(function(x){return '<button type="button" data-m="'+x[0]+'" class="'+(x[0]===mode?'on':'')+'" onclick="tosSet(this.dataset.m)">'+ge(x[1])+'<small>'+ge(x[2])+'</small></button>'}).join('')+
       '<button type="button" data-m="off" onclick="tosSet(this.dataset.m)">כבוי<small>בלי סימנים כלל</small></button>'+
+      ((typeof isAdmin==='function'&&isAdmin())?'<button type="button" onclick="tosTriOpen()">בדיקת תוספות<small>למנהל בלבד · הכרעה על מה שנפסל</small></button>':'')+
       ((window.tosTestOpen&&typeof isAdmin==='function'&&isAdmin())?((window.__TOSTEST&&window.__TOSTEST.rounds)||[{label:'מבחן מנועים'}]).map(function(rd,i){return '<button type="button" onclick="tosTestOpen('+i+')">'+ge(rd.label||'מבחן מנועים')+'<small>למנהל בלבד</small></button>'}).join(''):'');
     var b=document.getElementById('tosmb')||document.getElementById('tosbtn'),r=b.getBoundingClientRect();
     m.classList.toggle('open');
@@ -788,9 +800,70 @@
     post({n:n,note:i.value}).then(function(j){b.disabled=false;applyDoc(j);if(typeof toast==='function')toast('ההערה נשמרה')})
       .catch(function(e){b.disabled=false;if(typeof toast==='function')toast('לא נשמר: '+(e&&e.message||''),5000)})};
 
+
+  /* ================= מסך בדיקת תוספות שנפסלו (14.10.2026, מנהל בלבד) =================
+     מציג תוספות אחת אחת: לשון התוספות, השורה, נימוק המבקר. נכון: מסיר "טרם נבדק" (ומציג תוספות שהוסתרה).
+     לא נכון: מוריד מהאתר. דלג: עובר לסוף. ההכרעות נשמרות בשרת (/tri) ושם הן מאגר הדוגמאות של המבקר. */
+  var TRI={items:null,order:[],i:0,open:false};
+  var TRI_CLS={F:'טעות עניינית',D:'ייחוס שגוי',E:'תוספת דין או מסקנה',C:'השמטת נימוק',A:'מסגור או תמצות',B:'הפניה שאינה בתוספות',G:'בהירות או סגנון',H:'לא ברור',X:'כשל טכני בביקורת',Y:'שער אוטומטי'};
+  var TRI_PRI={F:0,D:1,E:2,C:3,B:4,A:5,G:6,H:7,Y:8,X:9};
+  function triEl(){var e=document.getElementById('tostri');if(!e){e=document.createElement('div');e.id='tostri';
+      e.style.cssText='position:fixed;inset:0;z-index:60;background:rgba(20,16,10,.55);display:none;direction:rtl;overflow:auto;padding:14px';
+      e.addEventListener('click',function(ev){if(ev.target===e)triClose()});document.body.appendChild(e)}return e}
+  function triClose(){TRI.open=false;triEl().style.display='none'}
+  function triSay(t){if(typeof toast==='function')toast(t,3000)}
+  function triIsDone(it){return it.dec&&(it.dec.ans==='yes'||it.dec.ans==='no')}
+  function triPri(it){return TRI_PRI[it.cls]===undefined?9:TRI_PRI[it.cls]}
+  function triBuild(){
+    var o=[];Object.keys(TRI.items).forEach(function(k){var it=TRI.items[k];if(!triIsDone(it)&&!it.skipped)o.push(k)});
+    o.sort(function(a,b){var x=TRI.items[a],y=TRI.items[b];return triPri(x)-triPri(y)||x.slug.localeCompare(y.slug)||(x.perek-y.perek)||(x.n-y.n)});
+    var sk=[];Object.keys(TRI.items).forEach(function(k){var it=TRI.items[k];if(!triIsDone(it)&&it.skipped)sk.push(k)});
+    TRI.order=o.concat(sk)}
+  function triRender(){
+    var e=triEl(),tot=Object.keys(TRI.items).length,done=Object.keys(TRI.items).filter(function(k){return triIsDone(TRI.items[k])}).length;
+    var k=TRI.order[0],h='<div style="max-width:880px;margin:0 auto;background:#fbf8f1;border-radius:12px;padding:16px 18px;color:#2b2620;font-size:17px;line-height:1.7">'+
+      '<div style="display:flex;gap:10px;align-items:center"><b style="font-size:1.15em;color:#7a5a14">בדיקת תוספות שנפסלו</b><span style="flex:1"></span><span>הוכרעו '+done+' מתוך '+tot+'</span>'+
+      '<button type="button" onclick="tosTriClose()" style="font:inherit;padding:2px 12px">סגור</button></div>';
+    if(!k){h+='<p>אין תוספות ממתינות להכרעה.</p></div>';e.innerHTML=h;return}
+    var it=TRI.items[k];
+    h+='<div style="color:#777;font-size:.9em;margin-top:6px">'+ge((it.slug==='sukkah'?'סוכה':'ברכות')+', פרק '+it.perek+', דף '+it.daf+', תוספות מספר '+it.n)+' · סוג: <b>'+ge(TRI_CLS[it.cls]||it.cls)+'</b>'+
+      (it.held?' · <span style="color:#a83c2f">מוסתרת מהלומדים עד הכרעתך</span>':' · מופיעה באתר בסימון "טרם נבדק"')+'</div>'+
+      '<div style="font-weight:700;margin-top:8px">ד"ה: '+ge(it.dh)+'</div>'+
+      '<div style="font-weight:700;color:#5b4a1e;margin-top:6px">לשון התוספות</div><div style="background:#fbf9f2;border-right:4px solid #cdbf93;padding:8px 12px;white-space:pre-wrap;max-height:34vh;overflow:auto">'+ge(it.text)+'</div>'+
+      '<div style="font-weight:700;color:#5b4a1e;margin-top:6px">השורה שפורסמה</div><div style="background:#eef4fb;border-right:4px solid #6a9bd1;padding:8px 12px">'+ge(it.line)+'</div>'+
+      (it.removed&&it.removed.length?'<div style="color:#8a4b00;margin-top:4px">הקוד מחק מהשורה את ההפניות: '+ge(it.removed.join(' · '))+'</div>':'')+
+      '<div style="font-weight:700;color:#5b4a1e;margin-top:6px">נימוק המבקר</div><div style="background:#fdf0ee;border-right:4px solid #d9776b;padding:8px 12px">'+(it.why&&it.why.length?it.why.map(ge).join('<br>'):'(אין)')+'</div>'+
+      '<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center">'+
+      '<button type="button" onclick="tosTriDec(\'yes\')" style="font:inherit;font-size:1.05em;padding:6px 22px;border:2px solid #2e7d32;border-radius:8px;background:#e8f5e9;cursor:pointer">נכון</button>'+
+      '<button type="button" onclick="tosTriDec(\'no\')" style="font:inherit;font-size:1.05em;padding:6px 22px;border:2px solid #b3261e;border-radius:8px;background:#fdecea;cursor:pointer">לא נכון</button>'+
+      '<button type="button" onclick="tosTriSkip()" style="font:inherit;font-size:1.05em;padding:6px 22px;border:2px solid #999;border-radius:8px;background:#fff;cursor:pointer">דלג</button>'+
+      '<input id="tritnote" placeholder="הערה לתיקון (לא חובה)" style="flex:1;min-width:220px;font:inherit;font-size:.95em;padding:6px 10px;border:1px solid #bbb;border-radius:8px;direction:rtl"></div>'+
+      '<div style="color:#777;font-size:.85em;margin-top:6px">נכון = השורה נאמנה ואפשר להשאיר באתר (הסימון יוסר). לא נכון = תרד מהאתר מיד. ההכרעה והערתך משמשות כדוגמה למבקר.</div></div>';
+    e.innerHTML=h}
+  window.tosTriClose=triClose;
+  window.tosTriOpen=function(){
+    if(!(typeof isAdmin==='function'&&isAdmin())||typeof api!=='function'){triSay('המסך זמין לכניסת מנהל בלבד');return}
+    var m=document.getElementById('tosmenu');if(m)m.classList.remove('open');
+    var e=triEl();e.style.display='block';TRI.open=true;e.innerHTML='<div style="max-width:880px;margin:0 auto;background:#fbf8f1;border-radius:12px;padding:16px">טוען...</div>';
+    Promise.all(['sukkah','berakhot'].map(function(sl){return api('/tri?slug='+sl).then(function(j){return {sl:sl,doc:(j&&j.doc)||{items:{},dec:{}}}})})).then(function(rs){
+      TRI.items={};rs.forEach(function(r){Object.keys(r.doc.items||{}).forEach(function(n){
+        var it=r.doc.items[n];it.slug=r.sl;it.num=+n;it.dec=(r.doc.dec||{})[n]||null;TRI.items[r.sl+':'+n]=it})});
+      triBuild();triRender()}).catch(function(err){e.innerHTML='<div style="max-width:880px;margin:0 auto;background:#fbf8f1;border-radius:12px;padding:16px">לא נטען: '+ge(err&&err.message||'')+'</div>'})};
+  window.tosTriSkip=function(){var k=TRI.order[0];if(!k)return;TRI.items[k].skipped=true;triBuild();triRender()};
+  window.tosTriDec=function(ans){
+    var k=TRI.order[0];if(!k)return;var it=TRI.items[k],ni=document.getElementById('tritnote');
+    var note=ni?ni.value:'';
+    api('/tri',{method:'POST',body:JSON.stringify({op:'dec',slug:it.slug,n:it.num,ans:ans,note:note})}).then(function(j){
+      if(!j||!j.ok)throw new Error((j&&j.error)||'לא נשמר');
+      it.dec={ans:ans,note:note};
+      if(it.slug===SLUG){if(ans==='yes')TOK[it.num]=true;else TNO[it.num]=true;triApply();tsMark()}
+      triBuild();triRender()}).catch(function(err){triSay('לא נשמר: '+(err&&err.message||''))})};
+
   /* ---- טעינה: הנוסחים שנבחרו (ציבורי) ---- */
   if(location.protocol==='http:'||location.protocol==='https:'){
     fetch(SUGGEST_API+'/tos?slug='+encodeURIComponent(SLUG),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){
+      if(j&&j.ok){TOK={};TNO={};(j.tok||[]).forEach(function(n){TOK[n]=true});(j.tno||[]).forEach(function(n){TNO[n]=true});
+        triApply();if(!off())tsMark()}
       if(j&&j.ok&&j.pub){var any=false;Object.keys(j.pub).forEach(function(n){if(byN[n]&&j.pub[n].t){PUB[n]=j.pub[n];any=true}});
         if(any&&!off())tsMark()}}).catch(function(){})}
   if(typeof isAdmin==='function'&&isAdmin()&&mode!=='off')setTimeout(admLoad,50);

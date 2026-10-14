@@ -273,3 +273,7 @@
 [2026-10-14 16:22:31] נשלח Batch msgbatch_01F96aGPCaTQthB2eNuJ7TWd (write) bava-batra פרק 8: 75 בקשות
 [2026-10-14 16:22:33] נשלח Batch msgbatch_01MyVie9u2WwgQqv5DdjmuBq (write) bava-batra פרק 9: 65 בקשות
 [2026-10-14 16:22:33] נשלח Batch msgbatch_01UzrPEda5Nz3E1dDCH7TqS8 (write) bava-batra פרק 10: 57 בקשות
+[2026-10-14 16:26:07] bava-metzia פרק 4: ביקורת הסתיימה, עלות $0.015, לכתיבה מחדש: 49 בקשות
+[2026-10-14 16:26:07] נשלח Batch msgbatch_01UHmQQFhEQnzrGkX75odvVh (rewrite) bava-metzia פרק 4: 49 בקשות
+[2026-10-14 16:26:09] bava-metzia פרק 8: ביקורת הסתיימה, עלות $0.011, לכתיבה מחדש: 27 בקשות
+[2026-10-14 16:26:10] נשלח Batch msgbatch_01Hmqc2TuYkhDcrA874XcpGF (rewrite) bava-metzia פרק 8: 27 בקשות

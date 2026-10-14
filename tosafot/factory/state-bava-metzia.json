@@ -23,11 +23,11 @@
    "batch": "msgbatch_01Aj43kEtpyfDfnRkWEkkaZ9"
   },
   "4": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T16:14:49Z",
-   "nreq": 27,
-   "batch": "msgbatch_01MyHkm7VmAiXEdfdznbGPYE"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T16:26:07Z",
+   "nreq": 49,
+   "batch": "msgbatch_01UHmQQFhEQnzrGkX75odvVh"
   },
   "5": {
    "status": "rewriting",
@@ -51,11 +51,11 @@
    "batch": "msgbatch_01HFk6ZqgvMJto9BeVdBr6hV"
   },
   "8": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T16:14:52Z",
-   "nreq": 18,
-   "batch": "msgbatch_01HdRdgPCswVqhtDz7Rjtv5G"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T16:26:10Z",
+   "nreq": 27,
+   "batch": "msgbatch_01Hmqc2TuYkhDcrA874XcpGF"
   },
   "9": {
    "status": "reviewing",
@@ -73,7 +73,7 @@
   }
  },
  "created": "2026-10-14T16:07:41Z",
- "updated": "2026-10-14T16:22:25Z",
+ "updated": "2026-10-14T16:26:10Z",
  "calibration": [
   {
    "perek": 4,

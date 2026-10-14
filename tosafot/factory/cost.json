@@ -1,14 +1,14 @@
 {
- "total": 79.509401,
+ "total": 79.534983,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
   "bava-kamma": 29.983559,
-  "bava-metzia": 7.470488
+  "bava-metzia": 7.49607
  },
  "byPhase": {
   "write": 35.313898,
-  "review": 0.235003,
+  "review": 0.260585,
   "rewrite": 43.655258,
   "rereview": 0.305241
  },
@@ -2316,6 +2316,38 @@
     "n": 6
    },
    "cost": 0.002913
+  },
+  {
+   "at": "2026-10-14T16:26:07Z",
+   "slug": "bava-metzia",
+   "perek": 4,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 27,
+   "usage": {
+    "in": 28174,
+    "cw": 122775,
+    "cr": 3746,
+    "out": 5130,
+    "n": 27
+   },
+   "cost": 0.014987
+  },
+  {
+   "at": "2026-10-14T16:26:09Z",
+   "slug": "bava-metzia",
+   "perek": 8,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 18,
+   "usage": {
+    "in": 22679,
+    "cw": 81804,
+    "cr": 0,
+    "out": 5121,
+    "n": 18
+   },
+   "cost": 0.010595
   }
  ],
  "tokens": {
@@ -2338,10 +2370,10 @@
    "out": 999780
   },
   "bava-metzia": {
-   "in": 1292721,
-   "cw": 187439,
-   "cr": 4957636,
-   "out": 376075
+   "in": 1343574,
+   "cw": 392018,
+   "cr": 4961382,
+   "out": 386326
   }
  }
 }

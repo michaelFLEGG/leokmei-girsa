@@ -184,7 +184,7 @@
     const R=SK.rpt;
     let h='<div class="skf"><b>בקשת סקירה</b><div class="dim">הבקשה נכנסת לתור. לא צריך לעשות דבר מעבר ללחיצה; ההערות יופיעו כאן בהרצה הבאה.</div>'+
       '<label>מדף <select id="skfrom" onchange="skEstDraw()">'+opt(R.from||cd)+'</select> עד <select id="skto" onchange="skEstDraw()">'+opt(R.to||cd)+'</select></label>'+
-      '<div class="gbt"><button onclick="skPreset(\'daf\')">הדף הנוכחי</button><button onclick="skPreset(\'perek\')">הפרק הנוכחי</button></div>'+
+      '<div class="gbt"><button onclick="skPreset(\'daf\')">הדף הנוכחי</button><button onclick="skPreset(\'perek\')">הפרק הנוכחי</button><button onclick="skPreset(\'all\')">כל המסכת</button></div>'+
       '<label>עומק <select id="skdepth" onchange="skEstDraw()"><option value="fast">מהירה (קוד ומודל זול)</option><option value="full">מלאה (כולל השכבה הסמנטית החזקה)</option></select></label>'+
       '<label>הערה לסוקר (לא חובה) <input type="text" id="sknote" maxlength="300" style="width:100%"></label>'+
       '<div id="skest" class="dim"></div>'+
@@ -193,6 +193,7 @@
   window.skPreset=function(w){
     const ds=skDafs();const cd=bkDafNow();
     if(w==='daf'){$('#skfrom').value=cd;$('#skto').value=cd}
+    else if(w==='all'){if(ds.length){$('#skfrom').value=ds[0][0];$('#skto').value=ds[ds.length-1][0]}}
     else{const sec=SEC[cur]||{from:0,to:0};const a=D.pages[sec.from],b=D.pages[sec.to];if(a&&b){$('#skfrom').value=a.daf;$('#skto').value=b.daf}}
     skEstDraw()};
   window.skEstDraw=function(){

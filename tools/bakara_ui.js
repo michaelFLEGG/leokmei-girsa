@@ -240,8 +240,13 @@
     let top,left;
     if(fr.left>W+16){left=fr.left-W-8;top=Math.min(vh-Hh-8,Math.max(8,rc.top-10))}
     else if(vw-fr.right>W+16){left=fr.right+8;top=Math.min(vh-Hh-8,Math.max(8,rc.top-10))}
-    else{left=Math.min(vw-W-8,Math.max(8,rc.left+rc.width/2-W/2));
-      top=rc.bottom+8;if(top+Hh>vh-8)top=rc.top-Hh-8;if(top<8)top=Math.max(8,vh-Hh-8)}
+    else{/* אין שוליים: הכרטיס מעוגן בתחתית המסך מעל הסרגל, והשורה הבעייתית נגללת מעליו */
+      const bar=$('#bkbar'),bh=bar?bar.offsetHeight+10:56;
+      left=Math.max(8,Math.round((vw-W)/2));top=Math.max(8,vh-Hh-bh-6);
+      c.style.left=left+'px';c.style.top=Math.round(top)+'px';
+      const over=rc.bottom-(top-14);
+      if(over>0||rc.top<70){const d=over>0?over:rc.top-90;try{window.scrollBy({top:d,behavior:'auto'})}catch(e){window.scrollBy(0,d)}}
+      return}
     c.style.left=Math.round(left)+'px';c.style.top=Math.round(top)+'px'}
   function bkLater(){clearTimeout(BK.hideT);BK.hideT=setTimeout(()=>bkHideCard(false),380)}
   function bkHit(x,y){

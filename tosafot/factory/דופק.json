@@ -1,12 +1,12 @@
 {
- "ticks": 23,
- "stalls": 1,
- "last": "2026-10-14T11:27:43Z",
+ "ticks": 24,
+ "stalls": 0,
+ "last": "2026-10-14T11:31:06Z",
  "summary": [
-  "sukkah פרק 1: rereviewing",
+  "sukkah פרק 1: published",
   "berakhot: הושלמה",
   "bava-kamma: ממתין להכנה (ספירה והקשר)"
  ],
- "spent": 41.937084,
- "left": 154.06
+ "spent": 42.055352,
+ "left": 153.94
 }

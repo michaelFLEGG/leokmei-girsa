@@ -1,7 +1,7 @@
 {
- "ticks": 9,
+ "ticks": 10,
  "stalls": 0,
- "last": "2026-10-14T09:51:58Z",
+ "last": "2026-10-14T09:55:28Z",
  "summary": [
   "sukkah פרק 2: reviewing",
   "sukkah פרק 3: writing",
@@ -10,7 +10,7 @@
   "berakhot פרק 1: reviewing",
   "berakhot פרק 2: reviewing",
   "berakhot פרק 3: writing",
-  "berakhot פרק 4: writing",
+  "berakhot פרק 4: reviewing",
   "berakhot פרק 5: reviewing",
   "berakhot פרק 6: writing",
   "berakhot פרק 7: writing",
@@ -18,6 +18,6 @@
   "berakhot פרק 9: writing",
   "bava-kamma: ממתין להכנה (ספירה והקשר)"
  ],
- "spent": 11.385361,
- "left": 184.61
+ "spent": 11.768484,
+ "left": 184.23
 }

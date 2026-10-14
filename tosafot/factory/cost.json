@@ -1,11 +1,11 @@
 {
- "total": 11.385361,
+ "total": 11.768484,
  "bySlug": {
   "sukkah": 10.366474,
-  "berakhot": 1.018887
+  "berakhot": 1.40201
  },
  "byPhase": {
-  "write": 4.517458,
+  "write": 4.900581,
   "review": 0.007873,
   "rewrite": 6.853236,
   "rereview": 0.006793
@@ -314,6 +314,38 @@
     "n": 1
    },
    "cost": 0.059104
+  },
+  {
+   "at": "2026-10-14T09:55:26Z",
+   "slug": "berakhot",
+   "perek": 4,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 17,
+   "usage": {
+    "in": 64029,
+    "cw": 0,
+    "cr": 240601,
+    "out": 11980,
+    "n": 17
+   },
+   "cost": 0.135959
+  },
+  {
+   "at": "2026-10-14T09:55:26Z",
+   "slug": "berakhot",
+   "perek": 4,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 2,
+   "usage": {
+    "in": 8761,
+    "cw": 14154,
+    "cr": 14154,
+    "out": 2402,
+    "n": 2
+   },
+   "cost": 0.247164
   }
  ],
  "tokens": {
@@ -324,10 +356,10 @@
    "out": 215228
   },
   "berakhot": {
-   "in": 259745,
-   "cw": 14154,
-   "cr": 962409,
-   "out": 55819
+   "in": 332535,
+   "cw": 28308,
+   "cr": 1217164,
+   "out": 70201
   }
  }
 }

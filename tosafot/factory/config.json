@@ -24,7 +24,7 @@
   "reservedOther": 0,
   "note": "הקרדיט (כ-196 דולר, פג ב-7.11.2026) משותף לכל מה שרץ במפתח של אותו ארגון, כולל בית החרושת לנ\"ך. reservedOther = כמה להפחית מהיתרה בגלל שימוש חיצוני לבית החרושת הזה. אין אמצעי תשלום רשום."
  },
- "reviewerV2": false,
+ "reviewerV2": true,
  "maxPerRequest": 6,
  "maxTokens": {"perTos": 500, "review": 2500, "expectOut": 260},
  "hard": {"words": 300, "markers": 4},

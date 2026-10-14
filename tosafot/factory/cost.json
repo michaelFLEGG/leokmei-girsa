@@ -1,14 +1,14 @@
 {
- "total": 35.137561,
+ "total": 35.140664,
  "bySlug": {
   "sukkah": 19.154131,
-  "berakhot": 15.98343
+  "berakhot": 15.986533
  },
  "byPhase": {
   "write": 9.748955,
   "review": 0.052119,
   "rewrite": 25.31217,
-  "rereview": 0.024317
+  "rereview": 0.02742
  },
  "batches": [
   {
@@ -1002,6 +1002,22 @@
     "n": 13
    },
    "cost": 0.826975
+  },
+  {
+   "at": "2026-10-14T10:17:32Z",
+   "slug": "berakhot",
+   "perek": 7,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 13,
+   "usage": {
+    "in": 32055,
+    "cw": 0,
+    "cr": 7436,
+    "out": 5853,
+    "n": 13
+   },
+   "cost": 0.003103
   }
  ],
  "tokens": {
@@ -1012,10 +1028,10 @@
    "out": 515632
   },
   "berakhot": {
-   "in": 1851490,
+   "in": 1883545,
    "cw": 170992,
-   "cr": 4908287,
-   "out": 524736
+   "cr": 4915723,
+   "out": 530589
   }
  }
 }

@@ -66,6 +66,8 @@ def ctx_page(ctxj, dafKey, daf, slug):
 
 
 def counted_perakim(slug):
+    if not jload(fp(slug, 'chapters.json')):
+        return []
     return [ch['n'] for ch in F.chapters(slug) if os.path.exists(fp(slug, 'count-%d.json' % ch['n']))]
 
 

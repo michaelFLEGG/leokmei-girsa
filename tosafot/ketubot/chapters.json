@@ -1,0 +1,123 @@
+{
+ "masechet": "כתובות",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "בתולה נשאת",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "15b",
+   "toLine": 11,
+   "countedThrough": "15b"
+  },
+  {
+   "n": 2,
+   "name": "האשה שנתארמלה",
+   "from": "15b",
+   "fromLine": 12,
+   "to": "28b",
+   "toLine": 14,
+   "countedThrough": "28b"
+  },
+  {
+   "n": 3,
+   "name": "אלו נערות",
+   "from": "29a",
+   "fromLine": 1,
+   "to": "41b",
+   "toLine": 10,
+   "countedThrough": "41b"
+  },
+  {
+   "n": 4,
+   "name": "נערה שנתפתתה",
+   "from": "41b",
+   "fromLine": 11,
+   "to": "54b",
+   "toLine": 5,
+   "countedThrough": "54b"
+  },
+  {
+   "n": 5,
+   "name": "אף על פי",
+   "from": "54b",
+   "fromLine": 6,
+   "to": "65b",
+   "toLine": 12,
+   "countedThrough": "65b"
+  },
+  {
+   "n": 6,
+   "name": "מציאת האשה",
+   "from": "65b",
+   "fromLine": 13,
+   "to": "70a",
+   "toLine": 6,
+   "countedThrough": "70a"
+  },
+  {
+   "n": 7,
+   "name": "המדיר",
+   "from": "70a",
+   "fromLine": 7,
+   "to": "77b",
+   "toLine": 14,
+   "countedThrough": "77b"
+  },
+  {
+   "n": 8,
+   "name": "האשה שנפלו",
+   "from": "78a",
+   "fromLine": 1,
+   "to": "82b",
+   "toLine": 14,
+   "countedThrough": "82b"
+  },
+  {
+   "n": 9,
+   "name": "הכותב לאשתו",
+   "from": "83a",
+   "fromLine": 1,
+   "to": "90a",
+   "toLine": 7,
+   "countedThrough": "90a"
+  },
+  {
+   "n": 10,
+   "name": "מי שהיה נשוי",
+   "from": "90a",
+   "fromLine": 8,
+   "to": "95b",
+   "toLine": 14,
+   "countedThrough": "95b"
+  },
+  {
+   "n": 11,
+   "name": "אלמנה ניזונת",
+   "from": "95b",
+   "fromLine": 15,
+   "to": "101b",
+   "toLine": 12,
+   "countedThrough": "101b"
+  },
+  {
+   "n": 12,
+   "name": "הנושא את האשה",
+   "from": "101b",
+   "fromLine": 13,
+   "to": "104b",
+   "toLine": 18,
+   "countedThrough": "104b"
+  },
+  {
+   "n": 13,
+   "name": "שני דייני גזירות",
+   "from": "104b",
+   "fromLine": 19,
+   "to": "112b",
+   "toLine": 4,
+   "countedThrough": "112b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 77b."
+}

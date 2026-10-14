@@ -1,14 +1,15 @@
 {
- "total": 61.786547,
+ "total": 75.126207,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
-  "bava-kamma": 19.731194
+  "bava-kamma": 29.85595,
+  "bava-metzia": 3.214903
  },
  "byPhase": {
-  "write": 27.861433,
+  "write": 31.076336,
   "review": 0.164516,
-  "rewrite": 33.530501,
+  "rewrite": 43.655258,
   "rereview": 0.230095
  },
  "batches": [
@@ -1771,6 +1772,198 @@
     "n": 2
    },
    "cost": 0.39681
+  },
+  {
+   "at": "2026-10-14T16:14:38Z",
+   "slug": "bava-kamma",
+   "perek": 2,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 32,
+   "usage": {
+    "in": 134381,
+    "cw": 0,
+    "cr": 452928,
+    "out": 57948,
+    "n": 32
+   },
+   "cost": 2.177221
+  },
+  {
+   "at": "2026-10-14T16:14:40Z",
+   "slug": "bava-kamma",
+   "perek": 3,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 31,
+   "usage": {
+    "in": 142805,
+    "cw": 0,
+    "cr": 438774,
+    "out": 53244,
+    "n": 31
+   },
+   "cost": 2.099972
+  },
+  {
+   "at": "2026-10-14T16:14:41Z",
+   "slug": "bava-kamma",
+   "perek": 4,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 35,
+   "usage": {
+    "in": 136774,
+    "cw": 0,
+    "cr": 495390,
+    "out": 54492,
+    "n": 35
+   },
+   "cost": 2.108094
+  },
+  {
+   "at": "2026-10-14T16:14:43Z",
+   "slug": "bava-kamma",
+   "perek": 5,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 30,
+   "usage": {
+    "in": 136101,
+    "cw": 0,
+    "cr": 424620,
+    "out": 49005,
+    "n": 30
+   },
+   "cost": 1.958708
+  },
+  {
+   "at": "2026-10-14T16:14:45Z",
+   "slug": "bava-kamma",
+   "perek": 8,
+   "phase": "rewrite",
+   "model": "claude-fable-5-1",
+   "n": 31,
+   "usage": {
+    "in": 137858,
+    "cw": 0,
+    "cr": 438774,
+    "out": 41465,
+    "n": 31
+   },
+   "cost": 1.780762
+  },
+  {
+   "at": "2026-10-14T16:14:48Z",
+   "slug": "bava-metzia",
+   "perek": 4,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 44,
+   "usage": {
+    "in": 165137,
+    "cw": 14153,
+    "cr": 608579,
+    "out": 41362,
+    "n": 44
+   },
+   "cost": 0.430682
+  },
+  {
+   "at": "2026-10-14T16:14:48Z",
+   "slug": "bava-metzia",
+   "perek": 4,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 11,
+   "usage": {
+    "in": 37287,
+    "cw": 0,
+    "cr": 155694,
+    "out": 15138,
+    "n": 11
+   },
+   "cost": 0.584347
+  },
+  {
+   "at": "2026-10-14T16:14:50Z",
+   "slug": "bava-metzia",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 18,
+   "usage": {
+    "in": 57299,
+    "cw": 0,
+    "cr": 254772,
+    "out": 22680,
+    "n": 18
+   },
+   "cost": 0.885342
+  },
+  {
+   "at": "2026-10-14T16:14:50Z",
+   "slug": "bava-metzia",
+   "perek": 5,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 36,
+   "usage": {
+    "in": 129150,
+    "cw": 14153,
+    "cr": 495355,
+    "out": 32603,
+    "n": 36
+   },
+   "cost": 0.345239
+  },
+  {
+   "at": "2026-10-14T16:14:52Z",
+   "slug": "bava-metzia",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 11,
+   "usage": {
+    "in": 39356,
+    "cw": 0,
+    "cr": 155694,
+    "out": 17366,
+    "n": 11
+   },
+   "cost": 0.650392
+  },
+  {
+   "at": "2026-10-14T16:14:52Z",
+   "slug": "bava-metzia",
+   "perek": 8,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 25,
+   "usage": {
+    "in": 89517,
+    "cw": 0,
+    "cr": 353825,
+    "out": 21468,
+    "n": 25
+   },
+   "cost": 0.214548
+  },
+  {
+   "at": "2026-10-14T16:14:53Z",
+   "slug": "bava-metzia",
+   "perek": 10,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 10,
+   "usage": {
+    "in": 32049,
+    "cw": 14153,
+    "cr": 127377,
+    "out": 7526,
+    "n": 10
+   },
+   "cost": 0.104354
   }
  ],
  "tokens": {
@@ -1787,10 +1980,16 @@
    "out": 557908
   },
   "bava-kamma": {
-   "in": 2246931,
+   "in": 2934850,
    "cw": 1796053,
-   "cr": 7189791,
-   "out": 681772
+   "cr": 9440277,
+   "out": 937926
+  },
+  "bava-metzia": {
+   "in": 549795,
+   "cw": 42459,
+   "cr": 2151296,
+   "out": 158143
   }
  }
 }

@@ -23,18 +23,18 @@
    "nreq": 35
   },
   "4": {
-   "status": "writing",
-   "batch": "msgbatch_01SbUv7jFLok4ZdGytEdVDDh",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:07:44Z",
-   "nreq": 55
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:14:49Z",
+   "nreq": 27,
+   "batch": "msgbatch_01MyHkm7VmAiXEdfdznbGPYE"
   },
   "5": {
-   "status": "writing",
-   "batch": "msgbatch_013NQ5x8UkQJMPUvcPuZLXkN",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:07:45Z",
-   "nreq": 54
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:14:50Z",
+   "nreq": 29,
+   "batch": "msgbatch_01DoMXBKBN72LTMmCVJunBdm"
   },
   "6": {
    "status": "writing",
@@ -51,11 +51,11 @@
    "nreq": 37
   },
   "8": {
-   "status": "writing",
-   "batch": "msgbatch_01ANzgJVZRJN8U9UN8TG61dw",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:07:46Z",
-   "nreq": 36
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:14:52Z",
+   "nreq": 18,
+   "batch": "msgbatch_01HdRdgPCswVqhtDz7Rjtv5G"
   },
   "9": {
    "status": "writing",
@@ -65,13 +65,39 @@
    "nreq": 49
   },
   "10": {
-   "status": "writing",
-   "batch": "msgbatch_0192CSvar9kipAHB4GNAUKa6",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:07:48Z",
-   "nreq": 10
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:14:54Z",
+   "nreq": 6,
+   "batch": "msgbatch_01HbSG8FC8D9JYuaywqtGcJj"
   }
  },
  "created": "2026-10-14T16:07:41Z",
- "updated": "2026-10-14T16:07:48Z"
+ "updated": "2026-10-14T16:14:54Z",
+ "calibration": [
+  {
+   "perek": 4,
+   "mean": 0.496,
+   "n": 4,
+   "at": "2026-10-14T16:14:48Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.573,
+   "n": 4,
+   "at": "2026-10-14T16:14:50Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.414,
+   "n": 4,
+   "at": "2026-10-14T16:14:52Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.415,
+   "n": 4,
+   "at": "2026-10-14T16:14:53Z"
+  }
+ ]
 }

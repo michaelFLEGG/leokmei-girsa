@@ -210,3 +210,21 @@
 [2026-10-14 16:07:46] נשלח Batch msgbatch_01ANzgJVZRJN8U9UN8TG61dw (write) bava-metzia פרק 8: 36 בקשות
 [2026-10-14 16:07:47] נשלח Batch msgbatch_01CgL1kzzgSBRYUxSB6hwemb (write) bava-metzia פרק 9: 49 בקשות
 [2026-10-14 16:07:48] נשלח Batch msgbatch_0192CSvar9kipAHB4GNAUKa6 (write) bava-metzia פרק 10: 10 בקשות
+[2026-10-14 16:14:38] bava-kamma פרק 2: כתיבה מחדש הסתיימה, עלות $2.177
+[2026-10-14 16:14:39] נשלח Batch msgbatch_013uWg7UV3V9xvWhXHmS3bFP (rereview) bava-kamma פרק 2: 22 בקשות
+[2026-10-14 16:14:40] bava-kamma פרק 3: כתיבה מחדש הסתיימה, עלות $2.100
+[2026-10-14 16:14:40] נשלח Batch msgbatch_01Rq7LkgPxcmEDmsehPHzBWj (rereview) bava-kamma פרק 3: 21 בקשות
+[2026-10-14 16:14:41] bava-kamma פרק 4: כתיבה מחדש הסתיימה, עלות $2.108
+[2026-10-14 16:14:42] נשלח Batch msgbatch_01SmGfKRLSDrozZRFau1q7wT (rereview) bava-kamma פרק 4: 20 בקשות
+[2026-10-14 16:14:43] bava-kamma פרק 5: כתיבה מחדש הסתיימה, עלות $1.959
+[2026-10-14 16:14:44] נשלח Batch msgbatch_01CkFH82EQQnj5GYkb7jsEmJ (rereview) bava-kamma פרק 5: 20 בקשות
+[2026-10-14 16:14:45] bava-kamma פרק 8: כתיבה מחדש הסתיימה, עלות $1.781
+[2026-10-14 16:14:46] נשלח Batch msgbatch_018LKifummh7SNscZGQcMjH3 (rereview) bava-kamma פרק 8: 20 בקשות
+[2026-10-14 16:14:48] bava-metzia פרק 4: כתיבה הסתיימה {'ok': 85, 'bad': 81, 'api': 0}, עלות $1.015
+[2026-10-14 16:14:49] נשלח Batch msgbatch_01MyHkm7VmAiXEdfdznbGPYE (review) bava-metzia פרק 4: 27 בקשות
+[2026-10-14 16:14:50] bava-metzia פרק 5: כתיבה הסתיימה {'ok': 58, 'bad': 64, 'api': 0}, עלות $1.231
+[2026-10-14 16:14:50] נשלח Batch msgbatch_01DoMXBKBN72LTMmCVJunBdm (review) bava-metzia פרק 5: 29 בקשות
+[2026-10-14 16:14:52] bava-metzia פרק 8: כתיבה הסתיימה {'ok': 51, 'bad': 34, 'api': 0}, עלות $0.865
+[2026-10-14 16:14:52] נשלח Batch msgbatch_01HdRdgPCswVqhtDz7Rjtv5G (review) bava-metzia פרק 8: 18 בקשות
+[2026-10-14 16:14:53] bava-metzia פרק 10: כתיבה הסתיימה {'ok': 15, 'bad': 6, 'api': 0}, עלות $0.104
+[2026-10-14 16:14:54] נשלח Batch msgbatch_01HbSG8FC8D9JYuaywqtGcJj (review) bava-metzia פרק 10: 6 בקשות

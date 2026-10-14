@@ -25,6 +25,7 @@ jobs:
       - name: פעימה
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        continue-on-error: true
         run: python tools/tosafot/factory_flow.py tick
       - name: שמירה, דחיפה והפעלת הבנייה
         env:

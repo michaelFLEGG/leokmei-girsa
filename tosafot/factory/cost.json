@@ -1,16 +1,16 @@
 {
- "total": 78.416517,
+ "total": 79.509401,
  "bySlug": {
   "sukkah": 26.056524,
   "berakhot": 15.998829,
-  "bava-kamma": 29.918283,
-  "bava-metzia": 6.44288
+  "bava-kamma": 29.983559,
+  "bava-metzia": 7.470488
  },
  "byPhase": {
-  "write": 34.304313,
-  "review": 0.21698,
+  "write": 35.313898,
+  "review": 0.235003,
   "rewrite": 43.655258,
-  "rereview": 0.239964
+  "rereview": 0.305241
  },
  "batches": [
   {
@@ -2172,6 +2172,150 @@
     "n": 14
    },
    "cost": 0.805809
+  },
+  {
+   "at": "2026-10-14T16:22:11Z",
+   "slug": "bava-kamma",
+   "perek": 2,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 22,
+   "usage": {
+    "in": 53084,
+    "cw": 102852,
+    "cr": 0,
+    "out": 6584,
+    "n": 22
+   },
+   "cost": 0.014585
+  },
+  {
+   "at": "2026-10-14T16:22:12Z",
+   "slug": "bava-kamma",
+   "perek": 3,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 21,
+   "usage": {
+    "in": 53016,
+    "cw": 89473,
+    "cr": 3830,
+    "out": 5649,
+    "n": 21
+   },
+   "cost": 0.01303
+  },
+  {
+   "at": "2026-10-14T16:22:13Z",
+   "slug": "bava-kamma",
+   "perek": 4,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 20,
+   "usage": {
+    "in": 42476,
+    "cw": 88816,
+    "cr": 0,
+    "out": 6475,
+    "n": 20
+   },
+   "cost": 0.012624
+  },
+  {
+   "at": "2026-10-14T16:22:15Z",
+   "slug": "bava-kamma",
+   "perek": 5,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 20,
+   "usage": {
+    "in": 47619,
+    "cw": 83327,
+    "cr": 5217,
+    "out": 6896,
+    "n": 20
+   },
+   "cost": 0.012464
+  },
+  {
+   "at": "2026-10-14T16:22:17Z",
+   "slug": "bava-kamma",
+   "perek": 8,
+   "phase": "rereview",
+   "model": "claude-haiku-5-5",
+   "n": 20,
+   "usage": {
+    "in": 43746,
+    "cw": 87278,
+    "cr": 0,
+    "out": 6634,
+    "n": 20
+   },
+   "cost": 0.012574
+  },
+  {
+   "at": "2026-10-14T16:22:19Z",
+   "slug": "bava-metzia",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-sonnet-5-5",
+   "n": 37,
+   "usage": {
+    "in": 137830,
+    "cw": 0,
+    "cr": 523661,
+    "out": 32348,
+    "n": 37
+   },
+   "cost": 0.325753
+  },
+  {
+   "at": "2026-10-14T16:22:19Z",
+   "slug": "bava-metzia",
+   "perek": 2,
+   "phase": "write",
+   "model": "claude-fable-5-1",
+   "n": 11,
+   "usage": {
+    "in": 43909,
+    "cw": 0,
+    "cr": 155694,
+    "out": 17793,
+    "n": 11
+   },
+   "cost": 0.683832
+  },
+  {
+   "at": "2026-10-14T16:22:21Z",
+   "slug": "bava-metzia",
+   "perek": 5,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 29,
+   "usage": {
+    "in": 26992,
+    "cw": 122491,
+    "cr": 0,
+    "out": 6047,
+    "n": 29
+   },
+   "cost": 0.01511
+  },
+  {
+   "at": "2026-10-14T16:22:24Z",
+   "slug": "bava-metzia",
+   "perek": 10,
+   "phase": "review",
+   "model": "claude-haiku-5-5",
+   "n": 6,
+   "usage": {
+    "in": 6225,
+    "cw": 22489,
+    "cr": 3996,
+    "out": 1331,
+    "n": 6
+   },
+   "cost": 0.002913
   }
  ],
  "tokens": {
@@ -2188,16 +2332,16 @@
    "out": 557908
   },
   "bava-kamma": {
-   "in": 3109726,
-   "cw": 2249755,
-   "cr": 9603397,
-   "out": 967542
+   "in": 3349667,
+   "cw": 2701501,
+   "cr": 9612444,
+   "out": 999780
   },
   "bava-metzia": {
-   "in": 1077765,
-   "cw": 42459,
-   "cr": 4274285,
-   "out": 318556
+   "in": 1292721,
+   "cw": 187439,
+   "cr": 4957636,
+   "out": 376075
   }
  }
 }

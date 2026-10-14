@@ -1,0 +1,77 @@
+{
+ "slug": "bava-batra",
+ "perakim": {
+  "1": {
+   "status": "writing",
+   "batch": "msgbatch_01CepHCNu8XtZjeY5cvq7SgN",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:25Z",
+   "nreq": 50
+  },
+  "2": {
+   "status": "writing",
+   "batch": "msgbatch_01UqLDnMN1NKi59hDTTijVud",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:26Z",
+   "nreq": 50
+  },
+  "3": {
+   "status": "writing",
+   "batch": "msgbatch_018tBHZQHUugrE5YqvmryMBL",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:27Z",
+   "nreq": 96
+  },
+  "4": {
+   "status": "writing",
+   "batch": "msgbatch_017oKqN4HHxdvimj8U8UULBP",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:28Z",
+   "nreq": 34
+  },
+  "5": {
+   "status": "writing",
+   "batch": "msgbatch_01CcU68ZQPzuuvtrukDHrRni",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:29Z",
+   "nreq": 51
+  },
+  "6": {
+   "status": "writing",
+   "batch": "msgbatch_01KjovLvvZzGstWaeJXUCA3i",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:30Z",
+   "nreq": 29
+  },
+  "7": {
+   "status": "writing",
+   "batch": "msgbatch_01PYeQEtAb8KNewbGVk7sNTg",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:31Z",
+   "nreq": 16
+  },
+  "8": {
+   "status": "writing",
+   "batch": "msgbatch_01F96aGPCaTQthB2eNuJ7TWd",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:31Z",
+   "nreq": 75
+  },
+  "9": {
+   "status": "writing",
+   "batch": "msgbatch_01MyVie9u2WwgQqv5DdjmuBq",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:33Z",
+   "nreq": 65
+  },
+  "10": {
+   "status": "writing",
+   "batch": "msgbatch_01UzrPEda5Nz3E1dDCH7TqS8",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T16:22:33Z",
+   "nreq": 57
+  }
+ },
+ "created": "2026-10-14T16:22:25Z",
+ "updated": "2026-10-14T16:22:33Z"
+}

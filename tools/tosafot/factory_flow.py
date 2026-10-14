@@ -239,7 +239,14 @@ def build_review(slug, perek, c, work):
                 blocks.append('### מזהה: %s\nדיבור המתחיל: %s\nפנים התוספות:\n%s\nשורת מסקנה: %s\nשאלות:\n%s'
                               % (r['rid'], r['dh'], r['text'], r['s'], qs))
             cid = 'rv-%s-p%d-%s-%d' % (slug, perek, g[0]['daf'], gi // per)
-            reqs.append(mk_req(cid, c['engines']['review'], F.REVIEW_SYS, '\n\n'.join(blocks), c['maxTokens']['review']))
+            rsys = F.REVIEW_SYS
+            if c.get('reviewerV2'):
+                # מבקר חדש (14.10.2026): שלוש דרגות ודוגמאות מהכרעות המנהל. פעיל רק כשהדגל reviewerV2 בהגדרות דלוק.
+                import triage_reviewer as TR
+                rsys = TR.system_with_examples([(r['text'], r['s']) for r in g])
+                blocks = [TR.user_block(r['rid'], r['dh'], r['text'], r['s'],
+                                        [q for i, q in enumerate(r['q']) if not (r.get('bad_q') or {}).get(str(i))]) for r in g]
+            reqs.append(mk_req(cid, c['engines']['review'], rsys, '\n\n'.join(blocks), c['maxTokens']['review']))
             work['rvreqs'][cid] = [r['rid'] for r in g]
     return reqs
 
@@ -267,7 +274,20 @@ def ingest_review(slug, perek, c, work, results):
             rec = work['recs'][i]
             rec['rv_s'], rec['rv_q'], rec['rv_done'] = '', {}, True
             g = got.get(i)
-            if isinstance(g, dict):
+            if isinstance(g, dict) and g.get('d'):
+                # פורמט המבקר החדש: תקין / תיקון קל (המבקר מחזיר שורה מתוקנת) / פסול
+                if g['d'] == 'תיקון קל' and str(g.get('fix') or '').strip():
+                    fixed = str(g['fix']).strip().replace(';', '.')
+                    if not F.check_line(fixed, rec, c):
+                        rec['s'], rec['bad_s'], rec['rv_fix'] = fixed, [], True
+                if g['d'] == 'פסול':
+                    rec['rv_s'] = str(g.get('s') or 'פסול')
+                if g.get('star'):
+                    rec['star'] = True
+                for k, why in enumerate(g.get('q') or []):
+                    if why:
+                        rec['rv_q'][str(k)] = str(why)
+            elif isinstance(g, dict):
                 rec['rv_s'] = str(g.get('s') or '')
                 qs = g.get('q') or []
                 if isinstance(qs, list):

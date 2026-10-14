@@ -590,3 +590,43 @@
 [2026-10-14 18:03:06] נשלח Batch msgbatch_0111Fp2neuFDiQU8oMGZfwgW (write) ketubot פרק 11: 23 בקשות
 [2026-10-14 18:03:07] נשלח Batch msgbatch_01HXamQXP5eyCkAmEGxQTBHY (write) ketubot פרק 12: 13 בקשות
 [2026-10-14 18:03:07] נשלח Batch msgbatch_01VwxQpwjXQYBPs6mq7CEUEc (write) ketubot פרק 13: 27 בקשות
+[2026-10-14 18:06:50] gittin פרק 1: כתיבה מחדש הסתיימה, עלות $3.445
+[2026-10-14 18:06:50] נשלח Batch msgbatch_01JUhQSE9W2RNgKLvvRBMmbP (rereview) gittin פרק 1: 32 בקשות
+[2026-10-14 18:06:52] gittin פרק 3: כתיבה מחדש הסתיימה, עלות $1.822
+[2026-10-14 18:06:52] נשלח Batch msgbatch_013dA4LLBhVbVYs3xb2GuFPX (rereview) gittin פרק 3: 16 בקשות
+[2026-10-14 18:06:54] gittin פרק 5: כתיבה מחדש הסתיימה, עלות $2.435
+[2026-10-14 18:06:54] נשלח Batch msgbatch_01Vw9HHRgYm4dJg94XQ3bapQ (rereview) gittin פרק 5: 26 בקשות
+[2026-10-14 18:06:55] gittin פרק 7: כתיבה מחדש הסתיימה, עלות $1.390
+[2026-10-14 18:06:56] נשלח Batch msgbatch_017qmkVat2eAmHntWJ6oYaGN (rereview) gittin פרק 7: 17 בקשות
+[2026-10-14 18:06:58] yevamot פרק 1: ביקורת הסתיימה, עלות $0.018, לכתיבה מחדש: 52 בקשות
+[2026-10-14 18:06:58] נשלח Batch msgbatch_01Eudi474CFpQqw6KQqDD76V (rewrite) yevamot פרק 1: 52 בקשות
+[2026-10-14 18:06:59] yevamot פרק 2: ביקורת הסתיימה, עלות $0.009, לכתיבה מחדש: 26 בקשות
+[2026-10-14 18:07:00] נשלח Batch msgbatch_01L9brz8298fE6Fm3LrSynDy (rewrite) yevamot פרק 2: 26 בקשות
+[2026-10-14 18:07:01] yevamot פרק 3: ביקורת הסתיימה, עלות $0.010, לכתיבה מחדש: 24 בקשות
+[2026-10-14 18:07:01] נשלח Batch msgbatch_01NGaStdFXi4HynrAsjgoihz (rewrite) yevamot פרק 3: 24 בקשות
+[2026-10-14 18:07:02] yevamot פרק 4: ביקורת הסתיימה, עלות $0.015, לכתיבה מחדש: 47 בקשות
+[2026-10-14 18:07:03] נשלח Batch msgbatch_01JFHPanAuygXxYys7Vv9tFp (rewrite) yevamot פרק 4: 47 בקשות
+[2026-10-14 18:07:04] yevamot פרק 5: ביקורת הסתיימה, עלות $0.004, לכתיבה מחדש: 12 בקשות
+[2026-10-14 18:07:05] נשלח Batch msgbatch_01QvWckcbYSX5RJFUSE6FwVU (rewrite) yevamot פרק 5: 12 בקשות
+[2026-10-14 18:07:06] yevamot פרק 6: ביקורת הסתיימה, עלות $0.014, לכתיבה מחדש: 36 בקשות
+[2026-10-14 18:07:06] נשלח Batch msgbatch_01UbHUfdn7HqKNPxX8h3dqMq (rewrite) yevamot פרק 6: 36 בקשות
+[2026-10-14 18:07:07] yevamot פרק 7: ביקורת הסתיימה, עלות $0.004, לכתיבה מחדש: 16 בקשות
+[2026-10-14 18:07:08] נשלח Batch msgbatch_01LaTRBjUim7MHNmbRZcWosy (rewrite) yevamot פרק 7: 16 בקשות
+[2026-10-14 18:07:09] yevamot פרק 8: ביקורת הסתיימה, עלות $0.015, לכתיבה מחדש: 47 בקשות
+[2026-10-14 18:07:10] נשלח Batch msgbatch_01PJxRRJmGpDeNMHJnsKNVVw (rewrite) yevamot פרק 8: 47 בקשות
+[2026-10-14 18:07:10] yevamot פרק 9: ביקורת הסתיימה, עלות $0.002, לכתיבה מחדש: 12 בקשות
+[2026-10-14 18:07:11] נשלח Batch msgbatch_01TSUtAh7EpVbsTPLbWxxFuL (rewrite) yevamot פרק 9: 12 בקשות
+[2026-10-14 18:07:12] yevamot פרק 10: ביקורת הסתיימה, עלות $0.009, לכתיבה מחדש: 27 בקשות
+[2026-10-14 18:07:12] נשלח Batch msgbatch_01PXFEJHRCLrANR2Kr6S3cDh (rewrite) yevamot פרק 10: 27 בקשות
+[2026-10-14 18:07:13] yevamot פרק 11: ביקורת הסתיימה, עלות $0.005, לכתיבה מחדש: 11 בקשות
+[2026-10-14 18:07:14] נשלח Batch msgbatch_016DZJPh4s17VM2JZMhXQUYa (rewrite) yevamot פרק 11: 11 בקשות
+[2026-10-14 18:07:15] yevamot פרק 12: ביקורת הסתיימה, עלות $0.007, לכתיבה מחדש: 19 בקשות
+[2026-10-14 18:07:16] נשלח Batch msgbatch_016o71omq39PTGjPN4xgkcKQ (rewrite) yevamot פרק 12: 19 בקשות
+[2026-10-14 18:07:16] yevamot פרק 13: ביקורת הסתיימה, עלות $0.005, לכתיבה מחדש: 16 בקשות
+[2026-10-14 18:07:17] נשלח Batch msgbatch_01EAuzA7GNTThda69w1kjn8T (rewrite) yevamot פרק 13: 16 בקשות
+[2026-10-14 18:07:18] yevamot פרק 14: ביקורת הסתיימה, עלות $0.002, לכתיבה מחדש: 5 בקשות
+[2026-10-14 18:07:18] נשלח Batch msgbatch_01Nhxh7nDZsCn1HhzTXhTrJb (rewrite) yevamot פרק 14: 5 בקשות
+[2026-10-14 18:07:19] yevamot פרק 15: ביקורת הסתיימה, עלות $0.005, לכתיבה מחדש: 14 בקשות
+[2026-10-14 18:07:20] נשלח Batch msgbatch_01QjKW1wPCyB4M4PKrKhk2bA (rewrite) yevamot פרק 15: 14 בקשות
+[2026-10-14 18:07:21] yevamot פרק 16: ביקורת הסתיימה, עלות $0.003, לכתיבה מחדש: 11 בקשות
+[2026-10-14 18:07:21] נשלח Batch msgbatch_01LxYDJCahy8A97tHLxyfzKy (rewrite) yevamot פרק 16: 11 בקשות

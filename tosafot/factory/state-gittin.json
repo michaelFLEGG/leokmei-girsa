@@ -2,11 +2,11 @@
  "slug": "gittin",
  "perakim": {
   "1": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:15Z",
-   "nreq": 53,
-   "batch": "msgbatch_018sEqzTE9zTW6WaJiHBEz8D"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:06:50Z",
+   "nreq": 32,
+   "batch": "msgbatch_01JUhQSE9W2RNgKLvvRBMmbP"
   },
   "2": {
    "status": "rereviewing",
@@ -16,11 +16,11 @@
    "batch": "msgbatch_01Tcq6uPDpo5qAuuXN21cVa6"
   },
   "3": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:18Z",
-   "nreq": 26,
-   "batch": "msgbatch_016HBAfSpq3snqfgbMtH1zTX"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:06:52Z",
+   "nreq": 16,
+   "batch": "msgbatch_013dA4LLBhVbVYs3xb2GuFPX"
   },
   "4": {
    "status": "rereviewing",
@@ -30,11 +30,11 @@
    "batch": "msgbatch_01XvL2xTHC3y2aTe9oAf8LEw"
   },
   "5": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:22Z",
-   "nreq": 36,
-   "batch": "msgbatch_01PR2ZnKyeAztgFe5L6mfv1f"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:06:54Z",
+   "nreq": 26,
+   "batch": "msgbatch_01Vw9HHRgYm4dJg94XQ3bapQ"
   },
   "6": {
    "status": "rereviewing",
@@ -44,11 +44,11 @@
    "batch": "msgbatch_01Eyi1eZZdjifwHjwAETvjDe"
   },
   "7": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T17:58:25Z",
-   "nreq": 22,
-   "batch": "msgbatch_018jBeRxwX3z534vEYUufdHL"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T18:06:56Z",
+   "nreq": 17,
+   "batch": "msgbatch_017qmkVat2eAmHntWJ6oYaGN"
   },
   "8": {
    "status": "rereviewing",
@@ -66,7 +66,7 @@
   }
  },
  "created": "2026-10-14T16:45:20Z",
- "updated": "2026-10-14T18:02:51Z",
+ "updated": "2026-10-14T18:06:56Z",
  "calibration": [
   {
    "perek": 1,

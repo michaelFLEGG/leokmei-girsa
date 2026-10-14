@@ -325,3 +325,23 @@
 [2026-10-14 16:33:49] נשלח Batch msgbatch_01Ln3TwmzHpRMpqsAd6ibPW2 (review) bava-batra פרק 6: 19 בקשות
 [2026-10-14 16:33:50] bava-batra פרק 9: כתיבה הסתיימה {'ok': 85, 'bad': 75, 'api': 0}, עלות $1.421
 [2026-10-14 16:33:51] נשלח Batch msgbatch_0151VcxMCH3VAkgLNFZz1hVS (review) bava-batra פרק 9: 35 בקשות
+[2026-10-14 16:37:23] bava-metzia פרק 2: כתיבה מחדש הסתיימה, עלות $2.503
+[2026-10-14 16:37:23] נשלח Batch msgbatch_01Jq7B1rUMvzycNWF8L13ca9 (rereview) bava-metzia פרק 2: 27 בקשות
+[2026-10-14 16:37:24] bava-metzia פרק 3: כתיבה מחדש הסתיימה, עלות $1.952
+[2026-10-14 16:37:25] נשלח Batch msgbatch_01HdccRMQ2XwZRTDkQV7ZQap (rereview) bava-metzia פרק 3: 22 בקשות
+[2026-10-14 16:37:26] bava-metzia פרק 6: כתיבה מחדש הסתיימה, עלות $1.358
+[2026-10-14 16:37:27] נשלח Batch msgbatch_01XwevtWb9aPQbjsPb7tBBVx (rereview) bava-metzia פרק 6: 15 בקשות
+[2026-10-14 16:37:28] bava-metzia פרק 7: כתיבה מחדש הסתיימה, עלות $2.021
+[2026-10-14 16:37:28] נשלח Batch msgbatch_01WsAu2oW3udcMuMEGggp9Xc (rereview) bava-metzia פרק 7: 22 בקשות
+[2026-10-14 16:37:29] bava-metzia פרק 10: ביקורת חוזרת הסתיימה, עלות $0.002
+[2026-10-14 16:37:30] הודעה: - 14.10.2026 16:37 | בבא מציעא פרק 10 (הבית והעלייה): 16 תוספות חדשות באתר, 9 שאלות פורסמו, 5 סומנו למנהל. קישור: https://leokmei.com/bava-metzia.html (בכניסת מנהל: תוס' ← הערות שוליים; כל שורה מסומנת "לא הוגה").
+[2026-10-14 16:37:31] bava-batra פרק 2: כתיבה הסתיימה {'ok': 103, 'bad': 67, 'api': 0}, עלות $0.905
+[2026-10-14 16:37:32] נשלח Batch msgbatch_012hwQsYVEefAEANs7EQPC4V (review) bava-batra פרק 2: 27 בקשות
+[2026-10-14 16:37:33] bava-batra פרק 5: ביקורת הסתיימה, עלות $0.017, לכתיבה מחדש: 36 בקשות
+[2026-10-14 16:37:33] נשלח Batch msgbatch_01McdjJkNgXM1BncwxqnwEi5 (rewrite) bava-batra פרק 5: 36 בקשות
+[2026-10-14 16:37:34] bava-batra פרק 7: ביקורת הסתיימה, עלות $0.004, לכתיבה מחדש: 11 בקשות
+[2026-10-14 16:37:35] נשלח Batch msgbatch_01SchKfQQeL5gW79bhrckrtN (rewrite) bava-batra פרק 7: 11 בקשות
+[2026-10-14 16:37:36] bava-batra פרק 8: ביקורת הסתיימה, עלות $0.019, לכתיבה מחדש: 60 בקשות
+[2026-10-14 16:37:37] נשלח Batch msgbatch_01WUSHyy23StGib96kYhQxLg (rewrite) bava-batra פרק 8: 60 בקשות
+[2026-10-14 16:37:38] bava-batra פרק 10: כתיבה הסתיימה {'ok': 60, 'bad': 68, 'api': 0}, עלות $1.475
+[2026-10-14 16:37:38] נשלח Batch msgbatch_01XEKu88ynthpaQzsZpe2ANr (review) bava-batra פרק 10: 26 בקשות

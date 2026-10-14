@@ -9,18 +9,18 @@
    "batch": "msgbatch_017T51JteEsnWa6V9jMsvnf1"
   },
   "2": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T16:29:43Z",
-   "nreq": 37,
-   "batch": "msgbatch_01KF7d6AvE4hKsfsQf9U1Ujq"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T16:37:23Z",
+   "nreq": 27,
+   "batch": "msgbatch_01Jq7B1rUMvzycNWF8L13ca9"
   },
   "3": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T16:29:46Z",
-   "nreq": 29,
-   "batch": "msgbatch_01NxZXEKwxTWizVGMGjg83Rc"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T16:37:25Z",
+   "nreq": 22,
+   "batch": "msgbatch_01HdccRMQ2XwZRTDkQV7ZQap"
   },
   "4": {
    "status": "rereviewing",
@@ -37,18 +37,18 @@
    "batch": "msgbatch_0152EhKdSFnRDGkvvY87yqcY"
   },
   "6": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T16:29:48Z",
-   "nreq": 20,
-   "batch": "msgbatch_01K28Rcezt8f1hgbskBksWdp"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T16:37:27Z",
+   "nreq": 15,
+   "batch": "msgbatch_01XwevtWb9aPQbjsPb7tBBVx"
   },
   "7": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T16:29:50Z",
-   "nreq": 30,
-   "batch": "msgbatch_01MfKCfVjXtjEcJS8idz3KEx"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T16:37:28Z",
+   "nreq": 22,
+   "batch": "msgbatch_01WsAu2oW3udcMuMEGggp9Xc"
   },
   "8": {
    "status": "rereviewing",
@@ -65,15 +65,21 @@
    "batch": "msgbatch_01JHsSU2uwCVkZC2vaTptu52"
   },
   "10": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T16:29:53Z",
    "nreq": 5,
-   "batch": "msgbatch_01MQtUGQLtgB2howd5Wizy8b"
+   "published": "2026-10-14T16:37:30Z",
+   "result": {
+    "generated": 16,
+    "decided": 0,
+    "flagged": 5,
+    "questions": 9
+   }
   }
  },
  "created": "2026-10-14T16:07:41Z",
- "updated": "2026-10-14T16:33:42Z",
+ "updated": "2026-10-14T16:37:30Z",
  "calibration": [
   {
    "perek": 4,

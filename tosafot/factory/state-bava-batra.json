@@ -9,11 +9,11 @@
    "batch": "msgbatch_01Aov2vB7iEXM5XQesngZmry"
   },
   "2": {
-   "status": "writing",
-   "batch": "msgbatch_01UqLDnMN1NKi59hDTTijVud",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:22:26Z",
-   "nreq": 50
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:37:32Z",
+   "nreq": 27,
+   "batch": "msgbatch_012hwQsYVEefAEANs7EQPC4V"
   },
   "3": {
    "status": "reviewing",
@@ -30,11 +30,11 @@
    "batch": "msgbatch_01Gy4GUNeFZ7tEVJBbGmvgYy"
   },
   "5": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T16:29:56Z",
-   "nreq": 32,
-   "batch": "msgbatch_01Ja11AZteww4Fx4Vkp7zcWi"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T16:37:33Z",
+   "nreq": 36,
+   "batch": "msgbatch_01McdjJkNgXM1BncwxqnwEi5"
   },
   "6": {
    "status": "reviewing",
@@ -44,18 +44,18 @@
    "batch": "msgbatch_01Ln3TwmzHpRMpqsAd6ibPW2"
   },
   "7": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T16:29:59Z",
-   "nreq": 7,
-   "batch": "msgbatch_01DvJBEQhD4XPK5ctwhszRxK"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T16:37:35Z",
+   "nreq": 11,
+   "batch": "msgbatch_01SchKfQQeL5gW79bhrckrtN"
   },
   "8": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T16:30:00Z",
-   "nreq": 41,
-   "batch": "msgbatch_01QEA5WWR7YoaDiHLcv8TFTQ"
+   "status": "rewriting",
+   "batchPhase": "rewrite",
+   "submitted": "2026-10-14T16:37:37Z",
+   "nreq": 60,
+   "batch": "msgbatch_01WUSHyy23StGib96kYhQxLg"
   },
   "9": {
    "status": "reviewing",
@@ -65,15 +65,15 @@
    "batch": "msgbatch_0151VcxMCH3VAkgLNFZz1hVS"
   },
   "10": {
-   "status": "writing",
-   "batch": "msgbatch_01UzrPEda5Nz3E1dDCH7TqS8",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:22:33Z",
-   "nreq": 57
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T16:37:38Z",
+   "nreq": 26,
+   "batch": "msgbatch_01XEKu88ynthpaQzsZpe2ANr"
   }
  },
  "created": "2026-10-14T16:22:25Z",
- "updated": "2026-10-14T16:33:51Z",
+ "updated": "2026-10-14T16:37:38Z",
  "calibration": [
   {
    "perek": 5,
@@ -122,6 +122,18 @@
    "mean": 0.863,
    "n": 4,
    "at": "2026-10-14T16:33:50Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.288,
+   "n": 4,
+   "at": "2026-10-14T16:37:31Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.387,
+   "n": 4,
+   "at": "2026-10-14T16:37:38Z"
   }
  ]
 }

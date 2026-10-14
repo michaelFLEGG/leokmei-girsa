@@ -608,8 +608,7 @@
   "gen": true,
   "engine": "claude-fable-5-1",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "9": {
   "dh": "מתוך שיוצא בשאול יוצא בגזול",
@@ -681,8 +680,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "26": {
   "dh": "קווץ",
@@ -871,8 +869,7 @@
   "gen": true,
   "engine": "claude-fable-5-1",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "63": {
   "dh": "הא בכולה הא במקצתה",
@@ -881,8 +878,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "64": {
   "dh": "אי נסדק תנינא",
@@ -909,8 +905,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "80": {
   "dh": "כדי לעצור רוחות רעות",
@@ -928,8 +923,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "90": {
   "dh": "מכאן שמצוה לענות בראשי הפרקים",
@@ -956,8 +950,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "95": {
   "dh": "עובר לעשייתן",
@@ -1002,8 +995,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "108": {
   "dh": "יצאו משרה וכבוסה שהנאתן אחר ביעורן",
@@ -1048,8 +1040,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "118": {
   "dh": "אלא א\"כ נתן לו במתנה",

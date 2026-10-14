@@ -367,8 +367,7 @@
   "gen": true,
   "engine": "claude-fable-5-1",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "46": {
   "dh": "כהן מניח ידו תחת יד הבעלים ומניף",
@@ -377,8 +376,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "47": {
   "dh": "רגל בפני עצמו",

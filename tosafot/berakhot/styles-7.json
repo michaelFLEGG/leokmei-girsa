@@ -392,8 +392,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "8": {
   "dh": "שאני התם דאיכא דעות",
@@ -420,8 +419,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "27": {
   "dh": "ומאכילין את האכסניא דמאי",
@@ -484,8 +482,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "36": {
   "dh": "מתחיל בנחמה",
@@ -494,8 +491,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "41": {
   "dh": "אי בעי אכיל ואי בעי לא אכיל",
@@ -558,8 +554,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "59": {
   "dh": "מודים חכמים לר\"א בכוס של ברכה שאין מברכין עליו עד שיתן לתוכו מים",

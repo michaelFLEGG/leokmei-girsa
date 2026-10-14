@@ -840,6 +840,17 @@
       '<input id="tritnote" placeholder="הערה לתיקון (לא חובה)" style="flex:1;min-width:220px;font:inherit;font-size:.95em;padding:6px 10px;border:1px solid #bbb;border-radius:8px;direction:rtl"></div>'+
       '<div style="color:#777;font-size:.85em;margin-top:6px">נכון = השורה נאמנה ואפשר להשאיר באתר (הסימון יוסר). לא נכון = תרד מהאתר מיד. ההכרעה והערתך משמשות כדוגמה למבקר.</div></div>';
     e.innerHTML=h}
+  /* כפתור צף למנהל: כמה תוספות ממתינות להכרעה במסכת הזאת, ופתיחת מסך הבדיקה (14.10.2026) */
+  function triFab(){
+    if(!(typeof isAdmin==='function'&&isAdmin()))return;
+    var n=ALLITEMS.filter(function(it){return it.u&&!TOK[it.n]&&!TNO[it.n]}).length;
+    var b=document.getElementById('tostrifab');
+    if(!n){if(b)b.remove();return}
+    if(!b){b=document.createElement('button');b.id='tostrifab';b.type='button';
+      b.style.cssText='position:fixed;z-index:29;left:12px;bottom:14px;font:inherit;font-size:15px;padding:8px 14px;border:2px solid #c9a24a;border-radius:20px;background:#fff6dc;color:#5a4a1e;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.25)';
+      b.onclick=function(){tosTriOpen()};document.body.appendChild(b)}
+    b.textContent='בדיקת תוספות ('+n+' ממתינות)'}
+  setTimeout(triFab,900);setTimeout(triFab,3500);
   window.tosTriClose=triClose;
   window.tosTriOpen=function(){
     if(!(typeof isAdmin==='function'&&isAdmin())||typeof api!=='function'){triSay('המסך זמין לכניסת מנהל בלבד');return}
@@ -857,7 +868,7 @@
       if(!j||!j.ok)throw new Error((j&&j.error)||'לא נשמר');
       it.dec={ans:ans,note:note};
       if(it.slug===SLUG){if(ans==='yes')TOK[it.num]=true;else TNO[it.num]=true;triApply();tsMark()}
-      triBuild();triRender()}).catch(function(err){triSay('לא נשמר: '+(err&&err.message||''))})};
+      triFab();triBuild();triRender()}).catch(function(err){triSay('לא נשמר: '+(err&&err.message||''))})};
 
   /* ---- טעינה: הנוסחים שנבחרו (ציבורי) ---- */
   if(location.protocol==='http:'||location.protocol==='https:'){

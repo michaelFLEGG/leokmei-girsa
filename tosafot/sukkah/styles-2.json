@@ -426,8 +426,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "17": {
   "dh": "הא זה וזה בתוך עשרים אמרינן חבוט רמי",
@@ -490,8 +489,7 @@
   "gen": true,
   "engine": "claude-fable-5-1",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "34": {
   "dh": "תלמוד לומר וכתב לה מכל מקום",
@@ -554,8 +552,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "46": {
   "dh": "שחל שביעי שלהן בערב הפסח",

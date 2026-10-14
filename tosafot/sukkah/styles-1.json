@@ -751,8 +751,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "43": {
   "dh": "שהשבת אינה ניתרת אלא בעומד מרובה על הפרוץ",
@@ -761,8 +760,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "44": {
   "dh": "סיכך על גבי מבוי שיש לו לחי כשרה",
@@ -834,8 +832,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "60": {
   "dh": "ההוא מיבעי ליה למעוטי גזולה",
@@ -844,8 +841,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "61": {
   "dh": "הא קא מצטרף סכך פסול בהדי סכך כשר",
@@ -863,8 +859,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "67": {
   "dh": "עד מוצאי י\"ט האחרון של חג",
@@ -900,8 +895,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "84": {
   "dh": "בפסולת גורן ויקב הכתוב מדבר",
@@ -928,8 +922,7 @@
   "gen": true,
   "engine": "claude-fable-5-1",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "92": {
   "dh": "אפקותא דדיקלא",
@@ -965,8 +958,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "106": {
   "dh": "ומודה רבי מאיר שאם יש בין נסר לנסר כמלא נסר",
@@ -975,8 +967,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "108": {
   "dh": "רבי מאיר אומר נוטל אחת מבינתים אבל לא יפקפק",
@@ -1012,8 +1003,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "116": {
   "dh": "בין מלמטה בין מתוך אוגנו",
@@ -1040,8 +1030,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "127": {
   "dh": "כדתנן המקצע מכולן טפח",
@@ -1068,8 +1057,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "F",
-  "held": true
+  "cls": "F"
  },
  "135": {
   "dh": "טיט הנרוק יוכיח",

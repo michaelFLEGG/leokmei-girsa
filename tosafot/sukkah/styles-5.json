@@ -239,8 +239,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "29": {
   "dh": "והלכתא סוכה ואח\"כ זמן",

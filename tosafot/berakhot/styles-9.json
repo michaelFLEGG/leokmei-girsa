@@ -229,8 +229,7 @@
   "gen": true,
   "engine": "claude-sonnet-5-5",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "27": {
   "dh": "וכל העובר אחורי אשה בנהר אין לו חלק לעוה\"ב",

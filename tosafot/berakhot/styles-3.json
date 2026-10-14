@@ -246,8 +246,7 @@
   "gen": true,
   "engine": "claude-fable-5-1",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "9": {
   "dh": "למחר באין אצלנו ועכשיו מחרפין אותנו",

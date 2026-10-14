@@ -266,8 +266,7 @@
   "gen": true,
   "engine": "claude-fable-5-1",
   "unc": true,
-  "cls": "D",
-  "held": true
+  "cls": "D"
  },
  "17": {
   "dh": "ומנח תפילין ומצלי",

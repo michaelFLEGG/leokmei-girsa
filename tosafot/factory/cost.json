@@ -1,14 +1,14 @@
 {
- "total": 41.871475,
+ "total": 41.937084,
  "bySlug": {
-  "sukkah": 25.872647,
+  "sukkah": 25.938256,
   "berakhot": 15.998829
  },
  "byPhase": {
   "write": 9.748955,
   "review": 0.052119,
   "rewrite": 32.024183,
-  "rereview": 0.046218
+  "rereview": 0.111827
  },
  "batches": [
   {
@@ -1146,14 +1146,30 @@
     "n": 22
    },
    "cost": 2.857975
+  },
+  {
+   "at": "2026-10-14T11:24:13Z",
+   "slug": "sukkah",
+   "perek": 2,
+   "phase": "rereview",
+   "model": "claude-sonnet-5-5",
+   "n": 16,
+   "usage": {
+    "in": 33891,
+    "cw": 572,
+    "cr": 8580,
+    "out": 6029,
+    "n": 16
+   },
+   "cost": 0.065609
   }
  ],
  "tokens": {
   "sukkah": {
-   "in": 1804306,
-   "cw": 906999,
-   "cr": 3993618,
-   "out": 638785
+   "in": 1838197,
+   "cw": 907571,
+   "cr": 4002198,
+   "out": 644814
   },
   "berakhot": {
    "in": 1989105,

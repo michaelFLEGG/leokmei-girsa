@@ -19,21 +19,17 @@
    "batch": "msgbatch_01MNLryBXT67uXcs6iqEUDR9"
   },
   "2": {
-   "status": "rereviewing",
+   "status": "published",
    "batchPhase": "rereview",
    "submitted": "2026-10-14T11:17:32Z",
    "nreq": 16,
-   "published": "2026-10-14T10:13:45Z",
+   "published": "2026-10-14T11:24:13Z",
    "result": {
-    "generated": 38,
+    "generated": 48,
     "decided": 0,
-    "flagged": 42,
+    "flagged": 32,
     "questions": 11
-   },
-   "retry": {
-    "reviewer": "claude-sonnet-5-5"
-   },
-   "batch": "msgbatch_01CR4rANtQARGAY2FVwdCy2R"
+   }
   },
   "3": {
    "status": "published",
@@ -76,7 +72,7 @@
   }
  },
  "created": "2026-10-13T15:12:29Z",
- "updated": "2026-10-14T11:17:32Z",
+ "updated": "2026-10-14T11:24:13Z",
  "calibration": [
   {
    "perek": 1,

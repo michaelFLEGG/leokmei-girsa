@@ -1,0 +1,17 @@
+{
+ "slug": "sanhedrin",
+ "masechet": "סנהדרין",
+ "perek": 11,
+ "perekName": "חלק",
+ "from": "90a",
+ "fromLine": 15,
+ "to": "113b",
+ "toLine": 4,
+ "countedThrough": "113b",
+ "verifiedThrough": "",
+ "source": "Sefaria, Tosafot on Sanhedrin, Vilna Edition",
+ "total": 0,
+ "removed": [],
+ "note": "הספירה קבועה: אין לחשב מחדש בכל טעינה. שינוי בה נעשה רק בכלי הזה, עם רישום ב-removed.",
+ "items": []
+}

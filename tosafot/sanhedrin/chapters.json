@@ -1,0 +1,105 @@
+{
+ "masechet": "סנהדרין",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "דיני ממונות",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "18a",
+   "toLine": 4,
+   "countedThrough": "18a"
+  },
+  {
+   "n": 2,
+   "name": "כהן גדול",
+   "from": "18a",
+   "fromLine": 5,
+   "to": "22b",
+   "toLine": 23,
+   "countedThrough": "22b"
+  },
+  {
+   "n": 3,
+   "name": "זה בורר",
+   "from": "23a",
+   "fromLine": 1,
+   "to": "31b",
+   "toLine": 21,
+   "countedThrough": "31b"
+  },
+  {
+   "n": 4,
+   "name": "אחד דיני ממונות",
+   "from": "32a",
+   "fromLine": 1,
+   "to": "39b",
+   "toLine": 22,
+   "countedThrough": "39b"
+  },
+  {
+   "n": 5,
+   "name": "היו בודקין",
+   "from": "40a",
+   "fromLine": 1,
+   "to": "42a",
+   "toLine": 20,
+   "countedThrough": "42a"
+  },
+  {
+   "n": 6,
+   "name": "נגמר הדין",
+   "from": "42b",
+   "fromLine": 1,
+   "to": "49a",
+   "toLine": 17,
+   "countedThrough": "49a"
+  },
+  {
+   "n": 7,
+   "name": "ארבע מיתות",
+   "from": "49b",
+   "fromLine": 1,
+   "to": "68a",
+   "toLine": 13,
+   "countedThrough": "68a"
+  },
+  {
+   "n": 8,
+   "name": "בן סורר ומורה",
+   "from": "68b",
+   "fromLine": 1,
+   "to": "75a",
+   "toLine": 6,
+   "countedThrough": "75a"
+  },
+  {
+   "n": 9,
+   "name": "הנשרפין",
+   "from": "75a",
+   "fromLine": 7,
+   "to": "84a",
+   "toLine": 18,
+   "countedThrough": "84a"
+  },
+  {
+   "n": 10,
+   "name": "אלו הן הנחנקין",
+   "from": "84b",
+   "fromLine": 1,
+   "to": "90a",
+   "toLine": 14,
+   "countedThrough": "90a"
+  },
+  {
+   "n": 11,
+   "name": "חלק",
+   "from": "90a",
+   "fromLine": 15,
+   "to": "113b",
+   "toLine": 4,
+   "countedThrough": "113b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 39b, 44b, 90a, 90b, 91a, 91b, 92a, 92b, 93a, 93b, 94a, 94b, 95a, 95b, 96a, 96b, 97a, 97b, 98a, 98b, 99a, 99b, 100a, 100b, 101a, 101b, 102a, 102b, 103a, 103b, 104a, 104b, 105a, 105b, 106a, 106b, 107a, 107b, 108a, 108b, 109a, 109b, 110a, 110b, 111a, 111b, 112a, 112b, 113a, 113b."
+}

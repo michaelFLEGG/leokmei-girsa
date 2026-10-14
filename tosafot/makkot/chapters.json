@@ -1,0 +1,33 @@
+{
+ "masechet": "מכות",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "כיצד העדים",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "7a",
+   "toLine": 13,
+   "countedThrough": "7a"
+  },
+  {
+   "n": 2,
+   "name": "אלו הן הגולין",
+   "from": "7a",
+   "fromLine": 14,
+   "to": "13a",
+   "toLine": 7,
+   "countedThrough": "13a"
+  },
+  {
+   "n": 3,
+   "name": "אלו הן הלוקין",
+   "from": "13a",
+   "fromLine": 8,
+   "to": "24b",
+   "toLine": 5,
+   "countedThrough": "24b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 10a, 11a, 24a."
+}

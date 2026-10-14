@@ -620,17 +620,26 @@ def tick():
             summary.append('%s: ממתין למפתח' % slug)
             break
         st.pop('blocked', None)
-        # פרק אחד פעיל בכל רגע (התקדמות בסדר הפרקים), כדי שהפרסום יהיה פרק אחר פרק
-        p = todo[0]
-        try:
-            progressed |= step_perek(client, slug, p, st, c)
-            summary.append('%s פרק %d: %s' % (slug, p, st['perakim'][str(p)]['status']))
-        except Halt as e:
-            st['halt'] = str(e)
-            log('עצירה: %s %s' % (slug, e))
-            summary.append('%s: עצור - %s' % (slug, e))
+        # 14.10: כל הפרקים הלא-מפורסמים מתקדמים במקביל (Batch נפרד לכל פרק); הדחיפות: לא מחכים לפרק הקודם
+        halted = False
+        for p in todo:
+            try:
+                for _ in range(3):
+                    progressed |= step_perek(client, slug, p, st, c)
+                    if st['perakim'][str(p)]['status'] not in ('ready',):
+                        break
+                summary.append('%s פרק %d: %s' % (slug, p, st['perakim'][str(p)]['status']))
+            except Halt as e:
+                st['halt'] = str(e)
+                log('עצירה: %s %s' % (slug, e))
+                summary.append('%s: עצור - %s' % (slug, e))
+                halted = True
+                break
         save_state(slug, st)
-        break
+        if halted:
+            break
+        if any(v.get('status') in BATCH_PHASES for v in st['perakim'].values()):
+            open(fp(FDIR, '.waiting'), 'w').write(now_iso())
     # שומר הדופק: נרשם כשיש התקדמות, כשהסיכום השתנה, או אחת לשעה (פעימות שקטות אינן מייצרות קומיט)
     bp = fp(FDIR, 'דופק.json')
     beat = jload(bp) or {'ticks': 0, 'stalls': 0, 'last': '', 'summary': []}

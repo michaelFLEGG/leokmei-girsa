@@ -316,7 +316,7 @@
     var sent=sentMap()[it.n];
     return '<div class="tsn" data-n="'+it.n+'"><span class="tsnum" role="button" tabindex="0" aria-label="חזרה למקום בטקסט, תוספות '+ge(it.hn)+'">'+ge(it.hn)+'</span><span class="tsdh">'+ge(dispDh(it))+'</span>'+
       (it.g&&!(ADM&&ADM.picks&&ADM.picks[it.n])?'<span class="tsug" title="נכתב בבית החרושת ועדיין לא עבר עיון של המנהל">לא הוגה</span>':'')+
-      (it.u&&!TOK[it.n]?'<span class="tsug" title="נפסל בביקורת האוטומטית ופורסם עד עיון של המנהל. הכרעה: תפריט תוס\' ← בדיקת תוספות">טרם נבדק</span>':'')+
+      (it.u&&!TOK[it.n]?'<span class="tsug" title="נפסל בביקורת האוטומטית ופורסם עד עיון של המנהל. הכרעה: תפריט תוס\' ← בדיקת תוספות">*</span>':'')+
       '<span class="tstx">'+ge(txt(it))+'</span>'+
       '<span class="tsbt"><button class="tsin" type="button" onclick="tosFace(this)" aria-expanded="false" aria-label="פנים התוספות">פנים</button>'+
       '<button type="button" onclick="tosCopy(this)" aria-label="העתק">העתק</button>'+
@@ -832,7 +832,7 @@
     if(!k){h+='<p>אין תוספות ממתינות להכרעה.</p></div>';e.innerHTML=h;return}
     var it=TRI.items[k];
     h+='<div style="color:#777;font-size:.9em;margin-top:6px">'+ge((it.slug==='sukkah'?'סוכה':'ברכות')+', פרק '+it.perek+', דף '+it.daf+', תוספות מספר '+it.n)+' · סוג: <b>'+ge(TRI_CLS[it.cls]||it.cls)+'</b>'+
-      (it.held?' · <span style="color:#a83c2f">מוסתרת מהלומדים עד הכרעתך</span>':' · מופיעה באתר בסימון "טרם נבדק"')+'</div>'+
+      (it.held?' · <span style="color:#a83c2f">מוסתרת מהלומדים עד הכרעתך</span>':' · מופיעה באתר בסימון כוכבית')+'</div>'+
       '<div style="font-weight:700;margin-top:8px">ד"ה: '+ge(it.dh)+'</div>'+
       '<div style="font-weight:700;color:#5b4a1e;margin-top:6px">לשון התוספות</div><div style="background:#fbf9f2;border-right:4px solid #cdbf93;padding:8px 12px;white-space:pre-wrap;max-height:34vh;overflow:auto">'+ge(it.text)+'</div>'+
       '<div style="font-weight:700;color:#5b4a1e;margin-top:6px">השורה שפורסמה</div><div style="background:#eef4fb;border-right:4px solid #6a9bd1;padding:8px 12px">'+ge(it.line)+'</div>'+

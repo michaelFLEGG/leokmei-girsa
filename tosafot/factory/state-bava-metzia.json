@@ -17,9 +17,11 @@
    "result": {
     "generated": 95,
     "decided": 0,
+    "unchecked": 34,
     "flagged": 34,
     "questions": 54
-   }
+   },
+   "unc_done": true
   },
   "3": {
    "status": "published",
@@ -30,9 +32,11 @@
    "result": {
     "generated": 67,
     "decided": 0,
+    "unchecked": 29,
     "flagged": 29,
     "questions": 39
-   }
+   },
+   "unc_done": true
   },
   "4": {
    "status": "published",
@@ -43,9 +47,11 @@
    "result": {
     "generated": 133,
     "decided": 0,
+    "unchecked": 33,
     "flagged": 33,
     "questions": 66
-   }
+   },
+   "unc_done": true
   },
   "5": {
    "status": "published",
@@ -56,9 +62,11 @@
    "result": {
     "generated": 80,
     "decided": 0,
+    "unchecked": 42,
     "flagged": 42,
     "questions": 57
-   }
+   },
+   "unc_done": true
   },
   "6": {
    "status": "published",
@@ -69,9 +77,11 @@
    "result": {
     "generated": 51,
     "decided": 0,
+    "unchecked": 17,
     "flagged": 17,
     "questions": 29
-   }
+   },
+   "unc_done": true
   },
   "7": {
    "status": "published",
@@ -82,9 +92,11 @@
    "result": {
     "generated": 61,
     "decided": 0,
+    "unchecked": 42,
     "flagged": 42,
     "questions": 27
-   }
+   },
+   "unc_done": true
   },
   "8": {
    "status": "published",
@@ -95,9 +107,11 @@
    "result": {
     "generated": 44,
     "decided": 0,
+    "unchecked": 41,
     "flagged": 41,
     "questions": 30
-   }
+   },
+   "unc_done": true
   },
   "9": {
    "status": "published",
@@ -108,9 +122,11 @@
    "result": {
     "generated": 75,
     "decided": 0,
+    "unchecked": 38,
     "flagged": 38,
     "questions": 49
-   }
+   },
+   "unc_done": true
   },
   "10": {
    "status": "published",
@@ -121,13 +137,15 @@
    "result": {
     "generated": 16,
     "decided": 0,
+    "unchecked": 5,
     "flagged": 5,
     "questions": 9
-   }
+   },
+   "unc_done": true
   }
  },
  "created": "2026-10-14T16:07:41Z",
- "updated": "2026-10-14T16:45:06Z",
+ "updated": "2026-10-14T17:24:18Z",
  "calibration": [
   {
    "perek": 4,

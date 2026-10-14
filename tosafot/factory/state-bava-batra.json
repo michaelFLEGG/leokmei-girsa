@@ -38,9 +38,11 @@
    "result": {
     "generated": 95,
     "decided": 0,
+    "unchecked": 42,
     "flagged": 42,
     "questions": 48
-   }
+   },
+   "unc_done": true
   },
   "6": {
    "status": "rewriting",
@@ -58,9 +60,11 @@
    "result": {
     "generated": 18,
     "decided": 0,
+    "unchecked": 9,
     "flagged": 9,
     "questions": 13
-   }
+   },
+   "unc_done": true
   },
   "8": {
    "status": "published",
@@ -71,9 +75,11 @@
    "result": {
     "generated": 102,
     "decided": 0,
+    "unchecked": 44,
     "flagged": 44,
     "questions": 70
-   }
+   },
+   "unc_done": true
   },
   "9": {
    "status": "rewriting",
@@ -91,7 +97,7 @@
   }
  },
  "created": "2026-10-14T16:22:25Z",
- "updated": "2026-10-14T16:52:37Z",
+ "updated": "2026-10-14T17:24:19Z",
  "calibration": [
   {
    "perek": 5,

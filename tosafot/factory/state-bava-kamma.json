@@ -10,9 +10,11 @@
    "result": {
     "generated": 154,
     "decided": 0,
+    "unchecked": 55,
     "flagged": 55,
     "questions": 70
-   }
+   },
+   "unc_done": true
   },
   "2": {
    "status": "published",
@@ -23,9 +25,11 @@
    "result": {
     "generated": 105,
     "decided": 0,
+    "unchecked": 30,
     "flagged": 30,
     "questions": 52
-   }
+   },
+   "unc_done": true
   },
   "3": {
    "status": "published",
@@ -36,9 +40,11 @@
    "result": {
     "generated": 68,
     "decided": 0,
+    "unchecked": 33,
     "flagged": 33,
     "questions": 33
-   }
+   },
+   "unc_done": true
   },
   "4": {
    "status": "published",
@@ -49,9 +55,11 @@
    "result": {
     "generated": 72,
     "decided": 0,
+    "unchecked": 40,
     "flagged": 40,
     "questions": 36
-   }
+   },
+   "unc_done": true
   },
   "5": {
    "status": "published",
@@ -62,9 +70,11 @@
    "result": {
     "generated": 69,
     "decided": 0,
+    "unchecked": 25,
     "flagged": 25,
     "questions": 43
-   }
+   },
+   "unc_done": true
   },
   "6": {
    "status": "published",
@@ -75,9 +85,11 @@
    "result": {
     "generated": 66,
     "decided": 0,
+    "unchecked": 15,
     "flagged": 15,
     "questions": 35
-   }
+   },
+   "unc_done": true
   },
   "7": {
    "status": "published",
@@ -88,9 +100,11 @@
    "result": {
     "generated": 148,
     "decided": 0,
+    "unchecked": 53,
     "flagged": 53,
     "questions": 98
-   }
+   },
+   "unc_done": true
   },
   "8": {
    "status": "published",
@@ -101,9 +115,11 @@
    "result": {
     "generated": 53,
     "decided": 0,
+    "unchecked": 44,
     "flagged": 44,
     "questions": 25
-   }
+   },
+   "unc_done": true
   },
   "9": {
    "status": "published",
@@ -114,9 +130,11 @@
    "result": {
     "generated": 128,
     "decided": 0,
+    "unchecked": 55,
     "flagged": 55,
     "questions": 66
-   }
+   },
+   "unc_done": true
   },
   "10": {
    "status": "published",
@@ -127,13 +145,15 @@
    "result": {
     "generated": 40,
     "decided": 0,
+    "unchecked": 19,
     "flagged": 19,
     "questions": 20
-   }
+   },
+   "unc_done": true
   }
  },
  "created": "2026-10-14T13:30:52Z",
- "updated": "2026-10-14T16:48:56Z",
+ "updated": "2026-10-14T17:24:11Z",
  "calibration": [
   {
    "perek": 6,

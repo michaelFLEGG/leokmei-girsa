@@ -209,14 +209,18 @@ def prep2(a):
             d = (b.get('daf') or '').strip()
             if d not in pages_needed:
                 pages_needed.append(d)
+    flagged_pages = {(by_i[i].get('daf') or '').strip() for i in flagged if i in by_i}
     gem = os.path.join(w, 'l2-src.md')
     with open(gem, 'w', encoding='utf-8') as f:
         for d in pages_needed:
             pg = (src.get('pages') or {}).get(d)
             if not pg:
                 continue
-            f.write('## %s\n### גמרא\n%s\n\n### פירוש הגמרא\n%s\n\n' % (
-                d, '\n'.join(tag.sub('', x) for x in pg.get('gemara', [])), '\n'.join(tag.sub('', x) for x in pg.get('perush', []))))
+            # חיסכון (14.10.2026): פירוש הגמרא רק לדפים שיש בהם פסקה שסומנה; דפי מדגם בלבד מקבלים גמרא בלבד
+            per = d in flagged_pages
+            f.write('## %s\n### גמרא\n%s\n\n%s' % (
+                d, '\n'.join(tag.sub('', x) for x in pg.get('gemara', [])),
+                ('### פירוש הגמרא\n%s\n\n' % '\n'.join(tag.sub('', x) for x in pg.get('perush', []))) if per else ''))
     # הערות פרטיות של המנהל לקלוד (ערוץ ההתכתבות הקיים) נקראות ע"י הסוקר
     notes = os.path.join(w, 'admin-notes.json')
     try:

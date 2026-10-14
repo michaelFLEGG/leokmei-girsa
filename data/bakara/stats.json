@@ -1,24 +1,30 @@
 {
- "when": "2026-10-06T14:35:04",
- "total": 103,
+ "when": "2026-10-14T13:16:08",
+ "total": 155,
  "by": {
   "abbr": {
-   "ok": 5,
+   "ok": 6,
    "no": 2,
    "edit": 0,
-   "n": 7
+   "n": 8
   },
   "amor_miss": {
-   "ok": 12,
+   "ok": 16,
    "no": 0,
    "edit": 0,
-   "n": 12
+   "n": 16
   },
   "aram": {
-   "ok": 10,
-   "no": 5,
+   "ok": 21,
+   "no": 7,
    "edit": 0,
-   "n": 15
+   "n": 28
+  },
+  "dbl": {
+   "ok": 0,
+   "no": 1,
+   "edit": 0,
+   "n": 1
   },
   "dh_inline": {
    "ok": 2,
@@ -28,9 +34,9 @@
   },
   "joined": {
    "ok": 1,
-   "no": 3,
+   "no": 7,
    "edit": 0,
-   "n": 4
+   "n": 8
   },
   "orphan": {
    "ok": 0,
@@ -39,71 +45,72 @@
    "n": 1
   },
   "psuk_bad": {
-   "ok": 2,
-   "no": 1,
+   "ok": 3,
+   "no": 3,
    "edit": 0,
-   "n": 3
+   "n": 6
   },
   "psuk_nik": {
-   "ok": 10,
-   "no": 0,
+   "ok": 14,
+   "no": 1,
    "edit": 0,
-   "n": 10
+   "n": 15
   },
   "punct": {
-   "ok": 1,
-   "no": 0,
-   "edit": 0,
-   "n": 1
-  },
-  "sem_hav": {
-   "ok": 3,
-   "no": 0,
-   "edit": 0,
-   "n": 3
-  },
-  "sem_hsr": {
    "ok": 2,
    "no": 0,
    "edit": 0,
    "n": 2
   },
-  "sem_lo": {
-   "ok": 5,
-   "no": 1,
-   "edit": 0,
-   "n": 6
-  },
-  "sem_mil": {
-   "ok": 12,
-   "no": 0,
-   "edit": 2,
-   "n": 14
-  },
-  "sem_sty": {
-   "ok": 3,
-   "no": 1,
-   "edit": 0,
-   "n": 4
-  },
-  "sem_yih": {
+  "sem_hav": {
    "ok": 7,
    "no": 0,
    "edit": 0,
    "n": 7
   },
+  "sem_hsr": {
+   "ok": 4,
+   "no": 0,
+   "edit": 0,
+   "n": 4
+  },
+  "sem_lo": {
+   "ok": 7,
+   "no": 1,
+   "edit": 0,
+   "n": 8
+  },
+  "sem_mil": {
+   "ok": 18,
+   "no": 0,
+   "edit": 2,
+   "n": 20
+  },
+  "sem_sty": {
+   "ok": 4,
+   "no": 1,
+   "edit": 0,
+   "n": 5
+  },
+  "sem_yih": {
+   "ok": 11,
+   "no": 0,
+   "edit": 0,
+   "n": 11
+  },
   "typo": {
    "ok": 3,
-   "no": 3,
+   "no": 4,
    "edit": 0,
-   "n": 6
+   "n": 7
   }
  },
  "demoted": [
-  "dh_inline"
+  "dh_inline",
+  "joined"
  ],
  "candidates": [
   "amor_miss",
-  "psuk_nik"
+  "sem_yih"
  ]
 }

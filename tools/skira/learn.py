@@ -45,10 +45,8 @@ def pull(slugs):
         try:
             th = _api.call('/skira/threads?slug=' + s)
             C.jsave(os.path.join(C.DATA, 'threads-%s.json' % s), th.get('open') or {})
-        except SystemExit:
-            raise
-        except Exception as e:
-            print('אזהרה: שרשורים לא נמשכו:', e)
+        except BaseException as e:      # נקודת קליטה שטרם עודכנה (404): ממשיכים בלי שרשורים
+            print('אזהרה: שרשורים לא נמשכו:', str(e)[:80])
     return out
 
 
@@ -147,8 +145,8 @@ def main():
             patterns.add(k)
     for det, s in by_d.items():
         n = s['ok'] + s['no'] + s['edit']
-        if n >= REJ_MUTE_MIN and s['no'] / n > REJ_MUTE:
-            muted.append(det)
+        if n >= REJ_MUTE_MIN and s['no'] / n > REJ_MUTE and det.startswith(('sem_', 'sk_', 'cl_')):
+            muted.append(det)       # רק סוגי מודל: סוג קוד אינו עולה טוקנים, והוא מורד ל"קל" ב-stats.py
         elif n >= REJ_DEMOTE_MIN and s['no'] / n > REJ_DEMOTE:
             demoted.append(det)
         if n >= ACC_MECH_MIN and (s['ok'] + s['edit']) / n >= ACC_MECH and det not in muted:

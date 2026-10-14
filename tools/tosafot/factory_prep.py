@@ -47,7 +47,7 @@ def parse_ref(ref):
 
 def chapters_from_index(slug):
     he, book = BOOKS[slug]
-    j = get('https://www.sefaria.org/api/v2/raw/index/%s' % book)
+    j = get('https://www.sefaria.org/api/v2/raw/index/%s' % book.replace(' ', '_'))
     nodes = j['alt_structs']['Chapters']['nodes']
     out = []
     for i, nd in enumerate(nodes, 1):
@@ -68,7 +68,7 @@ def fetch_raw(slug, first, last):
         have.setdefault(it['daf'], []).append(it)
     items, missing = [], []
     for d in dafim(first, last):
-        j = get('https://www.sefaria.org/api/v3/texts/Tosafot_on_%s.%s?version=hebrew' % (book, d))
+        j = get('https://www.sefaria.org/api/v3/texts/Tosafot_on_%s.%s?version=hebrew' % (book.replace(' ', '_'), d))
         vs = (j or {}).get('versions') or []
         if not vs:
             missing.append(d)

@@ -1,0 +1,96 @@
+{
+ "masechet": "בבא מציעא",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "שנים אוחזין",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "21a",
+   "toLine": 6,
+   "countedThrough": "21a"
+  },
+  {
+   "n": 2,
+   "name": "אלו מציאות",
+   "from": "21a",
+   "fromLine": 7,
+   "to": "33b",
+   "toLine": 6,
+   "countedThrough": "33b"
+  },
+  {
+   "n": 3,
+   "name": "המפקיד",
+   "from": "33b",
+   "fromLine": 7,
+   "to": "44a",
+   "toLine": 7,
+   "countedThrough": "44a"
+  },
+  {
+   "n": 4,
+   "name": "הזהב",
+   "from": "44a",
+   "fromLine": 8,
+   "to": "60b",
+   "toLine": 7,
+   "countedThrough": "60b"
+  },
+  {
+   "n": 5,
+   "name": "איזהו נשך",
+   "from": "60b",
+   "fromLine": 8,
+   "to": "75b",
+   "toLine": 14,
+   "countedThrough": "75b"
+  },
+  {
+   "n": 6,
+   "name": "השוכר את האומנין",
+   "from": "75b",
+   "fromLine": 15,
+   "to": "83a",
+   "toLine": 11,
+   "countedThrough": "83a"
+  },
+  {
+   "n": 7,
+   "name": "השוכר את הפועלים",
+   "from": "83a",
+   "fromLine": 12,
+   "to": "94a",
+   "toLine": 15,
+   "countedThrough": "94a"
+  },
+  {
+   "n": 8,
+   "name": "השואל את הפרה",
+   "from": "94a",
+   "fromLine": 16,
+   "to": "103a",
+   "toLine": 15,
+   "countedThrough": "103a"
+  },
+  {
+   "n": 9,
+   "name": "המקבל שדה מחבירו",
+   "from": "103a",
+   "fromLine": 16,
+   "to": "116a",
+   "toLine": 9,
+   "countedThrough": "116a"
+  },
+  {
+   "n": 10,
+   "name": "הבית והעלייה",
+   "from": "116b",
+   "fromLine": 1,
+   "to": "119a",
+   "toLine": 6,
+   "countedThrough": "119a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: אין."
+}

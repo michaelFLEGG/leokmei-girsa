@@ -345,3 +345,5 @@
 [2026-10-14 16:37:37] נשלח Batch msgbatch_01WUSHyy23StGib96kYhQxLg (rewrite) bava-batra פרק 8: 60 בקשות
 [2026-10-14 16:37:38] bava-batra פרק 10: כתיבה הסתיימה {'ok': 60, 'bad': 68, 'api': 0}, עלות $1.475
 [2026-10-14 16:37:38] נשלח Batch msgbatch_01XEKu88ynthpaQzsZpe2ANr (review) bava-batra פרק 10: 26 בקשות
+[2026-10-14 16:41:19] bava-batra פרק 7: כתיבה מחדש הסתיימה, עלות $0.508
+[2026-10-14 16:41:20] נשלח Batch msgbatch_01Ah4sCeWqEetB9uzWgvXt3k (rereview) bava-batra פרק 7: 10 בקשות

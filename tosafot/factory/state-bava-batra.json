@@ -44,11 +44,11 @@
    "batch": "msgbatch_01Ln3TwmzHpRMpqsAd6ibPW2"
   },
   "7": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T16:37:35Z",
-   "nreq": 11,
-   "batch": "msgbatch_01SchKfQQeL5gW79bhrckrtN"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T16:41:20Z",
+   "nreq": 10,
+   "batch": "msgbatch_01Ah4sCeWqEetB9uzWgvXt3k"
   },
   "8": {
    "status": "rewriting",
@@ -73,7 +73,7 @@
   }
  },
  "created": "2026-10-14T16:22:25Z",
- "updated": "2026-10-14T16:37:38Z",
+ "updated": "2026-10-14T16:41:21Z",
  "calibration": [
   {
    "perek": 5,

@@ -2,10 +2,10 @@
  "slug": "sukkah",
  "perakim": {
   "1": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T11:14:05Z",
-   "nreq": 32,
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T11:17:30Z",
+   "nreq": 28,
    "published": "2026-10-14T09:01:00Z",
    "result": {
     "generated": 52,
@@ -13,16 +13,16 @@
     "flagged": 59,
     "questions": 19
    },
-   "batch": "msgbatch_0196Xjzx614KXK3N5NMQDjGo",
    "retry": {
     "reviewer": "claude-sonnet-5-5"
-   }
+   },
+   "batch": "msgbatch_01MNLryBXT67uXcs6iqEUDR9"
   },
   "2": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T11:14:05Z",
-   "nreq": 22,
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T11:17:32Z",
+   "nreq": 16,
    "published": "2026-10-14T10:13:45Z",
    "result": {
     "generated": 38,
@@ -30,10 +30,10 @@
     "flagged": 42,
     "questions": 11
    },
-   "batch": "msgbatch_019ChPE3JBdVZsPLgQ9aemEu",
    "retry": {
     "reviewer": "claude-sonnet-5-5"
-   }
+   },
+   "batch": "msgbatch_01CR4rANtQARGAY2FVwdCy2R"
   },
   "3": {
    "status": "published",
@@ -76,7 +76,7 @@
   }
  },
  "created": "2026-10-13T15:12:29Z",
- "updated": "2026-10-14T11:14:06Z",
+ "updated": "2026-10-14T11:17:32Z",
  "calibration": [
   {
    "perek": 1,

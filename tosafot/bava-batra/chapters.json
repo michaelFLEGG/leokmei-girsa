@@ -1,0 +1,96 @@
+{
+ "masechet": "בבא בתרא",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "השותפין",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "17a",
+   "toLine": 7,
+   "countedThrough": "17a"
+  },
+  {
+   "n": 2,
+   "name": "לא יחפור",
+   "from": "17a",
+   "fromLine": 8,
+   "to": "27b",
+   "toLine": 24,
+   "countedThrough": "27b"
+  },
+  {
+   "n": 3,
+   "name": "חזקת הבתים",
+   "from": "28a",
+   "fromLine": 1,
+   "to": "60b",
+   "toLine": 22,
+   "countedThrough": "60b"
+  },
+  {
+   "n": 4,
+   "name": "המוכר את הבית",
+   "from": "61a",
+   "fromLine": 1,
+   "to": "73a",
+   "toLine": 2,
+   "countedThrough": "73a"
+  },
+  {
+   "n": 5,
+   "name": "המוכר את הספינה",
+   "from": "73a",
+   "fromLine": 3,
+   "to": "91b",
+   "toLine": 18,
+   "countedThrough": "91b"
+  },
+  {
+   "n": 6,
+   "name": "המוכר פירות",
+   "from": "92a",
+   "fromLine": 1,
+   "to": "102b",
+   "toLine": 8,
+   "countedThrough": "102b"
+  },
+  {
+   "n": 7,
+   "name": "בית כור",
+   "from": "102b",
+   "fromLine": 9,
+   "to": "108a",
+   "toLine": 2,
+   "countedThrough": "108a"
+  },
+  {
+   "n": 8,
+   "name": "יש נוחלין",
+   "from": "108a",
+   "fromLine": 3,
+   "to": "139b",
+   "toLine": 6,
+   "countedThrough": "139b"
+  },
+  {
+   "n": 9,
+   "name": "מי שמת",
+   "from": "139b",
+   "fromLine": 7,
+   "to": "159b",
+   "toLine": 16,
+   "countedThrough": "159b"
+  },
+  {
+   "n": 10,
+   "name": "גט פשוט",
+   "from": "160a",
+   "fromLine": 1,
+   "to": "176b",
+   "toLine": 3,
+   "countedThrough": "176b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 16a, 91b, 104b, 112b, 118a, 133a, 137a, 176b."
+}

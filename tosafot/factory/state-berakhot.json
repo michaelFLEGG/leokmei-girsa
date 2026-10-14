@@ -1,0 +1,70 @@
+{
+ "slug": "berakhot",
+ "perakim": {
+  "1": {
+   "status": "writing",
+   "batch": "msgbatch_011C2J6pYt3pTkXHFkNNFvmx",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:44Z",
+   "nreq": 29
+  },
+  "2": {
+   "status": "writing",
+   "batch": "msgbatch_01CLBWJ1xQWZNPkkesmkyuG3",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:45Z",
+   "nreq": 17
+  },
+  "3": {
+   "status": "writing",
+   "batch": "msgbatch_01Ra8xuSUey53d9KWsZUiVdo",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:46Z",
+   "nreq": 29
+  },
+  "4": {
+   "status": "writing",
+   "batch": "msgbatch_01EczADwjNrs7T4jVatuUqGj",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:47Z",
+   "nreq": 19
+  },
+  "5": {
+   "status": "writing",
+   "batch": "msgbatch_01Aj2cB6c7GEmLUQB9vWez9V",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:48Z",
+   "nreq": 14
+  },
+  "6": {
+   "status": "writing",
+   "batch": "msgbatch_019GKUJFJ2EXYwgBEAZCxGjF",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:49Z",
+   "nreq": 35
+  },
+  "7": {
+   "status": "writing",
+   "batch": "msgbatch_01JuucfCtaqvYa9HnzbeY5dq",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:50Z",
+   "nreq": 25
+  },
+  "8": {
+   "status": "writing",
+   "batch": "msgbatch_01LAuyFND93pWTkZF66Eznku",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:51Z",
+   "nreq": 9
+  },
+  "9": {
+   "status": "writing",
+   "batch": "msgbatch_01VYbqLxMQ5nhXTqWvFma1wp",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:51Z",
+   "nreq": 16
+  }
+ },
+ "created": "2026-10-14T09:44:43Z",
+ "updated": "2026-10-14T09:44:51Z"
+}

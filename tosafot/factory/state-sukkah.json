@@ -13,10 +13,38 @@
     "flagged": 59,
     "questions": 19
    }
+  },
+  "2": {
+   "status": "writing",
+   "batch": "msgbatch_01UJV3B35vh7x6tNhQ29Dc9c",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:41Z",
+   "nreq": 32
+  },
+  "3": {
+   "status": "writing",
+   "batch": "msgbatch_01WfQBJGM3wouCs8j24qCcEi",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:42Z",
+   "nreq": 44
+  },
+  "4": {
+   "status": "writing",
+   "batch": "msgbatch_01SyMMc4hudnoGiQGFcwkBFZ",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:43Z",
+   "nreq": 21
+  },
+  "5": {
+   "status": "writing",
+   "batch": "msgbatch_01Vsbkxc4A7uiAKYKckfgS4n",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T09:44:43Z",
+   "nreq": 19
   }
  },
  "created": "2026-10-13T15:12:29Z",
- "updated": "2026-10-14T09:01:00Z",
+ "updated": "2026-10-14T09:44:43Z",
  "calibration": [
   {
    "perek": 1,

@@ -1,0 +1,119 @@
+{
+ "slug": "yevamot",
+ "perakim": {
+  "1": {
+   "status": "writing",
+   "batch": "msgbatch_01HbNd4x1wRCYMvjB5EdUNHQ",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:46Z",
+   "nreq": 66
+  },
+  "2": {
+   "status": "writing",
+   "batch": "msgbatch_01634BVygw1gNAVHSta14aDS",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:46Z",
+   "nreq": 30
+  },
+  "3": {
+   "status": "writing",
+   "batch": "msgbatch_015mxLNuXuPRymrc8wqbGuUx",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:47Z",
+   "nreq": 32
+  },
+  "4": {
+   "status": "writing",
+   "batch": "msgbatch_01Q6CaTjpZ9W7sBKurp53pUE",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:47Z",
+   "nreq": 55
+  },
+  "5": {
+   "status": "writing",
+   "batch": "msgbatch_01A2ud8hzRWk815N65VvBMMX",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:48Z",
+   "nreq": 15
+  },
+  "6": {
+   "status": "writing",
+   "batch": "msgbatch_01V5o8rZdMWmnAbst6st4gzc",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:49Z",
+   "nreq": 46
+  },
+  "7": {
+   "status": "writing",
+   "batch": "msgbatch_01DHALWnay2M7twezFF4HazV",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:49Z",
+   "nreq": 18
+  },
+  "8": {
+   "status": "writing",
+   "batch": "msgbatch_01Nc1mjGxQHguWsjUY3sWn5Y",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:50Z",
+   "nreq": 51
+  },
+  "9": {
+   "status": "writing",
+   "batch": "msgbatch_01NtfFHckvxcmUhVutViR4Ao",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:50Z",
+   "nreq": 12
+  },
+  "10": {
+   "status": "writing",
+   "batch": "msgbatch_01Leo9HwJbyoHXbF1fSXK5rs",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:51Z",
+   "nreq": 34
+  },
+  "11": {
+   "status": "writing",
+   "batch": "msgbatch_01HbKyk4WEeMWtYYz5Q6WvL1",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:52Z",
+   "nreq": 15
+  },
+  "12": {
+   "status": "writing",
+   "batch": "msgbatch_01XVqMa6m6otmewAGpXk6tQD",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:52Z",
+   "nreq": 24
+  },
+  "13": {
+   "status": "writing",
+   "batch": "msgbatch_01DmBxhLRWnb7CKiDg2xgUsA",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:53Z",
+   "nreq": 19
+  },
+  "14": {
+   "status": "writing",
+   "batch": "msgbatch_0167ZuzBVSeFE5eKgmTnhkqn",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:53Z",
+   "nreq": 11
+  },
+  "15": {
+   "status": "writing",
+   "batch": "msgbatch_017GPbbugP5DVWRp79qrsfTJ",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:54Z",
+   "nreq": 19
+  },
+  "16": {
+   "status": "writing",
+   "batch": "msgbatch_01VxcSADdt7hBDPgDtqaAK3S",
+   "batchPhase": "write",
+   "submitted": "2026-10-14T17:50:54Z",
+   "nreq": 14
+  }
+ },
+ "created": "2026-10-14T17:50:45Z",
+ "updated": "2026-10-14T17:50:54Z"
+}

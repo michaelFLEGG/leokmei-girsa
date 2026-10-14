@@ -2,69 +2,125 @@
  "slug": "gittin",
  "perakim": {
   "1": {
-   "status": "writing",
-   "batch": "msgbatch_01R6JtXjp4W1KxBMNFELe6hf",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:45:21Z",
-   "nreq": 58
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T17:50:31Z",
+   "nreq": 27,
+   "batch": "msgbatch_01StgX2paM8riSXSbC5Uc2E5"
   },
   "2": {
-   "status": "writing",
-   "batch": "msgbatch_018cDhnhposjgTE6vPVjJuKQ",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:45:21Z",
-   "nreq": 43
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T17:50:32Z",
+   "nreq": 20,
+   "batch": "msgbatch_01VfwD2B6GzsU5bHEtuGbVrc"
   },
   "3": {
-   "status": "writing",
-   "batch": "msgbatch_01FTj3aai9ca6tCergCa4Viw",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:45:22Z",
-   "nreq": 34
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T17:50:33Z",
+   "nreq": 16,
+   "batch": "msgbatch_016gVP7fkWJFxk7i18GmDPi5"
   },
   "4": {
-   "status": "writing",
-   "batch": "msgbatch_01JidG9uJPD1qE6XQpLjD5pQ",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:45:23Z",
-   "nreq": 58
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T17:50:35Z",
+   "nreq": 31,
+   "batch": "msgbatch_018pqdWzsFPJcCv7pykKq5NG"
   },
   "5": {
-   "status": "writing",
-   "batch": "msgbatch_01JKHbdQCJuHDNPWo2G5Wto2",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:45:23Z",
-   "nreq": 42
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T17:50:36Z",
+   "nreq": 25,
+   "batch": "msgbatch_01HeX8rwHK86t1HKijABikFX"
   },
   "6": {
-   "status": "writing",
-   "batch": "msgbatch_01Fd3fDusLoXHxbFP4asS1dj",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:45:24Z",
-   "nreq": 20
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T17:50:37Z",
+   "nreq": 8,
+   "batch": "msgbatch_01JdHHNzdTMPvbK9mJyYf15X"
   },
   "7": {
-   "status": "writing",
-   "batch": "msgbatch_0184u7iFiGn7CSdBuWYxYvzW",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:45:24Z",
-   "nreq": 29
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T17:50:39Z",
+   "nreq": 17,
+   "batch": "msgbatch_01KbSe1KWMEdVwfiALS4Szkz"
   },
   "8": {
-   "status": "writing",
-   "batch": "msgbatch_01DaWuDze1wfANUmQtCVLUGG",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:45:25Z",
-   "nreq": 23
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T17:50:41Z",
+   "nreq": 10,
+   "batch": "msgbatch_015mGb6axBjnc2ydSBtFiJ7d"
   },
   "9": {
-   "status": "writing",
-   "batch": "msgbatch_01SeAJ9xGmujTQm2KvvBu9FC",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T16:45:25Z",
-   "nreq": 28
+   "status": "reviewing",
+   "batchPhase": "review",
+   "submitted": "2026-10-14T17:50:42Z",
+   "nreq": 17,
+   "batch": "msgbatch_01EW5Fas141gybqEBEwPkdx2"
   }
  },
  "created": "2026-10-14T16:45:20Z",
- "updated": "2026-10-14T16:45:25Z"
+ "updated": "2026-10-14T17:50:42Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.434,
+   "n": 4,
+   "at": "2026-10-14T17:50:30Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.218,
+   "n": 4,
+   "at": "2026-10-14T17:50:31Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.265,
+   "n": 4,
+   "at": "2026-10-14T17:50:33Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.377,
+   "n": 4,
+   "at": "2026-10-14T17:50:34Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.629,
+   "n": 4,
+   "at": "2026-10-14T17:50:36Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.456,
+   "n": 4,
+   "at": "2026-10-14T17:50:37Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.415,
+   "n": 4,
+   "at": "2026-10-14T17:50:38Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.334,
+   "n": 4,
+   "at": "2026-10-14T17:50:40Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.689,
+   "n": 4,
+   "at": "2026-10-14T17:50:41Z"
+  }
+ ]
 }

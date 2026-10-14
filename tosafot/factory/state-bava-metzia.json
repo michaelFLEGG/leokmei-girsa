@@ -2,11 +2,11 @@
  "slug": "bava-metzia",
  "perakim": {
   "1": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T16:44:55Z",
-   "nreq": 54,
-   "batch": "msgbatch_011SCxDMawQWLtaEu6k92HrH"
+   "status": "rereviewing",
+   "batchPhase": "rereview",
+   "submitted": "2026-10-14T17:50:18Z",
+   "nreq": 37,
+   "batch": "msgbatch_017ERDNtbFJ1ibUMSsRBduv7"
   },
   "2": {
    "status": "published",
@@ -145,7 +145,7 @@
   }
  },
  "created": "2026-10-14T16:07:41Z",
- "updated": "2026-10-14T17:24:18Z",
+ "updated": "2026-10-14T17:50:18Z",
  "calibration": [
   {
    "perek": 4,

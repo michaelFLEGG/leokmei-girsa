@@ -434,3 +434,56 @@
 [2026-10-14 17:24:19] bava-batra פרק 7: הושלם פרסום 9 תוספות בסימון טרם נבדק
 [2026-10-14 17:24:19] bava-batra פרק 8: הושלם פרסום 44 תוספות בסימון טרם נבדק
 [2026-10-14 17:24:21] bava-metzia פרק 1: כתיבה מחדש הסתיימה, עלות $3.853
+[2026-10-14 17:50:17] bava-metzia פרק 1: כתיבה מחדש הסתיימה, עלות $3.853
+[2026-10-14 17:50:18] נשלח Batch msgbatch_017ERDNtbFJ1ibUMSsRBduv7 (rereview) bava-metzia פרק 1: 37 בקשות
+[2026-10-14 17:50:19] bava-batra פרק 1: כתיבה מחדש הסתיימה, עלות $2.820
+[2026-10-14 17:50:19] נשלח Batch msgbatch_01C3CGrM66opeJyDxW4bkW3z (rereview) bava-batra פרק 1: 27 בקשות
+[2026-10-14 17:50:20] bava-batra פרק 2: כתיבה מחדש הסתיימה, עלות $2.718
+[2026-10-14 17:50:21] נשלח Batch msgbatch_01VpB6v5MRsTcZYtjzRTsTDW (rereview) bava-batra פרק 2: 28 בקשות
+[2026-10-14 17:50:22] bava-batra פרק 3: כתיבה מחדש הסתיימה, עלות $5.538
+[2026-10-14 17:50:23] נשלח Batch msgbatch_01CRN617umqDhurR5M5guLQE (rereview) bava-batra פרק 3: 62 בקשות
+[2026-10-14 17:50:24] bava-batra פרק 4: כתיבה מחדש הסתיימה, עלות $1.234
+[2026-10-14 17:50:24] נשלח Batch msgbatch_01Fj1n2rx5NNLUXNvx9K8VFP (rereview) bava-batra פרק 4: 19 בקשות
+[2026-10-14 17:50:25] bava-batra פרק 6: כתיבה מחדש הסתיימה, עלות $1.348
+[2026-10-14 17:50:26] נשלח Batch msgbatch_01BD66anwsL8fb53W1iz48qa (rereview) bava-batra פרק 6: 21 בקשות
+[2026-10-14 17:50:27] bava-batra פרק 9: כתיבה מחדש הסתיימה, עלות $2.849
+[2026-10-14 17:50:28] נשלח Batch msgbatch_011GTc4TVtFvE269t5zvgxNH (rereview) bava-batra פרק 9: 38 בקשות
+[2026-10-14 17:50:29] bava-batra פרק 10: כתיבה מחדש הסתיימה, עלות $3.101
+[2026-10-14 17:50:29] נשלח Batch msgbatch_01VVdCFM7piPNTsdVrz5nJ7Y (rereview) bava-batra פרק 10: 33 בקשות
+[2026-10-14 17:50:30] gittin פרק 1: כתיבה הסתיימה {'ok': 95, 'bad': 88, 'api': 5}, עלות $1.096
+[2026-10-14 17:50:31] נשלח Batch msgbatch_01StgX2paM8riSXSbC5Uc2E5 (review) gittin פרק 1: 27 בקשות
+[2026-10-14 17:50:31] gittin פרק 2: כתיבה הסתיימה {'ok': 62, 'bad': 46, 'api': 0}, עלות $1.122
+[2026-10-14 17:50:31] אזהרת כיול (לא עוצר, מדגם קטן): gittin פרק 2 ממוצע 0.22
+[2026-10-14 17:50:32] נשלח Batch msgbatch_01VfwD2B6GzsU5bHEtuGbVrc (review) gittin פרק 2: 20 בקשות
+[2026-10-14 17:50:33] gittin פרק 3: כתיבה הסתיימה {'ok': 55, 'bad': 35, 'api': 1}, עלות $0.667
+[2026-10-14 17:50:33] נשלח Batch msgbatch_016gVP7fkWJFxk7i18GmDPi5 (review) gittin פרק 3: 16 בקשות
+[2026-10-14 17:50:34] gittin פרק 4: כתיבה הסתיימה {'ok': 79, 'bad': 74, 'api': 0}, עלות $1.451
+[2026-10-14 17:50:35] נשלח Batch msgbatch_018pqdWzsFPJcCv7pykKq5NG (review) gittin פרק 4: 31 בקשות
+[2026-10-14 17:50:36] gittin פרק 5: כתיבה הסתיימה {'ok': 70, 'bad': 56, 'api': 3}, עלות $0.729
+[2026-10-14 17:50:36] נשלח Batch msgbatch_01HeX8rwHK86t1HKijABikFX (review) gittin פרק 5: 25 בקשות
+[2026-10-14 17:50:37] gittin פרק 6: כתיבה הסתיימה {'ok': 21, 'bad': 29, 'api': 0}, עלות $0.413
+[2026-10-14 17:50:37] נשלח Batch msgbatch_01JdHHNzdTMPvbK9mJyYf15X (review) gittin פרק 6: 8 בקשות
+[2026-10-14 17:50:38] gittin פרק 7: כתיבה הסתיימה {'ok': 38, 'bad': 42, 'api': 0}, עלות $0.461
+[2026-10-14 17:50:39] נשלח Batch msgbatch_01KbSe1KWMEdVwfiALS4Szkz (review) gittin פרק 7: 17 בקשות
+[2026-10-14 17:50:40] gittin פרק 8: כתיבה הסתיימה {'ok': 28, 'bad': 26, 'api': 0}, עלות $0.495
+[2026-10-14 17:50:41] נשלח Batch msgbatch_015mGb6axBjnc2ydSBtFiJ7d (review) gittin פרק 8: 10 בקשות
+[2026-10-14 17:50:41] gittin פרק 9: כתיבה הסתיימה {'ok': 59, 'bad': 34, 'api': 0}, עלות $0.309
+[2026-10-14 17:50:42] נשלח Batch msgbatch_01EW5Fas141gybqEBEwPkdx2 (review) gittin פרק 9: 17 בקשות
+[2026-10-14 17:50:44] kiddushin פרק 1: כתיבה הסתיימה {'ok': 181, 'bad': 167, 'api': 1}, עלות $2.505
+[2026-10-14 17:50:45] נשלח Batch msgbatch_014hUW2aRfJGNRbd49StP1g5 (review) kiddushin פרק 1: 68 בקשות
+[2026-10-14 17:50:46] נשלח Batch msgbatch_01HbNd4x1wRCYMvjB5EdUNHQ (write) yevamot פרק 1: 66 בקשות
+[2026-10-14 17:50:46] נשלח Batch msgbatch_01634BVygw1gNAVHSta14aDS (write) yevamot פרק 2: 30 בקשות
+[2026-10-14 17:50:47] נשלח Batch msgbatch_015mxLNuXuPRymrc8wqbGuUx (write) yevamot פרק 3: 32 בקשות
+[2026-10-14 17:50:47] נשלח Batch msgbatch_01Q6CaTjpZ9W7sBKurp53pUE (write) yevamot פרק 4: 55 בקשות
+[2026-10-14 17:50:48] נשלח Batch msgbatch_01A2ud8hzRWk815N65VvBMMX (write) yevamot פרק 5: 15 בקשות
+[2026-10-14 17:50:49] נשלח Batch msgbatch_01V5o8rZdMWmnAbst6st4gzc (write) yevamot פרק 6: 46 בקשות
+[2026-10-14 17:50:49] נשלח Batch msgbatch_01DHALWnay2M7twezFF4HazV (write) yevamot פרק 7: 18 בקשות
+[2026-10-14 17:50:50] נשלח Batch msgbatch_01Nc1mjGxQHguWsjUY3sWn5Y (write) yevamot פרק 8: 51 בקשות
+[2026-10-14 17:50:50] נשלח Batch msgbatch_01NtfFHckvxcmUhVutViR4Ao (write) yevamot פרק 9: 12 בקשות
+[2026-10-14 17:50:51] נשלח Batch msgbatch_01Leo9HwJbyoHXbF1fSXK5rs (write) yevamot פרק 10: 34 בקשות
+[2026-10-14 17:50:52] נשלח Batch msgbatch_01HbKyk4WEeMWtYYz5Q6WvL1 (write) yevamot פרק 11: 15 בקשות
+[2026-10-14 17:50:52] נשלח Batch msgbatch_01XVqMa6m6otmewAGpXk6tQD (write) yevamot פרק 12: 24 בקשות
+[2026-10-14 17:50:53] נשלח Batch msgbatch_01DmBxhLRWnb7CKiDg2xgUsA (write) yevamot פרק 13: 19 בקשות
+[2026-10-14 17:50:53] נשלח Batch msgbatch_0167ZuzBVSeFE5eKgmTnhkqn (write) yevamot פרק 14: 11 בקשות
+[2026-10-14 17:50:54] נשלח Batch msgbatch_017GPbbugP5DVWRp79qrsfTJ (write) yevamot פרק 15: 19 בקשות
+[2026-10-14 17:50:54] נשלח Batch msgbatch_01VxcSADdt7hBDPgDtqaAK3S (write) yevamot פרק 16: 14 בקשות

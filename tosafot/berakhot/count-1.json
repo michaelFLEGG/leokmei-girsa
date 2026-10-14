@@ -26,7 +26,8 @@
    "n": 1,
    "hn": "א'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.1.1",
+   "dhs": "מאימתי קורין"
   },
   {
    "daf": "2a",
@@ -40,7 +41,8 @@
    "n": 2,
    "hn": "ב'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.7.1",
+   "dhs": "ליתני דשחרית"
   },
   {
    "daf": "2a",
@@ -54,7 +56,8 @@
    "n": 3,
    "hn": "ג'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.10.1",
+   "dhs": "א\"ה סיפא"
   },
   {
    "daf": "2a",
@@ -68,7 +71,8 @@
    "n": 4,
    "hn": "ד'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.10.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.10.2",
+   "dhs": "מברך שתים"
   },
   {
    "daf": "2a",
@@ -82,7 +86,8 @@
    "n": 5,
    "hn": "ה'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2a.13.1",
+   "dhs": "והא קמ\"ל"
   },
   {
    "daf": "2b",
@@ -96,7 +101,8 @@
    "n": 6,
    "hn": "ו'",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.1.1",
+   "dhs": "דילמא ביאת"
   },
   {
    "daf": "2b",
@@ -110,7 +116,8 @@
    "n": 7,
    "hn": "ז'",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.2.1",
+   "dhs": "א\"כ לימא"
   },
   {
    "daf": "2b",
@@ -124,7 +131,8 @@
    "n": 8,
    "hn": "ח'",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.5.1",
+   "dhs": "משעה שהעני"
   },
   {
    "daf": "2b",
@@ -138,7 +146,8 @@
    "n": 9,
    "hn": "ט'",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.8.1",
+   "dhs": "אע\"פ שאין"
   },
   {
    "daf": "2b",
@@ -152,7 +161,8 @@
    "n": 10,
    "hn": "י'",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.16.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.16.1",
+   "dhs": "ואי ס\"ד"
   },
   {
    "daf": "2b",
@@ -166,7 +176,8 @@
    "n": 11,
    "hn": "י\"א",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.17.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_2b.17.1",
+   "dhs": "א\"ל ר'"
   },
   {
    "daf": "3a",
@@ -180,7 +191,8 @@
    "n": 12,
    "hn": "י\"ב",
    "dafKey": "ג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.1.1",
+   "dhs": "קשיא דר'"
   },
   {
    "daf": "3a",
@@ -194,7 +206,8 @@
    "n": 13,
    "hn": "י\"ג",
    "dafKey": "ג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.2.1",
+   "dhs": "קשיא דרבי"
   },
   {
    "daf": "3a",
@@ -208,7 +221,8 @@
    "n": 14,
    "hn": "י\"ד",
    "dafKey": "ג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.10.1",
+   "dhs": "למאן דגני"
   },
   {
    "daf": "3a",
@@ -222,7 +236,8 @@
    "n": 15,
    "hn": "ט\"ו",
    "dafKey": "ג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.12.1",
+   "dhs": "היה לך"
   },
   {
    "daf": "3a",
@@ -236,7 +251,8 @@
    "n": 16,
    "hn": "ט\"ז",
    "dafKey": "ג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3a.14.1",
+   "dhs": "ועונין יהא"
   },
   {
    "daf": "3b",
@@ -250,7 +266,8 @@
    "n": 17,
    "hn": "י\"ז",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.2.1",
+   "dhs": "אין אומרין בפני המת אלא דבריו של מת"
   },
   {
    "daf": "3b",
@@ -264,7 +281,8 @@
    "n": 18,
    "hn": "י\"ח",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.9.1",
+   "dhs": "במקומן חיישינן"
   },
   {
    "daf": "3b",
@@ -278,7 +296,8 @@
    "n": 19,
    "hn": "י\"ט",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.17.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.17.1",
+   "dhs": "אין אומרין בפני המת אלא דבריו של מת"
   },
   {
    "daf": "3b",
@@ -292,7 +311,8 @@
    "n": 20,
    "hn": "כ'",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.22.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.22.1",
+   "dhs": "[שם מעולם"
   },
   {
    "daf": "3b",
@@ -306,7 +326,8 @@
    "n": 21,
    "hn": "כ\"א",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.28.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.28.1",
+   "dhs": "ואתא איהו"
   },
   {
    "daf": "3b",
@@ -320,7 +341,8 @@
    "n": 22,
    "hn": "כ\"ב",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.29.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.29.1",
+   "dhs": "רוח צפונית"
   },
   {
    "daf": "3b",
@@ -334,7 +356,8 @@
    "n": 23,
    "hn": "כ\"ג",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.29.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.29.2",
+   "dhs": "ואין הבור"
   },
   {
    "daf": "4a",
@@ -348,7 +371,8 @@
    "n": 24,
    "hn": "כ\"ד",
    "dafKey": "ד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_4a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_4a.1.1",
+   "dhs": "בניהו זה"
   },
   {
    "daf": "4b",
@@ -362,7 +386,8 @@
    "n": 25,
    "hn": "כ\"ה",
    "dafKey": "ד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_4b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_4b.2.1",
+   "dhs": "וקורא ק\"ש"
   },
   {
    "daf": "4b",
@@ -376,7 +401,8 @@
    "n": 26,
    "hn": "כ\"ו",
    "dafKey": "ד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_4b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_4b.6.1",
+   "dhs": "דאמר ר'"
   },
   {
    "daf": "5b",
@@ -390,7 +416,8 @@
    "n": 27,
    "hn": "כ\"ז",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.7.1",
+   "dhs": "הא לן"
   },
   {
    "daf": "5b",
@@ -404,7 +431,8 @@
    "n": 28,
    "hn": "כ\"ח",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.9.1",
+   "dhs": "והאמר ר'"
   },
   {
    "daf": "5b",
@@ -418,7 +446,8 @@
    "n": 29,
    "hn": "כ\"ט",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.14.1",
+   "dhs": "ה\"ג לא"
   },
   {
    "daf": "5b",
@@ -432,7 +461,8 @@
    "n": 30,
    "hn": "ל'",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.17.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.17.1",
+   "dhs": "דינא בלא"
   },
   {
    "daf": "5b",
@@ -446,7 +476,8 @@
    "n": 31,
    "hn": "ל\"א",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.21.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.21.1",
+   "dhs": "שלא יהא"
   },
   {
    "daf": "5b",
@@ -460,7 +491,8 @@
    "n": 32,
    "hn": "ל\"ב",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.21.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.21.2",
+   "dhs": "אלא אימא"
   },
   {
    "daf": "5b",
@@ -474,7 +506,8 @@
    "n": 33,
    "hn": "ל\"ג",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.23.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.23.1",
+   "dhs": "כל הנותן"
   },
   {
    "daf": "5b",
@@ -488,7 +521,8 @@
    "n": 34,
    "hn": "ל\"ד",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.25.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_5b.25.1",
+   "dhs": "המתפלל ולא"
   },
   {
    "daf": "6a",
@@ -502,7 +536,8 @@
    "n": 35,
    "hn": "ל\"ה",
    "dafKey": "ו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6a.3.1",
+   "dhs": "כי כסלא"
   },
   {
    "daf": "6a",
@@ -516,7 +551,8 @@
    "n": 36,
    "hn": "ל\"ו",
    "dafKey": "ו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6a.14.1",
+   "dhs": "חד לא"
   },
   {
    "daf": "6a",
@@ -530,7 +566,8 @@
    "n": 37,
    "hn": "ל\"ז",
    "dafKey": "ו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6a.19.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6a.19.1",
+   "dhs": "אלו תפילין"
   },
   {
    "daf": "6a",
@@ -544,7 +581,8 @@
    "n": 38,
    "hn": "ל\"ח",
    "dafKey": "ו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6a.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6a.20.1",
+   "dhs": "מי כעמך"
   },
   {
    "daf": "6b",
@@ -558,7 +596,8 @@
    "n": 39,
    "hn": "ל\"ט",
    "dafKey": "ו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6b.18.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_6b.18.1",
+   "dhs": "אחורי בהכנ\"ס"
   },
   {
    "daf": "7a",
@@ -572,7 +611,8 @@
    "n": 40,
    "hn": "מ'",
    "dafKey": "ז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_7a.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_7a.12.1",
+   "dhs": "שאלמלי כעסתי"
   },
   {
    "daf": "7a",
@@ -586,7 +626,8 @@
    "n": 41,
    "hn": "מ\"א",
    "dafKey": "ז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_7a.19.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_7a.19.1",
+   "dhs": "ההוא צדוקי"
   },
   {
    "daf": "7b",
@@ -600,7 +641,8 @@
    "n": 42,
    "hn": "מ\"ב",
    "dafKey": "ז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_7b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_7b.1.1",
+   "dhs": "לא היה"
   },
   {
    "daf": "8a",
@@ -614,7 +656,8 @@
    "n": 43,
    "hn": "מ\"ג",
    "dafKey": "ח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8a.29.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8a.29.1",
+   "dhs": "רב ששת"
   },
   {
    "daf": "8a",
@@ -628,7 +671,8 @@
    "n": 44,
    "hn": "מ\"ד",
    "dafKey": "ח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8a.30.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8a.30.1",
+   "dhs": "שנים מקרא"
   },
   {
    "daf": "8b",
@@ -642,7 +686,8 @@
    "n": 45,
    "hn": "מ\"ה",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8b.1.1",
+   "dhs": "ואפילו עטרות"
   },
   {
    "daf": "8b",
@@ -656,7 +701,8 @@
    "n": 46,
    "hn": "מ\"ו",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8b.3.1",
+   "dhs": "כאילו מתענה"
   },
   {
    "daf": "8b",
@@ -670,7 +716,8 @@
    "n": 47,
    "hn": "מ\"ז",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8b.5.1",
+   "dhs": "ישלים פרשיותיו"
   },
   {
    "daf": "8b",
@@ -684,7 +731,8 @@
    "n": 48,
    "hn": "מ\"ח",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8b.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_8b.20.1",
+   "dhs": "לא לעולם"
   },
   {
    "daf": "9a",
@@ -698,7 +746,8 @@
    "n": 49,
    "hn": "מ\"ט",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9a.1.1",
+   "dhs": "לעולם יממא"
   },
   {
    "daf": "9a",
@@ -712,7 +761,8 @@
    "n": 50,
    "hn": "נ'",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9a.2.1",
+   "dhs": "ובלבד שלא"
   },
   {
    "daf": "9a",
@@ -726,7 +776,8 @@
    "n": 51,
    "hn": "נ\"א",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9a.14.1",
+   "dhs": "ר' אלעזר"
   },
   {
    "daf": "9b",
@@ -740,7 +791,8 @@
    "n": 52,
    "hn": "נ\"ב",
    "dafKey": "ט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9b.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9b.11.1",
+   "dhs": "אלא בין"
   },
   {
    "daf": "9b",
@@ -748,13 +800,15 @@
    "seg": 1,
    "ref": "Tosafot on Berakhot 9b:12:1",
    "text": "אחרים אומרים עד שיראה חברו וכו' -בירושלמי במה אנן קיימין אי ברגיל אפי' ברחוק טפי חכים ביה ואי בשאינו רגיל אפילו בקרוב לגביה לא חכים ביה תפתר ברגיל ואינו רגיל כהדין אכסניא דאתי לקיצין. וצריך לומר דהאי אחרים לאו ר' מאיר נינהו דהא ר' מאיר איירי לעיל מינייהו:",
-   "dh": "אחרים אומרים עד שיראה חברו וכו' -בירושלמי במה אנן קיימין אי ברגיל אפי' ברחוק טפי חכים ביה ואי בשאינו רגיל אפילו בקרוב לגביה לא חכים ביה תפתר ברגיל ואינו רגיל כהדין אכסניא דאתי לקיצין",
-   "dhRule": "נקודה ארוכה (לבדיקה)",
+   "dh": "אחרים אומרים עד שיראה חברו וכו'",
+   "dhRule": "מקף צמוד",
    "verified": false,
    "n": 53,
    "hn": "נ\"ג",
    "dafKey": "ט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9b.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9b.12.1",
+   "dhOld": "אחרים אומרים עד שיראה חברו וכו' -בירושלמי במה אנן קיימין אי ברגיל אפי' ברחוק טפי חכים ביה ואי בשאינו רגיל אפילו בקרוב לגביה לא חכים ביה תפתר ברגיל ואינו רגיל כהדין אכסניא דאתי לקיצין",
+   "dhs": "אחרים אומרים"
   },
   {
    "daf": "9b",
@@ -768,7 +822,8 @@
    "n": 54,
    "hn": "נ\"ד",
    "dafKey": "ט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9b.13.1",
+   "dhs": "לק\"ש כותיקין"
   },
   {
    "daf": "9b",
@@ -782,7 +837,8 @@
    "n": 55,
    "hn": "נ\"ה",
    "dafKey": "ט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9b.16.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_9b.16.1",
+   "dhs": "כל הסומך"
   },
   {
    "daf": "10a",
@@ -796,7 +852,8 @@
    "n": 56,
    "hn": "נ\"ו",
    "dafKey": "י.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_10a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_10a.1.1",
+   "dhs": "כל פרשה"
   },
   {
    "daf": "10b",
@@ -810,7 +867,8 @@
    "n": 57,
    "hn": "נ\"ז",
    "dafKey": "י:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_10b.36.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_10b.36.1",
+   "dhs": "גדול הקורא"
   },
   {
    "daf": "11a",
@@ -824,7 +882,8 @@
    "n": 58,
    "hn": "נ\"ח",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11a.10.1",
+   "dhs": "שנאמר בהם"
   },
   {
    "daf": "11a",
@@ -832,13 +891,16 @@
    "seg": 1,
    "ref": "Tosafot on Berakhot 11a:20:1",
    "text": "תני רב יחזקאל עשה כבית שמאי עשה ורב יוסף אמר עשה כב\"ש לא עשה ולא כלום - וא\"ת פשיטא דאין הלכה כמותן. וי\"ל הואיל וב\"ש מחמירים על האדם טפי מב\"ה לא שייך לומר פשיטא. דהא דעשה כב\"ש לא עשה ולא כלום היינו היכא דב\"ש מקילין וב\"ה מחמירין אבל הכא בק\"ש לא פסלי ב\"ה דברי ב\"ש. אבל תימא א\"כ מה מייתי מסוכה כו' לא קיימת מצות סוכה כו' ופירש\"י דכי היכי דמי שעשה כב\"ה לא עשה ולא כלום לב\"ש אף העושה כב\"ש לא עשה ולא כלום לב\"ה ומאי קא מדמה התם פסלי ב\"ש לגמרי מה דמכשרי ב\"ה. אבל הכא קרא קרית שמע כב\"ש אליבא דב\"ה יצא. ע\"כ פירש הר\"ר שמעיה דקא מדמה הכי מדקאמר לא קיימת אע\"ג דמן הדין יצא שהרי בראשו ורובו בסוכה אינו אסור אלא גזירה שמא ימשך אחר שלחנו. כה\"ג גבי ק\"ש אע\"ג דמן הדין יצא בדיעבד כיון דלב\"ה אין נכון כדאיתא במתניתין כדאי היית לחוב בעצמך. אם עשה כב\"ש לב\"ה לא עשה ולא כלום [וע' תוספות סוכה ג. ד\"ה דאמר]:",
-   "dh": "תני רב יחזקאל עשה כבית שמאי עשה ורב יוסף אמר עשה כב\"ש לא עשה ולא כלום - וא\"ת פשיטא דאין הלכה כמותן",
+   "dh": "תני רב יחזקאל עשה כבית שמאי",
    "dhRule": "נקודה ארוכה (לבדיקה)",
    "verified": false,
    "n": 59,
    "hn": "נ\"ט",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11a.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11a.20.1",
+   "dhOld": "תני רב יחזקאל עשה כבית שמאי עשה ורב יוסף אמר עשה כב\"ש לא עשה ולא כלום - וא\"ת פשיטא דאין הלכה כמותן",
+   "dhFix": "נחתך למילים הראשונות (היה ארוך ושבור)",
+   "dhs": "תני רב"
   },
   {
    "daf": "11a",
@@ -852,7 +914,8 @@
    "n": 60,
    "hn": "ס'",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11a.24.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11a.24.1",
+   "dhs": "אחת ארוכה"
   },
   {
    "daf": "11a",
@@ -866,7 +929,8 @@
    "n": 61,
    "hn": "ס\"א",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11a.25.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11a.25.1",
+   "dhs": "מקום שאמרו"
   },
   {
    "daf": "11b",
@@ -880,7 +944,8 @@
    "n": 62,
    "hn": "ס\"ב",
    "dafKey": "יא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11b.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11b.9.1",
+   "dhs": "ורבנן אמרי"
   },
   {
    "daf": "11b",
@@ -894,7 +959,8 @@
    "n": 63,
    "hn": "ס\"ג",
    "dafKey": "יא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11b.10.1",
+   "dhs": "שכבר נפטר"
   },
   {
    "daf": "11b",
@@ -908,7 +974,8 @@
    "n": 64,
    "hn": "ס\"ד",
    "dafKey": "יא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11b.17.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11b.17.1",
+   "dhs": "ה\"ג ברוך"
   },
   {
    "daf": "11b",
@@ -922,7 +989,8 @@
    "n": 65,
    "hn": "ס\"ה",
    "dafKey": "יא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11b.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_11b.20.1",
+   "dhs": "וברכת כהנים"
   },
   {
    "daf": "12a",
@@ -936,7 +1004,8 @@
    "n": 66,
    "hn": "ס\"ו",
    "dafKey": "יב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.1.1",
+   "dhs": "משום דלא"
   },
   {
    "daf": "12a",
@@ -950,7 +1019,8 @@
    "n": 67,
    "hn": "ס\"ז",
    "dafKey": "יב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.9.1",
+   "dhs": "ברכה אחת"
   },
   {
    "daf": "12a",
@@ -964,7 +1034,8 @@
    "n": 68,
    "hn": "ס\"ח",
    "dafKey": "יב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.11.1",
+   "dhs": "פתח ואמר"
   },
   {
    "daf": "12a",
@@ -978,7 +1049,8 @@
    "n": 69,
    "hn": "ס\"ט",
    "dafKey": "יב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.20.1",
+   "dhs": "לא לאתויי"
   },
   {
    "daf": "12a",
@@ -992,7 +1064,8 @@
    "n": 70,
    "hn": "ע'",
    "dafKey": "יב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.23.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.23.1",
+   "dhs": "אמת ויציב"
   },
   {
    "daf": "12a",
@@ -1006,7 +1079,8 @@
    "n": 71,
    "hn": "ע\"א",
    "dafKey": "יב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.23.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12a.23.2",
+   "dhs": "להגיד בבקר"
   },
   {
    "daf": "12b",
@@ -1020,7 +1094,8 @@
    "n": 72,
    "hn": "ע\"ב",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12b.1.1",
+   "dhs": "כרע כחיזרא"
   },
   {
    "daf": "12b",
@@ -1034,7 +1109,8 @@
    "n": 73,
    "hn": "ע\"ג",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12b.5.1",
+   "dhs": "והלכתא כותיה"
   },
   {
    "daf": "12b",
@@ -1048,7 +1124,8 @@
    "n": 74,
    "hn": "ע\"ד",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12b.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12b.14.1",
+   "dhs": "בקשו לקבוע"
   },
   {
    "daf": "12b",
@@ -1062,7 +1139,8 @@
    "n": 75,
    "hn": "ע\"ה",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12b.14.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_12b.14.2",
+   "dhs": "הדרן עלך"
   }
  ]
 }

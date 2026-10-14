@@ -26,7 +26,8 @@
    "n": 1,
    "hn": "א'",
    "dafKey": "נ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50a.6.1",
+   "dhs": "מתני' החליל"
   },
   {
    "daf": "50a",
@@ -40,7 +41,8 @@
    "n": 2,
    "hn": "ב'",
    "dafKey": "נ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50a.6.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50a.6.2",
+   "dhs": "שאינו דוחה"
   },
   {
    "daf": "50b",
@@ -54,7 +56,8 @@
    "n": 3,
    "hn": "ג'",
    "dafKey": "נ:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50b.1.1",
+   "dhs": "חד תני"
   },
   {
    "daf": "50b",
@@ -68,7 +71,8 @@
    "n": 4,
    "hn": "ד'",
    "dafKey": "נ:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50b.1.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50b.1.2",
+   "dhs": "וחד תני"
   },
   {
    "daf": "50b",
@@ -82,7 +86,8 @@
    "n": 5,
    "hn": "ה'",
    "dafKey": "נ:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_50b.2.1",
+   "dhs": "ורבנן סברי"
   },
   {
    "daf": "51a",
@@ -96,7 +101,8 @@
    "n": 6,
    "hn": "ו'",
    "dafKey": "נא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51a.1.1",
+   "dhs": "כתנאי עבדי"
   },
   {
    "daf": "51a",
@@ -110,7 +116,8 @@
    "n": 7,
    "hn": "ז'",
    "dafKey": "נא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51a.5.1",
+   "dhs": "מעלין מדוכן"
   },
   {
    "daf": "51a",
@@ -124,7 +131,8 @@
    "n": 8,
    "hn": "ח'",
    "dafKey": "נא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51a.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51a.13.1",
+   "dhs": "למחצצרים ולמשוררים"
   },
   {
    "daf": "51a",
@@ -138,7 +146,8 @@
    "n": 9,
    "hn": "ט'",
    "dafKey": "נא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51a.16.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51a.16.1",
+   "dhs": "מבלאי מכנסי"
   },
   {
    "daf": "51b",
@@ -152,7 +161,8 @@
    "n": 10,
    "hn": "י'",
    "dafKey": "נא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51b.1.1",
+   "dhs": "שעליהן הלוים"
   },
   {
    "daf": "51b",
@@ -166,7 +176,8 @@
    "n": 11,
    "hn": "י\"א",
    "dafKey": "נא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51b.2.1",
+   "dhs": "קרא הגבר"
   },
   {
    "daf": "51b",
@@ -180,7 +191,8 @@
    "n": 12,
    "hn": "י\"ב",
    "dafKey": "נא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51b.6.1",
+   "dhs": "והיו בה"
   },
   {
    "daf": "51b",
@@ -194,7 +206,8 @@
    "n": 13,
    "hn": "י\"ג",
    "dafKey": "נא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51b.6.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_51b.6.2",
+   "dhs": "וכיון שהגיע"
   },
   {
    "daf": "52b",
@@ -208,7 +221,8 @@
    "n": 14,
    "hn": "י\"ד",
    "dafKey": "נב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_52b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_52b.2.1",
+   "dhs": "אם ברזל"
   },
   {
    "daf": "52b",
@@ -222,7 +236,8 @@
    "n": 15,
    "hn": "ט\"ו",
    "dafKey": "נב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_52b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_52b.6.1",
+   "dhs": "משביעו"
   },
   {
    "daf": "53a",
@@ -236,7 +251,8 @@
    "n": 16,
    "hn": "ט\"ז",
    "dafKey": "נג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_53a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_53a.1.1",
+   "dhs": "אשה היתה"
   },
   {
    "daf": "53a",
@@ -250,7 +266,8 @@
    "n": 17,
    "hn": "י\"ז",
    "dafKey": "נג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_53a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_53a.3.1",
+   "dhs": "אם אני"
   },
   {
    "daf": "53b",
@@ -264,7 +281,8 @@
    "n": 18,
    "hn": "י\"ח",
    "dafKey": "נג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_53b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_53b.10.1",
+   "dhs": "ר' יהודה"
   },
   {
    "daf": "54a",
@@ -278,7 +296,8 @@
    "n": 19,
    "hn": "י\"ט",
    "dafKey": "נד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54a.1.1",
+   "dhs": "מהו דתימא"
   },
   {
    "daf": "54a",
@@ -292,7 +311,8 @@
    "n": 20,
    "hn": "כ'",
    "dafKey": "נד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54a.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54a.11.1",
+   "dhs": "שייר ערב"
   },
   {
    "daf": "54b",
@@ -300,13 +320,16 @@
    "seg": 1,
    "ref": "Tosafot on Sukkah 54b:1:1",
    "text": "אי משום ערב הפסח לאו שיורא הוא הא מני רבי יהודה היא. תימה וכי יעמידנה כר' יהודה כדי שיקשה לו וכי האי גוונא איכא בנזיר פרק שלשה מינים (נזיר דף לח: ושם) אי משום בל יחל לאו שיורא הוא וכן בב\"ק ספ\"ק (דף טו.) ובכתובות פרק אלו נערות (כתובות דף מא. ושם) אי משום חצי כופר לאו שיורא הוא בההוא ניחא טפי דאיצטריך ליה למימר הכי כדי שלא יקשה למ\"ד פלגא נזקא ממונא דשייר חצי כופר מאי שייר דהאי שייר:",
-   "dh": "אי משום ערב הפסח לאו שיורא הוא הא מני רבי יהודה היא",
+   "dh": "אי משום ערב הפסח לאו שיורא",
    "dhRule": "נקודה ארוכה (לבדיקה)",
    "verified": false,
    "n": 21,
    "hn": "כ\"א",
    "dafKey": "נד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.1.1",
+   "dhOld": "אי משום ערב הפסח לאו שיורא הוא הא מני רבי יהודה היא",
+   "dhFix": "נחתך למילים הראשונות (היה ארוך ושבור)",
+   "dhs": "אי משום"
   },
   {
    "daf": "54b",
@@ -320,7 +343,8 @@
    "n": 22,
    "hn": "כ\"ב",
    "dafKey": "נד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.5.1",
+   "dhs": "כגון שחל"
   },
   {
    "daf": "54b",
@@ -334,7 +358,8 @@
    "n": 23,
    "hn": "כ\"ג",
    "dafKey": "נד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.10.1",
+   "dhs": "אלא ד'"
   },
   {
    "daf": "54b",
@@ -348,7 +373,8 @@
    "n": 24,
    "hn": "כ\"ד",
    "dafKey": "נד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.12.1",
+   "dhs": "ואמאי תדיר"
   },
   {
    "daf": "54b",
@@ -356,13 +382,16 @@
    "seg": 1,
    "ref": "Tosafot on Sukkah 54b:13:1",
    "text": "דתניא אברי תמיד ניתנין מחצי כבש ולמטה במערב ושל מוספין ניתנין מחצי כבש ולמטה במזרח ושל ראשי חדשים ניתנין על כרכוב המזבח ולמעלה. והיא שנויה כן בסוף מסכת שקלים (פ\"ח מ\"ח) ואין גירסת הספרים שלפנינו נכונה:",
-   "dh": "דתניא אברי תמיד ניתנין מחצי כבש ולמטה במערב ושל מוספין ניתנין מחצי כבש ולמטה במזרח ושל ראשי חדשים ניתנין על כרכוב המזבח ולמעלה",
+   "dh": "דתניא אברי תמיד ניתנין מחצי כבש",
    "dhRule": "נקודה ארוכה (לבדיקה)",
    "verified": false,
    "n": 25,
    "hn": "כ\"ה",
    "dafKey": "נד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_54b.13.1",
+   "dhOld": "דתניא אברי תמיד ניתנין מחצי כבש ולמטה במערב ושל מוספין ניתנין מחצי כבש ולמטה במזרח ושל ראשי חדשים ניתנין על כרכוב המזבח ולמעלה",
+   "dhFix": "נחתך למילים הראשונות (היה ארוך ושבור)",
+   "dhs": "דתניא אברי"
   },
   {
    "daf": "55a",
@@ -376,7 +405,8 @@
    "n": 26,
    "hn": "כ\"ו",
    "dafKey": "נה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_55a.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_55a.11.1",
+   "dhs": "אתקין אמימר"
   },
   {
    "daf": "55b",
@@ -390,7 +420,8 @@
    "n": 27,
    "hn": "כ\"ז",
    "dafKey": "נה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_55b.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_55b.12.1",
+   "dhs": "ובחילוק לחם"
   },
   {
    "daf": "56a",
@@ -398,13 +429,16 @@
    "seg": 1,
    "ref": "Tosafot on Sukkah 56a:8:1",
    "text": "עד כאן לא קאמרי ב\"ה התם אלא שהיין גורם לקידוש שתאמר. תימה הא קאמרי ב\"ה דהיין תדיר וי\"ל לא מטעם זה לחודיה קודמת לחובת היום דנימא מטעם זה יקדים זמן לסוכה ושמא אינו בא ליישב דברי רב אלא לפי דבריו בדין ולא לפי טעמי בית הלל:",
-   "dh": "עד כאן לא קאמרי ב\"ה התם אלא שהיין גורם לקידוש שתאמר",
+   "dh": "עד כאן לא קאמרי ב\"ה התם",
    "dhRule": "נקודה ארוכה (לבדיקה)",
    "verified": false,
    "n": 28,
    "hn": "כ\"ח",
    "dafKey": "נו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_56a.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_56a.8.1",
+   "dhOld": "עד כאן לא קאמרי ב\"ה התם אלא שהיין גורם לקידוש שתאמר",
+   "dhFix": "נחתך למילים הראשונות (היה ארוך ושבור)",
+   "dhs": "עד כאן"
   },
   {
    "daf": "56a",
@@ -418,7 +452,8 @@
    "n": 29,
    "hn": "כ\"ט",
    "dafKey": "נו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_56a.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_56a.12.1",
+   "dhs": "והלכתא סוכה"
   },
   {
    "daf": "56b",
@@ -432,7 +467,8 @@
    "n": 30,
    "hn": "ל'",
    "dafKey": "נו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_56b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Sukkah_56b.1.1",
+   "dhs": "בוצינא טבא"
   }
  ]
 }

@@ -88,7 +88,8 @@
    "n": 1,
    "hn": "א'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.1",
+   "dhs": "האשה נקנית"
   },
   {
    "daf": "2a",
@@ -102,7 +103,8 @@
    "n": 2,
    "hn": "ב'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.2",
+   "dhs": "ב\"ש אומרים"
   },
   {
    "daf": "2a",
@@ -116,7 +118,8 @@
    "n": 3,
    "hn": "ג'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.3"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.3",
+   "dhs": "בפרוטה ובשווה"
   },
   {
    "daf": "2a",
@@ -130,7 +133,8 @@
    "n": 4,
    "hn": "ד'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.4"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.4",
+   "dhs": "וכמה היא"
   },
   {
    "daf": "2a",
@@ -144,7 +148,8 @@
    "n": 5,
    "hn": "ה'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.5"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.5",
+   "dhs": "אחד מח'"
   },
   {
    "daf": "2a",
@@ -158,7 +163,8 @@
    "n": 6,
    "hn": "ו'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.6"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.1.6",
+   "dhs": "איטלקי"
   },
   {
    "daf": "2a",
@@ -172,7 +178,8 @@
    "n": 7,
    "hn": "ז'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.2.1",
+   "dhs": "היבמה נקנית"
   },
   {
    "daf": "2a",
@@ -186,7 +193,8 @@
    "n": 8,
    "hn": "ח'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.3.1",
+   "dhs": "מאי שנא"
   },
   {
    "daf": "2a",
@@ -200,7 +208,8 @@
    "n": 9,
    "hn": "ט'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.3.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.3.2",
+   "dhs": "משום דקבעי"
   },
   {
    "daf": "2a",
@@ -214,7 +223,8 @@
    "n": 10,
    "hn": "י'",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.4.1",
+   "dhs": "וכסף מנלן"
   },
   {
    "daf": "2a",
@@ -228,7 +238,8 @@
    "n": 11,
    "hn": "י\"א",
    "dafKey": "ב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.4.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2a.4.2",
+   "dhs": "וכתיב התם"
   },
   {
    "daf": "2b",
@@ -242,7 +253,8 @@
    "n": 12,
    "hn": "י\"ב",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.1.1",
+   "dhs": "א\"נ שדות"
   },
   {
    "daf": "2b",
@@ -256,7 +268,8 @@
    "n": 13,
    "hn": "י\"ג",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.2.1",
+   "dhs": "דאסר לה"
   },
   {
    "daf": "2b",
@@ -270,7 +283,8 @@
    "n": 14,
    "hn": "י\"ד",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.5.1",
+   "dhs": "אי תנא"
   },
   {
    "daf": "2b",
@@ -284,7 +298,8 @@
    "n": 15,
    "hn": "ט\"ו",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.6.1",
+   "dhs": "ליתני שלושה"
   },
   {
    "daf": "2b",
@@ -298,7 +313,8 @@
    "n": 16,
    "hn": "ט\"ז",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.7.1",
+   "dhs": "קשו קראי"
   },
   {
    "daf": "2b",
@@ -312,7 +328,8 @@
    "n": 17,
    "hn": "י\"ז",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.8.1",
+   "dhs": "הכא דבתורה"
   },
   {
    "daf": "2b",
@@ -326,7 +343,8 @@
    "n": 18,
    "hn": "י\"ח",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.13.1",
+   "dhs": "[מפני מה"
   },
   {
    "daf": "2b",
@@ -340,7 +358,8 @@
    "n": 19,
    "hn": "י\"ט",
    "dafKey": "ב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_2b.15.1",
+   "dhs": "אתרוג שוה"
   },
   {
    "daf": "3a",
@@ -354,7 +373,8 @@
    "n": 20,
    "hn": "כ'",
    "dafKey": "ג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3a.1.1",
+   "dhs": "מה ירק"
   },
   {
    "daf": "3a",
@@ -368,7 +388,8 @@
    "n": 21,
    "hn": "כ\"א",
    "dafKey": "ג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3a.2.1",
+   "dhs": "לא לחיה"
   },
   {
    "daf": "3a",
@@ -382,7 +403,8 @@
    "n": 22,
    "hn": "כ\"ב",
    "dafKey": "ג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3a.7.1",
+   "dhs": "ואשה בפחות"
   },
   {
    "daf": "3b",
@@ -396,7 +418,8 @@
    "n": 23,
    "hn": "כ\"ג",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.3.1",
+   "dhs": "ואין דבר"
   },
   {
    "daf": "3b",
@@ -410,7 +433,8 @@
    "n": 24,
    "hn": "כ\"ד",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.4.1",
+   "dhs": "האב זכאי"
   },
   {
    "daf": "3b",
@@ -424,7 +448,8 @@
    "n": 25,
    "hn": "כ\"ה",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.6.1",
+   "dhs": "ואימא לדידה"
   },
   {
    "daf": "3b",
@@ -438,7 +463,8 @@
    "n": 26,
    "hn": "כ\"ו",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.7.1",
+   "dhs": "ואימא ה\"מ"
   },
   {
    "daf": "3b",
@@ -452,7 +478,8 @@
    "n": 27,
    "hn": "כ\"ז",
    "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_3b.11.1",
+   "dhs": "וכי תימא"
   },
   {
    "daf": "4a",
@@ -466,7 +493,8 @@
    "n": 28,
    "hn": "כ\"ח",
    "dafKey": "ד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.1.1",
+   "dhs": "יציאה דכוותה"
   },
   {
    "daf": "4a",
@@ -480,7 +508,8 @@
    "n": 29,
    "hn": "כ\"ט",
    "dafKey": "ד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.6.1",
+   "dhs": "זרע פסול"
   },
   {
    "daf": "4a",
@@ -494,7 +523,8 @@
    "n": 30,
    "hn": "ל'",
    "dafKey": "ד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.11.1",
+   "dhs": "ויצאה חנם"
   },
   {
    "daf": "4a",
@@ -508,7 +538,8 @@
    "n": 31,
    "hn": "ל\"א",
    "dafKey": "ד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.12.1",
+   "dhs": "בא זה"
   },
   {
    "daf": "4a",
@@ -522,7 +553,8 @@
    "n": 32,
    "hn": "ל\"ב",
    "dafKey": "ד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.20.1",
+   "dhs": "בגרות שמוציאה"
   },
   {
    "daf": "4a",
@@ -536,7 +568,8 @@
    "n": 33,
    "hn": "ל\"ג",
    "dafKey": "ד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.21.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4a.21.1",
+   "dhs": "דלא אתיא"
   },
   {
    "daf": "4b",
@@ -550,7 +583,8 @@
    "n": 34,
    "hn": "ל\"ד",
    "dafKey": "ד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.6.1",
+   "dhs": "מעיקרא דדינא"
   },
   {
    "daf": "4b",
@@ -564,7 +598,8 @@
    "n": 35,
    "hn": "ל\"ה",
    "dafKey": "ד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.7.1",
+   "dhs": "מה לאמה"
   },
   {
    "daf": "4b",
@@ -578,7 +613,8 @@
    "n": 36,
    "hn": "ל\"ו",
    "dafKey": "ד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.9.1",
+   "dhs": "היכא דיהבה"
   },
   {
    "daf": "4b",
@@ -592,7 +628,8 @@
    "n": 37,
    "hn": "ל\"ז",
    "dafKey": "ד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.9.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.9.2",
+   "dhs": "כתב רחמנא"
   },
   {
    "daf": "4b",
@@ -606,7 +643,8 @@
    "n": 38,
    "hn": "ל\"ח",
    "dafKey": "ד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.10.1",
+   "dhs": "ובעלה מלמד"
   },
   {
    "daf": "4b",
@@ -620,7 +658,8 @@
    "n": 39,
    "hn": "ל\"ט",
    "dafKey": "ד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.11.1",
+   "dhs": "אמה העבריה"
   },
   {
    "daf": "4b",
@@ -634,7 +673,8 @@
    "n": 40,
    "hn": "מ'",
    "dafKey": "ד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_4b.13.1",
+   "dhs": "מה ליבמה"
   },
   {
    "daf": "5a",
@@ -648,7 +688,8 @@
    "n": 41,
    "hn": "מ\"א",
    "dafKey": "ה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.1.1",
+   "dhs": "ומניין שאף"
   },
   {
    "daf": "5a",
@@ -662,7 +703,8 @@
    "n": 42,
    "hn": "מ\"ב",
    "dafKey": "ה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.2.1",
+   "dhs": "שכן פודין"
   },
   {
    "daf": "5a",
@@ -676,7 +718,8 @@
    "n": 43,
    "hn": "מ\"ג",
    "dafKey": "ה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.3.1",
+   "dhs": "מה הויה"
   },
   {
    "daf": "5a",
@@ -690,7 +733,8 @@
    "n": 44,
    "hn": "מ\"ד",
    "dafKey": "ה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.4.1",
+   "dhs": "סניגור יעשה"
   },
   {
    "daf": "5a",
@@ -704,7 +748,8 @@
    "n": 45,
    "hn": "מ\"ה",
    "dafKey": "ה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.7.1",
+   "dhs": "קאי בגירושין"
   },
   {
    "daf": "5a",
@@ -718,7 +763,8 @@
    "n": 46,
    "hn": "מ\"ו",
    "dafKey": "ה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.10.1",
+   "dhs": "על מנת"
   },
   {
    "daf": "5a",
@@ -732,7 +778,8 @@
    "n": 47,
    "hn": "מ\"ז",
    "dafKey": "ה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.11.1",
+   "dhs": "ורבי יוסי"
   },
   {
    "daf": "5a",
@@ -746,7 +793,8 @@
    "n": 48,
    "hn": "מ\"ח",
    "dafKey": "ה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5a.14.1",
+   "dhs": "שכן ישנן"
   },
   {
    "daf": "5b",
@@ -760,7 +808,8 @@
    "n": 49,
    "hn": "מ\"ט",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.1.1",
+   "dhs": "חופה שגומרת"
   },
   {
    "daf": "5b",
@@ -774,7 +823,8 @@
    "n": 50,
    "hn": "נ'",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.2.1",
+   "dhs": "אף אני"
   },
   {
    "daf": "5b",
@@ -788,7 +838,8 @@
    "n": 51,
    "hn": "נ\"א",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.5.1",
+   "dhs": "ורב הונא"
   },
   {
    "daf": "5b",
@@ -802,7 +853,8 @@
    "n": 52,
    "hn": "נ\"ב",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.11.1",
+   "dhs": "הא נתן"
   },
   {
    "daf": "5b",
@@ -816,7 +868,8 @@
    "n": 53,
    "hn": "נ\"ג",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.16.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.16.1",
+   "dhs": "הא לאו"
   },
   {
    "daf": "5b",
@@ -830,7 +883,8 @@
    "n": 54,
    "hn": "נ\"ד",
    "dafKey": "ה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.18.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_5b.18.1",
+   "dhs": "הכא במאי"
   },
   {
    "daf": "6a",
@@ -844,7 +898,8 @@
    "n": 55,
    "hn": "נ\"ה",
    "dafKey": "ו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.3.1",
+   "dhs": "עצורתי מהו"
   },
   {
    "daf": "6a",
@@ -858,7 +913,8 @@
    "n": 56,
    "hn": "נ\"ו",
    "dafKey": "ו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.6.1",
+   "dhs": "משום שנא'"
   },
   {
    "daf": "6a",
@@ -872,7 +928,8 @@
    "n": 57,
    "hn": "נ\"ז",
    "dafKey": "ו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.6.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.6.2",
+   "dhs": "שכן ביהודה"
   },
   {
    "daf": "6a",
@@ -886,7 +943,8 @@
    "n": 58,
    "hn": "נ\"ח",
    "dafKey": "ו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.14.1",
+   "dhs": "לא יהא"
   },
   {
    "daf": "6a",
@@ -900,7 +958,8 @@
    "n": 59,
    "hn": "נ\"ט",
    "dafKey": "ו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.14.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6a.14.2",
+   "dhs": "אפי' לא"
   },
   {
    "daf": "6b",
@@ -914,7 +973,8 @@
    "n": 60,
    "hn": "ס'",
    "dafKey": "ו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.3.1",
+   "dhs": "אשה דלא"
   },
   {
    "daf": "6b",
@@ -928,7 +988,8 @@
    "n": 61,
    "hn": "ס\"א",
    "dafKey": "ו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.6.1",
+   "dhs": "כשתברח ממנו"
   },
   {
    "daf": "6b",
@@ -942,7 +1003,8 @@
    "n": 62,
    "hn": "ס\"ב",
    "dafKey": "ו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.9.1",
+   "dhs": "דארווח לה"
   },
   {
    "daf": "6b",
@@ -956,7 +1018,8 @@
    "n": 63,
    "hn": "ס\"ג",
    "dafKey": "ו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.13.1",
+   "dhs": "לא החזירו"
   },
   {
    "daf": "6b",
@@ -970,7 +1033,8 @@
    "n": 64,
    "hn": "ס\"ד",
    "dafKey": "ו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.13.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.13.2",
+   "dhs": "ואם לאו"
   },
   {
    "daf": "6b",
@@ -984,7 +1048,8 @@
    "n": 65,
    "hn": "ס\"ה",
    "dafKey": "ו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_6b.14.1",
+   "dhs": "לבר מאשה"
   },
   {
    "daf": "7a",
@@ -998,7 +1063,8 @@
    "n": 66,
    "hn": "ס\"ו",
    "dafKey": "ז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7a.6.1",
+   "dhs": "א\"כ הו\"ל"
   },
   {
    "daf": "7a",
@@ -1012,7 +1078,8 @@
    "n": 67,
    "hn": "ס\"ז",
    "dafKey": "ז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7a.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7a.13.1",
+   "dhs": "ונפשטו קידושי"
   },
   {
    "daf": "7a",
@@ -1026,7 +1093,8 @@
    "n": 68,
    "hn": "ס\"ח",
    "dafKey": "ז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7a.14.1",
+   "dhs": "ואפי' למאן"
   },
   {
    "daf": "7a",
@@ -1040,7 +1108,8 @@
    "n": 69,
    "hn": "ס\"ט",
    "dafKey": "ז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7a.16.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7a.16.1",
+   "dhs": "וחזר ולקחה"
   },
   {
    "daf": "7b",
@@ -1054,7 +1123,8 @@
    "n": 70,
    "hn": "ע'",
    "dafKey": "ז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.1.1",
+   "dhs": "שמע מינה"
   },
   {
    "daf": "7b",
@@ -1068,7 +1138,8 @@
    "n": 71,
    "hn": "ע\"א",
    "dafKey": "ז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.4.1",
+   "dhs": "חצייך בפרוטה וחצייך"
   },
   {
    "daf": "7b",
@@ -1082,7 +1153,8 @@
    "n": 72,
    "hn": "ע\"ב",
    "dafKey": "ז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.5.1",
+   "dhs": "חצייך בפרוטה היום"
   },
   {
    "daf": "7b",
@@ -1096,7 +1168,8 @@
    "n": 73,
    "hn": "ע\"ג",
    "dafKey": "ז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.7.1",
+   "dhs": "שתי בנותיך"
   },
   {
    "daf": "7b",
@@ -1110,7 +1183,8 @@
    "n": 74,
    "hn": "ע\"ד",
    "dafKey": "ז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.8.1",
+   "dhs": "בתך ופרתך"
   },
   {
    "daf": "7b",
@@ -1124,7 +1198,8 @@
    "n": 75,
    "hn": "ע\"ה",
    "dafKey": "ז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_7b.10.1",
+   "dhs": "ורב יוסף"
   },
   {
    "daf": "8a",
@@ -1138,7 +1213,8 @@
    "n": 76,
    "hn": "ע\"ו",
    "dafKey": "ח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.1.1",
+   "dhs": "אף שוה"
   },
   {
    "daf": "8a",
@@ -1152,7 +1228,8 @@
    "n": 77,
    "hn": "ע\"ז",
    "dafKey": "ח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.5.1",
+   "dhs": "ומאי ניהו"
   },
   {
    "daf": "8a",
@@ -1166,7 +1243,8 @@
    "n": 78,
    "hn": "ע\"ח",
    "dafKey": "ח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.8.1",
+   "dhs": "מנא אמינא"
   },
   {
    "daf": "8a",
@@ -1180,7 +1258,8 @@
    "n": 79,
    "hn": "ע\"ט",
    "dafKey": "ח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.10.1",
+   "dhs": "רב כהנא"
   },
   {
    "daf": "8a",
@@ -1194,7 +1273,8 @@
    "n": 80,
    "hn": "פ'",
    "dafKey": "ח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.11.1",
+   "dhs": "אבל כולי"
   },
   {
    "daf": "8a",
@@ -1208,7 +1288,8 @@
    "n": 81,
    "hn": "פ\"א",
    "dafKey": "ח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.18.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8a.18.1",
+   "dhs": "השתא במנה"
   },
   {
    "daf": "8b",
@@ -1222,7 +1303,8 @@
    "n": 82,
    "hn": "פ\"ב",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.1.1",
+   "dhs": "מנה אין"
   },
   {
    "daf": "8b",
@@ -1236,7 +1318,8 @@
    "n": 83,
    "hn": "פ\"ג",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.1.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.1.2",
+   "dhs": "משכון דאחרים"
   },
   {
    "daf": "8b",
@@ -1250,7 +1333,8 @@
    "n": 84,
    "hn": "פ\"ד",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.2.1",
+   "dhs": "מנין לבעל"
   },
   {
    "daf": "8b",
@@ -1264,7 +1348,8 @@
    "n": 85,
    "hn": "פ\"ה",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.2.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.2.2",
+   "dhs": "צדקה מנין"
   },
   {
    "daf": "8b",
@@ -1278,7 +1363,8 @@
    "n": 86,
    "hn": "פ\"ו",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.6.1",
+   "dhs": "תנם לאבא"
   },
   {
    "daf": "8b",
@@ -1292,7 +1378,8 @@
    "n": 87,
    "hn": "פ\"ז",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.8.1",
+   "dhs": "תנם לפלוני"
   },
   {
    "daf": "8b",
@@ -1306,7 +1393,8 @@
    "n": 88,
    "hn": "פ\"ח",
    "dafKey": "ח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_8b.11.1",
+   "dhs": "אם היה"
   },
   {
    "daf": "9a",
@@ -1320,7 +1408,8 @@
    "n": 89,
    "hn": "פ\"ט",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.2.1",
+   "dhs": "כל אשקי"
   },
   {
    "daf": "9a",
@@ -1334,7 +1423,8 @@
    "n": 90,
    "hn": "צ'",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.4.1",
+   "dhs": "הב אשקי"
   },
   {
    "daf": "9a",
@@ -1348,7 +1438,8 @@
    "n": 91,
    "hn": "צ\"א",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.5.1",
+   "dhs": "והלכתא שיראי"
   },
   {
    "daf": "9a",
@@ -1362,7 +1453,8 @@
    "n": 92,
    "hn": "צ\"ב",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.6.1",
+   "dhs": "כתב על"
   },
   {
    "daf": "9a",
@@ -1376,7 +1468,8 @@
    "n": 93,
    "hn": "צ\"ג",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.6.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.6.2",
+   "dhs": "אע\"פ שאין"
   },
   {
    "daf": "9a",
@@ -1390,7 +1483,8 @@
    "n": 94,
    "hn": "צ\"ד",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.7.1",
+   "dhs": "הא לא"
   },
   {
    "daf": "9a",
@@ -1404,7 +1498,8 @@
    "n": 95,
    "hn": "צ\"ה",
    "dafKey": "ט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9a.10.1",
+   "dhs": "הלכתא נינהו"
   },
   {
    "daf": "9b",
@@ -1418,7 +1513,8 @@
    "n": 96,
    "hn": "צ\"ו",
    "dafKey": "ט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_9b.6.1",
+   "dhs": "הן הן"
   },
   {
    "daf": "10a",
@@ -1432,7 +1528,8 @@
    "n": 97,
    "hn": "צ\"ז",
    "dafKey": "י.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10a.2.1",
+   "dhs": "עד שיהיו"
   },
   {
    "daf": "10a",
@@ -1446,7 +1543,8 @@
    "n": 98,
    "hn": "צ\"ח",
    "dafKey": "י.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10a.5.1",
+   "dhs": "כל הבועל"
   },
   {
    "daf": "10a",
@@ -1460,7 +1558,8 @@
    "n": 99,
    "hn": "צ\"ט",
    "dafKey": "י.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10a.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10a.8.1",
+   "dhs": "ומקבל את"
   },
   {
    "daf": "10a",
@@ -1474,7 +1573,8 @@
    "n": 100,
    "hn": "ק'",
    "dafKey": "י.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10a.10.1",
+   "dhs": "וחייבין עליה"
   },
   {
    "daf": "10b",
@@ -1488,7 +1588,8 @@
    "n": 101,
    "hn": "ק\"א",
    "dafKey": "י:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.5.1",
+   "dhs": "ומה שפחה"
   },
   {
    "daf": "10b",
@@ -1502,7 +1603,8 @@
    "n": 102,
    "hn": "ק\"ב",
    "dafKey": "י:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.5.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.5.2",
+   "dhs": "מה שפחה"
   },
   {
    "daf": "10b",
@@ -1516,7 +1618,8 @@
    "n": 103,
    "hn": "ק\"ג",
    "dafKey": "י:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.5.3"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.5.3",
+   "dhs": "זו שביאתה מאכילתה אינו"
   },
   {
    "daf": "10b",
@@ -1530,7 +1633,8 @@
    "n": 104,
    "hn": "ק\"ד",
    "dafKey": "י:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.13.1",
+   "dhs": "רבינא אמר"
   },
   {
    "daf": "10b",
@@ -1544,7 +1648,8 @@
    "n": 105,
    "hn": "ק\"ה",
    "dafKey": "י:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_10b.15.1",
+   "dhs": "זו שביאתה מאכילתה בתרומה"
   },
   {
    "daf": "11a",
@@ -1558,7 +1663,8 @@
    "n": 106,
    "hn": "ק\"ו",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.1.1",
+   "dhs": "עד שתכנס"
   },
   {
    "daf": "11a",
@@ -1572,7 +1678,8 @@
    "n": 107,
    "hn": "ק\"ז",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.3.1",
+   "dhs": "קוביוסטוס פ\"ה"
   },
   {
    "daf": "11a",
@@ -1586,7 +1693,8 @@
    "n": 108,
    "hn": "ק\"ח",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.3.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.3.2",
+   "dhs": "הנהו קלא"
   },
   {
    "daf": "11a",
@@ -1600,7 +1708,8 @@
    "n": 109,
    "hn": "ק\"ט",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.5.1",
+   "dhs": "קבל מסר"
   },
   {
    "daf": "11a",
@@ -1614,7 +1723,8 @@
    "n": 110,
    "hn": "ק\"י",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.6.1",
+   "dhs": "שכן אשה"
   },
   {
    "daf": "11a",
@@ -1628,7 +1738,8 @@
    "n": 111,
    "hn": "קי\"א",
    "dafKey": "יא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11a.9.1",
+   "dhs": "כל כסף"
   },
   {
    "daf": "11b",
@@ -1642,7 +1753,8 @@
    "n": 112,
    "hn": "קי\"ב",
    "dafKey": "יא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_11b.1.1",
+   "dhs": "והרי טענה"
   },
   {
    "daf": "12a",
@@ -1656,7 +1768,8 @@
    "n": 113,
    "hn": "קי\"ג",
    "dafKey": "יב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12a.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12a.15.1",
+   "dhs": "רב חסדא"
   },
   {
    "daf": "12b",
@@ -1670,7 +1783,8 @@
    "n": 114,
    "hn": "קי\"ד",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.2.1",
+   "dhs": "הא איכא"
   },
   {
    "daf": "12b",
@@ -1684,7 +1798,8 @@
    "n": 115,
    "hn": "קט\"ו",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.2.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.2.2",
+   "dhs": "והאיכא סהדי"
   },
   {
    "daf": "12b",
@@ -1698,7 +1813,8 @@
    "n": 116,
    "hn": "קט\"ז",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.4.1",
+   "dhs": "אם הקלנו"
   },
   {
    "daf": "12b",
@@ -1712,7 +1828,8 @@
    "n": 117,
    "hn": "קי\"ז",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.8.1",
+   "dhs": "ועל דמבטל"
   },
   {
    "daf": "12b",
@@ -1726,7 +1843,8 @@
    "n": 118,
    "hn": "קי\"ח",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.10.1",
+   "dhs": "בכולהו לא"
   },
   {
    "daf": "12b",
@@ -1740,7 +1858,8 @@
    "n": 119,
    "hn": "קי\"ט",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.10.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.10.2",
+   "dhs": "משום פריצותא"
   },
   {
    "daf": "12b",
@@ -1754,7 +1873,8 @@
    "n": 120,
    "hn": "ק\"כ",
    "dafKey": "יב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_12b.12.1",
+   "dhs": "בשעת מתן"
   },
   {
    "daf": "13a",
@@ -1768,7 +1888,8 @@
    "n": 121,
    "hn": "קכ\"א",
    "dafKey": "יג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13a.10.1",
+   "dhs": "כשם שאין"
   },
   {
    "daf": "13b",
@@ -1782,7 +1903,8 @@
    "n": 122,
    "hn": "קכ\"ב",
    "dafKey": "יג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.2.1",
+   "dhs": "האשה שהביאה"
   },
   {
    "daf": "13b",
@@ -1796,7 +1918,8 @@
    "n": 123,
    "hn": "קכ\"ג",
    "dafKey": "יג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.5.1",
+   "dhs": "מלוה הכתובה"
   },
   {
    "daf": "13b",
@@ -1810,7 +1933,8 @@
    "n": 124,
    "hn": "קכ\"ד",
    "dafKey": "יג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.7.1",
+   "dhs": "א\"ר פפא"
   },
   {
    "daf": "13b",
@@ -1824,7 +1948,8 @@
    "n": 125,
    "hn": "קכ\"ה",
    "dafKey": "יג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.9.1",
+   "dhs": "אלא מיתת"
   },
   {
    "daf": "13b",
@@ -1838,7 +1963,8 @@
    "n": 126,
    "hn": "קכ\"ו",
    "dafKey": "יג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.11.1",
+   "dhs": "מדאמר רחמנא"
   },
   {
    "daf": "13b",
@@ -1852,7 +1978,8 @@
    "n": 127,
    "hn": "קכ\"ז",
    "dafKey": "יג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.12.1",
+   "dhs": "לכ\"ע בעשה"
   },
   {
    "daf": "13b",
@@ -1866,7 +1993,8 @@
    "n": 128,
    "hn": "קכ\"ח",
    "dafKey": "יג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.16.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_13b.16.1",
+   "dhs": "חדא דיבם"
   },
   {
    "daf": "14a",
@@ -1880,7 +2008,8 @@
    "n": 129,
    "hn": "קכ\"ט",
    "dafKey": "יד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.7.1",
+   "dhs": "הא נמי"
   },
   {
    "daf": "14a",
@@ -1894,7 +2023,8 @@
    "n": 130,
    "hn": "ק\"ל",
    "dafKey": "יד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.9.1",
+   "dhs": "ותהא אשת"
   },
   {
    "daf": "14a",
@@ -1908,7 +2038,8 @@
    "n": 131,
    "hn": "קל\"א",
    "dafKey": "יד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.10.1",
+   "dhs": "ותהא יבמה"
   },
   {
    "daf": "14a",
@@ -1922,7 +2053,8 @@
    "n": 132,
    "hn": "קל\"ב",
    "dafKey": "יד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.10.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.10.2",
+   "dhs": "אמר קרא"
   },
   {
    "daf": "14a",
@@ -1936,7 +2068,8 @@
    "n": 133,
    "hn": "קל\"ג",
    "dafKey": "יד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14a.14.1",
+   "dhs": "הא לאו"
   },
   {
    "daf": "14b",
@@ -1950,7 +2083,8 @@
    "n": 134,
    "hn": "קל\"ד",
    "dafKey": "יד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14b.3.1",
+   "dhs": "הואיל וכל"
   },
   {
    "daf": "14b",
@@ -1964,7 +2098,8 @@
    "n": 135,
    "hn": "קל\"ה",
    "dafKey": "יד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14b.6.1",
+   "dhs": "מוכר עצמו"
   },
   {
    "daf": "14b",
@@ -1978,7 +2113,8 @@
    "n": 136,
    "hn": "קל\"ו",
    "dafKey": "יד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14b.13.1",
+   "dhs": "לך ולא"
   },
   {
    "daf": "14b",
@@ -1992,7 +2128,8 @@
    "n": 137,
    "hn": "קל\"ז",
    "dafKey": "יד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14b.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_14b.15.1",
+   "dhs": "ולא אזנו"
   },
   {
    "daf": "15a",
@@ -2006,7 +2143,8 @@
    "n": 138,
    "hn": "קל\"ח",
    "dafKey": "טו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.1.1",
+   "dhs": "ואידך לג\"ש"
   },
   {
    "daf": "15a",
@@ -2020,7 +2158,8 @@
    "n": 139,
    "hn": "קל\"ט",
    "dafKey": "טו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.3.1",
+   "dhs": "ההוא [מאוזן]"
   },
   {
    "daf": "15a",
@@ -2034,7 +2173,8 @@
    "n": 140,
    "hn": "ק\"מ",
    "dafKey": "טו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.9.1",
+   "dhs": "ואידך"
   },
   {
    "daf": "15a",
@@ -2048,7 +2188,8 @@
    "n": 141,
    "hn": "קמ\"א",
    "dafKey": "טו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.12.1",
+   "dhs": "כי טוב"
   },
   {
    "daf": "15a",
@@ -2062,7 +2203,8 @@
    "n": 142,
    "hn": "קמ\"ב",
    "dafKey": "טו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.13.1",
+   "dhs": "ואידך אי"
   },
   {
    "daf": "15a",
@@ -2076,7 +2218,8 @@
    "n": 143,
    "hn": "קמ\"ג",
    "dafKey": "טו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.18.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15a.18.1",
+   "dhs": "איזהו דבר"
   },
   {
    "daf": "15b",
@@ -2090,7 +2233,8 @@
    "n": 144,
    "hn": "קמ\"ד",
    "dafKey": "טו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.2.1",
+   "dhs": "ומה מי"
   },
   {
    "daf": "15b",
@@ -2104,7 +2248,8 @@
    "n": 145,
    "hn": "קמ\"ה",
    "dafKey": "טו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.3.1",
+   "dhs": "אמאי קאמר"
   },
   {
    "daf": "15b",
@@ -2118,7 +2263,8 @@
    "n": 146,
    "hn": "קמ\"ו",
    "dafKey": "טו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.4.1",
+   "dhs": "אמר קרא"
   },
   {
    "daf": "15b",
@@ -2132,7 +2278,8 @@
    "n": 147,
    "hn": "קמ\"ז",
    "dafKey": "טו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.6.1",
+   "dhs": "ורבי יוסי"
   },
   {
    "daf": "15b",
@@ -2146,7 +2293,8 @@
    "n": 148,
    "hn": "קמ\"ח",
    "dafKey": "טו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.10.1",
+   "dhs": "אלא בסברא"
   },
   {
    "daf": "15b",
@@ -2160,7 +2308,8 @@
    "n": 149,
    "hn": "קמ\"ט",
    "dafKey": "טו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_15b.14.1",
+   "dhs": "ורבי האי"
   },
   {
    "daf": "16a",
@@ -2174,7 +2323,8 @@
    "n": 150,
    "hn": "ק\"נ",
    "dafKey": "טז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.1.1",
+   "dhs": "בעובד כוכבים"
   },
   {
    "daf": "16a",
@@ -2188,7 +2338,8 @@
    "n": 151,
    "hn": "קנ\"א",
    "dafKey": "טז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.7.1",
+   "dhs": "שכן מוציא"
   },
   {
    "daf": "16a",
@@ -2202,7 +2353,8 @@
    "n": 152,
    "hn": "קנ\"ב",
    "dafKey": "טז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.13.1",
+   "dhs": "לימא ליה"
   },
   {
    "daf": "16a",
@@ -2216,7 +2368,8 @@
    "n": 153,
    "hn": "קנ\"ג",
    "dafKey": "טז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.13.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.13.2",
+   "dhs": "א\"ר זאת"
   },
   {
    "daf": "16a",
@@ -2230,7 +2383,8 @@
    "n": 154,
    "hn": "קנ\"ד",
    "dafKey": "טז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.13.3"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.13.3",
+   "dhs": "והרב שמחל"
   },
   {
    "daf": "16a",
@@ -2244,7 +2398,8 @@
    "n": 155,
    "hn": "קנ\"ה",
    "dafKey": "טז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16a.14.1",
+   "dhs": "מיתה שמוציאה"
   },
   {
    "daf": "16b",
@@ -2258,7 +2413,8 @@
    "n": 156,
    "hn": "קנ\"ו",
    "dafKey": "טז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16b.4.1",
+   "dhs": "והא ארבעה"
   },
   {
    "daf": "16b",
@@ -2272,7 +2428,8 @@
    "n": 157,
    "hn": "קנ\"ז",
    "dafKey": "טז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16b.10.1",
+   "dhs": "מה לסימנין"
   },
   {
    "daf": "16b",
@@ -2286,7 +2443,8 @@
    "n": 158,
    "hn": "קנ\"ח",
    "dafKey": "טז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16b.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16b.14.1",
+   "dhs": "והתנחלתם אותם"
   },
   {
    "daf": "16b",
@@ -2300,7 +2458,8 @@
    "n": 159,
    "hn": "קנ\"ט",
    "dafKey": "טז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16b.19.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_16b.19.1",
+   "dhs": "אמה העבריה"
   },
   {
    "daf": "17a",
@@ -2314,7 +2473,8 @@
    "n": 160,
    "hn": "ק\"ס",
    "dafKey": "יז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17a.3.1",
+   "dhs": "חלה שלש"
   },
   {
    "daf": "17a",
@@ -2328,7 +2488,8 @@
    "n": 161,
    "hn": "קס\"א",
    "dafKey": "יז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17a.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17a.9.1",
+   "dhs": "ונילף ריקם"
   },
   {
    "daf": "17a",
@@ -2342,7 +2503,8 @@
    "n": 162,
    "hn": "קס\"ב",
    "dafKey": "יז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17a.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17a.12.1",
+   "dhs": "חדא דתפשתה"
   },
   {
    "daf": "17b",
@@ -2356,7 +2518,8 @@
    "n": 163,
    "hn": "קס\"ג",
    "dafKey": "יז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17b.1.1",
+   "dhs": "למר למעוטי"
   },
   {
    "daf": "17b",
@@ -2370,7 +2533,8 @@
    "n": 164,
    "hn": "קס\"ד",
    "dafKey": "יז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17b.6.1",
+   "dhs": "מרבה אני"
   },
   {
    "daf": "17b",
@@ -2384,7 +2548,8 @@
    "n": 165,
    "hn": "קס\"ה",
    "dafKey": "יז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17b.16.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17b.16.1",
+   "dhs": "חליפי עבודת"
   },
   {
    "daf": "17b",
@@ -2398,7 +2563,8 @@
    "n": 166,
    "hn": "קס\"ו",
    "dafKey": "יז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17b.17.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_17b.17.1",
+   "dhs": "[אלא מדרבנן"
   },
   {
    "daf": "18a",
@@ -2412,7 +2578,8 @@
    "n": 167,
    "hn": "קס\"ז",
    "dafKey": "יח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18a.1.1",
+   "dhs": "כאן שהורתו"
   },
   {
    "daf": "18a",
@@ -2426,7 +2593,8 @@
    "n": 168,
    "hn": "קס\"ח",
    "dafKey": "יח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18a.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18a.9.1",
+   "dhs": "כאן בגניבה"
   },
   {
    "daf": "18a",
@@ -2440,7 +2608,8 @@
    "n": 169,
    "hn": "קס\"ט",
    "dafKey": "יח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18a.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18a.13.1",
+   "dhs": "אמר אביי"
   },
   {
    "daf": "18b",
@@ -2454,7 +2623,8 @@
    "n": 170,
    "hn": "ק\"ע",
    "dafKey": "יח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18b.1.1",
+   "dhs": "כיון שפירש"
   },
   {
    "daf": "18b",
@@ -2468,7 +2638,8 @@
    "n": 171,
    "hn": "קע\"א",
    "dafKey": "יח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18b.2.1",
+   "dhs": "ר' אליעזר"
   },
   {
    "daf": "18b",
@@ -2482,7 +2653,8 @@
    "n": 172,
    "hn": "קע\"ב",
    "dafKey": "יח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18b.4.1",
+   "dhs": "זבוני הוא"
   },
   {
    "daf": "18b",
@@ -2496,7 +2668,8 @@
    "n": 173,
    "hn": "קע\"ג",
    "dafKey": "יח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_18b.10.1",
+   "dhs": "בשלמא אירוסין"
   },
   {
    "daf": "19a",
@@ -2510,7 +2683,8 @@
    "n": 174,
    "hn": "קע\"ד",
    "dafKey": "יט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.2.1",
+   "dhs": "במאי מוקי"
   },
   {
    "daf": "19a",
@@ -2524,7 +2698,8 @@
    "n": 175,
    "hn": "קע\"ה",
    "dafKey": "יט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.4.1",
+   "dhs": "איש פרט"
   },
   {
    "daf": "19a",
@@ -2538,7 +2713,8 @@
    "n": 176,
    "hn": "קע\"ו",
    "dafKey": "יט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.6.1",
+   "dhs": "ומדאורייתא חזיא"
   },
   {
    "daf": "19a",
@@ -2552,7 +2728,8 @@
    "n": 177,
    "hn": "קע\"ז",
    "dafKey": "יט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.7.1",
+   "dhs": "תרתי -"
   },
   {
    "daf": "19a",
@@ -2566,7 +2743,8 @@
    "n": 178,
    "hn": "קע\"ח",
    "dafKey": "יט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.7.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.7.2",
+   "dhs": "תרתי"
   },
   {
    "daf": "19a",
@@ -2580,7 +2758,8 @@
    "n": 179,
    "hn": "קע\"ט",
    "dafKey": "יט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.13.1",
+   "dhs": "אומר אדם"
   },
   {
    "daf": "19a",
@@ -2594,7 +2773,8 @@
    "n": 180,
    "hn": "ק\"פ",
    "dafKey": "יט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.14.1",
+   "dhs": "וכי משייר"
   },
   {
    "daf": "19a",
@@ -2608,7 +2788,8 @@
    "n": 181,
    "hn": "קפ\"א",
    "dafKey": "יט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.15.1",
+   "dhs": "במלוה שיש"
   },
   {
    "daf": "19a",
@@ -2622,7 +2803,8 @@
    "n": 182,
    "hn": "קפ\"ב",
    "dafKey": "יט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.15.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19a.15.2",
+   "dhs": "לאו לקידושין"
   },
   {
    "daf": "19b",
@@ -2636,7 +2818,8 @@
    "n": 183,
    "hn": "קפ\"ג",
    "dafKey": "יט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19b.3.1",
+   "dhs": "משל למאן"
   },
   {
    "daf": "19b",
@@ -2650,7 +2833,8 @@
    "n": 184,
    "hn": "קפ\"ד",
    "dafKey": "יט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19b.4.1",
+   "dhs": "משל לרבי"
   },
   {
    "daf": "19b",
@@ -2664,7 +2848,8 @@
    "n": 185,
    "hn": "קפ\"ה",
    "dafKey": "יט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_19b.13.1",
+   "dhs": "לרבי מאיר"
   },
   {
    "daf": "20a",
@@ -2678,7 +2863,8 @@
    "n": 186,
    "hn": "קפ\"ו",
    "dafKey": "כ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.6.1",
+   "dhs": "שאינו יוצא"
   },
   {
    "daf": "20a",
@@ -2692,7 +2878,8 @@
    "n": 187,
    "hn": "קפ\"ז",
    "dafKey": "כ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.15.1",
+   "dhs": "כל הקונה"
   },
   {
    "daf": "20a",
@@ -2706,7 +2893,8 @@
    "n": 188,
    "hn": "קפ\"ח",
    "dafKey": "כ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.16.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.16.1",
+   "dhs": "אבקה של"
   },
   {
    "daf": "20a",
@@ -2720,7 +2908,8 @@
    "n": 189,
    "hn": "קפ\"ט",
    "dafKey": "כ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.20.1",
+   "dhs": "הא קמ\"ל"
   },
   {
    "daf": "20a",
@@ -2734,7 +2923,8 @@
    "n": 190,
    "hn": "ק\"צ",
    "dafKey": "כ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.22.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.22.1",
+   "dhs": "לעקר זה עבודת כוכבים"
   },
   {
    "daf": "20a",
@@ -2748,7 +2938,8 @@
    "n": 191,
    "hn": "קצ\"א",
    "dafKey": "כ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.22.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20a.22.2",
+   "dhs": "לעקר זה עבודת כוכבים"
   },
   {
    "daf": "20b",
@@ -2762,7 +2953,8 @@
    "n": 192,
    "hn": "קצ\"ב",
    "dafKey": "כ:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20b.5.1",
+   "dhs": "עבד ד'"
   },
   {
    "daf": "20b",
@@ -2776,7 +2968,8 @@
    "n": 193,
    "hn": "קצ\"ג",
    "dafKey": "כ:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20b.13.1",
+   "dhs": "גאולתו גאולתו"
   },
   {
    "daf": "20b",
@@ -2790,7 +2983,8 @@
    "n": 194,
    "hn": "קצ\"ד",
    "dafKey": "כ:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20b.19.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_20b.19.1",
+   "dhs": "איתיביה"
   },
   {
    "daf": "21a",
@@ -2804,7 +2998,8 @@
    "n": 195,
    "hn": "קצ\"ה",
    "dafKey": "כא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21a.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21a.8.1",
+   "dhs": "משום דאיכא"
   },
   {
    "daf": "21a",
@@ -2818,7 +3013,8 @@
    "n": 196,
    "hn": "קצ\"ו",
    "dafKey": "כא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21a.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21a.15.1",
+   "dhs": "מאי בכל"
   },
   {
    "daf": "21b",
@@ -2832,7 +3028,8 @@
    "n": 197,
    "hn": "קצ\"ז",
    "dafKey": "כא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21b.1.1",
+   "dhs": "לקובעו חובה"
   },
   {
    "daf": "21b",
@@ -2846,7 +3043,8 @@
    "n": 198,
    "hn": "קצ\"ח",
    "dafKey": "כא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21b.2.1",
+   "dhs": "ההוא לקרוב"
   },
   {
    "daf": "21b",
@@ -2860,7 +3058,8 @@
    "n": 199,
    "hn": "קצ\"ט",
    "dafKey": "כא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21b.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21b.20.1",
+   "dhs": "בביאה שניה"
   },
   {
    "daf": "21b",
@@ -2874,7 +3073,8 @@
    "n": 200,
    "hn": "ר'",
    "dafKey": "כא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21b.21.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_21b.21.1",
+   "dhs": "אשת אפילו"
   },
   {
    "daf": "22a",
@@ -2888,7 +3088,8 @@
    "n": 201,
    "hn": "ר\"א",
    "dafKey": "כב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22a.2.1",
+   "dhs": "ה\"ג שלא"
   },
   {
    "daf": "22a",
@@ -2902,7 +3103,8 @@
    "n": 202,
    "hn": "ר\"ב",
    "dafKey": "כב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22a.2.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22a.2.2",
+   "dhs": "שלא ילחצנה"
   },
   {
    "daf": "22b",
@@ -2916,7 +3118,8 @@
    "n": 203,
    "hn": "ר\"ג",
    "dafKey": "כב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22b.4.1",
+   "dhs": "כמין חומר"
   },
   {
    "daf": "22b",
@@ -2930,7 +3133,8 @@
    "n": 204,
    "hn": "ר\"ד",
    "dafKey": "כב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22b.4.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22b.4.2",
+   "dhs": "מה נשתנה"
   },
   {
    "daf": "22b",
@@ -2944,7 +3148,8 @@
    "n": 205,
    "hn": "ר\"ה",
    "dafKey": "כב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22b.8.1",
+   "dhs": "[ת\"ל לעולם"
   },
   {
    "daf": "22b",
@@ -2958,7 +3163,8 @@
    "n": 206,
    "hn": "ר\"ו",
    "dafKey": "כב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22b.19.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_22b.19.1",
+   "dhs": "איכא דאמרי"
   },
   {
    "daf": "23a",
@@ -2972,7 +3178,8 @@
    "n": 207,
    "hn": "ר\"ז",
    "dafKey": "כג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23a.2.1",
+   "dhs": "ואיכא דאמרי"
   },
   {
    "daf": "23a",
@@ -2986,7 +3193,8 @@
    "n": 208,
    "hn": "ר\"ח",
    "dafKey": "כג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23a.5.1",
+   "dhs": "[והא קמ\"ל"
   },
   {
    "daf": "23a",
@@ -3000,7 +3208,8 @@
    "n": 209,
    "hn": "ר\"ט",
    "dafKey": "כג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23a.14.1",
+   "dhs": "ר' שמעון"
   },
   {
    "daf": "23b",
@@ -3014,7 +3223,8 @@
    "n": 210,
    "hn": "ר\"י",
    "dafKey": "כג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23b.1.1",
+   "dhs": "מהו שיעשה"
   },
   {
    "daf": "23b",
@@ -3028,7 +3238,8 @@
    "n": 211,
    "hn": "רי\"א",
    "dafKey": "כג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23b.3.1",
+   "dhs": "דאמר רב"
   },
   {
    "daf": "23b",
@@ -3042,7 +3253,8 @@
    "n": 212,
    "hn": "רי\"ב",
    "dafKey": "כג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23b.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_23b.9.1",
+   "dhs": "ורבי אלעזר"
   },
   {
    "daf": "24a",
@@ -3056,7 +3268,8 @@
    "n": 213,
    "hn": "רי\"ג",
    "dafKey": "כד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24a.2.1",
+   "dhs": "ה\"ג רש\"י"
   },
   {
    "daf": "24a",
@@ -3070,7 +3283,8 @@
    "n": 214,
    "hn": "רי\"ד",
    "dafKey": "כד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24a.6.1",
+   "dhs": "תנא יוצא"
   },
   {
    "daf": "24b",
@@ -3084,7 +3298,8 @@
    "n": 215,
    "hn": "רט\"ו",
    "dafKey": "כד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.7.1",
+   "dhs": "הואיל ומדרש"
   },
   {
    "daf": "24b",
@@ -3098,7 +3313,8 @@
    "n": 216,
    "hn": "רט\"ז",
    "dafKey": "כד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.10.1",
+   "dhs": "תרנגול שהושיט"
   },
   {
    "daf": "24b",
@@ -3112,7 +3328,8 @@
    "n": 217,
    "hn": "רי\"ז",
    "dafKey": "כד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.16.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.16.1",
+   "dhs": "מיבעי ליה"
   },
   {
    "daf": "24b",
@@ -3126,7 +3343,8 @@
    "n": 218,
    "hn": "רי\"ח",
    "dafKey": "כד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.18.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.18.1",
+   "dhs": "סמויה וחטטה"
   },
   {
    "daf": "24b",
@@ -3140,7 +3358,8 @@
    "n": 219,
    "hn": "רי\"ט",
    "dafKey": "כד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.19.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.19.1",
+   "dhs": "[ותנא תונא"
   },
   {
    "daf": "24b",
@@ -3154,7 +3373,8 @@
    "n": 220,
    "hn": "ר\"כ",
    "dafKey": "כד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_24b.20.1",
+   "dhs": "ת\"ל מן"
   },
   {
    "daf": "25a",
@@ -3168,7 +3388,8 @@
    "n": 221,
    "hn": "רכ\"א",
    "dafKey": "כה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25a.3.1",
+   "dhs": "המנונא קרנונא"
   },
   {
    "daf": "25a",
@@ -3182,7 +3403,8 @@
    "n": 222,
    "hn": "רכ\"ב",
    "dafKey": "כה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25a.14.1",
+   "dhs": "ר' מדמה"
   },
   {
    "daf": "25a",
@@ -3196,7 +3418,8 @@
    "n": 223,
    "hn": "רכ\"ג",
    "dafKey": "כה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25a.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25a.20.1",
+   "dhs": "כל הראוי"
   },
   {
    "daf": "25b",
@@ -3210,7 +3433,8 @@
    "n": 224,
    "hn": "רכ\"ד",
    "dafKey": "כה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25b.3.1",
+   "dhs": "בהמה גסה נקנית במסירה"
   },
   {
    "daf": "25b",
@@ -3224,7 +3448,8 @@
    "n": 225,
    "hn": "רכ\"ה",
    "dafKey": "כה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25b.3.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25b.3.2",
+   "dhs": "בהמה גסה נקנית במסירה"
   },
   {
    "daf": "25b",
@@ -3238,7 +3463,8 @@
    "n": 226,
    "hn": "רכ\"ו",
    "dafKey": "כה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_25b.6.1",
+   "dhs": "שמעת מינה"
   },
   {
    "daf": "26a",
@@ -3252,7 +3478,8 @@
    "n": 227,
    "hn": "רכ\"ז",
    "dafKey": "כו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.1.1",
+   "dhs": "א\"נ בחבילי"
   },
   {
    "daf": "26a",
@@ -3266,7 +3493,8 @@
    "n": 228,
    "hn": "רכ\"ח",
    "dafKey": "כו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.4.1",
+   "dhs": "אמר קרא"
   },
   {
    "daf": "26a",
@@ -3280,7 +3508,8 @@
    "n": 229,
    "hn": "רכ\"ט",
    "dafKey": "כו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.8.1",
+   "dhs": "על הנייר"
   },
   {
    "daf": "26a",
@@ -3294,7 +3523,8 @@
    "n": 230,
    "hn": "ר\"ל",
    "dafKey": "כו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.9.1",
+   "dhs": "ולמה כתב"
   },
   {
    "daf": "26a",
@@ -3308,7 +3538,8 @@
    "n": 231,
    "hn": "רל\"א",
    "dafKey": "כו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.14.1",
+   "dhs": "קרקע כל"
   },
   {
    "daf": "26a",
@@ -3322,7 +3553,8 @@
    "n": 232,
    "hn": "רל\"ב",
    "dafKey": "כו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.14.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26a.14.2",
+   "dhs": "ובוידוי"
   },
   {
    "daf": "26b",
@@ -3336,7 +3568,8 @@
    "n": 233,
    "hn": "רל\"ג",
    "dafKey": "כו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26b.1.1",
+   "dhs": "ולכתוב עליה"
   },
   {
    "daf": "26b",
@@ -3350,7 +3583,8 @@
    "n": 234,
    "hn": "רל\"ד",
    "dafKey": "כו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26b.8.1",
+   "dhs": "ה\"ג אלא"
   },
   {
    "daf": "26b",
@@ -3364,7 +3598,8 @@
    "n": 235,
    "hn": "רל\"ה",
    "dafKey": "כו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26b.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_26b.11.1",
+   "dhs": "מעשה ברבן"
   },
   {
    "daf": "27a",
@@ -3378,7 +3613,8 @@
    "n": 236,
    "hn": "רל\"ו",
    "dafKey": "כז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27a.1.1",
+   "dhs": "נתון ליהושע"
   },
   {
    "daf": "27a",
@@ -3392,7 +3628,8 @@
    "n": 237,
    "hn": "רל\"ז",
    "dafKey": "כז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27a.1.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27a.1.2",
+   "dhs": "ומקומו מושכר"
   },
   {
    "daf": "27a",
@@ -3406,7 +3643,8 @@
    "n": 238,
    "hn": "רל\"ח",
    "dafKey": "כז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27a.2.1",
+   "dhs": "חוזר בשטר"
   },
   {
    "daf": "27b",
@@ -3420,7 +3658,8 @@
    "n": 239,
    "hn": "רל\"ט",
    "dafKey": "כז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.1.1",
+   "dhs": "במה דברים"
   },
   {
    "daf": "27b",
@@ -3434,7 +3673,8 @@
    "n": 240,
    "hn": "ר\"מ",
    "dafKey": "כז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.2.1",
+   "dhs": "עשר בהמות"
   },
   {
    "daf": "27b",
@@ -3448,7 +3688,8 @@
    "n": 241,
    "hn": "רמ\"א",
    "dafKey": "כז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.6.1",
+   "dhs": "אמן מאיש"
   },
   {
    "daf": "27b",
@@ -3462,7 +3703,8 @@
    "n": 242,
    "hn": "רמ\"ב",
    "dafKey": "כז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.8.1",
+   "dhs": "אלא דקני"
   },
   {
    "daf": "27b",
@@ -3476,7 +3718,8 @@
    "n": 243,
    "hn": "רמ\"ג",
    "dafKey": "כז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.9.1",
+   "dhs": "ונקה האיש"
   },
   {
    "daf": "27b",
@@ -3490,7 +3733,8 @@
    "n": 244,
    "hn": "רמ\"ד",
    "dafKey": "כז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_27b.10.1",
+   "dhs": "הכי גרסי'"
   },
   {
    "daf": "28a",
@@ -3504,7 +3748,8 @@
    "n": 245,
    "hn": "רמ\"ה",
    "dafKey": "כח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.2.1",
+   "dhs": "ספק מנלן"
   },
   {
    "daf": "28a",
@@ -3518,7 +3763,8 @@
    "n": 246,
    "hn": "רמ\"ו",
    "dafKey": "כח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.3.1",
+   "dhs": "נאמרה שבועה"
   },
   {
    "daf": "28a",
@@ -3532,7 +3778,8 @@
    "n": 247,
    "hn": "רמ\"ז",
    "dafKey": "כח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.5.1",
+   "dhs": "הקורא לחבירו"
   },
   {
    "daf": "28a",
@@ -3546,7 +3793,8 @@
    "n": 248,
    "hn": "רמ\"ח",
    "dafKey": "כח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.9.1",
+   "dhs": "כל הנעשה"
   },
   {
    "daf": "28a",
@@ -3560,7 +3808,8 @@
    "n": 249,
    "hn": "רמ\"ט",
    "dafKey": "כח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.9.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.9.2",
+   "dhs": "כיצד החליף"
   },
   {
    "daf": "28a",
@@ -3574,7 +3823,8 @@
    "n": 250,
    "hn": "ר\"נ",
    "dafKey": "כח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.10.1",
+   "dhs": "ש\"מ מטבע"
   },
   {
    "daf": "28a",
@@ -3588,7 +3838,8 @@
    "n": 251,
    "hn": "רנ\"א",
    "dafKey": "כח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.10.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28a.10.2",
+   "dhs": "הכי קאמר"
   },
   {
    "daf": "28b",
@@ -3602,7 +3853,8 @@
    "n": 252,
    "hn": "רנ\"ב",
    "dafKey": "כח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_28b.5.1",
+   "dhs": "שמא יאמר"
   },
   {
    "daf": "29a",
@@ -3616,7 +3868,8 @@
    "n": 253,
    "hn": "רנ\"ג",
    "dafKey": "כט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29a.2.1",
+   "dhs": "משכו במאתים"
   },
   {
    "daf": "29a",
@@ -3630,7 +3883,8 @@
    "n": 254,
    "hn": "רנ\"ד",
    "dafKey": "כט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29a.5.1",
+   "dhs": "אטו הדיוט"
   },
   {
    "daf": "29a",
@@ -3644,7 +3898,8 @@
    "n": 255,
    "hn": "רנ\"ה",
    "dafKey": "כט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29a.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29a.12.1",
+   "dhs": "אותו ולא"
   },
   {
    "daf": "29a",
@@ -3658,7 +3913,8 @@
    "n": 256,
    "hn": "רנ\"ו",
    "dafKey": "כט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29a.17.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29a.17.1",
+   "dhs": "ואיהי מנא"
   },
   {
    "daf": "29b",
@@ -3672,7 +3928,8 @@
    "n": 257,
    "hn": "רנ\"ז",
    "dafKey": "כט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29b.2.1",
+   "dhs": "ואזיל כהן"
   },
   {
    "daf": "29b",
@@ -3686,7 +3943,8 @@
    "n": 258,
    "hn": "רנ\"ח",
    "dafKey": "כט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29b.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_29b.15.1",
+   "dhs": "הא לן"
   },
   {
    "daf": "30a",
@@ -3700,7 +3958,8 @@
    "n": 259,
    "hn": "רנ\"ט",
    "dafKey": "ל.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30a.10.1",
+   "dhs": "לא צריכא"
   },
   {
    "daf": "30a",
@@ -3714,7 +3973,8 @@
    "n": 260,
    "hn": "ר\"ס",
    "dafKey": "ל.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30a.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30a.11.1",
+   "dhs": "נקראו סופרים"
   },
   {
    "daf": "30a",
@@ -3728,7 +3988,8 @@
    "n": 261,
    "hn": "רס\"א",
    "dafKey": "ל.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30a.14.1",
+   "dhs": "[יתר עליו"
   },
   {
    "daf": "30a",
@@ -3742,7 +4003,8 @@
    "n": 262,
    "hn": "רס\"ב",
    "dafKey": "ל.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30a.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30a.15.1",
+   "dhs": "אל תגמגם"
   },
   {
    "daf": "30b",
@@ -3756,7 +4018,8 @@
    "n": 263,
    "hn": "רס\"ג",
    "dafKey": "ל:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30b.8.1",
+   "dhs": "אם ברזל"
   },
   {
    "daf": "30b",
@@ -3770,7 +4033,8 @@
    "n": 264,
    "hn": "רס\"ד",
    "dafKey": "ל:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30b.17.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_30b.17.1",
+   "dhs": "שיש רשות"
   },
   {
    "daf": "31a",
@@ -3784,7 +4048,8 @@
    "n": 265,
    "hn": "רס\"ה",
    "dafKey": "לא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.2.1",
+   "dhs": "כל העובר"
   },
   {
    "daf": "31a",
@@ -3798,7 +4063,8 @@
    "n": 266,
    "hn": "רס\"ו",
    "dafKey": "לא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.7.1",
+   "dhs": "כבד את"
   },
   {
    "daf": "31a",
@@ -3812,7 +4078,8 @@
    "n": 267,
    "hn": "רס\"ז",
    "dafKey": "לא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.8.1",
+   "dhs": "והיה מפתח"
   },
   {
    "daf": "31a",
@@ -3826,7 +4093,8 @@
    "n": 268,
    "hn": "רס\"ח",
    "dafKey": "לא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.11.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.11.1",
+   "dhs": "גדול המצווה"
   },
   {
    "daf": "31a",
@@ -3840,7 +4108,8 @@
    "n": 269,
    "hn": "רס\"ט",
    "dafKey": "לא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.12.1",
+   "dhs": "דלא מפקידנא"
   },
   {
    "daf": "31a",
@@ -3854,7 +4123,8 @@
    "n": 270,
    "hn": "ר\"ע",
    "dafKey": "לא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.13.1",
+   "dhs": "ובאת אמו"
   },
   {
    "daf": "31a",
@@ -3868,7 +4138,8 @@
    "n": 271,
    "hn": "רע\"א",
    "dafKey": "לא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.14.1",
+   "dhs": "יש מאכיל"
   },
   {
    "daf": "31a",
@@ -3882,7 +4153,8 @@
    "n": 272,
    "hn": "רע\"ב",
    "dafKey": "לא.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.14.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31a.14.2",
+   "dhs": "וטורדו מן"
   },
   {
    "daf": "31b",
@@ -3896,7 +4168,8 @@
    "n": 273,
    "hn": "רע\"ג",
    "dafKey": "לא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31b.3.1",
+   "dhs": "איסתייא מילתא"
   },
   {
    "daf": "31b",
@@ -3910,7 +4183,8 @@
    "n": 274,
    "hn": "רע\"ד",
    "dafKey": "לא:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_31b.5.1",
+   "dhs": "ר' טרפון"
   },
   {
    "daf": "32a",
@@ -3924,7 +4198,8 @@
    "n": 275,
    "hn": "רע\"ה",
    "dafKey": "לב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32a.1.1",
+   "dhs": "רב יהודה"
   },
   {
    "daf": "32a",
@@ -3938,7 +4213,8 @@
    "n": 276,
    "hn": "רע\"ו",
    "dafKey": "לב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32a.1.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32a.1.2",
+   "dhs": "אורו ליה"
   },
   {
    "daf": "32a",
@@ -3952,7 +4228,8 @@
    "n": 277,
    "hn": "רע\"ז",
    "dafKey": "לב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32a.7.1",
+   "dhs": "דמחיל ליה"
   },
   {
    "daf": "32a",
@@ -3966,7 +4243,8 @@
    "n": 278,
    "hn": "רע\"ח",
    "dafKey": "לב.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32a.10.1",
+   "dhs": "ותיפוק לי"
   },
   {
    "daf": "32b",
@@ -3980,7 +4258,8 @@
    "n": 279,
    "hn": "רע\"ט",
    "dafKey": "לב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32b.8.1",
+   "dhs": "זקן אשמאי"
   },
   {
    "daf": "32b",
@@ -3994,7 +4273,8 @@
    "n": 280,
    "hn": "ר\"פ",
    "dafKey": "לב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32b.8.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32b.8.2",
+   "dhs": "ואין זקן"
   },
   {
    "daf": "32b",
@@ -4008,7 +4288,8 @@
    "n": 281,
    "hn": "רפ\"א",
    "dafKey": "לב:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32b.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_32b.14.1",
+   "dhs": "מאי שנא"
   },
   {
    "daf": "33a",
@@ -4022,7 +4303,8 @@
    "n": 282,
    "hn": "רפ\"ב",
    "dafKey": "לג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33a.3.1",
+   "dhs": "אין בעלי"
   },
   {
    "daf": "33a",
@@ -4036,7 +4318,8 @@
    "n": 283,
    "hn": "רפ\"ג",
    "dafKey": "לג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33a.6.1",
+   "dhs": "שני חומשין"
   },
   {
    "daf": "33a",
@@ -4050,7 +4333,8 @@
    "n": 284,
    "hn": "רפ\"ד",
    "dafKey": "לג.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33a.7.1",
+   "dhs": "[שמא בהן"
   },
   {
    "daf": "33b",
@@ -4064,7 +4348,8 @@
    "n": 285,
    "hn": "רפ\"ה",
    "dafKey": "לג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33b.1.1",
+   "dhs": "אין תלמיד"
   },
   {
    "daf": "33b",
@@ -4078,7 +4363,8 @@
    "n": 286,
    "hn": "רפ\"ו",
    "dafKey": "לג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33b.1.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33b.1.2",
+   "dhs": "[אין ת\"ח"
   },
   {
    "daf": "33b",
@@ -4092,7 +4378,8 @@
    "n": 287,
    "hn": "רפ\"ז",
    "dafKey": "לג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_33b.4.1",
+   "dhs": "ואימא מורא"
   },
   {
    "daf": "34a",
@@ -4106,7 +4393,8 @@
    "n": 288,
    "hn": "רפ\"ח",
    "dafKey": "לד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34a.1.1",
+   "dhs": "ותפילין וציצית"
   },
   {
    "daf": "34a",
@@ -4120,7 +4408,8 @@
    "n": 289,
    "hn": "רפ\"ט",
    "dafKey": "לד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34a.2.1",
+   "dhs": "מעקה אבידה"
   },
   {
    "daf": "34a",
@@ -4134,7 +4423,8 @@
    "n": 290,
    "hn": "ר\"צ",
    "dafKey": "לד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34a.5.1",
+   "dhs": "בכל מערבין"
   },
   {
    "daf": "34a",
@@ -4148,7 +4438,8 @@
    "n": 291,
    "hn": "רצ\"א",
    "dafKey": "לד.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34a.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34a.8.1",
+   "dhs": "גברא בעי"
   },
   {
    "daf": "34b",
@@ -4162,7 +4453,8 @@
    "n": 292,
    "hn": "רצ\"ב",
    "dafKey": "לד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.1.1",
+   "dhs": "סד\"א נילף"
   },
   {
    "daf": "34b",
@@ -4176,7 +4468,8 @@
    "n": 293,
    "hn": "רצ\"ג",
    "dafKey": "לד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.3.1",
+   "dhs": "ה\"א נילף"
   },
   {
    "daf": "34b",
@@ -4190,7 +4483,8 @@
    "n": 294,
    "hn": "רצ\"ד",
    "dafKey": "לד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.4.1",
+   "dhs": "אשה בעלה"
   },
   {
    "daf": "34b",
@@ -4204,7 +4498,8 @@
    "n": 295,
    "hn": "רצ\"ה",
    "dafKey": "לד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.8.1",
+   "dhs": "ואי כתב"
   },
   {
    "daf": "34b",
@@ -4218,7 +4513,8 @@
    "n": 296,
    "hn": "רצ\"ו",
    "dafKey": "לד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.10.1",
+   "dhs": "ולא בעי"
   },
   {
    "daf": "34b",
@@ -4232,7 +4528,8 @@
    "n": 297,
    "hn": "רצ\"ז",
    "dafKey": "לד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.10.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.10.2",
+   "dhs": "ואנא אמינא"
   },
   {
    "daf": "34b",
@@ -4246,7 +4543,8 @@
    "n": 298,
    "hn": "רצ\"ח",
    "dafKey": "לד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.12.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.12.2",
+   "dhs": "נשים חייבות"
   },
   {
    "daf": "34b",
@@ -4260,7 +4558,8 @@
    "n": 299,
    "hn": "רצ\"ט",
    "dafKey": "לד:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_34b.13.1",
+   "dhs": "ונילף מת\"ת"
   },
   {
    "daf": "35a",
@@ -4274,7 +4573,8 @@
    "n": 300,
    "hn": "ש'",
    "dafKey": "לה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.2.1",
+   "dhs": "ולרבי יוחנן"
   },
   {
    "daf": "35a",
@@ -4288,7 +4588,8 @@
    "n": 301,
    "hn": "ש\"א",
    "dafKey": "לה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.5.1",
+   "dhs": "מכלל דמ\"ע"
   },
   {
    "daf": "35a",
@@ -4302,7 +4603,8 @@
    "n": 302,
    "hn": "ש\"ב",
    "dafKey": "לה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.6.1",
+   "dhs": "אלא למ\"ד"
   },
   {
    "daf": "35a",
@@ -4316,7 +4618,8 @@
    "n": 303,
    "hn": "ש\"ג",
    "dafKey": "לה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.7.1",
+   "dhs": "משום דהוי"
   },
   {
    "daf": "35a",
@@ -4330,7 +4633,8 @@
    "n": 304,
    "hn": "ש\"ד",
    "dafKey": "לה.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35a.10.1",
+   "dhs": "משום כפרה"
   },
   {
    "daf": "35b",
@@ -4344,7 +4648,8 @@
    "n": 305,
    "hn": "ש\"ה",
    "dafKey": "לה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.1.1",
+   "dhs": "איש דבר"
   },
   {
    "daf": "35b",
@@ -4358,7 +4663,8 @@
    "n": 306,
    "hn": "ש\"ו",
    "dafKey": "לה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.6.1",
+   "dhs": "וכי כתב"
   },
   {
    "daf": "35b",
@@ -4372,7 +4678,8 @@
    "n": 307,
    "hn": "ש\"ז",
    "dafKey": "לה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.6.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.6.2",
+   "dhs": "הרי הוא"
   },
   {
    "daf": "35b",
@@ -4386,7 +4693,8 @@
    "n": 308,
    "hn": "ש\"ח",
    "dafKey": "לה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.7.1",
+   "dhs": "להשחתה לא"
   },
   {
    "daf": "35b",
@@ -4400,7 +4708,8 @@
    "n": 309,
    "hn": "ש\"ט",
    "dafKey": "לה:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_35b.12.1",
+   "dhs": "א\"כ ליכתוב"
   },
   {
    "daf": "36a",
@@ -4414,7 +4723,8 @@
    "n": 310,
    "hn": "ש\"י",
    "dafKey": "לו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.4.1",
+   "dhs": "אי לאו"
   },
   {
    "daf": "36a",
@@ -4428,7 +4738,8 @@
    "n": 311,
    "hn": "שי\"א",
    "dafKey": "לו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.8.1",
+   "dhs": "א\"כ ליכתוב"
   },
   {
    "daf": "36a",
@@ -4442,7 +4753,8 @@
    "n": 312,
    "hn": "שי\"ב",
    "dafKey": "לו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.10.1",
+   "dhs": "תפילין גופייהו"
   },
   {
    "daf": "36a",
@@ -4456,7 +4768,8 @@
    "n": 313,
    "hn": "שי\"ג",
    "dafKey": "לו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.15.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.15.1",
+   "dhs": "הסמיכות והתנופות"
   },
   {
    "daf": "36a",
@@ -4470,7 +4783,8 @@
    "n": 314,
    "hn": "שי\"ד",
    "dafKey": "לו.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.15.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36a.15.2",
+   "dhs": "הקבלות והזאות"
   },
   {
    "daf": "36b",
@@ -4484,7 +4798,8 @@
    "n": 315,
    "hn": "שט\"ו",
    "dafKey": "לו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.2.1",
+   "dhs": "אי דפרה"
   },
   {
    "daf": "36b",
@@ -4498,7 +4813,8 @@
    "n": 316,
    "hn": "שט\"ז",
    "dafKey": "לו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.2.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.2.2",
+   "dhs": "אי דפנים"
   },
   {
    "daf": "36b",
@@ -4512,7 +4828,8 @@
    "n": 317,
    "hn": "שי\"ז",
    "dafKey": "לו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.3.1",
+   "dhs": "ומה בן"
   },
   {
    "daf": "36b",
@@ -4526,7 +4843,8 @@
    "n": 318,
    "hn": "שי\"ח",
    "dafKey": "לו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.4.1",
+   "dhs": "חוץ ממנחת"
   },
   {
    "daf": "36b",
@@ -4540,7 +4858,8 @@
    "n": 319,
    "hn": "שי\"ט",
    "dafKey": "לו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.4.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.4.2",
+   "dhs": "כל מצוה"
   },
   {
    "daf": "36b",
@@ -4554,7 +4873,8 @@
    "n": 320,
    "hn": "ש\"כ",
    "dafKey": "לו:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_36b.6.1",
+   "dhs": "מכניס כהן"
   },
   {
    "daf": "37a",
@@ -4568,7 +4888,8 @@
    "n": 321,
    "hn": "שכ\"א",
    "dafKey": "לז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.1.1",
+   "dhs": "כל מצוה"
   },
   {
    "daf": "37a",
@@ -4582,7 +4903,8 @@
    "n": 322,
    "hn": "שכ\"ב",
    "dafKey": "לז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.2.1",
+   "dhs": "הרי תפילין"
   },
   {
    "daf": "37a",
@@ -4596,7 +4918,8 @@
    "n": 323,
    "hn": "שכ\"ג",
    "dafKey": "לז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.6.1",
+   "dhs": "ה\"ג צא"
   },
   {
    "daf": "37a",
@@ -4610,7 +4933,8 @@
    "n": 324,
    "hn": "שכ\"ד",
    "dafKey": "לז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.13.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.13.1",
+   "dhs": "ללמדך שכ\"מ"
   },
   {
    "daf": "37a",
@@ -4624,7 +4948,8 @@
    "n": 325,
    "hn": "שכ\"ה",
    "dafKey": "לז.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37a.14.1",
+   "dhs": "והרי שבת"
   },
   {
    "daf": "37b",
@@ -4638,7 +4963,8 @@
    "n": 326,
    "hn": "שכ\"ו",
    "dafKey": "לז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.3.1",
+   "dhs": "במאי קמיפלגי"
   },
   {
    "daf": "37b",
@@ -4652,7 +4978,8 @@
    "n": 327,
    "hn": "שכ\"ז",
    "dafKey": "לז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.3.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.3.2",
+   "dhs": "לא קירבו"
   },
   {
    "daf": "37b",
@@ -4666,7 +4993,8 @@
    "n": 328,
    "hn": "שכ\"ח",
    "dafKey": "לז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.5.1",
+   "dhs": "הואיל ונאמרה"
   },
   {
    "daf": "37b",
@@ -4680,7 +5008,8 @@
    "n": 329,
    "hn": "שכ\"ט",
    "dafKey": "לז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.8.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.8.1",
+   "dhs": "[בכורים לא"
   },
   {
    "daf": "37b",
@@ -4694,7 +5023,8 @@
    "n": 330,
    "hn": "ש\"ל",
    "dafKey": "לז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.12.1",
+   "dhs": "מושב דכתב"
   },
   {
    "daf": "37b",
@@ -4708,7 +5038,8 @@
    "n": 331,
    "hn": "של\"א",
    "dafKey": "לז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.12.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.12.2",
+   "dhs": "בזמן דאיכא"
   },
   {
    "daf": "37b",
@@ -4722,7 +5053,8 @@
    "n": 332,
    "hn": "של\"ב",
    "dafKey": "לז:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.14.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_37b.14.1",
+   "dhs": "ממחרת הפסח"
   },
   {
    "daf": "38a",
@@ -4736,7 +5068,8 @@
    "n": 333,
    "hn": "של\"ג",
    "dafKey": "לח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.1.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.1.1",
+   "dhs": "אקרוב עומר"
   },
   {
    "daf": "38a",
@@ -4750,7 +5083,8 @@
    "n": 334,
    "hn": "של\"ד",
    "dafKey": "לח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.3.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.3.1",
+   "dhs": "ובני ישראל"
   },
   {
    "daf": "38a",
@@ -4764,7 +5098,8 @@
    "n": 335,
    "hn": "של\"ה",
    "dafKey": "לח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.3.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.3.2",
+   "dhs": "עד בואם"
   },
   {
    "daf": "38a",
@@ -4778,7 +5113,8 @@
    "n": 336,
    "hn": "של\"ו",
    "dafKey": "לח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.6.1",
+   "dhs": "צא מהן"
   },
   {
    "daf": "38a",
@@ -4792,7 +5128,8 @@
    "n": 337,
    "hn": "של\"ז",
    "dafKey": "לח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.9.1",
+   "dhs": "שאין איסורו"
   },
   {
    "daf": "38a",
@@ -4806,7 +5143,8 @@
    "n": 338,
    "hn": "של\"ח",
    "dafKey": "לח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.10.1",
+   "dhs": "והוא הדין לערלה בשתים"
   },
   {
    "daf": "38a",
@@ -4820,7 +5158,8 @@
    "n": 339,
    "hn": "של\"ט",
    "dafKey": "לח.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.10.2"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38a.10.2",
+   "dhs": "והוא הדין לערלה בשתים"
   },
   {
    "daf": "38b",
@@ -4834,7 +5173,8 @@
    "n": 340,
    "hn": "ש\"מ",
    "dafKey": "לח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38b.2.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38b.2.1",
+   "dhs": "השמטת כספים"
   },
   {
    "daf": "38b",
@@ -4848,7 +5188,8 @@
    "n": 341,
    "hn": "שמ\"א",
    "dafKey": "לח:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38b.7.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_38b.7.1",
+   "dhs": "הערלה הלכה"
   },
   {
    "daf": "39a",
@@ -4862,7 +5203,8 @@
    "n": 342,
    "hn": "שמ\"ב",
    "dafKey": "לט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39a.5.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39a.5.1",
+   "dhs": "תני חדש"
   },
   {
    "daf": "39a",
@@ -4876,7 +5218,8 @@
    "n": 343,
    "hn": "שמ\"ג",
    "dafKey": "לט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39a.10.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39a.10.1",
+   "dhs": "ההוא למעוטי"
   },
   {
    "daf": "39a",
@@ -4890,7 +5233,8 @@
    "n": 344,
    "hn": "שמ\"ד",
    "dafKey": "לט.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39a.12.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39a.12.1",
+   "dhs": "לא קי\"ל"
   },
   {
    "daf": "39b",
@@ -4904,7 +5248,8 @@
    "n": 345,
    "hn": "שמ\"ה",
    "dafKey": "לט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39b.4.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39b.4.1",
+   "dhs": "שאם היתה"
   },
   {
    "daf": "39b",
@@ -4918,7 +5263,8 @@
    "n": 346,
    "hn": "שמ\"ו",
    "dafKey": "לט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39b.6.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39b.6.1",
+   "dhs": "מתניתין דעבדין"
   },
   {
    "daf": "39b",
@@ -4932,7 +5278,8 @@
    "n": 347,
    "hn": "שמ\"ז",
    "dafKey": "לט:",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39b.9.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_39b.9.1",
+   "dhs": "מחשבה רעה"
   },
   {
    "daf": "40a",
@@ -4946,7 +5293,8 @@
    "n": 348,
    "hn": "שמ\"ח",
    "dafKey": "מ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_40a.17.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_40a.17.1",
+   "dhs": "ויעשה מה"
   },
   {
    "daf": "40a",
@@ -4960,7 +5308,8 @@
    "n": 349,
    "hn": "שמ\"ט",
    "dafKey": "מ.",
-   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_40a.20.1"
+   "url": "https://www.sefaria.org/Tosafot_on_Kiddushin_40a.20.1",
+   "dhs": "אין מקיפין"
   }
  ]
 }

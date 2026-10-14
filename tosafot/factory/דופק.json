@@ -1,7 +1,7 @@
 {
- "ticks": 50,
- "stalls": 0,
- "last": "2026-10-14T18:27:02Z",
+ "ticks": 51,
+ "stalls": 1,
+ "last": "2026-10-14T18:56:43Z",
  "summary": [
   "sukkah: הושלמה",
   "berakhot: הושלמה",
@@ -10,10 +10,7 @@
   "bava-batra: הושלמה",
   "gittin: הושלמה",
   "kiddushin: הושלמה",
-  "yevamot פרק 8: published",
-  "yevamot פרק 10: published",
-  "ketubot פרק 1: reviewing",
-  "ketubot פרק 2: writing",
+  "yevamot: הושלמה",
   "ketubot: עצור - תקציב: היתרה צפויה לרדת מתחת ל-15 דולר. צריך להוסיף כ-21 דולר"
  ],
  "spent": 233.546772,

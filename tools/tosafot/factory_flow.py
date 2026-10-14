@@ -543,7 +543,12 @@ def step_perek(client, slug, perek, st, c):
         elif phase == 'rewrite':
             usage = ingest_rewrite(slug, perek, c, work, results)
             cost = sum(F.ledger_add(slug, perek, 'rewrite', m, u, u['n']) for m, u in usage.items())
-            reqs = build_review(slug, perek, c, work)
+            c_rv = c
+            if ps.get('retry'):
+                import copy
+                c_rv = copy.deepcopy(c)
+                c_rv['engines']['review'] = ps['retry']['reviewer']
+            reqs = build_review(slug, perek, c_rv, work)
             nxt = 'rereviewing'
             log('%s פרק %d: כתיבה מחדש הסתיימה, עלות $%.3f' % (slug, perek, cost))
         else:   # rereview
@@ -573,12 +578,60 @@ def step_perek(client, slug, perek, st, c):
         res = publish(slug, perek, c, work, flagged)
         ps['status'] = 'published'
         ps['published'] = now_iso()
+        ps.pop('retry', None)
         ps['result'] = {k: v for k, v in res.items() if k != 'skipped'}
         save_work(slug, perek, work)
         notify(slug, perek, res, c)
         open(fp(FDIR, '.published-flag'), 'w').write(now_iso())
         return True
     return False
+
+
+def apply_retry(client, slug, st, c):
+    """14.10: סבב נוסף לתוספות שנפסלו (retry.json). dry = רק אומדן עלות, בלי שליחה."""
+    import copy
+    rt = jload(fp(FDIR, 'retry.json'))
+    if not rt:
+        return
+    done = rt.setdefault('done', [])
+    changed = False
+    for item in rt.get('items', []):
+        sl, p = item[0], int(item[1])
+        key = '%s:%d' % (sl, p)
+        if sl != slug or key in done:
+            continue
+        ps = st['perakim'].get(str(p))
+        if not ps or ps.get('status') != 'published':
+            continue
+        c2 = copy.deepcopy(c)
+        if rt.get('rewriter'):
+            c2['engines']['rewrite'] = rt['rewriter']
+        work = load_work(slug, p)
+        n = 0
+        for r in work['recs'].values():
+            if r.get('status') == 'flagged':
+                r['tries'] = 1
+                n += 1
+        reqs = build_rewrite(slug, p, c2, work)
+        est = F.est_cost(reqs) if reqs else 0
+        if rt.get('dry'):
+            log('אומדן סבב נוסף %s פרק %d: %d תוספות פסולות, %d בקשות, כ-$%.2f' % (slug, p, n, len(reqs), est))
+            done.append(key)
+            changed = True
+            continue
+        if not reqs:
+            done.append(key)
+            changed = True
+            continue
+        submit_batch(client, slug, p, 'rewrite', reqs, work, ps)
+        ps['status'] = 'rewriting'
+        ps['retry'] = {'reviewer': rt.get('reviewer') or c['engines']['review']}
+        save_work(slug, p, work)
+        log('סבב נוסף %s פרק %d: %d תוספות, מנוע %s' % (slug, p, n, c2['engines']['rewrite']))
+        done.append(key)
+        changed = True
+    if changed:
+        jdump(fp(FDIR, 'retry.json'), rt)
 
 
 def tick():
@@ -604,6 +657,7 @@ def tick():
             open(fp(FDIR, '.need-prep'), 'w').write(slug)
             summary.append('%s: ממתין להכנה (ספירה והקשר)' % slug)
             break
+        apply_retry(client, slug, st, c)
         todo = [p for p in pers if st['perakim'].get(str(p), {}).get('status') != 'published']
         if todo:
             all_done = False

@@ -27,7 +27,7 @@
   if(!/^(foot|panel|side|list|off)$/.test(mode))mode='off';
   /* הגדרות הלומד: גודל גופן, פנים תמיד, עמוד/פרק, שינון, רוחב הפאנל */
   var CFG={fs:'m',face:0,page:1,mem:0,w:300};
-  try{var c0=JSON.parse(lsGet(CFG_KEY,'{}'));if(c0&&typeof c0==='object')Object.keys(CFG).forEach(function(k){if(c0[k]!==undefined)CFG[k]=c0[k]})}catch(e){}
+  try{var c0=JSON.parse(lsGet(CFG_KEY,'{}'));if(c0&&typeof c0==='object')Object.keys(CFG).forEach(function(k){if(c0[k]!==undefined)CFG[k]=c0[k]});CFG.face=0}catch(e){}
   function cfgSave(){lsSet(CFG_KEY,JSON.stringify(CFG))}
   var PUB={};            /* n -> {p,t}: הנוסח שנבחר (מנקודת הקליטה) */
   var TOK={},TNO={};     /* מסך בדיקת התוספות: n -> true. TOK = אושרה (מסיר "טרם נבדק" ומציג מוסתרת), TNO = הוסרה מהאתר */
@@ -318,7 +318,7 @@
       (it.g&&!(ADM&&ADM.picks&&ADM.picks[it.n])?'<span class="tsug" title="נכתב בבית החרושת ועדיין לא עבר עיון של המנהל">לא הוגה</span>':'')+
       (it.u&&!TOK[it.n]?'<span class="tsug" title="נפסל בביקורת האוטומטית ופורסם עד עיון של המנהל. הכרעה: תפריט תוס\' ← בדיקת תוספות">*</span>':'')+
       '<span class="tstx">'+ge(txt(it))+'</span>'+
-      '<span class="tsbt"><button class="tsin" type="button" onclick="tosFace(this)" aria-expanded="false" aria-label="פנים התוספות">פנים</button>'+
+      '<span class="tsbt"><button class="tsin" type="button" onclick="tosFace(this)" aria-expanded="false" aria-label="לשון התוספות בפנים">לשון התוס&#39; בפנים</button>'+
       '<button type="button" onclick="tosCopy(this)" aria-label="העתק">העתק</button>'+
       '<button type="button" class="tssh lk-sh-btn" onclick="tosShare(this)" aria-label="שתף את התוספות הזה" title="שיתוף התוספות הזה: ווטסאפ, הודעה, מייל, טלגרם, קישור וקוד QR">שתף</button>'+
       '<button type="button" onclick="tosSg(this)" aria-label="הצע תיקון על התוספות">הצע תיקון</button></span>'+
@@ -331,7 +331,7 @@
     if(open){
       faceLoad(function(){var it=byN[n];if(it&&!f.getAttribute('data-ok')){f.innerHTML=faceHTML(it);f.setAttribute('data-ok','1')}});
       f.removeAttribute('hidden')}else f.setAttribute('hidden','');
-    b.setAttribute('aria-expanded',open?'true':'false');b.textContent=open?'סגור':'פנים'}
+    b.setAttribute('aria-expanded',open?'true':'false');b.textContent=open?'הסתר':'לשון התוס\' בפנים'}
   window.tosFace=function(b){var box=noteOf(b);if(!box)return;var f=box.querySelector('.tsface');faceOpen(box,f.hasAttribute('hidden'))};
   /* שיתוף תוס' (14.10.2026): חלונית lk-share.js, קישור שפותח את הדף ואת הכרטיס הזה */
   window.tosShare=function(b){
@@ -339,9 +339,7 @@
     LKShare.tos({n:n,daf:it.daf,dh:dispDh(it),sum:txt(it)})};
   window.tosCopy=function(b){
     var box=noteOf(b),n=+box.getAttribute('data-n'),it=byN[n];if(!it)return;
-    var f=box.querySelector('.tsface');
     var t='תוספות '+it.hn+', ד"ה '+dispDh(it)+': '+txt(it);
-    if(f&&!f.hasAttribute('hidden')&&f.textContent)t+=String.fromCharCode(10)+f.textContent;
     function done(){if(typeof toast==='function')toast('הועתק',1800)}
     try{navigator.clipboard.writeText(t).then(done,function(){fb()})}catch(e){fb()}
     function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){}ta.remove()}};
@@ -425,14 +423,14 @@
       if(mode==='foot'){
         var last=rows[rows.length-1][1];
         var fo=document.createElement('div');fo.className='tsfoot';fo.setAttribute('contenteditable','false');
-        fo.innerHTML='<div class="tsh">תוספות על העמוד <button type="button" class="tsall" onclick="tosAll(this)" data-open="1">פתח הכל</button></div>'+byDaf[daf].slice().sort(function(a,b){return a.n-b.n}).map(noteHTML).join('');
+        fo.innerHTML='<div class="tsh">תוספות על העמוד</div>'+byDaf[daf].slice().sort(function(a,b){return a.n-b.n}).map(noteHTML).join('');
         last.insertAdjacentElement('afterend',fo);
         if(CFG.face)fo.querySelectorAll('.tsn').forEach(function(x){faceOpen(x,true)})}});
     if(bad.length&&typeof isAdmin==='function'&&isAdmin()&&!warned){warned=true;
       if(typeof toast==='function')toast('אזהרת שלמות בתוספות: '+bad.join('; '),6000)}
     drawList();tpRender(true);tsLayerSoon();
     /* טעינה מוקדמת ברקע של פנים התוספות, כדי שכרטיס הריחוף לא ימתין */
-    if(!preloaded){preloaded=true;setTimeout(function(){faceLoad(function(){})},1200)}};
+    };
   window.tosAll=function(b){
     var open=b.getAttribute('data-open')==='1',fo=b.closest('.tsfoot');if(!fo)return;
     fo.querySelectorAll('.tsn').forEach(function(x){faceOpen(x,open)});
@@ -471,8 +469,6 @@
     if(HOV.n&&HOV.n!==n)hiWord(HOV.n,false);
     HOV.n=n;HOV.sticky=!!sticky;
     p.innerHTML='<div class="tshov0"><button type="button" onclick="tosPin()" aria-label="נעץ בפאנל הצד">נעץ</button><span class="sp"></span><button type="button" onclick="tosHovClose()" aria-label="סגור">סגור</button></div>'+noteHTML(it);
-    var box=p.querySelector('.tsn');
-    faceOpen(box,true);
     p.classList.add('open');
     hiWord(n,true);
     /* מיקום: מתחת לשורה המעוגנת, ואם אין מקום - מעליה; לעולם לא על השורה עצמה ולא מחוץ למסך */
@@ -564,8 +560,7 @@
           '<button type="button" id="tpx" aria-label="סגור את הפאנל" title="סגור">&times;</button></div>'+
         '<div class="tpr" style="margin-top:.3em">'+
           '<button type="button" id="tpfs-s" aria-label="גופן קטן">א</button><button type="button" id="tpfs-m" aria-label="גופן רגיל" style="font-size:.95em">א</button><button type="button" id="tpfs-l" aria-label="גופן גדול" style="font-size:1.15em">א</button>'+
-          '<button type="button" id="tpface" aria-pressed="false">פנים תמיד</button>'+
-          '<button type="button" id="tppage" aria-pressed="false">עמוד</button>'+
+                    '<button type="button" id="tppage" aria-pressed="false">עמוד</button>'+
           '<button type="button" id="tpmem" aria-pressed="false" title="מצב שינון: רק הד&quot;ה, לחיצה חושפת">שינון</button>'+
         '<input id="tpq" type="search" placeholder="חיפוש, או מספר" aria-label="חיפוש בתוספות המסכת"></div>'+
       '</div><div id="tpl"></div><div class="tpgrip" aria-hidden="true"></div>';
@@ -575,7 +570,6 @@
     p.querySelector('#tpprev').onclick=function(){tpStep(-1)};
     p.querySelector('#tpnext').onclick=function(){tpStep(1)};
     ['s','m','l'].forEach(function(k){p.querySelector('#tpfs-'+k).onclick=function(){CFG.fs=k;cfgSave();tpFit();tpBtns()}});
-    p.querySelector('#tpface').onclick=function(){CFG.face=CFG.face?0:1;cfgSave();tpRender(true);if(mode==='foot'||mode==='list')tsMark();tpBtns()};
     p.querySelector('#tppage').onclick=function(){CFG.page=CFG.page?0:1;cfgSave();tpRender(true);tpBtns()};
     p.querySelector('#tpmem').onclick=function(){CFG.mem=CFG.mem?0:1;cfgSave();tpFit();tpBtns()};
     p.querySelector('#tpq').addEventListener('input',function(){TP.q=this.value;clearTimeout(tpEl.qt);tpEl.qt=setTimeout(function(){tpRender(true)},160)});
@@ -610,7 +604,7 @@
     var p=document.getElementById('tpan');if(!p)return;
     ['s','m','l'].forEach(function(k){p.querySelector('#tpfs-'+k).classList.toggle('on',CFG.fs===k)});
     function on(id,v,t){var b=p.querySelector(id);b.classList.toggle('on',!!v);b.setAttribute('aria-pressed',v?'true':'false');if(t)b.textContent=t}
-    on('#tpface',CFG.face);on('#tppage',CFG.page,CFG.page?'העמוד':'כל הפרק');on('#tpmem',CFG.mem);
+    on('#tppage',CFG.page,CFG.page?'העמוד':'כל הפרק');on('#tpmem',CFG.mem);
     var md=p.querySelector('#tpmode');if(md)md.value=mode}
   function tpFit(){
     var p=document.getElementById('tpan');if(!p)return;

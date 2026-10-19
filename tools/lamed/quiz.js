@@ -400,13 +400,13 @@
       var correctAt = perm.indexOf(0);
       var track = '';
       if (!blitz) for (var k = 0; k < n0; k++) track += '<li class="' + (res.marks[k] || (k === i ? 'cur' : '')) + '" aria-label="שאלה ' + (k + 1) + '">★</li>';
-      var opts = perm.map(function (pi, k) { return '<button type="button" class="qz-opt qz-c' + k + '" data-k="' + k + '"><b>' + (k + 1) + '</b><span>' + E(q.o[pi]) + '</span></button>'; }).join('');
+      var opts = perm.map(function (pi, k) { return '<button type="button" data-no-click-sound class="qz-opt qz-c' + k + '" data-k="' + k + '"><b>' + (k + 1) + '</b><span>' + E(q.o[pi]) + '</span></button>'; }).join('');
       var open = !!q.open;
       if (open) {   /* שאלת תוכן פתוחה: "הצג תשובה" ואז "ידעתי" או "לא ידעתי". ארבע משבצות מוסתרות שומרות על מנגנון הניקוד */
-        opts = perm.map(function (pi, k) { return '<button type="button" class="qz-opt qz-c' + k + '" data-k="' + k + '" hidden aria-hidden="true"></button>'; }).join('') +
+        opts = perm.map(function (pi, k) { return '<button type="button" data-no-click-sound class="qz-opt qz-c' + k + '" data-k="' + k + '" hidden aria-hidden="true"></button>'; }).join('') +
           '<div class="qz-open"><button type="button" class="lm-btn pri" id="qz-rev">הצג תשובה</button>' +
           '<div class="qz-ans" id="qz-ans" hidden><p class="qz-ansp">' + (q.dh ? '<b class="qz-dh" style="font-family:Vilna,serif;font-weight:700">' + E(q.dh) + '</b> - ' : '') + E(q.o[0]) + '</p>' +
-          '<div class="lm-row"><button type="button" class="lm-btn pri" id="qz-knew">ידעתי</button><button type="button" class="lm-btn" id="qz-dont">לא ידעתי</button></div></div></div>';
+          '<div class="lm-row"><button type="button" data-no-click-sound class="lm-btn pri" id="qz-knew">ידעתי</button><button type="button" data-no-click-sound class="lm-btn" id="qz-dont">לא ידעתי</button></div></div></div>';
       }
       card.innerHTML =
         '<div class="qz-hud"><div class="qz-pts" aria-live="off"><small>נקודות</small><b id="qz-pts">' + LG.nf(ptsShown) + '</b></div>' +

@@ -369,6 +369,10 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     write_shas(built)
     import build_seo
     build_seo.run(SITE, built, SLUG)
+    # צליל לחיצה ורטט קל (feel.js): העתקה ושתילת התג בכל הדפים, אחרי שכל הדפים כבר נוצרו
+    shutil.copy(os.path.join(ROOT, 'tools', 'feel.js'), os.path.join(SITE, 'feel.js'))
+    import add_feel
+    add_feel.run(SITE)
     # נתוני גלישה ועיפרון המנהל: אחרון, כדי שיעטוף גם את הדפים הסטטיים (8.10.2026)
     import lk_inject
     lk_inject.run(SITE)

@@ -87,7 +87,6 @@
 
   function disabled(n) { return n.disabled === true || n.getAttribute('aria-disabled') === 'true'; }
   function anchorOk(n) {
-    if (!n.hasAttribute('href') && !n.onclick) return false;
     if (BTN_CLASS.test(n.getAttribute('class') || '')) return true;
     if (n.closest('nav,[role="navigation"],[role="toolbar"],[role="menu"],[role="menubar"],[role="tablist"],header,footer,.toolbar,.pn')) return true;
     var rel = n.getAttribute('rel') || '';
@@ -105,7 +104,7 @@
       if (n.hasAttribute('data-no-click-sound')) return null;
       if (n.id === 'feelToggle') return null;
       if (n.matches(SEL)) { return disabled(n) ? null : n; }
-      if (n.tagName === 'A') { if (anchorOk(n)) return disabled(n) ? null : n; }
+      if (n.tagName === 'A' && n.hasAttribute('href')) { if (anchorOk(n)) return disabled(n) ? null : n; }
       else if (n.tagName !== 'LABEL' || n.control) {
         // אלמנט לחיץ מעוצב ככפתור: סמן יד, ואינו בלוק טקסט ארוך
         var cs = getComputedStyle(n);

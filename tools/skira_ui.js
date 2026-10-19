@@ -155,7 +155,7 @@
       '<select onchange="SK.FIL.conf=this.value;skDrawPanel()">'+opt([['','כל רמות הוודאות'],['גבוה','ודאי'],['בינוני','סביר'],['נמוך','ספק']],F.conf)+'</select>'+
       '<select onchange="SK.FIL.daf=this.value;skDrawPanel()">'+opt(dafs,F.daf)+'</select></div>';
     const pass=f=>{const st=bkStatus(f);
-      if(F.st==='pend'&&(st!=='pending'||(SK.autoQ&&SK.autoQ.has(f.id))))return false;if(F.st==='todo'&&st!=='todo')return false;
+      if(F.st==='pend'&&(st!=='pending'||(SK.autoQ&&SK.autoQ.has(f.id))||BK.STALE.has(f.id)))return false;if(F.st==='todo'&&st!=='todo')return false;
       if(F.st==='skipped'&&!(st==='pending'&&BK.SKIP.has(f.id)))return false;
       if(F.st==='done'&&(st==='pending'||st==='todo'))return false;
       if(F.typ&&bkTyp(f)!==F.typ)return false;if(F.sev&&f.sev!==F.sev)return false;

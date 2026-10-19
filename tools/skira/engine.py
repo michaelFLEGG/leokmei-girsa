@@ -253,6 +253,9 @@ def merge(a):
             for k in ('note', 'fix', 'evidence', 'mark'):
                 if k in r:
                     r[k] = C.no_dash(str(r[k]))
+            _op = r.get('op')   # מטען להחלה (19.10.2026): ההשלמה עצמה, בלי מקף ארוך
+            if isinstance(_op, dict) and isinstance(_op.get('ins'), dict) and 'text' in _op['ins']:
+                _op['ins']['text'] = C.no_dash(str(_op['ins']['text']))
             if r.get('kind') not in C.SKIRA_KINDS and r.get('kind') not in ('שגיאת הבנה', 'ייחוס שגוי', 'מילה משובשת', 'חסר מהלך', 'לא מובן', 'סגנון שגוי', 'קיצור לפי #'):
                 r['kind'] = 'לא מובן'
             nr += 1

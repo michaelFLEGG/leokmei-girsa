@@ -34,18 +34,81 @@
   function bkStatus(f){const d=BK.DEC[f.id];return d?d.d:'pending'}
   function bkSplitNote(f){const i=(f.note||'').indexOf(' · בגמרא: ');
     return i<0?{n:f.note||'',e:''}:{n:f.note.slice(0,i),e:f.note.slice(i+10)}}
-  /* החלפה: "ישן ⟵ חדש" בלבד, בזוג אחד. כל השאר הוא הוראה */
-  function bkRep(f){const fx=(f.fix||'').trim();
+  /* מטען ההחלה (19.10.2026): כל ממצא נושא פעולה מוכנה, ו"קבל" מחיל אותה תמיד.
+     f.op מובנה (נכתב בידי המנוע: tools/bakara/ops.py): {rep:{x,y}} | {ins:{after|before|end,text,cs}} | {style:{range,cs}} | {del:{range}} | {none:'סיבה'}.
+     בלעדיו: החלפה "ישן ⟵ חדש" וסגנון מתוך הנוסח הישן של ההצעה. אין עוד מצב של "אושר לביצוע". */
+  function bkRepFix(f){const fx=(f.fix||'').trim();
     if(fx.split('⟵').length!==2||fx.indexOf(';')>-1)return null;
     const p=fx.split('⟵'),x=p[0].trim();let y=p[1].trim();
     const unsure=/\s\?$/.test(y);if(unsure)y=y.replace(/\s\?$/,'').trim();
     if(!x||!y||x===y)return null;return {x,y,unsure}}
+  function bkOp(f){
+    if(f._op!==undefined)return f._op;
+    let op=null;const o=f.op;
+    if(o){
+      if(o.rep&&o.rep.x&&o.rep.y!==undefined&&o.rep.x!==o.rep.y)op={t:'rep',x:o.rep.x,y:o.rep.y,unsure:!!o.rep.unsure};
+      else if(o.ins&&o.ins.text)op={t:'ins',after:o.ins.after,before:o.ins.before,end:!!o.ins.end,text:String(o.ins.text),cs:o.ins.cs||'hs'};
+      else if(o.style&&(o.style.cs||o.style.cs===''))op={t:'style',cs:o.style.cs==='plain'?'':o.style.cs,range:o.style.range||''};
+      else if(o.del&&o.del.range)op={t:'rep',x:o.del.range,y:''};
+      else if(o.ask)op={t:'q',why:String(o.ask)};
+      else if(o.none)op={t:'none',why:String(o.none)}}
+    if(!op){const rp=bkRepFix(f);if(rp)op={t:'rep',x:rp.x,y:rp.y,unsure:rp.unsure}}
+    if(!op){const fx=f.fix||'';
+      if(/^להחיל סגנון אמוראים/.test(fx))op={t:'style',cs:'am',range:f.mark||''};
+      else if(/^להחיל סגנון פסוק/.test(fx))op={t:'style',cs:'ps',range:f.mark||''};
+      else if(/^להחזיר לסגנון רגיל/.test(fx))op={t:'style',cs:'',range:f.mark||''}}
+    if(!op&&bkTyp(f)==='h')op={t:'q'};
+    if(!op)op={t:'none',why:''};
+    f._op=op;return op}
+  function bkRep(f){const o=bkOp(f);return o.t==='rep'?o:null}
   function bkAction(f){
-    if(bkRep(f))return 'rep';
-    if(/^להחיל סגנון אמוראים/.test(f.fix||''))return 'am';
-    if(/^להחזיר לסגנון רגיל/.test(f.fix||''))return 'plain';
-    return 'instr'}
-  const BKACT={rep:'החלפה בנוסח',am:'סגנון אמוראים',plain:'חזרה לסגנון רגיל',instr:'הוראה - עריכה ממוקדת'};
+    const o=bkOp(f);
+    if(o.t==='style')return o.cs==='am'?'am':(o.cs==='ps'?'ps':'plain');
+    return o.t}
+  const BKACT={rep:'החלפה בנוסח',ins:'הוספת הסבר בסוגריים',am:'סגנון אמוראים',ps:'סגנון פסוק',plain:'חזרה לסגנון רגיל',q:'בדיקה או שאלה: אין שינוי בטקסט',none:'אין עדיין הצעה מוכנה'};
+  /* ---- התיישנות (19.10.2026): ממצא שהטקסט הנוכחי (כולל עריכות המנהל) כבר מכסה אותו אינו מוצג ---- */
+  const BKUSE=/^[ודלכמשבה]{1,3}(?=ר)/;
+  function bkSlotHtml(s){const old=ED.find(x=>x.k===s.k);return old?(old.nowH!==undefined?old.nowH:esc(old.now)):s.h}
+  /* לכל תו בטקסט: מחלקת הסגנון שלו ('am' / 'ps' / ...), לפי אותו HTML שעל המסך */
+  function bkCharClasses(h){
+    const d=document.createElement('div');d.innerHTML=h;
+    const w=document.createTreeWalker(d,NodeFilter.SHOW_TEXT),cl=[];let n,t='';
+    while(n=w.nextNode()){const el=n.parentElement&&n.parentElement.closest('i[class]');
+      const c=el?el.className:'';
+      for(let i=0;i<n.nodeValue.length;i++)cl.push(c);t+=n.nodeValue}
+    return {t,cl}}
+  function bkStale(f,L){
+    const o=bkOp(f),s=L.s,h=bkSlotHtml(s),T=bkCharClasses(h),text=T.t;
+    if(o.t==='style'){
+      const hit=bkFindIn(text,f);if(!hit||!hit.len)return false;
+      let a=0;const mk=bkCompact(text).c.slice(hit.pos,hit.pos+hit.len);
+      const u=BKUSE.exec(mk);if(o.cs==='am'&&u)a=u[0].length;
+      const want=o.cs==='ps'?'ps':'am';
+      let any=false,all=true;
+      for(let i=a;i<hit.len;i++){const oi=hit.sc.m[hit.pos+i],c=' '+(T.cl[oi]||'')+' ';
+        const on=(o.cs===''?/ (am|ps|hs|dm|ns) /.test(c):c.indexOf(' '+want+' ')>-1);
+        if(on)any=true;else all=false}
+      return o.cs===''?!any:all}
+    if(o.t==='ins'){
+      const tx=bkCompact(o.text).c;if(tx.length<4)return false;
+      return bkCompact(text).c.indexOf(tx)>-1}
+    if(o.t==='rep'){
+      const hit=bkFindIn(text,f);
+      const xc=bkCompact(o.x).c,yc=bkCompact(o.y).c;
+      if(hit){const within=bkCompact(text).c.slice(hit.pos,hit.pos+hit.len);
+        if(within.indexOf(xc)<0&&yc&&bkCompact(text).c.indexOf(yc)>-1&&bkCompact(text).c.indexOf(xc)<0)return true}
+      return false}
+    return false}
+  /* ממצא שלא אותר: אם נוסח ההחלפה כבר במקום - התיישן (ולא "אבד") */
+  function bkStaleLost(f,S){
+    const o=bkOp(f);if(o.t!=='rep'||!o.y)return false;
+    const cx=bkCompact((f.context||f.text||'').replace(o.x,o.y)).c,yc=bkCompact(o.y).c;
+    if(!cx||cx.indexOf(yc)<0)return false;
+    const k0=dafKey(f.daf);
+    for(const s of S){const k=dafKey(s.daf);if(k0!==null&&k!==null&&Math.abs(k-k0)>1)continue;
+      if(bkCompact(plain(bkSlotHtml(s))).c.indexOf(cx)>-1)return true}
+    return false}
+  BK.STALE=new Set();
 
   /* ---- עיגון ---- */
   function bkFindIn(text,f){
@@ -56,7 +119,7 @@
     if(pos<0&&mk){const p=sc.c.indexOf(mk);if(p>-1&&sc.c.indexOf(mk,p+1)<0)pos=p}
     return pos<0?null:{pos,len,sc}}
   function bkLocateAll(){
-    const S=slotsFull();BK.loc={};BK.ord=[];
+    const S=slotsFull();BK.loc={};BK.ord=[];BK.STALE=new Set();
     const idx=new Map();S.forEach((s,i)=>idx.set(s,i));
     for(const f of BK.F){
       const own=S.filter(s=>String(s.id)===String(f.u));
@@ -67,10 +130,11 @@
         const all=win.map(s=>[s,bkFindIn(s.t,f)]).filter(x=>x[1]);
         if(all.length>hits.length||!hits.length)hits=all;
         if(hits.length>1){hits.sort((a,b)=>Math.abs(a[0].id-f.u)-Math.abs(b[0].id-f.u))}}
-      if(!hits.length)continue;
+      if(!hits.length){if(bkStatus(f)==='pending'&&bkStaleLost(f,S))BK.STALE.add(f.id);continue}
       const [s,h]=hits[0];
-      BK.loc[f.id]={s,k:s.k,pi:s.pi,pos:h.pos,len:h.len,ord:idx.get(s)*100000+h.pos}}
-    BK.ord=BK.F.filter(f=>BK.loc[f.id]).sort((a,b)=>BK.loc[a.id].ord-BK.loc[b.id].ord)}
+      BK.loc[f.id]={s,k:s.k,pi:s.pi,pos:h.pos,len:h.len,ord:idx.get(s)*100000+h.pos};
+      if(bkStatus(f)==='pending'&&bkStale(f,BK.loc[f.id]))BK.STALE.add(f.id)}
+    BK.ord=BK.F.filter(f=>BK.loc[f.id]&&!BK.STALE.has(f.id)).sort((a,b)=>BK.loc[a.id].ord-BK.loc[b.id].ord)}
   /* מיקום ב-DOM: טווח סימון בתוך האלמנט, לפי אותו מדד דחוס */
   function bkDomRange(f){
     const L=BK.loc[f.id];if(!L)return null;
@@ -95,7 +159,7 @@
       '.bkcard{position:fixed;z-index:9;width:min(340px,94vw);background:#fffdf8;border:1px solid #c9b98f;border-radius:8px;box-shadow:0 6px 22px rgba(0,0,0,.28);padding:9px 12px;font-size:15px;line-height:1.5;direction:rtl}'+
       '.bkcard .h{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px}.bkcard .h .x{margin-right:auto;background:none;border:0;font-size:20px;cursor:pointer;color:#5a5044;line-height:1}'+
       '.bkchip{display:inline-block;color:#fff;border-radius:10px;padding:0 8px;font-size:12px}.bkcard .nt{font-weight:600}.bkcard .ev{font-size:13px;color:#5a5044;border-right:3px solid #d9d1bd;padding-right:7px;margin:3px 0}'+
-      '.bkcard .fx{margin:4px 0;background:#f3efe3;border-radius:4px;padding:3px 7px;font-size:15px}.bkcard del{color:#a83c2f;background:#fbe5e1}.bkcard ins{color:#2e6b3f;background:#e3f3e6;text-decoration:none}'+
+      '.bkcard .fx{margin:4px 0;background:#f3efe3;border-radius:4px;padding:3px 7px;font-size:15px}.bkcard del{color:#a83c2f;background:#fbe5e1}.bkcard ins{color:#2e6b3f;background:#e3f3e6;text-decoration:none}.bkcard ins.hs{color:#4a4137;font-size:.92em}.bkcard .fx.dim{background:none;color:#8a7d66;font-size:13px}'+
       '.bkcard .bt{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.bkcard .bt button{font:inherit;font-size:14px;border:1px solid #b9a97c;border-radius:5px;background:#f6f1e2;padding:2px 12px;cursor:pointer}'+
       '.bkcard .bt button.ok{background:#2e6b3f;color:#fff;border-color:#2e6b3f}.bkcard .bt button.no{color:#a83c2f}.bkcard input[type=text]{width:100%;box-sizing:border-box;font:inherit;font-size:14px;margin-top:5px}'+
       '.bkcard .dim{font-size:12px;color:#8a7d66}.bkcard .kk{font-size:10px;opacity:.7;margin-right:3px;direction:ltr;unicode-bidi:isolate}'+
@@ -126,7 +190,7 @@
     new MutationObserver(()=>bkSoon()).observe(f,{childList:true,subtree:true,characterData:true})})();
 
   /* ---- טעינה: רק למכשיר שהוכר כמנהל ---- */
-  function bkPend(f){return bkStatus(f)==='pending'&&!(SK.autoQ&&SK.autoQ.has(f.id))}
+  function bkPend(f){return bkStatus(f)==='pending'&&!(SK.autoQ&&SK.autoQ.has(f.id))&&!BK.STALE.has(f.id)}
   function bkCount(){
     const b=$('#bkbtn2');if(!b)return;
     if(!isAdmin()||!BK.has){b.style.display='none';return}
@@ -175,7 +239,7 @@
     if(BK.autoNext){auto=BK.autoNext;BK.autoNext=''}
     if(auto){it.auto=1;it.rs=typeof auto==='string'?auto:'auto'}
     else if(BK.rs){it.rs=BK.rs;BK.rs=''}
-    {const rp=bkRep(f);const sg=rp?rp.y:(f.fix||'');if(sg&&d!=='pending')it.sug=String(sg).slice(0,900)}
+    {const o=bkOp(f);const sg=o.t==='rep'?o.y:(o.t==='ins'?'['+bkInsText(o.text)+']':(f.fix||''));if(sg&&d!=='pending')it.sug=String(sg).slice(0,900)}
     if(d==='pending')delete BK.DEC[f.id];else BK.DEC[f.id]=it;
     const a=bkOutbox().filter(x=>x.id!==f.id);a.push(it);bkOutSave(a);return it}
 
@@ -198,13 +262,25 @@
     for(const f of BK.F){if(!bkPend(f))continue;na++;const L=BK.loc[f.id];if(!L)continue;
       if(L.pi>=sec.from&&L.pi<=sec.to)ns++;if(D.pages[L.pi]&&D.pages[L.pi].daf===dafN)nd++}
     const lost=BK.F.filter(f=>bkPend(f)&&!BK.loc[f.id]).length;
-    m.innerHTML='<b>סקירה</b><span>בדף: '+nd+' · בפרק: '+ns+' · בכל המסכת: '+na+(lost?' · לא אותרו: '+lost:'')+'</span>'+
+    m.innerHTML='<b>סקירה</b><span>בדף: '+nd+' · בפרק: '+ns+' · בכל המסכת: '+na+(lost?' · לא אותרו: '+lost:'')+bkStaleTxt()+'</span>'+
       skNextBtnHtml()+
       '<button onclick="bkNext(-1)" title="להערה הקודמת (רק בלחיצה מפורשת)">↑ הקודמת</button>'+
       '<button onclick="bkPanel()">רשימה</button><button onclick="bkToggle()">סיום</button><span class="kk" style="font-size:11px;opacity:.7" title="Enter קבל · Delete דחה · ←/→ הבאה/קודמת · E ערוך · C שוחח · S דלג · Ctrl+Z ביטול">Enter קבל · Del דחה · ←→ · E · C · S</span>';if(window.skBarExtra)skBarExtra(m);if(window.skBarEnd)skBarEnd(m)}
   function bkDafNow(){return (($('#curdaf')||{}).textContent||'').trim()}
 
   /* ---- כרטיס צף ---- */
+  /* "לפני / אחרי": מה יקרה ב-Enter. ההוספה בצבע ובגודל ההסבר */
+  function bkPreviewHtml(f){
+    const o=bkOp(f),c=f.context||f.text||'';
+    if(o.t==='rep')return '<div class="fx"><del>'+esc(o.x)+'</del> ⟵ <ins>'+esc(o.y)+'</ins>'+(o.unsure?' <span class="dim">(המערכת אינה בטוחה)</span>':'')+'</div>';
+    if(o.t==='ins'){
+      const a=o.end?'':(o.after||o.before||f.mark||'');const i=a?c.indexOf(a):-1;let pre=c,post='';
+      if(!o.end&&i>-1){if(o.before!==undefined&&o.after===undefined){pre=c.slice(0,i);post=c.slice(i)}else{pre=c.slice(0,i+a.length);post=c.slice(i+a.length)}}
+      return '<div class="fx"><b>לפני:</b> '+esc(c)+'</div><div class="fx"><b>אחרי:</b> '+esc(pre)+' <ins class="hs">['+esc(o.text)+']</ins> '+esc(post)+'</div>'}
+    if(o.t==='style')return '<div class="fx">'+esc(BKACT[bkAction(f)])+': <mark>'+esc(o.range||f.mark||'')+'</mark></div>';
+    if(o.t==='none')return (f.fix?'<div class="fx">'+esc(f.fix)+'</div>':'')+'<div class="fx dim">אין עדיין הצעה מוכנה לממצא הזה. Enter מבקש הצעה ועובר להערה הבאה; E לעריכה ידנית.</div>';
+    if(o.t==='q')return (f.fix?'<div class="fx">'+esc(f.fix)+'</div>':'')+'<div class="fx dim">'+esc(o.why||'בדיקה')+'. Enter: נבדק, בלי שינוי בטקסט.</div>';
+    return f.fix?'<div class="fx">'+esc(f.fix)+'</div>':''}
   function bkHideCard(force){
     const c=$('#bkcard');if(!c)return;
     if(BK.pin&&!force)return;
@@ -216,14 +292,13 @@
     const c=document.createElement('div');c.className='bkcard';c.id='bkcard';c.dataset.id=f.id;
     const sv=[SKT[bkTyp(f)][1]],st=bkStatus(f),sn=bkSplitNote(f),rp=bkRep(f);
     const dec=BK.DEC[f.id];
-    let fx='';
-    if(rp)fx='<div class="fx"><del>'+esc(rp.x)+'</del> ⟵ <ins>'+esc(rp.y)+'</ins>'+(rp.unsure?' <span class="dim">(המערכת אינה בטוחה)</span>':'')+'</div>';
-    else if(f.fix)fx='<div class="fx">'+esc(f.fix)+'</div>';
+    let fx=bkPreviewHtml(f);
+    const act=bkAction(f);
     c.innerHTML='<div class="h"><span class="bkchip" style="background:'+sv[0]+'">'+esc(SKT[bkTyp(f)][0])+' · '+esc(f.kind)+'</span><span class="dim">'+esc(f.sev)+' · '+esc(f.layer||'')+(f.conf?' · ביטחון '+esc(f.conf):'')+' · דף '+esc(f.daf||'')+'</span>'+
       '<button class="x" onmousedown="event.preventDefault()" onclick="bkHideCard(true)" aria-label="סגירה">×</button></div>'+
       '<div class="nt">'+esc(sn.n)+'</div>'+(sn.e?'<div class="ev">בגמרא: '+esc(sn.e)+'</div>':'')+fx+
       (st==='pending'||st==='todo'?
-        '<div class="bt"><button class="ok" onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'ok\')" title="'+esc(BKACT[bkAction(f)])+' - Enter">קבל <small class="kk">Enter</small></button>'+
+        '<div class="bt"><button class="ok" onmousedown="event.preventDefault()" onclick="bkAcceptClick(\''+f.id+'\')" title="'+esc(BKACT[act])+' - Enter">'+(act==='none'?'בקש הצעה ועבור':'קבל')+' <small class="kk">Enter</small></button>'+
         '<button class="no" onmousedown="event.preventDefault()" onclick="skRejectOpen(\''+f.id+'\')" title="דחה - Delete">דחה <small class="kk">Del</small></button>'+
         '<button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'edit\')" title="ערוך וקבל - E (אחר כך Alt+Enter)">ערוך וקבל <small class="kk">E</small></button>'+
         '<button onmousedown="event.preventDefault()" onclick="skChat(\''+f.id+'\')" title="שוחח על ההערה - C">שוחח <small class="kk">C</small></button>'+
@@ -231,8 +306,7 @@
         (st==='todo'?'<button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'ok\',1)">בוצע</button>':'')+'</div>'+
         '<div id="skwhy" class="skwhy" style="display:none">'+SKWHY.map(w=>'<button onmousedown="event.preventDefault()" onclick="skReject(\''+f.id+'\',\''+w[0]+'\')">'+w[1]+'</button>').join('')+
         '<input type="text" id="bkwhy" maxlength="300" placeholder="סיבה חופשית (לא חובה) ואז Enter" aria-label="נימוק" onkeydown="if(event.key===\'Enter\'){event.preventDefault();skReject(\''+f.id+'\',\'free\')}"></div>'+
-        '<div id="skchat" class="skchat" style="display:none"></div>'+
-        (st==='todo'?'<div class="dim">אושר לביצוע: הוראה שטרם בוצעה.</div>':'')
+        '<div id="skchat" class="skchat" style="display:none"></div>'
       :'<div class="dim">'+(dec?({ok:'התקבל',no:'נדחה',edit:'נערך',todo:'אושר לביצוע'}[dec.d]||''):'')+(dec&&dec.txt?' · '+esc(dec.txt):'')+'</div><div class="bt"><button onmousedown="event.preventDefault()" onclick="bkDecide(\''+f.id+'\',\'pending\')">החזר לממתינים</button><button onmousedown="event.preventDefault()" onclick="skChat(\''+f.id+'\')">שוחח</button></div><div id="skchat" class="skchat" style="display:none"></div>');
     document.body.appendChild(c);BK.pin=!!pin;BK.cardId=f.id;
     bkPlace(c,rect||bkRectOf(f));
@@ -290,10 +364,15 @@
   /* אחרי הכרעה: לממצא הבא שטרם הוכרע בפרק הפתוח, בלי לחזור להתחלה */
   function bkAdvance(){bkBlurText();BK.kb=true;skNext(1)}
   async function bkKbDecide(f,d){
-    const id=f.id,st=bkStatus(f);
-    if(d==='edit-ok'){BK.editId='';await bkDecide(id,'edit',false,true)}
-    else await bkDecide(id,d,d==='ok'&&st==='todo'?1:0);
-    if(bkStatus(f)!=='pending'&&!(d==='ok'&&st==='todo'&&bkStatus(f)==='todo'))bkAdvance()}
+    /* שני מאזיני מקלדת (כאן וב-skira_ui) שומעים את אותו Enter: ההכרעה נעשית פעם אחת, ולא גם על הממצא הבא */
+    if(BK.kbBusy&&Date.now()-BK.kbBusy<5000)return;
+    BK.kbBusy=Date.now();
+    try{
+      const id=f.id,st=bkStatus(f);
+      if(d==='edit-ok'){BK.editId='';await bkDecide(id,'edit',false,true)}
+      else await bkDecide(id,d,0);   /* גם ממצא שנשאר מ"אושר לביצוע" ישן: Enter מחיל את המטען ("בוצע" רק בכפתור) */
+      if(bkStatus(f)!=='pending'&&bkStatus(f)!==st)bkAdvance()}
+    finally{BK.kbBusy=0}}
   document.addEventListener('pointerdown',e=>{if(BK.ON&&!(e.target.closest&&e.target.closest('#bkcard,#bkbar')))BK.kb=false},true);
   document.addEventListener('keydown',e=>{
     if(!BK.ON)return;
@@ -366,21 +445,30 @@
       x.nodeValue=x.nodeValue.slice(0,lo)+(first?now:'')+x.nodeValue.slice(hi);first=false}
     d.normalize();return d.innerHTML}
   /* החלפה כעריכת מנהל רגילה, באותו נתיב של הצעות התיקון. מחזיר false עם הסבר אם אי אפשר. */
-  function bkApplyRep(f,rp){
+  /* הוספת קטע HTML בנקודה בטקסט (לפי מקום בטקסט הפשוט). בקצה סגנון תו - מחוץ לו */
+  function bkInsertAt(h,pos,frag){
+    const d=document.createElement('div');d.innerHTML=h;
+    const w=document.createTreeWalker(d,NodeFilter.SHOW_TEXT);let n,acc=0,tgt=null,off=0;
+    while(n=w.nextNode()){const L=n.nodeValue.length;
+      if(L&&acc+L>=pos){tgt=n;off=pos-acc;break}acc+=L}
+    const tp=document.createElement('template');tp.innerHTML=frag;
+    if(!tgt){d.appendChild(tp.content);return d.innerHTML}
+    let top=tgt;while(top.parentNode&&top.parentNode!==d)top=top.parentNode;
+    if(top===tgt){const rest=off>=tgt.nodeValue.length?tgt.nextSibling:tgt.splitText(off);
+      if(rest)d.insertBefore(tp.content,rest);else d.appendChild(tp.content)}
+    else{
+      const lastTxt=(function(){const ww=document.createTreeWalker(top,NodeFilter.SHOW_TEXT);let x,l=null;while(x=ww.nextNode())l=x;return l})();
+      if(off>=tgt.nodeValue.length&&lastTxt===tgt)d.insertBefore(tp.content,top.nextSibling);
+      else if(off===0){const ww=document.createTreeWalker(top,NodeFilter.SHOW_TEXT);if(ww.nextNode()===tgt)d.insertBefore(tp.content,top);else{tgt.parentNode.insertBefore(tp.content,tgt)}}
+      else{const rest=tgt.splitText(off);tgt.parentNode.insertBefore(tp.content,rest)}}
+    return d.innerHTML}
+  /* ליבת ההחלה: כעריכת מנהל רגילה. make(curT,curH) מחזיר {nowT,nowH} או הסבר כשל */
+  function bkApplyCore(f,make){
     const L=BK.loc[f.id];if(!L)return 'הממצא לא אותר בטקסט הנוכחי.';
     const s=L.s,old=ED.find(x=>x.k===s.k);
     const curT=old?old.now:s.t,curH=old?(old.nowH!==undefined?old.nowH:esc(old.now)):s.h;
-    const h=bkFindIn(curT,f);if(!h)return 'הטקסט בשורה השתנה מאז הבקרה.';
-    const xc=bkCompact(rp.x).c,mkc=bkCompact(f.mark||'').c;
-    /* הקטע להחלפה נמצא בתוך הסימון (או בתוך ההקשר) - ורק התאמה אחת */
-    const within=h.sc.c.slice(h.pos,h.pos+h.len);
-    let cs=within.indexOf(xc);
-    if(cs<0&&mkc){const c2=h.sc.c.indexOf(xc);if(c2>-1&&h.sc.c.indexOf(xc,c2+1)<0)cs=c2-h.pos;else return 'הקטע "'+rp.x+'" אינו בשורה כפי שנרשם.'}
-    else if(cs<0)return 'הקטע "'+rp.x+'" אינו בשורה כפי שנרשם.';
-    const cStart=h.pos+cs,cEnd=cStart+xc.length-1;
-    const oStart=h.sc.m[cStart],oEnd=h.sc.m[cEnd]+1;
-    const nowT=curT.slice(0,oStart)+rp.y+curT.slice(oEnd);
-    const nowH=bkReplaceAt(curH,oStart,oEnd-oStart,rp.y);
+    const r=make(curT,curH);if(typeof r==='string')return r;
+    const nowT=r.nowT,nowH=r.nowH;
     if(plain(nowH||'')!==nowT)return 'לא ניתן להחיל בלי לפגוע בסגנון התו שבשורה. השתמש ב"ערוך".';
     const wasT=old?old.was:s.t,wasH=old?(old.wasH!==undefined?old.wasH:s.h):s.h;
     const el=$('#flow').querySelector('[data-ek="'+s.k+'"]');
@@ -391,6 +479,35 @@
     BK.undo={id:f.id,f,prev:old||null,k:s.k,wasH:curH};
     if(old)ED=ED.filter(x=>x!==old);
     ED.push(edit);saveED();applyTextNow(edit);return edit}
+  function bkApplyRep(f,rp){
+    return bkApplyCore(f,(curT,curH)=>{
+      const h=bkFindIn(curT,f);if(!h)return 'הטקסט בשורה השתנה מאז הבקרה.';
+      const xc=bkCompact(rp.x).c,mkc=bkCompact(f.mark||'').c;
+      /* הקטע להחלפה נמצא בתוך הסימון (או בתוך ההקשר) - ורק התאמה אחת */
+      const within=h.sc.c.slice(h.pos,h.pos+h.len);
+      let cs=within.indexOf(xc);
+      if(cs<0&&mkc){const c2=h.sc.c.indexOf(xc);if(c2>-1&&h.sc.c.indexOf(xc,c2+1)<0)cs=c2-h.pos;else return 'הקטע "'+rp.x+'" אינו בשורה כפי שנרשם.'}
+      else if(cs<0)return 'הקטע "'+rp.x+'" אינו בשורה כפי שנרשם.';
+      const cStart=h.pos+cs,cEnd=cStart+xc.length-1;
+      const oStart=h.sc.m[cStart],oEnd=h.sc.m[cEnd]+1;
+      return {nowT:curT.slice(0,oStart)+rp.y+curT.slice(oEnd),nowH:bkReplaceAt(curH,oStart,oEnd-oStart,rp.y)}})}
+  /* הוספה: [הסבר] בסגנון "הסבר" אחרי עוגן מדויק, לפניו, או בסוף הפסקה */
+  function bkInsText(t){t=String(t||'').trim().replace(/^\[+|\]+$/g,'').trim().replace(/[.\s]+$/,'');return t}
+  function bkApplyIns(f,op){
+    return bkApplyCore(f,(curT,curH)=>{
+      const tx=bkInsText(op.text);if(!tx)return 'אין טקסט להוספה.';
+      const h=bkFindIn(curT,f),sc=h?h.sc:bkCC(curT);
+      const before=op.before!==undefined&&op.after===undefined&&!op.end;
+      let oi;
+      if(op.end)oi=curT.replace(/\s+$/,'').length;
+      else{
+        const a=bkCompact(op.after||op.before||f.mark||'').c;if(!a)return 'אין עוגן להוספה.';
+        let p=h?sc.c.indexOf(a,Math.max(0,h.pos-a.length)):-1;if(p<0)p=sc.c.indexOf(a);
+        if(p<0)return 'העוגן "'+(op.after||op.before||f.mark)+'" אינו בשורה כפי שנרשם.';
+        oi=before?sc.m[p]:sc.m[p+a.length-1]+1}
+      const lead=before?'':' ',tail=before?' ':'';
+      return {nowT:curT.slice(0,oi)+lead+'['+tx+']'+tail+curT.slice(oi),
+              nowH:bkInsertAt(curH,oi,lead+'<i class="'+(op.cs||'hs')+'">['+esc(tx)+']</i>'+tail)}})}
   function bkAfterEdit(){drawEd();pubSoon();syncSoon()}
   async function bkDecide(id,d,done,nofocus){
     const f=BK.byId[id];if(!f)return;
@@ -399,30 +516,39 @@
     if(d==='pending'){bkPut(f,'pending');bkSave();bkHideCard(true);bkRefreshAfter();toast('הממצא חזר לממתינים.');return}
     if(d==='ok'&&!done){
       const act=bkAction(f);
-      if(act==='rep'){
-        const r=bkApplyRep(f,bkRep(f));
+      if(act==='rep'||act==='ins'){
+        const r=act==='rep'?bkApplyRep(f,bkRep(f)):bkApplyIns(f,bkOp(f));
         if(typeof r==='string'){toast(r+' אפשר ללחוץ "ערוך".',6000);return}
-        now=bkRep(f).y;bkAfterEdit();msg='התיקון הוחל כעריכת מנהל. Ctrl+Z מבטל.'}
-      else if(act==='am'||act==='plain'){
+        now=act==='rep'?bkRep(f).y:bkInsText(bkOp(f).text);bkAfterEdit();
+        msg=act==='rep'?'התיקון הוחל כעריכת מנהל. Ctrl+Z מבטל.':'ההוספה הוחלה בסגנון הסבר, כעריכת מנהל. Ctrl+Z מבטל.'}
+      else if(act==='am'||act==='plain'||act==='ps'){
         if(!EDIT)setEdit(true);if(!EDIT)return;
         const L=BK.loc[f.id];if(!L){toast('הממצא לא אותר בטקסט הנוכחי.');return}
         if(!(SK.mode&&BK.curId===id&&$('#flow').querySelector('[data-ek="'+L.k+'"]'))){bkGo(id,false);
           await new Promise(r=>setTimeout(r,160))}
         const el=$('#flow').querySelector('[data-ek="'+L.k+'"]');
         if(el){el.focus();if(!bkSel(f)){toast('לא נמצא הקטע לסימון. אפשר ללחוץ "ערוך".');return}
-          setCs(act==='am'?'am':'');msg=act==='am'?'סגנון אמוראים הוחל.':'הסגנון הוסר.'}
+          setCs(act==='am'?'am':(act==='ps'?'ps':''));msg=act==='am'?'סגנון אמוראים הוחל.':(act==='ps'?'סגנון פסוק הוחל.':'הסגנון הוסר.')}
         else{toast('לא נמצאה השורה לעריכה.');return}}
-      else{
-        /* הוראה, לא החלפה: עריכה ממוקדת על השורה, והכרעה "אושר - לביצוע" */
-        if(!bkFocusEdit(f))return;
-        bkPut(f,'todo',why);bkSave();bkHideCard(true);bkRefreshAfter();toast('אושר לביצוע. הסמן על הקטע: ערוך כרצונך.',5000);return}}
+      else if(act==='q'){msg='נרשם: הוכרעה ללא שינוי בטקסט.'}
+      else{bkNeedOp(f);return}}
     if(d==='ok'&&done){/* "בוצע" אחרי עריכה ידנית */}
     if(d==='edit'){if(!nofocus&&!bkFocusEdit(f))return;msg='עריכה על הקטע. מה שתכתוב גובר על ההצעה.'}
     if(d==='no'){msg='נדחה.'}
+    /* למידה: אחרי "ערוך וקבל" נשמר הנוסח שהמחבר כתב בפועל, ליד ההצעה שהוצגה */
+    if(d==='edit'&&nofocus){const L=BK.loc[f.id];if(L){const old=ED.find(x=>x.k===L.s.k);now=((old?old.now:L.s.t)||'').slice(0,900)}}
     bkPut(f,d,why,now);bkSave();bkHideCard(true);bkRefreshAfter();
     if(msg&&!SK.mode)toast(msg,4000);
     if(d==='no'&&BK.ON)setTimeout(()=>{},0)}
   window.bkDecide=bkDecide;
+  /* לחיצה על "קבל" בכרטיס = Enter: מחיל ועובר להבא */
+  window.bkAcceptClick=function(id){const f=BK.byId[id];if(f)bkKbDecide(f,'ok')};
+  /* אין מטען מוכן: לא מסמנים "אושר", לא פותחים עריכה. נרשמת בקשה להצעה (שרשור שממתין להרצה המקומית), וממשיכים להבאה */
+  function bkNeedOp(f){
+    skSkip(f.id);
+    toast('אין עדיין הצעה מוכנה לממצא הזה. נרשמה בקשה להצעה, ועברת להערה הבאה.',5000);
+    BK.needSent=BK.needSent||new Set();if(BK.needSent.has(f.id))return;BK.needSent.add(f.id);
+    if(typeof skPost==='function')skPost('/skira/thread',{slug:SLUG,id:f.id,who:'m',txt:'[בקשת הצעה] אין מטען מוכן להחלה (op) לממצא הזה. נא להכין הצעה מנוסחת וקצרה.'}).catch(()=>{})}
   /* במצב מעבר מהיר: בלי חישוב מיקומים ובלי ציור חלונית בכל הכרעה (הדגשה וספירה בלבד) */
   function bkRefreshAfter(){
     if(!SK.mode){bkRefresh();return}
@@ -471,17 +597,19 @@
     if(d==='no'){
       const why=prompt('דחיית כל '+list.length+' הממצאים מסוג "'+c[1]+'". נימוק (לא חובה):','');if(why===null)return;
       list.forEach(f=>bkPut(f,'no',why));bkSave();bkRefresh();toast('נדחו '+list.length+' ממצאים.');return}
-    const reps=list.filter(f=>bkAction(f)==='rep'),rest=list.length-reps.length;
-    if(!confirm('לאשר את כל '+list.length+' הממצאים מסוג "'+c[1]+'"?\n'+reps.length+' החלפות יוחלו כעריכת מנהל'+(rest?'\n'+rest+' יסומנו "אושר לביצוע" (הוראות שאינן החלפה)':'')+'\nאפשר לבטל כל אחד בנפרד.'))return;
+    const apply=list.filter(f=>/^(rep|ins)$/.test(bkAction(f))),rest=list.length-apply.length;
+    if(!apply.length){toast('אין בסוג הזה הצעה מוכנה להחלה גורפת.',5000);return}
+    if(!confirm('לאשר את '+apply.length+' מתוך '+list.length+' הממצאים מסוג "'+c[1]+'"?\n'+apply.length+' ההצעות יוחלו כעריכת מנהל'+(rest?'\n'+rest+' ללא הצעה מוכנה יישארו ממתינות':'')+'\nאפשר לבטל כל אחד בנפרד.'))return;
     let ok=0,skip=[];
-    for(const f of list){
-      if(bkAction(f)==='rep'){const r=bkApplyRep(f,bkRep(f));
-        if(typeof r==='string'){skip.push(f);continue}
-        bkPut(f,'ok','',bkRep(f).y);ok++;bkLocateAll()}
-      else{bkPut(f,'todo','');ok++}}
+    for(const f of apply){
+      const o=bkOp(f),r=o.t==='rep'?bkApplyRep(f,o):bkApplyIns(f,o);
+      if(typeof r==='string'){skip.push(f);continue}
+      bkPut(f,'ok','',o.t==='rep'?o.y:bkInsText(o.text));ok++;bkLocateAll()}
     bkSave();bkAfterEdit();bkRefresh();
     toast('אושרו '+ok+' מתוך '+list.length+(skip.length?'. '+skip.length+' דולגו (הטקסט השתנה) ונשארו ממתינים.':'.'),7000)}
   window.bkBulk=bkBulk;
+  /* סרגל: מונה קטן של ממצאים שהתיישנו ונסגרו (הטקסט כבר מכסה אותם) */
+  function bkStaleTxt(){const n=BK.STALE?BK.STALE.size:0;return n?' · '+n+' התיישנו':''}
 
   /* ---- חיווט: כפתור בסרגל, חלונית, וטעינה למנהל בלבד ---- */
   window.bkInit=function(){

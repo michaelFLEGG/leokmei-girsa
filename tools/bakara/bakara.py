@@ -117,6 +117,38 @@ def _auto_vocal(src, daf, text):
     return bool(res) and any(res)
 
 
+def _cmp(t):
+    return re.sub(r"[\s֑-ׇ'\"״׳]", '', t or '')
+
+
+def _drop_covered_by_edits(findings, slug):
+    """שם בלי סגנון אמוראים (amor_miss) שהעריכה המפורסמת בשורה כבר החילה עליו את הסגנון: אינו ממצא.
+    הדלתא נמדדת על הטקסט שאחרי עריכות המנהל (data/edits/<מסכת>.json), ולא על הוורד הגולמי. אותיות השימוש
+    (ו/ד/ל/כ/מ/ש/ב/ה) שלפני השם אינן נדרשות להיות בתוך הסגנון."""
+    import html as _h
+    ep = os.path.join(REPO, 'data', 'edits', slug + '.json')
+    if not os.path.exists(ep):
+        return findings, 0
+    edits = json.load(open(ep, encoding='utf-8')).get('edits') or []
+    idx = []
+    for e in edits:
+        nh = e.get('nowH')
+        if not nh or not e.get('was'):
+            continue
+        spans = [_cmp(_h.unescape(x)) for x in re.findall(r'<i class="am">(.*?)</i>', nh, flags=re.S)]
+        idx.append((_cmp(e['was']), spans))
+    out, n = [], 0
+    for f in findings:
+        if f['det'] == 'amor_miss' and f.get('mark'):
+            core = _cmp(re.sub(r'^[ודלכמשבה]{1,3}(?=ר)', '', f['mark']))
+            tx = _cmp(f.get('text'))
+            if core and any(w and (w in tx or tx in w) and any(core in sp for sp in spans) for w, spans in idx):
+                n += 1
+                continue
+        out.append(f)
+    return out, n
+
+
 def main():
     docx, slug, perek, vocab_p, out_p = sys.argv[2:7]
     sem_files = sys.argv[7:]
@@ -379,7 +411,8 @@ def main():
             note = r.get('note', '')
             if r.get('evidence'):
                 note += ' · בגמרא: ' + r['evidence']
-            add(det, bb, r.get('mark', ''), note, r.get('fix', ''), sev=sev, conf=r.get('conf', ''), run=tag)
+            kw = {'op': r['op']} if isinstance(r.get('op'), dict) else {}    # מטען מוכן להחלה (19.10.2026)
+            add(det, bb, r.get('mark', ''), note, r.get('fix', ''), sev=sev, conf=r.get('conf', ''), run=tag, **kw)
 
     # כפילויות: אותו מקום, אותו סימון. ממצא שהקוד והמודל מצאו שניהם -
     # נשאר אחד (של המודל, שנימוקו עשיר יותר), ומסומן "נמצא בשתי השכבות".
@@ -401,6 +434,10 @@ def main():
                 drop.add(id(c))
                 break
     ded = [f for f in ded if id(f) not in drop]
+    # 19.10.2026: ממצא שעריכות המנהל שפורסמו באתר כבר מכסות אינו נכתב (הוורד הגולמי אינו רואה אותן)
+    ded, n_cov = _drop_covered_by_edits(ded, slug)
+    if n_cov:
+        print('כבר מכוסים בעריכות המנהל שפורסמו, לא נכתבו:', n_cov)
     loc = HG._locate(blocks)
     for f in ded:
         f['u'] = loc.get(f['i'], (0, f['i']))[1]
@@ -458,6 +495,8 @@ def main():
         print('גרש ציטוט הוכרע בקוד: %d שלמים, %d הושלמו' % (len(auto_log), sum(1 for f in ded if f.get('auto'))))
     except ImportError:
         pass
+    import ops as OPS
+    print('מטען להחלה:', OPS.annotate(ded))
     json.dump({'perek': perek, 'range': [lo, hi], 'n_blocks': len(P), 'catalog': cat,
                'candidates': st.get('candidates') or [], 'findings': ded, 'auto': auto_log},
               open(out_p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

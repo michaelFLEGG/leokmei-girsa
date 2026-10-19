@@ -11,7 +11,7 @@
   const SKEXP={g:'תיקון מכני - אין בו שיקול דעת תוכני',f:'מבנה הדף - ציוני דף, מספור וסדר',e:'ניסוח וסגנון',d:'כותרות',
                i:'בחירת נוסח',h:'שאלה שמופנית אליך',c:'מקום שאינו מובן',b:'שלב חסר בהסבר',a:'טעות בפשט'};
   const SKACT={rep:'החלפה בנוסח המוצע',am:'החלת סגנון: המילים המסומנות יקבלו סגנון אמוראים',
-               plain:'חזרה לסגנון רגיל: הסגנון המיוחד יוסר מן המילים המסומנות',instr:'הוראה: עריכה ממוקדת על הקטע, הסמן יעמוד עליו'};
+               plain:'חזרה לסגנון רגיל: הסגנון המיוחד יוסר מן המילים המסומנות',ins:'הוספת הסבר בסוגריים, בסגנון הסבר',ps:'החלת סגנון פסוק על המילים המסומנות',q:'שאלה למחבר: Enter מסמן שנענתה, בלי שינוי בטקסט',none:'אין עדיין הצעה מוכנה: Enter מבקש הצעה ועובר להבאה'};
   const SKPOS='lg-sk-pos-'+SLUG,SKUNDO='lg-sk-undo-'+SLUG,SKOFF='lg-sk-autooff-'+SLUG;
   function skLs(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')||d}catch(e){return d}}
   function skLsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
@@ -30,7 +30,7 @@
     if(!SK.rng)return true;
     const k=dafKey(f.daf);if(k===null||k===undefined)return false;
     return k>=SK.rng.a&&k<=SK.rng.b}
-  function skPendRaw(f){return bkStatus(f)==='pending'&&!SK.autoQ.has(f.id)&&BK.loc[f.id]}
+  function skPendRaw(f){return bkStatus(f)==='pending'&&!SK.autoQ.has(f.id)&&!BK.STALE.has(f.id)&&BK.loc[f.id]}
   function skCands(){
     return BK.ord.filter(f=>skPendRaw(f)&&skInScope(f)&&skInRng(f)&&(!SK.mode||f.det===SK.mode)&&
       (SK.pool?SK.pool.has(f.id):!BK.SKIP.has(f.id)))}
@@ -172,7 +172,10 @@
     const bb=$('#bkbar');if(bb)bb.style.display='';
     bkRefresh()};
   function skDiffHtml(f){
-    const rp=bkRep(f),c=f.context||f.text||'',m=f.mark||'';
+    const rp=bkRep(f),c=f.context||f.text||'',m=f.mark||'',op=bkOp(f);
+    if(op.t==='ins'){const a=op.end?'':(op.after||op.before||m);const i=a?c.indexOf(a):-1;let pre=c,post='';
+      if(!op.end&&i>-1){if(op.before!==undefined&&op.after===undefined){pre=c.slice(0,i);post=c.slice(i)}else{pre=c.slice(0,i+a.length);post=c.slice(i+a.length)}}
+      return '<div class="dim">לפני: '+esc(c)+'</div>אחרי: '+esc(pre)+' <ins class="hs">['+esc(op.text)+']</ins> '+esc(post)}
     if(rp){
       const i=c.indexOf(rp.x);
       if(i>-1)return esc(c.slice(0,i))+'<del>'+esc(rp.x)+'</del> <b>⟵</b> <ins>'+esc(rp.y)+'</ins>'+esc(c.slice(i+rp.x.length));
@@ -287,11 +290,17 @@
         if(typeof r==='string'){skip++;continue}
         recs.push({id,u:BK.undo&&BK.undo.id===id?{id:BK.undo.id,k:BK.undo.k,prev:BK.undo.prev,wasH:BK.undo.wasH}:null});
         bkPut(f,'ok','',bkRep(f).y);ok++}
-      else if(/^(am|plain)$/.test(bkAction(f))){
+      else if(bkAction(f)==='ins'){
+        BK.curId=id;
+        const o=bkOp(f),r=bkApplyIns(f,o);
+        if(typeof r==='string'){skip++;continue}
+        recs.push({id,u:BK.undo&&BK.undo.id===id?{id:BK.undo.id,k:BK.undo.k,prev:BK.undo.prev,wasH:BK.undo.wasH}:null});
+        bkPut(f,'ok','',bkInsText(o.text));ok++}
+      else if(/^(am|plain|ps)$/.test(bkAction(f))){
         BK.curId=id;
         await bkDecide(id,'ok');
         if(bkStatus(f)==='ok')ok++;else skip++}
-      else{bkPut(f,'todo','');ok++}}
+      else skip++}
     BK.undo=null;
     SK.batch={mode:SK.mode,recs};
     bkSave();bkAfterEdit();bkLocateAll();bkRefreshAfter();
@@ -331,7 +340,7 @@
     const a=$('#skfrom'),b=$('#skto'),e=$('#sknow');if(!a||!e)return;
     const ka=dafKey(a.value),kb=dafKey(b.value);
     if(ka===null||kb===null||kb<ka){e.innerHTML='';return}
-    const L=BK.F.filter(f=>{const k=dafKey(f.daf);return k!==null&&k>=ka&&k<=kb&&bkStatus(f)==='pending'&&!SK.autoQ.has(f.id)});
+    const L=BK.F.filter(f=>{const k=dafKey(f.daf);return k!==null&&k>=ka&&k<=kb&&bkStatus(f)==='pending'&&!SK.autoQ.has(f.id)&&!BK.STALE.has(f.id)});
     const by={};L.forEach(f=>{by[bkTyp(f)]=(by[bkTyp(f)]||0)+1});
     e.innerHTML='<div class="skready"><b>מוכן עכשיו בטווח:</b> '+L.length+' הערות'+
       (L.length?' ('+Object.keys(by).sort((x,y)=>SKORDER.indexOf(x)-SKORDER.indexOf(y)).map(k=>esc(SKT[k][0])+' '+by[k]).join(' · ')+')':'')+
@@ -423,6 +432,7 @@
       for(const f of BK.F){
         if(bkStatus(f)!=='pending')continue;
         if(SK.autoOff[f.det])continue;
+        if(BK.STALE.has(f.id))continue;
         const act=bkAction(f);
         let how='';
         if(f.auto&&act==='rep')how='ok';
@@ -442,14 +452,14 @@
       let nNo=0;
       for(const f of jobs.no.slice(0,600)){bkPut(f,'no','','','auto_'+(f.auto?'v':(H.bySig[skSig(f)]?'sig':'type')));nNo++}
       /* החלה אוטומטית: עד 40 בכל טעינה, רק בפרק הפתוח, כעריכת מנהל רגילה (נכנסת לוורד בעקוב אחר שינויים) */
-      let nOk=0;
+      let nOk=0;const userUndo=BK.undo;   /* ביטול ההכרעה האחרונה של המחבר (Ctrl+Z) אינו נדרס בתיקון אוטומטי */
       for(const f of jobs.ok.slice(0,40)){
         const act=bkAction(f);
         if(act==='rep'){
           const r=bkApplyRep(f,bkRep(f));
           if(typeof r==='string')continue;
           const rec=BK.undo&&BK.undo.id===f.id?{k:BK.undo.k,prev:BK.undo.prev,wasH:BK.undo.wasH}:null;
-          BK.undo=null;
+          BK.undo=userUndo;
           if(rec){SK.undoRec[f.id]=rec}
           bkPut(f,'ok','',bkRep(f).y,'auto_'+(f.auto?'v':(H.bySig[skSig(f)]?'sig':'type')));nOk++}
         else continue}

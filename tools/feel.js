@@ -75,7 +75,7 @@
   }
   var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   function buzz() {
-    if (navigator.vibrate) { try { navigator.vibrate(10); } catch (e) {} }
+    if (navigator.vibrate) { try { if (!navigator.userActivation || navigator.userActivation.hasBeenActive) navigator.vibrate(10); } catch (e) {} }
     else if (isIOS) iosTick();
   }
 

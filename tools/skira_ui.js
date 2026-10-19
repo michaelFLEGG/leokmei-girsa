@@ -187,12 +187,12 @@
   /* אומדן (19.10.2026): מהירה = קוד בלבד (חינם); רגילה = מודל קטן + ביאור חברותא (נמדד בכורות: כ-19 אלף טוקנים לעמוד, כחצי אגורה); מעמיקה = גם מאמת חזק */
   function skEst(depth,n){return depth==='full'?15000+38000*n:depth==='reg'?19000*n:0}
   function skUsd(depth,n){return depth==='full'?0.02*n:depth==='reg'?0.006*n:0}
-  function skMin(depth,n){return depth==='full'?Math.ceil(n*1.2):depth==='reg'?Math.ceil(n*0.5):1}
+  function skMin(depth,n){return depth==='full'?Math.ceil(n*2):depth==='reg'?Math.ceil(n*1.2):1}
   function skReqHtml(){
     const dafs=skDafs();const cd=bkDafNow();
     const opt=(sel)=>dafs.map(x=>'<option value="'+esc(x[0])+'"'+(x[0]===sel?' selected':'')+'>'+esc(x[0])+'</option>').join('');
     const R=SK.rpt;
-    let h='<div class="skf"><b>בקשת סקירה</b><div class="dim">הבקשה נכנסת לתור. לא צריך לעשות דבר מעבר ללחיצה; ההערות יופיעו כאן בהרצה הבאה.</div>'+
+    let h='<div class="skf"><b>בקשת סקירה</b><div class="dim">לוחצים "שלח" וזהו: הסקירה רצה אוטומטית מהמחשב שלך (ממכסת המנוי, בלי עלות API), בתנאי שהמחשב דלוק. ההערות מופיעות כאן כשהיא מסתיימת.</div>'+
       '<label>מדף <select id="skfrom" onchange="skEstDraw()">'+opt(R.from||cd)+'</select> עד <select id="skto" onchange="skEstDraw()">'+opt(R.to||cd)+'</select></label>'+
       '<div class="gbt"><button onclick="skPreset(\'daf\')">העמוד הנוכחי</button><button onclick="skPreset(\'dafboth\')">הדף כולו</button><button onclick="skPreset(\'perek\')">הפרק הנוכחי</button><button onclick="skPreset(\'all\')">כל המסכת</button></div>'+
       '<label>עומק <select id="skdepth" onchange="skEstDraw()"><option value="reg">רגילה (כולל מודל קטן וביאור חברותא)</option><option value="fast">מהירה (בדיקות קוד בלבד, מיידי, בלי עלות)</option><option value="full">מעמיקה (כולל מאמת חזק וכל הסוגים)</option></select></label>'+
@@ -213,14 +213,14 @@
     if(i<0||j<i){e.textContent='הטווח אינו תקין: "עד" חייב לבוא אחרי "מדף".';return}
     const n=(j-i+1)*1;SK.rpt={from:a.value,to:b.value};
     const est=skEst(d.value,n);
-    e.innerHTML='אומדן: '+(n===1?'עמוד אחד':n+' עמודים')+(est?', עד כ-<b>'+est.toLocaleString('he-IL')+'</b> טוקנים, כ-<b>'+skUsd(d.value,n).toFixed(2)+'</b> דולר, כ-<b>'+skMin(d.value,n)+'</b> דקות':', בלי עלות, מיידי')+' (עמוד שלא השתנה מאז הסקירה הקודמת אינו נשלח שוב, ולכן בפועל פחות).'};
+    e.innerHTML='אומדן: '+(n===1?'עמוד אחד':n+' עמודים')+(est?', כ-<b>'+skMin(d.value,n)+'</b> דקות (כדקה לעמוד), ממכסת המנוי, בלי תשלום נוסף':', בלי עלות, תוך דקה')+' (עמוד שלא השתנה מאז הסקירה הקודמת אינו נשלח שוב, ולכן בפועל פחות).'};
   window.skQueueSend=async function(){
     const a=$('#skfrom'),b=$('#skto'),d=$('#skdepth');if(!a)return;
     const ds=skDafs().map(x=>x[0]),i=ds.indexOf(a.value),j=ds.indexOf(b.value);
     if(i<0||j<i){toast('הטווח אינו תקין.');return}
     const est=skEst(d.value,j-i+1);
     try{await skPost('/skira/queue',{slug:SLUG,from:a.value,to:b.value,depth:d.value,note:($('#sknote')||{}).value||'',est});
-      toast('הבקשה נרשמה בתור. ההערות יופיעו בהרצה הבאה.',5000);await skQLoad();skDrawPanel()}
+      toast('הבקשה נשלחה ורצה אוטומטית מהמחשב שלך. ההערות יופיעו כאן כשתסתיים.',6000);await skQLoad();skDrawPanel()}
     catch(e){toast('הבקשה לא נשלחה: '+(e.message||'שגיאה'),6000)}};
   async function skQLoad(){try{const r=await skGet('/skira/queue');SK.Q=(r.doc&&r.doc.items)||[]}catch(e){SK.Q=SK.Q||[]}}
   function skQHtml(){

@@ -169,7 +169,7 @@
     'border-radius:' + (TH.radius || '999px') + ';opacity:.78;-webkit-tap-highlight-color:transparent;transition:opacity .2s,background .2s}' +
     '#feelToggle:hover,#feelToggle:focus-visible{opacity:1;' + (TH.hoverBg ? 'background:' + TH.hoverBg + ';' : '') + '}' +
     '#feelToggle svg{width:1.05em;height:1.05em;flex:none}' +
-    '#feelToggle.floating{position:fixed;inset-block-end:10px;inset-inline-start:10px;z-index:' + (TH.z || 60) + ';margin:0;' +
+    '#feelToggle.floating{position:fixed;inset-block-end:6px;left:50%;transform:translateX(-50%);z-index:' + (TH.z || 60) + ';margin:0;' +
     'background:' + (TH.floatBg || TH.bg || 'rgba(255,255,255,.9)') + ';box-shadow:0 1px 6px rgba(0,0,0,.18)}' +
     '.feel-wrap{text-align:center}' +
     '@media print{#feelToggle,.feel-wrap{display:none!important}}';
@@ -193,8 +193,13 @@
     paint();
     function place() {
       var host = null;
-      try { host = document.querySelector(TH.host || 'footer'); } catch (e) {}
-      if (host && host.offsetParent !== null && !host.closest('[hidden]')) {
+      try {
+        var cand = document.querySelectorAll(TH.host || 'footer');
+        for (var i = cand.length - 1; i >= 0; i--) {
+          if (cand[i].offsetParent !== null && !cand[i].closest('[hidden]') && cand[i].getBoundingClientRect().height > 8) { host = cand[i]; break; }
+        }
+      } catch (e) {}
+      if (host) {
         if (b.parentNode && b.parentNode.className === 'feel-wrap' && host.contains(b)) return true;
         var w = document.createElement('div'); w.className = 'feel-wrap'; w.appendChild(b);
         b.className = ''; host.appendChild(w); return true;

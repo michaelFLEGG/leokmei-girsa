@@ -7,7 +7,7 @@
     uv run python tools/skira/queue.py fail <מזהה> "סיבה"
     uv run python tools/skira/queue.py replies           שרשורי "שוחח" שהמחבר כתב בהם אחרון
     uv run python tools/skira/queue.py prefetch <מסכת> [מספר-דפים]
-                                                         מזמין מראש סקירה מהירה לדפים שאחרי מה שנסקר לאחרונה (הכנה מראש)
+                                                         מזמין מראש סקירה רגילה (כולל ביאור חברותא) לדפים שאחרי מה שנסקר לאחרונה (הכנה מראש)
     uv run python tools/skira/queue.py progress <מזהה> <הושלמו> <סה"כ> [דף-הבא] [דקות]
                                                          מעדכן את פס המצב שבדף ("הושלמו 3 דפים מתוך 11")
 
@@ -50,8 +50,8 @@ def main():
         if not rng:
             print('אין דפים להכנה מראש.')
             return
-        r = _api.call('/skira/queue', 'POST', {'slug': slug, 'from': rng[0], 'to': rng[-1], 'depth': 'fast',
-                                               'note': 'הכנה מראש', 'est': 12000 + 9000 * len(rng), 'prio': 'prefetch'})
+        r = _api.call('/skira/queue', 'POST', {'slug': slug, 'from': rng[0], 'to': rng[-1], 'depth': 'reg',
+                                               'note': 'הכנה מראש (רגילה, כולל ביאור חברותא)', 'est': 19000 * len(rng), 'prio': 'prefetch'})
         print('נרשמה הכנה מראש:', slug, rng[0], 'עד', rng[-1], r['item']['id'])
         return
     if cmd == 'progress':

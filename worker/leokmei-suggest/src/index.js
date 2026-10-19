@@ -933,6 +933,31 @@ async function bkStats(req, env) {
      PUT  /skira/learned         החלפת הכללים (בידי הכלי, לא בדפדפן)
      POST /skira/learned         ביטול או החזרת כלל {id, off}
      POST /skira/ask             תשובה מיידית: פעילה רק אם הוגדר מפתח ב-env, ובתקרה חודשית */
+/* ===== חומר עיון פרטי (ביאור חברותא), מנהל בלבד (19.10.2026) =====
+   POST /hv/put   {slug, c, pages:{daf: חבילה}}  החלפת מקטע של כ-6 דפים (מפתח hv:<מסכת>:<מקטע>)
+   GET  /hv/page  ?slug&daf&c  חבילת עמוד אחד. אינו נשמר במטמון ציבורי ואינו מוגש בלי הרשאת מנהל.
+   הנתונים נכתבים בידי tools/hv/push.py מן הריפו הפרטי. הם אינם בקובצי האתר ולא בריפו הציבורי. */
+async function hvApi(req, env, url, p) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (p === '/hv/put') {
+    let b;
+    try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+    const slug = str(b.slug, 30), c = parseInt(b.c, 10);
+    if (!slugOk(slug) || !(c >= 0 && c < 1000) || !b.pages || typeof b.pages !== 'object') return bad('פרמטרים לא תקינים');
+    const body = JSON.stringify(b.pages);
+    if (body.length > 20 * 1024 * 1024) return bad('מקטע גדול מדי', 413);
+    await env.STORE.put('hv:' + slug + ':' + c, body);
+    return json({ ok: true, slug, c, bytes: body.length });
+  }
+  const slug = str(url.searchParams.get('slug'), 30), daf = str(url.searchParams.get('daf'), 12);
+  const c = parseInt(url.searchParams.get('c'), 10);
+  if (!slugOk(slug) || !daf || !(c >= 0 && c < 1000)) return bad('פרמטרים לא תקינים');
+  const chunk = await env.STORE.get('hv:' + slug + ':' + c, 'json');
+  const pk = chunk && chunk[daf];
+  const r = json({ ok: true, found: !!pk, page: pk || null });
+  r.headers.set('Cache-Control', 'private, no-store');
+  return r;
+}
 const SK_STATUS = ['pending', 'running', 'done', 'failed', 'cancelled'];
 async function skQueue(req, env, url, method, sub) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
@@ -957,7 +982,7 @@ async function skQueue(req, env, url, method, sub) {
   }
   const slug = str(b.slug, 30);
   if (!slugOk(slug)) return bad('מסכת לא תקינה');
-  const depth = b.depth === 'full' ? 'full' : 'fast';
+  const depth = b.depth === 'full' ? 'full' : (b.depth === 'reg' ? 'reg' : 'fast');
   const it = { id: Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), slug,
                from: str(b.from, 12), to: str(b.to, 12), depth, note: str(b.note, 300),
                est: +b.est || 0, status: 'pending', t: Date.now() };
@@ -1862,6 +1887,7 @@ export default {
       if (p === '/bakara/data' && (req.method === 'GET' || req.method === 'PUT')) return await bkData(req, env, url, req.method);
       if (p === '/bakara/dec' && (req.method === 'GET' || req.method === 'POST')) return await bkDec(req, env, url, req.method);
       if (p === '/bakara/stats' && req.method === 'GET') return await bkStats(req, env);
+      if ((p === '/hv/put' && req.method === 'POST') || (p === '/hv/page' && req.method === 'GET')) return await hvApi(req, env, url, p);
       if (p === '/skira/queue' && (req.method === 'GET' || req.method === 'POST')) return await skQueue(req, env, url, req.method, '');
       if (p === '/skira/queue/update' && req.method === 'POST') return await skQueue(req, env, url, 'POST', 'update');
       if (p === '/skira/thread' && (req.method === 'GET' || req.method === 'POST')) return await skThread(req, env, url, req.method, false);

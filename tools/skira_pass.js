@@ -389,7 +389,7 @@
   function skSig(f){
     const rp=bkRep(f);
     return f.det+'|'+bkCompact(f.mark||'').c+(rp?'|'+bkCompact(rp.x).c+'>'+bkCompact(rp.y).c:'')}
-  const SKNOAUTO={psuk_nik:1,psuk_miss:1,sem_hav:1,sem_yih:1,sem_hsr:1,sem_lo:1,sk_pshat:1,sk_step:1,sk_lo:1,sk_q:1,alt:1,hash:1,sem_hash:1};
+  const SKNOAUTO={psuk_nik:1,psuk_miss:1,sem_hav:1,sem_yih:1,sem_hsr:1,sem_lo:1,sk_pshat:1,sk_step:1,sk_lo:1,sk_q:1,sk_miss:1,sk_mach:1,alt:1,hash:1,sem_hash:1};
   function skHistory(){
     const bySig={},byDet={};
     for(const f of BK.F){

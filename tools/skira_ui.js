@@ -184,15 +184,18 @@
       lost.map(f=>'<div class="it" onclick="bkShowLost(\''+f.id+'\')"><small>'+esc(f.daf||'')+' · '+esc(f.kind)+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span></div>').join('');
     h+='<div class="gbt" style="margin-top:8px"><button onclick="skExportDocx()">ייצוא ההערות הפתוחות לוורד</button></div>';
     return h}
-  function skEst(depth,n){return depth==='full'?12000+35000*n:12000+9000*n}
+  /* אומדן (19.10.2026): מהירה = קוד בלבד (חינם); רגילה = מודל קטן + ביאור חברותא (נמדד בכורות: כ-19 אלף טוקנים לעמוד, כחצי אגורה); מעמיקה = גם מאמת חזק */
+  function skEst(depth,n){return depth==='full'?15000+38000*n:depth==='reg'?19000*n:0}
+  function skUsd(depth,n){return depth==='full'?0.02*n:depth==='reg'?0.006*n:0}
+  function skMin(depth,n){return depth==='full'?Math.ceil(n*1.2):depth==='reg'?Math.ceil(n*0.5):1}
   function skReqHtml(){
     const dafs=skDafs();const cd=bkDafNow();
     const opt=(sel)=>dafs.map(x=>'<option value="'+esc(x[0])+'"'+(x[0]===sel?' selected':'')+'>'+esc(x[0])+'</option>').join('');
     const R=SK.rpt;
     let h='<div class="skf"><b>בקשת סקירה</b><div class="dim">הבקשה נכנסת לתור. לא צריך לעשות דבר מעבר ללחיצה; ההערות יופיעו כאן בהרצה הבאה.</div>'+
       '<label>מדף <select id="skfrom" onchange="skEstDraw()">'+opt(R.from||cd)+'</select> עד <select id="skto" onchange="skEstDraw()">'+opt(R.to||cd)+'</select></label>'+
-      '<div class="gbt"><button onclick="skPreset(\'daf\')">הדף הנוכחי</button><button onclick="skPreset(\'perek\')">הפרק הנוכחי</button><button onclick="skPreset(\'all\')">כל המסכת</button></div>'+
-      '<label>עומק <select id="skdepth" onchange="skEstDraw()"><option value="fast">מהירה (קוד ומודל זול)</option><option value="full">מלאה (כולל השכבה הסמנטית החזקה)</option></select></label>'+
+      '<div class="gbt"><button onclick="skPreset(\'daf\')">העמוד הנוכחי</button><button onclick="skPreset(\'dafboth\')">הדף כולו</button><button onclick="skPreset(\'perek\')">הפרק הנוכחי</button><button onclick="skPreset(\'all\')">כל המסכת</button></div>'+
+      '<label>עומק <select id="skdepth" onchange="skEstDraw()"><option value="reg">רגילה (כולל מודל קטן וביאור חברותא)</option><option value="fast">מהירה (בדיקות קוד בלבד, מיידי, בלי עלות)</option><option value="full">מעמיקה (כולל מאמת חזק וכל הסוגים)</option></select></label>'+
       '<label>הערה לסוקר (לא חובה) <input type="text" id="sknote" maxlength="300" style="width:100%"></label>'+
       '<div id="skest" class="dim"></div>'+
       '<div class="gbt"><button class="go" onclick="skQueueSend()">שלח לתור</button></div></div><div id="skqlist"></div>';
@@ -200,6 +203,7 @@
   window.skPreset=function(w){
     const ds=skDafs();const cd=bkDafNow();
     if(w==='daf'){$('#skfrom').value=cd;$('#skto').value=cd}
+    else if(w==='dafboth'){const ds2=skDafs().map(x=>x[0]);const base=String(cd).replace(/[.:]$/,'');const a=ds2.find(x=>x===base+'.')||cd,b=ds2.find(x=>x===base+':')||cd;$('#skfrom').value=a;$('#skto').value=b}
     else if(w==='all'){if(ds.length){$('#skfrom').value=ds[0][0];$('#skto').value=ds[ds.length-1][0]}}
     else{const sec=SEC[cur]||{from:0,to:0};const a=D.pages[sec.from],b=D.pages[sec.to];if(a&&b){$('#skfrom').value=a.daf;$('#skto').value=b.daf}}
     skEstDraw()};
@@ -209,7 +213,7 @@
     if(i<0||j<i){e.textContent='הטווח אינו תקין: "עד" חייב לבוא אחרי "מדף".';return}
     const n=(j-i+1)*1;SK.rpt={from:a.value,to:b.value};
     const est=skEst(d.value,n);
-    e.innerHTML='אומדן: '+(n===1?'דף אחד':n+' דפים')+', עד כ-<b>'+est.toLocaleString('he-IL')+'</b> טוקנים (פסקה שלא השתנתה מאז הסקירה הקודמת אינה נשלחת, ולכן בפועל פחות).'};
+    e.innerHTML='אומדן: '+(n===1?'עמוד אחד':n+' עמודים')+(est?', עד כ-<b>'+est.toLocaleString('he-IL')+'</b> טוקנים, כ-<b>'+skUsd(d.value,n).toFixed(2)+'</b> דולר, כ-<b>'+skMin(d.value,n)+'</b> דקות':', בלי עלות, מיידי')+' (עמוד שלא השתנה מאז הסקירה הקודמת אינו נשלח שוב, ולכן בפועל פחות).'};
   window.skQueueSend=async function(){
     const a=$('#skfrom'),b=$('#skto'),d=$('#skdepth');if(!a)return;
     const ds=skDafs().map(x=>x[0]),i=ds.indexOf(a.value),j=ds.indexOf(b.value);
@@ -223,7 +227,7 @@
     const L=(SK.Q||[]).filter(x=>x.slug===SLUG).slice(-8).reverse();
     if(!L.length)return '';
     const nm={pending:'ממתינה',running:'רצה',done:'הושלמה',failed:'נכשלה',cancelled:'בוטלה'};
-    return '<h3>בקשות אחרונות</h3>'+L.map(x=>'<div class="it" style="cursor:default"><small>'+esc(x.from)+' עד '+esc(x.to)+' · '+(x.depth==='full'?'מלאה':'מהירה')+' · '+(nm[x.status]||x.status)+'</small>'+(x.result?'<br><small>'+esc(x.result)+'</small>':'')+'</div>').join('')}
+    return '<h3>בקשות אחרונות</h3>'+L.map(x=>'<div class="it" style="cursor:default"><small>'+esc(x.from)+' עד '+esc(x.to)+' · '+(x.depth==='full'?'מעמיקה':x.depth==='reg'?'רגילה':'מהירה')+' · '+(nm[x.status]||x.status)+'</small>'+(x.result?'<br><small>'+esc(x.result)+'</small>':'')+'</div>').join('')}
   function skLearnHtml(){
     /* שיעורי קבלה לכל סוג מההכרעות הקיימות, וכללים מ-/skira/learned */
     const by={};

@@ -30,6 +30,27 @@ try{new PerformanceObserver(l=>{for(const e of l.getEntries())window.__lt.push([
 '''
 
 
+# --- חסימת כתיבה (19.10.2026) ---------------------------------------------
+# הבדיקה מקלידה טקסט זבל ("אבאב", "שלום עולם", "בדיקה") ומפצלת פסקאות. בהרצה
+# על האתר החי עם אסימון מנהל אמיתי, הדפדפן פרסם את הזבל הזה לנקודת הקליטה,
+# משם הוא נקלט לקובצי הוורד ונראה בשבת, בסוכה ובבכורות. מעתה: בכל מצב, חי או
+# מקומי, כל בקשה שאינה קריאה (PUT/POST/PATCH/DELETE) אל נקודת הקליטה, אל
+# גיטהאב או אל הגשר המקומי - נחסמת ומקבלת תשובה מדומה. קריאה בלבד עוברת.
+WRITE_HOSTS = ('workers.dev', 'api.github.com', '127.0.0.1:8760', 'localhost:8760')
+BLOCKED = []
+
+
+def seal_writes(target):
+    """חוסם כל כתיבה החוצה מן הדפדפן הנבדק. target הוא context או page."""
+    def handler(route):
+        req = route.request
+        if req.method.upper() not in ('GET', 'HEAD', 'OPTIONS') and any(h in req.url for h in WRITE_HOSTS):
+            BLOCKED.append(req.method + ' ' + req.url.split('?')[0])
+            return route.fulfill(status=200, content_type='application/json', body='{"ok":true,"doc":{"edits":[]}}')
+        return route.continue_()
+    target.route('**/*', handler)
+
+
 def pct(v, p):
     v = sorted(v)
     return v[max(0, min(len(v) - 1, int(round(p * len(v) + 0.5)) - 1))] if v else None
@@ -53,6 +74,7 @@ def open_ctx(pw, a, token):
         kw.update(is_mobile=True, has_touch=True, device_scale_factor=2,
                   user_agent='Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Mobile Safari/537.36')
     ctx = br.new_context(**kw)
+    seal_writes(ctx)   # תמיד, גם בהרצה חיה: הבדיקה לעולם אינה מפרסמת
     ctx.add_init_script(INIT + "try{localStorage.setItem('lg-admin','1');localStorage.setItem('lg-adm'," + json.dumps(token) + ")}catch(e){}")
     return br, ctx
 

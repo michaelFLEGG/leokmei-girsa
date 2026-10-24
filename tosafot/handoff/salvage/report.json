@@ -1,0 +1,242 @@
+[
+ {
+  "slug": "ketubot",
+  "perek": 1,
+  "batch": "msgbatch_01Rhkk2QWx6KZhrLyWykuZ3R",
+  "status": "ended",
+  "counts": {
+   "succeeded": 50,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 50,
+  "ok": 50
+ },
+ {
+  "slug": "ketubot",
+  "perek": 2,
+  "batch": "msgbatch_01WMMN9BTsAykZz78hVm3etR",
+  "status": "ended",
+  "counts": {
+   "succeeded": 51,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 51,
+  "ok": 51
+ },
+ {
+  "slug": "ketubot",
+  "perek": 3,
+  "batch": "msgbatch_01S8sXixpuxgvbWSPJ19oQRz",
+  "status": "ended",
+  "counts": {
+   "succeeded": 58,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 58,
+  "ok": 58
+ },
+ {
+  "slug": "ketubot",
+  "perek": 4,
+  "batch": "msgbatch_01M5AT6w8r59pak1tCiqoKe1",
+  "status": "ended",
+  "counts": {
+   "succeeded": 49,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 49,
+  "ok": 49
+ },
+ {
+  "slug": "ketubot",
+  "perek": 5,
+  "batch": "msgbatch_016C19HLj7m4c95vXTXLzCxi",
+  "status": "ended",
+  "counts": {
+   "succeeded": 42,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 42,
+  "ok": 42
+ },
+ {
+  "slug": "ketubot",
+  "perek": 6,
+  "batch": "msgbatch_01EopfVDdAnq8idEVRrW7xGb",
+  "status": "ended",
+  "counts": {
+   "succeeded": 16,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 16,
+  "ok": 16
+ },
+ {
+  "slug": "ketubot",
+  "perek": 7,
+  "batch": "msgbatch_01Awai3FGDirHyWgJGTTMeC4",
+  "status": "ended",
+  "counts": {
+   "succeeded": 28,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 28,
+  "ok": 28
+ },
+ {
+  "slug": "ketubot",
+  "perek": 8,
+  "batch": "msgbatch_013ZnXFW5ZKDnBSoR7hkq3rB",
+  "status": "ended",
+  "counts": {
+   "succeeded": 18,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 18,
+  "ok": 18
+ },
+ {
+  "slug": "ketubot",
+  "perek": 9,
+  "batch": "msgbatch_01TVUtWfoUpsDU7Zsoz7S3Ei",
+  "status": "ended",
+  "counts": {
+   "succeeded": 25,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 25,
+  "ok": 25
+ },
+ {
+  "slug": "ketubot",
+  "perek": 10,
+  "batch": "msgbatch_01W9LVWhxVYfhLELFZK3Lv3a",
+  "status": "ended",
+  "counts": {
+   "succeeded": 25,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 25,
+  "ok": 25
+ },
+ {
+  "slug": "ketubot",
+  "perek": 11,
+  "batch": "msgbatch_0111Fp2neuFDiQU8oMGZfwgW",
+  "status": "ended",
+  "counts": {
+   "succeeded": 23,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 23,
+  "ok": 23
+ },
+ {
+  "slug": "ketubot",
+  "perek": 12,
+  "batch": "msgbatch_01HXamQXP5eyCkAmEGxQTBHY",
+  "status": "ended",
+  "counts": {
+   "succeeded": 13,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 13,
+  "ok": 13
+ },
+ {
+  "slug": "ketubot",
+  "perek": 13,
+  "batch": "msgbatch_01VwxQpwjXQYBPs6mq7CEUEc",
+  "status": "ended",
+  "counts": {
+   "succeeded": 27,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 27,
+  "ok": 27
+ },
+ {
+  "slug": "makkot",
+  "perek": 1,
+  "batch": "msgbatch_01RQjWmUvRMsy31v9aPNVBm8",
+  "status": "ended",
+  "counts": {
+   "succeeded": 21,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 21,
+  "ok": 21
+ },
+ {
+  "slug": "makkot",
+  "perek": 2,
+  "batch": "msgbatch_015N3q9M15Df2t7uUn3Hy3R1",
+  "status": "ended",
+  "counts": {
+   "succeeded": 17,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 17,
+  "ok": 17
+ },
+ {
+  "slug": "makkot",
+  "perek": 3,
+  "batch": "msgbatch_014vfBkcJqk8yJoefe1cdxz1",
+  "status": "ended",
+  "counts": {
+   "succeeded": 31,
+   "errored": 0,
+   "canceled": 0,
+   "expired": 0,
+   "processing": 0
+  },
+  "saved": 31,
+  "ok": 31
+ }
+]

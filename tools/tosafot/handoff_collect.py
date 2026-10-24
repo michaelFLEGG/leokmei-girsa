@@ -384,6 +384,12 @@ def write_board(state_line=None):
     for slug, (a, b, f) in by.items():
         lines.append('| %s | %d | %d | %d |' % (F.SLUG2HE.get(slug, slug), a, b, f))
     io.open(os.path.join(HO, 'board.md'), 'w', encoding='utf-8', newline='\n').write('\n'.join(lines) + '\n')
+    # שורת התוס' בלוח בתי החרושת בדרייב: כלי הדרייב אינו עורך תוכן של מסמך קיים, ולכן היא נכתבת בתיאור (description) של הלוח
+    one = ("מפעל התוס' (לאוקמי, החשבון השני), %s UTC: %s. %d/%d יחידות (%.1f%%), %d/%d תוס', לעיון המנהל %d, redo %d, "
+           "קצב %.1f יחידות ליום, סיום צפוי %s. הלוח המלא: github.com/michaelFLEGG/leokmei-girsa/blob/main/tosafot/handoff/board.md"
+           % (now.strftime('%d.%m.%Y %H:%M'), state_line, ok_u, tot_u, 100.0 * ok_u / max(1, tot_u), ok_t, tot_t, flagged,
+              len(idx.get('redo') or []), rate, eta))
+    io.open(os.path.join(HO, 'board-line.txt'), 'w', encoding='utf-8', newline='\n').write(one + '\n')
 
 
 def main(argv):

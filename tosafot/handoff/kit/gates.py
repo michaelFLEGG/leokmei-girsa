@@ -278,16 +278,77 @@ def cap_questions(qs, rec, c):
     return qs[:2 if n >= 180 else 1]
 
 
+def repair_quotes(t):
+    """מתקן מרכאות שלא הוברחו בתוך מחרוזת (ש"ס, רש"י, "מה לי"), תקלה שנמדדה ב-24.10.2026 בכתיבה דרך תת-סוכן.
+    מרכאה בתוך מחרוזת נחשבת סוגרת רק כשאחריה (אחרי רווחים) בא : } ] , או פסיק שאחריו פותח ערך או מפתח חדש."""
+    out, i, n, ins = [], 0, len(t), False
+    while i < n:
+        ch = t[i]
+        if not ins:
+            out.append(ch)
+            if ch == '"':
+                ins = True
+            i += 1
+            continue
+        if ch == '\\' and i + 1 < n:
+            out.append(t[i:i + 2])
+            i += 2
+            continue
+        if ch == '"':
+            j = i + 1
+            while j < n and t[j] in ' \t\r\n':
+                j += 1
+            nxt = t[j] if j < n else ''
+            close = nxt in ('', ':', '}', ']')
+            if nxt == ',':
+                k = j + 1
+                while k < n and t[k] in ' \t\r\n':
+                    k += 1
+                close = k >= n or t[k] in '"{[-0123456789ntf'
+            if close:
+                out.append(ch)
+                ins = False
+            else:
+                out.append('\\"')
+            i += 1
+            continue
+        if ch == '\n':
+            out.append('\\n')
+            i += 1
+            continue
+        out.append(ch)
+        i += 1
+    return ''.join(out)
+
+
 def parse_json(t):
     t = (t or '').strip()
     t = re.sub(r'^```(?:json)?|```$', '', t, flags=re.M).strip()
     try:
         return json.loads(t)
     except Exception:
-        i, j = t.find('{'), t.rfind('}')
-        if 0 <= i < j:
-            return json.loads(t[i:j + 1])
-        raise
+        pass
+    # תת-סוכן שתיקן את עצמו מחזיר לפעמים שני אובייקטים ("Wait... Corrected:"): קודם האחרון שבתחילת שורה, אחר כך הראשון
+    starts = [m.start() for m in re.finditer(r'(?:^|\n)\s*\{', t)]
+    cands = []
+    for s0 in reversed(starts):
+        s0 = t.index('{', s0)
+        e0 = t.find('\n}', s0)
+        j = t.rfind('}')
+        cands.append(t[s0:j + 1])
+        k = t.find('}\n', s0)
+        if k > 0:
+            cands.append(t[s0:k + 1])
+    i, j = t.find('{'), t.rfind('}')
+    if 0 <= i < j:
+        cands.append(t[i:j + 1])
+    for cand in cands:
+        for f in (lambda x: x, repair_quotes):
+            try:
+                return json.loads(f(cand))
+            except Exception:
+                continue
+    raise ValueError('פלט לא JSON')
 
 
 def resolve_anchor(a, ctxp, idx):
@@ -727,7 +788,7 @@ def page_fn(unit):
 
 def log_line(wd, msg):
     with io.open(os.path.join(wd, 'gates.log'), 'a', encoding='utf-8') as f:
-        f.write('[%s] %s\n' % (datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), msg))
+        f.write('[%s] %s\n' % (datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'), msg))
 
 
 def nothing():
@@ -890,9 +951,14 @@ def cmd_finalize(wd, outp):
         cal.append(dict(x, src=src))
     eng = {k: v for k, v in (work.get('engines') or {}).items() if v}
     out = {'id': unit['id'], 'slug': unit['slug'], 'perek': unit['perek'], 'gates': VERSION,
-           'done_at': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
+           'done_at': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
            'engines': eng, 'ntos': len(recs), 'flagged': len(flagged), 'recs': recs, 'cal': cal,
            'raw': work.get('raw', {})}
+    # ריפוד: קובץ תוצר קטן מ-110 אלף בתים מורחב ברווחים, כדי שהקולט יוכל להוריד אותו מהדרייב ישר לדיסק (תוצאה גדולה נשמרת
+    # לקובץ) ולא יצטרך להעתיק אותו ביד. הריפוד אינו נקרא ואינו משפיע על התוכן.
+    size = len(json.dumps(out, ensure_ascii=False, indent=1).encode('utf-8'))
+    if size < 110000:
+        out['_pad'] = ' ' * (110000 - size)
     jdump(outp, out)
     msg = 'finalize: %d תוספות, %d לעיון המנהל, %d כיול -> %s' % (len(recs), len(flagged), len(cal), outp)
     log_line(wd, msg)

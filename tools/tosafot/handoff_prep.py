@@ -162,7 +162,6 @@ def main():
     index = jload(idx_path) or {'version': 1, 'created': F.now_iso(), 'units': [], 'redo': []}
     have = {u['id'] for u in index['units']}
     have_pk = {(u['slug'], u['perek']) for u in index['units'] if not u.get('fill')}
-    order = max([u['order'] for u in index['units']] or [0])
     done_slugs, todo_slugs = plan()
     only = set(x for x in a.only.split(',') if x)
     rep = {'at': F.now_iso(), 'completeness': [], 'units': 0, 'tos': 0, 'by': {}, 'skipped': [], 'prewritten': 0}
@@ -224,26 +223,26 @@ def main():
             for ui, upages in enumerate(split_units(pages), 1):
                 uid = '%s-p%02d-u%02d' % (slug, p, ui)
                 add(build_unit(uid, slug, p, 0, upages, c, ctxj, salv, pool, examples, 0))
-    # הסדר: יחידות השלמה בראש, אחריהן לפי סדר התוכנית; יחידות שכבר באינדקס שומרות את מספרן
-    fills = [u for u in new_units if u.get('fill')]
-    rest = [u for u in new_units if not u.get('fill')]
-    if fills:
-        for u in index['units']:
-            u['order'] += len(fills)
-        for i, u in enumerate(fills, 1):
-            u['order'] = i
-        order += len(fills)
-    for u in rest:
-        order += 1
-        u['order'] = order
+    # הסדר (שדה order): יחידות השלמה בראש, אחריהן לפי סדר התוכנית (מסכת, פרק, יחידה). ממוספר מחדש בכל הרצה, כדי שמסכת
+    # שההכנה שלה הסתיימה מאוחר תיכנס במקומה בתור ולא בסופו. המזהים אינם משתנים.
+    rank = {s_: i for i, s_ in enumerate(done_slugs + todo_slugs)}
+
+    def key(u):
+        return (0 if u.get('fill') else 1, rank.get(u['slug'], 999), u['perek'], u['id'])
     if a.dry:
         print(json.dumps({k: v for k, v in rep.items()}, ensure_ascii=False, indent=1))
         return
     for u in new_units:
-        jdump(os.path.join(HO, 'units', u['id'] + '.json'), u)
-        index['units'].append({'id': u['id'], 'slug': u['slug'], 'perek': u['perek'], 'order': u['order'], 'ntos': u['ntos'],
+        index['units'].append({'id': u['id'], 'slug': u['slug'], 'perek': u['perek'], 'order': 0, 'ntos': u['ntos'],
                                **({'fill': True} if u.get('fill') else {})})
-    index['units'].sort(key=lambda u: u['order'])
+    index['units'].sort(key=key)
+    orders = {}
+    for i, u in enumerate(index['units'], 1):
+        u['order'] = i
+        orders[u['id']] = i
+    for u in new_units:
+        u['order'] = orders[u['id']]
+        jdump(os.path.join(HO, 'units', u['id'] + '.json'), u)
     index['updated'] = F.now_iso()
     index.setdefault('redo', [])
     jdump(idx_path, index)

@@ -1,0 +1,39 @@
+name: מפעל התוס' בחשבון השני - בניית יחידות (קוד בלבד)
+# 24.10.2026: בונה את יחידות הקלט לחשבון השני (tosafot/handoff/units, index.json) מכל מה שההכנה כבר הכינה.
+# יחידה קיימת אינה נבנית מחדש: המזהים יציבים, והחשבון השני כבר עובד עליהן. רץ בענן כי הקבצים גדולים (ההעלאה מהבית חלשה).
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ['בית החרושת לתוספות - הכנה (קוד בלבד, בלי מודל ובלי מפתח)']
+    types: [completed]
+permissions:
+  contents: write
+concurrency:
+  group: tosafot-handoff-build
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: בניית יחידות
+        run: python tools/tosafot/handoff_prep.py
+      - name: דחיפה
+        run: |
+          git config user.name "tosafot-handoff"; git config user.email "factory@users.noreply.github.com"
+          git add -A tosafot/handoff
+          if git diff --cached --quiet; then echo "אין שינוי"; else
+            git commit -q -m "מפעל התוס' בחשבון השני: יחידות קלט $(date -u +'%d.%m.%Y %H:%M')"
+            OK=0
+            for i in 1 2 3 4 5 6 7 8; do
+              git stash -q --include-untracked 2>/dev/null || true
+              if git pull --rebase -q && git push -q; then OK=1; fi
+              git stash pop -q 2>/dev/null || true
+              if [ "$OK" = "1" ]; then break; fi
+              sleep $((i * 9))
+            done
+            if [ "$OK" != "1" ]; then echo "::error::הדחיפה נכשלה"; exit 1; fi
+          fi

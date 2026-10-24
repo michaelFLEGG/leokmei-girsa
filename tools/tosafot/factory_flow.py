@@ -203,7 +203,7 @@ def drift_check(slug, perek, c, work, st):
 
 
 # ---------------------------------------------------------------- פרסום פרק
-def publish(slug, perek, c, work, flagged):
+def publish(slug, perek, c, work, flagged, only=None):
     d = fp(slug)
     count = F.load_count(slug, perek)
     dec = F.decided_map(slug)
@@ -214,6 +214,8 @@ def publish(slug, perek, c, work, flagged):
     qitems = []
     skipped = []
     for r in count['items']:
+        if only is not None and rid(perek, r['n']) not in only:
+            continue      # 24.10.2026: השלמה חלקית (יחידת השלמה מהחשבון השני): שאר הפרק אינו נוגע
         k = str(r['n'])
         key = str(ukey(perek, r['n']))
         if key in dec:

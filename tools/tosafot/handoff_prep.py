@@ -176,8 +176,8 @@ def main():
         rep['by'][u['slug']][1] += u['ntos']
         rep['prewritten'] += len(u.get('prewritten') or {})
 
-    # א. בדיקת שלמות במסכתות שהושלמו: תוספות בספירה שאין לו שורה חיה (מוכרע / תקין / מסומן)
-    for slug in done_slugs:
+    # א. בדיקת שלמות בפרקים שפורסמו: תוספות בספירה שאין לו שורה חיה (מוכרע / תקין / מסומן)
+    for slug in done_slugs + todo_slugs:      # כל פרק שפורסם, גם במסכת שעוד לא הושלמה (קידושין פרק א)
         if only and slug not in only:
             continue
         ctxj = jload(fp(slug, 'context.json')) or {}

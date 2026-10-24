@@ -1,0 +1,96 @@
+{
+ "masechet": "עירובין",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "מבוי",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "17b",
+   "toLine": 14,
+   "countedThrough": "17b"
+  },
+  {
+   "n": 2,
+   "name": "עושין פסין",
+   "from": "17b",
+   "fromLine": 15,
+   "to": "26b",
+   "toLine": 16,
+   "countedThrough": "26b"
+  },
+  {
+   "n": 3,
+   "name": "בכל מערבין",
+   "from": "26b",
+   "fromLine": 17,
+   "to": "41b",
+   "toLine": 5,
+   "countedThrough": "41b"
+  },
+  {
+   "n": 4,
+   "name": "מי שהוציאוהו",
+   "from": "41b",
+   "fromLine": 6,
+   "to": "52b",
+   "toLine": 15,
+   "countedThrough": "52b"
+  },
+  {
+   "n": 5,
+   "name": "כיצד מעברין",
+   "from": "52b",
+   "fromLine": 16,
+   "to": "61b",
+   "toLine": 10,
+   "countedThrough": "61b"
+  },
+  {
+   "n": 6,
+   "name": "הדר",
+   "from": "61b",
+   "fromLine": 11,
+   "to": "76a",
+   "toLine": 6,
+   "countedThrough": "76a"
+  },
+  {
+   "n": 7,
+   "name": "חלון",
+   "from": "76a",
+   "fromLine": 7,
+   "to": "82a",
+   "toLine": 9,
+   "countedThrough": "82a"
+  },
+  {
+   "n": 8,
+   "name": "כיצד משתתפין",
+   "from": "82a",
+   "fromLine": 10,
+   "to": "89a",
+   "toLine": 3,
+   "countedThrough": "89a"
+  },
+  {
+   "n": 9,
+   "name": "כל גגות",
+   "from": "89a",
+   "fromLine": 4,
+   "to": "95a",
+   "toLine": 21,
+   "countedThrough": "95a"
+  },
+  {
+   "n": 10,
+   "name": "המוצא תפילין",
+   "from": "95a",
+   "fromLine": 22,
+   "to": "105a",
+   "toLine": 12,
+   "countedThrough": "105a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 54a."
+}

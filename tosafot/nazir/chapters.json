@@ -1,0 +1,87 @@
+{
+ "masechet": "נזיר",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "כל כנויי נזירות",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "8b",
+   "toLine": 12,
+   "countedThrough": "8b"
+  },
+  {
+   "n": 2,
+   "name": "הריני נזיר",
+   "from": "9a",
+   "fromLine": 1,
+   "to": "16a",
+   "toLine": 3,
+   "countedThrough": "16a"
+  },
+  {
+   "n": 3,
+   "name": "מי שאמר קמא",
+   "from": "16a",
+   "fromLine": 4,
+   "to": "20b",
+   "toLine": 2,
+   "countedThrough": "20b"
+  },
+  {
+   "n": 4,
+   "name": "מי שאמר בתרא",
+   "from": "20b",
+   "fromLine": 3,
+   "to": "30b",
+   "toLine": 10,
+   "countedThrough": "30b"
+  },
+  {
+   "n": 5,
+   "name": "בית שמאי",
+   "from": "30b",
+   "fromLine": 11,
+   "to": "34a",
+   "toLine": 9,
+   "countedThrough": "34a"
+  },
+  {
+   "n": 6,
+   "name": "שלשה מינין",
+   "from": "34a",
+   "fromLine": 10,
+   "to": "47a",
+   "toLine": 5,
+   "countedThrough": "47a"
+  },
+  {
+   "n": 7,
+   "name": "כהן גדול",
+   "from": "47a",
+   "fromLine": 6,
+   "to": "57a",
+   "toLine": 3,
+   "countedThrough": "57a"
+  },
+  {
+   "n": 8,
+   "name": "שני נזירים",
+   "from": "57a",
+   "fromLine": 4,
+   "to": "61a",
+   "toLine": 5,
+   "countedThrough": "61a"
+  },
+  {
+   "n": 9,
+   "name": "הכותים אין להם נזירות",
+   "from": "61a",
+   "fromLine": 6,
+   "to": "66b",
+   "toLine": 5,
+   "countedThrough": "66b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 33b."
+}

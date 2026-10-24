@@ -1,0 +1,42 @@
+{
+ "masechet": "ראש השנה",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "ארבעה ראשי שנים",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "22a",
+   "toLine": 12,
+   "countedThrough": "22a"
+  },
+  {
+   "n": 2,
+   "name": "אם אינן מכירין",
+   "from": "22a",
+   "fromLine": 13,
+   "to": "25b",
+   "toLine": 6,
+   "countedThrough": "25b"
+  },
+  {
+   "n": 3,
+   "name": "ראוהו בית דין",
+   "from": "25b",
+   "fromLine": 7,
+   "to": "29b",
+   "toLine": 4,
+   "countedThrough": "29b"
+  },
+  {
+   "n": 4,
+   "name": "יום טוב",
+   "from": "29b",
+   "fromLine": 5,
+   "to": "35a",
+   "toLine": 13,
+   "countedThrough": "35a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: אין."
+}

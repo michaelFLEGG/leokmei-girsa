@@ -1,0 +1,78 @@
+{
+ "masechet": "יומא",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "שבעת ימים",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "21b",
+   "toLine": 15,
+   "countedThrough": "21b"
+  },
+  {
+   "n": 2,
+   "name": "בראשונה",
+   "from": "22a",
+   "fromLine": 1,
+   "to": "28a",
+   "toLine": 9,
+   "countedThrough": "28a"
+  },
+  {
+   "n": 3,
+   "name": "אמר להם הממונה",
+   "from": "28a",
+   "fromLine": 10,
+   "to": "39a",
+   "toLine": 5,
+   "countedThrough": "39a"
+  },
+  {
+   "n": 4,
+   "name": "טרף בקלפי",
+   "from": "39a",
+   "fromLine": 6,
+   "to": "46b",
+   "toLine": 11,
+   "countedThrough": "46b"
+  },
+  {
+   "n": 5,
+   "name": "הוציאו לו",
+   "from": "47a",
+   "fromLine": 1,
+   "to": "62a",
+   "toLine": 7,
+   "countedThrough": "62a"
+  },
+  {
+   "n": 6,
+   "name": "שני שעירי",
+   "from": "62a",
+   "fromLine": 8,
+   "to": "68b",
+   "toLine": 11,
+   "countedThrough": "68b"
+  },
+  {
+   "n": 7,
+   "name": "בא לו",
+   "from": "68b",
+   "fromLine": 12,
+   "to": "73b",
+   "toLine": 12,
+   "countedThrough": "73b"
+  },
+  {
+   "n": 8,
+   "name": "יום הכפורים",
+   "from": "73b",
+   "fromLine": 13,
+   "to": "88a",
+   "toLine": 12,
+   "countedThrough": "88a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 58b, 62a, 68b, 72b, 75a, 75b, 77a, 82b, 83b, 86a, 86b, 87a."
+}

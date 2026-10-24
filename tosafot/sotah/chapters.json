@@ -1,0 +1,87 @@
+{
+ "masechet": "סוטה",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "המקנא",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "14a",
+   "toLine": 11,
+   "countedThrough": "14a"
+  },
+  {
+   "n": 2,
+   "name": "היה מביא",
+   "from": "14a",
+   "fromLine": 12,
+   "to": "19a",
+   "toLine": 6,
+   "countedThrough": "19a"
+  },
+  {
+   "n": 3,
+   "name": "היה נוטל",
+   "from": "19a",
+   "fromLine": 7,
+   "to": "23b",
+   "toLine": 13,
+   "countedThrough": "23b"
+  },
+  {
+   "n": 4,
+   "name": "ארוסה",
+   "from": "23b",
+   "fromLine": 14,
+   "to": "27b",
+   "toLine": 2,
+   "countedThrough": "27b"
+  },
+  {
+   "n": 5,
+   "name": "כשם שהמים",
+   "from": "27b",
+   "fromLine": 3,
+   "to": "31a",
+   "toLine": 13,
+   "countedThrough": "31a"
+  },
+  {
+   "n": 6,
+   "name": "מי שקינא",
+   "from": "31a",
+   "fromLine": 14,
+   "to": "32a",
+   "toLine": 4,
+   "countedThrough": "32a"
+  },
+  {
+   "n": 7,
+   "name": "אלו נאמרין",
+   "from": "32a",
+   "fromLine": 5,
+   "to": "42a",
+   "toLine": 7,
+   "countedThrough": "42a"
+  },
+  {
+   "n": 8,
+   "name": "משוח מלחמה",
+   "from": "42a",
+   "fromLine": 8,
+   "to": "44b",
+   "toLine": 9,
+   "countedThrough": "44b"
+  },
+  {
+   "n": 9,
+   "name": "עגלה ערופה",
+   "from": "44b",
+   "fromLine": 10,
+   "to": "49b",
+   "toLine": 20,
+   "countedThrough": "49b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 29b, 43a, 43b, 44a, 45a, 45b, 46a, 46b, 47a, 47b, 48a, 48b, 49a, 49b."
+}

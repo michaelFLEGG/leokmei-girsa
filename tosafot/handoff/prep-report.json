@@ -1,5 +1,5 @@
 {
- "at": "2026-10-24T18:02:38Z",
+ "at": "2026-10-24T18:08:57Z",
  "completeness": [
   {
    "slug": "bava-batra",
@@ -25,47 +25,31 @@
    ]
   }
  ],
- "units": 156,
- "tos": 3453,
+ "units": 197,
+ "tos": 4421,
  "by": {
-  "shevuot": [
-   25,
-   520
+  "kiddushin": [
+   12,
+   288
   ],
-  "avodah-zarah": [
-   34,
-   776
+  "nedarim": [
+   56,
+   1253
   ],
-  "horayot": [
-   3,
-   63
+  "shabbat": [
+   70,
+   1550
   ],
-  "zevachim": [
+  "pesachim": [
    46,
-   1026
+   1058
   ],
-  "menachot": [
-   48,
-   1068
+  "beitzah": [
+   13,
+   272
   ]
  },
  "skipped": [
-  {
-   "slug": "nedarim",
-   "why": "אין ספירה או הקשר (ההכנה טרם הסתיימה)"
-  },
-  {
-   "slug": "shabbat",
-   "why": "אין ספירה או הקשר (ההכנה טרם הסתיימה)"
-  },
-  {
-   "slug": "pesachim",
-   "why": "אין ספירה או הקשר (ההכנה טרם הסתיימה)"
-  },
-  {
-   "slug": "beitzah",
-   "why": "אין ספירה או הקשר (ההכנה טרם הסתיימה)"
-  },
   {
    "slug": "shekalim",
    "why": "אין ספירה או הקשר (ההכנה טרם הסתיימה)"
@@ -76,6 +60,6 @@
   }
  ],
  "prewritten": 0,
- "total_units": 617,
- "total_tos": 13504
+ "total_units": 814,
+ "total_tos": 17925
 }

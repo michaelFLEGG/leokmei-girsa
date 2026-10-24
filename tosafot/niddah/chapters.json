@@ -1,0 +1,96 @@
+{
+ "masechet": "נדה",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "שמאי אומר",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "12b",
+   "toLine": 11,
+   "countedThrough": "12b"
+  },
+  {
+   "n": 2,
+   "name": "כל היד",
+   "from": "13a",
+   "fromLine": 1,
+   "to": "21a",
+   "toLine": 3,
+   "countedThrough": "21a"
+  },
+  {
+   "n": 3,
+   "name": "המפלת חתיכה",
+   "from": "21a",
+   "fromLine": 4,
+   "to": "31b",
+   "toLine": 17,
+   "countedThrough": "31b"
+  },
+  {
+   "n": 4,
+   "name": "בנות כותים",
+   "from": "31b",
+   "fromLine": 18,
+   "to": "39b",
+   "toLine": 12,
+   "countedThrough": "39b"
+  },
+  {
+   "n": 5,
+   "name": "יוצא דופן",
+   "from": "40a",
+   "fromLine": 1,
+   "to": "48a",
+   "toLine": 10,
+   "countedThrough": "48a"
+  },
+  {
+   "n": 6,
+   "name": "בא סימן",
+   "from": "48a",
+   "fromLine": 11,
+   "to": "54b",
+   "toLine": 9,
+   "countedThrough": "54b"
+  },
+  {
+   "n": 7,
+   "name": "דם הנדה",
+   "from": "54b",
+   "fromLine": 10,
+   "to": "57a",
+   "toLine": 17,
+   "countedThrough": "57a"
+  },
+  {
+   "n": 8,
+   "name": "הרואה כתם",
+   "from": "57b",
+   "fromLine": 1,
+   "to": "59a",
+   "toLine": 17,
+   "countedThrough": "59a"
+  },
+  {
+   "n": 9,
+   "name": "האשה שהיא עושה",
+   "from": "59b",
+   "fromLine": 1,
+   "to": "64b",
+   "toLine": 4,
+   "countedThrough": "64b"
+  },
+  {
+   "n": 10,
+   "name": "תינוקת",
+   "from": "64b",
+   "fromLine": 5,
+   "to": "73a",
+   "toLine": 16,
+   "countedThrough": "73a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: אין."
+}

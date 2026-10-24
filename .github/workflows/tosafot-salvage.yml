@@ -1,0 +1,79 @@
+name: בית החרושת לתוספות - שליפת אצוות ששולמו (חד-פעמי, בלי בקשה חדשה)
+# 24.10.2026: אצוות הכתיבה של כתובות ומכות נשלחו ב-14.10 ושולמו, ותוצאותיהן נשמרות אצל Anthropic כ-29 יום (עד כ-12.11).
+# שליפת תוצאות אינה עולה כסף. ההרצה הזאת רק קוראת (retrieve, results) ושומרת את התשובות הגולמיות ל-tosafot/handoff/salvage/.
+# היא אינה שולחת שום בקשה חדשה ואינה מבטלת דבר. התשובות נכנסות ליחידות כ"כתיבה מוכנה" (prewritten) בבניית היחידות.
+on: workflow_dispatch
+permissions:
+  contents: write
+concurrency:
+  group: tosafot-salvage
+  cancel-in-progress: false
+jobs:
+  salvage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install anthropic
+      - name: שליפה בלבד
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python - <<'PY'
+          import anthropic, json, io, os
+          B = [('ketubot', 1, 'msgbatch_01Rhkk2QWx6KZhrLyWykuZ3R'), ('ketubot', 2, 'msgbatch_01WMMN9BTsAykZz78hVm3etR'),
+               ('ketubot', 3, 'msgbatch_01S8sXixpuxgvbWSPJ19oQRz'), ('ketubot', 4, 'msgbatch_01M5AT6w8r59pak1tCiqoKe1'),
+               ('ketubot', 5, 'msgbatch_016C19HLj7m4c95vXTXLzCxi'), ('ketubot', 6, 'msgbatch_01EopfVDdAnq8idEVRrW7xGb'),
+               ('ketubot', 7, 'msgbatch_01Awai3FGDirHyWgJGTTMeC4'), ('ketubot', 8, 'msgbatch_013ZnXFW5ZKDnBSoR7hkq3rB'),
+               ('ketubot', 9, 'msgbatch_01TVUtWfoUpsDU7Zsoz7S3Ei'), ('ketubot', 10, 'msgbatch_01W9LVWhxVYfhLELFZK3Lv3a'),
+               ('ketubot', 11, 'msgbatch_0111Fp2neuFDiQU8oMGZfwgW'), ('ketubot', 12, 'msgbatch_01HXamQXP5eyCkAmEGxQTBHY'),
+               ('ketubot', 13, 'msgbatch_01VwxQpwjXQYBPs6mq7CEUEc'),
+               ('makkot', 1, 'msgbatch_01RQjWmUvRMsy31v9aPNVBm8'), ('makkot', 2, 'msgbatch_015N3q9M15Df2t7uUn3Hy3R1'),
+               ('makkot', 3, 'msgbatch_014vfBkcJqk8yJoefe1cdxz1')]
+          c = anthropic.Anthropic()
+          os.makedirs('tosafot/handoff/salvage', exist_ok=True)
+          rep = []
+          for slug, perek, bid in B:
+              try:
+                  b = c.messages.batches.retrieve(bid)
+              except Exception as e:
+                  rep.append({'slug': slug, 'perek': perek, 'batch': bid, 'err': str(e)[:300]})
+                  continue
+              row = {'slug': slug, 'perek': perek, 'batch': bid, 'status': b.processing_status,
+                     'counts': {k: getattr(b.request_counts, k) for k in ('succeeded', 'errored', 'canceled', 'expired', 'processing')}}
+              if b.processing_status == 'ended':
+                  out = {}
+                  try:
+                      for r in c.messages.batches.results(bid):
+                          res = r.result
+                          if res.type != 'succeeded':
+                              out[r.custom_id] = {'ok': False, 'err': res.type}
+                              continue
+                          m = res.message
+                          out[r.custom_id] = {'ok': True, 'model': m.model,
+                                              'text': ''.join(x.text for x in m.content if getattr(x, 'type', '') == 'text')}
+                  except Exception as e:
+                      row['err'] = str(e)[:300]
+                  with io.open('tosafot/handoff/salvage/%s-%d.json' % (slug, perek), 'w', encoding='utf-8') as f:
+                      json.dump({'slug': slug, 'perek': perek, 'batch': bid, 'results': out}, f, ensure_ascii=False, indent=1)
+                  row['saved'] = len(out)
+                  row['ok'] = sum(1 for v in out.values() if v.get('ok'))
+              rep.append(row)
+              print(row, flush=True)
+          with io.open('tosafot/handoff/salvage/report.json', 'w', encoding='utf-8') as f:
+              json.dump(rep, f, ensure_ascii=False, indent=1)
+          PY
+      - name: דחיפה
+        run: |
+          git config user.name "tosafot-factory"; git config user.email "factory@users.noreply.github.com"
+          git add -A tosafot/handoff/salvage
+          if git diff --cached --quiet; then echo "אין שינוי"; else
+            git commit -m "מפעל התוס': שליפת אצוות כתובות ומכות ששולמו (בלי בקשה חדשה)"
+            for i in 1 2 3 4 5 6; do
+              if git pull --rebase -q && git push -q; then exit 0; fi
+              sleep $((i * 9))
+            done
+            exit 1
+          fi

@@ -10,6 +10,7 @@
 
     uv run python tools/tosafot/factory_prep.py sukkah --fetch      # שלבים 1 עד 4
     uv run python tools/tosafot/factory_prep.py sukkah --context    # שלב 5, אחרי בנייה
+    --keep-counts: ספירה של פרק שכבר קיימת אינה נבנית מחדש (קידושין פרק א, וכל פרק שכבר פורסם)
 """
 import os, sys, re, json, io, time, subprocess, urllib.request, urllib.parse, urllib.error
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -20,6 +21,7 @@ from build_count import heb_num, daf_key, daf_order
 from fetch_tosafot import dafim
 from fetch_sources import get
 
+KEEP = False
 import factory as _F
 from sefaria_map import SEFARIA as _SEF
 # מכל מסכת בתור: שם עברי ושם בספריא (לפי מפת המסכתות של האתר)
@@ -170,6 +172,10 @@ def do_fetch(slug):
     old['note'] = 'גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: ' + (', '.join(missing) or 'אין') + '.'
     jdump(cpath, old)
     for c in merged:
+        # 24.10.2026: ספירה קיימת אינה נבנית מחדש (--keep-counts): המספור שלה כבר פורסם ומוכרע. רק פרק חדש נספר.
+        if KEEP and os.path.exists(os.path.join(ROOT, 'tosafot', slug, 'count-%d.json' % c['n'])):
+            print('פרק %d: ספירה קיימת נשמרת' % c['n'])
+            continue
         run_count(slug, c['n'])
     print('נבנתה ספירה ל-%d פרקים' % len(merged))
 
@@ -190,6 +196,7 @@ def do_context(slug):
 if __name__ == '__main__':
     sys.stdout.reconfigure(encoding='utf-8')
     slug = sys.argv[1]
+    KEEP = '--keep-counts' in sys.argv
     if '--fetch' in sys.argv:
         do_fetch(slug)
     if '--context' in sys.argv:

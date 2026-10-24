@@ -1,47 +1,59 @@
 name: בית החרושת לתוספות - הכנה (קוד בלבד, בלי מודל ובלי מפתח)
 # שלב ההכנה למסכת: משיכת התוספות מספריא, הספירה הקבועה והאימות, ובנייה של האתר כדי לחלץ את שורות הלאוקמי גירסא לכל עמוד.
 # התוצר נדחף לריפו: tosafot/<מסכת>/ ו-tosafot/raw/.
+# 24.10.2026: אפשר כמה מסכתות בהרצה אחת, מופרדות בפסיק (בנייה אחת לכולן). ספירה קיימת אינה נבנית מחדש (--keep-counts).
+# כשל במסכת אחת נרשם ואינו עוצר את האחרות. קבוצת המקביליות לפי הקלט, כדי שהרצות שונות לא יבטלו זו את זו.
 on:
   workflow_dispatch:
     inputs:
       slug:
-        description: 'מסכת (sukkah או berakhot)'
+        description: 'מסכת אחת או כמה, מופרדות בפסיק (למשל nedarim,shabbat)'
         required: true
 permissions:
   contents: write
 concurrency:
-  group: tosafot-prep
+  group: tosafot-prep-${{ inputs.slug }}
   cancel-in-progress: false
 jobs:
   prep:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 340
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
       - run: pip install lxml fonttools brotli pillow
       - name: משיכת התוספות והספירה
-        run: python tools/tosafot/factory_prep.py "${{ inputs.slug }}" --fetch
+        run: |
+          FAIL=""
+          for s in $(echo "${{ inputs.slug }}" | tr ',' ' '); do
+            echo "::group::$s"
+            python tools/tosafot/factory_prep.py "$s" --fetch --keep-counts || FAIL="$FAIL $s"
+            echo "::endgroup::"
+          done
+          if [ -n "$FAIL" ]; then echo "::warning::המשיכה נכשלה ב:$FAIL"; fi
       - name: הורדה מהדרייב
         run: python tools/fetch.py
       - name: בנייה (להקשר הלאוקמי גירסא)
         run: python tools/build_all.py
       - name: הקשר לכל עמוד
-        run: python tools/tosafot/factory_prep.py "${{ inputs.slug }}" --context
+        run: |
+          for s in $(echo "${{ inputs.slug }}" | tr ',' ' '); do
+            if [ -f "tosafot/raw/$s.json" ]; then python tools/tosafot/factory_prep.py "$s" --context || echo "::warning::הקשר נכשל ב-$s"; fi
+          done
       - name: דחיפה
         run: |
           git config user.name "tosafot-factory"; git config user.email "factory@users.noreply.github.com"
           git add -A tosafot
           if git diff --cached --quiet; then echo "אין שינוי"; else
-            git commit -m "בית החרושת לתוספות: הכנה ל${{ inputs.slug }} (ספירה, אימות והקשר)"
+            git commit -m "בית החרושת לתוספות: הכנה ל-${{ inputs.slug }} (ספירה, אימות והקשר)"
             OK=0
-            for i in 1 2 3 4 5; do
+            for i in 1 2 3 4 5 6 7 8; do
               git stash -q --include-untracked 2>/dev/null || true
               if git pull --rebase -q && git push -q; then OK=1; fi
               git stash pop -q 2>/dev/null || true
               if [ "$OK" = "1" ]; then break; fi
-              sleep $((i * 7))
+              sleep $((i * 9))
             done
-            if [ "$OK" != "1" ]; then echo "::error::הדחיפה נכשלה אחרי חמישה ניסיונות"; exit 1; fi
+            if [ "$OK" != "1" ]; then echo "::error::הדחיפה נכשלה אחרי שמונה ניסיונות"; exit 1; fi
           fi

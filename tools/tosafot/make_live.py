@@ -12,8 +12,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 
 def ukey(slug, perek, n):
     """המפתח היחיד של תוספות במסכת (בדף, בנקודת הקליטה). בקידושין נשאר n כמות שהוא (הבחירות הקיימות); בשאר המסכתות
-    perek*1000+n, כדי שמספר 5 בפרק ג ומספר 5 בפרק ד לא יתנגשו. המספר שמוצג ללומד (disp) הוא מספר התוספות בפרק."""
-    return n if slug == 'kiddushin' else perek * 1000 + n
+    perek*1000+n, כדי שמספר 5 בפרק ג ומספר 5 בפרק ד לא יתנגשו. המספר שמוצג ללומד (disp) הוא מספר התוספות בפרק.
+    24.10.2026: בקידושין רק פרק א שומר את n; פרקים ב עד ד (מפעל התוס' בחשבון השני) כמו שאר המסכתות."""
+    return n if (slug == 'kiddushin' and perek == 1) else perek * 1000 + n
 
 
 def main():

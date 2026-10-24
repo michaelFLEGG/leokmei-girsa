@@ -243,7 +243,7 @@ def do_pack(cfg):
     for slug, daf, tos in pages:
         for r in tos:
             m = shuffled(slug, r['id'], cfg['engines'])
-            key = r['n'] if slug == 'kiddushin' else r['perek'] * 1000 + r['n']      # זהה ל-make_live.ukey
+            key = r['n'] if (slug == 'kiddushin' and r['perek'] == 1) else r['perek'] * 1000 + r['n']      # זהה ל-make_live.ukey
             pub = {'key': key, 'n': r['n'], 'perek': r['perek'], 'hn': r['hn'], 'daf': r['dafKey'], 'dh': r['dh'], 'text': r['text'], 'url': r['url'],
                    'laukmi': r['laukmi'], 'options': {k: opts[(slug, r['id'])][m[k]] for k in 'abcde'[:len(cfg['engines'])]}}
             by_slug.setdefault(slug, {'items': {}, 'map': {}, 'tokens': {}, 'review': {}})

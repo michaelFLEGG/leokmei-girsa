@@ -1,0 +1,60 @@
+{
+ "masechet": "מעילה",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "קדשי קדשים",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "8a",
+   "toLine": 2,
+   "countedThrough": "8a"
+  },
+  {
+   "n": 2,
+   "name": "חטאת העוף",
+   "from": "8a",
+   "fromLine": 3,
+   "to": "10b",
+   "toLine": 6,
+   "countedThrough": "10b"
+  },
+  {
+   "n": 3,
+   "name": "ולד חטאת",
+   "from": "10b",
+   "fromLine": 7,
+   "to": "14b",
+   "toLine": 10,
+   "countedThrough": "14b"
+  },
+  {
+   "n": 4,
+   "name": "קדשי מזבח",
+   "from": "15a",
+   "fromLine": 1,
+   "to": "18a",
+   "toLine": 7,
+   "countedThrough": "18a"
+  },
+  {
+   "n": 5,
+   "name": "הנהנה מן ההקדש",
+   "from": "18a",
+   "fromLine": 8,
+   "to": "20a",
+   "toLine": 11,
+   "countedThrough": "20a"
+  },
+  {
+   "n": 6,
+   "name": "השליח שעשה שליחותו",
+   "from": "20a",
+   "fromLine": 12,
+   "to": "22a",
+   "toLine": 4,
+   "countedThrough": "22a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: אין."
+}

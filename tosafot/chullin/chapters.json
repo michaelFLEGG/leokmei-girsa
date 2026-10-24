@@ -1,0 +1,114 @@
+{
+ "masechet": "חולין",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "הכל שוחטין",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "26b",
+   "toLine": 19,
+   "countedThrough": "26b"
+  },
+  {
+   "n": 2,
+   "name": "השוחט",
+   "from": "27a",
+   "fromLine": 1,
+   "to": "42a",
+   "toLine": 2,
+   "countedThrough": "42a"
+  },
+  {
+   "n": 3,
+   "name": "אלו טרפות",
+   "from": "42a",
+   "fromLine": 3,
+   "to": "67b",
+   "toLine": 16,
+   "countedThrough": "67b"
+  },
+  {
+   "n": 4,
+   "name": "בהמה המקשה",
+   "from": "68a",
+   "fromLine": 1,
+   "to": "78a",
+   "toLine": 4,
+   "countedThrough": "78a"
+  },
+  {
+   "n": 5,
+   "name": "אותו ואת בנו",
+   "from": "78a",
+   "fromLine": 5,
+   "to": "83b",
+   "toLine": 2,
+   "countedThrough": "83b"
+  },
+  {
+   "n": 6,
+   "name": "כסוי הדם",
+   "from": "83b",
+   "fromLine": 3,
+   "to": "89b",
+   "toLine": 2,
+   "countedThrough": "89b"
+  },
+  {
+   "n": 7,
+   "name": "גיד הנשה",
+   "from": "89b",
+   "fromLine": 3,
+   "to": "103b",
+   "toLine": 15,
+   "countedThrough": "103b"
+  },
+  {
+   "n": 8,
+   "name": "כל הבשר",
+   "from": "103b",
+   "fromLine": 16,
+   "to": "117b",
+   "toLine": 5,
+   "countedThrough": "117b"
+  },
+  {
+   "n": 9,
+   "name": "העור והרוטב",
+   "from": "117b",
+   "fromLine": 6,
+   "to": "129b",
+   "toLine": 18,
+   "countedThrough": "129b"
+  },
+  {
+   "n": 10,
+   "name": "הזרוע והלחיים",
+   "from": "130a",
+   "fromLine": 1,
+   "to": "134b",
+   "toLine": 25,
+   "countedThrough": "134b"
+  },
+  {
+   "n": 11,
+   "name": "ראשית הגז",
+   "from": "135a",
+   "fromLine": 1,
+   "to": "138b",
+   "toLine": 2,
+   "countedThrough": "138b"
+  },
+  {
+   "n": 12,
+   "name": "שילוח הקן",
+   "from": "138b",
+   "fromLine": 3,
+   "to": "142a",
+   "toLine": 10,
+   "countedThrough": "142a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 131b, 142a."
+}

@@ -1,0 +1,69 @@
+{
+ "masechet": "תמורה",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "הכל ממירין",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "13b",
+   "toLine": 17,
+   "countedThrough": "13b"
+  },
+  {
+   "n": 2,
+   "name": "יש בקרבנות",
+   "from": "14a",
+   "fromLine": 1,
+   "to": "17b",
+   "toLine": 2,
+   "countedThrough": "17b"
+  },
+  {
+   "n": 3,
+   "name": "אלו קדשים",
+   "from": "17b",
+   "fromLine": 3,
+   "to": "21b",
+   "toLine": 14,
+   "countedThrough": "21b"
+  },
+  {
+   "n": 4,
+   "name": "ולד חטאת",
+   "from": "21b",
+   "fromLine": 15,
+   "to": "24a",
+   "toLine": 30,
+   "countedThrough": "24a"
+  },
+  {
+   "n": 5,
+   "name": "כיצד מערימין",
+   "from": "24b",
+   "fromLine": 1,
+   "to": "27b",
+   "toLine": 19,
+   "countedThrough": "27b"
+  },
+  {
+   "n": 6,
+   "name": "כל האסורין",
+   "from": "28a",
+   "fromLine": 1,
+   "to": "31a",
+   "toLine": 12,
+   "countedThrough": "31a"
+  },
+  {
+   "n": 7,
+   "name": "יש בקדשי מזבח",
+   "from": "31a",
+   "fromLine": 13,
+   "to": "34a",
+   "toLine": 21,
+   "countedThrough": "34a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 16a."
+}

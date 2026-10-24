@@ -1,0 +1,87 @@
+{
+ "masechet": "ערכין",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "הכל מעריכין",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "7b",
+   "toLine": 14,
+   "countedThrough": "7b"
+  },
+  {
+   "n": 2,
+   "name": "אין נערכין",
+   "from": "7b",
+   "fromLine": 15,
+   "to": "13b",
+   "toLine": 16,
+   "countedThrough": "13b"
+  },
+  {
+   "n": 3,
+   "name": "יש בערכין",
+   "from": "13b",
+   "fromLine": 17,
+   "to": "17a",
+   "toLine": 8,
+   "countedThrough": "17a"
+  },
+  {
+   "n": 4,
+   "name": "השג יד",
+   "from": "17a",
+   "fromLine": 9,
+   "to": "19a",
+   "toLine": 3,
+   "countedThrough": "19a"
+  },
+  {
+   "n": 5,
+   "name": "האומר משקלי עלי",
+   "from": "19a",
+   "fromLine": 4,
+   "to": "21b",
+   "toLine": 12,
+   "countedThrough": "21b"
+  },
+  {
+   "n": 6,
+   "name": "שום היתומים",
+   "from": "21b",
+   "fromLine": 13,
+   "to": "24a",
+   "toLine": 11,
+   "countedThrough": "24a"
+  },
+  {
+   "n": 7,
+   "name": "אין מקדישין",
+   "from": "24a",
+   "fromLine": 12,
+   "to": "27a",
+   "toLine": 6,
+   "countedThrough": "27a"
+  },
+  {
+   "n": 8,
+   "name": "המקדיש שדהו",
+   "from": "27a",
+   "fromLine": 7,
+   "to": "29a",
+   "toLine": 24,
+   "countedThrough": "29a"
+  },
+  {
+   "n": 9,
+   "name": "המוכר שדהו",
+   "from": "29b",
+   "fromLine": 1,
+   "to": "34a",
+   "toLine": 9,
+   "countedThrough": "34a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 33b."
+}

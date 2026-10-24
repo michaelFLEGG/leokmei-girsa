@@ -1,0 +1,60 @@
+{
+ "masechet": "כריתות",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "שלשים ושש",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "8b",
+   "toLine": 3,
+   "countedThrough": "8b"
+  },
+  {
+   "n": 2,
+   "name": "ארבעה מחוסרי כפרה",
+   "from": "8b",
+   "fromLine": 4,
+   "to": "11b",
+   "toLine": 5,
+   "countedThrough": "11b"
+  },
+  {
+   "n": 3,
+   "name": "אמרו לו",
+   "from": "11b",
+   "fromLine": 6,
+   "to": "17a",
+   "toLine": 25,
+   "countedThrough": "17a"
+  },
+  {
+   "n": 4,
+   "name": "ספק אכל חלב",
+   "from": "17a",
+   "fromLine": 26,
+   "to": "20b",
+   "toLine": 6,
+   "countedThrough": "20b"
+  },
+  {
+   "n": 5,
+   "name": "דם שחיטה",
+   "from": "20b",
+   "fromLine": 7,
+   "to": "23b",
+   "toLine": 11,
+   "countedThrough": "23b"
+  },
+  {
+   "n": 6,
+   "name": "המביא אשם",
+   "from": "23b",
+   "fromLine": 12,
+   "to": "28b",
+   "toLine": 9,
+   "countedThrough": "28b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 26a, 26b, 27a, 27b, 28a, 28b."
+}

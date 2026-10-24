@@ -1,0 +1,78 @@
+{
+ "masechet": "שבועות",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "שבועות שתים קמא",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "14a",
+   "toLine": 11,
+   "countedThrough": "14a"
+  },
+  {
+   "n": 2,
+   "name": "ידיעות הטומאה",
+   "from": "14a",
+   "fromLine": 12,
+   "to": "19b",
+   "toLine": 12,
+   "countedThrough": "19b"
+  },
+  {
+   "n": 3,
+   "name": "שבועות שתים בתרא",
+   "from": "19b",
+   "fromLine": 13,
+   "to": "29b",
+   "toLine": 16,
+   "countedThrough": "29b"
+  },
+  {
+   "n": 4,
+   "name": "שבועת העדות",
+   "from": "30a",
+   "fromLine": 1,
+   "to": "36b",
+   "toLine": 4,
+   "countedThrough": "36b"
+  },
+  {
+   "n": 5,
+   "name": "שבועת הפקדון",
+   "from": "36b",
+   "fromLine": 5,
+   "to": "38b",
+   "toLine": 7,
+   "countedThrough": "38b"
+  },
+  {
+   "n": 6,
+   "name": "שבועת הדיינין",
+   "from": "38b",
+   "fromLine": 8,
+   "to": "44b",
+   "toLine": 7,
+   "countedThrough": "44b"
+  },
+  {
+   "n": 7,
+   "name": "כל הנשבעין",
+   "from": "44b",
+   "fromLine": 8,
+   "to": "49a",
+   "toLine": 3,
+   "countedThrough": "49a"
+  },
+  {
+   "n": 8,
+   "name": "ארבעה שומרין",
+   "from": "49a",
+   "fromLine": 4,
+   "to": "49b",
+   "toLine": 16,
+   "countedThrough": "49b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: אין."
+}

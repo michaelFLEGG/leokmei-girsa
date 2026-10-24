@@ -1,0 +1,17 @@
+{
+ "slug": "horayot",
+ "masechet": "הוריות",
+ "perek": 3,
+ "perekName": "כהן משיח",
+ "from": "9b",
+ "fromLine": 11,
+ "to": "14a",
+ "toLine": 7,
+ "countedThrough": "14a",
+ "verifiedThrough": "",
+ "source": "Sefaria, Tosafot on Horayot, Vilna Edition",
+ "total": 0,
+ "removed": [],
+ "note": "הספירה קבועה: אין לחשב מחדש בכל טעינה. שינוי בה נעשה רק בכלי הזה, עם רישום ב-removed.",
+ "items": []
+}

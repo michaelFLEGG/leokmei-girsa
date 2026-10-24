@@ -1,0 +1,51 @@
+{
+ "masechet": "עבודה זרה",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "לפני אידיהן",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "22a",
+   "toLine": 10,
+   "countedThrough": "22a"
+  },
+  {
+   "n": 2,
+   "name": "אין מעמידין",
+   "from": "22a",
+   "fromLine": 11,
+   "to": "40b",
+   "toLine": 11,
+   "countedThrough": "40b"
+  },
+  {
+   "n": 3,
+   "name": "כל הצלמים",
+   "from": "40b",
+   "fromLine": 12,
+   "to": "49b",
+   "toLine": 17,
+   "countedThrough": "49b"
+  },
+  {
+   "n": 4,
+   "name": "רבי ישמעאל",
+   "from": "49b",
+   "fromLine": 18,
+   "to": "61b",
+   "toLine": 16,
+   "countedThrough": "61b"
+  },
+  {
+   "n": 5,
+   "name": "השוכר את הפועל",
+   "from": "62a",
+   "fromLine": 1,
+   "to": "76b",
+   "toLine": 5,
+   "countedThrough": "76b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: אין."
+}

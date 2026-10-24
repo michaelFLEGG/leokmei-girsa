@@ -1,0 +1,132 @@
+{
+ "masechet": "זבחים",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "כל הזבחים",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "15b",
+   "toLine": 8,
+   "countedThrough": "15b"
+  },
+  {
+   "n": 2,
+   "name": "כל הזבחים שקבלו דמן",
+   "from": "15b",
+   "fromLine": 9,
+   "to": "31b",
+   "toLine": 13,
+   "countedThrough": "31b"
+  },
+  {
+   "n": 3,
+   "name": "כל הפסולין",
+   "from": "31b",
+   "fromLine": 14,
+   "to": "36b",
+   "toLine": 15,
+   "countedThrough": "36b"
+  },
+  {
+   "n": 4,
+   "name": "בית שמאי",
+   "from": "36b",
+   "fromLine": 16,
+   "to": "47a",
+   "toLine": 11,
+   "countedThrough": "47a"
+  },
+  {
+   "n": 5,
+   "name": "איזהו מקומן",
+   "from": "47a",
+   "fromLine": 12,
+   "to": "57b",
+   "toLine": 12,
+   "countedThrough": "57b"
+  },
+  {
+   "n": 6,
+   "name": "קדשי קדשים",
+   "from": "58a",
+   "fromLine": 1,
+   "to": "66a",
+   "toLine": 6,
+   "countedThrough": "66a"
+  },
+  {
+   "n": 7,
+   "name": "חטאת העוף",
+   "from": "66a",
+   "fromLine": 7,
+   "to": "70b",
+   "toLine": 14,
+   "countedThrough": "70b"
+  },
+  {
+   "n": 8,
+   "name": "כל הזבחים שנתערבו",
+   "from": "70b",
+   "fromLine": 15,
+   "to": "83a",
+   "toLine": 14,
+   "countedThrough": "83a"
+  },
+  {
+   "n": 9,
+   "name": "המזבח מקדש",
+   "from": "83a",
+   "fromLine": 15,
+   "to": "88b",
+   "toLine": 15,
+   "countedThrough": "88b"
+  },
+  {
+   "n": 10,
+   "name": "כל התדיר",
+   "from": "89a",
+   "fromLine": 1,
+   "to": "92a",
+   "toLine": 5,
+   "countedThrough": "92a"
+  },
+  {
+   "n": 11,
+   "name": "דם חטאת",
+   "from": "92a",
+   "fromLine": 6,
+   "to": "98b",
+   "toLine": 5,
+   "countedThrough": "98b"
+  },
+  {
+   "n": 12,
+   "name": "טבול יום",
+   "from": "98b",
+   "fromLine": 6,
+   "to": "106a",
+   "toLine": 8,
+   "countedThrough": "106a"
+  },
+  {
+   "n": 13,
+   "name": "השוחט והמעלה",
+   "from": "106a",
+   "fromLine": 9,
+   "to": "112a",
+   "toLine": 10,
+   "countedThrough": "112a"
+  },
+  {
+   "n": 14,
+   "name": "פרת חטאת",
+   "from": "112a",
+   "fromLine": 11,
+   "to": "120b",
+   "toLine": 3,
+   "countedThrough": "120b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 21b, 112b, 118b, 120a, 120b."
+}

@@ -1,0 +1,33 @@
+{
+ "masechet": "הוריות",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "הורו בית דין",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "6b",
+   "toLine": 10,
+   "countedThrough": "6b"
+  },
+  {
+   "n": 2,
+   "name": "הורה כהן משיח",
+   "from": "6b",
+   "fromLine": 11,
+   "to": "9b",
+   "toLine": 10,
+   "countedThrough": "9b"
+  },
+  {
+   "n": 3,
+   "name": "כהן משיח",
+   "from": "9b",
+   "fromLine": 11,
+   "to": "14a",
+   "toLine": 7,
+   "countedThrough": "14a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 9a, 9b, 10a, 10b, 11a, 11b, 12a, 12b, 13a, 13b, 14a."
+}

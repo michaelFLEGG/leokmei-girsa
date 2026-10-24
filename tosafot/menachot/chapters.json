@@ -1,0 +1,123 @@
+{
+ "masechet": "מנחות",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "כל המנחות",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "13a",
+   "toLine": 6,
+   "countedThrough": "13a"
+  },
+  {
+   "n": 2,
+   "name": "הקומץ את המנחה",
+   "from": "13a",
+   "fromLine": 7,
+   "to": "17a",
+   "toLine": 15,
+   "countedThrough": "17a"
+  },
+  {
+   "n": 3,
+   "name": "הקומץ רבה",
+   "from": "17a",
+   "fromLine": 16,
+   "to": "38a",
+   "toLine": 3,
+   "countedThrough": "38a"
+  },
+  {
+   "n": 4,
+   "name": "התכלת",
+   "from": "38a",
+   "fromLine": 4,
+   "to": "52b",
+   "toLine": 11,
+   "countedThrough": "52b"
+  },
+  {
+   "n": 5,
+   "name": "כל המנחות באות מצה",
+   "from": "52b",
+   "fromLine": 12,
+   "to": "63b",
+   "toLine": 8,
+   "countedThrough": "63b"
+  },
+  {
+   "n": 6,
+   "name": "רבי ישמעאל",
+   "from": "63b",
+   "fromLine": 9,
+   "to": "72b",
+   "toLine": 18,
+   "countedThrough": "72b"
+  },
+  {
+   "n": 7,
+   "name": "אלו מנחות נקמצות",
+   "from": "72b",
+   "fromLine": 19,
+   "to": "76b",
+   "toLine": 14,
+   "countedThrough": "76b"
+  },
+  {
+   "n": 8,
+   "name": "התודה היתה באה",
+   "from": "76b",
+   "fromLine": 15,
+   "to": "83b",
+   "toLine": 9,
+   "countedThrough": "83b"
+  },
+  {
+   "n": 9,
+   "name": "כל קרבנות ציבור",
+   "from": "83b",
+   "fromLine": 10,
+   "to": "87a",
+   "toLine": 20,
+   "countedThrough": "87a"
+  },
+  {
+   "n": 10,
+   "name": "שתי מדות",
+   "from": "87a",
+   "fromLine": 21,
+   "to": "94a",
+   "toLine": 10,
+   "countedThrough": "94a"
+  },
+  {
+   "n": 11,
+   "name": "שתי הלחם",
+   "from": "94a",
+   "fromLine": 11,
+   "to": "100b",
+   "toLine": 8,
+   "countedThrough": "100b"
+  },
+  {
+   "n": 12,
+   "name": "המנחות והנסכים",
+   "from": "100b",
+   "fromLine": 9,
+   "to": "104b",
+   "toLine": 12,
+   "countedThrough": "104b"
+  },
+  {
+   "n": 13,
+   "name": "הרי עלי עשרון",
+   "from": "104b",
+   "fromLine": 13,
+   "to": "110a",
+   "toLine": 24,
+   "countedThrough": "110a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: אין."
+}

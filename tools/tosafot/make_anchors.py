@@ -12,42 +12,13 @@ import os, sys, re, json, io
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import llm
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(HERE)), 'tosafot', 'handoff', 'kit'))
+from gates import norm_idx, norm_ctx, find_occ   # 24.10.2026: מקור יחיד לנרמול (ערכת החשבון השני)
 from build_count import heb_num, daf_key, daf_order
 ROOT = os.path.dirname(os.path.dirname(HERE))
 NIK = re.compile('[֑-ׇ]')
 SYS = ('אתה עוזר לעיגון הערות שוליים בספר לימוד. ענה JSON בלבד, בלי הסבר ובלי גדרות קוד. '
        'אסור להשתמש בקו מפריד ארוך (em dash או en dash).')
-
-
-def norm_idx(lines):
-    """אותו נרמול כמו buildIndex בדפדפן: אותיות בלבד, מקף/רווח כרווח יחיד, שורות מופרדות ברווח."""
-    s = ''
-    for ln in lines:
-        for c in NIK.sub('', ln):
-            if 'א' <= c <= 'ת':
-                s += c
-            elif c.isspace() or c in '-־':
-                if s and s[-1] != ' ':
-                    s += ' '
-        if s and s[-1] != ' ':
-            s += ' '
-    return s
-
-
-def norm_ctx(t):
-    return norm_idx([t]).strip()
-
-
-def find_occ(idx, ctx):
-    """רשימת המופעים (שלמי מילים) של ctx ב-idx; מחזיר כמה יש."""
-    out, frm = [], 0
-    while True:
-        k = idx.find(ctx, frm)
-        if k < 0:
-            return out
-        if (k == 0 or idx[k - 1] == ' ') and (k + len(ctx) >= len(idx) or idx[k + len(ctx)] == ' '):
-            out.append(k)
-        frm = k + 1
 
 
 def prompt_for(daf, ctxp, tos):

@@ -30,10 +30,11 @@ import os, sys, re, json, io, time, math, random, hashlib, datetime, subprocess
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(ROOT, 'tosafot', 'handoff', 'kit'))
 from make_anchors import norm_idx, norm_ctx, find_occ
-
-NIK = re.compile('[֑-ׇ]')
-DASH = re.compile('[–—―]')
+# 24.10.2026: שערי הקוד עברו למקור יחיד, tosafot/handoff/kit/gates.py (ערכת מפעל התוס' בחשבון השני). כאן רק קוראים משם.
+from gates import (NIK, DASH, WORDS, TIRUTZ, is_hard, REVIEW_SYS, REWRITE_NOTE, page_user_msg, BAN_PHRASES, BAN_Q_START, QTYPES,
+                   LVLS, norm_type, check_line, check_q, check_page_variety, cap_questions, parse_json, resolve_anchor, similarity)
 FDIR = 'factory'
 MOCK = bool(os.environ.get('FACTORY_MOCK'))
 
@@ -310,16 +311,6 @@ def all_decided():
     return out
 
 
-WORDS = re.compile(r'\S+')
-TIRUTZ = re.compile(r'וי"ל|ויש לומר|ותירץ|תי\'|ועוד י"ל|וי״ל|ואומר ר"י|וי"מ|ואם תאמר|וא"ת|וקשה')
-
-
-def is_hard(r, c):
-    n = len(WORDS.findall(r['text']))
-    t = len(TIRUTZ.findall(r['text']))
-    return n >= c['hard']['words'] or t >= c['hard']['markers']
-
-
 def pages_of(slug, perek, skip_decided=True):
     """[(dafKey, daf, [רשומות...])] לפי סדר הדף, בלי מה שהמנהל כבר הכריע."""
     cnt = load_count(slug, perek)
@@ -348,36 +339,6 @@ def system_prompt():
     return io.open(p, encoding='utf-8').read()
 
 
-REVIEW_SYS = (
-    'אתה מבקר זהיר של הערות שוליים לתוספות בספר לימוד של הש"ס. לכל תוספות יוגשו: פנים התוספות, שורת מסקנה, ושאלות (אם יש). '
-    'בדוק מול לשון התוספות בלבד: '
-    '(1) המסקנה אומרת רק מה שבתוספות, בלי הוספה, בלי פירוש משלך ובלי החלפת דעה (למשל ייחוס לר"ת מה שאינו שלו); '
-    '(2) המסקנה ברורה לבן ישיבה ואינה חוזרת על הדיבור המתחיל ואינה בלשון מכונה או תרגום; '
-    '(3) כל שאלה: התשובה נמצאת בתוספות עצמו, השאלה אינה מסגירה את התשובה, אינה בנאלית ("מה שאל התוס\'", "מה תירץ התוס\'"), '
-    'אינה בלשון מכונה ("מה ההסבר ל", "כיצד מתמודדים עם", "בהתאם ל", "נשאלת השאלה", "יש לציין"), ואינה כפולה לשאלה אחרת באותה בקשה. '
-    'החזר JSON אחד בלבד, בלי גדרות קוד: אובייקט שהמפתחות בו מזהי התוספות שיש בהם בעיה בלבד. '
-    'לכל כזה: {"s": "<סיבה קצרה, או ריק אם השורה תקינה>", "q": ["<סיבה לשאלה 1 או ריק>", ...]}. '
-    'תוספות תקין אינו מופיע. אל תכתוב קו מפריד ארוך (em dash או en dash).')
-
-REWRITE_NOTE = ('\n\n## תיקון\nהגרסה הקודמת נפסלה. הסיבות מצוינות לכל תוספות. כתוב מחדש אך ורק את מה שנפסל, '
-                'בהתאם לכללי ההנחיה הקבועה, והחזר את אותו פורמט JSON עבור המזהים שלהלן בלבד.')
-
-
-def page_user_msg(slug, perek, dafKey, ctx, recs, ctxp, extra=''):
-    lines = '\n'.join('%d. %s' % (i + 1, l) for i, l in enumerate(ctxp['lines'])) or '(אין שורות לאוקמי גירסא לעמוד זה. החזר "a": null.)'
-    gem = '\n'.join('%d. %s' % (i + 1, NIK.sub('', g)) for i, g in enumerate(ctxp['gemara']))
-    blocks = []
-    for r in recs:
-        blocks.append('### מזהה: %s\nעל שורת גמרא: %d\nדיבור המתחיל (מוצג ללומד בנפרד, אל תחזור עליו): %s\nפנים התוספות:\n%s'
-                      % (r['rid'], r['line'], r['dh'], r['text']))
-    return ('מסכת %s, פרק %d, עמוד %s.\n\n## שורות הלאוקמי גירסא של העמוד (ממוספרות)\n%s\n\n## שורות הגמרא המקוריות של העמוד\n%s\n\n'
-            '## התוספות\n%s%s\n\n'
-            'החזר JSON אחד בלבד, בלי גדרות קוד ובלי טקסט נוסף: {"<מזהה>": {"s": "<שורת מסקנה>", '
-            '"a": {"line": <מספר שורת לאוקמי>, "t": "<2 עד 6 מילים רצופות מתוך שורות הלאוקמי>", "rule": 1|2|3}, '
-            '"q": null או [{"t": "<סוג>", "lvl": "קל|בינוני|קשה", "q": "<שאלה>", "a": "<תשובה>"}]}}.'
-            % (ctx['masechet'], perek, dafKey, lines, gem, '\n\n'.join(blocks), extra))
-
-
 def sys_blocks(text):
     return [{'type': 'text', 'text': text, 'cache_control': {'type': 'ephemeral', 'ttl': '1h'}}]
 
@@ -396,174 +357,3 @@ def est_cost(reqs):
         tin = est_tokens(r)
         tot += price(m, {'in': tin, 'out': r['params']['max_tokens'] * 0.45})
     return tot
-
-
-# ---------------------------------------------------------------- שערי קוד
-BAN_PHRASES = ['מה ההסבר ל', 'כיצד מתמודדים עם', 'מהי הסוגיה המרכזית', 'בהתאם ל', 'נשאלת השאלה', 'יש לציין',
-               'התוספות שואל', "התוס' שואל", 'התוספות מקשה', 'בנוסף לכך', 'כמו כן']
-BAN_Q_START = [re.compile(p) for p in (r'^מה שאל התוס', r'^מה תירץ התוס', r'^מה (?:שואל|מקשה|מתרץ|אומר) (?:ה)?תוס', r'^מה כתב התוס')]
-QTYPES = ['קושיא', 'הכרח', 'נפק"מ', 'סברא', 'ממקום אחר', 'צ"ע']
-LVLS = ['קל', 'בינוני', 'קשה']
-
-
-def norm_type(t):
-    t = (t or '').strip().replace('״', '"').replace('׳', "'")
-    m = {'קושיה': 'קושיא', 'קושיא בלי תירוץ': 'קושיא', 'נפקא מינה': 'נפק"מ', 'נפק״מ': 'נפק"מ', 'נפקא מינא': 'נפק"מ',
-         'השלם את הסברא': 'סברא', 'השלמת סברא': 'סברא', 'צריך עיון': 'צ"ע', 'צע': 'צ"ע', 'הכרח': 'הכרח'}
-    return m.get(t, t)
-
-
-def check_line(s, rec, c):
-    """רשימת קודי כשל לשורת המסקנה. ריקה = עברה."""
-    bad = []
-    if not isinstance(s, str) or not s.strip():
-        return ['ריקה']
-    if DASH.search(s):
-        bad.append('קו ארוך')
-    if ';' in s:
-        bad.append('תו ; (כלל 14.10.2026: נקודה)')
-    if NIK.search(s):
-        bad.append('ניקוד')
-    if '\n' in s.strip():
-        bad.append('כמה שורות')
-    w = len(WORDS.findall(s))
-    mx = c['line']['maxWords'] + (c['line']['longExtra'] if len(WORDS.findall(rec['text'])) >= 180 else 0)
-    if w < c['line']['minWords']:
-        bad.append('קצרה מדי (%d)' % w)
-    if w > mx:
-        bad.append('ארוכה מדי (%d>%d)' % (w, mx))
-    for ph in BAN_PHRASES:
-        if ph in s:
-            bad.append('ביטוי אסור: ' + ph)
-    dhw = norm_ctx(rec['dh']).split()
-    sw = norm_ctx(s).split()
-    if len(dhw) >= 3 and sw[:3] == dhw[:3]:
-        bad.append('חוזרת על הד"ה')
-    if re.search(r'[A-Za-z]{3,}', s):
-        bad.append('אותיות לטיניות')
-    return bad
-
-
-def check_q(q, rec, c):
-    bad = []
-    if not isinstance(q, dict):
-        return ['לא אובייקט']
-    qq, aa = str(q.get('q', '')).strip(), str(q.get('a', '')).strip()
-    if len(qq) < 12:
-        bad.append('שאלה קצרה')
-    if not aa:
-        bad.append('אין תשובה')
-    if len(aa.split()) > c['question']['maxAnswerWords']:
-        bad.append('תשובה ארוכה')
-    for txt in (qq, aa):
-        if DASH.search(txt):
-            bad.append('קו ארוך')
-            break
-    if ';' in qq or ';' in aa:
-        bad.append('תו ; (כלל 14.10.2026: נקודה)')
-    for ph in BAN_PHRASES:
-        if ph in qq:
-            bad.append('ביטוי אסור: ' + ph)
-    for rx in BAN_Q_START:
-        if rx.search(qq):
-            bad.append('שאלה בנאלית')
-    if norm_type(q.get('t')) not in QTYPES:
-        bad.append('סוג לא מוכר')
-    if q.get('lvl') not in LVLS:
-        bad.append('רמה לא תקינה')
-    # השאלה אינה מסגירה את התשובה: רוב מילות התשובה כבר בשאלה
-    aw = set(norm_ctx(aa).split())
-    qw = set(norm_ctx(qq).split())
-    if len(aw) >= 4 and len(aw & qw) / float(len(aw)) > 0.8:
-        bad.append('מסגירה את התשובה')
-    if qq.count('?') > 1:
-        bad.append('כמה שאלות')
-    return bad
-
-
-def check_page_variety(recs):
-    """כללי הגיוון (תוספת 13.10, ג): אין שתי שאלות רצופות מאותו סוג בעמוד, ואין יותר משתיים הפותחות באותה מילה.
-    מחזיר מזהי תוספות שחורגים. הקוד מחזיר לתיקון, אינו מוחק."""
-    flat = []
-    for r in recs:
-        for i, q in enumerate(r.get('q') or []):
-            flat.append((r['rid'], i, norm_type(q.get('t')), (str(q.get('q', '')).split() or [''])[0]))
-    bad = set()
-    for a, b in zip(flat, flat[1:]):
-        if a[2] and a[2] == b[2]:
-            bad.add((b[0], b[1]))
-    first = {}
-    for x in flat:
-        first.setdefault(x[3], []).append(x)
-    for w, xs in first.items():
-        if len(xs) > 2:
-            for x in xs[2:]:
-                bad.add((x[0], x[1]))
-    return bad
-
-
-def cap_questions(qs, rec, c):
-    """כללי הכמות (תוספת 13.10, ו): תוספות קצר או הפניה בלבד אינו מקבל שאלה; לכל היותר אחת, ושתיים בתוספות ארוך."""
-    n = len(WORDS.findall(rec['text']))
-    if n < c['question'].get('minTosWords', 30):
-        return []
-    return qs[:2 if n >= 180 else 1]
-
-
-def parse_json(t):
-    t = (t or '').strip()
-    t = re.sub(r'^```(?:json)?|```$', '', t, flags=re.M).strip()
-    try:
-        return json.loads(t)
-    except Exception:
-        i, j = t.find('{'), t.rfind('}')
-        if 0 <= i < j:
-            return json.loads(t[i:j + 1])
-        raise
-
-
-def resolve_anchor(a, ctxp, idx):
-    """הקוד אינו סומך על המודל: הקטע חייב להימצא בדף. כשל ← כלל 3 (סוף שורת הלאוקמי שנבחרה). None אם גם זה נכשל."""
-    if not isinstance(a, dict):
-        return None
-    t = str(a.get('t', '')).strip()
-    ln = a.get('line')
-    c = norm_ctx(t) if t else ''
-    occs = find_occ(idx, c) if c else []
-    rule = a.get('rule') if a.get('rule') in (1, 2, 3) else 3
-    why = ''
-    if not occs:
-        try:
-            ln = int(ln)
-        except Exception:
-            return None
-        lines = ctxp['lines']
-        if not (1 <= ln <= len(lines)):
-            return None
-        w = norm_ctx(lines[ln - 1]).split(' ')
-        occs = []
-        for k in (4, 3, 2, 1):
-            c = ' '.join(w[-k:])
-            occs = find_occ(idx, c)
-            if occs:
-                break
-        if not occs:
-            return None
-        rule, why = 3, 'הקטע שהוצע לא נמצא בדף; סוף שורת הלאוקמי %d' % ln
-    occ = 1
-    if len(occs) > 1:
-        try:
-            lnn = int(ln)
-            pre = len(norm_idx(ctxp['lines'][:lnn - 1]))
-            occ = min(range(len(occs)), key=lambda i: abs(occs[i] - pre)) + 1
-        except Exception:
-            occ = 1
-    return {'t': c, 'occ': occ, 'rule': rule, 'why': why}
-
-
-def similarity(a, b):
-    """דמיון מילים (ז'קארד על שורשי מילים) בין שתי שורות, לשמירה מפני סחיפה."""
-    sa, sb = set(norm_ctx(a).split()), set(norm_ctx(b).split())
-    if not sa or not sb:
-        return 0.0
-    return len(sa & sb) / float(len(sa | sb))

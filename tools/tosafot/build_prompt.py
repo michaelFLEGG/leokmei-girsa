@@ -71,6 +71,10 @@ def main():
     assert '—' not in out and '–' not in out, 'קו ארוך בפרומפט'
     with io.open(os.path.join(T, 'תוס-פרומפט-ייצור.md'), 'w', encoding='utf-8') as f:
         f.write(out)
+    # 24.10.2026: העתק מדויק לערכת החשבון השני (tosafot/handoff/kit/system-write.md); מתעדכן יחד עם הפרומפט הקבוע
+    os.makedirs(os.path.join(T, 'handoff', 'kit'), exist_ok=True)
+    with io.open(os.path.join(T, 'handoff', 'kit', 'system-write.md'), 'w', encoding='utf-8') as f:
+        f.write(out)
     print('נכתב tosafot/תוס-פרומפט-ייצור.md: %d תווים (כ-%d טוקנים), %d דוגמאות שורה, %d דוגמאות שאלה'
           % (len(out), len(out) // 2, len(ex['tosafot']), len(ex['questions'])))
 

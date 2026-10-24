@@ -4,6 +4,7 @@ import os, sys, re, json, io, time, random, hashlib, datetime, subprocess, argpa
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import factory as F
+import gates as G   # 24.10.2026: השכבות עצמן (קליטה, ביקורת, כתיבה מחדש, סיום) במקור יחיד, tosafot/handoff/kit/gates.py
 from factory import (fp, jload, jdump, log, cfg, state, save_state, now_iso, ukey, rid, FDIR, norm_idx, norm_ctx, find_occ, NIK)
 
 
@@ -131,287 +132,53 @@ def build_calibration(slug, perek, c, work, sysT):
     return reqs
 
 
-def tidy_q(q):
-    if not isinstance(q, dict):
-        return {'t': '', 'lvl': '', 'q': '', 'a': ''}
-    return {'t': F.norm_type(q.get('t')), 'lvl': q.get('lvl'), 'q': str(q.get('q', '')).strip(), 'a': str(q.get('a', '')).strip()}
-
-
-def add_usage(acc, res):
-    u = acc.setdefault(res['model'], {'in': 0, 'cw': 0, 'cr': 0, 'out': 0, 'n': 0})
-    for k in ('in', 'cw', 'cr', 'out'):
-        u[k] += res['usage'][k]
-    u['n'] += 1
-
-
-def variety_pass(work):
-    by_daf = {}
-    for r in work['recs'].values():
-        if r.get('q'):
-            by_daf.setdefault(r['dafKey'], []).append(r)
-    for dk, rs in by_daf.items():
-        rs.sort(key=lambda x: x['n'])
-        for ri, qi in F.check_page_variety(rs):
-            r = work['recs'][ri]
-            r.setdefault('bad_q', {}).setdefault(str(qi), [])
-            if 'גיוון' not in r['bad_q'][str(qi)]:
-                r['bad_q'][str(qi)].append('גיוון')
+tidy_q = G.tidy_q
+add_usage = G.add_usage
+variety_pass = G.variety_pass
+has_fail = G.has_fail
+finalize = G.finalize_core     # אחרי כתיבה מחדש וביקורת חוזרת: מה שעדיין נכשל מסומן למנהל ואינו מתפרסם
 
 
 def ingest_write(slug, perek, c, work, results):
     ctxj = ctx_of(slug)
-    idxs = {}
-    stats = {'ok': 0, 'bad': 0, 'api': 0}
-    usage = {}
-    for cid, res in results.items():
-        meta = work['reqs'].get(cid)
-        if not meta:
-            continue
-        if res.get('ok'):
-            add_usage(usage, res)
-        if meta.get('cal'):
-            if res.get('ok'):
-                try:
-                    got = F.parse_json(res['text'])
-                    s = list(got.values())[0].get('s', '')
-                    work['cal'].append({'key': meta['ids'][0], 'sim': round(F.similarity(s, meta['final']), 3)})
-                except Exception:
-                    work['cal'].append({'key': meta['ids'][0], 'sim': 0.0, 'err': 'parse'})
-            continue
-        if not res.get('ok'):
-            for i in meta['ids']:
-                work['recs'][i].update({'bad_s': ['api:' + str(res.get('err'))], 'bad_a': True, 'q': [], 'bad_q': {}})
-                stats['api'] += 1
-            continue
-        try:
-            got = F.parse_json(res['text'])
-        except Exception:
-            for i in meta['ids']:
-                work['recs'][i].update({'bad_s': ['פלט לא JSON'], 'bad_a': True, 'q': [], 'bad_q': {}})
-                stats['bad'] += 1
-            continue
-        ctxp = ctx_page(ctxj, meta['dafKey'], work['reqs'][cid].get('daf', ''), slug)
-        idx = idxs.setdefault(meta['dafKey'], norm_idx(ctxp['lines']))
-        for i in meta['ids']:
-            rec = work['recs'][i]
-            g = got.get(i)
-            if not isinstance(g, dict):
-                rec.update({'bad_s': ['חסר בפלט'], 'bad_a': True, 'q': [], 'bad_q': {}})
-                stats['bad'] += 1
-                continue
-            rec['s'] = str(g.get('s', '')).strip()
-            rec['bad_s'] = F.check_line(rec['s'], rec, c)
-            rec['a'] = F.resolve_anchor(g.get('a'), ctxp, idx)
-            rec['bad_a'] = False          # עוגן שלא נמצא אינו כשל: הסימן יונח לפי השכנים (factory_place.py)
-            qs = g.get('q')
-            rec['q'] = [tidy_q(q) for q in qs] if isinstance(qs, list) else []
-            rec['q'] = F.cap_questions(rec['q'], rec, c)
-            rec['bad_q'] = {str(k): F.check_q(q, rec, c) for k, q in enumerate(rec['q'])}
-            stats['bad' if (rec['bad_s'] or rec['bad_a']) else 'ok'] += 1
-    variety_pass(work)
-    return usage, stats
-
-
-def has_fail(rec):
-    if rec.get('bad_s') or rec.get('bad_a') or rec.get('rv_s') or rec.get('s') is None:
-        return True
-    return any(v for v in (rec.get('bad_q') or {}).values()) or any((rec.get('rv_q') or {}).values())
+    return G.ingest_write_core(work, results, c, lambda meta: ctx_page(ctxj, meta['dafKey'], meta.get('daf', ''), slug))
 
 
 def build_review(slug, perek, c, work):
     """בקשות מבקר זול לכל התוספות שעברו שערי קוד בשורה ובעוגן; שאלות שנפסלו בקוד אינן נשלחות."""
-    reqs = []
-    byd = {}
-    for r in work['recs'].values():
-        if r.get('s') is None or r.get('bad_s') or r.get('bad_a') or r.get('rv_done'):
-            continue
-        byd.setdefault(r['dafKey'], []).append(r)
-    per = c['maxPerRequest']
+    if c.get('reviewerV2'):
+        # מבקר חדש (14.10.2026): שלוש דרגות ודוגמאות מהכרעות המנהל. פעיל רק כשהדגל reviewerV2 בהגדרות דלוק.
+        import triage_reviewer as TR
+        sysf = lambda g: TR.system_with_examples([(r['text'], r['s']) for r in g])
+    else:
+        sysf = lambda g: F.REVIEW_SYS
     work['rvreqs'] = {}
-    for dk, rs in byd.items():
-        rs.sort(key=lambda x: x['n'])
-        for gi in range(0, len(rs), per):
-            g = rs[gi:gi + per]
-            blocks = []
-            for r in g:
-                qs = '\n'.join('  שאלה %d: %s | תשובה: %s' % (i + 1, q['q'], q['a']) for i, q in enumerate(r['q'])
-                               if not (r.get('bad_q') or {}).get(str(i))) or '  (אין שאלות)'
-                blocks.append('### מזהה: %s\nדיבור המתחיל: %s\nפנים התוספות:\n%s\nשורת מסקנה: %s\nשאלות:\n%s'
-                              % (r['rid'], r['dh'], r['text'], r['s'], qs))
-            cid = 'rv-%s-p%d-%s-%d' % (slug, perek, g[0]['daf'], gi // per)
-            rsys = F.REVIEW_SYS
-            if c.get('reviewerV2'):
-                # מבקר חדש (14.10.2026): שלוש דרגות ודוגמאות מהכרעות המנהל. פעיל רק כשהדגל reviewerV2 בהגדרות דלוק.
-                import triage_reviewer as TR
-                rsys = TR.system_with_examples([(r['text'], r['s']) for r in g])
-                blocks = [TR.user_block(r['rid'], r['dh'], r['text'], r['s'],
-                                        [q for i, q in enumerate(r['q']) if not (r.get('bad_q') or {}).get(str(i))]) for r in g]
-            reqs.append(mk_req(cid, c['engines']['review'], rsys, '\n\n'.join(blocks), c['maxTokens']['review']))
-            work['rvreqs'][cid] = [r['rid'] for r in g]
+    reqs = []
+    for cid, rsys, user, ids in G.review_groups(work, c, 'rv-%s-p%d' % (slug, perek), sysf, bool(c.get('reviewerV2'))):
+        reqs.append(mk_req(cid, c['engines']['review'], rsys, user, c['maxTokens']['review']))
+        work['rvreqs'][cid] = ids
     return reqs
 
 
 def ingest_review(slug, perek, c, work, results):
-    usage = {}
-    for cid, res in results.items():
-        ids = work.get('rvreqs', {}).get(cid)
-        if ids is None:
-            continue
-        if not res.get('ok'):
-            for i in ids:     # כשל בביקורת אינו אישור
-                work['recs'][i]['rv_s'] = 'ביקורת נכשלה: ' + str(res.get('err'))
-                work['recs'][i]['rv_done'] = True
-            continue
-        add_usage(usage, res)
-        try:
-            got = F.parse_json(res['text'])
-        except Exception:
-            for i in ids:
-                work['recs'][i]['rv_s'] = 'פלט ביקורת לא JSON'
-                work['recs'][i]['rv_done'] = True
-            continue
-        if isinstance(got, list):   # 14.10: המבקר החדש מחזיר לפעמים רשימה במקום מילון
-            m = {}
-            for pos, x in enumerate(got):
-                if not isinstance(x, dict):
-                    continue
-                k = x.get('id') or x.get('rid') or x.get('מזהה')
-                if k is None and len(x) == 1 and isinstance(next(iter(x.values())), dict):
-                    m.update(x)
-                elif k is not None:
-                    m[str(k)] = x
-                elif pos < len(ids):
-                    m[ids[pos]] = x
-            got = m
-        if not isinstance(got, dict):
-            got = {}
-        for i in ids:
-            rec = work['recs'][i]
-            rec['rv_s'], rec['rv_q'], rec['rv_done'] = '', {}, True
-            g = got.get(i)
-            if isinstance(g, dict) and g.get('d'):
-                # פורמט המבקר החדש: תקין / תיקון קל (המבקר מחזיר שורה מתוקנת) / פסול
-                if g['d'] == 'תיקון קל' and str(g.get('fix') or '').strip():
-                    fixed = str(g['fix']).strip().replace(';', '.')
-                    if not F.check_line(fixed, rec, c):
-                        rec['s'], rec['bad_s'], rec['rv_fix'] = fixed, [], True
-                if g['d'] == 'פסול':
-                    rec['rv_s'] = str(g.get('s') or 'פסול')
-                if g.get('star'):
-                    rec['star'] = True
-                for k, why in enumerate(g.get('q') or []):
-                    if why:
-                        rec['rv_q'][str(k)] = str(why)
-            elif isinstance(g, dict):
-                rec['rv_s'] = str(g.get('s') or '')
-                qs = g.get('q') or []
-                if isinstance(qs, list):
-                    for k, why in enumerate(qs):
-                        if why:
-                            rec['rv_q'][str(k)] = str(why)
-    return usage
+    return G.ingest_review_core(work, results, c, work.get('rvreqs', {}))
 
 
 def build_rewrite(slug, perek, c, work):
     ctxj = ctx_of(slug)
     sysT = F.system_prompt()
-    byd = {}
-    for r in work['recs'].values():
-        if r.get('tries', 1) >= 2 or not has_fail(r):
-            continue
-        byd.setdefault(r['dafKey'], []).append(r)
     reqs = []
     work['rwreqs'] = {}
-    per = max(1, c['maxPerRequest'] // 2)
-    for dk, rs in byd.items():
-        rs.sort(key=lambda x: x['n'])
-        for gi in range(0, len(rs), per):
-            g = rs[gi:gi + per]
-            notes = []
-            for r in g:
-                why = []
-                if r.get('bad_s'):
-                    why.append('שורה: ' + ', '.join(r['bad_s']))
-                if r.get('rv_s'):
-                    why.append('שורה (מבקר): ' + r['rv_s'])
-                if r.get('bad_a'):
-                    why.append('עוגן: הקטע לא נמצא בשורות הלאוקמי')
-                for k, v in (r.get('bad_q') or {}).items():
-                    if v:
-                        why.append('שאלה %d: %s' % (int(k) + 1, ', '.join(v)))
-                for k, v in (r.get('rv_q') or {}).items():
-                    why.append('שאלה %d (מבקר): %s' % (int(k) + 1, v))
-                prev = {'s': r.get('s'), 'q': r.get('q')}
-                notes.append('מזהה %s - נפסל: %s\nהגרסה הקודמת: %s' % (r['rid'], '; '.join(why) or 'כללי', json.dumps(prev, ensure_ascii=False)))
-            um = F.page_user_msg(slug, perek, dk, {'masechet': masechet_name(slug)}, g, ctx_page(ctxj, dk, g[0]['daf'], slug), F.REWRITE_NOTE + '\n\n' + '\n\n'.join(notes))
-            cid = 'rw-%s-p%d-%s-%d' % (slug, perek, g[0]['daf'], gi // per)
-            reqs.append(mk_req(cid, c['engines']['rewrite'], sysT, um, c['maxTokens']['perTos'] * len(g) + 800))
-            work['rwreqs'][cid] = {'ids': [r['rid'] for r in g], 'dafKey': dk}
+    for cid, um, ids, dk in G.rewrite_groups(work, c, 'rw-%s-p%d' % (slug, perek), slug, perek, masechet_name(slug),
+                                             lambda dk, daf: ctx_page(ctxj, dk, daf, slug)):
+        reqs.append(mk_req(cid, c['engines']['rewrite'], sysT, um, c['maxTokens']['perTos'] * len(ids) + 800))
+        work['rwreqs'][cid] = {'ids': ids, 'dafKey': dk}
     return reqs
 
 
 def ingest_rewrite(slug, perek, c, work, results):
     ctxj = ctx_of(slug)
-    usage = {}
-    for cid, res in results.items():
-        meta = work.get('rwreqs', {}).get(cid)
-        if not meta:
-            continue
-        for i in meta['ids']:
-            work['recs'][i]['tries'] = 2
-            work['recs'][i]['rv_done'] = False
-        if not res.get('ok'):
-            continue
-        add_usage(usage, res)
-        try:
-            got = F.parse_json(res['text'])
-        except Exception:
-            continue
-        ctxp = ctx_page(ctxj, meta['dafKey'], work['recs'][meta['ids'][0]]['daf'], slug)
-        idx = norm_idx(ctxp['lines'])
-        for i in meta['ids']:
-            rec = work['recs'][i]
-            g = got.get(i)
-            if not isinstance(g, dict):
-                continue
-            s_failed = bool(rec.get('bad_s') or rec.get('rv_s') or rec.get('s') is None)
-            a_failed = bool(rec.get('bad_a'))
-            q_failed = any(v for v in (rec.get('bad_q') or {}).values()) or any((rec.get('rv_q') or {}).values())
-            if s_failed:
-                rec['s'] = str(g.get('s', '')).strip()
-                rec['bad_s'] = F.check_line(rec['s'], rec, c)
-                rec['rv_s'] = ''
-            if a_failed or rec.get('a') is None:
-                rec['a'] = F.resolve_anchor(g.get('a'), ctxp, idx)
-            rec['bad_a'] = False
-            if q_failed:
-                qs = g.get('q')
-                rec['q'] = F.cap_questions([tidy_q(q) for q in qs] if isinstance(qs, list) else [], rec, c)
-                rec['bad_q'] = {str(k): F.check_q(q, rec, c) for k, q in enumerate(rec['q'])}
-                rec['rv_q'] = {}
-    variety_pass(work)
-    return usage
-
-
-def finalize(work):
-    """אחרי כתיבה מחדש וביקורת חוזרת: מה שעדיין נכשל מסומן למנהל ואינו מתפרסם."""
-    flagged = []
-    for r in work['recs'].values():
-        s_bad = bool(r.get('bad_s') or r.get('rv_s') or r.get('s') is None)
-        r['status'] = 'flagged' if s_bad else 'ok'
-        keep, drop = [], []
-        for k, q in enumerate(r.get('q') or []):
-            bq = (r.get('bad_q') or {}).get(str(k))
-            rq = (r.get('rv_q') or {}).get(str(k))
-            if bq or rq:
-                drop.append({'q': q, 'why': bq or [rq]})
-            else:
-                keep.append(q)
-        r['q_keep'], r['q_drop'] = keep, drop
-        if s_bad:
-            flagged.append({'rid': r['rid'], 'dh': r['dh'], 'daf': r['daf'],
-                            'why': list(r.get('bad_s') or []) + ([r['rv_s']] if r.get('rv_s') else [])})
-    return flagged
+    return G.ingest_rewrite_core(work, results, c, work.get('rwreqs', {}), lambda dk, daf: ctx_page(ctxj, dk, daf, slug))
 
 
 # ---------------------------------------------------------------- שמירה מפני סחיפה

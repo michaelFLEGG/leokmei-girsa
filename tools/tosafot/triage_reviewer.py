@@ -16,34 +16,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 EX = os.path.join(ROOT, 'tosafot', 'triage', 'examples.json')
 NIK = re.compile('[֑-ׇ]')
-
-SYS_V2 = """אתה מבקר זהיר של שורת מסקנה (הערת שוליים) שנכתבה על תוספות בספר לימוד של הש"ס. לכל תוספות יוגשו: ד"ה, לשון התוספות המלאה, השורה שנכתבה, ושאלות (אם יש). בדוק מול לשון התוספות המלאה בלבד.
-
-מונחים: "קונטרס" הוא רש"י. ר"ת הוא רבינו תם. ר"י הוא רבי יצחק (הזקן) מבעלי התוספות. ריב"א הוא רבי יצחק בן אשר. ר"ח הוא רבנו חננאל. הרשב"א, הרא"ש והר"ן הם ראשונים מאוחרים. "הא דקאמר" וכדומה הם לשון תוספות רגילה. ייחוס "לרש"י" שורה שהתוספות מכנים "בקונטרס" אינו שגוי.
-
-שלוש דרגות. החזר לכל תוספות דרגה אחת:
-
-1. "תקין": התוכן נאמן ללשון התוספות. מותר תמצות, קיצור וסידור (לרש"י... ולתוס'...). מותר מטבע לשון מוכר שאינו מפורש. אין לפסול על סגנון, על כך שהשורה "מכנית", על כך שאפשר היה לנסח אחרת, או על כך שלא הוסבר דבר שהתוספות עצמם לא הסבירו. אנו אינם מחויבים ליותר ממה שהתוספות כתבו.
-
-2. "תיקון קל": התוכן נאמן, אך יש בשורה פגם קטן שאתה מתקן בעצמך: הפניה למקור או דף שאינם בלשון התוספות (מחק אותה), מילה עודפת, או שורה ארוכה שאפשר לקצר בלי לאבד נימוק. החזר בשדה "fix" את השורה המתוקנת במלואה. אל תוסיף דבר שאינו בתוספות.
-
-3. "פסול": רק כשיש אחד מאלה: (א) תוספת דין או מסקנה שאינה בתוספות; (ב) השמטת נימוק מכריע, כך שהשורה מטעה או אינה מובנת; (ג) ייחוס הפוך (דעה לאדם הלא נכון); (ד) טעות עניינית. בשדה "s" כתוב את הסיבה הקצרה והמדויקת.
-
-הפניה לתוספות אחר או למקום אחר ("כמו שכתבנו", "בד"ה ...") אינה פגם: אל תפסול עליה ואל תמחק אותה כשהיא בלשון התוספות. אם השורה מפנה למקום אחר ויש צורך שמודל חזק יבדוק אחר כך את היעד, סמן "star": true. אל תשנה מספור או הפניות פנימיות.
-
-שאלות: כל שאלה נבדקת בנפרד. שאלה פגומה (התשובה אינה בתוספות, השאלה מסגירה את התשובה, בנאלית, כפולה) מקבלת סיבה קצרה ברשימה "q" במקומה; שאלה תקינה מקבלת מחרוזת ריקה.
-
-החזר JSON אחד בלבד, בלי גדרות קוד, בלי טקסט נוסף, לכל מזהה שהוגש:
-{"<מזהה>": {"d": "תקין" | "תיקון קל" | "פסול", "s": "<סיבה, רק בפסול>", "fix": "<השורה המתוקנת, רק בתיקון קל>", "star": false, "q": ["", ...]}}
-אל תכתוב קו מפריד ארוך (em dash או en dash) ואל תכתוב את התו ; (נקודה-פסיק)."""
-
+sys.path.insert(0, os.path.join(ROOT, 'tosafot', 'handoff', 'kit'))
+import gates as G   # 24.10.2026: הנחיית המבקר V2 ובחירת הדוגמאות במקור יחיד (ערכת החשבון השני)
+from gates import SYS_V2, fmt_example, user_block
 
 def jload(p, d=None):
     return json.load(io.open(p, encoding='utf-8')) if os.path.exists(p) else d
-
-
-def words(s):
-    return set(re.findall(r'[א-ת]{2,}', NIK.sub('', s or '')))
 
 
 def examples():
@@ -51,47 +29,13 @@ def examples():
 
 
 def pick(text, line, exclude=None, k=6):
-    """הדוגמאות הרלוונטיות: דמיון מילים (ג'קארד) ללשון התוספות ולשורה, ואיזון: לפחות שתיים משני הכיוונים כשיש."""
-    ex = [e for e in examples() if e.get('ans') in ('yes', 'no') and e.get('id') != exclude]
-    q = words(text) | words(line)
-    sc = []
-    for e in ex:
-        w = words(e.get('text')) | words(e.get('line'))
-        sc.append((len(q & w) / float(len(q | w) or 1), e))
-    sc.sort(key=lambda x: -x[0])
-    out = [e for _, e in sc[:k]]
-    for a in ('yes', 'no'):
-        if sum(1 for e in out if e['ans'] == a) < 2:
-            for _, e in sc:
-                if e['ans'] == a and e not in out:
-                    out.append(e)
-                    if sum(1 for x in out if x['ans'] == a) >= 2:
-                        break
-    return out
-
-
-def fmt_example(e):
-    v = 'נכון (השורה תקינה, המבקר טעה אם פסל)' if e['ans'] == 'yes' else 'לא נכון (יש בשורה פגם אמיתי)'
-    return ('### דוגמה מהכרעת המנהל\nד"ה: %s\nלשון התוספות: %s\nהשורה: %s\nנימוק המבקר הקודם: %s\nהכרעת המנהל: %s\nהערת המנהל: %s'
-            % (e.get('dh', ''), ' '.join((e.get('text') or '').split()[:220]), e.get('line', ''), ' | '.join(e.get('why') or []) or '(לא פסל)', v, e.get('note') or '(אין)'))
+    """הדוגמאות הרלוונטיות (gates.pick_examples) מתוך מאגר ההכרעות."""
+    return G.pick_examples(examples(), text, line, exclude, k)
 
 
 def system_with_examples(blocks_text_line, exclude=None):
     """blocks_text_line: [(text, line)] של הקבוצה; מצרף את הדוגמאות הרלוונטיות להוראות."""
-    seen, out = set(), []
-    for t, l in blocks_text_line:
-        for e in pick(t, l, exclude, 4):
-            if e['id'] not in seen:
-                seen.add(e['id'])
-                out.append(e)
-    if not out:
-        return SYS_V2
-    return SYS_V2 + '\n\n## דוגמאות מהכרעות המנהל (למד מהן את הרף)\n\n' + '\n\n'.join(fmt_example(e) for e in out[:8])
-
-
-def user_block(rid, dh, text, line, qs):
-    q = '\n'.join('  שאלה %d: %s | תשובה: %s' % (i + 1, x['q'], x['a']) for i, x in enumerate(qs or [])) or '  (אין שאלות)'
-    return '### מזהה: %s\nדיבור המתחיל: %s\nלשון התוספות המלאה:\n%s\nהשורה שנכתבה: %s\nשאלות:\n%s' % (rid, dh, text, line, q)
+    return G.system_with_examples(examples(), blocks_text_line, exclude)
 
 
 def run_claude(system, user, model='sonnet'):

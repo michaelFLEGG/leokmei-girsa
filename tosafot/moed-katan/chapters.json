@@ -1,0 +1,33 @@
+{
+ "masechet": "מועד קטן",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "משקין בית השלחין",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "11a",
+   "toLine": 21,
+   "countedThrough": "11a"
+  },
+  {
+   "n": 2,
+   "name": "מי שהפך",
+   "from": "11b",
+   "fromLine": 1,
+   "to": "13b",
+   "toLine": 14,
+   "countedThrough": "13b"
+  },
+  {
+   "n": 3,
+   "name": "ואלו מגלחין",
+   "from": "13b",
+   "fromLine": 15,
+   "to": "29a",
+   "toLine": 7,
+   "countedThrough": "29a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 16b, 29a."
+}

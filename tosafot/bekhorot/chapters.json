@@ -1,0 +1,87 @@
+{
+ "masechet": "בכורות",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "הלוקח עובר חמורו",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "13a",
+   "toLine": 8,
+   "countedThrough": "13a"
+  },
+  {
+   "n": 2,
+   "name": "הלוקח עובר פרתו",
+   "from": "13a",
+   "fromLine": 9,
+   "to": "19b",
+   "toLine": 4,
+   "countedThrough": "19b"
+  },
+  {
+   "n": 3,
+   "name": "הלוקח בהמה",
+   "from": "19b",
+   "fromLine": 5,
+   "to": "26b",
+   "toLine": 7,
+   "countedThrough": "26b"
+  },
+  {
+   "n": 4,
+   "name": "עד כמה",
+   "from": "26b",
+   "fromLine": 8,
+   "to": "31a",
+   "toLine": 13,
+   "countedThrough": "31a"
+  },
+  {
+   "n": 5,
+   "name": "כל פסולי המוקדשין",
+   "from": "31a",
+   "fromLine": 14,
+   "to": "37a",
+   "toLine": 14,
+   "countedThrough": "37a"
+  },
+  {
+   "n": 6,
+   "name": "על אלו מומין",
+   "from": "37a",
+   "fromLine": 15,
+   "to": "43a",
+   "toLine": 3,
+   "countedThrough": "43a"
+  },
+  {
+   "n": 7,
+   "name": "מומין אלו",
+   "from": "43a",
+   "fromLine": 4,
+   "to": "46a",
+   "toLine": 4,
+   "countedThrough": "46a"
+  },
+  {
+   "n": 8,
+   "name": "יש בכור",
+   "from": "46a",
+   "fromLine": 5,
+   "to": "52b",
+   "toLine": 18,
+   "countedThrough": "52b"
+  },
+  {
+   "n": 9,
+   "name": "מעשר בהמה",
+   "from": "53a",
+   "fromLine": 1,
+   "to": "61a",
+   "toLine": 14,
+   "countedThrough": "61a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 59b."
+}

@@ -1,0 +1,42 @@
+{
+ "masechet": "מגילה",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "מגילה נקראת",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "17a",
+   "toLine": 8,
+   "countedThrough": "17a"
+  },
+  {
+   "n": 2,
+   "name": "הקורא למפרע",
+   "from": "17a",
+   "fromLine": 9,
+   "to": "21a",
+   "toLine": 9,
+   "countedThrough": "21a"
+  },
+  {
+   "n": 3,
+   "name": "הקורא עומד",
+   "from": "21a",
+   "fromLine": 10,
+   "to": "25b",
+   "toLine": 19,
+   "countedThrough": "25b"
+  },
+  {
+   "n": 4,
+   "name": "בני העיר",
+   "from": "25b",
+   "fromLine": 20,
+   "to": "32a",
+   "toLine": 18,
+   "countedThrough": "32a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 2a, 11b."
+}

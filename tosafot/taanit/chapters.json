@@ -1,0 +1,42 @@
+{
+ "masechet": "תענית",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "מאימתי מזכירין",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "15a",
+   "toLine": 3,
+   "countedThrough": "15a"
+  },
+  {
+   "n": 2,
+   "name": "סדר תעניות כיצד",
+   "from": "15a",
+   "fromLine": 4,
+   "to": "18b",
+   "toLine": 13,
+   "countedThrough": "18b"
+  },
+  {
+   "n": 3,
+   "name": "סדר תעניות אלו",
+   "from": "18b",
+   "fromLine": 14,
+   "to": "26a",
+   "toLine": 2,
+   "countedThrough": "26a"
+  },
+  {
+   "n": 4,
+   "name": "בשלשה פרקים",
+   "from": "26a",
+   "fromLine": 3,
+   "to": "31a",
+   "toLine": 10,
+   "countedThrough": "31a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 23b, 24b, 25b."
+}

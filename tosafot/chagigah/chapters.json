@@ -1,0 +1,33 @@
+{
+ "masechet": "חגיגה",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "הכל חייבין",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "11b",
+   "toLine": 5,
+   "countedThrough": "11b"
+  },
+  {
+   "n": 2,
+   "name": "אין דורשין",
+   "from": "11b",
+   "fromLine": 6,
+   "to": "20b",
+   "toLine": 6,
+   "countedThrough": "20b"
+  },
+  {
+   "n": 3,
+   "name": "חומר בקודש",
+   "from": "20b",
+   "fromLine": 7,
+   "to": "27a",
+   "toLine": 9,
+   "countedThrough": "27a"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: אין."
+}

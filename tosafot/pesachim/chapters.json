@@ -1,0 +1,96 @@
+{
+ "masechet": "פסחים",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "אור לארבעה עשר",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "21a",
+   "toLine": 7,
+   "countedThrough": "21a"
+  },
+  {
+   "n": 2,
+   "name": "כל שעה",
+   "from": "21a",
+   "fromLine": 8,
+   "to": "42a",
+   "toLine": 14,
+   "countedThrough": "42a"
+  },
+  {
+   "n": 3,
+   "name": "אלו עוברין",
+   "from": "42a",
+   "fromLine": 15,
+   "to": "50a",
+   "toLine": 22,
+   "countedThrough": "50a"
+  },
+  {
+   "n": 4,
+   "name": "מקום שנהגו",
+   "from": "50a",
+   "fromLine": 23,
+   "to": "57b",
+   "toLine": 3,
+   "countedThrough": "57b"
+  },
+  {
+   "n": 5,
+   "name": "תמיד נשחט",
+   "from": "58a",
+   "fromLine": 1,
+   "to": "65b",
+   "toLine": 9,
+   "countedThrough": "65b"
+  },
+  {
+   "n": 6,
+   "name": "אלו דברים",
+   "from": "65b",
+   "fromLine": 10,
+   "to": "73b",
+   "toLine": 16,
+   "countedThrough": "73b"
+  },
+  {
+   "n": 7,
+   "name": "כיצד צולין",
+   "from": "74a",
+   "fromLine": 1,
+   "to": "86b",
+   "toLine": 13,
+   "countedThrough": "86b"
+  },
+  {
+   "n": 8,
+   "name": "האשה",
+   "from": "87a",
+   "fromLine": 1,
+   "to": "92b",
+   "toLine": 3,
+   "countedThrough": "92b"
+  },
+  {
+   "n": 9,
+   "name": "מי שהיה טמא",
+   "from": "92b",
+   "fromLine": 4,
+   "to": "99a",
+   "toLine": 5,
+   "countedThrough": "99a"
+  },
+  {
+   "n": 10,
+   "name": "ערבי פסחים",
+   "from": "99b",
+   "fromLine": 1,
+   "to": "121b",
+   "toLine": 3,
+   "countedThrough": "121b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 57b, 99a, 110b, 112b, 121b."
+}

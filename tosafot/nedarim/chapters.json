@@ -1,0 +1,105 @@
+{
+ "masechet": "נדרים",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "כל כנויי",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "13b",
+   "toLine": 6,
+   "countedThrough": "13b"
+  },
+  {
+   "n": 2,
+   "name": "ואלו מותרין",
+   "from": "13b",
+   "fromLine": 7,
+   "to": "20b",
+   "toLine": 13,
+   "countedThrough": "20b"
+  },
+  {
+   "n": 3,
+   "name": "ארבעה נדרים",
+   "from": "20b",
+   "fromLine": 14,
+   "to": "32b",
+   "toLine": 9,
+   "countedThrough": "32b"
+  },
+  {
+   "n": 4,
+   "name": "אין בין המודר",
+   "from": "32b",
+   "fromLine": 10,
+   "to": "45a",
+   "toLine": 3,
+   "countedThrough": "45a"
+  },
+  {
+   "n": 5,
+   "name": "השותפין שנדרו",
+   "from": "45b",
+   "fromLine": 1,
+   "to": "48b",
+   "toLine": 8,
+   "countedThrough": "48b"
+  },
+  {
+   "n": 6,
+   "name": "הנודר מן המבושל",
+   "from": "49a",
+   "fromLine": 1,
+   "to": "53b",
+   "toLine": 9,
+   "countedThrough": "53b"
+  },
+  {
+   "n": 7,
+   "name": "הנודר מן הירק",
+   "from": "54a",
+   "fromLine": 1,
+   "to": "60a",
+   "toLine": 3,
+   "countedThrough": "60a"
+  },
+  {
+   "n": 8,
+   "name": "קונם יין",
+   "from": "60a",
+   "fromLine": 4,
+   "to": "63b",
+   "toLine": 9,
+   "countedThrough": "63b"
+  },
+  {
+   "n": 9,
+   "name": "רבי אליעזר",
+   "from": "64a",
+   "fromLine": 1,
+   "to": "66b",
+   "toLine": 9,
+   "countedThrough": "66b"
+  },
+  {
+   "n": 10,
+   "name": "נערה המאורסה",
+   "from": "66b",
+   "fromLine": 10,
+   "to": "79a",
+   "toLine": 10,
+   "countedThrough": "79a"
+  },
+  {
+   "n": 11,
+   "name": "ואלו נדרים",
+   "from": "79a",
+   "fromLine": 11,
+   "to": "91b",
+   "toLine": 7,
+   "countedThrough": "91b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 22a, 23a, 32a, 40b, 70a, 70b, 71a, 71b, 72b, 73a, 73b, 74a, 74b, 75a, 75b, 76a, 76b, 77a, 77b."
+}

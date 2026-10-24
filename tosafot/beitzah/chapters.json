@@ -1,0 +1,51 @@
+{
+ "masechet": "ביצה",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "ביצה",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "15a",
+   "toLine": 15,
+   "countedThrough": "15a"
+  },
+  {
+   "n": 2,
+   "name": "יום טוב",
+   "from": "15b",
+   "fromLine": 1,
+   "to": "23b",
+   "toLine": 10,
+   "countedThrough": "23b"
+  },
+  {
+   "n": 3,
+   "name": "אין צדין",
+   "from": "23b",
+   "fromLine": 11,
+   "to": "29b",
+   "toLine": 9,
+   "countedThrough": "29b"
+  },
+  {
+   "n": 4,
+   "name": "המביא כדי יין",
+   "from": "29b",
+   "fromLine": 10,
+   "to": "35b",
+   "toLine": 6,
+   "countedThrough": "35b"
+  },
+  {
+   "n": 5,
+   "name": "משילין",
+   "from": "35b",
+   "fromLine": 7,
+   "to": "40b",
+   "toLine": 4,
+   "countedThrough": "40b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 26b, 28a, 29a, 40b."
+}

@@ -1,0 +1,222 @@
+{
+ "masechet": "שבת",
+ "chapters": [
+  {
+   "n": 1,
+   "name": "יציאות השבת",
+   "from": "2a",
+   "fromLine": 1,
+   "to": "20b",
+   "toLine": 4,
+   "countedThrough": "20b"
+  },
+  {
+   "n": 2,
+   "name": "במה מדליקין",
+   "from": "20b",
+   "fromLine": 5,
+   "to": "36b",
+   "toLine": 2,
+   "countedThrough": "36b"
+  },
+  {
+   "n": 3,
+   "name": "כירה",
+   "from": "36b",
+   "fromLine": 3,
+   "to": "47b",
+   "toLine": 7,
+   "countedThrough": "47b"
+  },
+  {
+   "n": 4,
+   "name": "במה טומנין",
+   "from": "47b",
+   "fromLine": 8,
+   "to": "51b",
+   "toLine": 6,
+   "countedThrough": "51b"
+  },
+  {
+   "n": 5,
+   "name": "במה בהמה",
+   "from": "51b",
+   "fromLine": 7,
+   "to": "56b",
+   "toLine": 20,
+   "countedThrough": "56b"
+  },
+  {
+   "n": 6,
+   "name": "במה אשה",
+   "from": "57a",
+   "fromLine": 1,
+   "to": "67b",
+   "toLine": 16,
+   "countedThrough": "67b"
+  },
+  {
+   "n": 7,
+   "name": "כלל גדול",
+   "from": "67b",
+   "fromLine": 17,
+   "to": "76b",
+   "toLine": 5,
+   "countedThrough": "76b"
+  },
+  {
+   "n": 8,
+   "name": "המוציא יין",
+   "from": "76b",
+   "fromLine": 6,
+   "to": "82a",
+   "toLine": 11,
+   "countedThrough": "82a"
+  },
+  {
+   "n": 9,
+   "name": "אמר רבי עקיבא",
+   "from": "82a",
+   "fromLine": 12,
+   "to": "90b",
+   "toLine": 6,
+   "countedThrough": "90b"
+  },
+  {
+   "n": 10,
+   "name": "המצניע",
+   "from": "90b",
+   "fromLine": 7,
+   "to": "96a",
+   "toLine": 3,
+   "countedThrough": "96a"
+  },
+  {
+   "n": 11,
+   "name": "הזורק",
+   "from": "96a",
+   "fromLine": 4,
+   "to": "102a",
+   "toLine": 13,
+   "countedThrough": "102a"
+  },
+  {
+   "n": 12,
+   "name": "הבונה",
+   "from": "102b",
+   "fromLine": 1,
+   "to": "105a",
+   "toLine": 8,
+   "countedThrough": "105a"
+  },
+  {
+   "n": 13,
+   "name": "האורג",
+   "from": "105a",
+   "fromLine": 9,
+   "to": "107a",
+   "toLine": 4,
+   "countedThrough": "107a"
+  },
+  {
+   "n": 14,
+   "name": "שמנה שרצים",
+   "from": "107a",
+   "fromLine": 5,
+   "to": "111b",
+   "toLine": 4,
+   "countedThrough": "111b"
+  },
+  {
+   "n": 15,
+   "name": "ואלו קשרים",
+   "from": "111b",
+   "fromLine": 5,
+   "to": "115a",
+   "toLine": 2,
+   "countedThrough": "115a"
+  },
+  {
+   "n": 16,
+   "name": "כל כתבי",
+   "from": "115a",
+   "fromLine": 3,
+   "to": "122b",
+   "toLine": 3,
+   "countedThrough": "122b"
+  },
+  {
+   "n": 17,
+   "name": "כל הכלים",
+   "from": "122b",
+   "fromLine": 4,
+   "to": "126b",
+   "toLine": 10,
+   "countedThrough": "126b"
+  },
+  {
+   "n": 18,
+   "name": "מפנין",
+   "from": "126b",
+   "fromLine": 11,
+   "to": "129b",
+   "toLine": 18,
+   "countedThrough": "129b"
+  },
+  {
+   "n": 19,
+   "name": "רבי אליעזר דמילה",
+   "from": "130a",
+   "fromLine": 1,
+   "to": "137b",
+   "toLine": 10,
+   "countedThrough": "137b"
+  },
+  {
+   "n": 20,
+   "name": "תולין",
+   "from": "137b",
+   "fromLine": 11,
+   "to": "141b",
+   "toLine": 18,
+   "countedThrough": "141b"
+  },
+  {
+   "n": 21,
+   "name": "נוטל אדם את בנו",
+   "from": "141b",
+   "fromLine": 19,
+   "to": "143a",
+   "toLine": 15,
+   "countedThrough": "143a"
+  },
+  {
+   "n": 22,
+   "name": "חבית",
+   "from": "143b",
+   "fromLine": 1,
+   "to": "148a",
+   "toLine": 4,
+   "countedThrough": "148a"
+  },
+  {
+   "n": 23,
+   "name": "שואל",
+   "from": "148a",
+   "fromLine": 5,
+   "to": "153a",
+   "toLine": 10,
+   "countedThrough": "153a"
+  },
+  {
+   "n": 24,
+   "name": "מי שהחשיך",
+   "from": "153a",
+   "fromLine": 11,
+   "to": "157b",
+   "toLine": 3,
+   "countedThrough": "157b"
+  }
+ ],
+ "note": "גבולות הפרקים לפי ספריא (Chapters, מהדורת וילנא). countedThrough: עד איזה עמוד נמשכו התוספות (13.10.2026: כל המסכת). עמודים שאין להם תוספות בספריא: 30a, 30b, 33a, 62b, 108b, 109b, 140a, 151b, 152a."
+}

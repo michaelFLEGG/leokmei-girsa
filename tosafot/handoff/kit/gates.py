@@ -399,10 +399,20 @@ def similarity(a, b):
 
 
 # ---------------------------------------------------------------- השכבות (משותף ל-factory_flow.py ולערכה)
+def semi_to_period(s):
+    """כלל 14.10.2026 (נקודה במקום נקודה-פסיק) מוחל בקוד, כמו בפרסום (factory_flow.publish), ולא בכתיבה מחדש במודל.
+    נמדד 24.10.2026: שליש מהשורות נכשלו רק על התו ;, וכל אחת מהן נשלחה לפייבל. ההחלפה מכנית ואינה משנה תוכן."""
+    if not isinstance(s, str):
+        return s
+    s = re.sub(r'\s*;\s*$', '.', s.strip())
+    return re.sub(r'\s*;\s*', '. ', s)
+
+
 def tidy_q(q):
     if not isinstance(q, dict):
         return {'t': '', 'lvl': '', 'q': '', 'a': ''}
-    return {'t': norm_type(q.get('t')), 'lvl': q.get('lvl'), 'q': str(q.get('q', '')).strip(), 'a': str(q.get('a', '')).strip()}
+    return {'t': norm_type(q.get('t')), 'lvl': q.get('lvl'), 'q': semi_to_period(str(q.get('q', '')).strip()),
+            'a': semi_to_period(str(q.get('a', '')).strip())}
 
 
 def add_usage(acc, res):
@@ -481,7 +491,7 @@ def ingest_write_core(work, results, c, page_of):
                 rec.update({'bad_s': ['חסר בפלט'], 'bad_a': True, 'q': [], 'bad_q': {}})
                 stats['bad'] += 1
                 continue
-            rec['s'] = str(g.get('s', '')).strip()
+            rec['s'] = semi_to_period(str(g.get('s', '')).strip())
             rec['bad_s'] = check_line(rec['s'], rec, c)
             rec['a'] = resolve_anchor(g.get('a'), ctxp, idx)
             rec['bad_a'] = False          # עוגן שלא נמצא אינו כשל: הסימן יונח לפי השכנים (factory_place.py)
@@ -655,7 +665,7 @@ def ingest_rewrite_core(work, results, c, reqmap, page_of_dk):
             a_failed = bool(rec.get('bad_a'))
             q_failed = any(v for v in (rec.get('bad_q') or {}).values()) or any((rec.get('rv_q') or {}).values())
             if s_failed:
-                rec['s'] = str(g.get('s', '')).strip()
+                rec['s'] = semi_to_period(str(g.get('s', '')).strip())
                 rec['bad_s'] = check_line(rec['s'], rec, c)
                 rec['rv_s'] = ''
             if a_failed or rec.get('a') is None:

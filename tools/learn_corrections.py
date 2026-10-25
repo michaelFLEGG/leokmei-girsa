@@ -190,7 +190,7 @@ def fragments(was, now):
 
 def classify(e):
     """שכבה לתיקון אחד: (שכבה, זוגות מכניים)."""
-    if e.get('kind') in ('split', 'merge', 'side', 'unside'):
+    if e.get('kind') in ('split', 'merge', 'side', 'unside', 'unside-merge'):
         return 'once', []                                  # שינוי מבנה: נרשם, אינו כלל
     was, now = plain(e.get('was')), plain(e.get('now'))
     if was == now:
@@ -370,7 +370,19 @@ def write_outputs(rules, held, cls, journal, new_ids, ver):
     io.open(os.path.join(OUT, 'מועמדים-לפרומפט-סמנטי.md'), 'w', encoding='utf-8').write(
         '# מועמדי שיפור לשכבה הסמנטית (מודל קל)\n\nמצטבר מן היומן. נכנס לפרומפט רק בהרצת השכבה, ואחרי בדיקה מול היומן.\n\n' +
         '\n'.join('- %dx `%s` ← `%s`' % (c, a, b) for (a, b), c in sc.most_common(80)) + '\n')
-    deep = [e for e in journal.values() if cls[e['id']][0] == 'deep']
+    # כותרת צד שהמנהל מחק ב-Delete (25.10.2026): סימן למנועים שכותרת במקום כזה מיותרת.
+    # ביומן: was = "עליונה | תחתונה | כותרת..." (ראו unside-merge ב-build_site)
+    gone = [(e, [t.strip() for t in (e.get('was') or '').split(' | ')[2:] if t.strip()])
+            for e in journal.values() if e.get('kind') == 'unside-merge']
+    gc = collections.Counter(t for _, ts in gone for t in ts)
+    ctxt = lambda e: plain(((e.get('was') or '').split(' | ') + ['', ''])[1])[:80]
+    io.open(os.path.join(OUT, 'כותרות-צד-שנמחקו.md'), 'w', encoding='utf-8').write(
+        '# כותרות צד שהמנהל מחק (Delete בסוף שורה)\n\nכל מחיקה היא סימן למנועים שכותרת צד במקום כזה '
+        'היתה מיותרת. מצטבר מן היומן; משמש את מנועי הכותרות בהרצות הבאות.\n\n## לפי נוסח\n\n' +
+        '\n'.join('- %dx `%s`' % (c, t) for t, c in gc.most_common(80)) + '\n\n## אחרונות, בהקשרן\n\n' +
+        '\n'.join('- %s %s: `%s` (השורה: %s)' % (e.get('slug'), e.get('daf'), ', '.join(ts), ctxt(e))
+                  for e, ts in gone[-60:]) + '\n')
+    deep =[e for e in journal.values() if cls[e['id']][0] == 'deep']
     io.open(os.path.join(OUT, 'מועמדים-לפרומפט-הידוק.md'), 'w', encoding='utf-8').write(
         '# מועמדי שיפור למנוע ההידוק (מודל חזק, רק על טווח שהמנהל מבקש)\n\n' +
         '\n'.join('- %s %s\n  - לפני: %s\n  - אחרי: %s' % (e.get('slug'), e.get('daf'), plain(e.get('was'))[:160], plain(e.get('now'))[:160])

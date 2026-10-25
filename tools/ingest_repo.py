@@ -110,6 +110,13 @@ def ops_of(doc):
                 mops.append({'kind': 'pside' if kind == 'side' else 'punside',
                              'texts': e.get('texts') or [], 'res': e.get('resT') or [],
                              'cut': (e.get('res') or [None, None, None])[2] if kind == 'side' else None})
+            elif kind == 'unside-merge':
+                # Delete על שורה שיש לה כותרת צד: texts=[עליונה, תחתונה, ...כותרות שנמחקו],
+                # res[2]=[up|down] - לאן עובר מה שמוגן (ציון דף, משנה בצד, גופא)
+                t = e.get('texts') or []
+                mops.append({'kind': 'pusm', 'texts': t[:2], 'side': t[2:], 'res': e.get('resT') or [],
+                             'where': ((e.get('res') or [None, None, ['up']])[2:] or [['up']])[0][0],
+                             'daf': e.get('daf', '')})
             else:
                 # סוג מבנה לא מוכר: לעולם לא נופל לאיחוי. נאמר ומדולג.
                 skipped.append((e, 'סוג שינוי מבנה לא מוכר: %r' % kind))

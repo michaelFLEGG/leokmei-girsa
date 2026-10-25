@@ -1079,7 +1079,8 @@ def apply_struct(path, ops, author, masechet, log=print, dry=False):
     old = [o for o in ops if o.get('kind') in ('psplit', 'pmerge', 'pins')]
     side = [o for o in ops if o.get('kind') in ('pside', 'punside')]
     deco = [o for o in ops if o.get('kind') in ('pdel', 'prep')]
-    rest = [o for o in ops if o not in old and o not in side and o not in hs and o not in deco]
+    usm = [o for o in ops if o.get('kind') == 'pusm']
+    rest = [o for o in ops if o not in old and o not in side and o not in hs and o not in deco and o not in usm]
     out = {'applied': 0, 'missed': [(o, 'סוג שינוי מבנה לא מוכר') for o in rest],
            'backup': None, 'verified': True}
     # כותרת בשתיים: קודם הפיצול (הפסקה השנייה יורשת את סגנון הכותרת), ואחריו
@@ -1104,7 +1105,7 @@ def apply_struct(path, ops, author, masechet, log=print, dry=False):
         out['missed'] += r2.get('missed') or []
         if r2.get('verified') is False:
             out['verified'] = False
-    for fn, batch in ((_apply_split_merge, old), (_apply_side, side), (_apply_deco, deco)):
+    for fn, batch in ((_apply_split_merge, old), (_apply_side, side), (_apply_deco, deco), (_apply_usm, usm)):
         if not batch:
             continue
         r = fn(path, batch, author, masechet, log=log, dry=dry)
@@ -1270,6 +1271,168 @@ def _apply_side(path, ops, author, masechet, log=print, dry=False):
         return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
     os.replace(tmp, path)
     log('נכתבו %d שינויי כותרת-צד, ואומתו' % done)
+    return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
+
+
+# ------------------------------------- Delete על שורה שיש לה כותרת צד (pusm, 25.10.2026)
+# באתר: כותרת הצד של השורה הבאה נמחקת, והשורה מתאחה לקודמת. בוורד, כמו שהיה
+# נעשה ביד: פסקאות הכותרת שנמחקו (side) נמחקות במעקב; כל פסקה אחרת שביניהן
+# (ציון "דף בצד", "משנה בצד", כותרת "גופא" שנשארה, סמן פריסה) אינה נמחקת לעולם -
+# היא עוברת במעקב אל לפני הפסקה העליונה (where=down) או אל אחרי התחתונה (up),
+# כמו באתר; וסימן הפסקה העליונה נמחק (איחוי). העיגון: נוסח שתי הפסקאות.
+
+def _clone_as_ins(p, author, when, nextid):
+    """עותק של פסקה כהוספה במעקב (חציו השני של העברה). פסקה שיש בה כבר שינוי
+    מעקב אינה מועתקת: וורד גובר, והאיחוי נשאר באתר."""
+    import copy
+    c = copy.deepcopy(p)
+    if c.find('.//' + W + 'ins') is not None or c.find('.//' + W + 'del') is not None:
+        return None
+    for b in c.findall('.//' + W + 'bookmarkStart') + c.findall('.//' + W + 'bookmarkEnd'):
+        b.getparent().remove(b)
+    for a in list(c.attrib):
+        if a.endswith('}paraId') or a.endswith('}textId'):
+            del c.attrib[a]
+    for r in [x for x in c if x.tag == W + 'r']:
+        idx = list(c).index(r)
+        ins = _mark(etree.Element(W + 'ins'), author, when, nextid)
+        c.remove(r)
+        ins.append(r)
+        c.insert(idx, ins)
+    _mark_para(c, 'ins', author, when, nextid)
+    return c
+
+
+def _apply_usm(path, ops, author, masechet, log=print, dry=False):
+    from styles_map import role_of
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    before = convert(path)
+    # הפסקה שבה ההמרה פולטת כל גוש (כשהמחבר כבר איחה במעקב, זו האחרונה בשרשרת):
+    # את סימן הפסקה שלה מוחקים, ולא את של הראשונה - שכבר מחוק
+    pmap = dict(convert.last.get('pmap') or {})
+    nb = [_nw(b['text']) for b in before]
+    role = [role_of(b) for b in before]
+    body = lambda n: role[n].startswith('body') or role[n] == 'mishna'
+    # בין שתי הפסקאות מותר רק מה שהאתר אינו מציג כשורה: חלון, ציון דף, ריהוט, ריק
+    between = lambda n: role[n] in ('anchor', 'daf', 'skip') or (not nb[n] and not body(n))
+    plan, missed = [], []
+    for op in ops:
+        t = op.get('texts') or []
+        if len(t) < 2 or not op.get('res'):
+            missed.append((op, 'רשומה חסרה'))
+            continue
+        w0, w1 = _nw(t[0]), _nw(t[1])
+        side = [_nw(x) for x in (op.get('side') or [])]
+        hits = []
+        for i in range(len(before)):
+            if nb[i] != w0 or not body(i):
+                continue
+            j = i + 1
+            while j < len(before) and between(j):
+                j += 1
+            if j >= len(before) or nb[j] != w1 or not body(j):
+                continue
+            mids = list(range(i + 1, j))
+            dels, ok = [], True
+            for s in side:
+                c = [m for m in mids if role[m] == 'anchor' and nb[m] == s and m not in dels]
+                if not c:
+                    ok = False
+                    break
+                dels.append(c[-1])                  # הקרובה לפסקה
+            if ok:
+                hits.append((i, j, dels, [m for m in mids if m not in dels]))
+        if len(hits) != 1:
+            missed.append((op, 'לא אותר זוג פסקאות יחיד עם הכותרת שנמחקה (%d מועמדים)' % len(hits)))
+            continue
+        plan.append(hits[0] + (op,))
+    if not plan:
+        return {'applied': 0, 'missed': missed, 'backup': None, 'verified': True}
+
+    want_after, n = [], 0
+    starts = {x[0]: x for x in plan}
+    while n < len(before):
+        if n in starts:
+            i, j, dels, moves, op = starts[n]
+            mv = [nb[m] for m in moves]
+            merged = [_nw((op.get('res') or [''])[0])]
+            want_after += (mv + merged) if op.get('where') == 'down' else (merged + mv)
+            n = j + 1
+            continue
+        want_after.append(nb[n])
+        n += 1
+    if dry:
+        return {'applied': len(plan), 'missed': missed, 'backup': None, 'verified': None,
+                'plan': [(x[0], 'pusm') for x in plan]}
+
+    bk = backup(path, masechet)
+    log('גיבוי: ' + bk)
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    settings = z.read('word/settings.xml')
+    z.close()
+    counter = [9900]
+
+    def nextid():
+        counter[0] += 1
+        return counter[0]
+
+    when = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    body_ps = doc.find(W + 'body').findall(W + 'p')
+    emit = lambda n: body_ps[pmap[n]] if n in pmap and pmap[n] < len(body_ps) else None
+    done = 0
+    for i, j, dels, moves, op in sorted(plan, key=lambda x: -x[0]):
+        pi_, pj = emit(i), emit(j)
+        mp = {m: emit(m) for m in dels + moves}
+        if pi_ is None or pj is None or any(v is None for v in mp.values()):
+            missed.append((op, 'הפסקה לא נמצאה ב-XML'))
+            continue
+        clones = [_clone_as_ins(mp[m], author, when, nextid) for m in moves]
+        if any(c is None for c in clones):
+            missed.append((op, 'בין השורות יש פסקה עם שינוי מעקב שטרם התקבל; וורד גובר'))
+            continue
+        if not all(_delete_paragraph(mp[m], author, when, nextid) for m in dels + moves):
+            missed.append((op, 'לא ניתן למחוק כאן במעקב (שינוי מעקב קיים)'))
+            continue
+        # פסקה שתוכנה כבר מחוק במעקב (ולכן ההמרה אינה רואה אותה) יושבת לפעמים בין
+        # השתיים, וסימנה החי עוצר את האיחוי: גם סימנה נמחק. אין בה טקסט חי.
+        for pn in range(pmap[i] + 1, pmap[j]):
+            q = body_ps[pn]
+            if q not in mp.values() and not ''.join(t for _, t, _ in _runs_of(q)).strip():
+                _mark_para(q, 'del', author, when, nextid)
+        if op.get('where') == 'down':
+            for c in clones:
+                pi_.addprevious(c)
+        else:
+            for c in reversed(clones):
+                pj.addnext(c)
+        # האתר מוסיף רווח בנקודת החיבור כשאין: כאן הוא רווח שנוסף במעקב בסוף העליונה
+        t0, t1 = before[i]['text'], before[j]['text']
+        if (_nw((op.get('res') or [''])[0]) == _nw(t0 + ' ' + t1) and _nw(t0 + t1) != _nw(t0 + ' ' + t1)):
+            runs = _runs_of(pi_)
+            sp = _mark(etree.Element(W + 'ins'), author, when, nextid)
+            sp.append(_mkrun(' ', _rpr(runs[-1][2]) if runs else None))
+            pi_.append(sp)
+        _mark_para(pi_, 'del', author, when, nextid)
+        done += 1
+
+    tmp = path + '.new'
+    _rezip(path, tmp, {'word/document.xml':
+                       etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
+                       'word/settings.xml': _ensure_track(settings)[0]})
+    after = convert(tmp)
+    got = [_nw(b['text']) for b in after]
+    if got != want_after:
+        os.remove(tmp)
+        bad = next((k for k in range(min(len(got), len(want_after))) if got[k] != want_after[k]),
+                   min(len(got), len(want_after)))
+        log('האימות נכשל. הקובץ לא נגע.')
+        log('   ציפינו: %r' % (want_after[bad:bad + 2],))
+        log('   קיבלנו: %r' % (got[bad:bad + 2],))
+        return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
+    os.replace(tmp, path)
+    log('נכתבו %d מחיקות כותרת-צד עם איחוי, ואומתו' % done)
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
 

@@ -323,6 +323,95 @@ def _unside_done(pages, e):
                                  e.get('daf')) is not None
 
 
+# ------------------------------------------------ Delete על שורה שיש לה כותרת צד (25.10.2026)
+# הכותרת נמחקת (לא חוזרת לגוף) והשורה מתאחה לקודמת. זהה ל-usmData שבדפדפן:
+#   texts=[עליונה, תחתונה, ...כותרות שנמחקו]
+#   res=[[סגנון העליונה, HTML מאוחד], [HTML הכותרות שנמחקו], ['up'|'down']]
+#   resT=[נוסח מאוחד]
+# up: המאוחדת ביחידה העליונה (ובאותו עמוד, בלי מוגן ביניהן - יחידה אחת);
+# down: ביחידה התחתונה, ששומרת את ציון הדף, מספר המשנה וכותרת "גופא" / "ת"ר".
+_MBF = ('mbw', 'mbi', 'mp', 'mb', 'mbc', 'mbh', 'mbn')
+
+
+def _usm_find(pages, e):
+    t = e.get('texts') or []
+    if len(t) < 2:
+        return None
+    gone = [_wn(_bare(x)) for x in ((e.get('res') or [None, []])[1] or [])]
+    flat = [(pi, u) for pi, p in enumerate(pages) for u in p['units']]
+    hits = []
+    for n in range(1, len(flat)):
+        (pa, P), (pb, U) = flat[n - 1], flat[n]
+        if U['k'] not in ('u', 'm') or P['k'] != U['k'] or not U['l'] or not P['l']:
+            continue
+        if _wn(_bare(U['l'][0][1])) != _wn(t[1]) or _wn(_bare(P['l'][-1][1])) != _wn(t[0]):
+            continue
+        w = [_wn(_bare(x)) for x in (U.get(_wkey(U)) or '').split('<br>')]
+        if not all(g in w for g in gone):
+            continue
+        hits.append(((pa, P), (pb, U), pages[pb]['daf']))
+    if len(hits) == 1:
+        return hits[0]
+    if len(hits) > 1 and e.get('daf'):
+        k0 = _daf_key(e['daf'])
+        near = [h for h in hits if k0 is not None and _daf_key(h[2]) is not None
+                and abs(_daf_key(h[2]) - k0) <= 1]
+        if len(near) == 1:
+            return near[0]
+    return None
+
+
+def _usm_apply(pages, e):
+    hit = _usm_find(pages, e)
+    res = e.get('res') or []
+    if hit is None or not res or not res[0]:
+        return False
+    (pa, P), (pb, U), _ = hit
+    where = ((res[2] if len(res) > 2 else None) or ['up'])[0]
+    k = _wkey(U)
+    lines = [x for x in (U.get(k) or '').split('<br>') if _bare(x).strip()]
+    for g in [_wn(_bare(x)) for x in (res[1] if len(res) > 1 else [])]:
+        j = next((i for i, x in enumerate(lines) if _wn(_bare(x)) == g), None)
+        if j is not None:
+            lines.pop(j)
+    U[k] = '<br>'.join(lines)
+    m = [res[0][0], res[0][1]]
+    uA, uB = pages[pa]['units'], pages[pb]['units']
+    if where == 'down':
+        P['l'].pop()
+        U['l'][0] = m
+        if not P['l']:
+            pw = P.get(_wkey(P)) or ''
+            if _bare(pw).strip():
+                U[k] = pw + ('<br>' + U[k] if U[k] else '')
+            if P.get('mbw') and not U.get('mbw'):
+                for f in _MBF:
+                    if f in P:
+                        U[f] = P[f]
+            if P.get('ref') and not U.get('ref'):
+                U['ref'] = P['ref']
+                if P.get('rs'):
+                    U['rs'] = P['rs']
+            uA.remove(P)
+    else:
+        P['l'][-1] = m
+        U['l'].pop(0)
+        if pa == pb and not _bare(U.get(k) or '').strip() and not U.get('mbw'):
+            P['l'] = P['l'] + U['l']
+            uB.remove(U)
+        elif not U['l']:
+            uB.remove(U)
+    P.pop('lv', None)
+    U.pop('lv', None)
+    return True
+
+
+def _usm_done(pages, e):
+    r = _wn((e.get('resT') or [''])[0])
+    return bool(r) and any(u['k'] in ('u', 'm') and any(_wn(_bare(x[1])) == r for x in u['l'])
+                           for p in pages for u in p['units'])
+
+
 # ------------------------------------------------ כותרות: פיצול ואיחוי (5.10.2026)
 # hsplit: כותרת (nose/dh) לשתיים. res=[[סוג הכותרת, HTML הראשון],
 #   [מחלקת גוף, HTML השני]], texts=[נוסח הכותרת שהיה], resT=[שני הנוסחים].
@@ -596,8 +685,9 @@ def _apply_site_edits(pages, slug, qa):
         # --- שינוי מבנה: פיצול פסקה או איחוי שתיים ---
         if e.get('op') == 'struct':
             kind = e.get('kind')
-            if kind in ('side', 'unside'):
-                ap, dn = (_side_apply, _side_done) if kind == 'side' else (_unside_apply, _unside_done)
+            if kind in ('side', 'unside', 'unside-merge'):
+                ap, dn = ((_side_apply, _side_done) if kind == 'side' else (_unside_apply, _unside_done)
+                          if kind == 'unside' else (_usm_apply, _usm_done))
                 if ap(pages, e):
                     done += 1
                     keep.append(e)
@@ -3389,6 +3479,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         else if(sp?hSplitDone(e):hMergeDone(e)){e.lost=0;e.done=1;EDTAKEN++,e.ing&&EDWORD++}
         else e.lost=1;
         continue}
+      if(e.kind==='unside-merge'){
+        const hit=usmFind(e);
+        if(hit){usmData(e,hit.pv,hit.cu);e.lost=0;e._ap=1;any=true;SLOTS=null}
+        else if(usmDone(e)){e.lost=0;e.done=1;EDTAKEN++,e.ing&&EDWORD++}
+        else e.lost=1;
+        continue}
       if(e.kind==='side'||e.kind==='unside'){
         const sd=e.kind==='side';
         const h=sd?findRun(e.texts,e.daf):findWinUnit(e.texts[0],e.texts[1],e.daf);
@@ -3488,32 +3584,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     UNDO.length=0;
     let u=info.u, i=info.i;
     if(i===0){
-      /* פסקה ראשונה ביחידה: אפשר לאחד רק אם אין ליחידה חלון משלה,
-         שאם יש - החלון מצביע עליה, ואיחוי היה מנתק אותו ממנה. */
-      const all=unitsAll();const n=all.findIndex(o=>o.u===u);
+      /* פסקה ראשונה ביחידה (25.10.2026): עד כאן סירוב ("הפסקה פותחת קטע משלה").
+         עכשיו האיחוי נעשה, וכותרת הצד שלה נמחקת - usmCmd. הסירוב היחיד הוא
+         בין יחידות מסוגים שונים (משנה וגמרא, כותרת, עיטור), במילים פשוטות. */
+      const all=flatU();const n=all.findIndex(o=>o.u===u);
       const prev=n>0?all[n-1]:null;
-      if(!prev||prev.u.k!==u.k||plain(u.a||'')||!prev.u.l.length){
-        flash('אי אפשר לאחד כאן: הפסקה פותחת קטע משלה');return false}
-      /* מעבירים את פסקאות היחידה אל הקודמת */
-      const texts=[plain(prev.u.l[prev.u.l.length-1][1]),plain(u.l[0][1])];
-      const cls=prev.u.l[prev.u.l.length-1][0];
-      const h=prev.u.l[prev.u.l.length-1][1]+u.l[0][1];
-      const d=document.createElement('div');d.innerHTML=h;
-      const snp=[snapOf(info.pi)];if(prev.pi!==info.pi)snp.push(snapOf(prev.pi));
-      const pre=[{pi:info.pi,snap:JSON.stringify(D.pages[info.pi].units)}];
-      if(prev.pi!==info.pi)pre.push({pi:prev.pi,snap:JSON.stringify(D.pages[prev.pi].units)});
-      freezeEdits(texts);
-      const ce=cancelSplit(texts);let me=null;
-      if(!ce){me={op:'struct',kind:'merge',texts:texts,res:[[cls,h]],
-                 resT:[d.textContent],daf:dafOf(el),t:Date.now(),pub:0,_ap:1};ED.push(me)}
-      UNDO.push({e:me,re:ce||null,snaps:pre,key:'u'+u.id+'.1',t:Date.now()});
-      prev.u.l[prev.u.l.length-1]=[cls,h];delete prev.u.lv;
-      u.l.shift();delete u.lv;
-      if(!u.l.length&&!plain(u.a||'')){
-        for(const p of D.pages){const k=p.units.indexOf(u);if(k>-1){p.units.splice(k,1);break}}}
-      SLOTS=null;saveED();
-      reflow('u'+prev.u.id+'.'+prev.u.l.length,texts[0].length,snp);
-      return true}
+      if(!prev){flash('אין שורה לפניה לאחד איתה');return false}
+      const why=usmWhyNot(prev.u,u);
+      if(why){flash(why);return false}
+      return usmCmd(info,prev)}
     const texts=[plain(u.l[i-1][1]),plain(u.l[i][1])];
     const cls=u.l[i-1][0];
     const h=u.l[i-1][1]+u.l[i][1];
@@ -3529,6 +3608,119 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     delete u.lv;
     SLOTS=null;saveED();
     reflow('u'+u.id+'.'+i,texts[0].length,snp);
+    return true}
+
+  /* =================== Delete על שורה שיש לה כותרת צד (25.10.2026) ===================
+     Delete בסוף שורה (או Backspace בתחילת הבאה), כשהשורה הבאה פותחת יחידה משלה:
+     כותרת הצד שלה נמחקת (לא חוזרת לגוף כמו ב-Ctrl+Q), והשורה עולה ומתאחה.
+     לחיצה אחת, ביטול אחד (Ctrl+Z מחזיר את הכותרת ואת הפיצול). רשומה אחת:
+       kind  'unside-merge'
+       texts [נוסח העליונה, נוסח התחתונה, ...נוסחי הכותרות שנמחקו]
+       res   [[סגנון העליונה, HTML מאוחד], [HTML הכותרות שנמחקו], [מקום]]
+       resT  [נוסח מאוחד]
+     המקום: 'up' - הפסקה המאוחדת נשארת ביחידה העליונה, ואם אין ביניהן דבר מוגן
+     שתי היחידות נעשות אחת; 'down' - היא עוברת ליחידה התחתונה, ששומרת את מה
+     שמוגן: ציון הדף (העמוד שלה), מספר המשנה (mbw), וכותרת "גופא" / "ת"ר"
+     שבערימה. מוגן לעולם אינו נמחק. בוורד: הכותרות נמחקות במעקב, המוגן עובר אל
+     לפני העליונה ('down') או אל אחרי התחתונה ('up'), וסימן הפסקה העליונה נמחק.
+     הבנייה (_usm_apply) והקולט לוורד (pusm) מחילים את אותה רשומה בדיוק. */
+  const WSPEC=/^\s*(גופא|ת"ר|ת״ר|תנו רבנן)/;
+  const MBF=['mbw','mbi','mp','mb','mbc','mbh','mbn'];
+  function usmWhyNot(P,U){
+    if(P.k===U.k&&(U.k==='u'||U.k==='m')&&P.l.length){
+      if(P.l[P.l.length-1][0]==='hatz')return 'יש עיטור בין השורות. לחץ עליו ומחק אותו (Delete), ואז אחד';
+      return ''}
+    if(P.k==='hatz')return 'יש עיטור (***) בין השורות. לחץ עליו ומחק אותו (Delete), ואז אחד';
+    if(P.k==='m'&&U.k==='u')return 'אי אפשר לאחד משנה עם גמרא: אלה שני סוגי קטעים, וכל אחד נשאר בשורה משלו';
+    if(P.k==='u'&&U.k==='m')return 'אי אפשר לאחד גמרא עם משנה: אלה שני סוגי קטעים, וכל אחד נשאר בשורה משלו';
+    return 'אי אפשר לאחד כאן: לפני השורה יש כותרת או פתיחת פרק, ולא שורת טקסט'}
+  /* מה יקרה, בלי לשנות דבר: אילו כותרות נמחקות, מה נשאר, ואיפה הפסקה המאוחדת */
+  function usmPlan(pv,cu){
+    const P=pv.u,U=cu.u,k=wkey(U);
+    const lines=(U[k]||'').split('<br>').filter(x=>plain(x).trim());
+    let del,keep,note='';
+    if(lines.length<=1){del=lines;keep=[]}
+    else{
+      del=lines.filter(x=>!WSPEC.test(plain(x)));keep=lines.filter(x=>WSPEC.test(plain(x)));
+      /* ערימה שכולה "גופא" / "ת"ר": נמחקת רק הקרובה לשורה, ונאמר */
+      if(!del.length){del=[lines[lines.length-1]];keep=lines.slice(0,-1);note='near'}}
+    const same=pv.pi===cu.pi;
+    if(same&&!U.mbw&&!keep.length)return {del,keep,note,where:'up',fuse:true};
+    const pOnly=P.l.length===1;
+    if(pOnly&&P.mbw&&U.mbw)return {err:'אי אפשר לאחד כאן: אלה שתי משניות שכל אחת מהן שורה אחת, ומספר המשנה של אחת מהן היה הולך לאיבוד'};
+    if(!(pOnly&&D.pages[pv.pi].units.length===1))return {del,keep,note,where:'down',fuse:false};
+    /* העליונה היא כל העמוד שלה: הפסקה המאוחדת נשארת בו, והתחתונה ממשיכה בעמודה */
+    if(U.l.length<2)return {err:'אי אפשר לאחד כאן: שתי השורות הן כל אחת עמוד שלם, וציון הדף היה נעלם'};
+    return {del,keep,note,where:'up',fuse:false}}
+  /* ההחלה על הנתונים - זהה לבנייה (_usm_apply) */
+  function usmData(e,pv,cu){
+    const P=pv.u,U=cu.u,k=wkey(U),where=((e.res||[])[2]||[])[0]||'up';
+    const lines=(U[k]||'').split('<br>').filter(x=>plain(x).trim());
+    for(const g of ((e.res||[])[1]||[]).map(plain)){const j=lines.findIndex(x=>plain(x)===g);if(j>-1)lines.splice(j,1)}
+    U[k]=lines.join('<br>');
+    const m=[e.res[0][0],e.res[0][1]];
+    const uA=D.pages[pv.pi].units,uB=D.pages[cu.pi].units;
+    let host,idx;
+    if(where==='down'){
+      P.l.pop();U.l[0]=m;host=U;idx=0;
+      if(!P.l.length){
+        /* העליונה התרוקנה: הכותרת שלה נערמת מעל הכותרות של התחתונה, ומה שמוגן בה עובר */
+        const pw=P[wkey(P)]||'';
+        if(plain(pw).trim())U[k]=pw+(U[k]?'<br>'+U[k]:'');
+        if(P.mbw&&!U.mbw)MBF.forEach(f=>{if(f in P)U[f]=P[f]});
+        if(P.ref&&!U.ref){U.ref=P.ref;if(P.rs)U.rs=P.rs}
+        uA.splice(uA.indexOf(P),1)}
+    }else{
+      P.l[P.l.length-1]=m;U.l.shift();host=P;idx=P.l.length-1;
+      if(pv.pi===cu.pi&&!plain(U[k]||'').trim()&&!U.mbw){P.l=P.l.concat(U.l);uB.splice(uB.indexOf(U),1)}
+      else if(!U.l.length)uB.splice(uB.indexOf(U),1)}
+    delete P.lv;delete U.lv;SLOTS=null;
+    return 'u'+host.id+'.'+(idx+1)}
+  function usmFind(e){
+    const t=e.texts||[];if(t.length<2)return null;
+    const gone=((e.res||[])[1]||[]).map(plain);
+    const all=flatU(),hits=[];
+    for(let n=1;n<all.length;n++){
+      const cu=all[n],pv=all[n-1],U=cu.u,P=pv.u;
+      if((U.k!=='u'&&U.k!=='m')||P.k!==U.k||!U.l.length||!P.l.length)continue;
+      if(plain(U.l[0][1])!==t[1]||plain(P.l[P.l.length-1][1])!==t[0])continue;
+      const w=(U[wkey(U)]||'').split('<br>').map(plain);
+      if(!gone.every(g=>w.indexOf(g)>-1))continue;
+      hits.push({pv,cu,daf:D.pages[cu.pi].daf})}
+    if(hits.length===1)return hits[0];
+    if(hits.length>1&&e.daf){const k0=dafKey(e.daf);
+      const near=hits.filter(h=>{const k=dafKey(h.daf);return k0!==null&&k!==null&&Math.abs(k-k0)<=1});
+      if(near.length===1)return near[0]}
+    return null}
+  function usmDone(e){
+    const r=(e.resT||[])[0];if(!r)return false;
+    return unitsAll().some(o=>o.u.l.some(x=>plain(x[1])===r))}
+  function usmCmd(info,pv){
+    const U=info.u,cu={u:U,pi:info.pi},P=pv.u;
+    const pl=usmPlan(pv,cu);
+    if(pl.err){flash(pl.err);return false}
+    const ph=P.l[P.l.length-1],nh=U.l[0];
+    const texts=[plain(ph[1]),plain(nh[1])].concat(pl.del.map(plain));
+    /* רווח בנקודת החיבור, אם אין (בלעדיו "קצרה.ששמע"); בוורד נוסף כרווח במעקב */
+    const h=ph[1]+(/\s$/.test(texts[0])||/^\s/.test(texts[1])||!texts[0].trim()?'':' ')+nh[1];
+    const pis=[...new Set([pv.pi,info.pi])];
+    const snp=pis.map(snapOf),pre=pis.map(pi=>({pi,snap:JSON.stringify(D.pages[pi].units)}));
+    freezeEdits(texts);
+    const e={op:'struct',kind:'unside-merge',texts,res:[[ph[0],h],pl.del.slice(),[pl.where]],
+             resT:[plain(h)],daf:D.pages[info.pi].daf,t:Date.now(),pub:0,_ap:1};
+    ED.push(e);
+    const key=usmData(e,pv,cu);
+    UNDO.length=0;UNDO.push({e,snaps:pre,key,t:Date.now()});
+    saveED();
+    reflow(key,texts[0].length,snp);
+    const q=s=>"'"+s+"'";
+    const gone=pl.del.map(x=>q(plain(x).trim()));
+    let msg=gone.length?(gone.length>1?'כותרות הצד '+gone.join(', ')+' נמחקו והשורה אוחתה':'כותרת הצד '+gone[0]+' נמחקה והשורה אוחתה')
+                      :'השורה אוחתה';
+    if(pl.note==='near')msg+=' (בערימה נמחקה רק הקרובה לשורה)';
+    else if(pl.keep.length)msg+='; '+pl.keep.map(x=>q(plain(x).trim())).join(', ')+' נשאר בצד';
+    if(pv.pi!==info.pi)msg+='; ציון הדף נשמר';
+    flash(msg+'. Ctrl+Z מחזיר');
     return true}
 
   /* =================== חופש עריכה מלא: כותרות (5.10.2026) ===================
@@ -4049,7 +4241,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl (בזמן בקרה עם כרטיס ממצא פתוח, Alt+1/2/3 = אשר / דחה / ערוך)'],
       ['Enter','בסוף פסקה - פסקה חדשה מתחתיה; בתחילתה - פסקה חדשה מעליה; באמצעה - פיצול. בכותרת: החלק החדש נעשה גוף רגיל'],
-      ['Backspace בתחילת פסקה / Delete בסופה','איחוי עם הקודמת / איחוי עם הבאה'],
+      ['Backspace בתחילת פסקה / Delete בסופה','איחוי עם הקודמת / איחוי עם הבאה. אם לשורה השנייה יש כותרת צד - הכותרת נמחקת והשורות מתאחות (Ctrl+Z מחזיר הכול)'],
       ['חצים, Home, End, PageUp, PageDown (עריכה)','הסמן זז, והדף נגלל אחריו; חץ בקצה הפרק עובר לפרק הסמוך'],
       ['חצים, Home, End, PageUp, PageDown (קריאה)','גלילת שורה / תחילת הפרק וסופו / גלילת מסך'],
       ['Alt+חץ ימינה / שמאלה (במגירת המקור)','הדף הקודם / הבא בגמרא'],
@@ -4063,13 +4255,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function structName(e){
     if(e.ins)return 'פסקה חדשה';
     return e.kind==='hdel'?'מחיקת עיטור':e.kind==='hrep'?'עיטור שהוחלף בכותרת':e.kind==='split'?'פיצול פסקה':e.kind==='merge'?'איחוי שתי פסקאות':
-           e.kind==='side'?'כותרת צד':e.kind==='unside'?'החזרת כותרת צד לגוף':
+           e.kind==='side'?'כותרת צד':e.kind==='unside'?'החזרת כותרת צד לגוף':e.kind==='unside-merge'?'מחיקת כותרת צד ואיחוי':
            e.kind==='hsplit'?'פיצול כותרת':e.kind==='hmerge'?'איחוי כותרת עם שורה סמוכה':'שינוי מבנה'}
   function structShow(e){
     if(e.kind==='hdel')return '*** ⟵ (נמחק)';
     if(e.kind==='hrep')return '*** ⟵ '+(e.resT&&e.resT[0]||'');
     if(e.kind==='side')return (e.resT&&e.resT[1]||'')+' ⟵ כותרת צד';
     if(e.kind==='unside')return (e.resT&&e.resT[0]||'')+' ⟵ גוף';
+    if(e.kind==='unside-merge')return ((e.texts||[]).slice(2).join(', ')||'(בלי כותרת)')+' ⟵ (נמחק) · '+(e.texts||[]).slice(0,2).join(' ⟂ ');
     if(e.ins)return e.resT[e.where==='before'?0:1];
     return ((e.kind==='split'||e.kind==='hsplit')?e.resT:e.texts).join(' ⟂ ')}
 
@@ -4858,7 +5051,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(h&&lo&&(isHeadEl(el)||lo.kind==='head')){
         clearTimeout(CAPT);capture(el);hMerge(h,lo,el);return}
       if(el.tagName!=='P'){flash('אין שורה אחריה לצרף');return}
-      const hs=editHosts(),nx=hs[hs.indexOf(el)+1];
+      /* כותרת צד של השורה הבאה (חלון במסילה) אינה השורה הבאה: מדלגים עליה, והאיחוי מוחק אותה */
+      const hs=editHosts();let j=hs.indexOf(el)+1;
+      while(hs[j]&&hs[j].classList.contains('anchor'))j++;
+      const nx=hs[j];
       if(!nx||nx.tagName!=='P'){flash('אין פסקה אחריה לצרף');return}
       clearTimeout(CAPT);capture(el);capture(nx);
       mergeBack(nx);

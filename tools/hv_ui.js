@@ -132,6 +132,8 @@
     const top=s.scrollTop,an=keep?hvTopSeg(s):null,off=an?an.getBoundingClientRect().top-s.getBoundingClientRect().top:0;
     const ak=an?an.dataset.d+'|'+an.dataset.k:'';
     s.innerHTML=HV.pages.map(d=>{const pg=HV.cache[SLUG+'|'+d];return pg?hvSecHtml(d,pg):hvNotFound(d)}).join('');
+    /* השורה המקבילה לסמן נשארת מודגשת גם כשעמוד נוסף נטען בגלילה */
+    if(HV.fol&&HV.fol.length)s.querySelectorAll('.sg').forEach(x=>{if(HV.fol.indexOf(x.dataset.d+'|'+x.dataset.k)>-1)x.classList.add('follow')});
     if(keep&&ak){const n=Array.from(s.querySelectorAll('.sg')).find(x=>x.dataset.d+'|'+x.dataset.k===ak);
       if(n)s.scrollTop+=n.getBoundingClientRect().top-s.getBoundingClientRect().top-off;else s.scrollTop=top}}
   async function hvEnsure(daf,where){
@@ -202,7 +204,7 @@
         const pg=D.pages[s.pi];let r=0;
         if(pg&&pg.units&&pg.units.length){const ix=pg.units.findIndex(u=>u.id===s.id);r=ix<0?0:ix/pg.units.length}
         hit=[all[Math.min(all.length-1,Math.floor(r*all.length))]]}
-      hit.forEach(x=>x.classList.add('follow'));
+      hit.forEach(x=>x.classList.add('follow'));HV.fol=hit.map(x=>x.dataset.d+'|'+x.dataset.k);
       sc.scrollTop+=hit[0].getBoundingClientRect().top-sc.getBoundingClientRect().top-(sc.clientHeight-hit[0].offsetHeight)/2})}
   function hvFollowSoon(t){clearTimeout(HVFT);HVFT=setTimeout(()=>hvFollow(t),220)}
   document.addEventListener('click',e=>{if((HV.on||HV.tab)&&e.target.closest&&e.target.closest('#flow'))hvFollowSoon(e.target)},true);
@@ -264,7 +266,7 @@
     w.hidden=!HV.tab;if(b)b.style.display=HV.tab?'none':'';
     box.querySelectorAll('#ss-prev,#ss-next,#ssync,#sback').forEach(x=>{x.style.visibility=HV.tab?'hidden':''});
     const a=$('#st-per'),h=$('#st-hv');if(a)a.classList.toggle('on',!HV.tab);if(h)h.classList.toggle('on',HV.tab);
-    if(!HV.tab){srcTitle();return}
+    if(!HV.tab){if(SRCSYNC)srcSyncNow();srcTitle();return}
     const hd=box.querySelector('.srchd b');if(hd)hd.textContent='חברותא';
     HV.pin=0;
     const el=hvFlowEl();

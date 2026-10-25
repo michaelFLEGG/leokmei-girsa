@@ -212,7 +212,7 @@ def run(a):
     for fn in files:
         pk = H.jload(os.path.join(d, fn))
         k = C.daf_key(pk['daf'])
-        if k < k0 or k > k1:
+        if pk.get('raw') or k < k0 or k > k1:      # חבילה גולמית: לתצוגה בלבד
             continue
         st['pages'] += 1
         locked = {p['i'] for p in pk['paras'] if p['ext'] == 0 and C.thash(p['text']) in lock}

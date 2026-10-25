@@ -20,7 +20,7 @@ def chunk_of(label):
 
 
 def slim(pk):
-    return {'daf': pk['daf'], 'url': pk.get('source_url'),
+    return {'daf': pk['daf'], 'url': pk.get('source_url'), 'raw': bool(pk.get('raw')),
             'segs': [{'k': s['k'], 'g': s['gemara'], 'e': s['explain'], 'p': s['para'], 's': s['sim']} for s in pk['segs']],
             'notes': [{'n': n['n'], 'src': n['sources'], 't': n['text']} for n in pk['notes']]}
 

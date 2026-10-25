@@ -105,12 +105,29 @@ def build(heb, force=False):
         k = C.daf_key(lbl)
         cov['chavruta_pages'] += 1
         ours = by_key.get(k)
-        if not ours:
-            cov['without_our_text'].append(lbl)
-            continue
-        cov['with_our_text'] += 1
         ch = H.jload(os.path.join(H.chav_json_dir(heb), fn), {})
         segs = [dict(s, k=n) for n, s in enumerate(ch.get('segments') or []) if (s.get('text') or '').strip()]
+        if not ours:
+            # אין לעמוד פסקאות לאוקמי (25.10.2026): חבילה גולמית בלי יישור, כדי שלשונית "חברותא"
+            # לא תציג ריק. raw=True, ובלשונית: "עוד לא יושר לפסקאות".
+            cov['without_our_text'].append(lbl)
+            outp = os.path.join(outdir, H.file_of_label(lbl) + '.json')
+            sig = 'raw-' + hashlib.sha1(json.dumps([s['text'] for s in segs], ensure_ascii=False).encode('utf-8')).hexdigest()[:10]
+            old = H.jload(outp, None)
+            # חבילה מיושרת קיימת אינה נדרסת לעולם בגולמית: אם פסקאות העמוד לא נמצאו הפעם (קובץ וורד
+            # חלקי, למשל סנהדרין בשני קבצים), היישור הקודם עדיף על כלום (נמדד 25.10.2026: 83 עמודים)
+            if old and (not old.get('raw') or (old.get('sig') == sig and not force)):
+                cov['cached'] += 1
+                continue
+            H.jsave(outp, {'slug': slug, 'daf': lbl, 'sig': sig, 'raw': True, 'source_url': ch.get('source_url'),
+                           'intro': ch.get('intro') or [], 'markers': ch.get('markers'), 'notes': ch.get('notes') or [],
+                           'warnings': ch.get('warnings') or [], 'paras': [],
+                           'segs': [{'k': s['k'], 'marker': s.get('marker'), 'gemara': s.get('gemara', ''),
+                                     'explain': s.get('explain', ''), 'refs': s.get('refs') or [], 'para': None,
+                                     'sim': None, 'best': 0, 'edge': None} for s in segs]})
+            cov['built'] += 1
+            continue
+        cov['with_our_text'] += 1
         sig = hashlib.sha1((json.dumps([b['text'] for b in ours], ensure_ascii=False) +
                             json.dumps([s['text'] for s in segs], ensure_ascii=False)).encode('utf-8')).hexdigest()[:14]
         outp = os.path.join(outdir, H.file_of_label(lbl) + '.json')

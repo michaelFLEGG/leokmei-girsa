@@ -85,6 +85,8 @@ def run(slug, lo=None, hi=None):
         k = C.daf_key(pk['daf'])
         if (k0 is not None and k < k0) or (k1 is not None and k > k1):
             continue
+        if pk.get('raw'):
+            continue                    # חבילה גולמית (אין פסקאות לאוקמי בעמוד): לתצוגה בלבד, לא לסקירה
         st['pages'] += 1
         st['segs'] += len(pk['segs'])
         st['matched'] += sum(1 for s in pk['segs'] if s['para'] is not None)

@@ -4235,6 +4235,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון פסקה: כותרת נושא (שוב - חוזרת לגוף)'],
       ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון פסקה: כותרת ד"ה משנה (שוב - חוזרת לגוף)'],['Ctrl+6','סגנון תו: ד"ה משנה בתוך שורה'],['Ctrl+7','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+H','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
       ['Ctrl+L (או Ctrl+Shift+L)','טאב יישור לשמאל: מה שאחרי הסמן נדחף לקצה השמאלי של השורה, כמו טאב שמאלי בוורד'],
+      ['Alt+J','במגירת המקור: מעבר בין "פירוש הגמרא" ל"חברותא" (מנהל בלבד; פותח את המגירה אם סגורה)'],
       ['Alt+N','רשימת כל דפי המסכת (כמו לחיצה על הדף בסרגל): קפיצה בלי לצאת מהעריכה ובלי לאבד שינויים'],['Ctrl+Alt+K','הצע כותרת: שלוש הצעות לכותרת על הקטע שאחרי המקום (על עיטור, או על שורה)'],
       ['עיטור (***)','לחיצה על העיטור מסמנת אותו: Delete או "מחק עיטור" מוחקים, "החלף בכותרת" הופך לשורה ריקה בסגנון נושא או ד"ה משנה'],
       ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
@@ -5497,7 +5498,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const t=srcTopPage(),el=$('#sdaf');
     const heb=t?SX.keys[+t.dataset.i]:'';
     if(el)el.textContent=heb;
-    const h=document.querySelector('#srcx .srchd b');if(h)h.textContent='מקור · דף '+heb}
+    const h=document.querySelector('#srcx .srchd b');if(h&&!HV.tab)h.textContent='מקור · דף '+heb}
   /* סימון: כל ההיקף ברקע עדין, והקטע המדויק חזק יותר */
   function srcMark(scroll,smooth){
     const box=$('#srcx');if(!box||!SX)return;
@@ -5532,6 +5533,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     while(row&&!row.dataset.ref)row=row.previousElementSibling;
     return row&&row.dataset.ref||''}
   function srcSyncSoon(){
+    if(HV.tab){const e=hvFlowEl();if(e)hvFollowSoon(e);return}     /* לשונית "חברותא": גוללת עם הקריאה כמו הפירוש */
     if(!SX||!SRCSYNC||!$('#srcx'))return;
     clearTimeout(SRCT);SRCT=setTimeout(srcSyncNow,250)}
   function srcSyncNow(){
@@ -5613,7 +5615,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     box.className='src '+mode;
     document.body.classList.toggle('splitsrc',mode==='split');
     SX={ref,lo:0,hi:-1,keys:[]};REFS=null;
-    box.innerHTML='<div class="srchd"><b>מקור</b>'+
+    box.innerHTML='<div class="srchd"><b>מקור</b>'+hvTabsHTML()+
       '<button id="sp-prev" title="הדף הקודם בגמרא (Alt+חץ ימינה)">› דף קודם</button>'+
       '<span class="sdaf" id="sdaf"></span>'+
       '<button id="sp-next" title="הדף הבא בגמרא (Alt+חץ שמאלה)">דף הבא ‹</button>'+
@@ -5628,7 +5630,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       (mode==='split'?'<div class="srcdrag" id="srcdrag" title="גרור לשינוי היחס בין הטקסט והמקור; לחיצה כפולה: חצי-חצי"></div>':
        mode==='peek'?'<div class="srcdragv" id="srcdragv" title="גרור לשינוי גובה המקור; לחיצה כפולה: גובה רגיל"></div>':'');
     srcSyncUi();
-    $('#sp-prev').onclick=()=>srcPage(-1);$('#sp-next').onclick=()=>srcPage(1);
+    $('#sp-prev').onclick=()=>{if(!hvTabPage(-1))srcPage(-1)};$('#sp-next').onclick=()=>{if(!hvTabPage(1))srcPage(1)};
     $('#ss-prev').onclick=()=>srcSeg(-1);$('#ss-next').onclick=()=>srcSeg(1);
     $('#ssync').onclick=()=>{SRCSYNC=!SRCSYNC;try{localStorage.setItem('lg-srcsync',SRCSYNC?'1':'0')}catch(e){}
       srcSyncUi();if(SRCSYNC)srcSyncNow()};
@@ -5656,6 +5658,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       else if(ev.key==='PageUp'){srcFree();bd.scrollBy({top:-bd.clientHeight*.9,behavior:'smooth'});ev.preventDefault()}
       ev.stopPropagation()});
     /* גלילה ידנית בגלגלת או במגע מפסיקה את הצמידות */
+    hvTabMount(box);    /* לשונית "חברותא" למנהל בלבד (hv_ui.js) */
     const body0=srcBody();
     body0.addEventListener('wheel',()=>srcFree(),{passive:true});
     body0.addEventListener('touchmove',()=>srcFree(),{passive:true});
@@ -5699,7 +5702,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     }).catch(e=>{srcBody().innerHTML=
       '<div class="ld">לא הצלחתי לטעון את הגמרא ('+esc(String(e.message||e))+').</div>'});
   }
-  function closeSrc(){const b=$('#srcx');if(b)b.remove();SX=null;document.body.classList.remove('splitsrc')}
+  function closeSrc(){const b=$('#srcx');if(b)b.remove();SX=null;document.body.classList.remove('splitsrc');hvTabOff()}
 
   /* =================== הסמן והמסך: כמו בוורד ===================
      א. אחרי כל תזוזת סמן (חצים, Home, End, PageUp, PageDown, הקלדה, Enter)
@@ -6137,7 +6140,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _td=os.path.dirname(os.path.abspath(__file__))
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+
          # מנוע ההדפסה ל-PDF (11.10.2026): קוד משותף לכל המסכתות. במצב ?print=1 הוא מחליף את התצוגה בעמודי A4; אחרת - רק חלון ההדפסה.
-         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"hv_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   _SHARED_BODY=JS[:JS.rindex(chr(10)+"  build();")]   # הקוד המשותף לכל המסכתות; מה שאחריו (בקרה, צורת הדף, תוספות) פרטי למסכת
   # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
   # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.
@@ -6145,7 +6148,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _root=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
   has_bakara=bool(_glob.glob(os.path.join(_root,'data','bakara',slug+'-*.json')))
   if has_bakara:
-    JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"bakara_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"skira_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"skira_pass.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"hv_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+    JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"bakara_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"skira_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"skira_pass.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"hv_glue.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   # צורת הדף (8.10.2026): הקוד והכפתור נכללים רק במסכת שיש לה צורת דף במניפסט. אחרת - כלום.
   _tzm=os.path.join(_root,'data','tzura','manifest.json')
   tz_man=None

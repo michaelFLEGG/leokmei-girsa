@@ -1,0 +1,20 @@
+{
+ "units": {
+  "ketubot-p01-u01": {
+   "ok": true,
+   "done_at": "2026-10-24T19:56:17Z",
+   "at": "2026-10-25T06:40:23Z",
+   "ntos": 26,
+   "flagged": 1,
+   "cal": 0.445
+  }
+ },
+ "files": {
+  "out-ketubot-p01-u01.json": {
+   "id": "1F4JLXTjy_KHJ4TH2oS2XYvAcelPBLTlj",
+   "modified": "2026-10-24T20:21:04.237Z",
+   "saved": "2026-10-25T06:38:48Z",
+   "done_at": "2026-10-24T19:56:17Z"
+  }
+ }
+}

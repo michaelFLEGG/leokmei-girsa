@@ -15,16 +15,88 @@
     "questions": 168
    },
    "unc_done": true
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-10-25T18:46:00Z",
+   "unc_done": true,
+   "handoff_units": [
+    "kiddushin-p02-u01",
+    "kiddushin-p02-u02",
+    "kiddushin-p02-u03",
+    "kiddushin-p02-u04",
+    "kiddushin-p02-u05",
+    "kiddushin-p02-u06"
+   ],
+   "result": {
+    "generated": 144,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 124
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-10-25T18:46:01Z",
+   "unc_done": true,
+   "handoff_units": [
+    "kiddushin-p03-u01",
+    "kiddushin-p03-u02",
+    "kiddushin-p03-u03"
+   ],
+   "result": {
+    "generated": 74,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 70
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-10-25T18:46:01Z",
+   "unc_done": true,
+   "handoff_units": [
+    "kiddushin-p04-u01",
+    "kiddushin-p04-u02",
+    "kiddushin-p04-u03"
+   ],
+   "result": {
+    "generated": 70,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 61
+   }
   }
  },
  "created": "2026-10-14T16:45:25Z",
- "updated": "2026-10-14T18:15:13Z",
+ "updated": "2026-10-25T18:46:01Z",
  "calibration": [
   {
    "perek": 1,
    "mean": 0.384,
    "n": 4,
    "at": "2026-10-14T17:50:44Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.502,
+   "n": 11,
+   "at": "2026-10-25T18:46:00Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.447,
+   "n": 6,
+   "at": "2026-10-25T18:46:00Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.388,
+   "n": 6,
+   "at": "2026-10-25T18:46:01Z"
   }
  ],
  "done": "2026-10-14T18:15:13Z"

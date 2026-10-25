@@ -2,98 +2,243 @@
  "slug": "ketubot",
  "perakim": {
   "1": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T18:27:01Z",
-   "nreq": 24,
-   "batch": "msgbatch_01WpTxzcPtkm6SG1LR5TtsaK"
+   "status": "published",
+   "published": "2026-10-25T18:45:52Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p01-u01",
+    "ketubot-p01-u02",
+    "ketubot-p01-u03",
+    "ketubot-p01-u04",
+    "ketubot-p01-u05",
+    "ketubot-p01-u06",
+    "ketubot-p01-u07"
+   ],
+   "result": {
+    "generated": 158,
+    "decided": 0,
+    "unchecked": 5,
+    "flagged": 5,
+    "questions": 112
+   }
   },
   "2": {
-   "status": "writing",
-   "batch": "msgbatch_01WMMN9BTsAykZz78hVm3etR",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:02:58Z",
-   "nreq": 51
+   "status": "published",
+   "published": "2026-10-25T18:45:52Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p02-u01",
+    "ketubot-p02-u02",
+    "ketubot-p02-u03",
+    "ketubot-p02-u04",
+    "ketubot-p02-u05",
+    "ketubot-p02-u06"
+   ],
+   "result": {
+    "generated": 151,
+    "decided": 0,
+    "unchecked": 6,
+    "flagged": 6,
+    "questions": 94
+   }
   },
   "3": {
-   "status": "rewriting",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T18:19:03Z",
-   "nreq": 26
+   "status": "published",
+   "published": "2026-10-25T18:45:53Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p03-u01",
+    "ketubot-p03-u02",
+    "ketubot-p03-u03",
+    "ketubot-p03-u04",
+    "ketubot-p03-u05",
+    "ketubot-p03-u06",
+    "ketubot-p03-u07"
+   ],
+   "result": {
+    "generated": 172,
+    "decided": 0,
+    "unchecked": 5,
+    "flagged": 5,
+    "questions": 118
+   }
   },
   "4": {
-   "status": "writing",
-   "batch": "msgbatch_01M5AT6w8r59pak1tCiqoKe1",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:02Z",
-   "nreq": 49
+   "status": "published",
+   "published": "2026-10-25T18:45:54Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p04-u01",
+    "ketubot-p04-u02",
+    "ketubot-p04-u03",
+    "ketubot-p04-u04",
+    "ketubot-p04-u05",
+    "ketubot-p04-u06"
+   ],
+   "result": {
+    "generated": 128,
+    "decided": 0,
+    "unchecked": 7,
+    "flagged": 7,
+    "questions": 89
+   }
   },
   "5": {
-   "status": "writing",
-   "batch": "msgbatch_016C19HLj7m4c95vXTXLzCxi",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:02Z",
-   "nreq": 42
+   "status": "published",
+   "published": "2026-10-25T18:45:54Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p05-u01",
+    "ketubot-p05-u02",
+    "ketubot-p05-u03",
+    "ketubot-p05-u04",
+    "ketubot-p05-u05"
+   ],
+   "result": {
+    "generated": 117,
+    "decided": 0,
+    "unchecked": 3,
+    "flagged": 3,
+    "questions": 77
+   }
   },
   "6": {
-   "status": "writing",
-   "batch": "msgbatch_01EopfVDdAnq8idEVRrW7xGb",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:03Z",
-   "nreq": 16
+   "status": "published",
+   "published": "2026-10-25T18:45:55Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p06-u01",
+    "ketubot-p06-u02",
+    "ketubot-p06-u03"
+   ],
+   "result": {
+    "generated": 51,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 25
+   }
   },
   "7": {
-   "status": "writing",
-   "batch": "msgbatch_01Awai3FGDirHyWgJGTTMeC4",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:04Z",
-   "nreq": 28
+   "status": "published",
+   "published": "2026-10-25T18:45:55Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p07-u01",
+    "ketubot-p07-u02",
+    "ketubot-p07-u03"
+   ],
+   "result": {
+    "generated": 78,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 57
+   }
   },
   "8": {
-   "status": "writing",
-   "batch": "msgbatch_013ZnXFW5ZKDnBSoR7hkq3rB",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:05Z",
-   "nreq": 18
+   "status": "published",
+   "published": "2026-10-25T18:45:56Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p08-u01",
+    "ketubot-p08-u02"
+   ],
+   "result": {
+    "generated": 48,
+    "decided": 0,
+    "unchecked": 4,
+    "flagged": 4,
+    "questions": 36
+   }
   },
   "9": {
-   "status": "writing",
-   "batch": "msgbatch_01TVUtWfoUpsDU7Zsoz7S3Ei",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:03:05Z",
-   "nreq": 25
+   "status": "published",
+   "published": "2026-10-25T18:45:57Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p09-u01",
+    "ketubot-p09-u02",
+    "ketubot-p09-u03"
+   ],
+   "result": {
+    "generated": 78,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 50
+   }
   },
   "10": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T18:15:23Z",
-   "nreq": 11,
-   "batch": "msgbatch_014cw47xYEQ4rmAYmMQ2QASZ"
+   "status": "published",
+   "published": "2026-10-25T18:45:58Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p10-u01",
+    "ketubot-p10-u02",
+    "ketubot-p10-u03"
+   ],
+   "result": {
+    "generated": 49,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 36
+   }
   },
   "11": {
-   "status": "rewriting",
-   "batchPhase": "rewrite",
-   "submitted": "2026-10-14T18:23:04Z",
-   "nreq": 21,
-   "batch": "msgbatch_01UCt6Uhe3Wr1LPz5dNRn3AP"
+   "status": "published",
+   "published": "2026-10-25T18:45:58Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p11-u01",
+    "ketubot-p11-u02",
+    "ketubot-p11-u03"
+   ],
+   "result": {
+    "generated": 58,
+    "decided": 0,
+    "unchecked": 6,
+    "flagged": 6,
+    "questions": 38
+   }
   },
   "12": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T18:15:25Z",
-   "nreq": 6,
-   "batch": "msgbatch_01Marb21vCbJpMeAygBsDyuZ"
+   "status": "published",
+   "published": "2026-10-25T18:45:59Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p12-u01",
+    "ketubot-p12-u02"
+   ],
+   "result": {
+    "generated": 28,
+    "decided": 0,
+    "unchecked": 3,
+    "flagged": 3,
+    "questions": 15
+   }
   },
   "13": {
-   "status": "reviewing",
-   "batchPhase": "review",
-   "submitted": "2026-10-14T18:23:06Z",
-   "nreq": 16,
-   "batch": "msgbatch_01BLLYwJELh9fBtySP7YEpt6"
+   "status": "published",
+   "published": "2026-10-25T18:46:00Z",
+   "unc_done": true,
+   "handoff_units": [
+    "ketubot-p13-u01",
+    "ketubot-p13-u02",
+    "ketubot-p13-u03"
+   ],
+   "result": {
+    "generated": 58,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 47
+   }
   }
  },
  "created": "2026-10-14T18:02:57Z",
- "updated": "2026-10-14T18:27:02Z",
+ "updated": "2026-10-25T18:46:00Z",
  "calibration": [
   {
    "perek": 11,
@@ -130,7 +275,85 @@
    "mean": 0.572,
    "n": 4,
    "at": "2026-10-14T18:27:00Z"
+  },
+  {
+   "perek": 1,
+   "mean": 0.379,
+   "n": 13,
+   "at": "2026-10-25T18:45:51Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.526,
+   "n": 12,
+   "at": "2026-10-25T18:45:52Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.418,
+   "n": 14,
+   "at": "2026-10-25T18:45:52Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.406,
+   "n": 11,
+   "at": "2026-10-25T18:45:53Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.353,
+   "n": 9,
+   "at": "2026-10-25T18:45:54Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.339,
+   "n": 5,
+   "at": "2026-10-25T18:45:54Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.29,
+   "n": 6,
+   "at": "2026-10-25T18:45:55Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.418,
+   "n": 4,
+   "at": "2026-10-25T18:45:55Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.279,
+   "n": 6,
+   "at": "2026-10-25T18:45:56Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.396,
+   "n": 5,
+   "at": "2026-10-25T18:45:57Z"
+  },
+  {
+   "perek": 11,
+   "mean": 0.248,
+   "n": 5,
+   "at": "2026-10-25T18:45:58Z"
+  },
+  {
+   "perek": 12,
+   "mean": 0.314,
+   "n": 3,
+   "at": "2026-10-25T18:45:58Z"
+  },
+  {
+   "perek": 13,
+   "mean": 0.226,
+   "n": 5,
+   "at": "2026-10-25T18:45:59Z"
   }
  ],
- "halt": "תקציב: היתרה צפויה לרדת מתחת ל-15 דולר. צריך להוסיף כ-21 דולר"
+ "done": "2026-10-25T18:46:00Z"
 }

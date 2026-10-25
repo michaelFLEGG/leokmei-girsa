@@ -2,27 +2,77 @@
  "slug": "makkot",
  "perakim": {
   "1": {
-   "status": "writing",
-   "batch": "msgbatch_01RQjWmUvRMsy31v9aPNVBm8",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:23:07Z",
-   "nreq": 21
+   "status": "published",
+   "published": "2026-10-25T18:46:01Z",
+   "unc_done": true,
+   "handoff_units": [
+    "makkot-p01-u01",
+    "makkot-p01-u02",
+    "makkot-p01-u03"
+   ],
+   "result": {
+    "generated": 49,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 39
+   }
   },
   "2": {
-   "status": "writing",
-   "batch": "msgbatch_015N3q9M15Df2t7uUn3Hy3R1",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:23:09Z",
-   "nreq": 17
+   "status": "published",
+   "published": "2026-10-25T18:46:01Z",
+   "unc_done": true,
+   "handoff_units": [
+    "makkot-p02-u01",
+    "makkot-p02-u02"
+   ],
+   "result": {
+    "generated": 47,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 31
+   }
   },
   "3": {
-   "status": "writing",
-   "batch": "msgbatch_014vfBkcJqk8yJoefe1cdxz1",
-   "batchPhase": "write",
-   "submitted": "2026-10-14T18:23:15Z",
-   "nreq": 31
+   "status": "published",
+   "published": "2026-10-25T18:46:02Z",
+   "unc_done": true,
+   "handoff_units": [
+    "makkot-p03-u01",
+    "makkot-p03-u02",
+    "makkot-p03-u03"
+   ],
+   "result": {
+    "generated": 68,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 50
+   }
   }
  },
  "created": "2026-10-14T18:23:06Z",
- "updated": "2026-10-14T18:23:15Z"
+ "updated": "2026-10-25T18:46:02Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.281,
+   "n": 5,
+   "at": "2026-10-25T18:46:01Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.852,
+   "n": 4,
+   "at": "2026-10-25T18:46:01Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.331,
+   "n": 6,
+   "at": "2026-10-25T18:46:01Z"
+  }
+ ],
+ "done": "2026-10-25T18:46:02Z"
 }

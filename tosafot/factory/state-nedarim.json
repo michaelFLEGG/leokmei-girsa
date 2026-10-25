@@ -1,0 +1,286 @@
+{
+ "slug": "nedarim",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-10-25T18:46:02Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p01-u01",
+    "nedarim-p01-u02",
+    "nedarim-p01-u03",
+    "nedarim-p01-u04",
+    "nedarim-p01-u05",
+    "nedarim-p01-u06",
+    "nedarim-p01-u07"
+   ],
+   "result": {
+    "generated": 168,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 91
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-10-25T18:46:02Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p02-u01",
+    "nedarim-p02-u02",
+    "nedarim-p02-u03"
+   ],
+   "result": {
+    "generated": 71,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 41
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-10-25T18:46:02Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p03-u01",
+    "nedarim-p03-u02",
+    "nedarim-p03-u03",
+    "nedarim-p03-u04"
+   ],
+   "result": {
+    "generated": 92,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 58
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-10-25T18:46:03Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p04-u01",
+    "nedarim-p04-u02",
+    "nedarim-p04-u03",
+    "nedarim-p04-u04",
+    "nedarim-p04-u05",
+    "nedarim-p04-u06",
+    "nedarim-p04-u07",
+    "nedarim-p04-u08",
+    "nedarim-p04-u09"
+   ],
+   "result": {
+    "generated": 177,
+    "decided": 0,
+    "unchecked": 5,
+    "flagged": 5,
+    "questions": 46
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-10-25T18:46:03Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p05-u01",
+    "nedarim-p05-u02",
+    "nedarim-p05-u03"
+   ],
+   "result": {
+    "generated": 60,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 29
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-10-25T18:46:03Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p06-u01",
+    "nedarim-p06-u02",
+    "nedarim-p06-u03",
+    "nedarim-p06-u04",
+    "nedarim-p06-u05",
+    "nedarim-p06-u06"
+   ],
+   "result": {
+    "generated": 124,
+    "decided": 0,
+    "unchecked": 5,
+    "flagged": 5,
+    "questions": 15
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-10-25T18:46:03Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p07-u01",
+    "nedarim-p07-u02",
+    "nedarim-p07-u03",
+    "nedarim-p07-u04",
+    "nedarim-p07-u05",
+    "nedarim-p07-u06",
+    "nedarim-p07-u07"
+   ],
+   "result": {
+    "generated": 143,
+    "decided": 0,
+    "unchecked": 3,
+    "flagged": 3,
+    "questions": 26
+   }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-10-25T18:46:04Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p08-u01",
+    "nedarim-p08-u02",
+    "nedarim-p08-u03"
+   ],
+   "result": {
+    "generated": 68,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 13
+   }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-10-25T18:46:04Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p09-u01",
+    "nedarim-p09-u02",
+    "nedarim-p09-u03"
+   ],
+   "result": {
+    "generated": 61,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 10
+   }
+  },
+  "10": {
+   "status": "published",
+   "published": "2026-10-25T18:46:04Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p10-u01",
+    "nedarim-p10-u02",
+    "nedarim-p10-u03"
+   ],
+   "result": {
+    "generated": 58,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 23
+   }
+  },
+  "11": {
+   "status": "published",
+   "published": "2026-10-25T18:46:05Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nedarim-p11-u01",
+    "nedarim-p11-u02",
+    "nedarim-p11-u03",
+    "nedarim-p11-u04",
+    "nedarim-p11-u05",
+    "nedarim-p11-u06",
+    "nedarim-p11-u07",
+    "nedarim-p11-u08"
+   ],
+   "result": {
+    "generated": 215,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 69
+   }
+  }
+ },
+ "created": "2026-10-25T18:46:02Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.36,
+   "n": 13,
+   "at": "2026-10-25T18:46:02Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.311,
+   "n": 6,
+   "at": "2026-10-25T18:46:02Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.305,
+   "n": 7,
+   "at": "2026-10-25T18:46:02Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.278,
+   "n": 15,
+   "at": "2026-10-25T18:46:02Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.29,
+   "n": 5,
+   "at": "2026-10-25T18:46:03Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.282,
+   "n": 10,
+   "at": "2026-10-25T18:46:03Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.469,
+   "n": 11,
+   "at": "2026-10-25T18:46:03Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.262,
+   "n": 6,
+   "at": "2026-10-25T18:46:03Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.403,
+   "n": 5,
+   "at": "2026-10-25T18:46:04Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.314,
+   "n": 5,
+   "at": "2026-10-25T18:46:04Z"
+  },
+  {
+   "perek": 11,
+   "mean": 0.421,
+   "n": 16,
+   "at": "2026-10-25T18:46:04Z"
+  }
+ ],
+ "updated": "2026-10-25T18:46:05Z",
+ "done": "2026-10-25T18:46:05Z"
+}

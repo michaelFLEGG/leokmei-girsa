@@ -16,6 +16,7 @@
     python3 tools/tosafot/handoff_collect.py connect <folder> <units> <מייל> # מתוך מייל החיבור
     python3 tools/tosafot/handoff_collect.py waiting                       # מייל החיבור עוד לא הגיע: נרשם "ממתין לחיבור"
     python3 tools/tosafot/handoff_collect.py save <קובץ-תוצאת-הורדה> [id=<מזהה>] [modified=<זמן>]   # הורדה מהדרייב ל-inbox/
+    python3 tools/tosafot/handoff_collect.py savezip <קובץ-זיפ> [id=<מזהה>] [modified=<זמן>]   # זיפ תוצרים: פותח, מניח ב-inbox/ ורושם כנקלט
     python3 tools/tosafot/handoff_collect.py collect                       # קליטה, פרסום, דואר ולוח
     python3 tools/tosafot/handoff_collect.py sent <מזהה>                   # סימון מייל שנשלח
 """
@@ -118,6 +119,58 @@ def cmd_save(path, name=None, file_id=None, modified=None):
         col['files'][name or ('out-%s.json' % uid)] = {'id': file_id, 'modified': modified, 'saved': now_iso(), 'done_at': out.get('done_at')}
         jdump(os.path.join(HO, 'collected.json'), col)
     print('נשמר', dst, out.get('done_at'))
+
+
+def _zip_bytes(path):
+    """זיפ מתוצאת הורדה מהדרייב (JSON עם content ב-base64, או base64 גולמי) או זיפ גולמי."""
+    b = open(path, 'rb').read()
+    if b[:2] == b'PK':
+        return b
+    raw = b.decode('utf-8', errors='replace').strip()
+    try:
+        j = json.loads(raw)
+        if isinstance(j, dict) and isinstance(j.get('content'), str):
+            return base64.b64decode(j['content'])
+        if isinstance(j, list) and j and isinstance(j[0], dict) and 'text' in j[0]:
+            return base64.b64decode(json.loads(j[0]['text'])['content'])
+    except Exception:
+        pass
+    return base64.b64decode(re.sub(r'\s+', '', raw))
+
+
+def cmd_savezip(path, file_id=None, modified=None, zname=None):
+    """זיפ תוצרים (25.10.2026): כל out-*.json שבו עובר ל-inbox/ לפי אותם כללים כמו קובץ בודד.
+    אותו מזהה גם בזיפ וגם בקובץ בודד: קובע done_at המאוחר. הזיפ נרשם ב-collected.json['zips'] לפי מזהה ותאריך שינוי, ואינו נפתח שוב."""
+    import zipfile
+    col = collected()
+    key = '%s|%s' % (file_id or zname or os.path.basename(path), modified or '')
+    if key in col.setdefault('zips', {}):
+        print('הזיפ כבר נקלט (%s), לא נפתח שוב' % key)
+        return
+    z = zipfile.ZipFile(io.BytesIO(_zip_bytes(path)))
+    os.makedirs(INBOX, exist_ok=True)
+    n_put = n_old = n_skip = 0
+    for name in sorted(z.namelist()):
+        base = name.split('/')[-1]
+        if not (base.startswith('out-') and base.endswith('.json')):
+            n_skip += 1      # יומן, לוח מצב, תיקיות עבודה: לא נקלטים
+            continue
+        data = z.read(name)
+        out = json.loads(data.decode('utf-8'))
+        uid = out.get('id')
+        if not uid or not re.match(r'^[a-z-]+-p\d\d-u\d\d$', uid) or base != 'out-%s.json' % uid:
+            raise SystemExit('עצירה: מזהה יחידה לא תקין בזיפ: %s' % name)
+        dst = os.path.join(INBOX, base)
+        if os.path.exists(dst):
+            cur = jload(dst) or {}
+            if (cur.get('done_at') or '') >= (out.get('done_at') or ''):
+                n_old += 1
+                continue
+        io.open(dst, 'wb').write(data)
+        n_put += 1
+    col['zips'][key] = {'name': zname or os.path.basename(path), 'id': file_id, 'modified': modified, 'opened': now_iso(), 'out': n_put, 'older_kept': n_old, 'skipped': n_skip}
+    jdump(os.path.join(HO, 'collected.json'), col)
+    log('זיפ %s נפתח: %d תוצרים הונחו, %d ישנים מהקיימים לא הונחו, %d קבצים שאינם תוצרים לא נקלטו' % (zname or os.path.basename(path), n_put, n_old, n_skip))
 
 
 def cmd_sent(mid):
@@ -280,7 +333,10 @@ def cmd_collect():
             alerts.append('%s פרק %d: %s' % (F.SLUG2HE.get(slug, slug), perek, e))
             log('עצירה: %s פרק %d: %s' % (slug, perek, e))
     for a in alerts:
-        mail('alert', 'התראת כיול או עצירה', a + '\n\nהפרק לא פורסם וממתין להכרעתך במסך המנהל. שאר העבודה ממשיכה.')
+        if a.startswith('DRIFT|'):
+            mail('alert', 'סחיפת כיול (פורסם בכל זאת)', a[6:] + '\n\nהפרק פורסם בכל זאת, לפי הכלל שלא לעכב פרסום. מומלץ לעיין בו.')
+        else:
+            mail('alert', 'התראת כיול או עצירה', a + '\n\nהפרק לא פורסם וממתין להכרעתך במסך המנהל. שאר העבודה ממשיכה.')
     if published_any:
         open(fp(F.FDIR, '.published-flag'), 'w').write(now_iso())
     write_board()
@@ -311,7 +367,12 @@ def maybe_publish(slug, perek, fill, c, idx, col, alerts):
         # כבר פורסם; תוצר מחודש (redo) מפורסם שוב
         if all(col['units'][u].get('published') for u in regular):
             return False
-    FF.drift_check(slug, perek, c, work, st)
+    try:
+        FF.drift_check(slug, perek, c, work, st)
+    except FF.Halt as e:
+        # 25.10.2026, הכרעת בעל הפרויקט: סחיפת כיול אינה מעכבת פרסום בקליטה מהחשבון השני. מפרסמים, ומסמנים בדוח ובמייל
+        alerts.append('DRIFT|%s פרק %d: %s' % (F.SLUG2HE.get(slug, slug), perek, e))
+        log('סחיפת כיול (פורסם בכל זאת): %s פרק %d: %s' % (slug, perek, e))
     flagged = FF.finalize(work)
     res = FF.publish(slug, perek, c, work, flagged)
     jdump(FF.work_path(slug, perek), work)
@@ -406,6 +467,9 @@ def main(argv):
     elif cmd == 'save':
         kv = dict(a.split('=', 1) for a in argv[3:] if '=' in a)
         cmd_save(argv[2], kv.get('name'), kv.get('id'), kv.get('modified'))
+    elif cmd == 'savezip':
+        kv = dict(a.split('=', 1) for a in argv[3:] if '=' in a)
+        cmd_savezip(argv[2], kv.get('id'), kv.get('modified'), kv.get('name'))
     elif cmd == 'collect':
         cmd_collect()
     elif cmd == 'sent':

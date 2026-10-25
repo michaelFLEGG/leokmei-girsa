@@ -1,0 +1,427 @@
+{
+ "slug": "shabbat",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-10-25T18:46:17Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p01-u01",
+    "shabbat-p01-u02",
+    "shabbat-p01-u03",
+    "shabbat-p01-u04",
+    "shabbat-p01-u05",
+    "shabbat-p01-u06",
+    "shabbat-p01-u07",
+    "shabbat-p01-u08",
+    "shabbat-p01-u09"
+   ],
+   "result": {
+    "generated": 231,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 176
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-10-25T18:46:18Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p02-u01",
+    "shabbat-p02-u02",
+    "shabbat-p02-u03",
+    "shabbat-p02-u04",
+    "shabbat-p02-u05",
+    "shabbat-p02-u06"
+   ],
+   "result": {
+    "generated": 142,
+    "decided": 0,
+    "unchecked": 4,
+    "flagged": 4,
+    "questions": 119
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-10-25T18:46:18Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p03-u01",
+    "shabbat-p03-u02",
+    "shabbat-p03-u03",
+    "shabbat-p03-u04",
+    "shabbat-p03-u05",
+    "shabbat-p03-u06"
+   ],
+   "result": {
+    "generated": 139,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 111
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-10-25T18:46:19Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p04-u01",
+    "shabbat-p04-u02"
+   ],
+   "result": {
+    "generated": 52,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 36
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-10-25T18:46:20Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p05-u01",
+    "shabbat-p05-u02",
+    "shabbat-p05-u03"
+   ],
+   "result": {
+    "generated": 59,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 32
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-10-25T18:46:21Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p06-u01",
+    "shabbat-p06-u02",
+    "shabbat-p06-u03",
+    "shabbat-p06-u04"
+   ],
+   "result": {
+    "generated": 95,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 80
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-10-25T18:46:21Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p07-u01",
+    "shabbat-p07-u02",
+    "shabbat-p07-u03",
+    "shabbat-p07-u04"
+   ],
+   "result": {
+    "generated": 95,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 77
+   }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-10-25T18:46:22Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p08-u01",
+    "shabbat-p08-u02",
+    "shabbat-p08-u03"
+   ],
+   "result": {
+    "generated": 54,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 39
+   }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-10-25T18:46:23Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p09-u01",
+    "shabbat-p09-u02",
+    "shabbat-p09-u03",
+    "shabbat-p09-u04"
+   ],
+   "result": {
+    "generated": 100,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 76
+   }
+  },
+  "10": {
+   "status": "published",
+   "published": "2026-10-25T18:46:24Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p10-u01",
+    "shabbat-p10-u02",
+    "shabbat-p10-u03"
+   ],
+   "result": {
+    "generated": 67,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 47
+   }
+  },
+  "11": {
+   "status": "published",
+   "published": "2026-10-25T18:46:25Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p11-u01",
+    "shabbat-p11-u02"
+   ],
+   "result": {
+    "generated": 55,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 48
+   }
+  },
+  "12": {
+   "status": "published",
+   "published": "2026-10-25T18:46:26Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p12-u01",
+    "shabbat-p12-u02"
+   ],
+   "result": {
+    "generated": 32,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 12
+   }
+  },
+  "13": {
+   "status": "published",
+   "published": "2026-10-25T18:46:27Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p13-u01"
+   ],
+   "result": {
+    "generated": 16,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 13
+   }
+  },
+  "14": {
+   "status": "published",
+   "published": "2026-10-25T18:46:28Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p14-u01",
+    "shabbat-p14-u02"
+   ],
+   "result": {
+    "generated": 36,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 25
+   }
+  },
+  "15": {
+   "status": "published",
+   "published": "2026-10-25T18:46:29Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p15-u01"
+   ],
+   "result": {
+    "generated": 22,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 15
+   }
+  },
+  "16": {
+   "status": "published",
+   "published": "2026-10-25T18:46:30Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p16-u01",
+    "shabbat-p16-u02",
+    "shabbat-p16-u03"
+   ],
+   "result": {
+    "generated": 69,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 47
+   }
+  },
+  "17": {
+   "status": "published",
+   "published": "2026-10-25T18:46:31Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p17-u01",
+    "shabbat-p17-u02"
+   ],
+   "result": {
+    "generated": 34,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 23
+   }
+  },
+  "18": {
+   "status": "published",
+   "published": "2026-10-25T18:46:53Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p18-u01"
+   ],
+   "result": {
+    "generated": 29,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 15
+   }
+  }
+ },
+ "created": "2026-10-25T18:46:16Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.439,
+   "n": 18,
+   "at": "2026-10-25T18:46:16Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.369,
+   "n": 11,
+   "at": "2026-10-25T18:46:17Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.478,
+   "n": 12,
+   "at": "2026-10-25T18:46:18Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.292,
+   "n": 4,
+   "at": "2026-10-25T18:46:18Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.498,
+   "n": 5,
+   "at": "2026-10-25T18:46:19Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.315,
+   "n": 7,
+   "at": "2026-10-25T18:46:20Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.347,
+   "n": 8,
+   "at": "2026-10-25T18:46:21Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.502,
+   "n": 5,
+   "at": "2026-10-25T18:46:21Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.412,
+   "n": 8,
+   "at": "2026-10-25T18:46:22Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.369,
+   "n": 5,
+   "at": "2026-10-25T18:46:23Z"
+  },
+  {
+   "perek": 11,
+   "mean": 0.493,
+   "n": 4,
+   "at": "2026-10-25T18:46:24Z"
+  },
+  {
+   "perek": 12,
+   "mean": 0.489,
+   "n": 3,
+   "at": "2026-10-25T18:46:25Z"
+  },
+  {
+   "perek": 13,
+   "mean": 0.577,
+   "n": 1,
+   "at": "2026-10-25T18:46:26Z"
+  },
+  {
+   "perek": 14,
+   "mean": 0.422,
+   "n": 2,
+   "at": "2026-10-25T18:46:27Z"
+  },
+  {
+   "perek": 15,
+   "mean": 0.394,
+   "n": 2,
+   "at": "2026-10-25T18:46:28Z"
+  },
+  {
+   "perek": 16,
+   "mean": 0.435,
+   "n": 5,
+   "at": "2026-10-25T18:46:29Z"
+  },
+  {
+   "perek": 17,
+   "mean": 0.206,
+   "n": 3,
+   "at": "2026-10-25T18:46:30Z"
+  },
+  {
+   "perek": 18,
+   "mean": 0.184,
+   "n": 2,
+   "at": "2026-10-25T18:46:52Z"
+  }
+ ],
+ "updated": "2026-10-25T18:46:53Z"
+}

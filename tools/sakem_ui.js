@@ -72,7 +72,11 @@
     if(e.ctrlKey&&e.shiftKey&&!e.altKey&&(e.code==='KeyS')){
       if(!skmOK())return;
       e.preventDefault();e.stopPropagation();skmGo();return}
-    if(e.key==='Escape'&&SKM.sel&&!SKM.ghost){skmMark(null)}},true);
+    if(e.key==='Escape'&&SKM.sel&&!SKM.ghost){skmMark(null)}
+    /* ההצעה פתוחה והמיקוד אינו בתוכה ואינו בשדה כתיבה: Enter ו-Esc חלים עליה */
+    if(SKM.ghost&&!SKM.ghost.classList.contains('edit')&&!SKM.ghost.contains(e.target)&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&
+       (e.key==='Escape'||e.key==='Enter'&&!(e.target.closest&&e.target.closest('[contenteditable="true"],[contenteditable=""],input,textarea,select,button')))){
+      e.preventDefault();e.stopPropagation();skmQuick(e.key)}},true);
 
   /* ---- הכפתור הצף ---- */
   function skmBtnShow(){
@@ -126,7 +130,7 @@
     try{
       const j=await api('/sakem',{method:'POST',body:JSON.stringify({slug:SLUG,masechet:D.masechet,
         units:os.map(skmPU),before:ctxB.map(skmPU),after:ctxA.map(skmPU)})});
-      skmArrive({id:j.id,ids,orig,text:j.text,changes:j.changes||[],warn:j.warn||[],usd:j.usd||0,round:1});
+      skmArrive({id:j.id,ids,orig,text:j.text,point:j.point||'',changes:j.changes||[],warn:j.warn||[],notes:j.notes||[],usd:j.usd||0,round:1});
     }catch(err){
       const m=err.message||'';
       if(/טרם פורסמו|לא נמצאה באתר/.test(m)){
@@ -141,12 +145,36 @@
     skmShow(p)}
 
   /* ---- הרוח: ההצעה במקום הקטע ---- */
-  function skmGhostBody(text){
-    const toks=SKC.parse(text);let h='',row=null;
+  /* מה השתנה, במבט אחד (פרומפט 7): הסבר חדש ברקע צהוב, מספר שנוסף בזהב, ודובר שעבר בין
+     השורה לכותרת הצד בקו מקווקו. הסימון הוא data-skm בלבד: הקריאה חזרה (h2i) מתעלמת ממנו. */
+  function skmMarks(text,orig){
+    const R=SKC.rows(text),M=R.map(()=>({hs:new Set(),num:false,mv:false}));
+    if(!orig)return M;
+    const nh=SKC.newHs(orig,text);
+    nh.forEach(x=>{const sp=SKC.spans(R[x.ri].v,'הס');const k=sp.findIndex(s=>s.a===x.a);if(k>-1)M[x.ri].hs.add(k)});
+    const bag={};SKC.nums(orig).forEach(n=>{bag[n]=(bag[n]||0)+1});
+    R.forEach((r,i)=>{const n=SKC.numOf(r.p);if(!n)return;if(bag[n]){bag[n]--;return}M[i].num=true});
+    /* רק כותרת או פתיח שורה חדשים: כותרת שהיתה במקור כמות שהיא לא זזה */
+    const mv=new Set(SKC.movedNames(orig,text)),unNum=p=>p.replace(/^[א-י]\.\s*/,'');
+    const oT={},oL={},take=(o,k)=>o[k]>0?(o[k]--,true):false;
+    const opener=r=>{const s=unNum(r.v);const x=s.indexOf('{אם:')===0&&SKC.spans(s,'אם')[0];return x?SKC.nbase(SKC.plainI(x.v)):''};
+    SKC.rows(orig).forEach(r=>{const k=r.k==='title'?unNum(r.p):opener(r),o=r.k==='title'?oT:oL;if(k)o[k]=(o[k]||0)+1});
+    if(mv.size)R.forEach((r,i)=>{
+      if(r.k==='title'){const k=unNum(r.p);M[i].mv=!take(oT,k)&&r.p.split(/[\s,]+/).some(w=>mv.has(SKC.nbase(w)))}
+      else{const b=opener(r);M[i].mv=!!(b&&!take(oL,b)&&mv.has(b))}});
+    return M}
+  function skmMarkH(h,m){
+    if(!m)return h;
+    if(m.hs.size){let k=-1;h=h.replace(/<i class="hs">/g,t=>(++k,m.hs.has(k)?'<i class="hs" data-skm="new">':t))}
+    if(m.num)h=h.replace(/^([א-י]\.)/,'<span data-skm="num">$1</span>');
+    return h}
+  function skmGhostBody(text,orig){
+    const toks=SKC.parse(text);let h='',row=null,ri=0;
+    const MK=skmMarks(text,orig);
     const flush=()=>{if(!row)return;
-      h+='<div class="skmrow"><div class="skmrail">'+row.t.map(t=>'<span class="skmanc">'+SKC.i2h(t,true)+'</span>').join('')+'</div>'+
+      h+='<div class="skmrow"><div class="skmrail">'+row.t.map(t=>'<span class="skmanc"'+(t.m&&t.m.mv?' data-skm="moved"':'')+'>'+skmMarkH(SKC.i2h(t.v,true),t.m)+'</span>').join('')+'</div>'+
          '<div class="skmmain">'+row.l.map(l=>l.src?'<p class="skmsrc" contenteditable="false" data-tok="'+esc(l.src).replace(/"/g,'&quot;')+'"></p>':
-           '<p data-sty="'+(l.sty||'')+'" class="'+(l.sty||'')+'">'+(SKC.i2h(l.v,true)||'<br>')+'</p>').join('')+'</div></div>';row=null};
+           '<p data-sty="'+(l.sty||'')+'" class="'+(l.sty||'')+'">'+(skmMarkH(SKC.i2h(l.v,true),l.m).replace(/<i class="am">/,x=>l.m&&l.m.mv?'<i class="am" data-skm="moved">':x)||'<br>')+'</p>').join('')+'</div></div>';row=null};
     const LAB={'דף':v=>'דף '+v,'משנה':v=>v?'משנה '+v:'משנה','גמרא':()=>'גמרא','קבוע':()=>'(עיטור / פתיחה)','מקור':()=>''};
     toks.forEach(k=>{
       if(k.t==='lock'){
@@ -158,8 +186,8 @@
           h+='<div class="skmhead '+(k.kind==='כותרת-נושא'?'nose':'dh')+'" data-kind="'+k.kind+'">'+SKC.i2h(k.val,true)+'</div>';return}
         const lab=(LAB[k.kind]||(()=>''))(k.val);
         h+='<div class="skmlock'+(lab?'':' skmhid')+'" contenteditable="false" data-tok="'+esc(raw).replace(/"/g,'&quot;')+'">'+esc(lab)+'</div>';return}
-      if(k.t==='title'){if(row&&row.l.length)flush();if(!row)row={t:[],l:[]};row.t.push(k.v);return}
-      if(!row)row={t:[],l:[]};row.l.push(k)});
+      if(k.t==='title'){if(row&&row.l.length)flush();if(!row)row={t:[],l:[]};row.t.push({v:k.v,m:MK[ri++]});return}
+      if(!row)row={t:[],l:[]};row.l.push(Object.assign({},k,{m:MK[ri++]}))});
     flush();return h}
   /* קריאה חזרה מן הרוח אחרי עריכה ישירה */
   function skmReadBack(g){
@@ -183,17 +211,20 @@
     rows.forEach(r=>r.classList.add('skmold'));
     const g=document.createElement('div');g.className='skmghost';g.dir='rtl';
     const blocked=p.warn&&p.warn.length;
-    g.innerHTML='<div class="skmbody">'+skmGhostBody(p.text)+'</div>'+
+    /* השלד במבט אחד: אם המודל לא הבין את הסוגיה, רואים זאת לפני שקוראים את הנוסח */
+    g.innerHTML=(p.point?'<div class="skmpoint" contenteditable="false"><b>השלד:</b> '+esc(p.point)+'</div>':'')+
+      '<div class="skmbody">'+skmGhostBody(p.text,p.orig)+'</div>'+
       '<div class="skmbar" contenteditable="false">'+
         '<span class="skmt">הצעת סכם'+(p.round>1?' · קיצור '+p.round:'')+'</span>'+
         (blocked?'<span class="skmwarn" title="'+esc(p.warn.join(' · '))+'">⚠ '+esc(p.warn.join(' · '))+'</span>':'')+
-        '<button type="button" data-a="ok"'+(blocked?' hidden':'')+'>קבל</button>'+
+        (p.notes&&p.notes.length?'<span class="skmnote" title="'+esc(p.notes.join(' · '))+'">'+esc(p.notes.join(' · '))+'</span>':'')+
+        '<button type="button" data-a="ok"'+(blocked?' hidden':'')+' title="Enter">קבל</button>'+
         '<button type="button" data-a="edit">ערוך</button>'+
         '<button type="button" data-a="more">קצר עוד</button>'+
         (p.hist&&p.hist.length?'<button type="button" data-a="back" title="חזרה להצעה הקודמת, בלי קריאה חדשה ובלי עלות">חזרה לקודמת</button>':'')+
-        '<button type="button" data-a="no">בטל</button>'+
+        '<button type="button" data-a="no" title="Esc">בטל</button>'+
         '<button type="button" data-a="set" class="skmlink" title="מפתח, עלויות, למידה ותור הסולמיות">עלות ומפתח</button>'+
-        (p.changes&&p.changes.length?'<details class="skmwhy"><summary>מה שיניתי</summary><ul>'+p.changes.slice(0,3).map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul></details>':'')+
+        (p.changes&&p.changes.length?'<details class="skmwhy"><summary>מה שיניתי</summary><ul>'+p.changes.slice(0,5).map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul></details>':'')+
       '</div>';
     rows[rows.length-1].after(g);
     SKM.ghost=g;SKM.cur=p;
@@ -202,9 +233,21 @@
       if(t==='keydown')skmGhostKey(ev);ev.stopPropagation()}));
     g.querySelector('.skmbar').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
       ({ok:skmAccept,edit:skmEdit,more:skmMore,no:skmCancel,back:skmBack,set:()=>skmPanel()})[b.dataset.a]()});
-    g.scrollIntoView({block:'nearest',behavior:'smooth'})}
+    /* המיקוד עובר להצעה, כדי ש-Enter יקבל ו-Esc יבטל ולא יפצלו פסקה בדף */
+    g.tabIndex=-1;
+    g.scrollIntoView({block:'nearest',behavior:'smooth'});
+    try{const a=document.activeElement;if(a&&a!==document.body&&!g.contains(a))a.blur();g.focus({preventScroll:true})}catch(e){}}
+  /* קבלה מהירה: Enter = קבל, Esc = בטל (לא במצב עריכה; שם Ctrl+Enter מקבל את הנוסח הערוך) */
+  function skmQuick(key){
+    const g=SKM.ghost;if(!g||g.classList.contains('edit'))return;
+    if(key==='Enter'){const ok=g.querySelector('[data-a="ok"]');if(ok&&!ok.hidden)skmAccept();else flash('ההצעה נחסמה בשומר: ערוך אותה או בטל');return}
+    if(key==='Escape')skmCancel()}
   function skmGhostKey(ev){
-    if(!SKM.ghost||!SKM.ghost.classList.contains('edit'))return;
+    if(!SKM.ghost)return;
+    if(!SKM.ghost.classList.contains('edit')){
+      if(ev.key==='Escape'||ev.key==='Enter'&&!ev.ctrlKey&&!ev.altKey&&!ev.shiftKey&&!ev.target.closest('button')){ev.preventDefault();skmQuick(ev.key)}
+      return}
+    if(ev.key==='Enter'&&ev.ctrlKey&&!ev.altKey&&!ev.shiftKey){ev.preventDefault();skmAccept();return}
     const C={Digit1:'am',Digit2:'ps',Digit4:'hs',Digit6:'dm',Digit7:'ns'};
     if(ev.ctrlKey&&!ev.altKey&&!ev.shiftKey&&(C[ev.code]||ev.code==='KeyB')){
       ev.preventDefault();const s=getSelection();if(!s.rangeCount||s.isCollapsed)return;
@@ -231,7 +274,7 @@
     const g=SKM.ghost;g.classList.add('skmbusy');
     try{const j=await api('/sakem/more',{method:'POST',body:JSON.stringify({slug:SLUG,id:p.id})});
       /* ההצעה הקודמת נשמרת במכשיר: "חזרה לקודמת" מחזירה אותה בלי קריאה חדשה ובלי עלות */
-      skmShow(Object.assign({},p,{id:j.id,text:j.text,changes:j.changes||[],warn:j.warn||[],round:(p.round||1)+1,
+      skmShow(Object.assign({},p,{id:j.id,text:j.text,point:j.point||p.point||'',changes:j.changes||[],warn:j.warn||[],notes:j.notes||[],round:(p.round||1)+1,
         hist:(p.hist||[]).concat([Object.assign({},p,{hist:null})])}))}
     catch(err){g.classList.remove('skmbusy');flash('קצר עוד: '+(err.message||''))}}
   function skmCancel(){const p=SKM.cur;skmClose();if(p)skmDone(p,'cancel')}
@@ -265,7 +308,7 @@
     const ks=Object.keys(m);if(ks.length>600)ks.sort((a,b)=>m[a][1]-m[b][1]).slice(0,ks.length-600).forEach(k=>delete m[k]);
     try{localStorage.setItem(SKMK,JSON.stringify(m))}catch(e){}
     /* גם לפי מפתח המקום: רשומה שהוחלפה בעותק מן השרת מאבדת שדות מקומיים */
-    recs.forEach(e=>{if(e.op!=='struct'&&e.k){e._skm=id;e._skmNow=e.now;m['k:'+e.k]=[id,Date.now(),e.now]}});
+    recs.forEach(e=>{if(e.op!=='struct'&&e.k){const I=SKC.h2i(e.nowH||'');e._skm=id;e._skmNow=e.now;e._skmNowI=I;m['k:'+e.k]=[id,Date.now(),e.now,I]}});
     try{localStorage.setItem(SKMK,JSON.stringify(m))}catch(e){}
     saveED()}
   SKM.lat={};
@@ -276,19 +319,35 @@
     const k=el&&el.dataset&&el.dataset.ek;if(!k)return;
     const e=ED.find(x=>x.op!=='struct'&&x.k===k);if(!e||e.now===e.was)return;
     let hit=null;
-    if(e._skm&&e._skmNow!==undefined&&skmNorm(e._skmNow)!==skmNorm(e.now))hit={id:e._skm,was:e._skmNow};
+    if(e._skm&&e._skmNow!==undefined&&skmNorm(e._skmNow)!==skmNorm(e.now))hit={id:e._skm,was:e._skmNow,wasI:e._skmNowI||''};
     else{const m=skmMade(),hk=m['k:'+k],h=m[skmNorm(e.was)];
-      if(hk&&skmNorm(hk[2])!==skmNorm(e.now))hit={id:hk[0],was:hk[2]};
-      else if(h)hit={id:h[0],was:e.was}}
+      if(hk&&skmNorm(hk[2])!==skmNorm(e.now))hit={id:hk[0],was:hk[2],wasI:hk[3]||''};
+      else if(h)hit={id:h[0],was:e.was,wasI:SKC.h2i(e.wasH||'')}}
     if(!hit)return;
-    SKM.lat[k]={id:hit.id,was:hit.was,now:e.now,daf:e.daf||''};
+    /* בפורמט הביניים, כדי שנקודת הקליטה תדע את סוג התיקון: מספור / הסבר (פרומפט 7) */
+    SKM.lat[k]={id:hit.id,was:hit.was,now:e.now,daf:e.daf||'',wasI:hit.wasI,nowI:SKC.h2i(e.nowH||'')};
     clearTimeout(SKM.latT);SKM.latT=setTimeout(skmLaterFlush,20000)}
+  function skmLaterSend(x){
+    fetch(SUGGEST_API+'/sakem/later',{method:'POST',keepalive:true,headers:{'content-type':'application/json; charset=utf-8','x-admin-key':admKey()},
+      body:JSON.stringify({slug:SLUG,id:x.id,was:x.was,now:x.now,daf:x.daf,wasI:x.wasI||'',nowI:x.nowI||'',kinds:x.kinds||[]})}).catch(()=>{})}
   function skmLaterFlush(){
     const L=SKM.lat;SKM.lat={};
-    Object.keys(L).forEach(k=>{const x=L[k];
-      fetch(SUGGEST_API+'/sakem/later',{method:'POST',keepalive:true,headers:{'content-type':'application/json; charset=utf-8','x-admin-key':admKey()},
-        body:JSON.stringify({slug:SLUG,id:x.id,was:x.was,now:x.now,daf:x.daf})}).catch(()=>{})})}
+    Object.keys(L).forEach(k=>skmLaterSend(L[k]))}
   addEventListener('pagehide',skmLaterFlush);
+  /* דובר שהועבר אחרי הקבלה מן השורה לכותרת צד (או בחזרה) הוא פעולת מבנה ולא תיקון טקסט:
+     כל רשומת side / unside חדשה שנוגעת בשורה שנכתבה ב"סכם" נרשמת ביומן הלמידה כסוג "דובר".
+     רשומות שהקבלה עצמה יצרה (skmApply מסמן אותן כנראו) אינן תיקון של המחבר. */
+  SKM.seenS=new Set(ED.filter(e=>e.op==='struct').map(e=>e.t));
+  const skmSave0=saveED;
+  saveED=function(){skmSave0();try{skmStructLater()}catch(e){}};
+  function skmStructLater(){
+    if(!isAdmin()||SUGM)return;
+    let m=null;
+    ED.forEach(e=>{if(e.op!=='struct'||SKM.seenS.has(e.t))return;SKM.seenS.add(e.t);
+      if(!/^(side|unside|unside-merge)$/.test(e.kind||''))return;
+      m=m||skmMade();
+      const hit=(e.texts||[]).map(t=>m[skmNorm(t)]).find(Boolean);if(!hit)return;
+      skmLaterSend({id:hit[0],was:(e.texts||[]).join(' | '),now:(e.resT||[]).join(' | '),daf:e.daf||'',kinds:['דובר']})})}
 
   /* =================== ההחלה: מאותן רשומות שהעורך כותב =================== */
   function skmStyOf(cls){return String(cls||'').split(' ').filter(c=>PCLS.indexOf(c)>-1).join(' ')}
@@ -325,7 +384,7 @@
     const pre=pis.map(pi=>({pi,snap:JSON.stringify(D.pages[pi].units)})),befores=pis.map(snapOf);
     const RECS=[],OLDS=[];let T0=Date.now();
     const nt=()=>(T0=Math.max(T0+1,Date.now()));
-    const add=e=>{e.t=nt();e.pub=0;e._ap=1;ED.push(e);RECS.push(e);return e};
+    const add=e=>{e.t=nt();e.pub=0;e._ap=1;ED.push(e);RECS.push(e);if(SKM.seenS)SKM.seenS.add(e.t);return e};
     const pgDaf=pi=>D.pages[pi].daf||'';
     const unitAt=line=>{for(const o of unitsAll()){const i=o.u.l.indexOf(line);if(i>-1)return {u:o.u,pi:o.pi,i}}return null};
     /* תיקון טקסט ו/או סגנון פסקה במקום אחד - כמו capture: רשומה אחת לכל מקום */
@@ -571,7 +630,7 @@
     const os=skmUnits(it.ids);
     if(os.length!==it.ids.length||skmInter(os)!==it.orig){skmDone(it,'stale');return skmQNext()}
     const r=document.getElementById('u'+it.ids[0]);if(r)r.scrollIntoView({block:'center'});
-    skmShow({id:it.id,ids:it.ids,orig:it.orig,text:it.text,changes:it.changes||[],warn:it.warn||[],round:1})}
+    skmShow({id:it.id,ids:it.ids,orig:it.orig,text:it.text,point:it.point||'',changes:it.changes||[],warn:it.warn||[],notes:it.notes||[],round:1})}
 
   /* ---- מראה ---- */
   (function(){const s=document.createElement('style');s.textContent=
@@ -593,6 +652,11 @@
     '.skmghost ins.skmadd,.skmghost ins.skmfix{text-decoration:underline;text-decoration-color:#e08a2c;text-decoration-thickness:2px;text-underline-offset:3px;background:rgba(224,138,44,.08)}'+
     '.skmghost ins.skmadd::after,.skmghost ins.skmfix::after{content:"תוספת";font-size:10px;color:#b86b17;vertical-align:super;margin-right:2px}.skmghost ins.skmfix::after{content:"תיקון"}'+
     '.skmghost.edit ins::after{display:none}'+
+    '.skmpoint{font-size:12.5px;color:#5d6b60;margin:0 0 4px;padding:0 0 3px;border-bottom:1px dotted rgba(46,125,60,.25);line-height:1.45}.skmpoint b{color:#2e5d3a;font-weight:600}'+
+    '.skmghost [data-skm="new"]{background:rgba(250,214,80,.32);border-radius:2px}'+
+    '.skmghost [data-skm="num"]{color:#a8801f;font-weight:700}'+
+    '.skmghost [data-skm="moved"]{text-decoration:underline dashed;text-decoration-color:#6d8fb5;text-decoration-thickness:1.5px;text-underline-offset:3px}'+
+    '.skmghost:focus{outline:none}.skmnote{color:#8a6a1f;font-size:12.5px}'+
     '.skmbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;padding-top:5px;border-top:1px dashed rgba(46,125,60,.3);font-size:14px}'+
     '.skmbar .skmt{font-weight:700;color:#2e5d3a;margin-left:6px}.skmbar button{padding:3px 12px;border-radius:12px;border:1px solid #2e7d3c;background:#fff;color:#2e5d3a;cursor:pointer}'+
     '.skmbar button[data-a="ok"]{background:#2e7d3c;color:#fff}.skmwarn{color:#a8452f;font-size:13px}.skmwhy{flex-basis:100%;font-size:13px;color:#4d5a4f}.skmwhy summary{cursor:pointer}.skmwhy ul{margin:3px 18px 0;padding:0}'+

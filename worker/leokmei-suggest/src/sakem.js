@@ -226,7 +226,8 @@ function userText(orig, before, after, ctx) {
     ctx.gem ? 'לשון הגמרא (וילנא) של הקטע:\n<גמרא>\n' + ctx.gem + '</גמרא>' : '',
     ctx.per ? 'פירוש הגמרא לשורות המקבילות:\n<פירוש>\n' + ctx.per + '</פירוש>' : '',
     ctx.hv ? 'ביאור חברותא לאותו מקום:\n<חברותא>\n' + ctx.hv + '</חברותא>' : '',
-    'הפירוש, החברותא ולשון הגמרא הם להבנת הפשט ולבדיקת שלמות בלבד - לא למילוי. החזר את הקטע המסומן מהודק ומתוקן, כ-JSON.',
+    'הפירוש, החברותא ולשון הגמרא הם להבנת הפשט ולבדיקת שלמות בלבד - לא למילוי. ' +
+    'החזר את הקטע המסומן מהודק באמת (יעד: לפחות כשליש פחות תווים), כתוב מחדש מתוך שלד הסוגיה ולא כהחלפת מילים, ומתוקן - כ-JSON.',
   ].filter(Boolean).join('\n\n');
 }
 
@@ -315,7 +316,7 @@ export async function sakemApi(req, env, url, p, h) {
     const pr = await env.STORE.get('skm:p:' + String(b.id || '').slice(0, 40), 'json');
     if (!pr) return bad('ההצעה לא נמצאה (פגה)', 404);
     const msgs = (pr.msgs || []).concat([{ role: 'assistant', content: JSON.stringify({ point: pr.point || '', text: pr.text, changes: pr.changes || [] }) },
-      { role: 'user', content: 'קצר עוד: אותו קטע, קצר יותר וברור באותה מידה, בלי לאבד את שלד הסוגיה. השאלה נכללת בתשובה ככל האפשר. החזר JSON.' }]);
+      { role: 'user', content: 'קצר עוד: אותו קטע, בערך שליש פחות מן ההצעה שלך, וברור באותה מידה - בלי לאבד שלב בסוגיה, דעה או מסקנה. השאלה נכללת בתשובה, ושורות שאומרות דבר אחד מתאחדות. החזר JSON.' }]);
     const g = await generate(env, key, systemText(await examples(env)), msgs, pr.orig, pr.gemara || '');
     if (g.usd) await addCost(env, g.usd);
     if (g.err) return bad(g.err, g.cap ? 429 : 502);

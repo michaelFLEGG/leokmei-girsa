@@ -87,8 +87,15 @@
     b.classList.toggle('dim',!!(nokey||SKM.sel&&SKM.sel.long));
     const last=SKM.sel.rows[SKM.sel.rows.length-1].getBoundingClientRect();
     const top=Math.min(innerHeight-44,Math.max(8,last.bottom+4));
-    b.style.top=top+'px';b.style.left=Math.max(8,last.left+8)+'px';b.style.display='block'}
-  function skmBtnHide(){const b=$('#skmbtn');if(b)b.style.display='none'}
+    b.style.top=top+'px';b.style.left=Math.max(8,last.left+8)+'px';b.style.display='block';
+    /* גלגל השיניים שליד הכפתור: מפתח, עלויות, למידה ותור הסולמיות (27.10.2026) */
+    let g=$('#skmset');
+    if(!g){g=document.createElement('button');g.id='skmset';g.type='button';g.textContent='⚙';
+      g.title='סכם: מפתח, עלויות ותור';g.setAttribute('aria-label','סכם: מפתח, עלויות ותור');
+      g.addEventListener('mousedown',e=>e.preventDefault());
+      g.addEventListener('click',()=>skmPanel());document.body.appendChild(g)}
+    g.style.top=top+'px';g.style.left=(Math.max(8,last.left+8)+b.offsetWidth+6)+'px';g.style.display='block'}
+  function skmBtnHide(){['#skmbtn','#skmset'].forEach(s=>{const b=$(s);if(b)b.style.display='none'})}
   addEventListener('scroll',()=>{if(SKM.sel&&$('#skmbtn')&&$('#skmbtn').style.display==='block')skmBtnShow()},{passive:true,capture:true});
   /* כפתור גם בחלונית הסגנונות הצפה, כשיש בחירה */
   const skmSty0=styHtml;
@@ -184,6 +191,7 @@
         '<button type="button" data-a="edit">ערוך</button>'+
         '<button type="button" data-a="more">קצר עוד</button>'+
         '<button type="button" data-a="no">בטל</button>'+
+        '<button type="button" data-a="set" class="skmlink" title="מפתח, עלויות, למידה ותור הסולמיות">עלות ומפתח</button>'+
         (p.changes&&p.changes.length?'<details class="skmwhy"><summary>מה שיניתי</summary><ul>'+p.changes.slice(0,3).map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul></details>':'')+
       '</div>';
     rows[rows.length-1].after(g);
@@ -192,7 +200,7 @@
     ['keydown','keyup','input','focusin','focusout','beforeinput'].forEach(t=>g.addEventListener(t,ev=>{
       if(t==='keydown')skmGhostKey(ev);ev.stopPropagation()}));
     g.querySelector('.skmbar').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
-      ({ok:skmAccept,edit:skmEdit,more:skmMore,no:skmCancel})[b.dataset.a]()});
+      ({ok:skmAccept,edit:skmEdit,more:skmMore,no:skmCancel,set:()=>skmPanel()})[b.dataset.a]()});
     g.scrollIntoView({block:'nearest',behavior:'smooth'})}
   function skmGhostKey(ev){
     if(!SKM.ghost||!SKM.ghost.classList.contains('edit'))return;
@@ -527,6 +535,8 @@
     '#flow .row.skmold{background:rgba(190,60,50,.05)}#flow .row.skmold .main,#flow .row.skmold .anchor{text-decoration:line-through;text-decoration-color:rgba(190,60,50,.55);color:#8a5a55}'+
     '#skmbtn{position:fixed;z-index:60;display:none;padding:5px 14px;border-radius:16px;border:1px solid #2e5b8a;background:#2e5b8a;color:#fff;font:600 14px inherit;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18)}'+
     '#skmbtn.dim{background:#8a98a8;border-color:#8a98a8}'+
+    '#skmset{position:fixed;z-index:60;display:none;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid #2e5b8a;background:#fff;color:#2e5b8a;font-size:16px;line-height:28px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)}'+
+    '.skmbar button.skmlink{border:none;background:none;text-decoration:underline;color:#4d5a4f;padding:3px 4px;margin-right:auto}'+
     '.skmghost{margin:4px 0 10px;border:1px solid rgba(46,125,60,.35);background:rgba(46,125,60,.05);border-radius:6px;padding:6px 8px 4px}'+
     '.skmghost.skmbusy{opacity:.6}.skmghost.edit{background:#fff;border-color:#2e7d3c;box-shadow:0 0 0 2px rgba(46,125,60,.15)}'+
     '.skmrow{display:flex;gap:10px;margin:2px 0}.skmrail{flex:0 0 auto;min-width:3.4em;max-width:8em;text-align:left;font-size:.82em;color:#2e5d3a;font-weight:700;display:flex;flex-direction:column}'+

@@ -1943,6 +1943,15 @@
    "flagged": 0,
    "cal": 0.184,
    "published": "2026-10-25T18:46:53Z"
+  },
+  "yevamot-p09-u90": {
+   "ok": true,
+   "done_at": "2026-10-24T19:10:57Z",
+   "at": "2026-10-26T12:44:30Z",
+   "ntos": 3,
+   "flagged": 0,
+   "cal": 0.429,
+   "published": "2026-10-26T12:44:31Z"
   }
  },
  "files": {
@@ -1951,6 +1960,12 @@
    "modified": "2026-10-24T20:21:04.237Z",
    "saved": "2026-10-25T06:38:48Z",
    "done_at": "2026-10-24T19:56:17Z"
+  },
+  "out-yevamot-p09-u90.json": {
+   "id": "1FWybVyiaAHemCmBoa_AI8HEnmKhUMhIh",
+   "modified": "2026-10-24T19:47:19.932Z",
+   "saved": "2026-10-26T12:43:39Z",
+   "done_at": "2026-10-24T19:10:57Z"
   }
  },
  "zips": {

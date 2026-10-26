@@ -354,3 +354,9 @@
 [2026-10-26 18:16:42] shabbat פרק 22 פורסם: {'generated': 40, 'decided': 0, 'unchecked': 0, 'flagged': 0, 'questions': 25}
 [2026-10-26 18:16:44] shabbat פרק 23 פורסם: {'generated': 37, 'decided': 0, 'unchecked': 0, 'flagged': 0, 'questions': 26}
 [2026-10-26 18:16:45] shabbat פרק 24 פורסם: {'generated': 31, 'decided': 0, 'unchecked': 0, 'flagged': 0, 'questions': 19}
+[2026-10-26 18:22:57] נקלט bava-batra-p06-u90: 1 תוספות, 0 לעיון המנהל, כיול 0.441
+[2026-10-26 18:22:57] נקלט kiddushin-p01-u90: 3 תוספות, 0 לעיון המנהל, כיול 0.222
+[2026-10-26 18:22:58] נקלט yevamot-p08-u90: 1 תוספות, 0 לעיון המנהל, כיול 0.304
+[2026-10-26 18:22:59] השלמה פורסמה bava-batra-p06-u90: {'generated': 1, 'decided': 0, 'unchecked': 0, 'flagged': 14, 'questions': 2}
+[2026-10-26 18:23:00] השלמה פורסמה kiddushin-p01-u90: {'generated': 3, 'decided': 0, 'unchecked': 0, 'flagged': 86, 'questions': 3}
+[2026-10-26 18:23:00] השלמה פורסמה yevamot-p08-u90: {'generated': 1, 'decided': 0, 'unchecked': 0, 'flagged': 44, 'questions': 2}

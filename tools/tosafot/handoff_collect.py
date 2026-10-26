@@ -496,6 +496,14 @@ def write_board(state_line=None):
     rate = week / 7.0
     eta = ('כ-%d ימים' % round((tot_u - ok_u) / rate)) if rate > 0 else 'לא ידוע עדיין'
     cals = [v['cal'] for v in col['units'].values() if v.get('cal') is not None]
+    # "הלוח" של החשבון השני מהאצווה האחרונה (לקריאה בלבד): שורת ההתקדמות שלו
+    other = ''
+    bts = sorted((ib.get('batches') or {}).values(), key=lambda x: x.get('modified') or '')
+    if bts:
+        bp = os.path.join(HO, 'batches', re.sub(r'\.json$', '', bts[-1]['name']) + '-board.md')
+        m = re.search(r'התקדמות:\s*([^\n]+)', io.open(bp, encoding='utf-8').read()) if os.path.exists(bp) else None
+        if m:
+            other = 'לפי הלוח של החשבון השני באצווה %s: %s' % (bts[-1]['name'], m.group(1).strip())
     lines = ["## מפעל התוס' (לאוקמי גירסא, החשבון השני)", '',
              '- עודכן: %s UTC' % now.strftime('%d.%m.%Y %H:%M'),
              '- מצב: %s' % state_line,
@@ -503,7 +511,10 @@ def write_board(state_line=None):
              '- לעיון המנהל: %d תוס\'' % flagged,
              '- ממתינים לחזרה (redo): %d' % len(idx.get('redo') or []),
              '- קצב: %.1f יחידות ביום בשבוע האחרון; סיום צפוי: %s' % (rate, eta),
-             '- כיול (דמיון לנוסח המנהל): %s' % ('%.2f בממוצע על %d יחידות' % (sum(cals) / len(cals), len(cals)) if cals else 'טרם נמדד'), '',
+             '- כיול (דמיון לנוסח המנהל): %s' % ('%.2f בממוצע על %d יחידות' % (sum(cals) / len(cals), len(cals)) if cals else 'טרם נמדד')]
+    if other:
+        lines.append('- ' + other)
+    lines += ['',
              '| מסכת | יחידות שהושלמו | סה"כ | לעיון המנהל |', '| :-: | :-: | :-: | :-: |']
     for slug, (a, b, f) in by.items():
         lines.append('| %s | %d | %d | %d |' % (F.SLUG2HE.get(slug, slug), a, b, f))
@@ -513,6 +524,8 @@ def write_board(state_line=None):
            "קצב %.1f יחידות ליום, סיום צפוי %s. הלוח המלא: github.com/michaelFLEGG/leokmei-girsa/blob/main/tosafot/handoff/board.md"
            % (now.strftime('%d.%m.%Y %H:%M'), state_line, ok_u, tot_u, 100.0 * ok_u / max(1, tot_u), ok_t, tot_t, flagged,
               len(idx.get('redo') or []), rate, eta))
+    if other:
+        one = one.replace(' הלוח המלא:', ' %s. הלוח המלא:' % other)
     io.open(os.path.join(HO, 'board-line.txt'), 'w', encoding='utf-8', newline='\n').write(one + '\n')
 
 

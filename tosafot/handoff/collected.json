@@ -2335,6 +2335,33 @@
    "flagged": 0,
    "cal": 0.275,
    "published": "2026-10-26T18:16:45Z"
+  },
+  "bava-batra-p06-u90": {
+   "ok": true,
+   "done_at": "2026-10-24T18:33:07Z",
+   "at": "2026-10-26T18:22:57Z",
+   "ntos": 1,
+   "flagged": 0,
+   "cal": 0.441,
+   "published": "2026-10-26T18:22:59Z"
+  },
+  "kiddushin-p01-u90": {
+   "ok": true,
+   "done_at": "2026-10-24T19:11:04Z",
+   "at": "2026-10-26T18:22:57Z",
+   "ntos": 3,
+   "flagged": 0,
+   "cal": 0.222,
+   "published": "2026-10-26T18:23:00Z"
+  },
+  "yevamot-p08-u90": {
+   "ok": true,
+   "done_at": "2026-10-24T19:10:57Z",
+   "at": "2026-10-26T18:22:58Z",
+   "ntos": 1,
+   "flagged": 0,
+   "cal": 0.304,
+   "published": "2026-10-26T18:23:00Z"
   }
  },
  "files": {
@@ -2349,6 +2376,24 @@
    "modified": "2026-10-24T19:47:19.932Z",
    "saved": "2026-10-26T12:43:39Z",
    "done_at": "2026-10-24T19:10:57Z"
+  },
+  "out-kiddushin-p01-u90.json": {
+   "id": "1bQiBOBxVvQf0aYNvkT-tklgisbEVL9Th",
+   "modified": "2026-10-24T19:48:25.650Z",
+   "saved": "2026-10-26T18:22:56Z",
+   "done_at": "2026-10-24T19:11:04Z"
+  },
+  "out-yevamot-p08-u90.json": {
+   "id": "1po91eml0ycQI0a6Z_IgC9hYGzzARPihc",
+   "modified": "2026-10-24T19:12:05.650Z",
+   "saved": "2026-10-26T18:22:57Z",
+   "done_at": "2026-10-24T19:10:57Z"
+  },
+  "out-bava-batra-p06-u90.json": {
+   "id": "1G9WGI-JxMj5ak7raYqtCAH2sO5geVves",
+   "modified": "2026-10-24T18:34:25.553Z",
+   "saved": "2026-10-26T18:22:57Z",
+   "done_at": "2026-10-24T18:33:07Z"
   }
  },
  "zips": {

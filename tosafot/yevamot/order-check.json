@@ -1,7 +1,14 @@
 {
  "slug": "yevamot",
- "shown": 1305,
- "moved": [],
+ "shown": 1306,
+ "moved": [
+  {
+   "perek": 8,
+   "n": 115,
+   "to": "עז:",
+   "was": ""
+  }
+ ],
  "errors": [],
  "ok": true
 }

@@ -190,6 +190,7 @@
         '<button type="button" data-a="ok"'+(blocked?' hidden':'')+'>קבל</button>'+
         '<button type="button" data-a="edit">ערוך</button>'+
         '<button type="button" data-a="more">קצר עוד</button>'+
+        (p.hist&&p.hist.length?'<button type="button" data-a="back" title="חזרה להצעה הקודמת, בלי קריאה חדשה ובלי עלות">חזרה לקודמת</button>':'')+
         '<button type="button" data-a="no">בטל</button>'+
         '<button type="button" data-a="set" class="skmlink" title="מפתח, עלויות, למידה ותור הסולמיות">עלות ומפתח</button>'+
         (p.changes&&p.changes.length?'<details class="skmwhy"><summary>מה שיניתי</summary><ul>'+p.changes.slice(0,3).map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul></details>':'')+
@@ -200,7 +201,7 @@
     ['keydown','keyup','input','focusin','focusout','beforeinput'].forEach(t=>g.addEventListener(t,ev=>{
       if(t==='keydown')skmGhostKey(ev);ev.stopPropagation()}));
     g.querySelector('.skmbar').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
-      ({ok:skmAccept,edit:skmEdit,more:skmMore,no:skmCancel,set:()=>skmPanel()})[b.dataset.a]()});
+      ({ok:skmAccept,edit:skmEdit,more:skmMore,no:skmCancel,back:skmBack,set:()=>skmPanel()})[b.dataset.a]()});
     g.scrollIntoView({block:'nearest',behavior:'smooth'})}
   function skmGhostKey(ev){
     if(!SKM.ghost||!SKM.ghost.classList.contains('edit'))return;
@@ -229,9 +230,14 @@
     const p=SKM.cur;if(!p)return;
     const g=SKM.ghost;g.classList.add('skmbusy');
     try{const j=await api('/sakem/more',{method:'POST',body:JSON.stringify({slug:SLUG,id:p.id})});
-      skmShow(Object.assign({},p,{id:j.id,text:j.text,changes:j.changes||[],warn:j.warn||[],round:(p.round||1)+1}))}
+      /* ההצעה הקודמת נשמרת במכשיר: "חזרה לקודמת" מחזירה אותה בלי קריאה חדשה ובלי עלות */
+      skmShow(Object.assign({},p,{id:j.id,text:j.text,changes:j.changes||[],warn:j.warn||[],round:(p.round||1)+1,
+        hist:(p.hist||[]).concat([Object.assign({},p,{hist:null})])}))}
     catch(err){g.classList.remove('skmbusy');flash('קצר עוד: '+(err.message||''))}}
   function skmCancel(){const p=SKM.cur;skmClose();if(p)skmDone(p,'cancel')}
+  function skmBack(){const p=SKM.cur;if(!p||!p.hist||!p.hist.length)return;
+    const prev=p.hist[p.hist.length-1];
+    skmShow(Object.assign({},prev,{hist:p.hist.slice(0,-1)}))}
   function skmDone(p,act,fin){
     api('/sakem/done',{method:'POST',body:JSON.stringify({slug:SLUG,id:p.id,act,final:fin||''})}).catch(()=>{})}
   function skmAccept(){
@@ -481,7 +487,8 @@
        '<p class="skmsmall">המפתח נכתב פעם אחת בשרת (מוצפן), אינו נשמר בדפדפן ואינו מוצג שוב. מפתח מן הסביבה "לאוקמי - סכם" בקונסול.</p>';
     h+='<p><b>עלות:</b> היום '+usd(st.day)+' · החודש '+usd(st.month)+' מתוך תקרה של '+usd(st.cap)+(st.capped?' · <span class="skmwarn">הגעת לתקרת החודש</span>':'')+
        ' · '+(st.n||0)+' הצעות החודש'+(st.n?' · ממוצע '+usd(st.month/st.n)+' להצעה':'')+'</p>';
-    h+='<p><b>למידה:</b> '+(st.pairs||0)+' זוגות (הצעה מול הנוסח שהתקבל אחרי עריכה) · '+(st.rejects||0)+' דחיות</p>';
+    h+='<p><b>למידה:</b> '+(st.pairs||0)+' זוגות (הצעה מול הנוסח שקיבלת אחרי עריכה) · '+(st.rejects||0)+' דחיות'+
+       ' · '+(st.fresh||0)+' מתוך 24 זוגות חדשים עד הצעת עדכון הדוגמאות'+(st.learned?' · הדוגמאות כבר עודכנו מן הלמידה':'')+'</p>';
     if(st.suggest&&st.suggest.length)h+='<p><button id="skmex">עדכן את דוגמאות הסכם ('+st.suggest.length+' זוגות חדשים)</button></p>';
     h+='<hr><p><b>תור הסולמיות (#):</b> <button id="skmhq">הכן הצעות לכל ה-# במסכת</button>'+
        (st.queue?' <button id="skmhqo">פתח את התור ('+st.queue+')</button>':'')+'</p><div id="skmhqs" class="skmsmall"></div>';

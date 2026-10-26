@@ -255,7 +255,8 @@ export async function sakemApi(req, env, url, p, h) {
     const slug = url.searchParams.get('slug') || '';
     const q = slugOk(slug) ? ((await env.STORE.get('skm:hq:' + slug, 'json')) || { items: [] }).items.filter((x) => !x.d).length : 0;
     return json({ ok: true, hasKey: !!(await getKey(env)), day: c.days[day()] || 0, month: c.usd || 0, n: c.n || 0, cap: CAP_USD,
-                  capped: (c.usd || 0) >= CAP_USD, pairs: lg.pairs.length, rejects: lg.rejects || 0,
+                  capped: (c.usd || 0) >= CAP_USD, pairs: lg.pairs.length, fresh: fresh.length, rejects: lg.rejects || 0,
+                  learned: !!(await env.STORE.get('skm:ex')),
                   suggest: fresh.length >= 24 ? fresh.slice(-6).map((x) => x.id) : [], queue: q });
   }
   if (p === '/sakem/key') {

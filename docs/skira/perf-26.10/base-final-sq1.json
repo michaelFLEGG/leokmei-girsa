@@ -1,0 +1,264 @@
+{
+ "slug": "bekhorot",
+ "sq": "1",
+ "site": "live",
+ "when": "26.10.2026 18:57",
+ "load": 6067,
+ "dcl": 1243,
+ "load_capped": false,
+ "cpu_load_first": null,
+ "load_first": 6001,
+ "load_quiet_first": 6000,
+ "dcl_first": 1225,
+ "cpu_load": null,
+ "lt_load": [
+  [
+   885,
+   268
+  ],
+  [
+   1410,
+   258
+  ],
+  [
+   1687,
+   112
+  ],
+  [
+   1799,
+   68
+  ],
+  [
+   1982,
+   68
+  ],
+  [
+   2121,
+   134
+  ],
+  [
+   2386,
+   70
+  ],
+  [
+   2481,
+   74
+  ],
+  [
+   2556,
+   99
+  ],
+  [
+   2660,
+   80
+  ],
+  [
+   2814,
+   71
+  ],
+  [
+   2886,
+   75
+  ],
+  [
+   2966,
+   87
+  ],
+  [
+   3060,
+   79
+  ],
+  [
+   3185,
+   68
+  ],
+  [
+   3358,
+   69
+  ],
+  [
+   3497,
+   63
+  ],
+  [
+   3560,
+   107
+  ],
+  [
+   3747,
+   75
+  ],
+  [
+   3823,
+   68
+  ],
+  [
+   3919,
+   63
+  ],
+  [
+   3983,
+   115
+  ],
+  [
+   4118,
+   74
+  ],
+  [
+   4193,
+   81
+  ],
+  [
+   4299,
+   81
+  ],
+  [
+   4402,
+   83
+  ],
+  [
+   4517,
+   75
+  ],
+  [
+   4613,
+   70
+  ],
+  [
+   4684,
+   78
+  ],
+  [
+   4810,
+   86
+  ],
+  [
+   4931,
+   76
+  ],
+  [
+   5034,
+   71
+  ],
+  [
+   5106,
+   156
+  ],
+  [
+   5326,
+   85
+  ],
+  [
+   5517,
+   66
+  ],
+  [
+   5584,
+   77
+  ],
+  [
+   5734,
+   130
+  ],
+  [
+   5927,
+   140
+  ]
+ ],
+ "load_quiet": 6067,
+ "ed": {
+  "ed": 1446,
+  "lost": 445,
+  "ap": 1001,
+  "struct": 175,
+  "done": null
+ },
+ "admin": true,
+ "bkbtn": "סקירה",
+ "idle_busy_10s": 0,
+ "open": 108,
+ "open_detail": {
+  "sync": 107.69999999552965,
+  "quiet": 107.69999999552965,
+  "busy": 108
+ },
+ "cpu_open": null,
+ "stats": null,
+ "next_card": 135,
+ "next_quiet": 135,
+ "next": 135,
+ "next_runs": [
+  {
+   "card": 566.1000000014901,
+   "quiet": 2244,
+   "id": "a7ccf42df6"
+  },
+  {
+   "card": 143.80000000447035,
+   "quiet": 143.80000000447035,
+   "id": "2ce38f11da"
+  },
+  {
+   "card": 126.89999999850988,
+   "quiet": 126.89999999850988,
+   "id": "309d49a076"
+  },
+  {
+   "card": 127,
+   "quiet": 127,
+   "id": "6be9326924"
+  }
+ ],
+ "cpu_next": null,
+ "accept_card": 235,
+ "accept_quiet": 351,
+ "accept": 351,
+ "accept_runs": [
+  {
+   "card": 248.79999999701977,
+   "quiet": 248.79999999701977,
+   "id": "6be9326924"
+  },
+  {
+   "card": 863.4000000059605,
+   "quiet": 936.4000000059605,
+   "id": "508e55e326"
+  },
+  {
+   "card": 200,
+   "quiet": 347.8999999985099,
+   "id": "95261b68a8"
+  },
+  {
+   "card": 221,
+   "quiet": 354.3999999985099,
+   "id": "61e6d04da0"
+  }
+ ],
+ "cpu_accept": null,
+ "errors": [
+  "404 https://leokmei.com/layout-audit.json",
+  "Failed to load resource: the server responded with a status of 404 ()",
+  "404 https://leokmei.com/layout-audit.json",
+  "Failed to load resource: the server responded with a status of 404 ()",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED"
+ ],
+ "blocked": [
+  "PUT /edits (נענה מ-GET, בלי כתיבה)",
+  "PUT /edits (נענה מ-GET, בלי כתיבה)",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec"
+ ],
+ "blocked_n": 6,
+ "pass": {
+  "load": false,
+  "open": true,
+  "next": false,
+  "accept": false
+ }
+}

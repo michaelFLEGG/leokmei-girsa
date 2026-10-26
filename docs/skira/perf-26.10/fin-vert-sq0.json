@@ -1,0 +1,136 @@
+{
+ "slug": "bekhorot",
+ "sq": "0",
+ "vert": true,
+ "site": "C:/Users/Owner/leokmei-p8/site",
+ "when": "26.10.2026 19:54",
+ "load": 1227,
+ "dcl": 854,
+ "load_capped": false,
+ "cpu_load_first": null,
+ "load_first": 2364,
+ "load_quiet_first": 2364,
+ "dcl_first": 1372,
+ "cpu_load": null,
+ "lt_load": [
+  [
+   536,
+   245
+  ],
+  [
+   947,
+   280
+  ]
+ ],
+ "load_quiet": 1227,
+ "ed": {
+  "ed": 490,
+  "lost": 444,
+  "ap": 46,
+  "struct": 174,
+  "done": 625
+ },
+ "admin": true,
+ "bkbtn": "סקירה",
+ "idle_busy_10s": 0,
+ "open": 177,
+ "open_detail": {
+  "sync": 176,
+  "quiet": 176.70000000298023,
+  "busy": 177
+ },
+ "cpu_open": null,
+ "stats": null,
+ "next_card": 30,
+ "next_quiet": 30,
+ "next": 30,
+ "next_runs": [
+  {
+   "card": 35.599999994039536,
+   "quiet": 35.599999994039536,
+   "id": "a7ccf42df6"
+  },
+  {
+   "card": 30.299999997019768,
+   "quiet": 30.299999997019768,
+   "id": "2ce38f11da"
+  },
+  {
+   "card": 32.5,
+   "quiet": 32.5,
+   "id": "309d49a076"
+  },
+  {
+   "card": 27.899999998509884,
+   "quiet": 27.899999998509884,
+   "id": "6be9326924"
+  },
+  {
+   "card": 29.30000000447035,
+   "quiet": 29.30000000447035,
+   "id": "508e55e326"
+  }
+ ],
+ "cpu_next": null,
+ "accept_card": 68,
+ "accept_quiet": 72,
+ "accept": 72,
+ "accept_runs": [
+  {
+   "card": 56.5,
+   "quiet": 56.5,
+   "id": "508e55e326"
+  },
+  {
+   "card": 73.40000000596046,
+   "quiet": 73.40000000596046,
+   "id": "95261b68a8"
+  },
+  {
+   "card": 75,
+   "quiet": 75,
+   "id": "61e6d04da0"
+  },
+  {
+   "card": 65.30000000447035,
+   "quiet": 65.30000000447035,
+   "id": "8a3565205c"
+  },
+  {
+   "card": 62.79999999701977,
+   "quiet": 142.79999999701977,
+   "id": "8a1ca5542c"
+  },
+  {
+   "card": 69.70000000298023,
+   "quiet": 69.70000000298023,
+   "id": "6563fcbcc8"
+  }
+ ],
+ "cpu_accept": null,
+ "errors": [
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED"
+ ],
+ "blocked": [
+  "PUT /edits (נענה מ-GET, בלי כתיבה)",
+  "PUT /edits (נענה מ-GET, בלי כתיבה)",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec"
+ ],
+ "blocked_n": 8,
+ "pass": {
+  "load": true,
+  "open": true,
+  "next": true,
+  "accept": true
+ }
+}

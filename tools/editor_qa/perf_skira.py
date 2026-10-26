@@ -166,7 +166,7 @@ def run(a):
         # ממתינים לממצאי הסקירה (נטענים מן השרת)
         for _ in range(120):
             t = pg.evaluate("() => (document.getElementById('bkbtn2')||{}).textContent||''")
-            if t and '…' not in t and 'שגיאה' not in t:
+            if t and '…' not in t and 'שגיאה' not in t and pg.evaluate("() => typeof BK !== 'undefined' && BK.loaded"):
                 break
             pg.wait_for_timeout(500)
         out['bkbtn'] = t

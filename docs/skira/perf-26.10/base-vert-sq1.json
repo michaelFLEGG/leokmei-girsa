@@ -1,0 +1,1166 @@
+{
+ "slug": "bekhorot",
+ "sq": "1",
+ "vert": true,
+ "site": "live",
+ "when": "26.10.2026 18:58",
+ "load": 2200,
+ "dcl": 1066,
+ "load_capped": false,
+ "cpu_load_first": {
+  "self": [
+   [
+    "chunk:190 mas.js?v=1175730d",
+    4841
+   ],
+   [
+    "(program):0 ",
+    2880
+   ],
+   [
+    "(idle):0 ",
+    468
+   ],
+   [
+    "fitAnchors:307 mas.js?v=1175730d",
+    158
+   ],
+   [
+    "srcLayerNow:674 mas.js?v=1175730d",
+    136
+   ],
+   [
+    "idle.timeout:229 mas.js?v=1175730d",
+    100
+   ],
+   [
+    "lhOf:255 mas.js?v=1175730d",
+    93
+   ],
+   [
+    "plain:903 mas.js?v=1175730d",
+    64
+   ],
+   [
+    "applyEdits:1071 mas.js?v=1175730d",
+    52
+   ],
+   [
+    "nrm:1517 bekhorot.x.js?v=3e41f5b4",
+    45
+   ],
+   [
+    "RegExp: [<&\\r\\0]:0 ",
+    42
+   ],
+   [
+    "findRun:1255 mas.js?v=1175730d",
+    42
+   ],
+   [
+    "(garbage collector):0 ",
+    41
+   ],
+   [
+    "topAt:174 mas.js?v=1175730d",
+    31
+   ],
+   [
+    "caretIn:1710 mas.js?v=1175730d",
+    31
+   ],
+   [
+    "(anon):1067 mas.js?v=1175730d",
+    25
+   ],
+   [
+    "applyStructG:1281 mas.js?v=1175730d",
+    24
+   ],
+   [
+    "dafKey:974 mas.js?v=1175730d",
+    24
+   ],
+   [
+    "(anon):1573 bekhorot.x.js?v=3e41f5b4",
+    23
+   ],
+   [
+    "saveED:898 mas.js?v=1175730d",
+    21
+   ],
+   [
+    "sideDone:1868 mas.js?v=1175730d",
+    20
+   ],
+   [
+    "locate:980 mas.js?v=1175730d",
+    19
+   ],
+   [
+    "updTop:128 mobile.js?v=77136f07",
+    17
+   ],
+   [
+    "(anon):1571 bekhorot.x.js?v=3e41f5b4",
+    16
+   ],
+   [
+    "lastLineIsLone:164 mas.js?v=1175730d",
+    16
+   ]
+  ],
+  "incl": [
+   [
+    "chunk:190 mas.js?v=117",
+    4898
+   ],
+   [
+    "applyStruct:1339 mas.js?v=117",
+    332
+   ],
+   [
+    "applyStructG:1281 mas.js?v=117",
+    332
+   ],
+   [
+    "syncNow:3222 mas.js?v=117",
+    319
+   ],
+   [
+    "applyIncoming:3230 mas.js?v=117",
+    301
+   ],
+   [
+    "(anon):1 bekhorot.x.j",
+    276
+   ],
+   [
+    "build:808 mas.js?v=117",
+    272
+   ],
+   [
+    "fitAnchors:307 mas.js?v=117",
+    257
+   ],
+   [
+    "revealTail:457 mas.js?v=117",
+    186
+   ],
+   [
+    "(anon):473 mas.js?v=117",
+    186
+   ],
+   [
+    "(anon):673 mas.js?v=117",
+    138
+   ],
+   [
+    "srcLayerNow:674 mas.js?v=117",
+    136
+   ],
+   [
+    "layer:1591 bekhorot.x.j",
+    130
+   ],
+   [
+    "findRun:1255 mas.js?v=117",
+    129
+   ],
+   [
+    "locateAll:1568 bekhorot.x.j",
+    128
+   ],
+   [
+    "(anon):1620 bekhorot.x.j",
+    108
+   ],
+   [
+    "plain:903 mas.js?v=117",
+    107
+   ],
+   [
+    "patchPage:1717 mas.js?v=117",
+    101
+   ],
+   [
+    "(anon):3233 mas.js?v=117",
+    101
+   ],
+   [
+    "patchPage0:1718 mas.js?v=117",
+    101
+   ],
+   [
+    "idle.timeout:229 mas.js?v=117",
+    100
+   ],
+   [
+    "lhOf:255 mas.js?v=117",
+    93
+   ],
+   [
+    "(anon):1571 bekhorot.x.j",
+    89
+   ],
+   [
+    "locate:980 mas.js?v=117",
+    76
+   ],
+   [
+    "nrm:1517 bekhorot.x.j",
+    73
+   ]
+  ]
+ },
+ "load_first": 1902,
+ "load_quiet_first": 4195,
+ "dcl_first": 1126,
+ "cpu_load": {
+  "self": [
+   [
+    "chunk:190 mas.js?v=1175730d",
+    2386
+   ],
+   [
+    "(program):0 ",
+    1564
+   ],
+   [
+    "(idle):0 ",
+    400
+   ],
+   [
+    "getBoundingClientRect:0 ",
+    321
+   ],
+   [
+    "getPropertyValue:0 ",
+    229
+   ],
+   [
+    "idle.timeout:229 mas.js?v=1175730d",
+    123
+   ],
+   [
+    "querySelector:0 ",
+    120
+   ],
+   [
+    "plain:903 mas.js?v=1175730d",
+    79
+   ],
+   [
+    "caretIn:1710 mas.js?v=1175730d",
+    60
+   ],
+   [
+    "RegExp: [<&\\r\\0]:0 ",
+    57
+   ],
+   [
+    "locate:980 mas.js?v=1175730d",
+    45
+   ],
+   [
+    "findRun:1255 mas.js?v=1175730d",
+    42
+   ],
+   [
+    "updTop:128 mobile.js?v=77136f07",
+    38
+   ],
+   [
+    "nrm:1517 bekhorot.x.js?v=3e41f5b4",
+    37
+   ],
+   [
+    "dafKey:974 mas.js?v=1175730d",
+    32
+   ],
+   [
+    "(garbage collector):0 ",
+    30
+   ],
+   [
+    "setAttribute:0 ",
+    27
+   ],
+   [
+    "sideDone:1868 mas.js?v=1175730d",
+    26
+   ],
+   [
+    "applyStructG:1281 mas.js?v=1175730d",
+    21
+   ],
+   [
+    "_dn:5168 mas.js?v=1175730d",
+    21
+   ],
+   [
+    "(anon):986 mas.js?v=1175730d",
+    19
+   ],
+   [
+    "srcLayerNow:674 mas.js?v=1175730d",
+    19
+   ],
+   [
+    "(anon):1571 bekhorot.x.js?v=3e41f5b4",
+    17
+   ],
+   [
+    "bkSlotHtml:72 bekhorot.x.js?v=3e41f5b4",
+    16
+   ],
+   [
+    "(anon):72 bekhorot.x.js?v=3e41f5b4",
+    16
+   ]
+  ],
+  "incl": [
+   [
+    "chunk:190 mas.js?v=117",
+    2410
+   ],
+   [
+    "syncNow:3222 mas.js?v=117",
+    563
+   ],
+   [
+    "applyIncoming:3230 mas.js?v=117",
+    538
+   ],
+   [
+    "fitAnchors:307 mas.js?v=117",
+    522
+   ],
+   [
+    "applyStruct:1339 mas.js?v=117",
+    436
+   ],
+   [
+    "applyStructG:1281 mas.js?v=117",
+    433
+   ],
+   [
+    "(anon):0 bekhorot.x.j",
+    339
+   ],
+   [
+    "revealTail:457 mas.js?v=117",
+    339
+   ],
+   [
+    "(anon):473 mas.js?v=117",
+    339
+   ],
+   [
+    "build:808 mas.js?v=117",
+    337
+   ],
+   [
+    "patchPage0:1718 mas.js?v=117",
+    256
+   ],
+   [
+    "patchPage:1717 mas.js?v=117",
+    256
+   ],
+   [
+    "(anon):3233 mas.js?v=117",
+    256
+   ],
+   [
+    "lhOf:255 mas.js?v=117",
+    229
+   ],
+   [
+    "postRows:1740 mas.js?v=117",
+    190
+   ],
+   [
+    "findRun:1255 mas.js?v=117",
+    156
+   ],
+   [
+    "plain:903 mas.js?v=117",
+    136
+   ],
+   [
+    "idle.timeout:229 mas.js?v=117",
+    125
+   ],
+   [
+    "locate:980 mas.js?v=117",
+    123
+   ],
+   [
+    "layer:1591 bekhorot.x.j",
+    113
+   ],
+   [
+    "render:723 mas.js?v=117",
+    98
+   ],
+   [
+    "locateAll:1568 bekhorot.x.j",
+    93
+   ],
+   [
+    "(anon):1620 bekhorot.x.j",
+    90
+   ],
+   [
+    "bkLoad:207 bekhorot.x.j",
+    86
+   ],
+   [
+    "applyEdits:1071 mas.js?v=117",
+    85
+   ]
+  ]
+ },
+ "lt_load": [
+  [
+   632,
+   347
+  ],
+  [
+   1206,
+   352
+  ],
+  [
+   1558,
+   73
+  ],
+  [
+   1640,
+   560
+  ],
+  [
+   2686,
+   88
+  ],
+  [
+   3488,
+   51
+  ],
+  [
+   3643,
+   52
+  ]
+ ],
+ "load_quiet": 3695,
+ "ed": {
+  "ed": 1446,
+  "lost": 445,
+  "ap": 1001,
+  "struct": 175,
+  "done": null
+ },
+ "admin": true,
+ "bkbtn": "סקירה",
+ "idle_busy_10s": 215,
+ "open": 11323,
+ "open_detail": {
+  "sync": 235,
+  "quiet": 11322.89999999851,
+  "busy": 1056
+ },
+ "cpu_open": {
+  "self": [
+   [
+    "chunk:190 mas.js?v=1175730d",
+    7588
+   ],
+   [
+    "(program):0 ",
+    4608
+   ],
+   [
+    "getBoundingClientRect:0 ",
+    286
+   ],
+   [
+    "nrm:1517 bekhorot.x.js?v=3e41f5b4",
+    78
+   ],
+   [
+    "querySelector:0 ",
+    43
+   ],
+   [
+    "(idle):0 ",
+    34
+   ],
+   [
+    "srcLayerNow:674 mas.js?v=1175730d",
+    30
+   ],
+   [
+    "(anon):1571 bekhorot.x.js?v=3e41f5b4",
+    28
+   ],
+   [
+    "bkLocateAll:122 bekhorot.x.js?v=3e41f5b4",
+    19
+   ],
+   [
+    "(anon):126 bekhorot.x.js?v=3e41f5b4",
+    17
+   ],
+   [
+    "(garbage collector):0 ",
+    16
+   ],
+   [
+    "lastLineIsLone:164 mas.js?v=1175730d",
+    15
+   ],
+   [
+    "querySelectorAll:0 ",
+    14
+   ],
+   [
+    "(anon):72 bekhorot.x.js?v=3e41f5b4",
+    12
+   ],
+   [
+    "bkSlotHtml:72 bekhorot.x.js?v=3e41f5b4",
+    9
+   ],
+   [
+    "bkCompact:32 bekhorot.x.js?v=3e41f5b4",
+    8
+   ],
+   [
+    "requestAnimationFrame:0 ",
+    8
+   ],
+   [
+    "setStart:0 ",
+    7
+   ],
+   [
+    "closest:0 ",
+    6
+   ],
+   [
+    "(anon):337 lk-core.js?v=3994d078",
+    6
+   ],
+   [
+    "plain:903 mas.js?v=1175730d",
+    6
+   ],
+   [
+    "add:3063 mas.js?v=1175730d",
+    5
+   ],
+   [
+    "(anon):3062 mas.js?v=1175730d",
+    4
+   ],
+   [
+    "dafKey:974 mas.js?v=1175730d",
+    4
+   ],
+   [
+    "(anon):3065 mas.js?v=1175730d",
+    4
+   ]
+  ],
+  "incl": [
+   [
+    "chunk:190 mas.js?v=117",
+    7646
+   ],
+   [
+    "bkToggle:248 bekhorot.x.j",
+    232
+   ],
+   [
+    "bkRefresh:188 bekhorot.x.j",
+    218
+   ],
+   [
+    "(anon):673 mas.js?v=117",
+    179
+   ],
+   [
+    "srcLayerNow:674 mas.js?v=117",
+    178
+   ],
+   [
+    "(anon):1620 bekhorot.x.j",
+    160
+   ],
+   [
+    "layer:1591 bekhorot.x.j",
+    159
+   ],
+   [
+    "locateAll:1568 bekhorot.x.j",
+    158
+   ],
+   [
+    "bkBarDraw:259 bekhorot.x.j",
+    135
+   ],
+   [
+    "skNextInfo:1017 bekhorot.x.j",
+    135
+   ],
+   [
+    "window.skNextBtnHtml:1025 bekhorot.x.j",
+    135
+   ],
+   [
+    "bkCurOrd:406 bekhorot.x.j",
+    134
+   ],
+   [
+    "(anon):1571 bekhorot.x.j",
+    106
+   ],
+   [
+    "bkLocateAll:122 bekhorot.x.j",
+    80
+   ],
+   [
+    "nrm:1517 bekhorot.x.j",
+    78
+   ],
+   [
+    "lastLineIsLone:164 mas.js?v=117",
+    48
+   ],
+   [
+    "(anon):1573 bekhorot.x.j",
+    33
+   ],
+   [
+    "topAt:174 mas.js?v=117",
+    29
+   ],
+   [
+    "bkSlotHtml:72 bekhorot.x.j",
+    21
+   ],
+   [
+    "(anon):3062 mas.js?v=117",
+    19
+   ],
+   [
+    "slotsFull:3061 mas.js?v=117",
+    19
+   ],
+   [
+    "(anon):126 bekhorot.x.j",
+    17
+   ],
+   [
+    "bkStaleLost:104 bekhorot.x.j",
+    17
+   ],
+   [
+    "bkHL:174 bekhorot.x.j",
+    15
+   ],
+   [
+    "bkDomRange:140 bekhorot.x.j",
+    12
+   ]
+  ]
+ },
+ "stats": null,
+ "next_card": 217,
+ "next_quiet": 217,
+ "next": 217,
+ "next_runs": [
+  {
+   "card": 304.5,
+   "quiet": 15057.69999999553,
+   "id": "a7ccf42df6"
+  },
+  {
+   "card": 182.10000000149012,
+   "quiet": 182.10000000149012,
+   "id": "2ce38f11da"
+  },
+  {
+   "card": 214.20000000298023,
+   "quiet": 214.20000000298023,
+   "id": "309d49a076"
+  },
+  {
+   "card": 220.5,
+   "quiet": 220.5,
+   "id": "6be9326924"
+  }
+ ],
+ "cpu_next": {
+  "self": [
+   [
+    "chunk:190 mas.js?v=1175730d",
+    8150
+   ],
+   [
+    "(program):0 ",
+    6079
+   ],
+   [
+    "(idle):0 ",
+    4138
+   ],
+   [
+    "nrm:1517 bekhorot.x.js?v=3e41f5b4",
+    486
+   ],
+   [
+    "getBoundingClientRect:0 ",
+    379
+   ],
+   [
+    "querySelector:0 ",
+    258
+   ],
+   [
+    "hvRender:6823 mas.js?v=1175730d",
+    114
+   ],
+   [
+    "hvFont:6713 mas.js?v=1175730d",
+    114
+   ],
+   [
+    "(anon):1571 bekhorot.x.js?v=3e41f5b4",
+    109
+   ],
+   [
+    "hvScroll:6836 mas.js?v=1175730d",
+    71
+   ],
+   [
+    "srcLayerNow:674 mas.js?v=1175730d",
+    56
+   ],
+   [
+    "bkSlotHtml:72 bekhorot.x.js?v=3e41f5b4",
+    51
+   ],
+   [
+    "(anon):72 bekhorot.x.js?v=3e41f5b4",
+    48
+   ],
+   [
+    "(anon):126 bekhorot.x.js?v=3e41f5b4",
+    47
+   ],
+   [
+    "bkLocateAll:122 bekhorot.x.js?v=3e41f5b4",
+    46
+   ],
+   [
+    "updTop:128 mobile.js?v=77136f07",
+    42
+   ],
+   [
+    "plain:903 mas.js?v=1175730d",
+    40
+   ],
+   [
+    "(garbage collector):0 ",
+    36
+   ],
+   [
+    "querySelectorAll:0 ",
+    27
+   ],
+   [
+    "lastLineIsLone:164 mas.js?v=1175730d",
+    21
+   ],
+   [
+    "add:3063 mas.js?v=1175730d",
+    20
+   ],
+   [
+    "(anon):3062 mas.js?v=1175730d",
+    19
+   ],
+   [
+    "getClientRects:0 ",
+    18
+   ],
+   [
+    "closest:0 ",
+    16
+   ],
+   [
+    "bkPlace:319 bekhorot.x.js?v=3e41f5b4",
+    15
+   ]
+  ],
+  "incl": [
+   [
+    "chunk:190 mas.js?v=117",
+    8294
+   ],
+   [
+    "layer:1591 bekhorot.x.j",
+    949
+   ],
+   [
+    "locateAll:1568 bekhorot.x.j",
+    861
+   ],
+   [
+    "(anon):1590 bekhorot.x.j",
+    670
+   ],
+   [
+    "(anon):1571 bekhorot.x.j",
+    595
+   ],
+   [
+    "(anon):425 bekhorot.x.j",
+    531
+   ],
+   [
+    "nrm:1517 bekhorot.x.j",
+    486
+   ],
+   [
+    "(anon):1620 bekhorot.x.j",
+    280
+   ],
+   [
+    "bkLocateAll:122 bekhorot.x.j",
+    254
+   ],
+   [
+    "window.hvShow:6876 mas.js?v=117",
+    233
+   ],
+   [
+    "window.skAfterGo:1498 bekhorot.x.j",
+    233
+   ],
+   [
+    "(anon):673 mas.js?v=117",
+    229
+   ],
+   [
+    "srcLayerNow:674 mas.js?v=117",
+    227
+   ],
+   [
+    "(anon):1573 bekhorot.x.j",
+    175
+   ],
+   [
+    "hvOpenDaf:6865 mas.js?v=117",
+    149
+   ],
+   [
+    "(anon):926 lamed.js?v=c",
+    122
+   ],
+   [
+    "hvRender:6823 mas.js?v=117",
+    118
+   ],
+   [
+    "hvCss:6714 mas.js?v=117",
+    117
+   ],
+   [
+    "hvShell:6787 mas.js?v=117",
+    117
+   ],
+   [
+    "drawFin:844 lamed.js?v=c",
+    117
+   ],
+   [
+    "hvFont:6713 mas.js?v=117",
+    114
+   ],
+   [
+    "bkSlotHtml:72 bekhorot.x.j",
+    98
+   ],
+   [
+    "slotsFull:3061 mas.js?v=117",
+    84
+   ],
+   [
+    "(anon):3062 mas.js?v=117",
+    83
+   ],
+   [
+    "bkStaleLost:104 bekhorot.x.j",
+    80
+   ]
+  ]
+ },
+ "accept_card": 551,
+ "accept_quiet": 10939,
+ "accept": 10939,
+ "accept_runs": [
+  {
+   "card": 488.70000000298023,
+   "quiet": 488.70000000298023,
+   "id": "6be9326924"
+  },
+  {
+   "card": 3789.1999999955297,
+   "quiet": 33403.39999999851,
+   "id": "508e55e326"
+  },
+  {
+   "card": 613.5,
+   "quiet": 20742.29999999702,
+   "id": "95261b68a8"
+  },
+  {
+   "card": 486,
+   "quiet": 1135.8999999985099,
+   "id": "61e6d04da0"
+  }
+ ],
+ "cpu_accept": {
+  "self": [
+   [
+    "chunk:190 mas.js?v=1175730d",
+    26667
+   ],
+   [
+    "(program):0 ",
+    22321
+   ],
+   [
+    "getBoundingClientRect:0 ",
+    2488
+   ],
+   [
+    "(idle):0 ",
+    2039
+   ],
+   [
+    "(anon):1098 mas.js?v=1175730d",
+    1351
+   ],
+   [
+    "nrm:1517 bekhorot.x.js?v=3e41f5b4",
+    852
+   ],
+   [
+    "querySelector:0 ",
+    575
+   ],
+   [
+    "setAttribute:0 ",
+    519
+   ],
+   [
+    "bkLocateAll:122 bekhorot.x.js?v=3e41f5b4",
+    345
+   ],
+   [
+    "edBase:1097 mas.js?v=1175730d",
+    233
+   ],
+   [
+    "(anon):1571 bekhorot.x.js?v=3e41f5b4",
+    223
+   ],
+   [
+    "srcLayerNow:674 mas.js?v=1175730d",
+    175
+   ],
+   [
+    "querySelectorAll:0 ",
+    150
+   ],
+   [
+    "hvFont:6713 mas.js?v=1175730d",
+    141
+   ],
+   [
+    "(garbage collector):0 ",
+    126
+   ],
+   [
+    "(anon):72 bekhorot.x.js?v=3e41f5b4",
+    124
+   ],
+   [
+    "drawEd:2544 mas.js?v=1175730d",
+    120
+   ],
+   [
+    "(anon):126 bekhorot.x.js?v=3e41f5b4",
+    119
+   ],
+   [
+    "hvOpenDaf:6865 mas.js?v=1175730d",
+    85
+   ],
+   [
+    "plain:903 mas.js?v=1175730d",
+    81
+   ],
+   [
+    "updTop:128 mobile.js?v=77136f07",
+    79
+   ],
+   [
+    "hvRender:6823 mas.js?v=1175730d",
+    77
+   ],
+   [
+    "bkSlotHtml:72 bekhorot.x.js?v=3e41f5b4",
+    73
+   ],
+   [
+    "lastLineIsLone:164 mas.js?v=1175730d",
+    69
+   ],
+   [
+    "getClientRects:0 ",
+    55
+   ]
+  ],
+  "incl": [
+   [
+    "chunk:190 mas.js?v=117",
+    27000
+   ],
+   [
+    "bkDecide:513 bekhorot.x.j",
+    3011
+   ],
+   [
+    "bkKbDecide:367 bekhorot.x.j",
+    2921
+   ],
+   [
+    "(anon):378 bekhorot.x.j",
+    2867
+   ],
+   [
+    "setEdit:2148 mas.js?v=117",
+    2547
+   ],
+   [
+    "(anon):2162 mas.js?v=117",
+    2082
+   ],
+   [
+    "edBase:1097 mas.js?v=117",
+    1773
+   ],
+   [
+    "layer:1591 bekhorot.x.j",
+    1748
+   ],
+   [
+    "skmBtnShow:7339 mas.js?v=117",
+    1737
+   ],
+   [
+    "addEventListener.passive:7360 mas.js?v=117",
+    1737
+   ],
+   [
+    "locateAll:1568 bekhorot.x.j",
+    1612
+   ],
+   [
+    "render:723 mas.js?v=117",
+    1401
+   ],
+   [
+    "window.<computed>:359 mobile.js?v=",
+    1401
+   ],
+   [
+    "(anon):1098 mas.js?v=117",
+    1351
+   ],
+   [
+    "(anon):1571 bekhorot.x.j",
+    1075
+   ],
+   [
+    "(anon):1590 bekhorot.x.j",
+    953
+   ],
+   [
+    "bkLocateAll:122 bekhorot.x.j",
+    861
+   ],
+   [
+    "nrm:1517 bekhorot.x.j",
+    852
+   ],
+   [
+    "(anon):1620 bekhorot.x.j",
+    800
+   ],
+   [
+    "(anon):673 mas.js?v=117",
+    741
+   ],
+   [
+    "srcLayerNow:674 mas.js?v=117",
+    740
+   ],
+   [
+    "(anon):425 bekhorot.x.j",
+    583
+   ],
+   [
+    "bkRefresh:188 bekhorot.x.j",
+    574
+   ],
+   [
+    "(anon):1573 bekhorot.x.j",
+    320
+   ],
+   [
+    "(anon):187 bekhorot.x.j",
+    289
+   ]
+  ]
+ },
+ "errors": [
+  "404 https://leokmei.com/layout-audit.json",
+  "Failed to load resource: the server responded with a status of 404 ()",
+  "404 https://leokmei.com/layout-audit.json",
+  "Failed to load resource: the server responded with a status of 404 ()",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED",
+  "Failed to load resource: net::ERR_FAILED"
+ ],
+ "blocked": [
+  "PUT /edits (נענה מ-GET, בלי כתיבה)",
+  "PUT /edits (נענה מ-GET, בלי כתיבה)",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec",
+  "POST https://leokmei-suggest.m7654301.workers.dev/bakara/dec"
+ ],
+ "blocked_n": 6,
+ "pass": {
+  "load": false,
+  "open": false,
+  "next": false,
+  "accept": false
+ }
+}

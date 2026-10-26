@@ -76,11 +76,17 @@ async function addCost(env, usd) {
 /* ---- הדוגמאות (קובץ הריפו, ואם המנהל עדכן - המחסן גובר) ---- */
 async function examples(env) {
   const kv = await env.STORE.get('skm:ex', 'json');
-  return (kv && Array.isArray(kv.pairs) && kv.pairs.length) ? kv.pairs : EXAMPLES.pairs;
+  const rl = await env.STORE.get('skm:rules', 'json');
+  return { pairs: (kv && Array.isArray(kv.pairs) && kv.pairs.length) ? kv.pairs : EXAMPLES.pairs,
+           rules: (rl && Array.isArray(rl.rules)) ? rl.rules : [] };
 }
-function systemText(pairs) {
-  const ex = pairs.map((p, i) => `דוגמה ${i + 1} (${p.kind || ''}):\nלפני:\n${p.before}\nאחרי:\n${p.after}\nמה שיניתי: ${(p.changes || []).join(' · ')}`).join('\n\n');
-  return SAKEM_SYSTEM + '\n\nדוגמאות מתיקוני המחבר עצמו (לפני / אחרי):\n\n' + ex;
+function systemText(ex) {
+  const pairs = ex.pairs || ex;
+  const txt = pairs.map((p, i) => `דוגמה ${i + 1} (${p.kind || ''}):\nלפני:\n${p.before}\nאחרי:\n${p.after}\nמה שיניתי: ${(p.changes || []).join(' · ')}`).join('\n\n');
+  /* כללים שנלמדו מתיקוני המחבר בכפתור עצמו (גם תיקונים שעשה אחרי שקיבל), כל אחד עם הסיבה - גוברים על הכללים הכלליים */
+  const rules = (ex.rules || []).length ? '\n\nכללים שנלמדו מתיקוני המחבר בהצעות "סכם" (גוברים על הכללים הכלליים שלמעלה):\n' +
+    ex.rules.map((r, i) => (i + 1) + '. ' + r).join('\n') : '';
+  return SAKEM_SYSTEM + rules + '\n\nדוגמאות מתיקוני המחבר עצמו (לפני / אחרי):\n\n' + txt;
 }
 
 /* ---- אימות המקור: כל טקסט שנשלח קיים באתר או בעריכות המנהל ---- */
@@ -163,12 +169,13 @@ const SCHEMA = {
   type: 'object', additionalProperties: false, required: ['point', 'text', 'changes'],
   properties: { point: { type: 'string' }, text: { type: 'string' }, changes: { type: 'array', items: { type: 'string' } } },
 };
-async function callModel(env, key, sys, messages) {
+async function callModel(env, key, sys, messages, schema) {
+  const SCHEMA_ = schema || SCHEMA;
   const base = { model: MODEL, max_tokens: 16000, system: [{ type: 'text', text: sys, cache_control: { type: 'ephemeral' } }], messages };
   /* הבקשה המלאה: מאמץ בינוני, פלט JSON במבנה קבוע, וגיבוי אוטומטי בסירוב. אם השרת דוחה פרמטר
      (400) - פעם אחת בלי הגיבוי ובלי המבנה, וההנחיה עצמה דורשת JSON. */
   const tries = [
-    { body: Object.assign({}, base, { output_config: { effort: 'medium', format: { type: 'json_schema', schema: SCHEMA } }, fallbacks: 'default' }), beta: 'server-side-fallback-2026-07-01' },
+    { body: Object.assign({}, base, { output_config: { effort: 'medium', format: { type: 'json_schema', schema: SCHEMA_ } }, fallbacks: 'default' }), beta: 'server-side-fallback-2026-07-01' },
     { body: Object.assign({}, base, { output_config: { effort: 'medium' } }), beta: '' },
   ];
   let last = null;
@@ -257,6 +264,8 @@ export async function sakemApi(req, env, url, p, h) {
     return json({ ok: true, hasKey: !!(await getKey(env)), day: c.days[day()] || 0, month: c.usd || 0, n: c.n || 0, cap: CAP_USD,
                   capped: (c.usd || 0) >= CAP_USD, pairs: lg.pairs.length, fresh: fresh.length, rejects: lg.rejects || 0,
                   learned: !!(await env.STORE.get('skm:ex')),
+                  rules: (((await env.STORE.get('skm:rules', 'json')) || {}).rules || []),
+                  later: lg.pairs.reduce((n, x) => n + ((x.later || []).length), 0),
                   suggest: fresh.length >= 24 ? fresh.slice(-6).map((x) => x.id) : [], queue: q });
   }
   if (p === '/sakem/key') {
@@ -291,18 +300,63 @@ export async function sakemApi(req, env, url, p, h) {
     }
     return json({ ok: true });
   }
+  /* עריכה מאוחרת: המנהל תיקן בעורך שורה שנכתבה ב"סכם", אחרי שקיבל. נצמדת לאותה הצעה ביומן הלמידה. */
+  if (p === '/sakem/later') {
+    const id = String(b.id || '').slice(0, 40), was = String(b.was || '').slice(0, 4000), now = String(b.now || '').slice(0, 4000);
+    if (!id || !now || norm(was) === norm(now)) return json({ ok: true, skipped: true });
+    const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [], rejects: 0, applied: 0, rj: [] };
+    let pair = lg.pairs.find((x) => x.id === id);
+    if (!pair) {
+      const pr = await env.STORE.get('skm:p:' + id, 'json');
+      if (!pr) return json({ ok: true, skipped: 'no-proposal' });
+      pair = { id, slug: pr.slug, t: Date.now(), orig: pr.orig, prop: pr.text, final: pr.text };
+      lg.pairs.push(pair);
+    }
+    pair.later = (pair.later || []).filter((x) => norm(x.was) !== norm(was));
+    pair.later.push({ was, now, daf: String(b.daf || '').slice(0, 12), t: Date.now() });
+    pair.later = pair.later.slice(-20);
+    pair.t = Date.now();
+    if (lg.pairs.length > 300) lg.pairs = lg.pairs.slice(-300);
+    await env.STORE.put('skm:lg', JSON.stringify(lg));
+    return json({ ok: true, n: pair.later.length });
+  }
   if (p === '/sakem/examples') {
     const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [] };
     const fresh = lg.pairs.filter((x) => x.t > (lg.applied || 0)).filter((x) => x.orig.length < 1500);
-    /* המובהקים: הזוגות שבהם הנוסח הסופי רחוק ביותר מן ההצעה */
+    /* המובהקים: הזוגות שבהם הנוסח הסופי רחוק ביותר מן ההצעה (תיקון מאוחר מגדיל את המרחק) */
     const dist = (a, c) => { const A = new Set(norm(a).split(' ')), C = new Set(norm(c).split(' ')); let x = 0; A.forEach((w) => { if (!C.has(w)) x++; }); C.forEach((w) => { if (!A.has(w)) x++; }); return x / Math.max(1, A.size + C.size); };
-    const pick = fresh.map((x) => [dist(x.prop, x.final), x]).sort((a, c) => c[0] - a[0]).slice(0, 6).map((z) => z[1]);
+    const score = (x) => dist(x.prop, x.final) + 0.15 * (x.later || []).length;
+    const pick = fresh.map((x) => [score(x), x]).sort((a, c) => c[0] - a[0]).slice(0, 6).map((z) => z[1]);
+    const laterNote = (x) => (x.later || []).map((l) => 'ואחר כך תיקן בעורך: "' + l.was + '" ← "' + l.now + '"');
     const base = EXAMPLES.pairs.slice(0, 8);
-    const pairs = base.concat(pick.map((x) => ({ kind: 'נלמד מעריכת המנהל', before: x.orig, after: x.final, changes: ['נלמד מן הנוסח שהמנהל קיבל'] })));
+    const pairs = base.concat(pick.map((x) => ({ kind: 'נלמד מעריכת המנהל', before: x.orig, after: x.final,
+      changes: ['נלמד מן הנוסח שהמנהל קיבל'].concat(laterNote(x)) })));
+    /* להבין מדוע: המודל עובר על כל התיקונים (המיידיים והמאוחרים) ומנסח לכל אחד את הכלל שמאחוריו */
+    let nr = 0;
+    const key = await getKey(env);
+    if (key && fresh.length) {
+      const old = ((await env.STORE.get('skm:rules', 'json')) || { rules: [] }).rules;
+      const items = fresh.slice(-40).map((x, i) => '### תיקון ' + (i + 1) + '\nהמקור:\n' + x.orig.slice(0, 1200) + '\nהצעת המודל:\n' + x.prop.slice(0, 1200) +
+        '\nמה שהמחבר קיבל:\n' + x.final.slice(0, 1200) + ((x.later || []).length ? '\n' + laterNote(x).join('\n') : '')).join('\n\n');
+      const sys = 'אתה מנתח את תיקוני המחבר של "לאוקמי גירסא" (קיצור התלמוד) להצעות של כלי הקיצור. ' +
+        'לכל תיקון שאל: מה הכלל שמאחוריו - למה המחבר שינה כך את הצעת המודל. נסח כללים מותנים קצרים ("כש... - ..."), כל אחד עם הסיבה בקצרה. ' +
+        'כלל נכנס רק אם הוא חוזר בשני תיקונים לפחות, או שהוא חד-משמעי בתיקון אחד; תיקון מקומי שאין בו כלל - לא נכנס. ' +
+        'אחד עם הכללים הקיימים: עדכן כלל שהתחדד, מחק כלל שהתיקונים סותרים, ואל תכפיל. עד 12 כללים, בעברית, בלי מקף ארוך. פלט: JSON {"rules":[...]}';
+      const msg = (old.length ? 'הכללים הקיימים:\n' + old.map((r, i) => (i + 1) + '. ' + r).join('\n') + '\n\n' : '') + 'התיקונים החדשים:\n\n' + items;
+      const RSCH = { type: 'object', additionalProperties: false, required: ['rules'], properties: { rules: { type: 'array', items: { type: 'string' } } } };
+      const c = await callModel(env, key, sys, [{ role: 'user', content: msg }], RSCH);
+      if (c.j) {
+        await addCost(env, usdOf(c.j.usage));
+        const txt = (c.j.content || []).filter((z) => z.type === 'text').map((z) => z.text).join('');
+        let o = null; try { o = JSON.parse(txt); } catch (e) { try { o = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1)); } catch (e2) { o = null; } }
+        const rules = o && Array.isArray(o.rules) ? o.rules.map(String).map((r) => r.replace(/[–—]/g, '-').trim()).filter(Boolean).slice(0, 12) : [];
+        if (rules.length) { await env.STORE.put('skm:rules', JSON.stringify({ rules, t: Date.now(), from: fresh.length })); nr = rules.length; }
+      }
+    }
     await env.STORE.put('skm:ex', JSON.stringify({ pairs, t: Date.now() }));
     lg.applied = Date.now();
     await env.STORE.put('skm:lg', JSON.stringify(lg));
-    return json({ ok: true, n: pick.length });
+    return json({ ok: true, n: pick.length, rules: nr });
   }
 
   /* ---- הצעה חדשה / קצר עוד ---- */

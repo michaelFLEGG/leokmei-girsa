@@ -250,7 +250,45 @@
     try{r=skmApply(p,text)}catch(err){flash('לא הוחל: '+(err.message||err));return}
     skmClose();
     skmDone(p,edited?'edit':'accept',text);
+    skmRemember(p.id,text,r.recs||[]);
     flash(r.n?'הוחל: '+r.n+' שינויים, ויפורסמו עם שאר העריכות (Ctrl+Z מבטל)':'אין שינוי להחיל')}
+
+  /* =================== עריכה מאוחרת של שורה שנכתבה ב"סכם" (27.10.2026) ===================
+     גם תיקון שהמנהל עושה בעורך אחרי שקיבל את ההצעה הוא לקח: השורות שנכתבו נזכרות במכשיר
+     (נוסח ← מזהה ההצעה), וכל תיקון שלהן נשלח לנקודת הקליטה ונצמד לאותה הצעה ביומן הלמידה. */
+  const SKMK='lg-skm-made-'+SLUG;
+  function skmMade(){try{return JSON.parse(localStorage.getItem(SKMK)||'{}')}catch(e){return {}}}
+  const skmNorm=t=>nonik(String(t||'')).replace(/\s+/g,' ').trim();
+  function skmRemember(id,text,recs){
+    const m=skmMade();
+    SKC.parse(text).forEach(k=>{if(k.t==='line'){const t=skmNorm(SKC.plainI(k.v));if(t.length>3)m[t]=[id,Date.now()]}});
+    const ks=Object.keys(m);if(ks.length>600)ks.sort((a,b)=>m[a][1]-m[b][1]).slice(0,ks.length-600).forEach(k=>delete m[k]);
+    try{localStorage.setItem(SKMK,JSON.stringify(m))}catch(e){}
+    /* גם לפי מפתח המקום: רשומה שהוחלפה בעותק מן השרת מאבדת שדות מקומיים */
+    recs.forEach(e=>{if(e.op!=='struct'&&e.k){e._skm=id;e._skmNow=e.now;m['k:'+e.k]=[id,Date.now(),e.now]}});
+    try{localStorage.setItem(SKMK,JSON.stringify(m))}catch(e){}
+    saveED()}
+  SKM.lat={};
+  const skmCap0=capture;
+  capture=function(el){skmCap0(el);try{skmLater(el)}catch(e){}};
+  function skmLater(el){
+    if(!isAdmin()||SUGM)return;
+    const k=el&&el.dataset&&el.dataset.ek;if(!k)return;
+    const e=ED.find(x=>x.op!=='struct'&&x.k===k);if(!e||e.now===e.was)return;
+    let hit=null;
+    if(e._skm&&e._skmNow!==undefined&&skmNorm(e._skmNow)!==skmNorm(e.now))hit={id:e._skm,was:e._skmNow};
+    else{const m=skmMade(),hk=m['k:'+k],h=m[skmNorm(e.was)];
+      if(hk&&skmNorm(hk[2])!==skmNorm(e.now))hit={id:hk[0],was:hk[2]};
+      else if(h)hit={id:h[0],was:e.was}}
+    if(!hit)return;
+    SKM.lat[k]={id:hit.id,was:hit.was,now:e.now,daf:e.daf||''};
+    clearTimeout(SKM.latT);SKM.latT=setTimeout(skmLaterFlush,20000)}
+  function skmLaterFlush(){
+    const L=SKM.lat;SKM.lat={};
+    Object.keys(L).forEach(k=>{const x=L[k];
+      fetch(SUGGEST_API+'/sakem/later',{method:'POST',keepalive:true,headers:{'content-type':'application/json; charset=utf-8','x-admin-key':admKey()},
+        body:JSON.stringify({slug:SLUG,id:x.id,was:x.was,now:x.now,daf:x.daf})}).catch(()=>{})})}
+  addEventListener('pagehide',skmLaterFlush);
 
   /* =================== ההחלה: מאותן רשומות שהעורך כותב =================== */
   function skmStyOf(cls){return String(cls||'').split(' ').filter(c=>PCLS.indexOf(c)>-1).join(' ')}
@@ -488,7 +526,9 @@
     h+='<p><b>עלות:</b> היום '+usd(st.day)+' · החודש '+usd(st.month)+' מתוך תקרה של '+usd(st.cap)+(st.capped?' · <span class="skmwarn">הגעת לתקרת החודש</span>':'')+
        ' · '+(st.n||0)+' הצעות החודש'+(st.n?' · ממוצע '+usd(st.month/st.n)+' להצעה':'')+'</p>';
     h+='<p><b>למידה:</b> '+(st.pairs||0)+' זוגות (הצעה מול הנוסח שקיבלת אחרי עריכה) · '+(st.rejects||0)+' דחיות'+
-       ' · '+(st.fresh||0)+' מתוך 24 זוגות חדשים עד הצעת עדכון הדוגמאות'+(st.learned?' · הדוגמאות כבר עודכנו מן הלמידה':'')+'</p>';
+       ' · '+(st.later||0)+' תיקונים מאוחרים בעורך'+
+       ' · '+(st.fresh||0)+' מתוך 24 זוגות חדשים עד הצעת עדכון הדוגמאות'+(st.learned?' · הדוגמאות כבר עודכנו מן הלמידה':'')+'</p>'+
+       (st.rules&&st.rules.length?'<details><summary>כללים שנלמדו מתיקוניך ('+st.rules.length+')</summary><ol class="skmsmall">'+st.rules.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ol></details>':'');
     if(st.suggest&&st.suggest.length)h+='<p><button id="skmex">עדכן את דוגמאות הסכם ('+st.suggest.length+' זוגות חדשים)</button></p>';
     h+='<hr><p><b>תור הסולמיות (#):</b> <button id="skmhq">הכן הצעות לכל ה-# במסכת</button>'+
        (st.queue?' <button id="skmhqo">פתח את התור ('+st.queue+')</button>':'')+'</p><div id="skmhqs" class="skmsmall"></div>';
@@ -496,7 +536,7 @@
     $('#skmkeyb').onclick=async()=>{const v=$('#skmkey').value.trim();if(!v)return;
       try{await api('/sakem/key',{method:'POST',body:JSON.stringify({key:v})});$('#skmkey').value='';SKM.stat=null;flash('המפתח נשמר בשרת');skmPanel()}
       catch(e){flash('לא נשמר: '+e.message)}};
-    if($('#skmex'))$('#skmex').onclick=async()=>{try{const j=await api('/sakem/examples',{method:'POST',body:JSON.stringify({act:'apply'})});flash('הדוגמאות עודכנו ('+j.n+')');skmPanel()}catch(e){flash(e.message)}};
+    if($('#skmex'))$('#skmex').onclick=async()=>{try{const j=await api('/sakem/examples',{method:'POST',body:JSON.stringify({act:'apply'})});flash('הדוגמאות עודכנו ('+j.n+')'+(j.rules?' ו-'+j.rules+' כללים נוסחו מתיקוניך':''));skmPanel()}catch(e){flash(e.message)}};
     $('#skmhq').onclick=()=>skmHashPrep(st);
     if($('#skmhqo'))$('#skmhqo').onclick=()=>{m.remove();skmQOpen()}};
 

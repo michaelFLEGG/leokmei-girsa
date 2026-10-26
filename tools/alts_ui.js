@@ -59,17 +59,21 @@
 
   /* ---- איתור הפסקה של כל נקודה: לפי הטקסט המנורמל של אחד הנוסחים ---- */
   var LOC={};     /* id -> {s (שורת נתונים), el} */
+  /* (26.10.2026) האיתור נשמר לפי גרסת הנתונים (DV): בעבר רץ כל 0.9 שניות על כל מקומות המסכת
+     (נרמול של כל שורה), גם כשדבר לא השתנה. האלמנט שבדף נשלף מחדש רק כשהקודם כבר אינו בדף. */
+  var LOCV=-1,LOCS=null;
   function locateAll(){
-    LOC={};
     var S;try{S=slotsFull()}catch(e){return}
-    var by={};S.forEach(function(s){by[nrm(s.t)]=s});
+    if(S!==LOCS||LOCV!==(typeof DV!=='undefined'?DV:0)){
+      LOCS=S;LOCV=typeof DV!=='undefined'?DV:0;LOC={};
+      var by={};S.forEach(function(s){by[nrm(s.t)]=s});
+      AL.items.forEach(function(it){
+        var s=null;
+        for(var i=0;i<it.vn.length&&!s;i++)s=by[it.vn[i]]||null;
+        if(s)LOC[it.id]={s:s,el:null}})}
     var f=document.getElementById('flow');
-    AL.items.forEach(function(it){
-      var s=null;
-      for(var i=0;i<it.vn.length&&!s;i++)s=by[it.vn[i]]||null;
-      if(!s)return;
-      var el=f?f.querySelector('[data-ek="'+s.k+'"]'):null;
-      LOC[it.id]={s:s,el:el}})}
+    Object.keys(LOC).forEach(function(id){var l=LOC[id];
+      if(!l.el||!l.el.isConnected)l.el=f?f.querySelector('[data-ek="'+l.s.k+'"]'):null})}
   function curIndex(it){
     var l=LOC[it.id];if(!l)return -1;var n=nrm(l.s.t);
     var ed=null;try{ed=ED.find(function(x){return x.k===l.s.k})}catch(e){}
@@ -86,6 +90,8 @@
     var L=layerEl(),f=document.getElementById('flow');
     if(!f||!adm()){L.innerHTML='';return}
     if((typeof BOOK!=='undefined'&&BOOK)||(typeof PRINTING!=='undefined'&&PRINTING)){L.innerHTML='';return}
+    /* בזמן סקירה (bk-on) סימני הנוסחאות אינם מצוירים: לכל אחד קריאת מיקום אחרי כל גלילה */
+    if(document.body.classList.contains('bk-on')){if(L.firstChild)L.innerHTML='';return}
     locateAll();
     var fr=f.getBoundingClientRect(),have={};
     [].forEach.call(L.children,function(x){have[x.getAttribute('data-id')]=x});
@@ -101,8 +107,8 @@
         L.appendChild(el);have[it.id]=el}
       el.classList.toggle('dn',!!DEC[it.id]);
       /* בשוליים: מחוץ לשדה הטקסט, בצד שמאל של הפסקה (בעברית הטקסט נקרא מימין) */
-      var left=Math.max(2,Math.round(b.left-24)),top=Math.round(b.top+2);
-      el.style.left=left+'px';el.style.top=top+'px'});
+      var left=Math.max(2,Math.round(b.left-24))+'px',top=Math.round(b.top+2)+'px';
+      if(el.style.left!==left)el.style.left=left;if(el.style.top!==top)el.style.top=top});
     [].forEach.call(L.children,function(x){if(!seen[x.getAttribute('data-id')])x.remove()})}
   window.altLayer=layer;
   /* בדיקת שלמות (למנהל): כמה נקודות אותרו בטקסט הנוכחי, ואילו לא */
@@ -111,7 +117,9 @@
     return {total:AL.items.length,found:AL.items.length-miss.length,missing:miss}};
   addEventListener('resize',layerSoon);
   document.addEventListener('scroll',layerSoon,true);
-  setInterval(function(){if(adm()&&document.getElementById('flow'))layer()},900);
+  document.addEventListener('lg-dv',layerSoon);
+  /* גיבוי לתזוזות שאינן גלילה (גופנים, פריסת הזנב): קריאת מיקום של הנקודות שבמסך בלבד */
+  setInterval(function(){if(!document.hidden&&!document.body.classList.contains('bk-on')&&adm()&&document.getElementById('flow'))layer()},1500);
 
   /* ---- החלונית ---- */
   var OPEN=null,EDITV=null;

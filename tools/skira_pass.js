@@ -30,7 +30,7 @@
     if(!SK.rng)return true;
     const k=dafKey(f.daf);if(k===null||k===undefined)return false;
     return k>=SK.rng.a&&k<=SK.rng.b}
-  function skPendRaw(f){return bkStatus(f)==='pending'&&!SK.autoQ.has(f.id)&&!BK.STALE.has(f.id)&&BK.loc[f.id]}
+  function skPendRaw(f){return bkStatus(f)==='pending'&&!SK.autoQ.has(f.id)&&!BK.STALE.has(f.id)&&BK.loc[f.id]&&bkReady(f)}
   function skCands(){
     return BK.ord.filter(f=>skPendRaw(f)&&skInScope(f)&&skInRng(f)&&(!SK.mode||f.det===SK.mode)&&
       (SK.pool?SK.pool.has(f.id):!BK.SKIP.has(f.id)))}
@@ -48,15 +48,23 @@
   function skShow(f){
     if(SK.mode)bkHideCard(true);
     bkGo(f.id,!SK.mode)}
+  /* סוף המעבר (26.10.2026): "סוף" רק כשבאמת לא נשאר דבר בטווח שנבחר. נשארו הערות (שדולגו, שנוספו
+     מאחור, או בפרק אחר כשנבחר טווח) - הצעה אחת על כפתור "הבא בתור": להמשיך אליהן */
   function skEndOfPass(){
-    const base=BK.ord.filter(f=>skPendRaw(f)&&(!SK.mode||f.det===SK.mode)&&skInRng(f)&&skInScope(f));
-    const was=SK.pool;
-    const skipped=base.filter(f=>BK.SKIP.has(f.id)&&!(was&&was.has(f.id)&&false));
-    const behind=Array.from(SK.behind).filter(id=>BK.byId[id]&&bkStatus(BK.byId[id])==='pending');
+    const base=f=>skPendRaw(f)&&(!SK.mode||f.det===SK.mode)&&skInScope(f);
+    const inR=BK.ord.filter(f=>base(f)&&skInRng(f)),outR=SK.rng?BK.ord.filter(f=>base(f)&&!skInRng(f)):[];
     SK.pool=null;
-    if(!skipped.length&&!behind.length){SK.end={done:true};toast('סיימת את המעבר. אין הערות שממתינות.',4000)}
-    else SK.end={skipped:skipped.map(f=>f.id),behind};
+    if(inR.length)SK.end={more:{ids:inR.map(f=>f.id),daf:inR[0].daf,rng:0}};
+    else if(outR.length){const f0=outR[0],L=BK.loc[f0.id],si=L?secOf(L.pi):-1,sc=SEC[si]||{};
+      SK.end={more:{ids:outR.map(f=>f.id),daf:f0.daf,rng:1,perek:sc.perekName||sc.perek||''}}}
+    else{SK.end={done:true};toast('סיימת: אין עוד הערות ממתינות'+(SK.rng?' בטווח שבחרת':'')+'.',4000)}
     skBarRedraw()}
+  /* המשך אל מה שנשאר: מן הראשונה לפי סדר הטקסט */
+  window.skEndGo=function(){
+    const e=SK.end;if(!e||!e.more)return;
+    if(e.more.rng)SK.rng=null;
+    SK.pool=new Set(e.more.ids);SK.end=null;BK.curId='';SK.last='';SK.lastOrd=-1;SK.fromTop=true;
+    SK.behind.clear();skNext(1)};
   window.skEndAnswer=function(kind,yes){
     const e=SK.end;if(!e)return;
     const ids=e[kind]||[];
@@ -83,15 +91,16 @@
     const co=bkCurOrd();
     const n=skCands().filter(f=>BK.loc[f.id].ord>co).length;
     if(n)return {t:'הבא בתור ('+n+')',on:1};
+    if(SK.end&&SK.end.more){const m=SK.end.more;return {t:m.rng?'להמשיך לפרק '+(m.perek||'הבא')+'? ('+m.ids.length+')':'להמשיך: עוד '+m.ids.length+' (מדף '+(m.daf||'')+')',on:1,more:1}}
     const q=skActiveReq();
     if(q)return {t:skWaitText(q),on:0,wait:1};
-    if(SK.end&&!SK.end.done)return {t:'סוף המעבר - ראה למטה',on:0};
     return {t:'אין עוד הערות',on:0}}
   window.skNextBtnHtml=function(){
     const i=skNextInfo();
     return '<button class="go sknx'+(i.on?'':' idle')+'" id="sknext" onclick="skNextClick()" title="ההערה הבאה אחרי הנוכחית, לפי סדר הטקסט (Alt+חץ למטה)">'+esc(i.t)+(i.on?' ↓':'')+'</button>'};
   window.skNextClick=function(){
     const i=skNextInfo();
+    if(i.more){skEndGo();return}
     if(i.on){bkNext(1);return}
     if(i.wait){toast(i.t,5000);return}
     bkNext(1)};
@@ -205,8 +214,10 @@
     if(SK.bulk)h+=skBulkHtml();
     else if(SK.list)h+=skListHtml();
     else if(f){
-      h+='<div class="skdiff">'+skDiffHtml(f)+'</div>'+
-        '<div class="skmeta">'+esc(f.daf?'דף '+f.daf:'')+(f.sev?' · '+esc(f.sev):'')+(BK.SKIP.has(f.id)?' · נדחתה לסוף':'')+' · '+esc(bkSplitNote(f).n.slice(0,140))+'</div>';
+      /* (26.10.2026) ההצעה קודם (והשורה עצמה במצב "אחרי"), הנימוק מקופל */
+      h+='<div class="sug skdiff">'+bkSugHtml(f,bkCardOp(f))+'</div>'+
+        '<details class="skwhyd"'+(BK.whyOpen?' open':'')+'><summary>למה? <small class="kk">?</small></summary><div class="skdiff">'+skDiffHtml(f)+'</div>'+
+        '<div class="skmeta">'+esc(f.daf?'דף '+f.daf:'')+(f.sev?' · '+esc(f.sev):'')+(BK.SKIP.has(f.id)?' · נדחתה לסוף':'')+' · '+esc(bkSplitNote(f).n.slice(0,240))+'</div></details>';
       if(pend)h+='<div class="bt">'+
         '<button class="ok" onmousedown="event.preventDefault()" onclick="skPassDo(\'ok\')">קבל <small class="kk">Enter</small></button>'+
         '<button class="no" onmousedown="event.preventDefault()" onclick="skPassDo(\'no\')">דחה <small class="kk">Del</small></button>'+
@@ -222,24 +233,18 @@
       '<button onclick="SK.list=!SK.list;SK.bulk=null;skPassDraw()">'+(SK.list?'חזרה לכרטיס':'רשימה')+'</button>'+
       (SK.batch&&SK.batch.recs&&SK.batch.recs.length?'<button onclick="skBatchUndo()">בטל את האישור הגורף ('+SK.batch.recs.length+')</button>':'')+
       '</div>';
-    if(SK.end&&!SK.end.done){
-      const e=SK.end;
-      h+='<div class="skend">'+
-        (e.skipped&&e.skipped.length?'<div>'+skEndTxt('skipped',e.skipped.length)+' <button class="go" onclick="skEndAnswer(\'skipped\',1)">כן</button><button onclick="skEndAnswer(\'skipped\',0)">לא</button></div>':'')+
-        (e.behind&&e.behind.length?'<div>'+skEndTxt('behind',e.behind.length)+' <button class="go" onclick="skEndAnswer(\'behind\',1)">כן</button><button onclick="skEndAnswer(\'behind\',0)">לא</button></div>':'')+
-        '</div>'}
+    if(SK.end&&SK.end.more){
+      const m=SK.end.more;
+      h+='<div class="skend">'+(m.rng?'הטווח הושלם. נשארו '+m.ids.length+' בפרק '+esc(m.perek||'הבא'):'נשארו '+m.ids.length+' הערות שדילגת עליהן או שנוספו מאחור')+
+        ' <button class="go" onclick="skEndGo()">להמשיך</button></div>'}
     else if(SK.end&&SK.end.done){
       h+='<div class="skend">'+(SK.end.kept?'נשארו '+SK.end.kept+' הערות שמורות בלשונית "שדילגתי".':'סיימת את הסוג הזה.')+
         ' <button onclick="skNextType()">לעבור לסוג הבא?</button></div>'}
     el.innerHTML=h;
+    if(f&&pend&&!SK.list&&!SK.bulk)bkPrevShow(f,bkCardOp(f));else bkPrevClear();
     if(window.skChatRestore)skChatRestore()};
   window.skBarEnd=function(m){
-    if(SK.end&&!SK.end.done){
-      const e=SK.end;
-      m.insertAdjacentHTML('beforeend','<span class="skendbar">'+
-        (e.skipped&&e.skipped.length?skEndTxt('skipped',e.skipped.length)+' <button class="go" onclick="skEndAnswer(\'skipped\',1)">כן</button><button onclick="skEndAnswer(\'skipped\',0)">לא</button> ':'')+
-        (e.behind&&e.behind.length?skEndTxt('behind',e.behind.length)+' <button class="go" onclick="skEndAnswer(\'behind\',1)">כן</button><button onclick="skEndAnswer(\'behind\',0)">לא</button>':'')+
-        '</span>')}
+    /* מה שנשאר בסוף המעבר מוצע על כפתור "הבא בתור" עצמו (skNextInfo) */
     const st=skStatusText();
     if(st&&skActiveReq())m.insertAdjacentHTML('beforeend','<div class="skbarstat">'+esc(st)+'</div>')};
   window.skNextType=function(){
@@ -340,7 +345,7 @@
     const a=$('#skfrom'),b=$('#skto'),e=$('#sknow');if(!a||!e)return;
     const ka=dafKey(a.value),kb=dafKey(b.value);
     if(ka===null||kb===null||kb<ka){e.innerHTML='';return}
-    const L=BK.F.filter(f=>{const k=dafKey(f.daf);return k!==null&&k>=ka&&k<=kb&&bkStatus(f)==='pending'&&!SK.autoQ.has(f.id)&&!BK.STALE.has(f.id)});
+    const L=BK.F.filter(f=>{const k=dafKey(f.daf);return k!==null&&k>=ka&&k<=kb&&bkStatus(f)==='pending'&&!SK.autoQ.has(f.id)&&!BK.STALE.has(f.id)&&bkReady(f)});
     const by={};L.forEach(f=>{by[bkTyp(f)]=(by[bkTyp(f)]||0)+1});
     e.innerHTML='<div class="skready"><b>מוכן עכשיו בטווח:</b> '+L.length+' הערות'+
       (L.length?' ('+Object.keys(by).sort((x,y)=>SKORDER.indexOf(x)-SKORDER.indexOf(y)).map(k=>esc(SKT[k][0])+' '+by[k]).join(' · ')+')':'')+

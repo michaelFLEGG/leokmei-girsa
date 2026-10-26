@@ -174,7 +174,7 @@
       return;
     }
     if (G.paused) return;
-    G.dirty && updateCur();
+    G.dirty && !document.body.classList.contains('bk-on') && updateCur();
     var k = curKey();
     if (!k) return;
     var s = session();
@@ -280,6 +280,7 @@
   function drawFin() {
     var box = $('#lm-fin'), p = G.cur;
     if (!box || !p) return;
+    if (document.body.classList.contains('bk-on')) { if (box.style.display !== 'none') box.style.display = 'none'; return; }
     var pi = p.pi, last = G.lastUnit[pi], row = last && document.getElementById('u' + last);
     var done = LG.amudInfo(SLUG, p.d).st === 'done' && (LG.amudInfo(SLUG, p.d).a.dates.indexOf(LG.ymd(Date.now())) > -1);
     if (!row || !G.vis.has(row) || done) { box.style.display = 'none'; return; }
@@ -351,7 +352,9 @@
       var t = ev === 'scroll' ? $('#flow') : document;
       t.addEventListener(ev, act, { passive: true, capture: true });
     });
-    $('#flow').addEventListener('scroll', function () { G.dirty = true; if (!document.body.classList.contains('ed')) drawFin(); }, { passive: true });
+    /* ציור "סיימתי את העמוד" בגלילה: פעם אחת לפריים, ולא בזמן עריכה או סקירה (bk-on): הוא קורא מיקומים וכותב סגנון (26.10.2026) */
+    var finQ = 0;
+    $('#flow').addEventListener('scroll', function () { G.dirty = true; if (finQ || document.body.classList.contains('ed') || document.body.classList.contains('bk-on')) return; finQ = requestAnimationFrame(function () { finQ = 0; drawFin(); }); }, { passive: true });
     document.addEventListener('visibilitychange', function () {
       if (document.visibilityState === 'hidden') { T.savePos(); flush(true); }
       else { G.lastTick = Date.now(); G.act = Date.now(); }
@@ -361,7 +364,7 @@
     setInterval(tick, 1000);
     setInterval(function () {
       /* בעריכת מנהל אין "מקום קריאה" לצייר: הציור כופה פריסה (נמדד 12.10.2026) */
-      if (document.body.classList.contains('ed')) return;
+      if (document.body.classList.contains('ed') || document.body.classList.contains('bk-on')) return;
       if (G.dirty) updateCur(); drawClock(); drawFin();
     }, 1500);
     G.lastTick = Date.now();

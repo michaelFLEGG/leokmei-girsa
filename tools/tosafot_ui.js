@@ -300,7 +300,7 @@
   window.tsLayer=tsLayer;
   addEventListener('resize',function(){tsLayerSoon();tpFit()});
   document.addEventListener('scroll',tsLayerSoon,true);
-  setInterval(function(){if(document.querySelector('#flow .tsa'))tsLayer()},700);
+  setInterval(function(){if(!document.body.classList.contains('bk-on')&&document.querySelector('#flow .tsa'))tsLayer()},700);
 
   function lineOf(ref){var m=/\.(\d+)$/.exec(ref||'');return m?+m[1]:0}
   function placeMark(it,rows){

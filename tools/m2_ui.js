@@ -300,7 +300,7 @@
     if(EDIT){setEdit(false);return}
     if(isAdmin()&&(admKey()||ONGESHER)){SUGM=false;setEdit(true);return}
     sugEnter()}
-  function edBtnLabel(){const b=$('#edbtn');if(b)b.textContent=(isAdmin()&&(admKey()||ONGESHER))?'עריכה':'הצע תיקון'}
+  function edBtnLabel(){const b=$('#edbtn');if(!b)return;const t=(isAdmin()&&(admKey()||ONGESHER))?'עריכה':'הצע תיקון';if(b.textContent!==t)b.textContent=t}
   document.addEventListener('DOMContentLoaded',()=>{edBtnLabel();setTimeout(edBtnLabel,1200);setInterval(edBtnLabel,4000)});
 
   /* ---------- ו. פנלים מנוהלים במקום אחד ----------

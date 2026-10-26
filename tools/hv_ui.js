@@ -20,7 +20,9 @@
   function hvFont(){const f=document.getElementById('flow');const px=f?parseFloat(getComputedStyle(f).fontSize):0;return Math.max(16,Math.round((px||17)*10)/10)}
   function hvCss(){
     let st=document.getElementById('hvcss');if(!st){st=document.createElement('style');st.id='hvcss';document.head.appendChild(st)}
-    st.textContent='#hvx{position:fixed;top:0;left:0;width:'+HV.w+'px;max-width:96vw;height:100%;background:#fffdf4;border-right:2px solid #7a5a00;z-index:1190;box-sizing:border-box;direction:rtl;box-shadow:2px 0 12px rgba(0,0,0,.25);display:flex;flex-direction:column;color:#2b2620}'+
+    /* (26.10.2026) נכתב רק כשהשתנה: כתיבה של גיליון סגנון פוסלת את הסגנון של כל הדף, ובכל מעבר להערה
+       בסקירה היא כפתה חישוב סגנון של כל המסכת */
+    const css='#hvx{position:fixed;top:0;left:0;width:'+HV.w+'px;max-width:96vw;height:100%;background:#fffdf4;border-right:2px solid #7a5a00;z-index:1190;box-sizing:border-box;direction:rtl;box-shadow:2px 0 12px rgba(0,0,0,.25);display:flex;flex-direction:column;color:#2b2620}'+
       '#hvx.col{width:36px}#hvx.col .hvbody,#hvx.col #hvgrip{display:none}#hvx .hvexp{display:none}#hvx.col .hvexp{display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:8px}'+
       '#hvx .hvexp button{font:inherit;border:1px solid #b9a97c;background:#f6f1e2;border-radius:5px;cursor:pointer;padding:2px 4px}#hvx .hvexp span{writing-mode:vertical-rl;color:#7a5a00;font-weight:700;font-size:15px}'+
       '#hvx .hvbody{display:flex;flex-direction:column;height:100%;min-height:0}'+
@@ -35,11 +37,12 @@
       '#hvx .hvfoot{flex:none;padding:3px 8px;border-top:1px solid #e6dfcb;font-size:11px;color:#8a7d66}#hvx .hvwarn{color:#8a3b2f}'+
       '#hvgrip{position:absolute;top:0;right:-5px;width:10px;height:100%;cursor:ew-resize;z-index:2;touch-action:none}#hvgrip:hover{background:rgba(122,90,0,.25)}'+
       '@media print{#hvx{display:none!important}}';
+    if(st.textContent!==css)st.textContent=css;
     hvLayout()}
   /* במסך רחב הלוח מצמצם את אזור הקריאה ולא מכסה אותו; בצר - צף */
   function hvLayout(){
     const open=!!document.getElementById('hvx')&&HV.on,wide=innerWidth>=1100;
-    document.body.style.paddingLeft=(open&&wide)?((HV.col?36:HV.w)+'px'):''}
+    const pl=(open&&wide)?((HV.col?36:HV.w)+'px'):'';if(document.body.style.paddingLeft!==pl)document.body.style.paddingLeft=pl}
   async function hvLoad(daf){
     const key=hvKey(daf);if(key==null)return null;const c=Math.floor(key/12),ck=SLUG+'|'+daf;
     if(ck in HV.cache)return HV.cache[ck];

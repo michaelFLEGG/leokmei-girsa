@@ -133,7 +133,8 @@
     if (f && f.scrollHeight > f.clientHeight + 40 && curMode() !== 'book') part = Math.min(1, f.scrollTop / (f.scrollHeight - f.clientHeight));
     var ratio = Math.min(1, (i + (curMode() === 'vert' ? 0 : part * 0)) / n + (1 / n) * part * (curMode() === 'vert' ? 0 : 1));
     if (curMode() === 'vert') ratio = Math.min(1, (i + 1) / n);
-    prog.firstChild.style.width = Math.round(ratio * 1000) / 10 + '%';
+    var w = Math.round(ratio * 1000) / 10 + '%';
+    if (prog.firstChild.style.width !== w) prog.firstChild.style.width = w;   /* כתיבה רק כשמשתנה: אחרת כל קריאה אחריה כופה פריסה */
   }
 
   /* ------------------------------------------------------------------ גיליונות */
@@ -374,6 +375,7 @@
   }
   addEventListener('resize', onResize); addEventListener('orientationchange', onResize);
   classify(); applyMode(false); updTop();
-  setInterval(updTop, 700);
+  /* בזמן סקירה (bk-on) מושהה: הוא קורא את גובה הזרם */
+  setInterval(function () { if (!document.body.classList.contains('bk-on')) updTop(); }, 700);
   window.LGMOBILE = { classify: classify, applyMode: applyMode, dev: dev };
 })();

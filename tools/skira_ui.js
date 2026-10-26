@@ -117,7 +117,7 @@
   /* ---- מקלדת: Enter קבל, Delete דחה, חצים, E ערוך, C שוחח, Ctrl+Z ביטול ---- */
   function skTyping(t){return t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))}
   document.addEventListener('keydown',e=>{
-    if(!BK.ON||e.ctrlKey||e.metaKey||e.altKey)return;
+    if(!BK.ON||e.ctrlKey||e.metaKey||e.altKey||e.defaultPrevented)return;
     if(skTyping(e.target))return;
     const c=e.code;
     const f=BK.byId[BK.curId];
@@ -129,7 +129,11 @@
     if(c==='Enter'||c==='NumpadEnter'){
       if(e.target&&/^(BUTTON|A)$/.test(e.target.tagName))return;
       e.preventDefault();e.stopPropagation();bkKbDecide(f,'ok');return}
-    if(c==='Delete'||c==='Backspace'){e.preventDefault();e.stopPropagation();if(SK.mode&&!e.shiftKey){BK.rs='';bkKbDecide(f,'no')}else skRejectOpen(f.id);return}
+    /* (26.10.2026) Delete דוחה מיד ועובר להבאה; הסיבה אינה חובה (רצועה קטנה אחרי המעבר).
+       1/2/3 בוחר נוסח ומחיל. ? פותח את הנימוק. Shift+Delete: חלונית הסיבות כמו קודם */
+    if(c==='Delete'||c==='Backspace'){e.preventDefault();e.stopPropagation();if(e.shiftKey&&!SK.mode)skRejectOpen(f.id);else bkRejectNow(f.id);return}
+    if(/^(Digit|Numpad)[123]$/.test(c)){e.preventDefault();e.stopPropagation();bkAltPick(f.id,+c.slice(-1)-1,1);return}
+    if(e.key==='?'||c==='Slash'){e.preventDefault();e.stopPropagation();bkWhy();return}
     if(c==='KeyE'){e.preventDefault();e.stopPropagation();bkDecide(f.id,'edit');return}
     if(c==='KeyC'){e.preventDefault();e.stopPropagation();skChat(f.id);return}
     if(c==='KeyS'){e.preventDefault();e.stopPropagation();skSkip(f.id);return}
@@ -155,7 +159,7 @@
       '<select onchange="SK.FIL.conf=this.value;skDrawPanel()">'+opt([['','כל רמות הוודאות'],['גבוה','ודאי'],['בינוני','סביר'],['נמוך','ספק']],F.conf)+'</select>'+
       '<select onchange="SK.FIL.daf=this.value;skDrawPanel()">'+opt(dafs,F.daf)+'</select></div>';
     const pass=f=>{const st=bkStatus(f);
-      if(F.st==='pend'&&(st!=='pending'||(SK.autoQ&&SK.autoQ.has(f.id))||BK.STALE.has(f.id)))return false;if(F.st==='todo'&&st!=='todo')return false;
+      if(F.st==='pend'&&(st!=='pending'||(SK.autoQ&&SK.autoQ.has(f.id))||BK.STALE.has(f.id)||!bkReady(f)))return false;if(F.st==='todo'&&st!=='todo')return false;
       if(F.st==='skipped'&&!(st==='pending'&&BK.SKIP.has(f.id)))return false;
       if(F.st==='done'&&(st==='pending'||st==='todo'))return false;
       if(F.typ&&bkTyp(f)!==F.typ)return false;if(F.sev&&f.sev!==F.sev)return false;
@@ -180,9 +184,24 @@
         return F.st==='all'||(F.st==='pend'?!dn:dn)}).filter(it=>!F.daf||(F.daf.replace(/[.:]/g,'')===String(it.daf||'').replace(/[.:]/g,'')));
       if(al.length)h+='<details class="grp" open><summary><b style="color:'+SKT.i[1]+'">'+SKT.i[0]+'</b> <span class="n">('+al.length+')</span></summary><div class="gb">'+
         al.map(it=>'<div class="it" onclick="altGo(\''+esc(it.id)+'\')"><small>דף '+esc(it.daf||'')+(window.altDecided(it.id)?' · הוכרע':'')+'</small><br><small>'+esc(((it.variants[0]||{}).text||'').replace(/[⟦⟧]/g,'').slice(0,110))+'</small></div>').join('')+'</div></details>'}
-    if(lost.length)h+='<h3>שלא אותרו ('+lost.length+')</h3><div class="dim">הטקסט השתנה מאז הסקירה ולכן הן אינן בתוקף. אינן נתלות בשורה אחרת.</div>'+
-      lost.map(f=>'<div class="it" onclick="bkShowLost(\''+f.id+'\')"><small>'+esc(f.daf||'')+' · '+esc(f.kind)+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span></div>').join('');
+    if(lost.length)h+='<div class="dim" style="margin-top:6px">'+lost.length+' הערות שלא אותרו - בלשונית "ניהול".</div>';
     h+='<div class="gbt" style="margin-top:8px"><button onclick="skExportDocx()">ייצוא ההערות הפתוחות לוורד</button></div>';
+    return h}
+  /* לשונית "ניהול" (26.10.2026): מה שאינו בתור של המחבר - הערות בלי הצעה כתובה (חזרו להפקה),
+     הערות שלא אותרו בטקסט, והערות שהטקסט כבר מכסה אותן (התיישנו). לא בסרגל הראשי */
+  function skMngHtml(){
+    const P=BK.F.filter(f=>bkStatus(f)==='pending');
+    const back=P.filter(f=>!bkReady(f)),lost=P.filter(f=>bkReady(f)&&!BK.loc[f.id]),stale=P.filter(f=>BK.STALE.has(f.id));
+    const go=f=>BK.loc[f.id]?'bkGo(\''+f.id+'\',true)':'bkShowLost(\''+f.id+'\')';
+    const row=f=>'<div class="it" onclick="'+go(f)+'"><small>'+esc(f.daf||'')+' · '+esc(f.kind||f.det)+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span>'+(f.fix?'<br><small>'+esc(f.fix.slice(0,120))+'</small>':'')+'</div>';
+    let h='<div class="skf"><b>מה שאינו בתור</b><div class="dim">ההערות כאן אינן מגיעות אליך. הן חוזרות להפקה עד שתיכתב להן הצעה מוכנה להחלה.</div></div>';
+    const by={};back.forEach(f=>{const k=f.kind||f.det;(by[k]=by[k]||[]).push(f)});
+    h+='<details class="grp"'+(back.length?' open':'')+'><summary><b>חזרו להפקה</b> <span class="n">('+back.length+')</span></summary><div class="gb">'+
+      Object.keys(by).sort((a,b)=>by[b].length-by[a].length).map(k=>'<div class="dim" style="margin-top:4px"><b>'+esc(k)+'</b> ('+by[k].length+')</div>'+by[k].map(row).join('')).join('')+'</div></details>';
+    h+='<details class="grp"><summary><b>לא אותרו</b> <span class="n">('+lost.length+')</span></summary><div class="gb"><div class="dim">הטקסט השתנה מאז הסקירה ולכן הן אינן בתוקף. אינן נתלות בשורה אחרת.</div>'+
+      lost.map(row).join('')+'</div></details>';
+    h+='<details class="grp"><summary><b>התיישנו</b> <span class="n">('+stale.length+')</span></summary><div class="gb"><div class="dim">הטקסט הנוכחי כבר מכסה אותן (תוקן בעריכה).</div>'+
+      stale.map(row).join('')+'</div></details>';
     return h}
   /* אומדן (19.10.2026): מהירה = קוד בלבד (חינם); רגילה = מודל קטן + ביאור חברותא (נמדד בכורות: כ-19 אלף טוקנים לעמוד, כחצי אגורה); מעמיקה = גם מאמת חזק */
   function skEst(depth,n){return depth==='full'?15000+38000*n:depth==='reg'?19000*n:0}
@@ -254,9 +273,10 @@
   async function skLrLoad(){try{const r=await skGet('/skira/learned');SK.LR=r.doc}catch(e){}}
   window.skDrawPanel=function(){
     const box=$('#bkpb');if(!box)return;
-    const T=[['notes','הערות'],['req','סקור עכשיו'],['auto','תוקן אוטומטית'],['learn','מה למדתי']];
+    const T=[['notes','הערות'],['req','סקור עכשיו'],['auto','תוקן אוטומטית'],['mng','ניהול'],['learn','מה למדתי']];
     let h=(window.skHeadHtml?skHeadHtml():'')+'<div class="sktabs">'+T.map(t=>'<button class="'+(SK.tab===t[0]?'on':'')+'" onclick="skTab(\''+t[0]+'\')">'+t[1]+'</button>').join('')+'</div>';
     if(SK.tab==='auto')h+=skAutoHtml();
+    else if(SK.tab==='mng')h+=skMngHtml();
     else if(SK.tab==='notes')h+=(window.skTypesHtml?skTypesHtml():'')+skNotesHtml();
     else if(SK.tab==='req'){h+=skReqNowHtml()+skQHtml();
       if(SK.Q===null)skQLoad().then(()=>{if(SK.tab==='req')skDrawPanel()})}

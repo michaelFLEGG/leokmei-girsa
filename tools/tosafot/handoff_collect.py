@@ -18,6 +18,7 @@
     python3 tools/tosafot/handoff_collect.py save <קובץ-תוצאת-הורדה> [id=<מזהה>] [modified=<זמן>]   # הורדה מהדרייב ל-inbox/
     python3 tools/tosafot/handoff_collect.py savezip <קובץ-זיפ> [id=<מזהה>] [modified=<זמן>]   # זיפ תוצרים: פותח, מניח ב-inbox/ ורושם כנקלט
     python3 tools/tosafot/handoff_collect.py savebatch <קובץ-אצווה> [id=<מזהה>] [modified=<זמן>] [name=<שם>]   # אצווה-*.json: תוצרים ל-inbox/, לוח ויומן ל-batches/
+    python3 tools/tosafot/handoff_collect.py savelog <מזהה-דרייב> [modified=<זמן>] [name=<שם>]   # הורדה שהגיעה בתוך השיחה: מיומן השיחה, בלי העתקה ביד
     python3 tools/tosafot/handoff_collect.py collect                       # קליטה, פרסום, דואר ולוח
     python3 tools/tosafot/handoff_collect.py sent <מזהה>                   # סימון מייל שנשלח
 """
@@ -234,6 +235,57 @@ def cmd_savebatch(path, file_id=None, modified=None, bname=None):
                           'out': n_put, 'older_kept': n_old}
     jdump(ibp, ib)
     log('אצווה %s נקלטה ל-inbox: %d תוצרים הונחו, %d ישנים מהקיימים לא הונחו; הלוח והיומן נשמרו ב-batches/' % (bname, n_put, n_old))
+
+
+def _from_transcript(file_id):
+    """תוצאת הורדה קטנה מגיעה בתוך השיחה ולא לקובץ, והעתקת base64 ביד אינה נאמנה (26.10.2026: שלוש יחידות השלמה אבדו כך
+    ביומיים). כל תוצאת כלי נשמרת ביומן השיחה (~/.claude/projects/**/*.jsonl), ולכן מוציאים אותה משם כמות שהיא."""
+    root = os.path.expanduser(os.path.join('~', '.claude', 'projects'))
+    logs = sorted(glob.glob(os.path.join(root, '**', '*.jsonl'), recursive=True), key=os.path.getmtime, reverse=True)[:8]
+    hit = []
+
+    def walk(x):
+        if isinstance(x, str):
+            if file_id in x and '"content":"' in x:
+                try:
+                    j = json.loads(x)
+                    if isinstance(j, dict) and j.get('id') == file_id and isinstance(j.get('content'), str):
+                        hit.append(j)
+                except Exception:
+                    pass
+        elif isinstance(x, dict):
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+    for lp in logs:
+        for line in io.open(lp, encoding='utf-8', errors='replace'):
+            if file_id in line:
+                try:
+                    walk(json.loads(line))
+                except Exception:
+                    pass
+        if hit:
+            return hit[-1]
+    return None
+
+
+def cmd_savelog(file_id, modified=None, name=None):
+    """הורדה שהגיעה בתוך השיחה: מוציא אותה מיומן השיחה לפי מזהה הקובץ בדרייב, ומעביר ל-save / savezip / savebatch לפי השם."""
+    import tempfile
+    j = _from_transcript(file_id)
+    if not j:
+        raise SystemExit('עצירה: תוצאת ההורדה של %s לא נמצאה ביומן השיחה. הורד אותה שוב ב-download_file_content והרץ שוב' % file_id)
+    name = name or j.get('title') or ''
+    tmp = os.path.join(tempfile.gettempdir(), 'handoff-%s.json' % file_id)
+    io.open(tmp, 'w', encoding='utf-8').write(json.dumps(j))
+    if name.endswith('.zip'):
+        cmd_savezip(tmp, file_id, modified, name)
+    elif name.startswith('אצווה-'):
+        cmd_savebatch(tmp, file_id, modified, name)
+    else:
+        cmd_save(tmp, name, file_id, modified)
 
 
 def cmd_sent(mid):
@@ -549,6 +601,9 @@ def main(argv):
     elif cmd == 'savebatch':
         kv = dict(a.split('=', 1) for a in argv[3:] if '=' in a)
         cmd_savebatch(argv[2], kv.get('id'), kv.get('modified'), kv.get('name'))
+    elif cmd == 'savelog':
+        kv = dict(a.split('=', 1) for a in argv[3:] if '=' in a)
+        cmd_savelog(argv[2], kv.get('modified'), kv.get('name'))
     elif cmd == 'collect':
         cmd_collect()
     elif cmd == 'sent':

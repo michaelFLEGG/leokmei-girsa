@@ -310,6 +310,102 @@
     "flagged": 0,
     "questions": 15
    }
+  },
+  "19": {
+   "status": "published",
+   "published": "2026-10-26T18:16:37Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p19-u01",
+    "shabbat-p19-u02",
+    "shabbat-p19-u03"
+   ],
+   "result": {
+    "generated": 61,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 44
+   }
+  },
+  "20": {
+   "status": "published",
+   "published": "2026-10-26T18:16:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p20-u01",
+    "shabbat-p20-u02"
+   ],
+   "result": {
+    "generated": 26,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 19
+   }
+  },
+  "21": {
+   "status": "published",
+   "published": "2026-10-26T18:16:40Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p21-u01"
+   ],
+   "result": {
+    "generated": 17,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 15
+   }
+  },
+  "22": {
+   "status": "published",
+   "published": "2026-10-26T18:16:42Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p22-u01",
+    "shabbat-p22-u02"
+   ],
+   "result": {
+    "generated": 40,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 25
+   }
+  },
+  "23": {
+   "status": "published",
+   "published": "2026-10-26T18:16:44Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p23-u01",
+    "shabbat-p23-u02"
+   ],
+   "result": {
+    "generated": 37,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 26
+   }
+  },
+  "24": {
+   "status": "published",
+   "published": "2026-10-26T18:16:45Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shabbat-p24-u01",
+    "shabbat-p24-u02"
+   ],
+   "result": {
+    "generated": 31,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 19
+   }
   }
  },
  "created": "2026-10-25T18:46:16Z",
@@ -421,7 +517,44 @@
    "mean": 0.184,
    "n": 2,
    "at": "2026-10-25T18:46:52Z"
+  },
+  {
+   "perek": 19,
+   "mean": 0.414,
+   "n": 5,
+   "at": "2026-10-26T18:16:35Z"
+  },
+  {
+   "perek": 20,
+   "mean": 0.372,
+   "n": 3,
+   "at": "2026-10-26T18:16:37Z"
+  },
+  {
+   "perek": 21,
+   "mean": 0.167,
+   "n": 1,
+   "at": "2026-10-26T18:16:38Z"
+  },
+  {
+   "perek": 22,
+   "mean": 0.306,
+   "n": 3,
+   "at": "2026-10-26T18:16:40Z"
+  },
+  {
+   "perek": 23,
+   "mean": 0.51,
+   "n": 3,
+   "at": "2026-10-26T18:16:42Z"
+  },
+  {
+   "perek": 24,
+   "mean": 0.36,
+   "n": 3,
+   "at": "2026-10-26T18:16:44Z"
   }
  ],
- "updated": "2026-10-25T18:46:53Z"
+ "updated": "2026-10-26T18:16:45Z",
+ "done": "2026-10-26T18:16:45Z"
 }

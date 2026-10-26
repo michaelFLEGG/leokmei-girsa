@@ -266,7 +266,7 @@ def publish(slug, perek, c, work, flagged, only=None):
     if not rep['ok']:
         raise Halt('שער הסדר נכשל: ' + '; '.join(rep['errors'][:5]))
     anchors = jload(ap) or anchors
-    r = subprocess.run([sys.executable, os.path.join(HERE, 'make_live.py'), slug, str(perek)], capture_output=True, text=True, encoding='utf-8')
+    r = subprocess.run([sys.executable, os.path.join(HERE, 'make_live.py'), slug, str(perek)], capture_output=True, text=True, encoding='utf-8', env=dict(os.environ, PYTHONIOENCODING='utf-8'))
     if r.returncode != 0:
         raise Halt('make_live נכשל: ' + (r.stderr or r.stdout)[-400:])
     # שאלות (14.10.2026): קובץ אחד למסכת. שאלה שעברה את השערים והמבקר מתפרסמת מיד (סטטוס מפורסם), וההגהה בדיעבד:

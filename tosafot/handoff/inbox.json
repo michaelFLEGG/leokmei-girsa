@@ -3,5 +3,16 @@
  "units": "1tdvtQsM1pigpnR1G9uhivDLBTW6t2Nj4",
  "account": "mp7273@gmail.com",
  "connected": "2026-10-26T06:38:54Z",
- "note": "מתוך מייל החיבור \"[מפעל התוס'] חיבור\" מהחשבון השני. התיקייה משותפת עם m7654301@gmail.com בלבד, לא בקישור ציבורי."
+ "note": "מתוך מייל החיבור \"[מפעל התוס'] חיבור\" מהחשבון השני. התיקייה משותפת עם m7654301@gmail.com בלבד, לא בקישור ציבורי.",
+ "batches": {
+  "1-Nz4ersxHZTi9vcz7Ae_dwl6DnA8JOQw|2026-10-26T18:07:49.319Z": {
+   "name": "אצווה-2026-10-26-2002.json",
+   "id": "1-Nz4ersxHZTi9vcz7Ae_dwl6DnA8JOQw",
+   "modified": "2026-10-26T18:07:49.319Z",
+   "opened": "2026-10-26T18:16:13Z",
+   "units": 43,
+   "out": 43,
+   "older_kept": 0
+  }
+ }
 }

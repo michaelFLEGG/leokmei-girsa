@@ -1,0 +1,156 @@
+{
+ "slug": "pesachim",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-10-26T18:16:30Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p01-u01",
+    "pesachim-p01-u02",
+    "pesachim-p01-u03",
+    "pesachim-p01-u04",
+    "pesachim-p01-u05",
+    "pesachim-p01-u06",
+    "pesachim-p01-u07",
+    "pesachim-p01-u08"
+   ],
+   "result": {
+    "generated": 175,
+    "decided": 0,
+    "unchecked": 4,
+    "flagged": 4,
+    "questions": 124
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-10-26T18:16:31Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p02-u01",
+    "pesachim-p02-u02",
+    "pesachim-p02-u03",
+    "pesachim-p02-u04",
+    "pesachim-p02-u05",
+    "pesachim-p02-u06",
+    "pesachim-p02-u07",
+    "pesachim-p02-u08"
+   ],
+   "result": {
+    "generated": 186,
+    "decided": 0,
+    "unchecked": 5,
+    "flagged": 5,
+    "questions": 146
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-10-26T18:16:32Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p03-u01",
+    "pesachim-p03-u02",
+    "pesachim-p03-u03"
+   ],
+   "result": {
+    "generated": 69,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 55
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-10-26T18:16:33Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p04-u01",
+    "pesachim-p04-u02"
+   ],
+   "result": {
+    "generated": 45,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 39
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-10-26T18:16:34Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p05-u01",
+    "pesachim-p05-u02",
+    "pesachim-p05-u03"
+   ],
+   "result": {
+    "generated": 73,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 63
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-10-26T18:16:35Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p06-u01",
+    "pesachim-p06-u02",
+    "pesachim-p06-u03"
+   ],
+   "result": {
+    "generated": 64,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 49
+   }
+  }
+ },
+ "created": "2026-10-26T18:16:29Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.382,
+   "n": 14,
+   "at": "2026-10-26T18:16:29Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.376,
+   "n": 15,
+   "at": "2026-10-26T18:16:30Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.209,
+   "n": 5,
+   "at": "2026-10-26T18:16:31Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.589,
+   "n": 4,
+   "at": "2026-10-26T18:16:32Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.447,
+   "n": 6,
+   "at": "2026-10-26T18:16:33Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.332,
+   "n": 5,
+   "at": "2026-10-26T18:16:34Z"
+  }
+ ],
+ "updated": "2026-10-26T18:16:35Z"
+}

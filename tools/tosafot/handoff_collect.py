@@ -17,6 +17,7 @@
     python3 tools/tosafot/handoff_collect.py waiting                       # מייל החיבור עוד לא הגיע: נרשם "ממתין לחיבור"
     python3 tools/tosafot/handoff_collect.py save <קובץ-תוצאת-הורדה> [id=<מזהה>] [modified=<זמן>]   # הורדה מהדרייב ל-inbox/
     python3 tools/tosafot/handoff_collect.py savezip <קובץ-זיפ> [id=<מזהה>] [modified=<זמן>]   # זיפ תוצרים: פותח, מניח ב-inbox/ ורושם כנקלט
+    python3 tools/tosafot/handoff_collect.py savebatch <קובץ-אצווה> [id=<מזהה>] [modified=<זמן>] [name=<שם>]   # אצווה-*.json: תוצרים ל-inbox/, לוח ויומן ל-batches/
     python3 tools/tosafot/handoff_collect.py collect                       # קליטה, פרסום, דואר ולוח
     python3 tools/tosafot/handoff_collect.py sent <מזהה>                   # סימון מייל שנשלח
 """
@@ -67,7 +68,7 @@ def cmd_need():
     ib = jload(os.path.join(HO, 'inbox.json')) or {}
     col = collected()
     print(json.dumps({'connected': bool(ib.get('units')), 'folder': ib.get('folder'), 'units': ib.get('units'), 'account': ib.get('account'),
-                      'files': col.get('files', {}), 'mail_unsent': [x for x in outbox()['items'] if not x['sent']]}, ensure_ascii=False, indent=1))
+                      'files': col.get('files', {}), 'zips': col.get('zips', {}), 'batches': ib.get('batches', {}), 'mail_unsent': [x for x in outbox()['items'] if not x['sent']]}, ensure_ascii=False, indent=1))
 
 
 def cmd_connect(folder, units, account):
@@ -171,6 +172,68 @@ def cmd_savezip(path, file_id=None, modified=None, zname=None):
     col['zips'][key] = {'name': zname or os.path.basename(path), 'id': file_id, 'modified': modified, 'opened': now_iso(), 'out': n_put, 'older_kept': n_old, 'skipped': n_skip}
     jdump(os.path.join(HO, 'collected.json'), col)
     log('זיפ %s נפתח: %d תוצרים הונחו, %d ישנים מהקיימים לא הונחו, %d קבצים שאינם תוצרים לא נקלטו' % (zname or os.path.basename(path), n_put, n_old, n_skip))
+
+
+def _batch_bytes(path):
+    """קובץ אצווה מתוצאת הורדה מהדרייב (JSON עם content ב-base64), או base64 גולמי, או האצווה עצמה."""
+    b = open(path, 'rb').read()
+    raw = b.decode('utf-8', errors='replace').strip().lstrip('﻿')
+    try:
+        j = json.loads(raw)
+        if isinstance(j, dict) and isinstance(j.get('units'), dict):
+            return raw.encode('utf-8')
+        if isinstance(j, dict) and isinstance(j.get('content'), str):
+            return base64.b64decode(j['content'])
+        if isinstance(j, list) and j and isinstance(j[0], dict) and 'text' in j[0]:
+            return base64.b64decode(json.loads(j[0]['text'])['content'])
+    except Exception:
+        pass
+    return base64.b64decode(re.sub(r'\s+', '', raw))
+
+
+def cmd_savebatch(path, file_id=None, modified=None, bname=None):
+    """קובץ אצווה (26.10.2026): אצווה-<זמן>.json שהחשבון השני ארז, {units: {<id>: תוצר}, board: הלוח, log: היומן}.
+    כל תוצר עובר ל-inbox/out-<id>.json לפי אותם כללים כמו זיפ (אותו מזהה בכמה מקורות: קובע done_at המאוחר).
+    הלוח והיומן נשמרים ב-batches/ לקריאה ולדוח בלבד, ואינם מתפרסמים. האצווה נרשמת ב-inbox.json['batches']
+    לפי מזהה ותאריך שינוי, ואינה נקלטת שוב. קובץ האצווה עצמו אינו נמחק ואינו זז (שייך לחשבון השני)."""
+    ibp = os.path.join(HO, 'inbox.json')
+    ib = jload(ibp) or {}
+    bname = bname or os.path.basename(path)
+    key = '%s|%s' % (file_id or bname, modified or '')
+    if key in ib.setdefault('batches', {}):
+        print('האצווה כבר נקלטה (%s), לא נקלטת שוב' % key)
+        return
+    b = json.loads(_batch_bytes(path).decode('utf-8'))
+    units = b.get('units') if isinstance(b, dict) else None
+    if not isinstance(units, dict) or not units:
+        raise SystemExit('עצירה: אין units באצווה %s' % bname)
+    other = sorted(k for k in b if k not in ('units', 'board', 'log'))
+    if other:
+        log('אצווה %s: שדות שאינם מוכרים לקולט (לא נקלטו): %s' % (bname, ', '.join(other)))
+    os.makedirs(INBOX, exist_ok=True)
+    n_put = n_old = 0
+    for uid in sorted(units):
+        out = units[uid]
+        if not isinstance(out, dict) or not re.match(r'^[a-z-]+-p\d\d-u\d\d$', uid) or out.get('id') != uid:
+            raise SystemExit('עצירה: מזהה יחידה לא תקין באצווה: %s' % uid)
+        dst = os.path.join(INBOX, 'out-%s.json' % uid)
+        if os.path.exists(dst):
+            cur = jload(dst) or {}
+            if (cur.get('done_at') or '') >= (out.get('done_at') or ''):
+                n_old += 1
+                continue
+        io.open(dst, 'w', encoding='utf-8', newline='\n').write(json.dumps(out, ensure_ascii=False))
+        n_put += 1
+    stem = re.sub(r'\.json$', '', bname)
+    bdir = os.path.join(HO, 'batches')
+    os.makedirs(bdir, exist_ok=True)
+    for part in ('board', 'log'):
+        if isinstance(b.get(part), str):
+            io.open(os.path.join(bdir, '%s-%s.md' % (stem, part)), 'w', encoding='utf-8', newline='\n').write(b[part].rstrip('\n') + '\n')
+    ib['batches'][key] = {'name': bname, 'id': file_id, 'modified': modified, 'opened': now_iso(), 'units': len(units),
+                          'out': n_put, 'older_kept': n_old}
+    jdump(ibp, ib)
+    log('אצווה %s נקלטה ל-inbox: %d תוצרים הונחו, %d ישנים מהקיימים לא הונחו; הלוח והיומן נשמרו ב-batches/' % (bname, n_put, n_old))
 
 
 def cmd_sent(mid):
@@ -470,6 +533,9 @@ def main(argv):
     elif cmd == 'savezip':
         kv = dict(a.split('=', 1) for a in argv[3:] if '=' in a)
         cmd_savezip(argv[2], kv.get('id'), kv.get('modified'), kv.get('name'))
+    elif cmd == 'savebatch':
+        kv = dict(a.split('=', 1) for a in argv[3:] if '=' in a)
+        cmd_savebatch(argv[2], kv.get('id'), kv.get('modified'), kv.get('name'))
     elif cmd == 'collect':
         cmd_collect()
     elif cmd == 'sent':

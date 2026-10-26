@@ -13,18 +13,48 @@
   var TS=window.__TOS||null;
   if(!TS||!TS.items||!TS.items.length)return;
   var TS_KEY='lg-tos-mode',CFG_KEY='lg-tos-cfg';
-  var MODES=[['panel','פאנל צד','חלונית עדינה בצד, מסונכרנת לגלילה (בנייד: מגירה תחתונה)'],
-             ['foot','הערות שוליים','סימן עילי בטקסט, וההערות בתחתית הדף'],
-             ['side','בצד','לחיצה על הסימן פותחת את ההערה בכרטיס'],
+  /* סדר התפריט (26.10.2026): שלושת העיקריים, ואחריהם "סימנים בלבד" (לשעבר "בצד") ו"כבוי" */
+  var MODES=[['panel','פאנל צד (מומלץ)','חלונית בצד, מסונכרנת לגלילה (בטלפון: מגירה תחתונה)'],
              ['list','רשימה','כל התוספות ברצף ממוספר, לחזרה ולשינון'],
+             ['foot','הערות שוליים','סימן בטקסט, וההערות בתחתית העמוד'],
+             ['side','סימנים בלבד','סימן קטן בטקסט, ולחיצה עליו פותחת כרטיס'],
              ['off','כבוי','בלי סימנים כלל']];
+  var MSHORT={panel:'פאנל צד',list:'רשימה',foot:'הערות שוליים',side:'סימנים בלבד',off:'כבוי'};
+  /* סמלילים בקו דק, אחידים (26.10.2026) */
+  var ICP={
+    face:'<path d="M12 6.6C10 5.1 7.1 4.6 3.6 5.1v13c3.5-.5 6.4 0 8.4 1.5 2-1.5 4.9-2 8.4-1.5v-13c-3.5-.5-6.4 0-8.4 1.5z"/><path d="M12 6.6v13"/>',
+    faceup:'<path d="M6.5 4h10.8a1 1 0 0 1 1 1v14.6H7.6a2 2 0 0 1-2-2V5a1 1 0 0 1 .9-1z"/><path d="M5.6 17.6a2 2 0 0 1 2-2h10.7"/>',
+    copy:'<rect x="8.6" y="8.4" width="11" height="12.2" rx="1.6"/><path d="M15.4 8.4V5.1a1.5 1.5 0 0 0-1.5-1.5H5.9a1.5 1.5 0 0 0-1.5 1.5v10.3a1.5 1.5 0 0 0 1.5 1.5h2.7"/>',
+    ok:'<path d="M5 12.6l4.4 4.4L19.2 7.4"/>',
+    share:'<circle cx="17.6" cy="5.8" r="2.4"/><circle cx="6.4" cy="12" r="2.4"/><circle cx="17.6" cy="18.2" r="2.4"/><path d="M8.5 10.8l7-3.8M8.5 13.2l7 3.8"/>',
+    pen:'<path d="M15.4 4.6l4 4L8.6 19.4l-4.6.6.6-4.6z"/><path d="M13.4 6.6l4 4"/>',
+    pin:'<path d="M9 3.6h6l-1 5.1 3.4 3.4H6.6L10 8.7z"/><path d="M12 12.1v8.3"/>',
+    x:'<path d="M6.6 6.6l10.8 10.8M17.4 6.6L6.6 17.4"/>',
+    panel:'<rect x="3.6" y="4.6" width="16.8" height="14.8" rx="1.8"/><path d="M9.6 4.6v14.8"/><path d="M5.7 8.4h1.8M5.7 11.4h1.8M5.7 14.4h1.8"/>',
+    list:'<path d="M9.4 7h10.4M9.4 12h10.4M9.4 17h10.4"/><path d="M4.6 7h.9M4.6 12h.9M4.6 17h.9"/>',
+    foot:'<rect x="5.6" y="3.6" width="12.8" height="16.8" rx="1.4"/><path d="M8.4 7.4h7.2M8.4 10.4h7.2"/><path d="M8.4 15.4h3.4M8.4 17.8h5.4"/>',
+    side:'<path d="M3.8 12.6h10.4M3.8 17.6h16.4"/><circle cx="18" cy="8.2" r="2.3"/>',
+    off:'<circle cx="12" cy="12" r="8"/><path d="M6.4 17.6L17.6 6.4"/>'};
+  function svg(k){return '<svg class="tsi" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+(ICP[k]||'')+'</svg>'}
+  /* כפתור סמליל עם כיתוב צף בעברית (data-tip); aria-label לנגישות */
+  function ib(k,tip,attrs){return '<button type="button" class="tsic" data-tip="'+tip+'" aria-label="'+tip+'" '+(attrs||'')+'>'+svg(k)+'</button>'}
   var STY=[['a','שורה אחת'],['b','מהודק ומובן'],['c','קושיה ותירוץ'],['d','לשון התוספות המקוצרת'],['e','הנפקא מינה']];
   var RULE={'1':'המילה בטקסט','2':'מילה מקבילה בטקסט','3':'סוף שורת הגמרא הקרובה','m':'העוגן זז: הוצמד לסוף שורת הגמרא'};
   var SGT=[['nusach','ניסוח'],['misunderstand','טעות בהבנה'],['anchor','עוגן במקום לא נכון'],['missing','חסר']];
   function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
   function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-  var mode=lsGet(TS_KEY,'off');
-  if(!/^(foot|panel|side|list|off)$/.test(mode))mode='off';
+  /* הגירה חד-פעמית (26.10.2026): רוב מי ששמור אצלו אופן אחר מהפאנל נתקע בו במקרה. פעם אחת בכל מכשיר
+     ההדלקה הבאה חוזרת לפאנל הצד; אופן שנבחר בתפריט מכאן והלאה נשמר כרגיל */
+  if(lsGet('lg-tos-v6','')!=='1'){
+    var m0=lsGet(TS_KEY,'off');if(m0!=='off'&&m0!=='panel')lsSet(TS_KEY,'off');
+    lsSet('lg-tos-last','panel');lsSet('lg-tos-v6','1')}
+  /* pref = מה שהלומד בחר; mode = מה שמוצג בפועל (בטאבלט בטור אחד אין מקום לפאנל: רשימה במקומו) */
+  var pref=lsGet(TS_KEY,'off');
+  if(!/^(foot|panel|side|list|off)$/.test(pref))pref='off';
+  function eff(v){var h=document.documentElement;
+    if(v==='panel'&&h.classList.contains('dev-tab')&&innerWidth<1000)return 'list';
+    return v}
+  var mode=eff(pref);
   /* הגדרות הלומד: גודל גופן, פנים תמיד, עמוד/פרק, שינון, רוחב הפאנל */
   var CFG={fs:'m',face:0,page:1,mem:0,w:300};
   try{var c0=JSON.parse(lsGet(CFG_KEY,'{}'));if(c0&&typeof c0==='object')Object.keys(CFG).forEach(function(k){if(c0[k]!==undefined)CFG[k]=c0[k]});CFG.face=0}catch(e){}
@@ -65,11 +95,29 @@
    '.tsfoot .tsn:last-child{border-bottom:0}'+
    '.tsn .tsnum{cursor:pointer}'+
    '.tsn .tsnum:hover,.tsn .tsnum:focus-visible{text-decoration:underline;outline:0}'+
-   '#tosbtn .tsst{font-size:.72em;font-weight:700;margin-inline-start:.35em;opacity:.8}'+
-   '#tosbtn .tsst::before{content:"כבוי"}'+
-   '#tosbtn.on .tsst::before{content:"דלוק"}'+
-   '.tsmb{display:none}'+
-   '#tosbtn.on + .tsmb{display:inline-flex}'+
+   /* כפתור תוס' אחד מפוצל (26.10.2026): עיקר הכפתור מדליק ומכבה, החץ שבתוכו פותח את תפריט האופנים */
+   '#tosbtn{gap:4px}'+
+   '#tosbtn .tsmi{display:none;line-height:0}'+
+   '#tosbtn .tsmi .tsi{width:14px;height:14px}'+
+   '#tosbtn.on .tsmi{display:inline-flex}'+
+   '#tosbtn .tsdd{display:inline-flex;align-items:center;justify-content:center;align-self:stretch;margin:-3px -9px -3px -4px;padding:0 6px;border-inline-start:1px solid rgba(160,135,70,.35);font-size:.8em;line-height:1;opacity:.75;border-radius:0 var(--r,6px) var(--r,6px) 0}'+
+   '#tosbtn .tsdd:hover{opacity:1;background:rgba(201,162,74,.22)}'+
+   '.bar #tosbtn.on,#tosbtn.on{background:#f6ebc8;border-color:#c9a24a;color:#5a4410}'+
+   '.bar #tosbtn.on:hover{background:#f1e0ad;color:#4a370a}'+
+   '#mbot [data-a="tos"]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}'+
+   '#mbot [data-a="tos"].on{color:#7a5a14}'+
+   /* סמלילי הכרטיס */
+   '.tsi{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;display:block}'+
+   'body button.tsic.tsic{display:inline-flex;min-width:0;font:inherit;letter-spacing:0;box-shadow:none;align-items:center;justify-content:center;width:28px;height:28px;min-height:28px;padding:0;margin:0;border:0;border-radius:7px;background:transparent;color:#a3916a;cursor:pointer;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;transition:color .12s,background .12s}'+
+   'body button.tsic.tsic:hover,body button.tsic.tsic:focus-visible{border-color:transparent;color:#6b5318;background:rgba(201,162,74,.16);outline:0}'+
+   'body button.tsic.tsic:focus-visible{box-shadow:0 0 0 2px #c9a24a}'+
+   'body button.tsic.tsic[aria-expanded="true"]{color:#6b5318}'+
+   'body button.tsic.tsic.okd{color:#2d6a3a}'+
+   '#tstip{position:fixed;z-index:80;pointer-events:none;background:#2b2620;color:#f6efdc;font-size:13px;line-height:1.35;padding:3px 9px;border-radius:6px;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25);direction:rtl;opacity:0;transition:opacity .08s;font-family:var(--ui,serif)}'+
+   '#tstip.on{opacity:1}'+
+   '#tscap{position:fixed;z-index:79;pointer-events:none;background:#fffdf6;border:1px solid #c9a24a;border-radius:8px;box-shadow:0 4px 14px rgba(10,25,50,.2);padding:4px 9px;font-size:13px;line-height:1.5;color:#4a3d18;direction:rtl;transition:opacity .3s}'+
+   '#tscap div{display:flex;align-items:center;gap:6px;white-space:nowrap}'+
+   '#tscap .tsi{width:15px;height:15px;color:#8a6d2a}'+
    '.tsn{margin:.4em 0;padding:.25em .35em;border-radius:5px;scroll-margin-top:70px}'+
    '.tsn.hot{background:#fff4d6;transition:background .3s}'+
    '.tsn .tsnum{font-family:Vilna,serif;font-weight:900;font-size:1.05em;color:#000;margin-inline-end:.35em}'+
@@ -77,9 +125,10 @@
    '.tsn .tsug{display:none;font-size:.78em;margin-inline-end:.4em;padding:0 .5em;border:1px solid #c98a3a;border-radius:9px;background:#fff1dc;color:#8a4b00;white-space:nowrap}'+
    'body.adm .tsn .tsug{display:inline-block}'+
    '.tsn .tstx{display:inline}'+
-   '.tsn .tsbt{display:inline-flex;gap:.35em;margin-inline-start:.5em;flex-wrap:wrap}'+
-   '.tsn .tsbt button{font:inherit;font-size:.78em;padding:0 .6em;border:1px solid #c9bfa6;border-radius:10px;background:#faf6ea;color:#5a4a1e;cursor:pointer;min-height:22px}'+
-   '.tsn .tsbt button:hover,.tsn .tsbt button:focus-visible{background:#f2ead2;outline:0}'+
+   /* ארבעת הסמלילים צפים בשמאל, בסוף שורת הסיכום האחרונה; רק כשאין שם מקום הם יורדים לשורה משלהם */
+   '.tsn{display:flow-root}'+
+   '.tsn .tsbt{float:left;display:inline-flex;gap:0;margin:-3px .3em -4px 0;direction:rtl}'+
+   '.tsn .tsface,.tsn .tssgbox,.tsn .tssent,.tsn .tsadm{clear:both}'+
    '.tsn .tsface{margin:.4em 0 .2em;padding:.5em .7em;background:#f6f1e3;border-radius:5px;font-size:.88em;line-height:1.6;color:#2b2620;display:block;-webkit-user-select:text;user-select:text}'+
    '.tsn .tsface[hidden]{display:none}'+
    '.tsn .tsface b{font-weight:700;font-family:Vilna,serif}'+
@@ -107,17 +156,19 @@
    '.tsadm .tsw{color:#a83c2f}'+
    '#tosmenu{position:fixed;z-index:30;background:var(--paper,#fbf8f1);border:1px solid #c9bfa6;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.22);padding:.4em;min-width:15em;font-size:15px;display:none}'+
    '#tosmenu.open{display:block}'+
-   '#tosmenu button{display:block;width:100%;text-align:right;font:inherit;background:none;border:0;padding:.45em .6em;border-radius:5px;cursor:pointer;color:inherit}'+
+   '#tosmenu button{display:flex;align-items:flex-start;gap:.6em;width:100%;text-align:right;font:inherit;background:none;border:0;padding:.45em .6em;border-radius:5px;cursor:pointer;color:inherit}'+
+   '#tosmenu button .tsi{flex:0 0 auto;width:19px;height:19px;margin-top:.15em;color:#8a6d2a}'+
+   '#tosmenu button span{display:block}'+
    '#tosmenu button small{display:block;color:#7a6f58;font-size:.82em}'+
    '#tosmenu button:hover{background:#f2ead2}'+
-   '#tosmenu button.on{background:#e6edf7;font-weight:700}'+
+   '#tosmenu button.on{background:#f6ebc8;font-weight:700}'+
+   '#tosmenu hr{border:0;border-top:1px solid #e0d6b8;margin:.3em .2em}'+
+   '#tosmenu .tsnote{color:#8a6d2a;font-size:.8em;padding:.1em .6em .3em}'+
    /* כרטיס צף: ריחוף או הקשה על הסימן, בכל תצוגה */
    '#toshov{position:fixed;z-index:31;width:min(30em,92vw);max-height:56vh;display:none;flex-direction:column;background:#fbf8f1;border:1px solid #c9b46f;border-top:3px solid #c9a24a;border-radius:9px;box-shadow:0 10px 32px rgba(10,25,50,.3);padding:.55em .75em .6em;font-size:15px;line-height:1.6;direction:rtl}'+
    '#toshov.open{display:flex}'+
    '#toshov .tsn{margin:0;padding:0;overflow:auto;flex:1 1 auto;min-height:0}'+
-   '#toshov .tshov0{display:flex;gap:.4em;margin-bottom:.3em;justify-content:flex-start}'+
-   '#toshov .tshov0 button{font:inherit;font-size:.8em;border:1px solid #c9bfa6;border-radius:10px;background:#faf6ea;color:#5a4a1e;cursor:pointer;padding:0 .7em;min-height:24px}'+
-   '#toshov .tshov0 button:hover,#toshov .tshov0 button:focus-visible{background:#f2ead2;outline:0}'+
+   '#toshov .tshov0{display:flex;gap:.2em;margin:-.3em -.4em .1em;justify-content:flex-start}'+
    '#toshov .tshov0 .sp{flex:1}'+
    /* פאנל הצד (תצוגה מרכזית) ומגירה תחתונה בנייד */
    '#tpan{position:fixed;z-index:7;left:0;top:var(--bar,46px);bottom:0;width:var(--tpw,300px);background:#fbf8f1;border-right:1px solid #c9a24a;box-shadow:2px 0 14px rgba(10,25,50,.18);display:none;flex-direction:column;direction:rtl;font-size:var(--tpfs,15px);line-height:1.6}'+
@@ -133,7 +184,12 @@
    '#tpan .tsn{margin:.35em 0;padding:.45em .55em .5em;border:1px solid #e5dcb8;border-radius:8px;background:#fffdf6;cursor:pointer;transition:background .2s,border-color .2s}'+
    '#tpan .tsn.vis{background:#fff6dc;border-color:#d9b84f}'+
    '#tpan .tsn.cur{background:#fff0c4;border-color:#c9a24a;box-shadow:0 0 0 1px #c9a24a inset}'+
-   '#tpan .tsn .tsbt{display:flex;margin:.35em 0 0}'+
+   '.tpmd{display:inline-flex;gap:0;border:1px solid #d9c77e;border-radius:8px;background:#fff;padding:0 1px}'+
+   'body .tpmd button.tsic.tsic{border:0;width:30px;height:28px;min-height:28px}'+
+   'body .tpmd button.tsic.tsic.on{background:#f6ebc8;color:#6b5318;border-color:transparent}'+
+   '#tpan .tpmd .tsic{width:28px;height:26px;min-height:26px;min-width:0;border:0;border-radius:7px;padding:0;background:transparent}'+
+   '#tpan .tpr .tpmd .tsic.on{background:#f6ebc8;color:#6b5318;font-weight:400;border:0}'+
+   '#tpan .tpr .tsic.tpx0{border:0;background:transparent;min-width:28px;padding:0}'+
    '#tpan .tsdaf{font-weight:700;color:#7a5a14;margin:.7em 0 .15em;font-family:Vilna,serif;font-size:.95em}'+
    '#tpan .tpe{color:#7a6f58;padding:1em .4em;text-align:center}'+
    '#tpan .tpgrip{position:absolute;top:0;bottom:0;right:-5px;width:10px;cursor:ew-resize;touch-action:none}'+
@@ -318,20 +374,22 @@
       (it.g&&!(ADM&&ADM.picks&&ADM.picks[it.n])?'<span class="tsug" title="נכתב בבית החרושת ועדיין לא עבר עיון של המנהל">לא הוגה</span>':'')+
       (it.u&&!TOK[it.n]?'<span class="tsug" title="נפסל בביקורת האוטומטית ופורסם עד עיון של המנהל. הכרעה: תפריט תוס\' ← בדיקת תוספות">*</span>':'')+
       '<span class="tstx">'+ge(txt(it))+'</span>'+
-      '<span class="tsbt"><button class="tsin" type="button" onclick="tosFace(this)" aria-expanded="false" aria-label="לשון התוספות בפנים">לשון התוס&#39; בפנים</button>'+
-      '<button type="button" onclick="tosCopy(this)" aria-label="העתק">העתק</button>'+
-      '<button type="button" class="tssh lk-sh-btn" onclick="tosShare(this)" aria-label="שתף את התוספות הזה" title="שיתוף התוספות הזה: ווטסאפ, הודעה, מייל, טלגרם, קישור וקוד QR">שתף</button>'+
-      '<button type="button" onclick="tosSg(this)" aria-label="הצע תיקון על התוספות">הצע תיקון</button></span>'+
+      '<span class="tsbt">'+ib('face','לשון התוס&#39; בפנים','onclick="tosFace(this)" aria-expanded="false" data-k="face"')+
+      ib('copy','העתק','onclick="tosCopy(this)" data-k="copy"')+
+      ib('share','שתף','onclick="tosShare(this)" data-k="share"').replace('class="tsic"','class="tsic tssh lk-sh-btn"')+
+      ib('pen','הצע תיקון','onclick="tosSg(this)" data-k="pen"')+'</span>'+
       '<div class="tsface" hidden></div><div class="tssgbox" hidden></div>'+
       (sent?'<span class="tssent">הצעתך התקבלה לעיון</span>':'')+admHTML(it)+'</div>'}
   function noteOf(b){return b.closest('.tsn')}
   function faceOpen(box,open){
-    var f=box.querySelector('.tsface'),b=box.querySelector('.tsin');if(!f||!b)return;
+    var f=box.querySelector('.tsface'),b=box.querySelector('.tsic[data-k="face"]');if(!f||!b)return;
     var n=+box.getAttribute('data-n');
     if(open){
       faceLoad(function(){var it=byN[n];if(it&&!f.getAttribute('data-ok')){f.innerHTML=faceHTML(it);f.setAttribute('data-ok','1')}});
       f.removeAttribute('hidden')}else f.setAttribute('hidden','');
-    b.setAttribute('aria-expanded',open?'true':'false');b.textContent=open?'הסתר':'לשון התוס\' בפנים'}
+    var tp=open?'הסתר את לשון התוס\'':'לשון התוס\' בפנים';
+    b.setAttribute('aria-expanded',open?'true':'false');b.setAttribute('data-tip',tp);b.setAttribute('aria-label',tp);
+    b.innerHTML=svg(open?'faceup':'face');tipHide()}
   window.tosFace=function(b){var box=noteOf(b);if(!box)return;var f=box.querySelector('.tsface');faceOpen(box,f.hasAttribute('hidden'))};
   /* שיתוף תוס' (14.10.2026): חלונית lk-share.js, קישור שפותח את הדף ואת הכרטיס הזה */
   window.tosShare=function(b){
@@ -340,7 +398,9 @@
   window.tosCopy=function(b){
     var box=noteOf(b),n=+box.getAttribute('data-n'),it=byN[n];if(!it)return;
     var t='תוספות '+it.hn+', ד"ה '+dispDh(it)+': '+txt(it);
-    function done(){if(typeof toast==='function')toast('הועתק',1800)}
+    /* משוב קטן במקום הודעה: הסמליל הופך לסימן ✓ לשנייה */
+    function done(){var k=b.closest('.tsic')||b;k.innerHTML=svg('ok');k.classList.add('okd');k.setAttribute('data-tip','הועתק');tipHide();
+      clearTimeout(k._t);k._t=setTimeout(function(){k.innerHTML=svg('copy');k.classList.remove('okd');k.setAttribute('data-tip','העתק')},1100)}
     try{navigator.clipboard.writeText(t).then(done,function(){fb()})}catch(e){fb()}
     function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){}ta.remove()}};
 
@@ -399,6 +459,60 @@
     p.then(function(){return api('/decide',{method:'POST',body:JSON.stringify({id:id,st:st,reason:reason,now:st==='accepted'?g.note:''})})})
      .then(fin).catch(function(e){b.disabled=false;if(typeof toast==='function')toast('לא נשמר: '+(e&&e.message||''),5000)})};
 
+  /* ---- כיתוב צף מיידי (26.10.2026): במקום title של הדפדפן, שמופיע באיחור ----
+     עכבר: ריחוף על סמליל. מגע: לחיצה מבצעת מיד, לחיצה ארוכה מראה את הכיתוב ואינה מבצעת. */
+  var TIP={el:null,t:0,lp:0,lpHit:null,swallow:null};
+  function tipEl(){if(!TIP.el){TIP.el=document.createElement('div');TIP.el.id='tstip';TIP.el.setAttribute('aria-hidden','true');document.body.appendChild(TIP.el)}return TIP.el}
+  function tipShow(b){
+    var s=b&&b.getAttribute('data-tip');if(!s)return;
+    var e=tipEl();e.textContent=s;e.classList.add('on');
+    var r=b.getBoundingClientRect(),w=e.offsetWidth,h=e.offsetHeight;
+    var top=r.top-h-6;if(top<4)top=r.bottom+6;
+    e.style.top=Math.round(top)+'px';e.style.left=Math.round(Math.min(Math.max(4,r.left+r.width/2-w/2),innerWidth-w-4))+'px'}
+  function tipHide(){clearTimeout(TIP.t);if(TIP.el)TIP.el.classList.remove('on')}
+  function tipTarget(ev){return ev.target&&ev.target.closest?ev.target.closest('[data-tip]'):null}
+  document.addEventListener('pointerover',function(ev){
+    if(ev.pointerType==='touch')return;
+    var b=tipTarget(ev);if(!b)return;
+    clearTimeout(TIP.t);TIP.t=setTimeout(function(){tipShow(b)},90)});
+  document.addEventListener('pointerout',function(ev){var b=tipTarget(ev);if(b&&!b.contains(ev.relatedTarget))tipHide()});
+  document.addEventListener('scroll',tipHide,true);
+  /* לחיצה ארוכה: על סמליל - הכיתוב; על כפתור תוס' (בסרגל ובקונסולה התחתונה בנייד) - תפריט האופנים */
+  function lpTarget(ev){if(!ev.target.closest)return null;return ev.target.closest('[data-tip],#tosbtn,#mbot [data-a="tos"]')}
+  document.addEventListener('pointerdown',function(ev){
+    if(ev.pointerType!=='touch')return;
+    var b=lpTarget(ev);if(!b)return;
+    clearTimeout(TIP.lp);TIP.lpHit=null;
+    TIP.lp=setTimeout(function(){TIP.lpHit=b;TIP.swallow=b;
+      if(b.id==='tosbtn'||b.getAttribute('data-a')==='tos'){tosModes(b)}
+      else{tipShow(b);clearTimeout(TIP.t);TIP.t=setTimeout(tipHide,1800)}
+      try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}},480)},true);
+  ['pointerup','pointercancel','pointermove'].forEach(function(t){document.addEventListener(t,function(ev){
+    if(t==='pointermove'&&!(Math.abs(ev.movementX||0)>6||Math.abs(ev.movementY||0)>6))return;
+    clearTimeout(TIP.lp);
+    /* יש דפדפנים שאינם שולחים לחיצה אחרי לחיצה ארוכה: הבליעה פגה מעצמה */
+    if(t==='pointerup'&&TIP.swallow)setTimeout(function(){TIP.swallow=null},450)},true)});
+  /* הלחיצה שאחרי לחיצה ארוכה אינה מבצעת את הפעולה */
+  document.addEventListener('click',function(ev){
+    if(!TIP.swallow)return;var b=TIP.swallow;TIP.swallow=null;
+    if(b.contains(ev.target)){ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation()}},true);
+  document.addEventListener('contextmenu',function(ev){if(lpTarget(ev)&&touchy())ev.preventDefault()},true);
+  /* בפעם הראשונה בכל מכשיר מגע: מקרא קטן מתחת לסמלילים לשנייה וחצי, כדי שהלומד יבין מה כל אחד */
+  function capOnce(root){
+    if(!touchy()||lsGet('lg-tos-cap','')==='1'||!root)return;
+    setTimeout(function(){
+      var rows=root.querySelectorAll('.tsbt'),row=null;
+      for(var i=0;i<rows.length;i++){var r=rows[i].getBoundingClientRect();if(r.width&&r.top>40&&r.bottom<innerHeight-40){row=rows[i];break}}
+      if(!row||document.getElementById('tscap'))return;
+      lsSet('lg-tos-cap','1');
+      var c=document.createElement('div');c.id='tscap';c.setAttribute('aria-hidden','true');
+      c.innerHTML=[].map.call(row.querySelectorAll('.tsic'),function(b){return '<div>'+b.innerHTML+'<span>'+ge(b.getAttribute('data-tip'))+'</span></div>'}).join('');
+      document.body.appendChild(c);
+      var rr=row.getBoundingClientRect(),h=c.offsetHeight,w=c.offsetWidth,top=rr.bottom+4;
+      if(top+h>innerHeight-8)top=rr.top-h-4;
+      c.style.top=Math.round(top)+'px';c.style.left=Math.round(Math.min(Math.max(6,rr.left),innerWidth-w-6))+'px';
+      setTimeout(function(){c.style.opacity='0';setTimeout(function(){c.remove()},320)},1500)},250)}
+
   /* ---- סימון הדף ---- */
   function strip(){
     document.querySelectorAll('#flow .tsa,#flow .tsfoot,#flow .tsx').forEach(function(x){x.remove()});
@@ -429,6 +543,7 @@
     if(bad.length&&typeof isAdmin==='function'&&isAdmin()&&!warned){warned=true;
       if(typeof toast==='function')toast('אזהרת שלמות בתוספות: '+bad.join('; '),6000)}
     drawList();tpRender(true);tsLayerSoon();
+    if(mode==='foot')capOnce(f);
     /* טעינה מוקדמת ברקע של פנים התוספות, כדי שכרטיס הריחוף לא ימתין */
     };
   window.tosAll=function(b){
@@ -468,8 +583,8 @@
     var p=hovEl();
     if(HOV.n&&HOV.n!==n)hiWord(HOV.n,false);
     HOV.n=n;HOV.sticky=!!sticky;
-    p.innerHTML='<div class="tshov0"><button type="button" onclick="tosPin()" aria-label="נעץ בפאנל הצד">נעץ</button><span class="sp"></span><button type="button" onclick="tosHovClose()" aria-label="סגור">סגור</button></div>'+noteHTML(it);
-    p.classList.add('open');
+    p.innerHTML='<div class="tshov0">'+ib('pin','נעץ בפאנל הצד','onclick="tosPin()"')+'<span class="sp"></span>'+ib('x','סגור','onclick="tosHovClose()"')+'</div>'+noteHTML(it);
+    p.classList.add('open');capOnce(p);
     hiWord(n,true);
     /* מיקום: מתחת לשורה המעוגנת, ואם אין מקום - מעליה; לעולם לא על השורה עצמה ולא מחוץ למסך */
     var rr=null;
@@ -486,6 +601,8 @@
   window.tosHovClose=hovClose;
   window.tosPin=function(){var n=HOV.n;hovClose();
     if(!n)return;
+    if(eff('panel')!=='panel'){if(mode!=='list')tosSet('panel');
+      setTimeout(function(){var q=document.querySelector('#tospb .tsn[data-n="'+n+'"]');if(q){q.scrollIntoView({block:'nearest'});hot(n)}},80);return}
     if(mode!=='panel')tosSet('panel');
     else tpRender(true);
     tpFocus(n,true)};
@@ -532,7 +649,10 @@
   function ensurePanel(){
     if(document.getElementById('tosp'))return;
     var p=document.createElement('div');p.className='panel';p.id='tosp';
-    p.innerHTML='<button class="x" onclick="panel(&quot;tosp&quot;)">×</button><h3>תוספות - רשימה</h3><div id="tospb"></div>';
+    p.innerHTML='<button class="x" onclick="panel(&quot;tosp&quot;)">×</button><h3>תוספות - רשימה</h3>'+
+      '<div class="tpmd" role="group" aria-label="אופן תצוגת התוספות" style="margin:-.3em 0 .5em">'+MODES.map(function(x){
+        return ib(x[0],x[0]==='off'?'כבה את התוס&#39;':MSHORT[x[0]],'data-m="'+x[0]+'" aria-pressed="false" onclick="tosSet(this.dataset.m)"')}).join('')+'</div>'+
+      '<div id="tospb"></div>';
     document.body.appendChild(p)}
   function drawList(){
     ensurePanel();
@@ -541,7 +661,8 @@
     var by={},order=[];
     SORTED.forEach(function(it){if(!by[it.daf]){by[it.daf]=[];order.push(it.daf)}by[it.daf].push(it)});
     b.innerHTML=order.map(function(d){return '<div class="tsdaf">דף '+ge(d.replace(/[.:]$/,''))+(d.slice(-1)===':'?' ע"ב':' ע"א')+'</div>'+by[d].map(noteHTML).join('')}).join('')||'אין';
-    if(CFG.face)b.querySelectorAll('.tsn').forEach(function(x){faceOpen(x,true)})}
+    if(CFG.face)b.querySelectorAll('.tsn').forEach(function(x){faceOpen(x,true)});
+    capOnce(b)}
   function panelOpen(){ensurePanel();var p=document.getElementById('tosp');if(p&&!p.classList.contains('open'))panel('tosp')}
 
   /* ---- פאנל הצד / מגירה ---- */
@@ -554,10 +675,12 @@
     p.innerHTML='<div class="tpsheet" aria-hidden="true"></div>'+
       '<div class="tphd">'+
         '<div class="tpr"><span class="tpttl">תוספות</span>'+
-          '<select id="tpmode" aria-label="תצוגת התוספות">'+MODES.map(function(x){return '<option value="'+x[0]+'">'+ge(x[1])+'</option>'}).join('')+'</select>'+
-          '<button type="button" id="tpprev" aria-label="התוספות הקודם" title="קודם">&#9650;</button>'+
-          '<button type="button" id="tpnext" aria-label="התוספות הבא" title="הבא">&#9660;</button>'+
-          '<button type="button" id="tpx" aria-label="סגור את הפאנל" title="סגור">&times;</button></div>'+
+          /* בורר האופן: אותם סמלילים כמו בתפריט כפתור תוס' - "שפה אחת" (26.10.2026) */
+          '<span class="tpmd" role="group" aria-label="אופן תצוגת התוספות">'+MODES.filter(function(x){return x[0]!=='off'}).map(function(x){
+            return ib(x[0],MSHORT[x[0]],'data-m="'+x[0]+'" aria-pressed="false" onclick="tosSet(this.dataset.m)"')}).join('')+'</span>'+
+          '<button type="button" id="tpprev" aria-label="התוספות הקודם" data-tip="התוספות הקודם">&#9650;</button>'+
+          '<button type="button" id="tpnext" aria-label="התוספות הבא" data-tip="התוספות הבא">&#9660;</button>'+
+          ib('x','כבה את התוס&#39;','id="tpx"').replace('class="tsic"','class="tsic tpx0"')+'</div>'+
         '<div class="tpr" style="margin-top:.3em">'+
           '<button type="button" id="tpfs-s" aria-label="גופן קטן">א</button><button type="button" id="tpfs-m" aria-label="גופן רגיל" style="font-size:.95em">א</button><button type="button" id="tpfs-l" aria-label="גופן גדול" style="font-size:1.15em">א</button>'+
                     '<button type="button" id="tppage" aria-pressed="false">עמוד</button>'+
@@ -565,7 +688,6 @@
         '<input id="tpq" type="search" placeholder="חיפוש, או מספר" aria-label="חיפוש בתוספות המסכת"></div>'+
       '</div><div id="tpl"></div><div class="tpgrip" aria-hidden="true"></div>';
     document.body.appendChild(p);
-    p.querySelector('#tpmode').onchange=function(){tosSet(this.value)};
     p.querySelector('#tpx').onclick=function(){tosSet('off')};
     p.querySelector('#tpprev').onclick=function(){tpStep(-1)};
     p.querySelector('#tpnext').onclick=function(){tpStep(1)};
@@ -605,7 +727,9 @@
     ['s','m','l'].forEach(function(k){p.querySelector('#tpfs-'+k).classList.toggle('on',CFG.fs===k)});
     function on(id,v,t){var b=p.querySelector(id);b.classList.toggle('on',!!v);b.setAttribute('aria-pressed',v?'true':'false');if(t)b.textContent=t}
     on('#tppage',CFG.page,CFG.page?'העמוד':'כל הפרק');on('#tpmem',CFG.mem);
-    var md=p.querySelector('#tpmode');if(md)md.value=mode}
+    mdSync()}
+  function mdSync(){
+    [].forEach.call(document.querySelectorAll('.tpmd .tsic[data-m]'),function(b){var v=b.getAttribute('data-m')===pref;b.classList.toggle('on',v);b.setAttribute('aria-pressed',v?'true':'false')})}
   function tpFit(){
     var p=document.getElementById('tpan');if(!p)return;
     p.style.setProperty('--tpw',Math.max(240,Math.min(560,CFG.w|0))+'px');
@@ -648,7 +772,7 @@
     if(CFG.face)b.querySelectorAll('.tsn').forEach(function(x){faceOpen(x,true)});
     b.scrollTop=keep;
     p.classList.add('open');
-    tpMarkCur()}
+    tpMarkCur();capOnce(b)}
   function tpVisible(){
     var out=[],L=document.getElementById('tsl');if(!L)return out;
     var mid=innerHeight/2;
@@ -689,40 +813,70 @@
     TP.cur=l[j].n;TP.quiet=Date.now()+3000;tpMarkCur();scrollToAnchor(l[j].n)}
 
   /* ---- כפתור ותפריט ---- */
-  /* לחיצה אחת מדליקה ומכבה (13.10.2026). הדלקה חוזרת לאופן האחרון שנבחר (ברירת מחדל: פאנל צד).
-     בחירת אופן אחר: הכפתור הקטן שליד הכפתור הראשי ('אופן'), הנראה רק כשהתוספות דלוקות. */
+  /* כפתור תוס' אחד (26.10.2026): עיקר הכפתור מדליק ומכבה; הדלקה חוזרת לאופן האחרון שנבחר (ברירת מחדל: פאנל צד).
+     החץ ▾ שבתוך אותו כפתור (ובנייד: לחיצה ארוכה) פותח את תפריט האופנים. כפתור "אופן" הנפרד בוטל. */
   function lastOn(){var l=lsGet('lg-tos-last','panel');return /^(foot|panel|side|list)$/.test(l)?l:'panel'}
   function syncBtns(){
     var on=mode!=='off';
     var b=document.getElementById('tosbtn');
-    if(b){b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')}
+    if(b){b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');
+      var mi=b.querySelector('.tsmi');if(mi)mi.innerHTML=on?svg(mode):'';
+      b.title=on?'תוס\' דלוקים ('+MSHORT[mode]+'). לחיצה מכבה; החץ בוחר אופן תצוגה':'תוס\': לחיצה מדליקה ('+MSHORT[lastOn()]+'); החץ בוחר אופן תצוגה'}
     var mb=document.querySelector('#mbot [data-a="tos"]');
-    if(mb){mb.classList.toggle('on',on);mb.setAttribute('aria-pressed',on?'true':'false')}}
-  window.tosBtn=function(){tosSet(mode==='off'?lastOn():'off')};
-  window.tosModes=function(){
+    if(mb){mb.classList.toggle('on',on);mb.setAttribute('aria-pressed',on?'true':'false')}
+    mdSync()}
+  window.tosBtn=function(ev){
+    if(ev&&ev.target&&ev.target.closest&&ev.target.closest('.tsdd')){tosModes(ev.target.closest('#tosbtn'));return}
+    tosSet(mode==='off'?lastOn():'off')};
+  function mItem(x){
+    return '<button type="button" role="menuitemradio" aria-checked="'+(x[0]===pref)+'" data-m="'+x[0]+'" class="'+(x[0]===pref?'on':'')+'" onclick="tosSet(this.dataset.m)">'+svg(x[0])+'<span>'+ge(x[1])+'<small>'+ge(x[2])+'</small></span></button>'}
+  window.tosModes=function(anchor){
     var m=document.getElementById('tosmenu');
-    if(!m){m=document.createElement('div');m.id='tosmenu';document.body.appendChild(m)}
-    m.innerHTML=MODES.filter(function(x){return x[0]!=='off'}).map(function(x){return '<button type="button" data-m="'+x[0]+'" class="'+(x[0]===mode?'on':'')+'" onclick="tosSet(this.dataset.m)">'+ge(x[1])+'<small>'+ge(x[2])+'</small></button>'}).join('')+
-      '<button type="button" data-m="off" onclick="tosSet(this.dataset.m)">כבוי<small>בלי סימנים כלל</small></button>'+
-      ((typeof isAdmin==='function'&&isAdmin())?'<button type="button" onclick="tosTriOpen()">בדיקת תוספות<small>למנהל בלבד · הכרעה על מה שנפסל</small></button>':'')+
-      ((window.tosTestOpen&&typeof isAdmin==='function'&&isAdmin())?((window.__TOSTEST&&window.__TOSTEST.rounds)||[{label:'מבחן מנועים'}]).map(function(rd,i){return '<button type="button" onclick="tosTestOpen('+i+')">'+ge(rd.label||'מבחן מנועים')+'<small>למנהל בלבד</small></button>'}).join(''):'');
-    var b=document.getElementById('tosmb')||document.getElementById('tosbtn'),r=b.getBoundingClientRect();
-    m.classList.toggle('open');
+    if(!m){m=document.createElement('div');m.id='tosmenu';m.setAttribute('role','menu');m.setAttribute('aria-label','אופן תצוגת התוספות');document.body.appendChild(m)}
+    var adm=typeof isAdmin==='function'&&isAdmin();
+    m.innerHTML=MODES.slice(0,3).map(mItem).join('')+
+      (pref==='panel'&&mode==='list'?'<div class="tsnote">ברוחב הזה אין מקום לפאנל, ולכן מוצגת רשימה</div>':'')+
+      '<hr>'+MODES.slice(3).map(mItem).join('')+
+      (adm?'<hr><button type="button" onclick="tosTriOpen()"><span>בדיקת תוספות<small>למנהל בלבד · הכרעה על מה שנפסל</small></span></button>':'')+
+      ((window.tosTestOpen&&adm)?((window.__TOSTEST&&window.__TOSTEST.rounds)||[{label:'מבחן מנועים'}]).map(function(rd,i){return '<button type="button" onclick="tosTestOpen('+i+')"><span>'+ge(rd.label||'מבחן מנועים')+'<small>למנהל בלבד</small></span></button>'}).join(''):'');
+    var b=(anchor&&anchor.getBoundingClientRect)?anchor:document.getElementById('tosbtn'),r=b?b.getBoundingClientRect():{width:0};
+    m.classList.toggle('open');tipHide();
+    if(!m.classList.contains('open'))return;
     if(!r.width){m.style.top='22vh';m.style.left=Math.max(8,(innerWidth-m.offsetWidth)/2)+'px';return}
-    m.style.top=(r.bottom+6)+'px';
-    m.style.left=Math.max(8,Math.min(r.left,innerWidth-m.offsetWidth-8))+'px'};
+    var h=m.offsetHeight,top=r.bottom+6;
+    if(top+h>innerHeight-8)top=Math.max(8,r.top-h-6);
+    m.style.top=top+'px';
+    m.style.left=Math.max(8,Math.min(r.left,innerWidth-m.offsetWidth-8))+'px';
+    var cur=m.querySelector('button.on')||m.querySelector('button');if(cur&&!touchy())cur.focus()};
   window.tosSet=function(v){
-    mode=v;lsSet(TS_KEY,v);if(v!=='off')lsSet('lg-tos-last',v);
+    pref=v;mode=eff(v);lsSet(TS_KEY,v);if(v!=='off')lsSet('lg-tos-last',v);
     var m=document.getElementById('tosmenu');if(m)m.classList.remove('open');
     syncBtns();
-    hovClose();
-    var p=document.getElementById('tosp');if(p&&v!=='list')p.classList.remove('open');
-    if(v!=='panel')tpClose();
+    hovClose();tipHide();
+    var p=document.getElementById('tosp');if(p&&mode!=='list')p.classList.remove('open');
+    if(mode!=='panel')tpClose();
     TP.sig='';
     tsMark();
-    if(v==='list')panelOpen();
-    if(v==='panel'){tpOpen();tpRender(true)}
-    if(v==='foot'||v==='side'||v==='list'||v==='panel'){if(typeof isAdmin==='function'&&isAdmin())admLoad()}};
+    if(mode==='list')panelOpen();
+    if(mode==='panel'){tpOpen();tpRender(true)}
+    if(mode!=='off'){if(typeof isAdmin==='function'&&isAdmin())admLoad()}};
+  /* מקלדת: חץ למטה על כפתור תוס' פותח את התפריט; בתוך התפריט - חיצים */
+  document.addEventListener('keydown',function(ev){
+    var t=ev.target;
+    if(t&&t.id==='tosbtn'&&(ev.key==='ArrowDown'||(ev.altKey&&ev.key==='ArrowDown'))){ev.preventDefault();tosModes(t);return}
+    var m=document.getElementById('tosmenu');
+    if(m&&m.classList.contains('open')&&t&&t.closest&&t.closest('#tosmenu')&&(ev.key==='ArrowDown'||ev.key==='ArrowUp')){
+      ev.preventDefault();var bs=[].slice.call(m.querySelectorAll('button')),i=bs.indexOf(t.closest('button'));
+      var j=(i+(ev.key==='ArrowDown'?1:-1)+bs.length)%bs.length;bs[j].focus()}});
+  /* מעבר בין רוחב שיש בו מקום לפאנל לרוחב שאין (סיבוב טאבלט) */
+  var EFQ=0;
+  function effCheck(){if(pref!=='off'&&eff(pref)!==mode)tosSet(pref)}
+  addEventListener('resize',function(){clearTimeout(EFQ);EFQ=setTimeout(effCheck,250)});
+  /* סוג המכשיר (dev-tab) נקבע ב-mobile.js, לפעמים אחרי שהקוד הזה רץ */
+  try{new MutationObserver(function(){clearTimeout(EFQ);EFQ=setTimeout(effCheck,60)}).observe(document.documentElement,{attributes:true,attributeFilter:['class']})}catch(e){}
+  setTimeout(effCheck,600);
+  /* פאנל שהוחלף ברשימה נפתח בטעינה כמו שהפאנל היה נפתח */
+  setTimeout(function(){if(pref==='panel'&&mode==='list'&&!off())panelOpen()},700);
   syncBtns();
   /* חזרה מן ההערה אל הסימן שבטקסט: לחיצה על מספר ההערה */
   function tsBack(nm){

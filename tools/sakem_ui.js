@@ -42,10 +42,28 @@
     const s=getSelection();if(!s||!s.rangeCount)return;
     const r=s.getRangeAt(0);
     if(r.collapsed){if(SKM.sel&&!SKM.sel.rows.some(x=>x.contains(r.startContainer)))skmMark(null);return}
+    /* סימון שנעשה בגרירה על פני כמה שורות: בחירת הדפדפן נעצרת בשורה הראשונה, והיא אינה דורסת אותו */
+    if(SKM.dragged&&SKM.sel&&SKM.sel.rows.some(x=>x.contains(r.startContainer)))return;
     const a=skmRowOf(r.startContainer),b=skmRowOf(r.endContainer);
     if(!a||!b){return}
     SKM.anchor=a;skmMark(skmSpan(a,b))}
-  /* הרחבה בלחיצה עם Shift על שורה אחרת (בחירה בדפדפן נעצרת בגבול הפסקה הנערכת) */
+  /* גרירה על פני כמה שורות: בחירה בדפדפן נעצרת בגבול הפסקה הנערכת, ולכן הסימון עוקב אחרי
+     העכבר עצמו - כל שורה שהעכבר עובר עליה בזמן הגרירה נכנסת (27.10.2026, בקשת המנהל) */
+  let SKD=null;
+  document.addEventListener('mousedown',e=>{
+    if(e.button!==0||e.shiftKey||!skmOK())return;
+    const r=skmRowOf(e.target);
+    if(!r||r.closest('.skmghost')){SKD=null;return}
+    SKD={a:r,last:r};SKM.dragged=false},true);
+  document.addEventListener('mousemove',e=>{
+    if(!SKD||!(e.buttons&1))return;
+    const r=skmRowOf(document.elementFromPoint(e.clientX,e.clientY));
+    if(!r||r===SKD.last||r.closest('.skmghost'))return;
+    SKD.last=r;
+    if(r===SKD.a&&!SKM.dragged)return;
+    SKM.dragged=true;SKM.anchor=SKD.a;skmMark(skmSpan(SKD.a,r))},true);
+  document.addEventListener('mouseup',()=>{SKD=null},true);
+  /* הרחבה בלחיצה עם Shift על שורה אחרת */
   document.addEventListener('mousedown',e=>{
     if(!e.shiftKey||!skmOK()||!SKM.sel||!SKM.anchor)return;
     const r=skmRowOf(e.target);if(!r||r.closest('.skmghost'))return;
@@ -64,7 +82,8 @@
       b.addEventListener('click',()=>skmGo());document.body.appendChild(b)}
     const nokey=SKM.stat&&!SKM.stat.hasKey;
     b.textContent=nokey?'סכם · ממתין למפתח':'סכם';
-    b.title=SKM.sel&&SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הידוק ותיקון הקטע המסומן (Ctrl+Shift+S)';
+    b.title=SKM.sel&&SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הידוק ותיקון הקטע המסומן (Ctrl+Shift+S). להרחבה: גרירה על כמה שורות, או Shift+לחיצה על שורה אחרת';
+    if(SKM.sel&&SKM.sel.rows.length>1)b.textContent+=' · '+SKM.sel.rows.length+' שורות';
     b.classList.toggle('dim',!!(nokey||SKM.sel&&SKM.sel.long));
     const last=SKM.sel.rows[SKM.sel.rows.length-1].getBoundingClientRect();
     const top=Math.min(innerHeight-44,Math.max(8,last.bottom+4));

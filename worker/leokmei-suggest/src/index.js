@@ -1838,6 +1838,8 @@ async function triApi(req, env, url, method) {
   return bad('פעולה לא מוכרת');
 }
 
+import { sakemApi } from './sakem.js';
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -1907,6 +1909,7 @@ export default {
       if (p === '/qz/proposers' && req.method === 'GET') return await qzProposers(req, env, url);
       if (p === '/qz/dec') return await qzDec(req, env, url);
       if (p === '/ln/online') return await lnOnline(req, env, url);
+      if (p === '/sakem' || p.startsWith('/sakem/')) return await sakemApi(req, env, url, p, { isAdmin, json, bad, slugOk });
       return bad('לא נמצא', 404);
     } catch (e) {
       return bad('שגיאה: ' + (e && e.message ? e.message : String(e)), 500);

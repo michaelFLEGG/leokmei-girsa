@@ -122,14 +122,37 @@ def _runs_of(p):
     return out
 
 
+def _chain(p):
+    """הפסקאות שהן פסקה אחת בהמרה: פסקאות שסימנן נמחק במעקב מתאחות עם הבאה אחריהן
+    (docx2json: carry), והמפה מצביעה על האחרונה בשרשרת. מוחזרות לפי הסדר, ו-p בסופן.
+    בלי זה תיקון טקסט אחרי איחוי שתי שורות (באתר, או ב"סכם") לא אותר בוורד (26.10.2026)."""
+    out = [p]
+    q = p.getprevious()
+    while q is not None and q.tag == W + 'p' and q.find('w:pPr/w:rPr/w:del', ns) is not None:
+        out.insert(0, q)
+        q = q.getprevious()
+    return out
+
+
+def _chain_runs(p):
+    """הרצות החיות של כל השרשרת, ומיקום כל אחת בטקסט המאוחד - כמו בהמרה."""
+    out, off = [], 0
+    for q in _chain(p):
+        rs = _runs_of(q)
+        out += [(off + pos, txt, r) for pos, txt, r in rs]
+        off += sum(len(t) for _, t, _ in rs)
+    return out
+
+
 def _replace_in_paragraph(p, find, repl, author, when, nextid, at=None):
     """מחליף מופע אחד של find ב-repl, במעקב. מחזיר True אם הצליח.
 
     הסימון עשוי להתפרש על כמה קטעי-תו, מפני שוורד מפצל הרצות גם בלא
     שינוי עיצוב. לכן ההחלפה חותכת כל קטע שנוגע בסימון, מוחקת את החלק
     שבתוכו, ושותלת את הנוסח החדש במקום הראשון - בעיצוב שהיה שם.
-    קטע שכבר יושב בתוך שינוי-מעקב קיים אינו נוגע, ומדווח."""
-    runs = _runs_of(p)
+    קטע שכבר יושב בתוך שינוי-מעקב קיים אינו נוגע, ומדווח.
+    פסקה שאוחתה במעקב (שרשרת) נקראת כולה, כמו בהמרה."""
+    runs = _chain_runs(p)
     full = ''.join(t for _, t, _ in runs)
     k = full.find(find) if at is None else at
     if k < 0 or full[k:k + len(find)] != find:
@@ -1246,7 +1269,8 @@ def _apply_side(path, ops, author, masechet, log=print, dry=False):
         ins = _mark(etree.Element(W + 'ins'), author, when, nextid)
         ins.append(_mkrun(op['res'][1], None))
         np_.append(ins)
-        p.addprevious(np_)
+        # לפני ראש השרשרת: פסקה שאוחתה במעקב היא אחת, והחלון אינו נכנס לתוכה
+        _chain(p)[0].addprevious(np_)
         done += 1
 
     tmp = path + '.new'

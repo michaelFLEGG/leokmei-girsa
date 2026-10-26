@@ -6140,7 +6140,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _td=os.path.dirname(os.path.abspath(__file__))
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+
          # מנוע ההדפסה ל-PDF (11.10.2026): קוד משותף לכל המסכתות. במצב ?print=1 הוא מחליף את התצוגה בעמודי A4; אחרת - רק חלון ההדפסה.
-         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"hv_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"hv_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   _SHARED_BODY=JS[:JS.rindex(chr(10)+"  build();")]   # הקוד המשותף לכל המסכתות; מה שאחריו (בקרה, צורת הדף, תוספות) פרטי למסכת
   # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
   # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.
@@ -6249,6 +6249,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # גבולות הפרקים להדפסה (13.10.2026): ה-Worker של ההדפסה קורא אותם כדי לדחות
   # בקשה של מבקר שחורגת מפרק אחד. מפתח הפרק זהה לזה שבחלון ההדפסה (perek|perekName).
   _wr(slug+'.prn.json',json.dumps({'v':1,'pages':[[pg.get('daf',''),(pg.get('perek') or '')+'|'+(pg.get('perekName') or '')] for pg in pages]},ensure_ascii=False))
+  # סכם (26.10.2026): לכל עמוד קובץ קטן לנקודת הקליטה - היחידות כפי שנבנו (לאימות שהטקסט
+  # שהדפדפן שולח אכן קיים באתר), ולשון הגמרא ופירוש הגמרא של אותו דף. ה-Worker קורא רק את
+  # העמודים של הקטע, ואינו מפענח את קובץ המסכת כולו (מגבלת זמן המעבד בתוכנית החינמית).
+  os.makedirs(os.path.join(_outdir,'sk',slug),exist_ok=True)
+  _SKV={'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,'ל':30,'מ':40,'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400}
+  _srcp=(sources or {}).get('pages') or {}
+  for _pg in pages:
+    _d=(_pg.get('daf') or '').strip()
+    _n=sum(_SKV.get(_c,0) for _c in re.sub(r'[.:"\'׳״]','',_d))
+    if not _n: continue
+    _sp=_srcp.get(_d) or {}
+    _wr('sk/%s/%d.json'%(slug,_n*2+(1 if _d.endswith(':') else 0)),json.dumps(
+      {'daf':_d,'units':[{k:_u.get(k) for k in ('id','k','a','w','l','mbw') if _u.get(k) is not None} for _u in _pg.get('units') or []],
+       'refs':_sp.get('refs') or [],'g':_sp.get('gemara') or [],'p':_sp.get('perush') or []},ensure_ascii=False,separators=(',',':')))
   _DV=_hl.md5(_data_js.encode('utf-8')).hexdigest()[:8]
   _MV=_hl.md5((_SHARED_BODY+chr(10)).encode('utf-8')).hexdigest()[:8]
   _tail_s=_tail.strip()

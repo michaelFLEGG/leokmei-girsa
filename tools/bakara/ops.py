@@ -6,6 +6,7 @@
   {"rep": {"x": ישן, "y": חדש}}                       החלפה (גם מחיקה: y ריק)
   {"ins": {"after"|"before": עוגן, "end": true, "text": ..., "cs": "hs"}}   הוספה בסגנון "הסבר", בסוגריים מרובעים
   {"style": {"range": ..., "cs": "am"|"ps"|"plain"}}  החלת/הסרת סגנון תו
+  {"anchor": {...}} | {"heading": {...}} | {"nikud": {x,y}} | {"split": {at}} | {"join": 1}   (26.10.2026, ראה convert.py)
   {"ask": "..."}                                       בדיקה/שאלה: אין מה להחיל; "קבל" = נבדק, בלי שינוי
   {"none": "..."}                                      אין עדיין מטען: הדף מבקש הצעה ועובר הלאה
 החלפה "ישן ⟵ חדש" וסגנון ("להחיל סגנון ...") נגזרים בדף עצמו מתוך fix, ולכן כאן אינם נכתבים שוב.
@@ -90,7 +91,7 @@ def punct_op(f):
 def derive(f, hand=None):
     """המטען של ממצא אחד (לא נוגע בממצא)."""
     ex = f.get('op')
-    if ex and any(k in ex for k in ('rep', 'ins', 'style', 'del')):   # מטען אמיתי נשמר; none / ask נגזרים מחדש
+    if ex and any(k in ex for k in ('rep', 'ins', 'style', 'del', 'anchor', 'heading', 'nikud', 'split', 'join')):   # מטען אמיתי נשמר; none / ask נגזרים מחדש
         return ex
     if hand and f.get('id') in hand:
         return hand[f['id']]

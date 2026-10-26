@@ -440,7 +440,8 @@
         if(BK.STALE.has(f.id))continue;
         const act=bkAction(f);
         let how='';
-        if(f.auto&&act==='rep')how='ok';
+        /* (26.10.2026) טכני שהוכרע בהפקה (f.auto, מאומת בקוד: tools/bakara/convert.py) - מוחל לבד, בכל המסכת */
+        if(f.auto&&/^(rep|ins|style)$/.test(bkOp(f).t))how='ok';
         if(!how){const h=H.bySig[skSig(f)];
           if(h&&h.length&&h.every(x=>x.dir==='no'))how='no';
           else if(h&&h.length&&h.every(x=>x.dir==='ok')&&act==='rep'&&!SKNOAUTO[f.det])how='ok'}
@@ -450,28 +451,30 @@
         if(!how)continue;
         if(how==='no')jobs.no.push(f);
         else{
-          const L=BK.loc[f.id];
-          const inDom=L&&L.pi>=sec.from&&L.pi<=sec.to&&$('#flow').querySelector('[data-ek="'+L.k+'"]');
-          if(inDom)jobs.ok.push(f);else if(L)jobs.queued.push(f)}}
+          /* ההחלה על הנתונים ואינה תלויה בשורה שעל המסך: כל המסכת, ולא רק הפרק הפתוח */
+          if(BK.loc[f.id])jobs.ok.push(f)}}
       /* דחייה אוטומטית: החלטה בלבד, בלי נגיעה בטקסט */
       let nNo=0;
       for(const f of jobs.no.slice(0,600)){bkPut(f,'no','','','auto_'+(f.auto?'v':(H.bySig[skSig(f)]?'sig':'type')));nNo++}
-      /* החלה אוטומטית: עד 40 בכל טעינה, רק בפרק הפתוח, כעריכת מנהל רגילה (נכנסת לוורד בעקוב אחר שינויים) */
+      /* החלה אוטומטית כעריכת מנהל רגילה (נכנסת לוורד בעקוב אחר שינויים), על הנתונים, בפרוסות בזמן מנוחה
+         של הדפדפן - כך שגם מאות תיקונים אינם מקפיאים את הדף. לכל אחד נשמר "בטל" */
       let nOk=0;const userUndo=BK.undo;   /* ביטול ההכרעה האחרונה של המחבר (Ctrl+Z) אינו נדרס בתיקון אוטומטי */
-      for(const f of jobs.ok.slice(0,40)){
-        const act=bkAction(f);
-        if(act==='rep'){
-          const r=bkApplyRep(f,bkRep(f));
-          if(typeof r==='string')continue;
-          const rec=BK.undo&&BK.undo.id===f.id?{k:BK.undo.k,prev:BK.undo.prev,wasH:BK.undo.wasH}:null;
-          BK.undo=userUndo;
-          if(rec){SK.undoRec[f.id]=rec}
-          bkPut(f,'ok','',bkRep(f).y,'auto_'+(f.auto?'v':(H.bySig[skSig(f)]?'sig':'type')));nOk++}
-        else continue}
+      const idle=()=>new Promise(r=>(window.requestIdleCallback||setTimeout)(r,{timeout:300}));
+      for(let i=0;i<jobs.ok.length;i++){
+        if(i&&i%15===0)await idle();
+        const f=jobs.ok[i];if(bkStatus(f)!=='pending')continue;
+        const op=bkOp(f);
+        const r=bkApplyOp(f,op);
+        if(typeof r==='string')continue;
+        const rec=BK.undo&&BK.undo.id===f.id?{k:BK.undo.k,prev:BK.undo.prev,wasH:BK.undo.wasH}:null;
+        BK.undo=userUndo;
+        if(rec){SK.undoRec[f.id]=rec}
+        bkPut(f,'ok','',bkSugText(op),f.auto==='tech'?'auto_tech':'auto_'+(f.auto?'v':(H.bySig[skSig(f)]?'sig':'type')));nOk++}
       if(nOk)bkAfterEdit();
       SK.autoQ=new Set(jobs.queued.map(f=>f.id));
+      if(nOk||nNo)SK.autoLast={ok:nOk,no:nNo,t:Date.now()};
       if(nNo||nOk){
-        const ks=Object.keys(SK.undoRec);if(ks.length>300)ks.slice(0,ks.length-300).forEach(k=>delete SK.undoRec[k]);
+        const ks=Object.keys(SK.undoRec);if(ks.length>3000)ks.slice(0,ks.length-3000).forEach(k=>delete SK.undoRec[k]);
         skLsSet(SKUNDO,SK.undoRec);
         bkSave();bkLocateAll();bkHL();bkCount();
         if(BK.ON)toast('תוקן אוטומטית: '+nOk+' תיקונים, '+nNo+' הערות שהוכרעו לפי החלטות קודמות שלך. הפירוט בלשונית "תוקן אוטומטית".',7000)}
@@ -496,12 +499,18 @@
     const by={};rows.forEach(f=>{const k=f.kind||f.det;(by[k]||(by[k]=[])).push(f)});
     const closed=BK.AUTOLOG||[];
     let h='<div class="skf"><b>מה תוקן או הוכרע לבד</b><div class="dim">לא חוסם ולא מבקש דבר. אפשר לעיין, ולכל שורה יש "בטל".</div></div>';
+    if(SK.autoLast)h+='<div class="edsum">בכניסה הזאת הוחלו לבד '+SK.autoLast.ok+' תיקונים טכניים ב'+esc(D.masechet||'')+(SK.autoLast.no?', ו-'+SK.autoLast.no+' הערות נדחו לפי הכרעותיך הקודמות':'')+' - לצפייה ולביטול למטה.</div>';
     const det=SK.autoDet||{};
     const dets=Object.keys(det);
     if(dets.length)h+='<h3>סוגים שמוחלים מעתה לבד</h3>'+dets.map(k=>{
       const n=BK.F.filter(f=>f.det===k&&BK.DEC[f.id]&&BK.DEC[f.id].auto).length;
       return '<div class="it" style="cursor:default"><b>'+esc((BK.CAT[k]&&BK.CAT[k][1])||k)+'</b> <small>('+(det[k]==='ok'?'מאושר':'נדחה')+' - '+n+' פעמים עד כה)</small><br>'+
         'הסוג הזה מוחל מעתה לבד לפי ההכרעות שלך. <button onclick="skAutoOff(\''+k+'\',1)">החזר לשאלה</button></div>'}).join('');
+    /* (26.10.2026) סוגים טכניים שהוכרעו ואומתו בקוד בזמן ההפקה: מוחלים לבד, ולכל סוג "החזר לשאלה" */
+    {const tech={};BK.F.forEach(f=>{if(f.auto==='tech'&&!SK.autoOff[f.det]){const x=tech[f.det]||(tech[f.det]={n:0,why:f.autoWhy||'',kind:f.kind||f.det});if(BK.DEC[f.id]&&BK.DEC[f.id].auto)x.n++}});
+     const tk=Object.keys(tech);
+     if(tk.length)h+='<h3>תיקונים טכניים שמוחלים לבד</h3><div class="dim">הוכרעו בזמן הפקת הממצאים ואומתו בקוד (שם מוכר, נוסח המקרא, פיסוק).</div>'+tk.map(k=>
+       '<div class="it" style="cursor:default"><b>'+esc(tech[k].kind)+'</b> <small>('+esc(tech[k].why)+' - '+tech[k].n+' עד כה)</small> <button onclick="skAutoOff(\''+k+'\',1)">החזר לשאלה</button></div>').join('')}
     const off=Object.keys(SK.autoOff).filter(k=>SK.autoOff[k]);
     if(off.length)h+='<h3>סוגים שהחזרת לשאלה</h3>'+off.map(k=>'<div class="it" style="cursor:default">'+esc((BK.CAT[k]&&BK.CAT[k][1])||k)+' <button onclick="skAutoOff(\''+k+'\',0)">אפשר שוב לבד</button></div>').join('');
     if(SK.autoQ.size)h+='<div class="edsum">'+SK.autoQ.size+' הערות יוחלו לבד כשהפרק שלהן ייפתח.</div>';
@@ -514,11 +523,11 @@
     const ks=Object.keys(by).sort((a,b)=>by[b].length-by[a].length);
     h+=ks.map(k=>'<details class="grp"><summary><b>'+esc(k)+'</b> <span class="n">('+by[k].length+')</span></summary><div class="gb">'+
       by[k].map(f=>{const d=BK.DEC[f.id];
-        return '<div class="it" style="cursor:default"><small>'+esc(f.daf||'')+' · '+esc(skAutoWhy(d.rs))+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span> '+
+        return '<div class="it" style="cursor:default"><small>'+esc(f.daf||'')+' · '+esc(skAutoWhy(d.rs,f))+'</small> <span class="mk">'+esc((f.mark||'').slice(0,40))+'</span> '+
         '<button onclick="skAutoUndo(\''+f.id+'\')">בטל את התיקון הזה</button></div>'}).join('')+'</div></details>').join('');
     if(!ks.length&&!closed.length)h+='<div class="edsum">עדיין לא תוקן דבר לבד.</div>';
     return h};
-  function skAutoWhy(rs){return {auto_v:'ציטוט פסוק לפי נוסח המקרא',auto_sig:'אותה הכרעה שנתת בעבר',auto_type:'הסוג הזה מוחל לבד לפי הכרעותיך',auto:'אוטומטי'}[rs]||'אוטומטי'}
+  function skAutoWhy(rs,f){if(rs==='auto_tech')return (f&&f.autoWhy)||'תיקון טכני שאומת בקוד';return {auto_v:'ציטוט פסוק לפי נוסח המקרא',auto_sig:'אותה הכרעה שנתת בעבר',auto_type:'הסוג הזה מוחל לבד לפי הכרעותיך',auto:'אוטומטי'}[rs]||'אוטומטי'}
   window.skAutoUndo=function(id){
     const f=BK.byId[id];if(!f)return;
     const rec=SK.undoRec[id];

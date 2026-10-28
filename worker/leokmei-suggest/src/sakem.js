@@ -1,29 +1,27 @@
-/* ===== סכם: הידוק ותיקון של קטע נבחר, מנהל בלבד (26.10.2026) =====
-   POST /sakem          {slug, units, before, after, queue?}  הצעה חדשה (queue=1: לתור הסולמיות)
-   POST /sakem/more     {slug, id}                            "קצר עוד" על הצעה קיימת
-   POST /sakem/done     {slug, id, act, final}                 קבל / ערוך / בטל - ליומן הלמידה
-   GET  /sakem/stat     ?slug                                  מפתח קיים?, עלות יומית וחודשית, למידה, תור
-   POST /sakem/key      {key}                                  הדבקת המפתח פעם אחת (נכתב מוצפן, אינו מוחזר לעולם)
-   POST /sakem/examples {act:'apply'}                          עדכון דוגמאות הסכם מזוגות הלמידה
-   GET  /sakem/queue    ?slug                                  תור הסולמיות של המסכת
+/* ===== סכם: פרק שלם על המנוי, בלי API (פרומפט 15, 28.10.2026) =====
+   אין כאן עוד שום קריאה למודל ושום מפתח או תקרת עלות. "סכם" הוא תור:
+   הדף בונה "חבילה" (יחידות הפרק או הקטע בפורמט הדף, לשון הגמרא ופירוש הגמרא של דפיו)
+   ושולח אותה לכאן. פעולת גיטהאב (sakem-sync.yml) מורידה את החבילות לריפו
+   (data/sakem/queue/<jid>.json), משימה מתוזמנת של קלוד בענן כותבת הצעות לריפו
+   (data/sakem/out/<jid>.json) לפי docs/sakem-runner.md, והפעולה מעלה אותן חזרה לכאן.
+   המנהל סוקר בדף קטע-קטע, וכל הכרעה נרשמת כאן ויורדת לריפו ללמידה (data/sakem/decisions/).
 
-   הדפדפן שולח את יחידות הקטע כפי שהן בנתונים. אין כאן טקסט חופשי: כל שורה וכל כותרת חייבות
-   להימצא בקובץ העמוד שבאתר (sk/<מסכת>/<דף>.json) או בעריכות המנהל שבשרת (ed:<מסכת>), אחרת
-   הבקשה נדחית. לשון הגמרא ופירוש הגמרא נשלפים מקובץ העמוד, ביאור חברותא מן המחסן.
-
-   המפתח: SAKEM_API_KEY כסוד ב-Worker, ואם אינו מוגדר - המפתח שהודבק בחלונית הניהול, שמור
-   במחסן מוצפן (AES-GCM, מפתח ההצפנה נגזר מ-ADMIN_KEY ואינו במחסן). לעולם לא מפתח אחר.
-   תקרה פנימית: 9 דולר לחודש (מתחת לתקרת הסביבה "לאוקמי - סכם" בקונסול, 10 דולר). */
+   POST /sakem/job        {slug, kind:'perek'|'seg', perek, title, packet}   הכנסה לתור
+   POST /sakem/cancel     {jid}                                              הוצאה מן התור
+   GET  /sakem/jobs       ?slug                                              התור ומצבו (ממתין / בעבודה N מתוך M / מוכן לסקירה)
+   GET  /sakem/out        ?jid                                               ההצעות וההכרעות של עבודה אחת
+   POST /sakem/dec        {jid, iid, act, layers, final, prop, orig, slug}   הכרעה על פריט (accept/reject/edit/undo)
+   GET  /sakem/export                                                        (פעולת הסנכרון) חבילות שטרם ירדו לריפו
+   POST /sakem/exported   {jids}
+   POST /sakem/import     {jid, out}                                         (פעולת הסנכרון) הצעות מן הריפו
+   GET  /sakem/decisions                                                     (פעולת הסנכרון) הכרעות של פרקים שנסקרו
+   POST /sakem/committed  {jids}
+   POST /sakem/done, /sakem/later, GET /sakem/stat, /sakem/queue - כמו קודם (יומן הלמידה ותור הסולמיות הישן). */
 import SKC from '../../../tools/sakem_core.js';
-import EXAMPLES from '../../../data/sakem/sakem-examples.json';
-import { SAKEM_SYSTEM } from './sakem_prompt.js';
 
-const MODEL = 'claude-opus-5-5';
-/* מחירון רשמי לקלוד אופוס 5.5, דולר למיליון אסימונים: קלט 4, פלט 20, כתיבה למטמון (5 דקות) 5, קריאה ממנו 0.20 */
-const PRICE = { in: 4, out: 20, cw: 5, cr: 0.2 };
-const CAP_USD = 9;
-const SITE = 'https://leokmei.com';
-const CAP_MSG = 'הגעת לתקרת החודש, הכפתור יחזור ב-1 לחודש';
+const norm = (t) => SKC.bare(t).replace(/[֑-ׇ]/g, '').replace(/[\s ]+/g, ' ').trim();
+const JOBS = 'skm:jobs';
+const jidOk = (j) => /^[a-z-]{2,30}-(p\d{1,2}|s\d{1,9}-[a-z0-9]{1,12})$/.test(j || '');
 const HVG = { 'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'כ': 20, 'ל': 30, 'מ': 40, 'נ': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'צ': 90, 'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400 };
 function dafNum(d) {
   d = String(d || '').trim();
@@ -31,234 +29,10 @@ function dafNum(d) {
   for (const c of d.replace(/[^א-ת]/g, '')) n += HVG[c] || 0;
   return n ? n * 2 + (/:$/.test(d) ? 1 : 0) : null;
 }
-const norm = (t) => SKC.bare(t).replace(/[֑-ׇ]/g, '').replace(/[\s ]+/g, ' ').trim();
-const rid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const month = () => new Date().toISOString().slice(0, 7);
-const day = () => new Date().toISOString().slice(8, 10);
-
-/* ---- המפתח ---- */
-async function aesKey(env) {
-  const raw = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('sakem|' + (env.ADMIN_KEY || '')));
-  return crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt', 'decrypt']);
-}
-const b64 = (u8) => btoa(String.fromCharCode(...u8));
-const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
-async function getKey(env) {
-  if (env.SAKEM_API_KEY) return env.SAKEM_API_KEY;
-  const v = await env.STORE.get('skm:key', 'json');
-  if (!v || !env.ADMIN_KEY) return '';
-  try {
-    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(v.iv) }, await aesKey(env), unb64(v.ct));
-    return new TextDecoder().decode(pt);
-  } catch (e) { return ''; }
-}
-async function putKey(env, key) {
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await aesKey(env), new TextEncoder().encode(key)));
-  await env.STORE.put('skm:key', JSON.stringify({ iv: b64(iv), ct: b64(ct), t: Date.now() }));
-}
-
-/* ---- עלות ---- */
-async function costDoc(env) { return (await env.STORE.get('skm:cost:' + month(), 'json')) || { usd: 0, n: 0, days: {} }; }
-function usdOf(u) {
-  u = u || {};
-  return ((u.input_tokens || 0) * PRICE.in + (u.output_tokens || 0) * PRICE.out +
-          (u.cache_creation_input_tokens || 0) * PRICE.cw + (u.cache_read_input_tokens || 0) * PRICE.cr) / 1e6;
-}
-async function addCost(env, usd) {
-  const c = await costDoc(env);
-  c.usd = (c.usd || 0) + usd; c.n = (c.n || 0) + 1;
-  c.days[day()] = (c.days[day()] || 0) + usd;
-  await env.STORE.put('skm:cost:' + month(), JSON.stringify(c));
-  return c;
-}
-
-/* ---- הדוגמאות (קובץ הריפו, ואם המנהל עדכן - המחסן גובר) ---- */
-async function examples(env) {
-  const kv = await env.STORE.get('skm:ex', 'json');
-  const rl = await env.STORE.get('skm:rules', 'json');
-  let pairs = EXAMPLES.pairs;
-  if (kv && Array.isArray(kv.pairs) && kv.pairs.length) {
-    /* גרסת המחסן גוברת, ודוגמה שנוספה לקובץ אחריה (סוג שאינו בה) מצטרפת אליה בלי למחוק דבר */
-    const have = new Set(kv.pairs.map((x) => x.kind));
-    pairs = kv.pairs.concat(EXAMPLES.pairs.filter((x) => !have.has(x.kind)));
-  }
-  return { pairs, rules: (rl && Array.isArray(rl.rules)) ? rl.rules : [] };
-}
-function systemText(ex) {
-  const pairs = ex.pairs || ex;
-  const txt = pairs.map((p, i) => `דוגמה ${i + 1} (${p.kind || ''}):\nלפני:\n${p.before}\nאחרי:\n${p.after}` +
-    (p.bad ? `\nפסול (כך אסור):\n${p.bad}` : '') + `\nמה שיניתי: ${(p.changes || []).join(' · ')}`).join('\n\n');
-  /* כללים שנלמדו מתיקוני המחבר בכפתור עצמו (גם תיקונים שעשה אחרי שקיבל), כל אחד עם הסיבה - גוברים על הכללים הכלליים */
-  const rules = (ex.rules || []).length ? '\n\nכללים שנלמדו מתיקוני המחבר בהצעות "סכם" (גוברים על הכללים הכלליים שלמעלה):\n' +
-    ex.rules.map((r, i) => (i + 1) + '. ' + r).join('\n') : '';
-  return SAKEM_SYSTEM + rules + '\n\nדוגמאות מתיקוני המחבר עצמו (לפני / אחרי):\n\n' + txt;
-}
-
-/* ---- אימות המקור: כל טקסט שנשלח קיים באתר או בעריכות המנהל ---- */
-function unitTexts(u) {
-  const out = [];
-  const w = u.k === 'u' ? u.a : (u.k === 'm' ? u.w : '');
-  String(w || '').split(/<br\s*\/?>/i).forEach((x) => { const t = norm(x); if (t) out.push(t); });
-  if (u.k === 'nose' || u.k === 'dh') { const t = norm(u.a); if (t) out.push(t); }
-  (u.l || []).forEach((l) => { const t = norm(l && l[1]); if (t) out.push(t); });
-  if (u.mbw) { const t = norm(u.mbw); if (t) out.push(t); }
-  return out;
-}
-async function pageFile(env, slug, daf) {
-  const n = dafNum(daf);
-  if (n === null) return null;
-  const r = await fetch((env.SK_SITE || SITE) + '/sk/' + slug + '/' + n + '.json', { cf: { cacheTtl: 120 } });
-  if (!r.ok) return null;
-  try { return await r.json(); } catch (e) { return null; }
-}
-async function provenance(env, slug, units, pages) {
-  const known = new Set();
-  for (const pg of pages) if (pg) for (const u of pg.units || []) unitTexts(u).forEach((t) => known.add(t));
-  const want = [];
-  units.forEach((u) => unitTexts(u).forEach((t) => want.push(t)));
-  let miss = want.filter((t) => !known.has(t));
-  if (miss.length) {
-    const doc = (await env.STORE.get('ed:' + slug, 'json')) || { edits: [] };
-    for (const e of doc.edits || []) {
-      if (e.del) continue;
-      [e.now, e.nowH].forEach((x) => { if (x) known.add(norm(x)); });
-      (e.resT || []).forEach((x) => known.add(norm(x)));
-      (e.res || []).forEach((r) => { if (Array.isArray(r)) r.forEach((x) => { if (typeof x === 'string') { known.add(norm(x)); String(x).split(/<br\s*\/?>/i).forEach((y) => known.add(norm(y))); } }); });
-      (e.texts || []).forEach((x) => known.add(norm(x)));
-    }
-    miss = miss.filter((t) => !known.has(t));
-  }
-  return miss;
-}
-
-/* ---- ההקשר: פירוש הגמרא ולשון הגמרא לקטעים המקבילים, וחברותא לאותו עמוד ---- */
-function segRange(units, refs) {
-  const keys = units.map((u) => refs.indexOf(u.ref)).filter((i) => i > -1);
-  if (!keys.length) return null;
-  return [Math.max(0, Math.min(...keys) - 0), Math.min(refs.length - 1, Math.max(...keys) + 1)];
-}
-const strip = (h) => SKC.bare(h).replace(/[֑-ׇ]/g, '').replace(/\s+/g, ' ').trim();
-async function context(env, slug, units, pages) {
-  let gem = '', per = '', hv = '';
-  for (const pg of pages) {
-    if (!pg) continue;
-    const mine = units.filter((u) => u.daf === pg.daf);
-    const rg = segRange(mine, pg.refs || []) || (pg.g && pg.g.length ? [0, pg.g.length - 1] : null);
-    if (!rg) continue;
-    for (let i = rg[0]; i <= rg[1]; i++) {
-      if (pg.g && pg.g[i]) gem += '[' + pg.daf + ' ' + (i + 1) + '] ' + strip(pg.g[i]) + '\n';
-      if (pg.p && pg.p[i]) per += '[' + pg.daf + ' ' + (i + 1) + '] ' + strip(pg.p[i]) + '\n';
-    }
-    /* חברותא: חבילת העמוד, ורק השורות שמיושרות ליחידות הקטע (ושכנותיהן) */
-    const n = dafNum(pg.daf);
-    if (n !== null) {
-      try {
-        const chunk = await env.STORE.get('hv:' + slug + ':' + Math.floor(n / 12), 'json');
-        const hp = chunk && chunk[pg.daf];
-        const segs = (hp && hp.segs) || [];
-        const ids = new Set(mine.map((u) => u.id));
-        let idx = segs.map((s, i) => (ids.has(s.p) ? i : -1)).filter((i) => i > -1);
-        if (!idx.length && segs.length) idx = [];
-        const pick = new Set();
-        idx.forEach((i) => { pick.add(i - 1); pick.add(i); pick.add(i + 1); });
-        segs.forEach((s, i) => { if (pick.has(i)) hv += (s.g ? s.g + ' ' : '') + String(s.e || '').replace(/\[\[הערה:\d+\]\]/g, '') + '\n'; });
-      } catch (e) { /* בלי חברותא */ }
-    }
-  }
-  const cut = (s, n) => (s.length > n ? s.slice(0, n) + ' …' : s);
-  return { gem: cut(gem, 7000), per: cut(per, 9000), hv: cut(hv, 6000) };
-}
-
-/* ---- המודל ---- */
-const SCHEMA = {
-  type: 'object', additionalProperties: false, required: ['point', 'text', 'changes'],
-  properties: { point: { type: 'string' }, text: { type: 'string' }, changes: { type: 'array', items: { type: 'string' } } },
-};
-async function callModel(env, key, sys, messages, schema) {
-  const SCHEMA_ = schema || SCHEMA;
-  const base = { model: MODEL, max_tokens: 16000, system: [{ type: 'text', text: sys, cache_control: { type: 'ephemeral' } }], messages };
-  /* הבקשה המלאה: מאמץ בינוני, פלט JSON במבנה קבוע, וגיבוי אוטומטי בסירוב. אם השרת דוחה פרמטר
-     (400) - פעם אחת בלי הגיבוי ובלי המבנה, וההנחיה עצמה דורשת JSON. */
-  const tries = [
-    { body: Object.assign({}, base, { output_config: { effort: 'medium', format: { type: 'json_schema', schema: SCHEMA_ } }, fallbacks: 'default' }), beta: 'server-side-fallback-2026-07-01' },
-    { body: Object.assign({}, base, { output_config: { effort: 'medium' } }), beta: '' },
-  ];
-  let last = null;
-  for (const t of tries) {
-    const h = { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' };
-    if (t.beta) h['anthropic-beta'] = t.beta;
-    let r;
-    try { r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: h, body: JSON.stringify(t.body) }); }
-    catch (e) { return { err: 'שירות המודל אינו זמין כרגע' }; }
-    let j = null;
-    try { j = await r.json(); } catch (e) { /* ריק */ }
-    if (r.ok && j) return { j };
-    const msg = (j && j.error && j.error.message) || '';
-    if (/usage limit|spend limit|credit balance|billing/i.test(msg)) return { err: CAP_MSG, cap: true };
-    if (r.status === 401 || r.status === 403) return { err: 'המפתח נדחה בידי שירות המודל. הדבק מפתח חדש מן הסביבה "לאוקמי - סכם"' };
-    last = { err: 'שירות המודל החזיר שגיאה (' + r.status + ')' };
-    if (r.status !== 400) return last;
-  }
-  return last;
-}
-function parseOut(j) {
-  if (j.stop_reason === 'refusal') return { err: 'המודל סירב לבקשה' };
-  const txt = (j.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('');
-  let o = null;
-  try { o = JSON.parse(txt); } catch (e) {
-    const a = txt.indexOf('{'), b = txt.lastIndexOf('}');
-    try { o = JSON.parse(txt.slice(a, b + 1)); } catch (e2) { o = null; }
-  }
-  if (!o || typeof o.text !== 'string') return { err: 'תשובת המודל אינה בפורמט הצפוי', raw: txt };
-  return { point: String(o.point || ''), text: o.text.replace(/\r/g, '').trim(), changes: (Array.isArray(o.changes) ? o.changes : []).map(String).slice(0, 5), raw: txt };
-}
-/* קריאה, שומר, וקריאה חוזרת אחת עם ציון הכשל. אזהרות השומר (דובר ארוך בשורה, הסבר ארוך)
-   אינן פוסלות: הן מוצגות למחבר, ונשלחות למודל רק כשיש ממילא סבב תיקון. */
-async function generate(env, key, sys, msgs, orig, gemara, around) {
-  let usd = 0, out = null, errs = [], notes = [], rounds = 0;
-  const g = Object.assign({ gemara }, around || {});
-  for (let round = 0; round < 2; round++) {
-    rounds = round + 1;
-    const c = await callModel(env, key, sys, msgs);
-    if (c.err) return { err: c.err, cap: c.cap, usd };
-    usd += usdOf(c.j.usage);
-    const p = parseOut(c.j);
-    if (p.err) { errs = [p.err]; out = null; if (round === 0) { msgs = msgs.concat([{ role: 'assistant', content: p.raw || '{}' }, { role: 'user', content: 'התשובה אינה JSON תקין בשלושת השדות. החזר JSON בלבד.' }]); continue; } break; }
-    out = p;
-    const ck = SKC.check(orig, p.text, g);
-    errs = ck.errs; notes = ck.warns;
-    if (!errs.length) break;
-    if (round === 0) msgs = msgs.concat([{ role: 'assistant', content: p.raw }, { role: 'user', content: 'השומר שבקוד מצא בתשובה: ' + errs.join(' · ') +
-      (notes.length ? '. ושקול גם: ' + notes.join(' · ') : '') + '. תקן והחזר את כל ה-JSON מחדש.' }]);
-  }
-  if (!out) return { err: errs[0] || 'לא התקבלה הצעה', usd };
-  return { out, warn: errs, notes, usd, msgs, rounds };
-}
-
-function userText(orig, before, after, ctx) {
-  return [
-    'הקטע המסומן לעריכה:\n<קטע>\n' + orig + '\n</קטע>',
-    before ? 'שלוש שורות לפני (לקריאה בלבד, לא לשנות):\n<לפני>\n' + before + '\n</לפני>' : '',
-    after ? 'שלוש שורות אחרי (לקריאה בלבד, לא לשנות):\n<אחרי>\n' + after + '\n</אחרי>' : '',
-    ctx.gem ? 'לשון הגמרא (וילנא) של הקטע:\n<גמרא>\n' + ctx.gem + '</גמרא>' : '',
-    ctx.per ? 'פירוש הגמרא לשורות המקבילות:\n<פירוש>\n' + ctx.per + '</פירוש>' : '',
-    ctx.hv ? 'ביאור חברותא לאותו מקום:\n<חברותא>\n' + ctx.hv + '</חברותא>' : '',
-    'הפירוש, החברותא ולשון הגמרא הם להבנת הפשט ולבדיקת שלמות בלבד - לא למילוי. ' +
-    'החזר את הקטע המסומן מהודק באמת (יעד: לפחות כשליש פחות תווים), כתוב מחדש מתוך שלד הסוגיה ולא כהחלפת מילים, ומתוקן - כ-JSON.',
-  ].filter(Boolean).join('\n\n');
-}
-
-const UK = ['u', 'm', 'nose', 'dh', 'hatz', 'perek-start', 'perek-num', 'hadran', 'perek', 'pname', 'chap'];
-function cleanUnits(arr, max) {
-  if (!Array.isArray(arr)) return [];
-  const s = (v, n) => (typeof v === 'string' ? v : '').slice(0, n);
-  return arr.slice(0, max).map((u) => ({
-    id: +u.id || 0, k: s(u.k, 16), a: s(u.a, 400), w: s(u.w, 400), mbw: s(u.mbw, 60), ref: s(u.ref, 60), daf: s(u.daf, 12), first: !!u.first,
-    l: Array.isArray(u.l) ? u.l.slice(0, 40).map((l) => [s(l && l[0], 40), s(l && l[1], 4000)]) : [],
-    tos: Array.isArray(u.tos) ? u.tos.slice(0, 40).map((z) => ({ n: s(z.n, 12), t: s(z.t, 120) })) : [],
-  })).filter((u) => u.id > 0 && u.k);
-}
+async function jobs(env) { return (await env.STORE.get(JOBS, 'json')) || { items: [] }; }
+async function putJobs(env, j) { j.items = j.items.slice(-200); await env.STORE.put(JOBS, JSON.stringify(j)); }
+/* מה שמוצג לדף: בלי החבילה עצמה */
+const pub = (x) => ({ jid: x.jid, slug: x.slug, kind: x.kind, perek: x.perek, title: x.title, t: x.t, st: x.st, n: x.n || 0, total: x.total || 0, shown: x.shown || 0, dec: x.dec || 0 });
 
 export async function sakemApi(req, env, url, p, h) {
   const { isAdmin, json, bad, slugOk } = h;
@@ -266,25 +40,146 @@ export async function sakemApi(req, env, url, p, h) {
   let b = {};
   if (req.method === 'POST') { try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); } }
 
-  if (p === '/sakem/stat') {
-    const c = await costDoc(env);
-    const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [], rejects: 0, applied: 0 };
-    const fresh = lg.pairs.filter((x) => x.t > (lg.applied || 0));
-    const slug = url.searchParams.get('slug') || '';
-    const q = slugOk(slug) ? ((await env.STORE.get('skm:hq:' + slug, 'json')) || { items: [] }).items.filter((x) => !x.d).length : 0;
-    return json({ ok: true, hasKey: !!(await getKey(env)), day: c.days[day()] || 0, month: c.usd || 0, n: c.n || 0, cap: CAP_USD,
-                  capped: (c.usd || 0) >= CAP_USD, pairs: lg.pairs.length, fresh: fresh.length, rejects: lg.rejects || 0,
-                  learned: !!(await env.STORE.get('skm:ex')),
-                  rules: (((await env.STORE.get('skm:rules', 'json')) || {}).rules || []),
-                  later: lg.pairs.reduce((n, x) => n + ((x.later || []).length), 0),
-                  suggest: fresh.length >= 24 ? fresh.slice(-6).map((x) => x.id) : [], queue: q });
+  /* ---- התור ---- */
+  if (p === '/sakem/job') {
+    const slug = String(b.slug || ''), kind = b.kind === 'seg' ? 'seg' : 'perek';
+    if (!slugOk(slug)) return bad('מסכת לא תקינה');
+    const pk = b.packet;
+    if (!pk || !Array.isArray(pk.units) || !pk.units.length) return bad('החבילה ריקה');
+    const body = JSON.stringify(pk);
+    if (body.length > 4e6) return bad('החבילה גדולה מדי');
+    const perek = Math.max(0, Math.min(99, +b.perek || 0));
+    const jid = kind === 'perek' ? slug + '-p' + perek : slug + '-s' + (+pk.units[0].id || 0) + '-' + Date.now().toString(36);
+    if (!jidOk(jid)) return bad('מזהה עבודה לא תקין');
+    const J = await jobs(env);
+    const old = J.items.find((x) => x.jid === jid && x.st !== 'done');
+    if (old) return json({ ok: true, jid, job: pub(old), again: true });
+    J.items = J.items.filter((x) => x.jid !== jid);
+    pk.jid = jid;
+    await env.STORE.put('skm:job:' + jid, JSON.stringify(pk));
+    await env.STORE.delete('skm:out:' + jid);
+    await env.STORE.delete('skm:dec:' + jid);
+    const it = { jid, slug, kind, perek, title: String(b.title || '').slice(0, 120), t: Date.now(), st: 'wait' };
+    J.items.push(it);
+    await putJobs(env, J);
+    return json({ ok: true, jid, job: pub(it) });
   }
-  if (p === '/sakem/key') {
-    const k = String(b.key || '').trim();
-    if (!/^sk-ant-[A-Za-z0-9_\-]{20,300}$/.test(k)) return bad('זה אינו נראה כמפתח של Anthropic (מתחיל ב-sk-ant-)');
-    if (!env.ADMIN_KEY) return bad('חסר בשרת סוד ההצפנה');
-    await putKey(env, k);
+  if (p === '/sakem/cancel') {
+    const jid = String(b.jid || '');
+    const J = await jobs(env);
+    J.items = J.items.filter((x) => x.jid !== jid);
+    await putJobs(env, J);
     return json({ ok: true });
+  }
+  if (p === '/sakem/jobs') {
+    const slug = url.searchParams.get('slug') || '';
+    const J = await jobs(env);
+    return json({ ok: true, items: J.items.filter((x) => !slug || x.slug === slug).map(pub) });
+  }
+  if (p === '/sakem/out') {
+    const jid = url.searchParams.get('jid') || '';
+    if (!jidOk(jid)) return bad('מזהה עבודה לא תקין');
+    const out = await env.STORE.get('skm:out:' + jid, 'json');
+    if (!out) return bad('ההצעות לפרק הזה טרם הגיעו', 404);
+    const dec = (await env.STORE.get('skm:dec:' + jid, 'json')) || { dec: {}, log: [] };
+    const J = await jobs(env), it = J.items.find((x) => x.jid === jid);
+    return json({ ok: true, out, dec: dec.dec, job: it ? pub(it) : null });
+  }
+  if (p === '/sakem/dec') {
+    const jid = String(b.jid || ''), iid = String(b.iid || '').slice(0, 24), act = String(b.act || '');
+    if (!jidOk(jid) || !iid || !/^(accept|reject|edit|undo|stale|keep)$/.test(act)) return bad('הכרעה לא תקינה');
+    const dk = 'skm:dec:' + jid;
+    const D = (await env.STORE.get(dk, 'json')) || { dec: {}, log: [] };
+    const layers = (Array.isArray(b.layers) ? b.layers : []).map(String).slice(0, 4);
+    if (act === 'undo') delete D.dec[iid];
+    else D.dec[iid] = { act, layers, t: Date.now() };
+    const cut = (s, n) => String(s || '').slice(0, n);
+    D.log.push({ iid, act, layers, t: Date.now(), orig: cut(b.orig, 6000), prop: cut(b.prop, 6000), final: act === 'edit' ? cut(b.final, 6000) : '', gem: cut(b.gem, 1500) });
+    D.log = D.log.slice(-600);
+    await env.STORE.put(dk, JSON.stringify(D));
+    /* גם ליומן הלמידה הכללי של סכם (כמו /sakem/done), כשהנוסח הסופי שונה מן ההצעה */
+    if (act === 'edit' && b.final && norm(b.final) !== norm(b.prop || '')) {
+      const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [], rejects: 0, applied: 0, rj: [] };
+      lg.pairs.push({ id: jid + ':' + iid, slug: String(b.slug || ''), t: Date.now(), orig: cut(b.orig, 6000), prop: cut(b.prop, 6000), final: cut(b.final, 6000), kinds: SKC.diffKinds(String(b.prop || ''), String(b.final)), layers });
+      lg.pairs = lg.pairs.slice(-300);
+      await env.STORE.put('skm:lg', JSON.stringify(lg));
+    }
+    const J = await jobs(env), it = J.items.find((x) => x.jid === jid);
+    if (it) {
+      it.dec = Object.keys(D.dec).length;
+      if (it.shown && it.dec >= it.shown && it.st === 'ready') it.st = 'done';
+      else if (it.st === 'done' && it.dec < it.shown) it.st = 'ready';
+      await putJobs(env, J);
+    }
+    return json({ ok: true, job: it ? pub(it) : null });
+  }
+
+  /* ---- פעולת הסנכרון (גיטהאב, עם מפתח המנהל כסוד בריפו) ---- */
+  if (p === '/sakem/export') {
+    const J = await jobs(env), out = [];
+    for (const it of J.items.filter((x) => x.st === 'wait').slice(0, 6)) {
+      const pk = await env.STORE.get('skm:job:' + it.jid, 'json');
+      if (!pk) continue;
+      /* ביאור חברותא לדפי החבילה, מן המחסן */
+      pk.hv = {};
+      for (const pg of pk.pages || []) {
+        const n = dafNum(pg.daf);
+        if (n === null) continue;
+        try {
+          const ch = await env.STORE.get('hv:' + it.slug + ':' + Math.floor(n / 12), 'json');
+          const hp = ch && ch[pg.daf];
+          if (hp && hp.segs) pk.hv[pg.daf] = hp.segs.map((s) => ({ p: s.p, g: s.g || '', e: String(s.e || '').replace(/\[\[הערה:\d+\]\]/g, '') }));
+        } catch (e) { /* בלי חברותא */ }
+      }
+      out.push({ job: pub(it), packet: pk });
+    }
+    return json({ ok: true, items: out });
+  }
+  if (p === '/sakem/exported') {
+    const ids = new Set((b.jids || []).map(String));
+    const J = await jobs(env);
+    J.items.forEach((x) => { if (ids.has(x.jid) && x.st === 'wait') x.st = 'sent'; });
+    await putJobs(env, J);
+    return json({ ok: true });
+  }
+  if (p === '/sakem/import') {
+    const jid = String(b.jid || ''), o = b.out;
+    if (!jidOk(jid) || !o || !Array.isArray(o.items)) return bad('תוצאה לא תקינה');
+    const J = await jobs(env), it = J.items.find((x) => x.jid === jid);
+    if (!it) return json({ ok: true, skipped: 'no-job' });
+    await env.STORE.put('skm:out:' + jid, JSON.stringify(o));
+    it.total = +o.total || 0;
+    it.n = +o.done || 0;
+    it.shown = o.items.filter((x) => !x.nochange).length;
+    if (o.status === 'ready') { if (it.st !== 'done') it.st = (it.dec || 0) >= it.shown && it.shown ? 'done' : 'ready'; }
+    else if (it.st === 'wait' || it.st === 'sent') it.st = 'work';
+    await putJobs(env, J);
+    return json({ ok: true, job: pub(it) });
+  }
+  if (p === '/sakem/decisions') {
+    const J = await jobs(env), out = [];
+    for (const it of J.items.filter((x) => x.st === 'done' && !x.dc)) {
+      const D = await env.STORE.get('skm:dec:' + it.jid, 'json');
+      if (D) out.push({ job: pub(it), dec: D.dec, log: D.log });
+    }
+    return json({ ok: true, items: out });
+  }
+  if (p === '/sakem/committed') {
+    const ids = new Set((b.jids || []).map(String));
+    const J = await jobs(env);
+    J.items.forEach((x) => { if (ids.has(x.jid)) x.dc = 1; });
+    await putJobs(env, J);
+    return json({ ok: true });
+  }
+
+  /* ---- יומן הלמידה (כמו קודם) ---- */
+  if (p === '/sakem/stat') {
+    const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [], rejects: 0 };
+    const slug = url.searchParams.get('slug') || '';
+    const J = await jobs(env);
+    return json({ ok: true, pairs: lg.pairs.length, rejects: lg.rejects || 0,
+                  later: lg.pairs.reduce((n, x) => n + ((x.later || []).length), 0),
+                  jobs: J.items.filter((x) => !slug || x.slug === slug).map(pub) });
   }
   if (p === '/sakem/queue') {
     const slug = url.searchParams.get('slug') || '';
@@ -294,146 +189,29 @@ export async function sakemApi(req, env, url, p, h) {
   }
   if (p === '/sakem/done') {
     const slug = String(b.slug || ''), id = String(b.id || '').slice(0, 40), act = String(b.act || '');
-    const pr = await env.STORE.get('skm:p:' + id, 'json');
-    if (pr) {
-      const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [], rejects: 0, applied: 0, rj: [] };
-      const fin = String(b.final || '').slice(0, 20000);
-      if ((act === 'accept' || act === 'edit') && fin && norm(fin) !== norm(pr.text)) {
-        lg.pairs.push({ id, slug, t: Date.now(), orig: pr.orig, prop: pr.text, final: fin, kinds: SKC.diffKinds(pr.text, fin) });
-        if (lg.pairs.length > 300) lg.pairs = lg.pairs.slice(-300);
-      }
-      if (act === 'cancel') { lg.rejects = (lg.rejects || 0) + 1; lg.rj = (lg.rj || []).concat([{ id, slug, t: Date.now(), orig: pr.orig.slice(0, 3000), prop: pr.text.slice(0, 3000) }]).slice(-200); }
-      await env.STORE.put('skm:lg', JSON.stringify(lg));
-      if (slugOk(slug)) {
-        const qk = 'skm:hq:' + slug, q = await env.STORE.get(qk, 'json');
-        if (q && q.items.some((x) => x.id === id && !x.d)) { q.items.forEach((x) => { if (x.id === id) x.d = act || 'done'; }); await env.STORE.put(qk, JSON.stringify(q)); }
-      }
+    if (slugOk(slug)) {
+      const qk = 'skm:hq:' + slug, q = await env.STORE.get(qk, 'json');
+      if (q && q.items.some((x) => x.id === id && !x.d)) { q.items.forEach((x) => { if (x.id === id) x.d = act || 'done'; }); await env.STORE.put(qk, JSON.stringify(q)); }
     }
     return json({ ok: true });
   }
   /* עריכה מאוחרת: המנהל תיקן בעורך שורה שנכתבה ב"סכם", אחרי שקיבל. נצמדת לאותה הצעה ביומן הלמידה. */
   if (p === '/sakem/later') {
-    const id = String(b.id || '').slice(0, 40), was = String(b.was || '').slice(0, 4000), now = String(b.now || '').slice(0, 4000);
-    /* סוג התיקון: מן הדפדפן (העברת דובר היא פעולת מבנה), ומהשוואת הנוסחים בפורמט הביניים */
+    const id = String(b.id || '').slice(0, 60), was = String(b.was || '').slice(0, 4000), now = String(b.now || '').slice(0, 4000);
     const KINDS = ['מספור', 'דובר', 'הסבר'];
     const wasI = String(b.wasI || '').slice(0, 4000), nowI = String(b.nowI || '').slice(0, 4000);
     const kinds = [...new Set((Array.isArray(b.kinds) ? b.kinds.map(String) : []).concat(wasI && nowI ? SKC.diffKinds(wasI, nowI) : []))].filter((k) => KINDS.includes(k));
     if (!id || !now || norm(was) === norm(now)) return json({ ok: true, skipped: true });
     const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [], rejects: 0, applied: 0, rj: [] };
     let pair = lg.pairs.find((x) => x.id === id);
-    if (!pair) {
-      const pr = await env.STORE.get('skm:p:' + id, 'json');
-      if (!pr) return json({ ok: true, skipped: 'no-proposal' });
-      pair = { id, slug: pr.slug, t: Date.now(), orig: pr.orig, prop: pr.text, final: pr.text };
-      lg.pairs.push(pair);
-    }
+    if (!pair) { pair = { id, slug: String(b.slug || ''), t: Date.now(), orig: '', prop: was, final: was }; lg.pairs.push(pair); }
     pair.later = (pair.later || []).filter((x) => norm(x.was) !== norm(was));
     pair.later.push({ was, now, daf: String(b.daf || '').slice(0, 12), t: Date.now(), kinds });
     pair.later = pair.later.slice(-20);
     pair.t = Date.now();
-    if (lg.pairs.length > 300) lg.pairs = lg.pairs.slice(-300);
+    lg.pairs = lg.pairs.slice(-300);
     await env.STORE.put('skm:lg', JSON.stringify(lg));
     return json({ ok: true, n: pair.later.length });
   }
-  if (p === '/sakem/examples') {
-    const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [] };
-    const fresh = lg.pairs.filter((x) => x.t > (lg.applied || 0)).filter((x) => x.orig.length < 1500);
-    /* המובהקים: הזוגות שבהם הנוסח הסופי רחוק ביותר מן ההצעה (תיקון מאוחר מגדיל את המרחק) */
-    const dist = (a, c) => { const A = new Set(norm(a).split(' ')), C = new Set(norm(c).split(' ')); let x = 0; A.forEach((w) => { if (!C.has(w)) x++; }); C.forEach((w) => { if (!A.has(w)) x++; }); return x / Math.max(1, A.size + C.size); };
-    const score = (x) => dist(x.prop, x.final) + 0.15 * (x.later || []).length;
-    const pick = fresh.map((x) => [score(x), x]).sort((a, c) => c[0] - a[0]).slice(0, 6).map((z) => z[1]);
-    const kindNote = (k) => (k && k.length ? ' (סוג התיקון: ' + k.join(', ') + ')' : '');
-    const laterNote = (x) => (x.later || []).map((l) => 'ואחר כך תיקן בעורך' + kindNote(l.kinds) + ': "' + l.was + '" ← "' + l.now + '"');
-    const base = EXAMPLES.pairs;
-    const pairs = base.concat(pick.map((x) => ({ kind: 'נלמד מעריכת המנהל', before: x.orig, after: x.final,
-      changes: ['נלמד מן הנוסח שהמנהל קיבל'].concat(laterNote(x)) })));
-    /* להבין מדוע: המודל עובר על כל התיקונים (המיידיים והמאוחרים) ומנסח לכל אחד את הכלל שמאחוריו */
-    let nr = 0;
-    const key = await getKey(env);
-    if (key && fresh.length) {
-      const old = ((await env.STORE.get('skm:rules', 'json')) || { rules: [] }).rules;
-      const items = fresh.slice(-40).map((x, i) => '### תיקון ' + (i + 1) + '\nהמקור:\n' + x.orig.slice(0, 1200) + '\nהצעת המודל:\n' + x.prop.slice(0, 1200) +
-        '\nמה שהמחבר קיבל' + kindNote(x.kinds) + ':\n' + x.final.slice(0, 1200) + ((x.later || []).length ? '\n' + laterNote(x).join('\n') : '')).join('\n\n');
-      const sys = 'אתה מנתח את תיקוני המחבר של "לאוקמי גירסא" (קיצור התלמוד) להצעות של כלי הקיצור. ' +
-        'לכל תיקון שאל: מה הכלל שמאחוריו - למה המחבר שינה כך את הצעת המודל. תיקון שסוגו מסומן (מספור א. ב. ג., דובר בין כותרת צד לשורה, הסבר {הס:} שנוסף או נמחק) - נסח את הכלל באותו תחום. נסח כללים מותנים קצרים ("כש... - ..."), כל אחד עם הסיבה בקצרה. ' +
-        'כלל נכנס רק אם הוא חוזר בשני תיקונים לפחות, או שהוא חד-משמעי בתיקון אחד; תיקון מקומי שאין בו כלל - לא נכנס. ' +
-        'אחד עם הכללים הקיימים: עדכן כלל שהתחדד, מחק כלל שהתיקונים סותרים, ואל תכפיל. עד 12 כללים, בעברית, בלי מקף ארוך. פלט: JSON {"rules":[...]}';
-      const msg = (old.length ? 'הכללים הקיימים:\n' + old.map((r, i) => (i + 1) + '. ' + r).join('\n') + '\n\n' : '') + 'התיקונים החדשים:\n\n' + items;
-      const RSCH = { type: 'object', additionalProperties: false, required: ['rules'], properties: { rules: { type: 'array', items: { type: 'string' } } } };
-      const c = await callModel(env, key, sys, [{ role: 'user', content: msg }], RSCH);
-      if (c.j) {
-        await addCost(env, usdOf(c.j.usage));
-        const txt = (c.j.content || []).filter((z) => z.type === 'text').map((z) => z.text).join('');
-        let o = null; try { o = JSON.parse(txt); } catch (e) { try { o = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1)); } catch (e2) { o = null; } }
-        const rules = o && Array.isArray(o.rules) ? o.rules.map(String).map((r) => r.replace(/[–—]/g, '-').trim()).filter(Boolean).slice(0, 12) : [];
-        if (rules.length) { await env.STORE.put('skm:rules', JSON.stringify({ rules, t: Date.now(), from: fresh.length })); nr = rules.length; }
-      }
-    }
-    await env.STORE.put('skm:ex', JSON.stringify({ pairs, t: Date.now() }));
-    lg.applied = Date.now();
-    await env.STORE.put('skm:lg', JSON.stringify(lg));
-    return json({ ok: true, n: pick.length, rules: nr });
-  }
-
-  /* ---- הצעה חדשה / קצר עוד ---- */
-  const key = await getKey(env);
-  if (!key) return bad('ממתין למפתח: הדבק את מפתח הסכם בחלונית הניהול', 409);
-  const cost = await costDoc(env);
-  if ((cost.usd || 0) >= CAP_USD) return bad(CAP_MSG, 429);
-  const slug = String(b.slug || '');
-  if (!slugOk(slug)) return bad('מסכת לא תקינה');
-
-  if (p === '/sakem/more') {
-    const pr = await env.STORE.get('skm:p:' + String(b.id || '').slice(0, 40), 'json');
-    if (!pr) return bad('ההצעה לא נמצאה (פגה)', 404);
-    const msgs = (pr.msgs || []).concat([{ role: 'assistant', content: JSON.stringify({ point: pr.point || '', text: pr.text, changes: pr.changes || [] }) },
-      { role: 'user', content: 'קצר עוד: אותו קטע, בערך שליש פחות מן ההצעה שלך, וברור באותה מידה - בלי לאבד שלב בסוגיה, דעה או מסקנה. השאלה נכללת בתשובה, ושורות שאומרות דבר אחד מתאחדות. החזר JSON.' }]);
-    const g = await generate(env, key, systemText(await examples(env)), msgs, pr.orig, pr.gemara || '', { before: pr.before || '', after: pr.after || '' });
-    if (g.usd) await addCost(env, g.usd);
-    if (g.err) return bad(g.err, g.cap ? 429 : 502);
-    const id = rid();
-    const rec = { id, slug, ids: pr.ids, orig: pr.orig, gemara: pr.gemara, before: pr.before || '', after: pr.after || '', text: g.out.text, point: g.out.point, changes: g.out.changes, warn: g.warn, notes: g.notes, msgs: g.msgs.slice(0, 1), parent: pr.id, t: Date.now(), usd: g.usd };
-    await env.STORE.put('skm:p:' + id, JSON.stringify(rec), { expirationTtl: 14 * 86400 });
-    return json({ ok: true, id, text: rec.text, point: rec.point, changes: rec.changes, warn: rec.warn, notes: rec.notes, usd: g.usd });
-  }
-
-  /* המבחן החוזר (tools/sakem_tests/run.mjs): קטע בפורמט הביניים ישירות, בלי אימות מקור, באותה
-     הנחיה, אותן דוגמאות ואותו שומר. נספר בעלות ובתקרה ככל קריאה, ואינו נשמר ביומן הלמידה. */
-  if (p === '/sakem/test') {
-    const orig = String(b.text || '').slice(0, 6000).replace(/\r/g, '').trim();
-    if (!orig) return bad('לא נשלח קטע');
-    const ctx = { gem: String(b.gemara || '').slice(0, 7000), per: '', hv: '' };
-    const before = String(b.before || '').slice(0, 2000), after = String(b.after || '').slice(0, 2000);
-    const msgs = [{ role: 'user', content: userText(orig, before, after, ctx) }];
-    const g = await generate(env, key, systemText(await examples(env)), msgs, orig, ctx.gem, { before, after });
-    if (g.usd) await addCost(env, g.usd);
-    if (g.err) return bad(g.err, g.cap ? 429 : 502);
-    return json({ ok: true, text: g.out.text, point: g.out.point, changes: g.out.changes, warn: g.warn, notes: g.notes || [], usd: g.usd, rounds: g.rounds || 0 });
-  }
-
-  if (p !== '/sakem') return bad('נתיב לא מוכר', 404);
-  const units = cleanUnits(b.units, 120);
-  if (!units.length) return bad('לא נשלח קטע');
-  const dafs = [...new Set(units.map((u) => u.daf).filter(Boolean))];
-  if (dafs.length > 2) return bad('הקטע ארוך מדי, נא לסמן עד דף אחד');
-  const pages = await Promise.all(dafs.map((d) => pageFile(env, slug, d)));
-  if (pages.some((x) => !x)) return bad('קובץ העמוד לא נמצא באתר (המסכת טרם נבנתה מחדש עם סכם)', 409);
-  const miss = await provenance(env, slug, units, pages);
-  if (miss.length) return bad('בקטע יש שורה שלא נמצאה באתר ובעריכות שבשרת - כנראה עריכה שטרם פורסמו לשרת: "' + miss[0].slice(0, 50) + '"', 409);
-  const orig = SKC.toInter(units).text;
-  const before = SKC.toInter(cleanUnits(b.before, 3)).text, after = SKC.toInter(cleanUnits(b.after, 3)).text;
-  const ctx = await context(env, slug, units, pages);
-  const msgs = [{ role: 'user', content: userText(orig, before, after, ctx) }];
-  const g = await generate(env, key, systemText(await examples(env)), msgs, orig, ctx.gem, { before, after });
-  if (g.usd) await addCost(env, g.usd);
-  if (g.err) return bad(g.err, g.cap ? 429 : 502);
-  const id = rid();
-  const rec = { id, slug, ids: units.map((u) => u.id), orig, gemara: ctx.gem, before, after, text: g.out.text, point: g.out.point, changes: g.out.changes, warn: g.warn, notes: g.notes, msgs: msgs, t: Date.now(), usd: g.usd };
-  await env.STORE.put('skm:p:' + id, JSON.stringify(rec), { expirationTtl: 14 * 86400 });
-  if (b.queue) {
-    const qk = 'skm:hq:' + slug, q = (await env.STORE.get(qk, 'json')) || { items: [] };
-    q.items = q.items.filter((x) => !x.d).concat([{ id, ids: rec.ids, orig, text: rec.text, point: rec.point, changes: rec.changes, warn: rec.warn, notes: rec.notes, t: rec.t }]).slice(-500);
-    await env.STORE.put(qk, JSON.stringify(q));
-  }
-  return json({ ok: true, id, text: rec.text, point: rec.point, changes: rec.changes, warn: rec.warn, notes: rec.notes, usd: g.usd });
+  return bad('נתיב לא מוכר', 404);
 }

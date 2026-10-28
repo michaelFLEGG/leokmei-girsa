@@ -84,9 +84,9 @@
     if(!b){b=document.createElement('button');b.id='skmbtn';b.type='button';
       b.addEventListener('mousedown',e=>e.preventDefault());
       b.addEventListener('click',()=>skmGo());document.body.appendChild(b)}
-    const nokey=SKM.stat&&!SKM.stat.hasKey;
-    b.textContent=nokey?'סכם · ממתין למפתח':'סכם';
-    b.title=SKM.sel&&SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הידוק ותיקון הקטע המסומן (Ctrl+Shift+S). להרחבה: גרירה על כמה שורות, או Shift+לחיצה על שורה אחרת';
+    const nokey=false;
+    b.textContent='סכם';
+    b.title=SKM.sel&&SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הכנסת הקטע המסומן לתור סכם (Ctrl+Shift+S). להרחבה: גרירה על כמה שורות, או Shift+לחיצה על שורה אחרת';
     if(SKM.sel&&SKM.sel.rows.length>1)b.textContent+=' · '+SKM.sel.rows.length+' שורות';
     b.classList.toggle('dim',!!(nokey||SKM.sel&&SKM.sel.long));
     const last=SKM.sel.rows[SKM.sel.rows.length-1].getBoundingClientRect();
@@ -95,7 +95,7 @@
     /* גלגל השיניים שליד הכפתור: מפתח, עלויות, למידה ותור הסולמיות (27.10.2026) */
     let g=$('#skmset');
     if(!g){g=document.createElement('button');g.id='skmset';g.type='button';g.textContent='⚙';
-      g.title='סכם: מפתח, עלויות ותור';g.setAttribute('aria-label','סכם: מפתח, עלויות ותור');
+      g.title='סכם: התור';g.setAttribute('aria-label','סכם: התור');
       g.addEventListener('mousedown',e=>e.preventDefault());
       g.addEventListener('click',()=>skmPanel());document.body.appendChild(g)}
     g.style.top=top+'px';g.style.left=(Math.max(8,last.left+8)+b.offsetWidth+6)+'px';g.style.display='block'}
@@ -115,29 +115,10 @@
     if(!skmOK()){flash('סכם פועל במצב עריכה, למנהל');return}
     if(!SKM.sel){flash('סמן קטע (אפשר להרחיב ב-Shift+לחיצה על שורה אחרת), ואז סכם');return}
     if(SKM.sel.long){flash('הקטע ארוך מדי, נא לסמן עד דף אחד');return}
-    const st=await skmStat();
-    if(st&&!st.hasKey){skmPanel();flash('ממתין למפתח: הדבק את מפתח הסכם בחלונית');return}
-    if(st&&st.capped){flash('הגעת לתקרת החודש, הכפתור יחזור ב-1 לחודש');return}
-    const ids=SKM.sel.ids.slice(),rows=SKM.sel.rows.slice();
-    const key=ids.join(',');
-    if(SKM.busy.has(key)){flash('ההצעה לקטע הזה כבר בדרך');return}
+    /* פרומפט 15: אין עוד קריאה למודל. הקטע נכנס לאותו תור של "סכם פרק", והמשימה בענן מכינה לו הצעה */
     clearTimeout(CAPT);document.querySelectorAll('#flow [contenteditable="true"]').forEach(el=>{if(el.contains(document.activeElement)||el===document.activeElement)capture(el)});
-    const os=skmUnits(ids);
-    const fu=flatU(),i0=fu.findIndex(o=>o.u.id===ids[0]),i1=fu.findIndex(o=>o.u.id===ids[ids.length-1]);
-    const ctxB=fu.slice(Math.max(0,i0-3),i0),ctxA=fu.slice(i1+1,i1+4);
-    const orig=skmInter(os);
-    SKM.busy.add(key);rows.forEach(r=>r.classList.add('skmbusy'));skmMark(null);getSelection().removeAllRanges();
-    try{
-      const j=await api('/sakem',{method:'POST',body:JSON.stringify({slug:SLUG,masechet:D.masechet,
-        units:os.map(skmPU),before:ctxB.map(skmPU),after:ctxA.map(skmPU)})});
-      skmArrive({id:j.id,ids,orig,text:j.text,point:j.point||'',changes:j.changes||[],warn:j.warn||[],notes:j.notes||[],usd:j.usd||0,round:1});
-    }catch(err){
-      const m=err.message||'';
-      if(/טרם פורסמו|לא נמצאה באתר/.test(m)){
-        if(confirm(m+'\n\nלפרסם עכשיו את העריכות הממתינות ולנסות שוב?')){await pubNow(1);setTimeout(()=>{skmMark(rows.filter(r=>r.isConnected));skmGo()},1200)}}
-      else if(/מפתח/.test(m)){SKM.stat=null;skmPanel();flash(m)}
-      else flash('סכם: '+m)}
-    finally{SKM.busy.delete(key);rows.forEach(r=>r.classList.remove('skmbusy'))}}
+    const ids=SKM.sel.ids.slice();skmMark(null);getSelection().removeAllRanges();
+    try{await skpEnqueue('seg',ids)}catch(err){flash('סכם: '+(err.message||err))}}
   function skmArrive(p){
     /* הקטע השתנה בזמן היצירה: ההצעה כבר אינה מתאימה */
     if(skmInter(skmUnits(p.ids))!==p.orig){flash('הקטע השתנה בזמן היצירה. סמן שוב ובקש הצעה חדשה');skmDone(p,'stale');return}
@@ -220,10 +201,9 @@
         (p.notes&&p.notes.length?'<span class="skmnote" title="'+esc(p.notes.join(' · '))+'">'+esc(p.notes.join(' · '))+'</span>':'')+
         '<button type="button" data-a="ok"'+(blocked?' hidden':'')+' title="Enter">קבל</button>'+
         '<button type="button" data-a="edit">ערוך</button>'+
-        '<button type="button" data-a="more">קצר עוד</button>'+
         (p.hist&&p.hist.length?'<button type="button" data-a="back" title="חזרה להצעה הקודמת, בלי קריאה חדשה ובלי עלות">חזרה לקודמת</button>':'')+
         '<button type="button" data-a="no" title="Esc">בטל</button>'+
-        '<button type="button" data-a="set" class="skmlink" title="מפתח, עלויות, למידה ותור הסולמיות">עלות ומפתח</button>'+
+        '<button type="button" data-a="set" class="skmlink" title="התור של סכם">התור</button>'+
         (p.changes&&p.changes.length?'<details class="skmwhy"><summary>מה שיניתי</summary><ul>'+p.changes.slice(0,5).map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul></details>':'')+
       '</div>';
     rows[rows.length-1].after(g);
@@ -269,14 +249,7 @@
     const ok=g.querySelector('[data-a="ok"]');ok.hidden=false;ok.textContent='קבל את הנוסח הערוך';
     g.querySelector('[data-a="edit"]').hidden=true;
     const p=b.querySelector('p');if(p){p.focus();const r=document.createRange();r.selectNodeContents(p);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r)}}
-  async function skmMore(){
-    const p=SKM.cur;if(!p)return;
-    const g=SKM.ghost;g.classList.add('skmbusy');
-    try{const j=await api('/sakem/more',{method:'POST',body:JSON.stringify({slug:SLUG,id:p.id})});
-      /* ההצעה הקודמת נשמרת במכשיר: "חזרה לקודמת" מחזירה אותה בלי קריאה חדשה ובלי עלות */
-      skmShow(Object.assign({},p,{id:j.id,text:j.text,point:j.point||p.point||'',changes:j.changes||[],warn:j.warn||[],notes:j.notes||[],round:(p.round||1)+1,
-        hist:(p.hist||[]).concat([Object.assign({},p,{hist:null})])}))}
-    catch(err){g.classList.remove('skmbusy');flash('קצר עוד: '+(err.message||''))}}
+  function skmMore(){flash('קיצור נוסף: ערוך את ההצעה, או בטל וסמן שוב')}
   function skmCancel(){const p=SKM.cur;skmClose();if(p)skmDone(p,'cancel')}
   function skmBack(){const p=SKM.cur;if(!p||!p.hist||!p.hist.length)return;
     const prev=p.hist[p.hist.length-1];
@@ -519,6 +492,8 @@
           let pre=0;while(pre<cur.length&&pre<want.length&&cur[pre]===want[pre])pre++;
           let suf=0;while(suf<cur.length-pre&&suf<want.length-pre&&cur[cur.length-1-suf]===want[want.length-1-suf])suf++;
           if(want.length-pre-suf<1){if(suf)suf--;else pre--}
+          /* הוספה בלבד (חסר מהגמרא): אין שורה ישנה באמצע לפצל - השורה הקודמת נכנסת לפיצול */
+          if(cur.length-pre-suf<1){if(pre)pre--;else suf--}
           const s2=s+pre,tot2=total-pre-suf,fl2=flat.slice(pre,flat.length-suf),st2=stys.slice(pre,stys.length-suf);
           const oldT=U.l.slice(s2,s2+tot2).map(l=>plain(l[1])),newT=fl2.map(h=>plain(h));
           if(tot2===fl2.length)fl2.forEach((h,n)=>setText('u'+U.id+'.'+(s2+n+1),h,st2[n],daf));
@@ -565,61 +540,13 @@
     if($('#edn'))$('#edn').textContent=ED.length;
     return {n,recs:RECS}}
 
-  /* =================== חלונית הניהול: מפתח, עלויות, למידה ותור הסולמיות =================== */
+  /* =================== חלונית הניהול: התור של סכם (פרומפט 15: בלי מפתח ובלי עלות) =================== */
   function skmPanelBtn(){const box=$('#edb');if(!box||SUGM||!isAdmin())return;
     const row=box.querySelector('div[style*="flex-wrap"]');if(!row||row.querySelector('.skmpb'))return;
-    const b=document.createElement('button');b.className='skmpb';b.textContent='סכם: מפתח, עלויות ותור';b.onclick=()=>skmPanel();row.appendChild(b)}
+    const b=document.createElement('button');b.className='skmpb';b.textContent='סכם: התור';b.onclick=()=>skmPanel();row.appendChild(b)}
   const skmDraw0=drawEd;
   drawEd=function(){skmDraw0();skmPanelBtn()};
-  window.skmPanel=async function(){
-    const old=$('#skmpanel');if(old)old.remove();
-    const m=document.createElement('div');m.className='modal';m.id='skmpanel';
-    m.innerHTML='<div class="box skmbox"><h3>סכם</h3><div class="skmst">טוען…</div><div class="btns"><button onclick="document.getElementById(\'skmpanel\').remove()">סגירה</button></div></div>';
-    document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.remove()});
-    const st=await skmStat(true);const box=m.querySelector('.skmst');
-    if(!st){box.textContent='אין חיבור לנקודת הקליטה.';return}
-    const usd=x=>'$'+(+x||0).toFixed(x<1?3:2);
-    let h='<p><b>מפתח:</b> '+(st.hasKey?'מוגדר ✓ (אינו מוצג)':'<span class="skmwarn">ממתין למפתח</span>')+'</p>';
-    h+='<p><label>הדבק מפתח סכם: <input id="skmkey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-..." style="width:60%"></label> <button id="skmkeyb">שמור</button></p>'+
-       '<p class="skmsmall">המפתח נכתב פעם אחת בשרת (מוצפן), אינו נשמר בדפדפן ואינו מוצג שוב. מפתח מן הסביבה "לאוקמי - סכם" בקונסול.</p>';
-    h+='<p><b>עלות:</b> היום '+usd(st.day)+' · החודש '+usd(st.month)+' מתוך תקרה של '+usd(st.cap)+(st.capped?' · <span class="skmwarn">הגעת לתקרת החודש</span>':'')+
-       ' · '+(st.n||0)+' הצעות החודש'+(st.n?' · ממוצע '+usd(st.month/st.n)+' להצעה':'')+'</p>';
-    h+='<p><b>למידה:</b> '+(st.pairs||0)+' זוגות (הצעה מול הנוסח שקיבלת אחרי עריכה) · '+(st.rejects||0)+' דחיות'+
-       ' · '+(st.later||0)+' תיקונים מאוחרים בעורך'+
-       ' · '+(st.fresh||0)+' מתוך 24 זוגות חדשים עד הצעת עדכון הדוגמאות'+(st.learned?' · הדוגמאות כבר עודכנו מן הלמידה':'')+'</p>'+
-       (st.rules&&st.rules.length?'<details><summary>כללים שנלמדו מתיקוניך ('+st.rules.length+')</summary><ol class="skmsmall">'+st.rules.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ol></details>':'');
-    if(st.suggest&&st.suggest.length)h+='<p><button id="skmex">עדכן את דוגמאות הסכם ('+st.suggest.length+' זוגות חדשים)</button></p>';
-    h+='<hr><p><b>תור הסולמיות (#):</b> <button id="skmhq">הכן הצעות לכל ה-# במסכת</button>'+
-       (st.queue?' <button id="skmhqo">פתח את התור ('+st.queue+')</button>':'')+'</p><div id="skmhqs" class="skmsmall"></div>';
-    box.innerHTML=h;
-    $('#skmkeyb').onclick=async()=>{const v=$('#skmkey').value.trim();if(!v)return;
-      try{await api('/sakem/key',{method:'POST',body:JSON.stringify({key:v})});$('#skmkey').value='';SKM.stat=null;flash('המפתח נשמר בשרת');skmPanel()}
-      catch(e){flash('לא נשמר: '+e.message)}};
-    if($('#skmex'))$('#skmex').onclick=async()=>{try{const j=await api('/sakem/examples',{method:'POST',body:JSON.stringify({act:'apply'})});flash('הדוגמאות עודכנו ('+j.n+')'+(j.rules?' ו-'+j.rules+' כללים נוסחו מתיקוניך':''));skmPanel()}catch(e){flash(e.message)}};
-    $('#skmhq').onclick=()=>skmHashPrep(st);
-    if($('#skmhqo'))$('#skmhqo').onclick=()=>{m.remove();skmQOpen()}};
-
-  /* ---- תור הסולמיות: הכנת הצעות לכל שורה עם # (לא רץ מאליו) ---- */
-  function skmHashRows(){const out=[];
-    flatU().forEach(o=>{const u=o.u;if(u.k!=='u'&&u.k!=='m')return;
-      if((u.l||[]).some(l=>plain(l[1]).indexOf('#')>-1)||plain(u.a||u.w||'').indexOf('#')>-1)out.push(o)});
-    return out}
-  async function skmHashPrep(st){
-    const rows=skmHashRows(),box=$('#skmhqs');
-    if(!rows.length){box.textContent='אין במסכת שורות עם #.';return}
-    const per=st.n?st.month/st.n:0.03,est=per*rows.length,left=Math.max(0,st.cap-st.month);
-    const can=per>0?Math.min(rows.length,Math.floor(left/per)):rows.length;
-    box.innerHTML=rows.length+' יחידות עם # · הערכה: $'+est.toFixed(2)+' ($'+per.toFixed(3)+' להצעה) · נותר בתקרה $'+left.toFixed(2)+
-      (can<rows.length?' · ייכנסו '+can+' בלבד':'')+' <button id="skmhqgo">התחל</button>';
-    $('#skmhqgo').onclick=async()=>{
-      let done=0,fail=0;
-      for(const o of rows.slice(0,can)){
-        const fu=flatU(),i=fu.findIndex(x=>x.u===o.u);
-        try{await api('/sakem',{method:'POST',body:JSON.stringify({slug:SLUG,masechet:D.masechet,queue:1,
-          units:[skmPU(o)],before:fu.slice(Math.max(0,i-3),i).map(skmPU),after:fu.slice(i+1,i+4).map(skmPU)})});done++}
-        catch(e){fail++;if(/תקרת/.test(e.message||'')){box.textContent='נעצר: '+e.message;break}}
-        box.textContent='הוכנו '+done+' מתוך '+can+(fail?' · '+fail+' נכשלו':'')}
-      SKM.stat=null}}
+  window.skmPanel=function(){skpPanel()};
   async function skmQOpen(){
     try{const j=await api('/sakem/queue?slug='+encodeURIComponent(SLUG));SKM.q=(j.items||[]).filter(x=>!x.d);
       if(!SKM.q.length){flash('התור ריק');SKM.q=null;return}

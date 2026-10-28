@@ -30,7 +30,7 @@ LEDGER = os.path.join(ROOT, 'data', 'seo', 'lastmod.json')
 MIN_TEXT = 300          # פחות מזה - דף חלש: noindex ומחוץ למפת האתר
 NEAR = 5                # "דפים קרובים": חמישה לפני וחמישה אחרי
 DAF_YOMI = 'hadaf-hayomi.html'
-AUTHOR = {'@type': 'Person', 'name': 'הרב מיכאל פלעג'}
+AUTHOR = {'@type': 'Person', 'name': 'הרב מיכאל פלעג', 'url': BASE + '/about.html'}
 PUBLISHER = {'@type': 'Organization', 'name': 'מכון לאוקמי גירסא', 'url': BASE + '/',
              'logo': {'@type': 'ImageObject', 'url': BASE + '/brand/icons/lamed-600.png'}}
 NACH = 'https://nach.leokmei.com/'
@@ -348,6 +348,11 @@ def crumbs_ld(items):
         {'@type': 'ListItem', 'position': n + 1, 'name': nm, 'item': it} for n, (nm, it) in enumerate(items)]}
 
 
+def ld_date(d):
+    """תאריך מלא לנתונים המובנים: גוגל מבקש שעה ואזור זמן (בדיקת התוצאות העשירות, 28.10.2026)."""
+    return '%sT00:00:00+02:00' % d
+
+
 def first_line(txt, n=150):
     t = txt[:n]
     if len(txt) > n:
@@ -409,7 +414,7 @@ def write_daf_yomi(site, pages_by_slug, today):
     title = 'קיצור הדף היומי - %s דף %s | %s' % (nm, heb_num(n), NAME)
     desc = ('קיצור הדף היומי של היום, %s: מסכת %s דף %s בקיצור. %s' % (hd, nm, heb_num(n), line))[:250]
     ld = [{'@context': 'https://schema.org', '@type': 'WebPage', 'name': 'קיצור הדף היומי', 'headline': title, 'url': url,
-           'inLanguage': 'he', 'dateModified': today.isoformat(), 'description': desc, 'author': AUTHOR, 'publisher': PUBLISHER,
+           'inLanguage': 'he', 'dateModified': ld_date(today.isoformat()), 'description': desc, 'author': AUTHOR, 'publisher': PUBLISHER,
            'isPartOf': {'@type': 'WebSite', 'name': NAME, 'url': BASE + '/'}},
           crumbs_ld([(NAME, BASE + '/'), ('קיצור הדף היומי', url)])]
     today_box = ('<div class="today" id="hy-top"><p>היום, <b id="hy-date">%s</b>: <b>מסכת %s דף %s</b></p>'
@@ -485,7 +490,7 @@ def run(site, built, slug):
             perek = p.get('perek', '')
             ld = [{'@context': 'https://schema.org', '@type': ['Article', 'LearningResource'],
                    'headline': '%s %s בקיצור' % (m, daf_words(daf)), 'name': title, 'inLanguage': 'he', 'url': url,
-                   'mainEntityOfPage': url, 'datePublished': pub, 'dateModified': lm, 'description': desc[:200],
+                   'mainEntityOfPage': url, 'datePublished': ld_date(pub), 'dateModified': ld_date(lm), 'description': desc[:200],
                    'image': BASE + '/brand/og-image.png', 'learningResourceType': 'סיכום',
                    'about': 'תלמוד בבלי, %s, %s' % (mc, daf_words(daf)),
                    'isPartOf': {'@type': 'Book', 'name': mc + ' בקיצור', 'url': mc_url},
@@ -558,7 +563,7 @@ def run(site, built, slug):
         mlm = max(dates) if dates else tiso
         masechet_lastmod[sl] = mlm
         ld = [{'@context': 'https://schema.org', '@type': 'CollectionPage', 'name': title, 'url': mc_url, 'inLanguage': 'he',
-               'dateModified': mlm, 'author': AUTHOR, 'publisher': PUBLISHER,
+               'dateModified': ld_date(mlm), 'author': AUTHOR, 'publisher': PUBLISHER,
                'isPartOf': {'@type': 'WebSite', 'name': NAME, 'url': BASE + '/'}},
               crumbs_ld([(NAME, BASE + '/'), (mc, mc_url)])]
         body = ('<main><nav class="crumbs"><a href="/">%s</a> › %s</nav><h1>%s בקיצור</h1>'

@@ -22,7 +22,7 @@
 
 אין כאן שום מחיקה ממשית, ואין קבלה או דחייה של שינוי קיים.
 """
-import os, sys, json, shutil, time, zipfile, datetime, argparse, io, re
+import os, sys, json, shutil, time, zipfile, datetime, argparse, io, re, contextlib
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lxml import etree
@@ -133,6 +133,47 @@ def backup(path, masechet):
     except OSError as e:
         print('הערה: העברת גיבויים ישנים לארכיון נכשלה (%s). הגיבוי החדש נשמר.' % e)
     return dst
+
+
+# נמדד 28.10.2026: שני הקולטים (תיקוני האתר והצעות המגיהים) רצו יחד על
+# בכורות, ושניהם כתבו לאותו '<קובץ>.new'. האחד החליף את החי בקובץ הזמני
+# של השני, והשני קרס (FileNotFoundError). לכן: כותב אחד לוורד בכל רגע
+# (נעילה מקומית, משתחררת לבד כשהתהליך מת), ושם זמני ייחודי לכל תהליך.
+LOCK = os.path.join(os.environ.get('LOCALAPPDATA') or os.path.expanduser('~'), 'leokmei', 'word-writer.lock')
+
+
+def tmp_path(path):
+    return '%s.%d.new' % (path, os.getpid())
+
+
+@contextlib.contextmanager
+def writer_lock(minutes=20, log=print):
+    """רק תהליך אחד כותב לקובצי הוורד. השני ממתין עד 20 דקות, ואם לא
+    התפנה - נכשל בקול ולא כותב (הקליטה תנסה שוב בסבב הבא)."""
+    import msvcrt
+    os.makedirs(os.path.dirname(LOCK), exist_ok=True)
+    f = open(LOCK, 'a+b')
+    deadline = time.time() + minutes * 60
+    said = False
+    while True:
+        try:
+            f.seek(0)
+            msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+            break
+        except OSError:
+            if time.time() > deadline:
+                f.close()
+                raise Refused('כותב אחר לוורד פעיל כבר %d דקות. לא נכתב דבר; ינוסה שוב בסבב הבא.' % minutes)
+            if not said:
+                log('כותב אחר לוורד פעיל. ממתין לתורי')
+                said = True
+            time.sleep(5)
+    try:
+        yield
+    finally:
+        f.seek(0)
+        msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, 1)
+        f.close()
 
 
 def swap(tmp, path, tries=6, wait=2):
@@ -460,7 +501,7 @@ def apply_numbers(path, ops, author, masechet, log=print, dry=False):
         p.insert(pos, ins)
         expect[b['i']] = label + b['text']
         done += 1
-    tmp = path + '.new'
+    tmp = tmp_path(path)
     _rezip(path, tmp, dict({'word/document.xml':
                             etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
                             'word/settings.xml': _ensure_track(settings)[0]}, **extra))
@@ -755,7 +796,7 @@ def apply(path, ops, author, masechet, log=print, dry=False):
             else:
                 missed.append((op, 'הקטע אינו יחיד בפסקה, או שהוא בתוך שינוי-מעקב'))
 
-    tmp = path + '.new'
+    tmp = tmp_path(path)
     _rezip(path, tmp, dict({'word/document.xml':
                        etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
                        'word/settings.xml': _ensure_track(settings)[0]}, **extra))
@@ -1010,7 +1051,7 @@ def _apply_split_merge(path, ops, author, masechet, log=print, dry=False):
             _mark_para(p, 'del', author, when, nextid)
         done += 1
 
-    tmp = path + '.new'
+    tmp = tmp_path(path)
     _rezip(path, tmp, {'word/document.xml':
                        etree.tostring(doc, xml_declaration=True, encoding='UTF-8',
                                       standalone=True),
@@ -1156,7 +1197,7 @@ def _apply_deco(path, ops, author, masechet, log=print, dry=False):
                 continue
         done += 1
 
-    tmp = path + '.new'
+    tmp = tmp_path(path)
     _rezip(path, tmp, {'word/document.xml':
                        etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
                        'word/settings.xml': _ensure_track(settings)[0]})
@@ -1351,7 +1392,7 @@ def _apply_side(path, ops, author, masechet, log=print, dry=False):
         _chain(p)[0].addprevious(np_)
         done += 1
 
-    tmp = path + '.new'
+    tmp = tmp_path(path)
     _rezip(path, tmp, {'word/document.xml':
                        etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
                        'word/settings.xml': _ensure_track(settings)[0]})
@@ -1519,7 +1560,7 @@ def _apply_usm(path, ops, author, masechet, log=print, dry=False):
         _mark_para(pi_, 'del', author, when, nextid)
         done += 1
 
-    tmp = path + '.new'
+    tmp = tmp_path(path)
     _rezip(path, tmp, {'word/document.xml':
                        etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
                        'word/settings.xml': _ensure_track(settings)[0]})
@@ -1864,7 +1905,7 @@ def apply_transplant(path, src, author, masechet, log=print, dry=False):
         rep['backup'] = bk
         log('החלפה חלקית נכשלה בפסקה. הקובץ לא נגע.')
         return rep
-    tmp = path + '.new'
+    tmp = tmp_path(path)
     _rezip(path, tmp, {'word/document.xml':
                        etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
                        'word/settings.xml': _ensure_track(settings)[0]})
@@ -1952,7 +1993,7 @@ def turn_on_tracking(path, masechet, log=print):
         return False
     bk = backup(path, masechet)
     before = convert(path)
-    tmp = path + '.new'
+    tmp = tmp_path(path)
     _rezip(path, tmp, {'word/settings.xml': new})
     after = convert(tmp)
     if [b['text'] for b in before] != [a['text'] for a in after]:

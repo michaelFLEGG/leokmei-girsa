@@ -330,4 +330,9 @@ def install_task(repo):
 
 
 if __name__ == '__main__':
-    main()
+    # כותב אחד לוורד בכל רגע: קליטת ההצעות רצה גם היא כל עשר דקות
+    try:
+        with word_apply.writer_lock():
+            main()
+    except Refused as e:
+        raise SystemExit(str(e))

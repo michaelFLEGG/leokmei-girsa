@@ -166,4 +166,9 @@ def install_task():
 
 
 if __name__ == '__main__':
-    main()
+    # כותב אחד לוורד בכל רגע: קליטת תיקוני האתר רצה גם היא כל עשר דקות
+    try:
+        with word_apply.writer_lock():
+            main()
+    except Refused as e:
+        raise SystemExit(str(e))

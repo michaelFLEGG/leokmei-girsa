@@ -194,6 +194,9 @@
       wrap.appendChild(strip);
     }
     wrap.appendChild(LG.quiz.liveLine(''));
+    /* קישורים רגילים לגוגל ולמי שמחפש (פרומפט 10): קיצור הדף היומי, כל המסכתות, ואתרי המכון */
+    wrap.appendChild(el('nav', 'lm-small lm-seo', '<a href="hadaf-hayomi.html">קיצור הדף היומי</a> · <a href="masechtot.html">כל המסכתות</a> · ' +
+      '<a href="about.html">אודות</a> · <a href="https://nach.leokmei.com/">נ״ך המפורש</a> · <a href="https://xn--8dbacdxfna0hp.com/">ממלכת הזוהר</a>'));
     root.appendChild(wrap);
   };
 

@@ -119,7 +119,7 @@ PRE = {'home': ('<main class="lm-wrap lm-pre"><section class="gate-hero" aria-la
                 '<a class="gate-link" href="shas.html" aria-label="כניסה למפת הש&quot;ס"><img class="gate-img" src="brand/shaar-v2/shaar-zohar-360.avif" srcset="brand/shaar-v2/shaar-zohar-360.avif 360w, brand/shaar-v2/shaar-zohar-560.avif 560w, brand/shaar-v2/shaar-zohar-960.avif 960w, brand/shaar-v2/shaar-zohar-1600.avif 1600w" sizes="(max-width:520px) min(440px,100vw), 560px" '
                 'alt="שער לאוקמי גירסא" width="560" height="843" decoding="async" fetchpriority="high" onerror="if(!this.getAttribute(\'data-fb\')){this.setAttribute(\'data-fb\',1);this.removeAttribute(\'srcset\');this.src=\'brand/shaar-v2/shaar-zohar-360.webp\'}" '
                 'onload="var h=this.closest(\'.gate-hero\');this.classList.add(\'ld\');setTimeout(function(){h.style.backgroundImage=\'none\'},520)"></a></section>'
-                '<div class="ctas"><a class="lm-btn pri" href="shas.html">מפת הש&quot;ס</a></div></main>')}
+                '<div class="ctas"><a class="lm-btn pri" href="shas.html">מפת הש&quot;ס</a><a class="lm-btn" href="hadaf-hayomi.html">קיצור הדף היומי</a></div></main>')}
 
 
 def placeholder(site):

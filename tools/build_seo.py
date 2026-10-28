@@ -13,6 +13,9 @@ HOME_TITLE = 'לאוקמי גירסא · קיצור התלמוד הבבלי, ק�
 HOME_DESC = ('לאוקמי גירסא - קיצור התלמוד הבבלי, דף אחר דף. '
              'קיצור הדף היומי, קיצור הש"ס, ומערכת לימוד אישית. חינם.')
 API = 'https://leokmei-suggest.m7654301.workers.dev'
+ORG = 'מכון לאוקמי גירסא'
+# אתרי המכון ודף העמותה בגיידסטאר. ערוץ היוטיוב של השיעורים יתווסף כאן כשתהיה לו כתובת.
+SAME_AS = ['https://nach.leokmei.com/', 'https://xn--8dbacdxfna0hp.com/', 'https://www.guidestar.org.il/organization/580693760']
 NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'admin-quiz.html', 'masechet.html', 'quiz.html')
 
 ICONS = ('<meta property="og:image" content="%s/brand/og-image.png"><meta property="og:image:width" content="1200">'
@@ -104,16 +107,25 @@ def run(site, built, slug):
     now = datetime.date.today().isoformat()
     io.open(os.path.join(site, 'about.html'), 'w', encoding='utf-8').write(about_html())
     io.open(os.path.join(site, 'CNAME'), 'w', encoding='utf-8').write('leokmei.com\n')
+    import indexnow     # קובץ המפתח של IndexNow (בינג): ציבורי מעצם הגדרתו
+    io.open(os.path.join(site, indexnow.KEY + '.txt'), 'w', encoding='utf-8').write(indexnow.KEY)
     io.open(os.path.join(site, 'robots.txt'), 'w', encoding='utf-8').write(
         'User-agent: *\nAllow: /\nDisallow: /galeria-lamed/\n\nSitemap: %s/sitemap.xml\n' % BASE)
-    ld_home = [{'@context': 'https://schema.org', '@type': 'WebSite', 'name': NAME, 'url': BASE + '/',
-                'inLanguage': 'he', 'alternateName': ['קיצור התלמוד הבבלי', 'קיצור הדף היומי', 'קיצור הש"ס']},
-               {'@context': 'https://schema.org', '@type': 'Organization', 'name': NAME, 'url': BASE + '/'}]
+    ld_home = [{'@context': 'https://schema.org', '@type': 'WebSite', '@id': BASE + '/#website', 'name': NAME, 'url': BASE + '/',
+                'inLanguage': 'he', 'alternateName': ['לאוקמי גרסא', 'קיצור הדף היומי', 'קיצור התלמוד הבבלי', 'קיצור הש"ס'],
+                'publisher': {'@id': BASE + '/#org'}},
+               {'@context': 'https://schema.org', '@type': 'Organization', '@id': BASE + '/#org', 'name': ORG,
+                'alternateName': NAME, 'legalName': 'מכון "לאוקמי גירסא" ירושלים (ע"ר)', 'url': BASE + '/', 'logo': BASE + '/brand/icons/lamed-600.png',
+                'founder': {'@type': 'Person', 'name': 'הרב מיכאל פלעג'},
+                'identifier': {'@type': 'PropertyValue', 'propertyID': 'מספר עמותה', 'value': '580693760'},
+                'sameAs': SAME_AS}]
     urls = [('index.html', '1.0'), ('yomi.html', '0.9'), ('masechtot.html', '0.8'), ('shas.html', '0.7'),
             ('about.html', '0.4'), ('mekorot.html', '0.3')]
     rewrite(site, 'index.html', HOME_TITLE, HOME_DESC, ld=ld_home, body_extra=NOSCRIPT)
-    rewrite(site, 'yomi.html', 'הדף היומי היום בקיצור · ' + NAME,
-            'הדף היומי של היום בקיצור: הדף שלומדים היום בעולם. מתעדכן מדי יום.')
+    # yomi.html הוא לוח הלומד; הדף שאמור לעלות על "קיצור הדף היומי" הוא hadaf-hayomi.html,
+    # ולכן הכותרות שונות, כדי ששני הדפים לא יתחרו זה בזה.
+    rewrite(site, 'yomi.html', 'לוח הדף היומי ומעקב לימוד · ' + NAME,
+            'לוח הדף היומי של לאוקמי גירסא: הדף של היום, מעקב אחר הלימוד, ומעבר לקיצור של כל דף.')
     rewrite(site, 'masechtot.html', 'כל מסכתות הש"ס בקיצור · ' + NAME,
             'רשימת כל מסכתות התלמוד הבבלי, עם המסכתות שכבר עלו לאתר בקיצור לאוקמי גירסא.')
     rewrite(site, 'shas.html', 'מפת הש"ס · ' + NAME, 'מפת הש"ס לפי סדרים ומסכתות, עם התקדמות הלימוד.')
@@ -140,14 +152,50 @@ def run(site, built, slug):
               'inLanguage': 'he', 'url': BASE + '/' + fn, 'isPartOf': {'@type': 'WebSite', 'name': NAME, 'url': BASE + '/'}}
         hub = ('<noscript><main style="max-width:640px;margin:20px auto;padding:0 18px;font-family:serif"><h1>מסכת %s בקיצור</h1>'
                '<p><a href="%s/">רשימת כל דפי המסכת</a></p></main></noscript>') % (esc(m), slug[m])
-        if rewrite(site, fn, 'מסכת %s בקיצור · %s' % (m, NAME), desc, ld=ld, body_extra=hub):
+        if rewrite(site, fn, 'מסכת %s בקיצור - לימוד אינטראקטיבי | %s' % (m, NAME), desc, ld=ld, body_extra=hub):
             urls.append((fn, '0.8'))
     import build_static
-    urls += build_static.run(site, built, slug)
-    sm = ['<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    st_urls, mlm = build_static.run(site, built, slug)
+    write_sitemaps(site, urls, st_urls, mlm, slug)
+
+
+def write_sitemaps(site, urls, st_urls, mlm, slug):
+    """פרומפט 10: sitemap.xml הוא אינדקס; מפה אחת לדפים הראשיים ומפה לכל מסכת.
+    רק כתובות סופיות שקיימות באתר; lastmod אמיתי מן המרשם (ובדפים הכלליים - בלי
+    lastmod, כי אין להם תאריך תוכן אמיתי). כתובת שאינה קיימת עוצרת את הבנייה בקול."""
+    rows = {}
+    rev = {v: k for k, v in slug.items()}
     for fn, pr in urls:
-        loc = BASE + '/' if fn == 'index.html' else BASE + '/' + fn
-        sm.append('<url><loc>%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>' % (loc, now, pr))
-    sm.append('</urlset>')
-    io.open(os.path.join(site, 'sitemap.xml'), 'w', encoding='utf-8').write('\n'.join(sm))
-    print('SEO: %d כתובות במפת האתר' % len(urls))
+        sl = fn[:-5] if fn.endswith('.html') and fn[:-5] in rev else None
+        rows.setdefault('main', []).append((fn, pr, mlm.get(sl) if sl else None))
+    for fn, pr, lm, grp in st_urls:
+        rows.setdefault(grp, []).append((fn, pr, lm))
+    missing, seen = [], set()
+    for grp in rows:
+        for fn, pr, lm in rows[grp]:
+            path = os.path.join(site, fn, 'index.html') if fn.endswith('/') else os.path.join(site, fn)
+            if not os.path.exists(path):
+                missing.append(fn)
+            if fn in seen:
+                missing.append('כפול: ' + fn)
+            seen.add(fn)
+    if missing:
+        raise SystemExit('עצירה: מפת האתר מכילה כתובות שאינן באתר: ' + ', '.join(missing[:10]))
+    idx = ['<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    total = 0
+    for grp in ['main'] + sorted(g for g in rows if g != 'main'):
+        sm = ['<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+        lms = []
+        for fn, pr, lm in rows[grp]:
+            loc = BASE + '/' if fn == 'index.html' else BASE + '/' + fn
+            sm.append('<url><loc>%s</loc>%s<priority>%s</priority></url>' % (loc, ('<lastmod>%s</lastmod>' % lm) if lm else '', pr))
+            if lm:
+                lms.append(lm)
+        sm.append('</urlset>')
+        name = 'sitemap-%s.xml' % grp
+        io.open(os.path.join(site, name), 'w', encoding='utf-8').write('\n'.join(sm))
+        idx.append('<sitemap><loc>%s/%s</loc>%s</sitemap>' % (BASE, name, ('<lastmod>%s</lastmod>' % max(lms)) if lms else ''))
+        total += len(rows[grp])
+    idx.append('</sitemapindex>')
+    io.open(os.path.join(site, 'sitemap.xml'), 'w', encoding='utf-8').write('\n'.join(idx))
+    print('SEO: %d כתובות במפת האתר, ב-%d מפות' % (total, len(rows)))

@@ -543,3 +543,6 @@ body.lm .lm-dycal button.lm-dy.today{border:2px solid #f9e08a;box-shadow:0 0 0 2
   .lm-dycal{gap:4px}body.lm .lm-dycal button.lm-dy{min-height:46px;padding:4px 2px}body.lm .lm-dycal button.lm-dy b{font-size:17px}body.lm .lm-dycal button.lm-dy span{display:none}
   .lm-dyhead h3{font-size:21px}.lm-dyhead a.lm-dynav span{display:none}.lm-dyhead a.lm-dynav{padding:4px 12px}
 }
+
+/* קישורי הבית הרגילים (פרומפט 10) */
+.lm-seo{text-align:center;margin:22px 0 6px;line-height:2}.lm-seo a{color:var(--gold,#e9c35a);text-decoration:none}.lm-seo a:hover{text-decoration:underline}

@@ -74,7 +74,7 @@ jobs:
         run: |
           git config user.name "leokmei-watcher"
           git config user.email "watcher@users.noreply.github.com"
-          git add -A data/edits
+          git add -A data/edits data/seo
           git diff --cached --quiet || (git commit -m "תיקונים שנקלטו בוורד הוסרו מן הקובץ [skip ci]" && git push)
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

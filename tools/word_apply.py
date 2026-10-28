@@ -68,12 +68,90 @@ def wait_free(path, minutes=60, step=600, log=print):
 
 # ---------------------------------------------------------------- גיבוי
 
+# נמדד 28.10.2026: גיבוי לפני כל קריאה, גם כשלא נכתב דבר, הצטבר ל-25,604
+# קבצים ו-10 ג'יגה בדרייב (9,321 של בכורות; שלושה בשנייה בסוכה). לכן:
+# גיבוי זהה לאחרון אינו נוצר שוב, ובתיקייה נשארים החמישה האחרונים לכל
+# מסכת. הישנים מועברים (לא נמחקים) לארכיון, במנות, כדי שהדרייב יספוג.
+KEEP = 5
+ARCHIVE = os.path.join(DRIVE, '_שומר', 'ארכיון גיבויים')
+ROTATE_STEP = 200
+
+
+def _own_backups(masechet):
+    pat = re.compile(re.escape(masechet) + r' \d\d\.\d\d\.\d{4} \d\d-\d\d-\d\d(?: \d+)?\.docx$')
+    try:
+        names = [n for n in os.listdir(BACKUPS) if pat.match(n)]
+    except OSError:
+        return []
+    return sorted((os.path.join(BACKUPS, n) for n in names), key=os.path.getmtime)
+
+
+def _same_bytes(a, b):
+    try:
+        if os.path.getsize(a) != os.path.getsize(b):
+            return False
+        with open(a, 'rb') as fa, open(b, 'rb') as fb:
+            return fa.read() == fb.read()
+    except OSError:
+        return False
+
+
+def rotate(masechet, keep=KEEP, step=ROTATE_STEP):
+    """מעביר לארכיון את הגיבויים שמעבר לחמישה האחרונים. מחזיר כמה הועברו."""
+    old = _own_backups(masechet)[:-keep] if keep else _own_backups(masechet)
+    if not old:
+        return 0
+    dst_dir = os.path.join(ARCHIVE, masechet)
+    os.makedirs(dst_dir, exist_ok=True)
+    moved = 0
+    for p in old[:step]:
+        dst = os.path.join(dst_dir, os.path.basename(p))
+        if os.path.exists(dst):
+            if not _same_bytes(p, dst):
+                continue        # שם תפוס בתוכן אחר: נשאר במקומו, לא נדרס
+            os.remove(p)        # עותק זהה כבר בארכיון
+        else:
+            shutil.move(p, dst)
+        moved += 1
+    return moved
+
+
 def backup(path, masechet):
     os.makedirs(BACKUPS, exist_ok=True)
+    mine = _own_backups(masechet)
+    if mine and _same_bytes(path, mine[-1]):
+        return mine[-1]
     stamp = datetime.datetime.now().strftime('%d.%m.%Y %H-%M-%S')
     dst = os.path.join(BACKUPS, '%s %s.docx' % (masechet, stamp))
+    n = 1
+    while os.path.exists(dst):
+        n += 1
+        dst = os.path.join(BACKUPS, '%s %s %d.docx' % (masechet, stamp, n))
     shutil.copy2(path, dst)
+    try:
+        rotate(masechet)
+    except OSError as e:
+        print('הערה: העברת גיבויים ישנים לארכיון נכשלה (%s). הגיבוי החדש נשמר.' % e)
     return dst
+
+
+def swap(tmp, path, tries=6, wait=2):
+    """מחליף את הקובץ החי בגרסה החדשה. הסנכרון של הדרייב מחזיק לפעמים
+    את הקובץ לרגע (נמדד 28.10: PermissionError, ושריד .new נשאר ליד החי).
+    ממתין ומנסה שוב; ואם לא הצליח - מסיר את השריד ונכשל בקול."""
+    for i in range(tries):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError:
+            if i == tries - 1:
+                break
+            time.sleep(wait)
+    try:
+        os.remove(tmp)
+    except OSError:
+        pass
+    raise Refused('הקובץ החי תפוס (כנראה בידי סנכרון הדרייב) ולא הוחלף. שום דבר לא נכתב, והתיקונים יינסו שוב בסבב הבא.')
 
 
 # ------------------------------------------------------ עריכת ה-XML
@@ -404,7 +482,7 @@ def apply_numbers(path, ops, author, masechet, log=print, dry=False):
             log('   ' + line)
         return {'applied': 0, 'planned': len(plan), 'skipped': skipped, 'missed': missed,
                 'backup': bk, 'verified': False, 'errors': bad}
-    os.replace(tmp, path)
+    swap(tmp, path)
     log('נכתבו %d מספרי קטע, ואומתו' % done)
     return {'applied': done, 'planned': len(plan), 'skipped': skipped, 'missed': missed,
             'backup': bk, 'verified': True}
@@ -692,7 +770,7 @@ def apply(path, ops, author, masechet, log=print, dry=False):
             log('   ' + line)
         return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False, 'errors': bad}
 
-    os.replace(tmp, path)
+    swap(tmp, path)
     log('נכתבו %d תיקונים, ואומתו' % done)
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
@@ -947,7 +1025,7 @@ def _apply_split_merge(path, ops, author, masechet, log=print, dry=False):
         log('   ציפינו: %r' % (want_after[bad:bad + 1],))
         log('   קיבלנו: %r' % (got[bad:bad + 1],))
         return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
-    os.replace(tmp, path)
+    swap(tmp, path)
     log('נכתבו %d שינויי מבנה, ואומתו' % done)
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
@@ -1088,7 +1166,7 @@ def _apply_deco(path, ops, author, masechet, log=print, dry=False):
         os.remove(tmp)
         log('האימות נכשל. הקובץ לא נגע.')
         return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
-    os.replace(tmp, path)
+    swap(tmp, path)
     log('נכתבו %d שינויי עיטור, ואומתו' % done)
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
@@ -1293,7 +1371,7 @@ def _apply_side(path, ops, author, masechet, log=print, dry=False):
         os.remove(tmp)
         log('האימות נכשל (%s). הקובץ לא נגע.' % bad)
         return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
-    os.replace(tmp, path)
+    swap(tmp, path)
     log('נכתבו %d שינויי כותרת-צד, ואומתו' % done)
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
@@ -1455,7 +1533,7 @@ def _apply_usm(path, ops, author, masechet, log=print, dry=False):
         log('   ציפינו: %r' % (want_after[bad:bad + 2],))
         log('   קיבלנו: %r' % (got[bad:bad + 2],))
         return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
-    os.replace(tmp, path)
+    swap(tmp, path)
     log('נכתבו %d מחיקות כותרת-צד עם איחוי, ואומתו' % done)
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
@@ -1811,7 +1889,7 @@ def apply_transplant(path, src, author, masechet, log=print, dry=False):
         rep['verified'] = False
         rep['backup'] = bk
         return rep
-    os.replace(tmp, path)
+    swap(tmp, path)
     rep['verified'] = True
     rep['backup'] = bk
     log('הושתלו %d קבוצות פסקאות ו-%d החלפות מינימליות, ואומתו' % (rep['applied'], rep['fuzzy_applied']))
@@ -1880,7 +1958,7 @@ def turn_on_tracking(path, masechet, log=print):
     if [b['text'] for b in before] != [a['text'] for a in after]:
         os.remove(tmp)
         raise Refused('הפעלת המעקב שינתה טקסט. הקובץ לא נגע')
-    os.replace(tmp, path)
+    swap(tmp, path)
     log('מעקב-אחר-שינויים הופעל. גיבוי: ' + bk)
     return True
 

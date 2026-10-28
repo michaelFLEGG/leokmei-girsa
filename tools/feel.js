@@ -1,7 +1,7 @@
 // תחושת לחיצה: פעימה עדינה ורטט קצר בכל לחיצה על כפתור.
 // הצליל מסונתז בדפדפן (Web Audio, בלי קובץ קול): פעימה עמוקה ורכה עם נגיעת פעמון זעירה מעליה.
 // רטט: navigator.vibrate; באייפון (מערכת 18 ומעלה) דרך מתג מערכת נסתר, כי ספארי אינו תומך ב-vibrate.
-// מתג השתקה בתחתית הדף ("צליל לחיצה: פעיל / כבוי"); ההעדפה נשמרת בדפדפן.
+// השתקה: סמל רמקול קטן בלי כיתוב, בקצה סרגל הכלים או בפינה התחתונה השמאלית; ההעדפה נשמרת בדפדפן.
 // כפתור שאין להשמיע בו (למשל תשובות חידון שמשמיעות צליל משלהן): data-no-click-sound.
 // בדיקה: window.__feel.count עולה בכל הפעלה.
 (function () {
@@ -9,15 +9,10 @@
   if (window.__feel) return;
   var TH = {
     key: 'lgFeelClick',
-    host: '.lm-foot',
-    font: "700 13px/1.3 var(--ui, 'Assistant', system-ui, sans-serif)",
-    size: '13px',
+    bar: 'header.lm-top',
     fg: '#e9c35a',
-    bg: 'transparent',
-    border: 'rgba(209,162,58,.6)',
-    hoverBg: 'rgba(233,195,90,.15)',
-    floatBg: '#0f263b',
-    margin: '12px auto 0'
+    floatFg: '#d1a23a',
+    z: 60
   };
   var KEY = TH.key || 'feelClick';
   var mem = null;
@@ -161,19 +156,19 @@
     api.count++; api.last = el; pulse();
   }, { capture: true, passive: true });
 
-  // ---------- מתג השתקה ----------
-  var CSS = '#feelToggle{display:inline-flex;align-items:center;gap:.4em;margin:' + (TH.margin || '.6em auto') + ';padding:.3em .85em;' +
-    'font:' + (TH.font || 'inherit') + ';font-size:' + (TH.size || '.8rem') + ';line-height:1.3;letter-spacing:.01em;cursor:pointer;' +
-    'color:' + (TH.fg || 'inherit') + ';background:' + (TH.bg || 'transparent') + ';border:1px solid ' + (TH.border || 'currentColor') + ';' +
-    'border-radius:' + (TH.radius || '999px') + ';opacity:.78;-webkit-tap-highlight-color:transparent;transition:opacity .2s,background .2s}' +
-    '#feelToggle:hover,#feelToggle:focus-visible{opacity:1;' + (TH.hoverBg ? 'background:' + TH.hoverBg + ';' : '') + '}' +
-    '#feelToggle svg{width:1.05em;height:1.05em;flex:none}' +
-    '#feelToggle.floating{position:fixed;inset-block-end:6px;left:50%;transform:translateX(-50%);z-index:' + (TH.z || 60) + ';margin:0;' +
-    'background:' + (TH.floatBg || TH.bg || 'rgba(255,255,255,.9)') + ';box-shadow:0 1px 6px rgba(0,0,0,.18)}' +
-    '.feel-wrap{text-align:center}' +
-    '@media print{#feelToggle,.feel-wrap{display:none!important}}';
-  var SVG_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
-  var SVG_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6m0-6-5 6"/></svg>';
+  // ---------- מתג השתקה: סמל רמקול קטן, בלי כיתוב ----------
+  // פרומפט 1 כל האתרים (28.10.2026): התג "צליל לחיצה: פעיל" הוסר. במקומו סמל רמקול עמום בקצה סרגל הכלים העליון
+  // (TH.bar), רק כשהסרגל נשאר בשורה אחת ואף כפתור בו אינו מתכווץ; אחרת בפינה התחתונה השמאלית, מעל כל כפתור צף שיושב שם.
+  var CSS = '#feelToggle{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;' +
+    'width:32px;height:32px;min-width:32px;flex:0 0 32px;margin:0;padding:0;border:0;border-radius:50%;background:none;box-shadow:none;' +
+    'color:' + (TH.fg || 'currentColor') + ';opacity:.5;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .2s}' +
+    '#feelToggle:hover,#feelToggle:focus-visible{opacity:1}#feelToggle:focus-visible{outline:1px solid currentColor;outline-offset:-2px}' +
+    '#feelToggle svg{display:block;width:17px;height:17px;flex:none;pointer-events:none}' +
+    '#feelToggle.floating{position:fixed;left:calc(6px + env(safe-area-inset-left, 0px));bottom:calc(6px + env(safe-area-inset-bottom, 0px));' +
+    'z-index:' + (TH.z || 60) + ';color:' + (TH.floatFg || TH.fg || 'currentColor') + '}' +
+    '@media print{#feelToggle{display:none!important}}';
+  var SVG_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  var SVG_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M3.5 3.5l17 17"/></svg>';
 
   function addToggle() {
     if (document.getElementById('feelToggle')) return;
@@ -182,34 +177,88 @@
     (document.head || document.documentElement).appendChild(st);
     var b = document.createElement('button');
     b.id = 'feelToggle'; b.type = 'button';
+    b.setAttribute('data-no-zb', '');   // בלי הלוחית המוגבהת של שכבת הכפתורים
     function paint() {
-      var v = on();
-      b.innerHTML = (v ? SVG_ON : SVG_OFF) + '<span>' + (v ? 'צליל לחיצה: פעיל' : 'צליל לחיצה: כבוי') + '</span>';
-      b.setAttribute('aria-pressed', v ? 'true' : 'false');
-      b.title = v ? 'לחצו להשתקת צליל הלחיצה' : 'לחצו להפעלת צליל הלחיצה';
+      var tip = on() ? 'השתקת צליל הלחיצה' : 'הפעלת צליל הלחיצה';
+      b.innerHTML = on() ? SVG_ON : SVG_OFF;
+      b.title = tip; b.setAttribute('aria-label', tip);
     }
     b.addEventListener('click', function () { setOn(!on()); paint(); if (on()) { pulse(); buzz(); } });
     paint();
-    function place() {
-      var host = null;
-      try {
-        var cand = document.querySelectorAll(TH.host || 'footer');
-        for (var i = cand.length - 1; i >= 0; i--) {
-          if (cand[i].offsetParent !== null && !cand[i].closest('[hidden]') && cand[i].getBoundingClientRect().height > 8) { host = cand[i]; break; }
+
+    function shown(el) { return !!el && el.getClientRects().length > 0 && !el.closest('[hidden]'); }
+    // רוחב כל כפתור, קישור וסמל שבסרגל (מילוי גמיש כמו תפריט ניווט רשאי להצטמק; הפריטים שבתוכו לא)
+    function widths(bar) {
+      var w = [], els = bar.querySelectorAll('a,button,input,select,img,svg,[role="button"]');
+      for (var i = 0; i < els.length && i < 120; i++) { if (els[i] === b || b.contains(els[i])) continue; var r = els[i].getBoundingClientRect(); w.push(r.height > 0 ? r.width : -1); }
+      return w;
+    }
+    // בסרגל העליון: הפריט האחרון (הקצה השמאלי), ורק אם הסרגל לא נשבר לשורה שנייה, לא גלש ולא כיווץ כפתור אחר
+    function tryBar() {
+      var bar = null;
+      try { bar = TH.bar ? document.querySelector(TH.bar) : null; } catch (e) {}
+      if (!shown(bar)) return false;
+      if (b.parentNode) b.parentNode.removeChild(b);
+      var h0 = bar.getBoundingClientRect().height, sw0 = Math.max(bar.scrollWidth, bar.clientWidth), w0 = widths(bar);
+      b.className = ''; b.style.bottom = ''; bar.appendChild(b);
+      var r = bar.getBoundingClientRect(), q = b.getBoundingClientRect(), w1 = widths(bar), ok = q.width > 0 &&
+        r.height <= h0 + 1 && bar.scrollWidth <= sw0 + 1 && q.left >= r.left - 1 && q.right <= r.right + 1;
+      for (var i = 0; ok && i < w0.length; i++) if (w0[i] > 0 && w1[i] < w0[i] - 1) ok = false;
+      if (!ok) bar.removeChild(b);
+      return ok;
+    }
+    // כפתור צף אחר בפינה (חזרה למעלה, התקנה, נגן): הסמל עולה מעליו. מעטפת שמכסה את רוב המסך אינה מכשול.
+    function obstacle(x, y) {
+      var els = document.elementsFromPoint ? document.elementsFromPoint(x, y) : [];
+      for (var i = 0; i < els.length; i++) {
+        var e = els[i];
+        if (e === b || b.contains(e) || e === document.body || e === document.documentElement) continue;
+        for (var n = e; n && n !== document.body; n = n.parentElement) {
+          var p = getComputedStyle(n).position;
+          if (p === 'fixed' || p === 'sticky') {
+            var r = n.getBoundingClientRect();
+            if (r.height < innerHeight * 0.4) return r;
+            break;
+          }
         }
-      } catch (e) {}
-      if (host) {
-        if (b.parentNode && b.parentNode.className === 'feel-wrap' && host.contains(b)) return true;
-        var w = document.createElement('div'); w.className = 'feel-wrap'; w.appendChild(b);
-        b.className = ''; host.appendChild(w); return true;
       }
-      if (!b.parentNode) { b.className = 'floating'; document.body.appendChild(b); }
+      return null;
+    }
+    function dodge() {
+      if (b.className !== 'floating') return;
+      var y = 6;
+      for (var k = 0; k < 4; k++) {
+        var bot = innerHeight - y, top = bot - 32, hit = null;
+        var pts = [[9, top + 3], [35, top + 3], [9, bot - 3], [35, bot - 3], [22, top + 16]];
+        for (var i = 0; i < pts.length && !hit; i++) hit = obstacle(pts[i][0], pts[i][1]);
+        if (!hit) break;
+        y = innerHeight - hit.top + 6;
+        if (y > innerHeight / 2) { y = 6; break; }
+      }
+      var v = y === 6 ? '' : 'calc(' + Math.round(y) + 'px + env(safe-area-inset-bottom, 0px))';
+      if (b.style.bottom !== v) b.style.bottom = v;
+    }
+    // גוף דף עם transform או filter (למשל הנפשת כניסה) הופך את fixed ליחסי אליו - אז הסמל נתלה על השורש
+    function floatHost() {
+      var cs = getComputedStyle(document.body);
+      return (cs.transform !== 'none' || cs.filter !== 'none' || cs.perspective !== 'none' || /paint|layout|strict|content/.test(cs.contain || '')) ? document.documentElement : document.body;
+    }
+    function place() {
+      if (tryBar()) return true;
+      var host = floatHost();
+      if (b.parentNode !== host) { if (b.parentNode) b.parentNode.removeChild(b); host.appendChild(b); }
+      b.className = 'floating'; dodge();
       return false;
     }
-    // תחתית שנבנית מאוחר (בידי סקריפט של הדף) - נבדוק שוב עד שתופיע
-    if (!place()) {
+    // סרגל שנבנה מאוחר (בידי סקריפט של הדף) - נבדוק שוב עד שיופיע
+    if (!place() && TH.bar) {
       var tries = 0, iv = setInterval(function () { if (place() || ++tries > 12) clearInterval(iv); }, 500);
     }
+    var rt = 0, sc = 0;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(place, 250); });
+    window.addEventListener('load', function () { setTimeout(place, 300); });
+    window.addEventListener('scroll', function () { if (!sc) sc = setTimeout(function () { sc = 0; dodge(); }, 400); }, { passive: true, capture: true });
+    setTimeout(dodge, 2000);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addToggle); else addToggle();
 })();

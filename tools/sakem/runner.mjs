@@ -39,8 +39,9 @@ function push(msg, files) {
     execFileSync('git', ['commit', '-q', '-m', msg], { cwd: ROOT, stdio: 'inherit' });
   } catch (e) { console.log('(אין מה לשמור)'); return; }
   for (let i = 0; i < 4; i++) {
-    try { execFileSync('git', ['pull', '--rebase', '-q'], { cwd: ROOT, stdio: 'inherit' }); execFileSync('git', ['push', '-q'], { cwd: ROOT, stdio: 'inherit' }); console.log('נשמר ונדחף.'); return; }
-    catch (e) { console.log('דחיפה נכשלה, ניסיון חוזר…'); }
+    // תמיד אל main במפורש: משימה בענן רצה לעתים על ענף צדדי, ואז ההצעות לא היו מגיעות לסנכרון.
+    try { execFileSync('git', ['pull', '--rebase', '-q', 'origin', 'main'], { cwd: ROOT, stdio: 'inherit' }); execFileSync('git', ['push', '-q', 'origin', 'HEAD:main'], { cwd: ROOT, stdio: 'inherit' }); console.log('נשמר ונדחף.'); return; }
+    catch (e) { try { execFileSync('git', ['rebase', '--abort'], { cwd: ROOT, stdio: 'ignore' }); } catch (_) {} console.log('דחיפה נכשלה, ניסיון חוזר…'); }
   }
   die('הדחיפה נכשלה ארבע פעמים - עצור, ההתקדמות שמורה במחשב בלבד.');
 }

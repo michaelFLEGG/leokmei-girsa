@@ -31,4 +31,12 @@ jobs:
           git add data/sakem
           if git diff --cached --quiet; then echo "אין שינוי"; exit 0; fi
           git commit -m "סכם: סנכרון התור וההצעות [skip ci]"
-          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+          # 29.10: שתי הרצות בבת אחת התנגשו ב-sync-state.json, והלולאה נכשלה בשקט עם "הצלחה".
+          # במצב התנגשות - הגרסה של הרצה זו (החדשה) גוברת; ואם הדחיפה לא עלתה - כישלון רועש.
+          ok=0
+          for i in 1 2 3; do
+            if git pull --rebase -q -X theirs && git push -q; then ok=1; break; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 5
+          done
+          if [ "$ok" != 1 ]; then echo "::error::הדחיפה לריפו נכשלה שלוש פעמים"; exit 1; fi

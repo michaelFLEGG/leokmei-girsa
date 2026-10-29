@@ -70,6 +70,7 @@ def main():
     ap.add_argument('--tos', default='1')
     ap.add_argument('--duplex', default='0')
     ap.add_argument('--profile', default='a4')
+    ap.add_argument('--holefix', default='1', help='0: בלי פיצול הערות ומתיחה (מדידת "לפני" בבקרת החורים)')
     ap.add_argument('--out', required=True)
     ap.add_argument('--dev', action='store_true')
     ap.add_argument('--tos-dir', default=os.path.join(ROOT, 'tosafot'), help='תיקיית נתוני התוספות (live-*.json) לבדיקה')
@@ -80,6 +81,8 @@ def main():
     from playwright.sync_api import sync_playwright
 
     q = {'print': '1', 'tos': a.tos, 'duplex': a.duplex, 'profile': a.profile}
+    if a.holefix == '0':
+        q['holefix'] = '0'
     if a.all:
         q['all'] = '1'
     else:
@@ -157,12 +160,17 @@ def main():
     rep['seconds'] = round(time.time() - t0, 1)
     rep['console'] = [l for l in logs if not l.startswith('log:')][-15:]
     print(json.dumps({k: rep[k] for k in ('cols', 'lines', 'notes', 'placed', 'moved', 'warn', 'issues', 'loneFixed',
-                                          'msSqueeze', 'glued', 'semicolons', 'msMeasure', 't', 'seconds') if k in rep}, ensure_ascii=False))
+                                          'msSqueeze', 'glued', 'semicolons', 'msMeasure', 'splits', 'stretched', 't', 'seconds') if k in rep}, ensure_ascii=False))
     json.dump(rep, open(a.report or (a.out + '.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('pages=%d  out=%s' % (len(rep['pages']), a.out))
     # בודק החפיפות (14.10.2026): חפיפה או חריגה מהשוליים = כשל, אין קובץ "תקין"
     ov, bd = rep.get('overlaps') or [], rep.get('bounds') or []
     print('חפיפות=%d  חריגות_שוליים=%d' % (len(ov), len(bd)))
+    # בקרת החורים (פרומפט 16): טור עם ריק של יותר משורה וחצי (חוץ מסוף פרק). אזהרה, לא כשל
+    holes = rep.get('holes') or []
+    print('חורים_בטור=%d  הערות_מפוצלות=%d  טורים_שנמתחו=%d' % (len(holes), rep.get('splits', 0), rep.get('stretched', 0)))
+    for h in holes[:30]:
+        print('  חור: עמוד %s, טור %s (%s): %s שורות%s' % (h['page'], h['col'], h['daf'], h['lines'], (' - ' + h['why']) if h.get('why') else ''))
     for o in ov[:20]:
         print('  חפיפה: עמוד %s (%s): %s <> %s (%s מ"מ)' % (o['page'], o['daf'], o['a'], o['b'], o['mm']))
     for o in bd[:20]:

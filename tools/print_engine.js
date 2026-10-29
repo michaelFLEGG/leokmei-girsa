@@ -101,7 +101,7 @@
 
   /* ---------- מנוע ההדפסה ---------- */
   async function runPrint(){
-    var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],t:{}};var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
+    var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
     window.__PRN={state:'running',report:R};
     function W(m){R.warn.push(m);try{console.warn('[print] '+m)}catch(e){}}
     var prof=await (await fetch('print-profiles/'+(QS.get('profile')||'a4')+'.json',{cache:'no-store'})).json();
@@ -138,6 +138,8 @@
         '.pfn .fnum{font-size:'+n.numberScale+'em;line-height:0;position:relative;top:-'+n.numberRise+'em;vertical-align:baseline;margin-left:.18em;font-weight:'+n.numberWeight+';text-decoration:none}'+
         '.pfn .fnn{margin:'+n.betweenMm+'mm 0 0}.pfn .fnn:first-child{margin-top:0}'+
         '.pg .pfn .fnm{font-size:'+n.nameScale+'em;color:'+n.nameColor+'!important;font-weight:'+n.weight+'}'+
+        /* פרומפט 16: סימן ההמשך של הערה מפוצלת - קטן ואפור */
+        '.pfn .fcn,.pg .pfn .fcn{font-size:'+n.nameScale+'em;color:'+n.nameColor+'!important;font-weight:'+n.weight+'}'+
         '.pfn .fnp{font-size:'+(n.pt-n.parenLessPt)+'pt}'+
         '.pg a.tml{position:absolute;display:block;text-decoration:none;color:transparent!important}'+
         '.pg a.fnl,.pg a.dml{text-decoration:none;color:inherit}'+
@@ -391,23 +393,52 @@
       function paren(x){return ge(x).replace(/\([^()]*\)/g,function(q){return '<span class="fnp">'+q+'</span>'})}
       while((m=NAMES.exec(t))){o+=paren(t.slice(last,m.index))+'<span class="fnm">'+ge(m[1])+'</span>';last=m.index+m[0].length}
       return o+paren(t.slice(last))}
-    function noteHTML(n){
+    /* פרומפט 16 (29.10.2026): הערה ארוכה מתפצלת כמו בגמרות וילנא. pt.t = רק t המילים הראשונות (בטור של השורה המפנה);
+       pt.f = מן המילה f ועד הסוף (בראש אזור ההערות של הטור הבא, עם "המשך" קטן). המספר אינו משתנה */
+    function noteHTML(n,pt){
       var it=byN[n];var t=PUBN[n]||it.sum||'';
       var num=prof.notes.numbering==='digits'?String(it.dn||it.n):tosHeb(it);
+      if(pt&&pt.f!==undefined)
+        return '<div class="fnn fcont" id="fn-'+it.n+'-c"><a class="fnl" href="#tm-'+it.n+'"><span class="fnum">'+ge(num)+'</span></a> <span class="fcn">המשך</span> '+noteText(noteWords(n).w.slice(pt.f).join(' '))+'</div>';
+      if(pt&&pt.t!==undefined)t=noteWords(n).w.slice(0,pt.t).join(' ');
       return '<div class="fnn" id="fn-'+it.n+'"><a class="fnl" href="#tm-'+it.n+'"><span class="fnum">'+ge(num)+'</span></a> <span class="fdh">'+noteText(it.dhs||it.dh)+'</span> - '+noteText(t)+'</div>'}
+    /* מילות ההערה, ובאילו מהן מותר לפצל (רק מחוץ לסוגריים) */
+    var wcache={};
+    function noteWords(n){
+      if(wcache[n])return wcache[n];
+      var it=byN[n],t=String(PUBN[n]||it.sum||'').replace(/;/g,'.').replace(VERSE,'');
+      var w=t.split(/\s+/).filter(Boolean),ok=[],d=0;
+      w.forEach(function(x){d+=x.split('(').length+x.split('[').length-x.split(')').length-x.split(']').length;ok.push(d<=0)});
+      return (wcache[n]={w:w,ok:ok})}
     var meas=document.createElement('div');meas.id='prnmeas';document.body.appendChild(meas);
     var fcache={};
-    function fnBox(ids){
-      var k=ids.join(',');
+    function fnSpec(sp){
+      var k=sp.map(function(e){return e.n+(e.t!==undefined?'<'+e.t:'')+(e.f!==undefined?'>'+e.f:'')}).join(',');
       if(fcache[k])return fcache[k];
-      var o={html:'',h:0};
-      if(ids.length){
-        o.html=ids.map(noteHTML).join('');
-        meas.className='pfn'+(ids.length<2?' one':'');meas.innerHTML=o.html;
+      var o={html:'',h:0,spec:sp,parts:[]};
+      if(sp.length){
+        o.html=sp.map(function(e){return noteHTML(e.n,e)}).join('');
+        meas.className='pfn'+(sp.length<2?' one':'');meas.innerHTML=o.html;
         o.h=meas.getBoundingClientRect().height;
-        o.one=ids.length<2}
+        o.parts=[].map.call(meas.children,function(d){var t=0;[].forEach.call(d.getClientRects(),function(r){t+=r.height});return t});
+        o.one=sp.length<2}
       fcache[k]=o;return o}
+    function fnBox(ids){return fnSpec(ids.map(function(n){return {n:n}}))}
+    /* ההערות של טור: ההמשך שעבר אליו (carry) ראשון, ואחריו הערותיו; הערה שמתפצלת בו (split) - רק חלקה הראשון */
+    function specOf(ids,carry,split){
+      var s=[];if(carry)s.push({n:carry.n,f:carry.k});
+      ids.forEach(function(n){s.push(split&&split.n===n?{n:n,t:split.k}:{n:n})});
+      return s}
+    /* כמה שורות תתפוס יתרת ההערה בטור הבא (ברוחב עמודת הערות אחת) */
+    function remLines(n,k){
+      meas.className='pfn one';meas.style.width=((prof.measure-N.colGapMm)/2)+'mm';
+      meas.innerHTML=noteHTML(n,{f:k});
+      var h=meas.firstChild.getBoundingClientRect().height;
+      meas.style.width='';return h/NLH}
     var GAP=N.gapAboveMm*MM;
+    /* חור = ריק של יותר משורה וחצי (בקרה, קבוע). המתיחה: עד stretch.maxLines שורות, ועד stretch.maxPtPerGap נק' לכל גבול פסקה (מן הפרופיל) */
+    var STR=prof.stretch||{},NLH=N.linePt*PT,LH=prof.body.linePt*PT,HOLE=1.5*LH,STRMAX=(STR.maxLines||1.5)*LH,STRETCH=(STR.maxPtPerGap||3)*PT;
+    var HFIX=QS.get('holefix')!=='0';                    /* holefix=0: בלי פיצול ומתיחה, לבקרת לפני/אחרי בלבד */
     function noteIds(a,b){var s=[];for(var i=a;i<b;i++)for(var t=0;t<L[i].notes.length;t++)s.push(L[i].notes[t]);
       return s.sort(function(x,y){return x-y})}
 
@@ -419,6 +450,9 @@
     var SQ=2*PT;
     function segLen(i){
       if(i>=L.length)return 0;
+      /* פרומפט 16: כותרת שפותחת את הטור אינה "שורה בודדת". ד"ה של שורה אחת שאחריו מיד כותרת נושא נספר כאן כקטע של
+         שורה אחת, והמנוע סירב לפתוח בו טור והחזיר את השבירה אל תוך תיבת המשנה: חור של שבע שורות (סוכה כו.) */
+      if(HFIX&&L[i].first&&HEADS[L[i].kind])return 2;
       var c=0;
       for(var q=i;q<L.length;q++){if(q>i&&L[q].first&&HEADS[L[q].kind])break;c++;if(c>1)break}
       return c}
@@ -437,13 +471,13 @@
       return true}
 
     /* ---- מילוי טורים ---- */
-    var cols=[],i=0;
+    var cols=[],i=0,carry=null;
     function fillCol(i,cap,noLone){
       var y0=L[i].y0,best=-1,j=i,ids=[];
       while(j<L.length){
         if(j>i&&isForce(j))break;
         var nids=ids.concat(L[j].notes);
-        var nf=nids.length?fnBox(nids.slice().sort(function(x,y){return x-y})):null;
+        var nf=(nids.length||carry)?fnSpec(specOf(nids.slice().sort(function(x,y){return x-y}),carry,null)):null;
         var fh=nf?nf.h+GAP:0;
         var th=L[j].y1-y0;
         if(th+fh>cap+0.5)break;
@@ -451,20 +485,59 @@
         if(j>=L.length||(canBreak(j,noLone)&&!isForce(j)))best=j;
         else if(j<L.length&&isForce(j))best=j}
       return {best:best,j:j}}
+    /* גובה הטור בפועל: טקסט, ומעליו הערות (כולל המשך שעבר אליו) */
+    function colUsed(s,e,split){
+      var sp=specOf(noteIds(s,e),carry,split),fb=sp.length?fnSpec(sp):null;
+      return (L[e-1].y1-L[s].y0)+(fb?fb.h+GAP:0)}
+    /* פרומפט 16: פיצול ההערה האחרונה של הטור. השורות המפנות נשארות במקומן, וההערה מתחילה כאן וממשיכה בראש
+       אזור ההערות של הטור הבא. תנאים: שתי שורות לפחות מן ההערה בכל צד, שבירה חוקית בסוף הטור (כולל איסור שורה
+       בודדת בראש טור), ויתרה שאינה בולעת את הטור הבא. מחזיר את נקודת השבירה הרחוקה ביותר שעומדת בכל אלה */
+    function trySplit(i,cap){
+      var res=null;
+      for(var jj=i;jj<L.length;jj++){
+        if(jj>i&&isForce(jj))break;
+        var e=jj+1;if(e>=L.length)break;
+        var th=L[jj].y1-L[i].y0,ids=noteIds(i,e);
+        if(!ids.length){if(th>cap+0.5)break;continue}
+        var avail=cap-th-GAP-1;if(avail<2*NLH)break;                     /* פיקסל אחד של ביטחון: בלוק ההערות לעולם אינו נוגע בטקסט */
+        if(fnSpec(specOf(ids,carry,null)).h<=avail)continue;          /* נכנסת שלמה: אין צורך בפיצול כאן */
+        var n=ids[ids.length-1],nw=noteWords(n),lo=1,hi=nw.w.length-1,k=0;
+        while(lo<=hi){var mid=(lo+hi)>>1;
+          if(fnSpec(specOf(ids,carry,{n:n,k:mid})).h<=avail){k=mid;lo=mid+1}else hi=mid-1}
+        while(k>0&&!nw.ok[k-1])k--;
+        if(k<1)break;
+        var bx=fnSpec(specOf(ids,carry,{n:n,k:k}));
+        if(bx.h>avail)break;
+        if(bx.parts[bx.parts.length-1]/NLH<1.8)break;                     /* פחות משתי שורות בטור הראשון */
+        var rl=remLines(n,k);
+        if(rl<1.8)continue;                                                  /* פחות משתי שורות עוברות */
+        if(rl*NLH>0.45*cap)break;
+        if(canBreak(e,false))res={e:e,split:{n:n,k:k}}}
+      return res}
     while(i<L.length){
-      var r1=fillCol(i,A,true),best=r1.best,j=r1.j,sq=0;
+      var r1=fillCol(i,A,true),best=r1.best,j=r1.j,sq=0,split=null;
       if(best>i&&best<L.length&&segLen(best)===1&&!(L[best-1].ri===L[best].ri&&L[best-1].block===L[best].block)){
         var r2=fillCol(i,A+SQ,true);
         if(r2.best>best&&(r2.best>=L.length||segLen(r2.best)!==1)){
           best=r2.best;j=r2.j;
-          var nb=noteIds(i,best),fbx=nb.length?fnBox(nb):null;
-          sq=Math.max(0,Math.min(SQ,(L[best-1].y1-L[i].y0)+(fbx?fbx.h+GAP:0)-A));R.squeezed=(R.squeezed||0)+1}
+          sq=Math.max(0,Math.min(SQ,colUsed(i,best,null)-A));R.squeezed=(R.squeezed||0)+1}
         else{var r3=fillCol(i,A,false);if(r3.best>i){best=r3.best;j=r3.j;R.loneMoved=(R.loneMoved||0)+1}}}
       if(best<=i){                                          /* אין שבירה חוקית: מה שנכנס, ולכל הפחות שורה */
         best=Math.max(j,i+1);
         if(best<L.length)R.issues.push({type:'שבירה לא חוקית',daf:L[best].daf,detail:'לא נמצאה נקודת שבירה תקינה בטור'})}
+      /* פרומפט 16: נשאר חור של יותר משורה וחצי (ולא בסוף פרק) - מנסים לפצל את ההערה האחרונה */
+      if(HFIX&&!sq&&best<L.length&&!isForce(best)&&A-colUsed(i,best,null)>HOLE){
+        var ts=trySplit(i,A);
+        if(ts&&ts.e>best){best=ts.e;split=ts.split;R.splits=(R.splits||0)+1}}
+      /* הסיבה לחור שנשאר (לבקרה): השורה הבאה אינה נכנסת בגלל ההערות שלה, או שכלל עימוד אוסר לשבור כאן */
+      var why='';
+      if(best<L.length&&!isForce(best)){
+        var nx=colUsed(i,best+1,null);
+        why=nx<=A+0.5?'כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)':
+          ((L[best].y1-L[i].y0)<=A?'ההערות של השורה הבאה אינן נכנסות':'השורה הבאה עצמה אינה נכנסת')}
       var cn=noteIds(i,best);
-      cols.push({s:i,e:best,notes:cn,sq:sq});
+      cols.push({s:i,e:best,notes:cn,sq:sq,carry:carry,split:split,why:why});
+      carry=split?{n:split.n,k:split.k}:null;
       i=best}
 
     /* ---- בדיקות אחרי העימוד (לוח התקלות): כותרת מנותקת, שורה יתומה או אלמנה, הערה שנפרדה מסימנה ---- */
@@ -507,6 +580,16 @@
       cs2.forEach(function(c,ci){
         var ln=L[c.s],le=L[c.e-1];
         var yS=ln.y0-1,yE=le.y1,sqz=c.sq||0,spanY=Math.max(1,le.y1-ln.y0);
+        var spc=specOf(c.notes,c.carry,c.split),fb=spc.length?fnSpec(spc):null;
+        /* פרומפט 16, ב: ריק קטן שנשאר (עד שורה וחצי) מתפזר בשווה בין גבולות הפסקאות שבטור - לא בתוך פסקה, ועד 3 נק'
+           לכל גבול. טור שמסיים פרק (או את הטווח) נשאר כמות שהוא. ג: ריק גדול מזה נרשם בבקרה */
+        var endCol=c.e>=L.length||isForce(c.e);
+        var gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0),nb=le.ri-ln.ri,per=0;
+        if(HFIX&&!endCol&&!sqz&&gapPx>0.5&&gapPx<=STRMAX&&nb>0){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;R.stretched=(R.stretched||0)+1}
+        if(!endCol&&gapPx>HOLE){
+          var hl={page:pgi+1,col:ci===0?'ימני':'שמאלי',daf:ln.daf,lines:+(gapPx/LH).toFixed(1),why:c.why||''};
+          R.holes.push(hl);
+          R.issues.push({type:'חור בטור',page:hl.page,daf:hl.daf,unit:recs[ln.ri]&&recs[ln.ri].u&&recs[ln.ri].u.id,detail:'טור '+hl.col+': ריק של '+hl.lines+' שורות'+(hl.why?' ('+hl.why+')':'')})}
         /* ci 0 = הטור הימני: מכולה של 80 מ"מ שימינה עד שולי הימין */
         /* כל המרווח הפנוי נמצא בין שני הטורים; הטור הימני מתחיל בשולי הימין, והשמאלי בשולי השמאל */
         var boxLeft=ci===0?(PG.w-MG.right-(prof.rail+prof.measure)):MG.left;
@@ -516,14 +599,14 @@
           var rc=recs[ri];
           tpl.innerHTML=rc.html2;
           var cl=tpl.content.firstElementChild;
-          cl.style.position='absolute';cl.style.top=(rc.gtop-yS-sqz*Math.max(0,Math.min(1,(rc.gtop-ln.y0)/spanY)))+'px';cl.style.right='0';cl.style.width=(prof.rail+prof.measure)+'mm';
+          cl.style.position='absolute';cl.style.top=(rc.gtop-yS-sqz*Math.max(0,Math.min(1,(rc.gtop-ln.y0)/spanY))+per*(ri-ln.ri))+'px';cl.style.right='0';cl.style.width=(prof.rail+prof.measure)+'mm';
           rowsHtml+=cl.outerHTML}
-        var fb=c.notes.length?fnBox(c.notes):null;
         body+='<div class="pcol" style="left:'+boxLeft+'mm;top:'+MG.top+'mm;width:'+(prof.rail+prof.measure)+'mm;height:'+A_mm+'mm">'+
-          '<div class="ptx flow" style="height:'+(yE-yS-sqz)+'px">'+rowsHtml+'</div>'+
+          '<div class="ptx flow" style="height:'+(yE-yS-sqz+per*nb)+'px">'+rowsHtml+'</div>'+
           (fb?'<div class="pfnw" style="width:'+prof.measure+'mm"><div class="pfn'+(fb.one?' one':'')+'">'+fb.html+'</div></div>':'')+'</div>';
         c.notes.forEach(function(n){pageInfo.notes.push(n)});
-        pageInfo.cols.push({lines:c.e-c.s,textMm:+((yE-yS)/MM).toFixed(1),notes:c.notes.length,noteMm:fb?+(fb.h/MM).toFixed(1):0})});
+        pageInfo.cols.push({lines:c.e-c.s,textMm:+((yE-yS)/MM).toFixed(1),notes:c.notes.length,noteMm:fb?+(fb.h/MM).toFixed(1):0,
+          gapMm:+(gapPx/MM).toFixed(1),stretchPt:+(per/PT).toFixed(2),split:c.split?c.split.n:0,carry:c.carry?c.carry.n:0})});
       var foot='<div class="pnum" style="bottom:'+prof.footer.numberFromBottomMm+'mm">'+(pgi+1)+'</div>'+
         '<div class="psite" style="left:'+(MG.left+dx)+'mm">'+(prof.footer.pageQr?'<span class="qr"></span>':'')+'<span class="st">'+ge(prof.footer.siteText)+'</span></div>';
       pgEl.innerHTML=hd+body+foot;

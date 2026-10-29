@@ -73,6 +73,9 @@ def main():
         call('/sakem/exported', {'jids': done})
 
     # ב. הצעות מן הריפו לשרת (רק מה שהשתנה מאז הפעם הקודמת)
+    # 29.10: רשימת העבודות בשרת היא רשומה אחת, ו"סכם" שנלחץ באותה שנייה דרס עדכון "מוכן לסקירה".
+    # לכן בכל סבב משווים: עבודה שבריפו מתקדמת יותר מבשרת - מועלית שוב, גם כשהקובץ לא השתנה.
+    srv = {x['jid']: x for x in call('/sakem/jobs').get('items', [])}
     od = os.path.join(D, 'out')
     for fn in sorted(os.listdir(od)) if os.path.isdir(od) else []:
         if not fn.endswith('.json') or fn.endswith('.old.json'):
@@ -81,7 +84,15 @@ def main():
         raw = io.open(os.path.join(od, fn), 'rb').read()
         hsh = hashlib.sha1(raw).hexdigest()[:16]
         if imported.get(jid) == hsh:
-            continue
+            j = srv.get(jid)
+            if not j:
+                continue
+            o0 = json.loads(raw.decode('utf-8'))
+            lag = (o0.get('status') == 'ready' and j.get('st') not in ('ready', 'done')) or \
+                  (o0.get('status') != 'ready' and int(j.get('n') or 0) < int(o0.get('done') or 0))
+            if not lag:
+                continue
+            print('  מצב שנדרס בשרת - מעלה שוב:', jid, j.get('st'), '->', o0.get('status'))
         out = json.loads(raw.decode('utf-8'))
         print('הצעות:', jid, out.get('status'), '%s/%s' % (out.get('done'), out.get('total')))
         if not DRY:

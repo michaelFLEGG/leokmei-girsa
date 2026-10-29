@@ -50,8 +50,13 @@ def main():
     imported = st.setdefault('imported', {})
     changed = 0
 
-    # א. חבילות חדשות
-    ex = call('/sakem/export')['items']
+    # א. חבילות חדשות (וגם "נשלח" שאינו בריפו: סבב קודם סימן אותו ונכשל בדחיפה)
+    srv0 = call('/sakem/jobs').get('items', [])
+    lost = [x['jid'] for x in srv0 if x.get('st') == 'sent'
+            and not os.path.exists(os.path.join(D, 'queue', x['jid'] + '.json'))]
+    if lost:
+        print('נשלחו ואינם בריפו - מורידים שוב:', ', '.join(lost))
+    ex = call('/sakem/export' + ('?again=' + ','.join(lost) if lost else ''))['items']
     done = []
     for it in ex:
         jid = it['job']['jid']

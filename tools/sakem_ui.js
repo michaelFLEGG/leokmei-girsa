@@ -86,7 +86,7 @@
       b.addEventListener('click',()=>skmGo());document.body.appendChild(b)}
     const nokey=false;
     b.textContent='סכם';
-    b.title=SKM.sel&&SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הכנסת הקטע המסומן לתור סכם (Ctrl+Shift+S). להרחבה: גרירה על כמה שורות, או Shift+לחיצה על שורה אחרת';
+    b.title=SKM.sel&&SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הידוק ותיקון הקטע המסומן, מיד (Ctrl+Shift+S). להרחבה: גרירה על כמה שורות, או Shift+לחיצה על שורה אחרת';
     if(SKM.sel&&SKM.sel.rows.length>1)b.textContent+=' · '+SKM.sel.rows.length+' שורות';
     b.classList.toggle('dim',!!(nokey||SKM.sel&&SKM.sel.long));
     const last=SKM.sel.rows[SKM.sel.rows.length-1].getBoundingClientRect();
@@ -115,10 +115,30 @@
     if(!skmOK()){flash('סכם פועל במצב עריכה, למנהל');return}
     if(!SKM.sel){flash('סמן קטע (אפשר להרחיב ב-Shift+לחיצה על שורה אחרת), ואז סכם');return}
     if(SKM.sel.long){flash('הקטע ארוך מדי, נא לסמן עד דף אחד');return}
-    /* פרומפט 15: אין עוד קריאה למודל. הקטע נכנס לאותו תור של "סכם פרק", והמשימה בענן מכינה לו הצעה */
+    /* הכרעת המנהל 29.10: קטע מסומן - מיד, דרך ה-API. אין מפתח, נגמר הקרדיט או השירות נפל (השרת מחזיר queue) -
+       הקטע נכנס לתור של "סכם פרק", והמשימה המתוזמנת מכינה לו הצעה */
+    const ids=SKM.sel.ids.slice(),rows=SKM.sel.rows.slice();
+    const key=ids.join(',');
+    if(SKM.busy.has(key)){flash('ההצעה לקטע הזה כבר בדרך');return}
     clearTimeout(CAPT);document.querySelectorAll('#flow [contenteditable="true"]').forEach(el=>{if(el.contains(document.activeElement)||el===document.activeElement)capture(el)});
-    const ids=SKM.sel.ids.slice();skmMark(null);getSelection().removeAllRanges();
-    try{await skpEnqueue('seg',ids)}catch(err){flash('סכם: '+(err.message||err))}}
+    const os=skmUnits(ids);
+    const fu=flatU(),i0=fu.findIndex(o=>o.u.id===ids[0]),i1=fu.findIndex(o=>o.u.id===ids[ids.length-1]);
+    const ctxB=fu.slice(Math.max(0,i0-3),i0),ctxA=fu.slice(i1+1,i1+4);
+    const orig=skmInter(os);
+    SKM.busy.add(key);rows.forEach(r=>r.classList.add('skmbusy'));skmMark(null);getSelection().removeAllRanges();
+    try{
+      const j=await api('/sakem',{method:'POST',body:JSON.stringify({slug:SLUG,masechet:D.masechet,
+        units:os.map(skmPU),before:ctxB.map(skmPU),after:ctxA.map(skmPU)})});
+      skmArrive({id:j.id,ids,orig,text:j.text,point:j.point||'',changes:j.changes||[],warn:j.warn||[],notes:j.notes||[],usd:j.usd||0,round:1});
+    }catch(err){
+      const m=err.message||'';
+      if(err.j&&err.j.queue){
+        try{await skpEnqueue('seg',ids);toast(m+' - הקטע נכנס לתור, וההצעה תוכן במשימה המתוזמנת',6000)}
+        catch(e2){flash('סכם: '+(e2.message||e2))}}
+      else if(/טרם פורסמו|לא נמצאה באתר/.test(m)){
+        if(confirm(m+'\n\nלפרסם עכשיו את העריכות הממתינות ולנסות שוב?')){await pubNow(1);setTimeout(()=>{skmMark(rows.filter(r=>r.isConnected));skmGo()},1200)}}
+      else flash('סכם: '+m)}
+    finally{SKM.busy.delete(key);rows.forEach(r=>r.classList.remove('skmbusy'))}}
   function skmArrive(p){
     /* הקטע השתנה בזמן היצירה: ההצעה כבר אינה מתאימה */
     if(skmInter(skmUnits(p.ids))!==p.orig){flash('הקטע השתנה בזמן היצירה. סמן שוב ובקש הצעה חדשה');skmDone(p,'stale');return}
@@ -201,6 +221,7 @@
         (p.notes&&p.notes.length?'<span class="skmnote" title="'+esc(p.notes.join(' · '))+'">'+esc(p.notes.join(' · '))+'</span>':'')+
         '<button type="button" data-a="ok"'+(blocked?' hidden':'')+' title="Enter">קבל</button>'+
         '<button type="button" data-a="edit">ערוך</button>'+
+        (p.id&&!p.jid?'<button type="button" data-a="more">קצר עוד</button>':'')+
         (p.hist&&p.hist.length?'<button type="button" data-a="back" title="חזרה להצעה הקודמת, בלי קריאה חדשה ובלי עלות">חזרה לקודמת</button>':'')+
         '<button type="button" data-a="no" title="Esc">בטל</button>'+
         '<button type="button" data-a="set" class="skmlink" title="התור של סכם">התור</button>'+
@@ -249,7 +270,14 @@
     const ok=g.querySelector('[data-a="ok"]');ok.hidden=false;ok.textContent='קבל את הנוסח הערוך';
     g.querySelector('[data-a="edit"]').hidden=true;
     const p=b.querySelector('p');if(p){p.focus();const r=document.createRange();r.selectNodeContents(p);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r)}}
-  function skmMore(){flash('קיצור נוסף: ערוך את ההצעה, או בטל וסמן שוב')}
+  async function skmMore(){
+    const p=SKM.cur;if(!p)return;
+    const g=SKM.ghost;g.classList.add('skmbusy');
+    try{const j=await api('/sakem/more',{method:'POST',body:JSON.stringify({slug:SLUG,id:p.id})});
+      /* ההצעה הקודמת נשמרת במכשיר: "חזרה לקודמת" מחזירה אותה בלי קריאה חדשה ובלי עלות */
+      skmShow(Object.assign({},p,{id:j.id,text:j.text,point:j.point||p.point||'',changes:j.changes||[],warn:j.warn||[],notes:j.notes||[],round:(p.round||1)+1,
+        hist:(p.hist||[]).concat([Object.assign({},p,{hist:null})])}))}
+    catch(err){g.classList.remove('skmbusy');flash('קצר עוד: '+(err.message||''))}}
   function skmCancel(){const p=SKM.cur;skmClose();if(p)skmDone(p,'cancel')}
   function skmBack(){const p=SKM.cur;if(!p||!p.hist||!p.hist.length)return;
     const prev=p.hist[p.hist.length-1];

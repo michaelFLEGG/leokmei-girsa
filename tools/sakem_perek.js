@@ -91,11 +91,20 @@
     m.innerHTML='<div class="box skmbox"><h3>סכם: התור</h3>'+
       '<p class="skmsmall">ההצעות מוכנות במשימה המתוזמנת של קלוד בענן, על המנוי - בלי תשלום נוסף. פרק שנכנס לתור מופיע כאן כ"ממתין", אחר כך "בעבודה", ואז "מוכן לסקירה".</p>'+
       (SKP.all.length?'<table class="skptab">'+SKP.all.slice().reverse().map(row).join('')+'</table>':'<p>התור ריק.</p>')+
+      '<hr><div id="skpnow" class="skmsmall">סכם על קטע מסומן: בודק…</div>'+
       '<div class="btns"><button onclick="skpEnqueue(\'perek\');document.getElementById(\'skmpanel\').remove()">סכם את הפרק הנוכחי</button> <button onclick="document.getElementById(\'skmpanel\').remove()">סגירה</button></div></div>';
     document.body.appendChild(m);m.addEventListener('click',async e=>{if(e.target===m){m.remove();return}
       const b=e.target.closest('button');if(!b)return;
       if(b.dataset.o){const x=SKP.all.find(y=>y.jid===b.dataset.o);m.remove();if(x.slug===SLUG)skpOpen(x.jid);else location.href=x.slug+'.html#p='+(x.perek-1)+'&skp='+x.jid}
-      if(b.dataset.c&&confirm('להוציא מן התור?')){await api('/sakem/cancel',{method:'POST',body:JSON.stringify({jid:b.dataset.c})});m.remove();await skpLoad();skpPanel()}})}
+      if(b.dataset.c&&confirm('להוציא מן התור?')){await api('/sakem/cancel',{method:'POST',body:JSON.stringify({jid:b.dataset.c})});m.remove();await skpLoad();skpPanel()}
+      if(b.id==='skpkeyb'){const v=$('#skpkey').value.trim();if(!v)return;
+        try{await api('/sakem/key',{method:'POST',body:JSON.stringify({key:v})});toast('המפתח נשמר בשרת');m.remove();skpPanel()}catch(er){flash('לא נשמר: '+er.message)}}});
+    /* 29.10: סכם על קטע עובד מיד דרך ה-API כשיש קרדיט; בלי מפתח או קרדיט - נכנס לתור הזה */
+    api('/sakem/stat').then(st=>{const d=$('#skpnow');if(!d)return;
+      const usd=x=>'$'+(+x||0).toFixed(2);
+      d.innerHTML=st.hasKey&&!st.capped?'<b>סכם על קטע מסומן:</b> מיד, דרך המפתח · החודש '+usd(st.month)+' ('+(st.n||0)+' הצעות). כשהקרדיט נגמר - הקטע נכנס לתור לבד.':
+        '<b>סכם על קטע מסומן:</b> '+(st.capped?'הגעת לתקרת החודש':'אין מפתח')+' - קטע נכנס לתור הזה. '+
+        '<label>מפתח: <input id="skpkey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-..." style="width:40%"></label> <button id="skpkeyb">שמור</button>'}).catch(()=>{const d=$('#skpnow');if(d)d.textContent=''})}
   window.skpPanel=skpPanel;
 
   /* =================== הסקירה =================== */

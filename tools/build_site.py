@@ -5231,7 +5231,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(k)o.headers['x-admin-key']=k;
     const r=await fetch(SUGGEST_API+path,o);
     let j=null;try{j=await r.json()}catch(e){}
-    if(!r.ok||!j||!j.ok)throw new Error((j&&j.error)||('שגיאה '+r.status));
+    if(!r.ok||!j||!j.ok){const e=new Error((j&&j.error)||('שגיאה '+r.status));e.status=r.status;e.j=j;throw e}
     return j}
   function toast(msg,ms){let h=$('#toast');
     if(!h){h=document.createElement('div');h.className='hint';h.id='toast';document.body.appendChild(h)}

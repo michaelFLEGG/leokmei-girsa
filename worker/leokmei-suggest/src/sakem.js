@@ -1,5 +1,6 @@
 /* ===== סכם: פרק שלם על המנוי, בלי API (פרומפט 15, 28.10.2026) =====
-   אין כאן עוד שום קריאה למודל ושום מפתח או תקרת עלות. "סכם" הוא תור:
+   בקובץ הזה אין קריאה למודל. "סכם" על קטע מסומן - מיד, דרך ה-API (sakem_now.js, הוחזר 29.10),
+   ונופל לתור כשאין קרדיט. "סכם פרק" - תמיד תור:
    הדף בונה "חבילה" (יחידות הפרק או הקטע בפורמט הדף, לשון הגמרא ופירוש הגמרא של דפיו)
    ושולח אותה לכאן. פעולת גיטהאב (sakem-sync.yml) מורידה את החבילות לריפו
    (data/sakem/queue/<jid>.json), משימה מתוזמנת של קלוד בענן כותבת הצעות לריפו
@@ -18,6 +19,7 @@
    POST /sakem/committed  {jids}
    POST /sakem/done, /sakem/later, GET /sakem/stat, /sakem/queue - כמו קודם (יומן הלמידה ותור הסולמיות הישן). */
 import SKC from '../../../tools/sakem_core.js';
+import { sakemNow, nowStat, nowDone, NOW_PATHS } from './sakem_now.js';
 
 const norm = (t) => SKC.bare(t).replace(/[֑-ׇ]/g, '').replace(/[\s ]+/g, ' ').trim();
 const JOBS = 'skm:jobs';
@@ -39,6 +41,9 @@ export async function sakemApi(req, env, url, p, h) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   let b = {};
   if (req.method === 'POST') { try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); } }
+
+  /* ---- קטע מסומן: מיד, דרך ה-API (הכרעת המנהל 29.10.2026) ---- */
+  if (NOW_PATHS.has(p)) return sakemNow(env, p, b, h);
 
   /* ---- התור ---- */
   if (p === '/sakem/job') {
@@ -116,8 +121,10 @@ export async function sakemApi(req, env, url, p, h) {
 
   /* ---- פעולת הסנכרון (גיטהאב, עם מפתח המנהל כסוד בריפו) ---- */
   if (p === '/sakem/export') {
+    /* again: עבודות שסומנו "נשלח" אך אינן בריפו (הדחיפה של הסנכרון נכשלה אחרי הסימון) - נשלחות שוב */
+    const again = new Set(String(url.searchParams.get('again') || '').split(',').filter(Boolean));
     const J = await jobs(env), out = [];
-    for (const it of J.items.filter((x) => x.st === 'wait').slice(0, 6)) {
+    for (const it of J.items.filter((x) => x.st === 'wait' || (x.st === 'sent' && again.has(x.jid))).slice(0, 6)) {
       const pk = await env.STORE.get('skm:job:' + it.jid, 'json');
       if (!pk) continue;
       /* ביאור חברותא לדפי החבילה, מן המחסן */
@@ -177,7 +184,7 @@ export async function sakemApi(req, env, url, p, h) {
     const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [], rejects: 0 };
     const slug = url.searchParams.get('slug') || '';
     const J = await jobs(env);
-    return json({ ok: true, pairs: lg.pairs.length, rejects: lg.rejects || 0,
+    return json({ ok: true, ...(await nowStat(env)), pairs: lg.pairs.length, rejects: lg.rejects || 0,
                   later: lg.pairs.reduce((n, x) => n + ((x.later || []).length), 0),
                   jobs: J.items.filter((x) => !slug || x.slug === slug).map(pub) });
   }
@@ -189,6 +196,7 @@ export async function sakemApi(req, env, url, p, h) {
   }
   if (p === '/sakem/done') {
     const slug = String(b.slug || ''), id = String(b.id || '').slice(0, 40), act = String(b.act || '');
+    await nowDone(env, b);
     if (slugOk(slug)) {
       const qk = 'skm:hq:' + slug, q = await env.STORE.get(qk, 'json');
       if (q && q.items.some((x) => x.id === id && !x.d)) { q.items.forEach((x) => { if (x.id === id) x.d = act || 'done'; }); await env.STORE.put(qk, JSON.stringify(q)); }

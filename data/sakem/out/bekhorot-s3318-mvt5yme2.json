@@ -1,0 +1,19 @@
+{
+ "v": 1,
+ "jid": "bekhorot-s3318-mvt5yme2",
+ "slug": "bekhorot",
+ "title": "בכורות דף מא: (קטע)",
+ "status": "work",
+ "plan": [
+  {
+   "from": 3318,
+   "to": 3329,
+   "sugya": 1,
+   "title": "טעם ר\"י באנדרוגינוס - פשיטא או ספק"
+  }
+ ],
+ "total": 1,
+ "done": 0,
+ "items": [],
+ "t": 1793534572385
+}

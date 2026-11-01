@@ -111,6 +111,42 @@
     "flagged": 2,
     "questions": 49
    }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-01T12:39:35Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p07-u01",
+    "pesachim-p07-u02",
+    "pesachim-p07-u03",
+    "pesachim-p07-u04",
+    "pesachim-p07-u05"
+   ],
+   "result": {
+    "generated": 121,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 96
+   }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-01T12:39:36Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p08-u01",
+    "pesachim-p08-u02",
+    "pesachim-p08-u03"
+   ],
+   "result": {
+    "generated": 55,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 37
+   }
   }
  },
  "created": "2026-10-26T18:16:29Z",
@@ -150,7 +186,19 @@
    "mean": 0.332,
    "n": 5,
    "at": "2026-10-26T18:16:34Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.316,
+   "n": 9,
+   "at": "2026-11-01T12:39:33Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.3,
+   "n": 5,
+   "at": "2026-11-01T12:39:35Z"
   }
  ],
- "updated": "2026-10-26T18:16:35Z"
+ "updated": "2026-11-01T12:39:36Z"
 }

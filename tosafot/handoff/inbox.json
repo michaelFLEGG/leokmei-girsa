@@ -13,6 +13,51 @@
    "units": 43,
    "out": 43,
    "older_kept": 0
+  },
+  "15W2q43RSlLrmJPy1U1iliKmadjSi6Tls|2026-11-01T09:49:56.425Z": {
+   "name": "אצווה-2026-11-01-0936-4.json",
+   "id": "15W2q43RSlLrmJPy1U1iliKmadjSi6Tls",
+   "modified": "2026-11-01T09:49:56.425Z",
+   "opened": "2026-11-01T12:39:09Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1GgLQiHQVKEM5DQ7jp9U3aHG7HqMYXg4p|2026-11-01T09:50:59.082Z": {
+   "name": "אצווה-2026-11-01-0936-1.json",
+   "id": "1GgLQiHQVKEM5DQ7jp9U3aHG7HqMYXg4p",
+   "modified": "2026-11-01T09:50:59.082Z",
+   "opened": "2026-11-01T12:39:14Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1WoOqUdRj-kIVRgbPWKEhFMRyfg3AOCCX|2026-11-01T09:53:53.669Z": {
+   "name": "אצווה-2026-11-01-0936-3.json",
+   "id": "1WoOqUdRj-kIVRgbPWKEhFMRyfg3AOCCX",
+   "modified": "2026-11-01T09:53:53.669Z",
+   "opened": "2026-11-01T12:39:21Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1HgsA9ilZrOmgi5Mqhg2jA5bXZCQfx13U|2026-11-01T10:00:43.519Z": {
+   "name": "אצווה-2026-11-01-0936-2.json",
+   "id": "1HgsA9ilZrOmgi5Mqhg2jA5bXZCQfx13U",
+   "modified": "2026-11-01T10:00:43.519Z",
+   "opened": "2026-11-01T12:39:26Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1UpskZ9f4QYWXFjEeAMxFFMGb7wI0aLRe|2026-11-01T11:37:01.780Z": {
+   "name": "אצווה-2026-11-01-0936-5.json",
+   "id": "1UpskZ9f4QYWXFjEeAMxFFMGb7wI0aLRe",
+   "modified": "2026-11-01T11:37:01.780Z",
+   "opened": "2026-11-01T12:39:31Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
   }
  }
 }

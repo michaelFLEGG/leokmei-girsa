@@ -3,7 +3,7 @@
  "jid": "berakhot-p6",
  "slug": "berakhot",
  "title": "ברכות פרק שישי - כיצד מברכין",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 2668,
@@ -2302,5 +2302,11 @@
    "nochange": true
   }
  ],
- "t": 1793563739531
+ "t": 1793563746156,
+ "counts": {
+  "shown": 60,
+  "spatial": 3,
+  "adds": 3,
+  "missing": 0
+ }
 }

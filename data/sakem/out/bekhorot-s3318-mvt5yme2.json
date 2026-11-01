@@ -3,7 +3,7 @@
  "jid": "bekhorot-s3318-mvt5yme2",
  "slug": "bekhorot",
  "title": "בכורות דף מא: (קטע)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 3318,
@@ -45,5 +45,11 @@
    "warn": []
   }
  ],
- "t": 1793534589202
+ "t": 1793534598268,
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

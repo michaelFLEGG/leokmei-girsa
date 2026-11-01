@@ -3,7 +3,7 @@
  "jid": "bekhorot-p8",
  "slug": "bekhorot",
  "title": "בכורות פרק שמיני - יש בכור",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 3708,
@@ -1198,5 +1198,11 @@
    "warn": []
   }
  ],
- "t": 1793534542208
+ "t": 1793534550296,
+ "counts": {
+  "shown": 32,
+  "spatial": 5,
+  "adds": 1,
+  "missing": 0
+ }
 }

@@ -116,11 +116,70 @@
     if(!EDIT)setEdit(true);
     const items=(j.out.items||[]).filter(x=>!x.nochange);
     const R=SKP.rev={jid,job,out:j.out,items,dec:j.dec||{},i:0,hist:[],cnt:{accept:0,reject:0,edit:0}};
+    try{skpRelocate(R)}catch(e){}
     Object.values(R.dec).forEach(d=>{if(R.cnt[d.act]!==undefined)R.cnt[d.act]++});
     R.i=skpNextOpen(-1,1);
     if(R.i<0){flash('כל הקטעים בפרק הזה כבר הוכרעו');SKP.rev=null;return}
     document.body.classList.add('skprev');
     skpShow()}
+  /* 1.11.2026: מזהה יחידה הוא מספר הפסקה בוורד, וכל עריכה בוורד שלפני הפרק מזיזה אותו. הצעה שנכתבה
+     לפני העריכה הצביעה על יחידות אחרות, ולכן הופיעה במקום הלא נכון וסורבה ("האלמנטים הנעולים אינם
+     במקומם"). כאן כל הצעה מאותרת מחדש לפי תוכנה: אותיות הנוסח שההצעה נכתבה עליו מול אותיות היחידות שבדף.
+     קטע שלא נמצא כלשונו (נערך באמת) מוזז באותו היסט של הקטע שלפניו, ומוצג כעריכה שלך. */
+  const skpNorm=t=>String(t||'').split('\n').filter(s=>!/^\[(דף|משנה|גמרא|קבוע|מקור)(:[^\]]*)?\]$/.test(s.trim()))
+    .join(' ').replace(/\[(מס|תוס'):[^\]]*\]/g,' ').replace(/[^א-ת]/g,'');
+  function skpRelocate(R){
+    const fu=flatU(),pos=new Map(fu.map((o,i)=>[o.u.id,i]));
+    const sig=fu.map(o=>{try{return skpNorm(skmInter([o]))}catch(e){return '\u0000'}});
+    let delta=0;
+    const shift=ids=>{const ix=ids.map(id=>pos.get(id+delta));return ix.every((x,k)=>x!==undefined&&(!k||x===ix[k-1]+1))?ids.map(id=>id+delta):null};
+    R.items.forEach(it=>{
+      if(!it.ids||!it.ids.length)return;
+      if(it.kind!=='seg'){if(delta){const s=shift(it.ids);if(s){it.ids=s;if(it.anchor&&pos.has(it.anchor+delta))it.anchor+=delta}}return}
+      if(skmInter(skmUnits(it.ids))===it.orig)return;
+      const T=skpNorm(it.orig),n=it.ids.length;
+      let best=-1,bd=Infinity;
+      if(T)for(let i=0;i+n<=fu.length;i++){
+        if(!T.startsWith(sig[i]))continue;
+        let s='';for(let k=0;k<n&&s.length<=T.length;k++)s+=sig[i+k];
+        if(s!==T)continue;
+        const d=Math.abs(fu[i].u.id-(it.ids[0]+delta));if(d<bd){bd=d;best=i}}
+      if(best>=0){const nids=fu.slice(best,best+n).map(o=>o.u.id);delta=nids[0]-it.ids[0];it.ids=nids;it.orig=skmInter(skmUnits(nids));return}
+      if(delta){const s=shift(it.ids);if(s)it.ids=s}})}
+  /* הצעה שהנעולים שבה ([דף], [מקור], [משנה] וכו') אינם כבנוסח שבדף - הנעולים נלקחים מן הדף:
+     מה שחסר נשתל במקומו, מה שאינו בדף יוצא, ושורות ההצעה נשארות כמות שהן. */
+  const SKP_LK=/^\[(דף|משנה|גמרא|קבוע|מקור|כותרת-נושא|כותרת-דה)(?::(.*))?\]$/;
+  function skpFixLocks(orig,text){
+    const key=s=>{const m=SKP_LK.exec(String(s).trim());return m?(/^כותרת/.test(m[1])?m[1]:m[1]+':'+(m[2]||'').trim()):null};
+    const kind=k=>k.split(':')[0];
+    /* כל שורה מקבלת את מספר הפסקה שהיא לפניה; כותרות צד נצמדות לשורה שאחריהן */
+    const scan=L=>{const lk=[],body=[];let c=0,grp=[];
+      L.forEach((s,i)=>{const k=key(s);if(k){lk.push({k,s,c});return}
+        if(!String(s).trim())return;grp.push(s);if(!/^\[צד:.*\]$/.test(String(s).trim())){body.push(grp);grp=[];c++}});
+      if(grp.length)body.push(grp);return {lk,body,n:c}};
+    const O=scan(String(orig||'').split('\n')),T=scan(String(text||'').split('\n'));
+    if(O.lk.map(x=>x.k).join('|')===T.lk.map(x=>x.k).join('|'))return text;
+    const a=O.lk,b=T.lk,n=a.length,m=b.length,L=[...Array(n+1)].map(()=>new Array(m+1).fill(0));
+    for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)L[i][j]=a[i].k===b[j].k?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+    let P=[];for(let i=0,j=0;i<n&&j<m;){if(a[i].k===b[j].k){P.push([i,j]);i++;j++}else if(L[i+1][j]>=L[i][j+1])i++;else j++}
+    /* בין הזוגות: נעול מאותו סוג שערכו השתנה (מקור אחר, דף אחר) - מוחלף במקומו */
+    const Q=[];let pi=-1,pj=-1;
+    P.concat([[n,m]]).forEach(([i,j])=>{let jj=pj+1;for(let ii=pi+1;ii<i;ii++)for(let t=jj;t<j;t++)if(kind(a[ii].k)===kind(b[t].k)){Q.push([ii,t]);jj=t+1;break}
+      if(i<n)Q.push([i,j]);pi=i;pj=j});
+    Q.sort((x,y)=>x[0]-y[0]);
+    const at=new Array(n);Q.forEach(([i,j])=>{at[i]=b[j].c});
+    /* נעול שאין לו זוג - במקום היחסי שלו בין שני הזוגות הסמוכים */
+    for(let i=0;i<n;i++)if(at[i]===undefined){
+      let p=i-1;while(p>=0&&at[p]===undefined)p--;let q=i+1;while(q<n&&at[q]===undefined)q++;
+      const oa=p>=0?a[p].c:0,ob=q<n?a[q].c:O.n,ta=p>=0?at[p]:0,tb=q<n?at[q]:T.n;
+      at[i]=Math.min(tb,Math.max(ta,ta+Math.round((a[i].c-oa)*(tb-ta)/Math.max(1,ob-oa))))}
+    for(let i=1;i<n;i++)if(at[i]<at[i-1])at[i]=at[i-1];
+    const line=i=>{const pr=Q.find(x=>x[0]===i);return pr&&/^כותרת/.test(a[i].k)?b[pr[1]].s:a[i].s};
+    const out=[];let i=0;
+    T.body.forEach((g,k)=>{while(i<n&&at[i]<=k)out.push(line(i++));out.push(...g)});
+    while(i<n)out.push(line(i++));
+    return out.join('\n')}
+  window.skpFixLocks=skpFixLocks;
   function skpNextOpen(from,dir){const R=SKP.rev;for(let i=from+dir;i>=0&&i<R.items.length;i+=dir)if(!R.dec[R.items[i].iid])return i;return -1}
   function skpClose(){skmClose(true);document.querySelectorAll('.skpold').forEach(r=>r.classList.remove('skpold','skpshow'));
     const b=$('#skpbar');if(b)b.remove();SKP.rev=null;document.body.classList.remove('skprev');setTimeout(skpLoad,1500)}
@@ -240,6 +299,7 @@
     let p,t=text;
     if(it.kind==='missing'){const at=skpAnchor(it);if(!at)throw new Error('המקום לא נמצא');const o=skmInter([at]);p={id:SKP.rev.jid+':'+it.iid,ids:[at.u.id],orig:o};t=o+'\n'+it.text}
     else p={id:SKP.rev.jid+':'+it.iid,ids:it.ids,orig:orig||it.orig};
+    t=skpFixLocks(p.orig,t);
     const errs=SKC.guard(p.orig,t,{edited:true}).filter(x=>/נעולים|קטע שלם|נוספו שורות|תג לא מוכר/.test(x));
     if(errs.length)throw new Error(errs[0]);
     const r=skmApply(p,t);

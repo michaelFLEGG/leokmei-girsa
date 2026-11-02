@@ -49,6 +49,10 @@ def about_html():
     return t.replace('/*MINI_STYLE*/', hdr_style).replace('<!--MINI_HEADER-->', MINI_HEADER)
 
 
+# קישור גלוי ב-HTML של דף הבית אל נ"ך המפורש (נ"ך, פרומפט 10, 2.11.2026): שאר הדף נבנה ב-JavaScript
+NACH_LINE = ('<p id="lmNachLink" style="text-align:center;margin:0;padding:10px 14px;font-size:15px">'
+             '<a href="https://nach.leokmei.com/" style="color:#e9c35a">נ״ך המפורש - פירוש משולב על כל הנ״ך</a></p>')
+
 NOSCRIPT = ('<noscript><main style="max-width:640px;margin:20px auto;padding:0 18px;font-family:serif;line-height:1.8">'
             '<h1>לאוקמי גירסא - קיצור התלמוד הבבלי</h1>'
             '<p>קיצור הדף היומי וקיצור הש"ס, דף אחר דף. האתר פועל עם JavaScript.</p>'
@@ -88,6 +92,8 @@ def rewrite(site, fn, title, desc, noindex=False, ld=None, body_extra=None):
     h = h.replace('</head>', head_block(fn, title, desc, noindex, ld) + '</head>', 1)
     if body_extra:
         h = re.sub(r'(<body[^>]*>)', lambda m: m.group(1) + body_extra, h, count=1)
+    if fn == 'index.html' and NACH_LINE not in h:
+        h = h.replace('</body>', NACH_LINE + '</body>', 1)
     io.open(p, 'w', encoding='utf-8').write(h)
     return True
 

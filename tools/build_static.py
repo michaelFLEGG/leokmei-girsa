@@ -63,7 +63,7 @@ CSS = ('@font-face{font-family:LGVilnaXB;src:url(/fonts/vilna-xb.woff2) format("
 
 FOOTER = ('<footer class="sf"><a href="/">%s - קיצור התלמוד הבבלי</a> · <a href="/%s">קיצור הדף היומי</a> · '
           '<a href="/shas.html">מפת הש"ס</a> · <a href="/about.html">אודות</a><br>'
-          'אתרים נוספים של המכון: <a href="%s">נ״ך המפורש</a> · <a href="%s">ממלכת הזוהר</a></footer>') % (NAME, DAF_YOMI, NACH, ZOHAR)
+          'אתרים נוספים של המכון: <a href="%s">נ״ך המפורש - פירוש משולב על כל הנ״ך</a> · <a href="%s">ממלכת הזוהר</a></footer>') % (NAME, DAF_YOMI, NACH, ZOHAR)
 
 
 def esc(s):

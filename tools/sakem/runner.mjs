@@ -33,8 +33,9 @@ const outF = (jid) => path.join(O, jid + '.json');
 const outOf = (jid) => (fs.existsSync(outF(jid)) ? rd(outF(jid)) : null);
 const TEXTK = (u) => u.k === 'u' || u.k === 'm';
 
-/* פרומפט 17: פירוש הגמרא וחברותא אינם בחבילה שבריפו הציבורי. הכלי מושך אותם בשעת העבודה במפתח המנהל
-   (LEOKMEI_ADMIN_KEY, או קובץ המפתח המקומי), אל _work/sakem שאינו נשמר במאגר. בלי מפתח - העבודה ממשיכה על לשון הגמרא, ונאמרת בקול. */
+/* פרומפט 17: פירוש הגמרא וחברותא אינם בחבילה שבריפו הציבורי. הכלי מושך אותם בשעת העבודה אל _work/sakem,
+   שאינו נשמר במאגר: במשימה בענן משכפול הריפו הפרטי (אין שם מפתח), ובמחשב במפתח המנהל.
+   בלי אף אחד מהם - העבודה ממשיכה על לשון הגמרא, ונאמרת בקול. */
 const API = process.env.LG_API || 'https://leokmei-suggest.m7654301.workers.dev';
 function adminKey() {
   if (process.env.LEOKMEI_ADMIN_KEY) return process.env.LEOKMEI_ADMIN_KEY;
@@ -46,9 +47,29 @@ function adminKey() {
 }
 const GEM = { א: 1, ב: 2, ג: 3, ד: 4, ה: 5, ו: 6, ז: 7, ח: 8, ט: 9, י: 10, כ: 20, ל: 30, מ: 40, נ: 50, ס: 60, ע: 70, פ: 80, צ: 90, ק: 100, ר: 200, ש: 300, ת: 400 };
 const dafKey = (d) => { let n = 0; for (const c of String(d).replace(/[^א-ת]/g, '')) n += GEM[c] || 0; return n ? n * 2 + (/:\s*$/.test(d) ? 1 : 0) : null; };
+const CHAV = [process.env.LK_CHAVRUTA, path.join(ROOT, '..', 'leokmei-chavruta')].find((d) => d && fs.existsSync(path.join(d, '.git')));
+function chavShow(ref, p) {
+  try { return execFileSync('git', ['-C', CHAV, 'show', ref + ':' + p], { encoding: 'utf8', maxBuffer: 1 << 29, stdio: ['ignore', 'pipe', 'ignore'] }); }
+  catch (e) { return null; }
+}
+function chavCtx(pk) {
+  const out = { per: {}, hv: {}, warn: '' };
+  const txt = chavShow('origin/perush-store', 'perush/' + pk.slug + '.json');
+  if (txt) out.per = JSON.parse(txt);
+  else out.warn = 'פירוש הגמרא לא נמצא בריפו הפרטי (ענף perush-store).';
+  for (const pg of pk.pages || []) {
+    const name = String(pg.daf).replace(/[^א-ת]/g, '') + (/:\s*$/.test(pg.daf) ? 'ב' : 'א');
+    const t = chavShow('origin/main', 'packs/' + pk.slug + '/' + name + '.json');
+    if (!t) continue;
+    const segs = JSON.parse(t).segs || [];
+    out.hv[pg.daf] = segs.map((s) => ({ p: s.para, g: s.gemara || '', e: String(s.explain || '').replace(/\[\[הערה:\d+\]\]/g, '') }));
+  }
+  return out;
+}
 async function privateCtx(pk) {
+  if (CHAV) return chavCtx(pk);
   const key = adminKey();
-  if (!key) return { per: {}, hv: {}, warn: 'אין כאן מפתח מנהל, ולכן פירוש הגמרא וחברותא לא נמשכו. העבודה נעשית על לשון הגמרא בלבד.' };
+  if (!key) return { per: {}, hv: {}, warn: 'אין כאן גישה לריפו הפרטי ואין מפתח מנהל, ולכן פירוש הגמרא וחברותא לא נמשכו. העבודה נעשית על לשון הגמרא בלבד.' };
   const h = { 'x-admin-key': key };
   const out = { per: {}, hv: {}, warn: '' };
   try {

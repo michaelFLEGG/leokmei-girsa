@@ -105,6 +105,8 @@ def attach(src, slug, strict=True):
     """מוסיף לעמודי קובץ המקורות (בזיכרון בלבד) את השדה perush. מחזיר כמה עמודים קיבלו פירוש."""
     n = 0
     pages = src.get('pages') or {}
+    if not pages:           # קובץ מקורות ריק (שקלים): אין מה לצרף, ואין סיבה לפנות למחסן
+        return 0
     for k, segs in load(slug, strict).items():
         if k in pages:
             pages[k]['perush'] = segs

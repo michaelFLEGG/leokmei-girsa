@@ -27,6 +27,8 @@ print('עמודים', len(dafs), dafs[:6], dafs[-3:])
 # יחידות של 4 עמודים
 units = [dafs[k:k + 4] for k in range(0, len(dafs), 4)]
 src = json.load(io.open(SRC, encoding='utf-8'))
+import perush_store
+perush_store.attach(src, 'shabbat')
 pages = src['pages']
 TAG = re.compile(r'<[^>]+>')
 manifest = []

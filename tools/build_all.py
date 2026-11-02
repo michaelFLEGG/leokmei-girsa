@@ -3,6 +3,7 @@ import os, sys, json, shutil, re, html, datetime, argparse, io
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from docx2json import convert
 from build_site import build
+import perush_store as PS
 import hagaha
 import font_unicode
 import style_spacing
@@ -255,7 +256,13 @@ def main():
             if os.path.exists(sp):
                 sources = json.load(open(sp, encoding='utf-8'))
                 os.makedirs(os.path.join(SITE, 'sources'), exist_ok=True)
-                shutil.copy(sp, os.path.join(SITE, 'sources', SLUG[m] + '.json'))
+                # פירוש הגמרא (פרומפט 17) נמשך מן המחסן הפרטי לזיכרון הבנייה בלבד: מספור קטעי המשנה
+                # נגזר ממנו. קובץ האתר הוא הקובץ הנקי שבמאגר, אלא אם המתג commentary_public דולק.
+                PS.attach(sources, SLUG[m])
+                if PS.commentary_public():
+                    json.dump(sources, open(os.path.join(SITE, 'sources', SLUG[m] + '.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+                else:
+                    shutil.copy(sp, os.path.join(SITE, 'sources', SLUG[m] + '.json'))
             # המרווחים האנכיים שבדף נגזרים מ-w:spacing שבסגנונות הקובץ
             # הזה, ולא ממספרים שנבחרו לעין. קובץ מאוחד: המרווחים נלקחים
             # מן החלק הראשון, שהוא הגדול.
@@ -361,7 +368,8 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
         '<meta name="viewport" content="width=device-width,initial-scale=1"><title>מקורות · לאוקמי גירסא</title>'
         '<style>' + build_seo_mini_style() + '</style></head><body>' + build_seo_mini_header() + '<main>'
         '<h1>מקורות</h1>'
-        '<p>הגמרא המנוקדת והפירוש המוצגים במגירת "מקור" נלקחו מספריא (Sefaria), '
+        + ('<p>הגמרא המנוקדת והפירוש המוצגים במגירת "מקור" נלקחו מספריא (Sefaria), ' if PS.commentary_public()
+           else '<p>הגמרא המנוקדת המוצגת במגירת "מקור" נלקחה מספריא (Sefaria), ') +
         'ברישיון CC BY-NC 4.0. הלימוד באתר חינמי.</p>'
         '<p><a href="index.html">חזרה לשער</a></p></main></body></html>')
     write_privacy(SITE)

@@ -33,6 +33,39 @@ const outF = (jid) => path.join(O, jid + '.json');
 const outOf = (jid) => (fs.existsSync(outF(jid)) ? rd(outF(jid)) : null);
 const TEXTK = (u) => u.k === 'u' || u.k === 'm';
 
+/* פרומפט 17: פירוש הגמרא וחברותא אינם בחבילה שבריפו הציבורי. הכלי מושך אותם בשעת העבודה במפתח המנהל
+   (LEOKMEI_ADMIN_KEY, או קובץ המפתח המקומי), אל _work/sakem שאינו נשמר במאגר. בלי מפתח - העבודה ממשיכה על לשון הגמרא, ונאמרת בקול. */
+const API = process.env.LG_API || 'https://leokmei-suggest.m7654301.workers.dev';
+function adminKey() {
+  if (process.env.LEOKMEI_ADMIN_KEY) return process.env.LEOKMEI_ADMIN_KEY;
+  if (process.env.LG_ADMIN_KEY) return process.env.LG_ADMIN_KEY;
+  const f = 'C:\\Users\\Owner\\Documents\\לאוקמי-מפתח-מנהל.txt';
+  if (!fs.existsSync(f)) return '';
+  const ls2 = fs.readFileSync(f, 'utf8').replace(/^\uFEFF/, '').split(/\r?\n/).map((l) => l.trim()).filter((l) => /^[\x21-\x7e]{16,}$/.test(l));
+  return ls2.length ? ls2[ls2.length - 1] : '';
+}
+const GEM = { א: 1, ב: 2, ג: 3, ד: 4, ה: 5, ו: 6, ז: 7, ח: 8, ט: 9, י: 10, כ: 20, ל: 30, מ: 40, נ: 50, ס: 60, ע: 70, פ: 80, צ: 90, ק: 100, ר: 200, ש: 300, ת: 400 };
+const dafKey = (d) => { let n = 0; for (const c of String(d).replace(/[^א-ת]/g, '')) n += GEM[c] || 0; return n ? n * 2 + (/:\s*$/.test(d) ? 1 : 0) : null; };
+async function privateCtx(pk) {
+  const key = adminKey();
+  if (!key) return { per: {}, hv: {}, warn: 'אין כאן מפתח מנהל, ולכן פירוש הגמרא וחברותא לא נמשכו. העבודה נעשית על לשון הגמרא בלבד.' };
+  const h = { 'x-admin-key': key };
+  const out = { per: {}, hv: {}, warn: '' };
+  try {
+    const r = await fetch(API + '/perush/masechet?slug=' + pk.slug, { headers: h });
+    if (r.ok) out.per = await r.json();
+    else if (r.status !== 404) out.warn = 'פירוש הגמרא לא נמשך (' + r.status + ').';
+    for (const pg of pk.pages || []) {
+      const n = dafKey(pg.daf);
+      if (n === null) continue;
+      const q = await fetch(API + '/hv/page?slug=' + pk.slug + '&daf=' + encodeURIComponent(pg.daf) + '&c=' + Math.floor(n / 12), { headers: h });
+      const j = q.ok ? await q.json() : null;
+      if (j && j.page && j.page.segs) out.hv[pg.daf] = j.page.segs.map((s) => ({ p: s.p, g: s.g || '', e: String(s.e || '').replace(/\[\[הערה:\d+\]\]/g, '') }));
+    }
+  } catch (e) { out.warn = 'פירוש הגמרא וחברותא לא נמשכו: ' + e.message; }
+  return out;
+}
+
 function push(msg, files) {
   try {
     execFileSync('git', ['add', ...files], { cwd: ROOT, stdio: 'inherit' });
@@ -77,16 +110,18 @@ if (cmd === 'status') {
   const dir = path.join(WORK, jid);
   fs.mkdirSync(dir, { recursive: true });
   /* א. לשון הגמרא ופירוש הגמרא, לפי דפים */
-  let g = '# ' + (pk.title || jid) + ' - לשון הגמרא ופירוש הגמרא\n\n';
+  const prv = await privateCtx(pk);
+  if (prv.warn) console.log('אזהרה: ' + prv.warn);
+  let g = '# ' + (pk.title || jid) + ' - לשון הגמרא ופירוש הגמרא\n\n' + (prv.warn ? '(' + prv.warn + ')\n\n' : '');
   (pk.pages || []).forEach((pg) => {
     g += '## דף ' + pg.daf + '\n\n';
-    (pg.g || []).forEach((x, i) => { g += '[' + pg.daf + ' ' + (i + 1) + (pg.refs && pg.refs[i] ? ' · ' + pg.refs[i] : '') + '] ' + strip(x) + '\n'; if (pg.p && pg.p[i]) g += '   פירוש: ' + strip(pg.p[i]) + '\n'; });
+    (pg.g || []).forEach((x, i) => { g += '[' + pg.daf + ' ' + (i + 1) + (pg.refs && pg.refs[i] ? ' · ' + pg.refs[i] : '') + '] ' + strip(x) + '\n'; const ps = prv.per[pg.daf]; if (ps && ps[i]) g += '   פירוש: ' + strip(ps[i]) + '\n'; });
     g += '\n';
   });
   fs.writeFileSync(path.join(dir, 'gemara.md'), g);
   /* ב. חברותא, לפי הצורך */
   let hv = '';
-  Object.keys(pk.hv || {}).forEach((d) => { hv += '## דף ' + d + '\n' + pk.hv[d].map((s) => (s.g ? s.g + ' ' : '') + s.e).join('\n') + '\n\n'; });
+  Object.keys(prv.hv).forEach((d) => { hv += '## דף ' + d + '\n' + prv.hv[d].map((s) => (s.g ? s.g + ' ' : '') + s.e).join('\n') + '\n\n'; });
   if (hv) fs.writeFileSync(path.join(dir, 'chavruta.md'), '# חברותא\n\n' + hv);
   /* ג. הלאוקמי גירסא של הפרק, יחידה-יחידה עם המזהה */
   const pu = perUnit(pk.units);

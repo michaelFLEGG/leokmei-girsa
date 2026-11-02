@@ -86,6 +86,9 @@ def main():
     lo, hi = res['range']
     P = [b for b in blocks if lo <= b['i'] <= hi]
     src = json.load(open(os.path.join(ROOT, 'data', 'sources', a.slug + '.json'), encoding='utf-8'))
+    sys.path.insert(0, os.path.join(ROOT, 'tools'))
+    import perush_store
+    perush_store.attach(src, a.slug)
     pages = []                       # [(daf, [blocks])]
     for b in P:
         d = (b.get('daf') or '').strip()

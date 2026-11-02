@@ -25,6 +25,9 @@ def main():
     a = ap.parse_args()
     rows = H.jload(a.file, [])
     src = H.jload(os.path.join(H.ROOT, 'data', 'sources', a.slug + '.json'), {}) or {}
+    sys.path.insert(0, H.TOOLS)
+    import perush_store
+    perush_store.attach(src, a.slug)
     out, spent = [], 0.0
     for r in rows:
         if r.get('blocked'):

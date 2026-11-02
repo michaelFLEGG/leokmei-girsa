@@ -104,6 +104,9 @@ def prep(a):
     w = workdir(a.slug, a.d_from, a.d_to)
     cache, lock = load_cache(a.slug), locked_texts(a.slug)
     src = C.jload(os.path.join(C.ROOT, 'data', 'sources', a.slug + '.json'), {})
+    sys.path.insert(0, os.path.join(C.ROOT, 'tools'))
+    import perush_store
+    perush_store.attach(src, a.slug)
     tag = re.compile(r'<[^>]+>')
     items, skipped, locked = [], 0, 0
     for b in P:
@@ -193,6 +196,9 @@ def prep2(a):
     docx, blocks = load_blocks(a.slug)
     by_i = {b['i']: b for b in blocks}
     src = C.jload(os.path.join(C.ROOT, 'data', 'sources', a.slug + '.json'), {})
+    sys.path.insert(0, os.path.join(C.ROOT, 'tools'))
+    import perush_store
+    perush_store.attach(src, a.slug)
     tag = re.compile(r'<[^>]+>')
     lock = locked_texts(a.slug)
     inp = os.path.join(w, 'l2-in.txt')

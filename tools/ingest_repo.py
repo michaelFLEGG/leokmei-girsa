@@ -176,6 +176,9 @@ def replay_plan(masechet, doc, docx_path):
     json.dump(blocks, io.open(bj, 'w', encoding='utf-8'), ensure_ascii=False)
     sp = os.path.join(HERE, 'data', 'sources', slug + '.json')
     sources = json.load(io.open(sp, encoding='utf-8')) if os.path.exists(sp) else None
+    if sources:
+        import perush_store
+        perush_store.attach(sources, slug)
     # הבנייה כותבת לכמה תיקיות נתונים במאגר (sections, mbox, dhmiss, nikud-nakdan).  
     # הן נגזרות ואינן חלק מהקליטה: אם נקיות לפני, מחזירים אותן אחרי, כדי שלא יישאר עץ מלוכלך
     # שיכשיל את ה-pull של הקולט המתוזמן.

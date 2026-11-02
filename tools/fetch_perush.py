@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""fetch_perush.py - מוסיף לקובצי הגמרא שב-data/sources את "פירוש הגמרא".
+"""fetch_perush.py - מושך את "פירוש הגמרא" אל המחסן הפרטי (perush_store), ולא אל data/sources.
 
 המקור: ספריא, "Steinsaltz on <מסכת>" במהדורת William Davidson (עברית),
 מקטע מול מקטע של הגמרא המנוקדת. הרישיון: CC-BY-NC, כמו הגמרא עצמה.
@@ -15,11 +15,11 @@
 import os, sys, json, io, time, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch_sources import get, flat, clean, OUT
+import perush_store as PS
 from sefaria_map import SEFARIA
 
 API = 'https://www.sefaria.org/api/v3/texts/%s?version=hebrew'
 CHUNK = 10
-ATTRIB2 = 'פירוש הגמרא: ספריא, William Davidson, ברישיון CC BY-NC'
 
 
 def run(masechet, slug, log=print):
@@ -33,6 +33,7 @@ def run(masechet, slug, log=print):
     pages = data['pages']
     items = [(k, v['daf']) for k, v in pages.items()]
     got = bad = nodata = 0
+    per = {}
     for i in range(0, len(items), CHUNK):
         part = items[i:i + CHUNK]
         rng = '%s.%s-%s' % (q, part[0][1], part[-1][1]) if len(part) > 1 else '%s.%s' % (q, part[0][1])
@@ -62,14 +63,11 @@ def run(masechet, slug, log=print):
                 bad += 1
                 log('   %s %s: %d מקטעי פירוש מול %d של גמרא - לא נשמר' % (masechet, k, len(segs), len(pages[k]['gemara'])))
                 continue
-            pages[k]['perush'] = segs
+            per[k] = segs
             got += 1
         time.sleep(0.3)
-    data['perush_source'] = 'Sefaria, ' + book + ', William Davidson Edition - Hebrew'
-    data['perush_license'] = 'CC-BY-NC'
-    data['attribution'] = data.get('attribution', '').split(' | ')[0] + ' | ' + ATTRIB2
-    io.open(p, 'w', encoding='utf-8').write(json.dumps(data, ensure_ascii=False))
-    log('%s: פירוש ל-%d דפים, %d ללא התאמה, %d ללא פירוש; %.1f מ"ב' % (slug, got, bad, nodata, os.path.getsize(p) / 1e6))
+    size = PS.save(slug, per)
+    log('%s: פירוש ל-%d דפים, %d ללא התאמה, %d ללא פירוש; %.1f מ"ב במחסן הפרטי. הקובץ data/sources אינו משתנה' % (slug, got, bad, nodata, size / 1e6))
     return got, bad, nodata
 
 

@@ -958,6 +958,24 @@ async function hvApi(req, env, url, p) {
   r.headers.set('Cache-Control', 'private, no-store');
   return r;
 }
+/* ===== פירוש הגמרא, מנהל בלבד (פרומפט 17, 2.11.2026) =====
+   POST /perush/put       ?slug  גוף הבקשה: קובץ המסכת כפי שנכתב בידי tools/perush_store.py
+   GET  /perush/masechet  ?slug  קובץ המסכת. אינו נשמר במטמון ואינו מוגש בלי הרשאת מנהל.
+   הנתונים אינם בקובצי האתר ולא בריפו הציבורי. הטקסט עובר כמו שהוא, בלי פענוח (זמן המעבד בתוכנית החינמית). */
+async function perushApi(req, env, url, p) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  const slug = str(url.searchParams.get('slug'), 30);
+  if (!slugOk(slug)) return bad('פרמטרים לא תקינים');
+  if (p === '/perush/put') {
+    const body = await req.text();
+    if (body[0] !== '{' || body.length > 20 * 1024 * 1024) return bad('קובץ לא תקין', 413);
+    await env.STORE.put('perush:' + slug, body);
+    return json({ ok: true, slug, bytes: body.length });
+  }
+  const v = await env.STORE.get('perush:' + slug, { type: 'stream', cacheTtl: 300 });
+  if (!v) return bad('אין פירוש למסכת הזאת', 404);
+  return new Response(v, { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'private, no-store', 'x-robots-tag': 'noindex', ...CORS } });
+}
 const SK_STATUS = ['pending', 'running', 'done', 'failed', 'cancelled'];
 async function skQueue(req, env, url, method, sub) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
@@ -1890,6 +1908,7 @@ export default {
       if (p === '/bakara/dec' && (req.method === 'GET' || req.method === 'POST')) return await bkDec(req, env, url, req.method);
       if (p === '/bakara/stats' && req.method === 'GET') return await bkStats(req, env);
       if ((p === '/hv/put' && req.method === 'POST') || (p === '/hv/page' && req.method === 'GET')) return await hvApi(req, env, url, p);
+      if ((p === '/perush/put' && req.method === 'POST') || (p === '/perush/masechet' && req.method === 'GET')) return await perushApi(req, env, url, p);
       if (p === '/skira/queue' && (req.method === 'GET' || req.method === 'POST')) return await skQueue(req, env, url, req.method, '');
       if (p === '/skira/queue/update' && req.method === 'POST') return await skQueue(req, env, url, 'POST', 'update');
       if (p === '/skira/thread' && (req.method === 'GET' || req.method === 'POST')) return await skThread(req, env, url, req.method, false);

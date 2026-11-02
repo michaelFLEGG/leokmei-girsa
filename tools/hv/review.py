@@ -201,6 +201,9 @@ def run(a):
     d = os.path.join(H.CHAV, 'packs', a.slug)
     k0, k1 = C.daf_key(a.d_from), C.daf_key(a.d_to)
     src = H.jload(os.path.join(H.ROOT, 'data', 'sources', a.slug + '.json'), {}) or {}
+    sys.path.insert(0, H.TOOLS)
+    import perush_store
+    perush_store.attach(src, a.slug)
     cand_all = H.jload(os.path.join(H.CHAV, 'candidates', a.slug + '.json'), []) or []
     import engine
     lock = engine.locked_texts(a.slug)

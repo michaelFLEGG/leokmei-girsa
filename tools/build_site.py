@@ -18,6 +18,7 @@ STACK_MAX = 4
 # עמודים ריקים.
 DAF_RANGE_MAX = 3
 import match_sources
+import perush_store
 import font_ink
 import nikud_mishna
 import mishna_box
@@ -4342,7 +4343,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       ['חצים, Home, End, PageUp, PageDown (עריכה)','הסמן זז, והדף נגלל אחריו; חץ בקצה הפרק עובר לפרק הסמוך'],
       ['חצים, Home, End, PageUp, PageDown (קריאה)','גלילת שורה / תחילת הפרק וסופו / גלילת מסך'],
       ['Alt+חץ ימינה / שמאלה (במגירת המקור)','הדף הקודם / הבא בגמרא'],
-      ['חץ למעלה / למטה, PageUp, PageDown (במגירת המקור)','גלילה בגמרא ובפירוש'],
+      ['חץ למעלה / למטה, PageUp, PageDown (במגירת המקור)',perOk()?'גלילה בגמרא ובפירוש':'גלילה בגמרא'],
       ['Esc (במגירת המקור)','סגירת המגירה']];
     m.innerHTML='<div class="box"><h3>קיצורי מקשים בעריכה</h3><table style="width:100%;border-collapse:collapse">'+
       rows.map(r=>'<tr><td style="padding:3px 8px;font-weight:700;white-space:nowrap">'+esc(r[0])+'</td><td style="padding:3px 8px">'+esc(r[1])+'</td></tr>').join('')+
@@ -5556,9 +5557,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function loadSrc(){
     if(SRC)return Promise.resolve(SRC);
     if(SRCLOAD)return SRCLOAD;
-    SRCLOAD=fetch('sources/'+SLUG+'.json').then(r=>{if(!r.ok)throw new Error(r.status);return r.json()})
-      .then(j=>{SRC=j;return j});
+    SRCLOAD=Promise.all([fetch('sources/'+SLUG+'.json').then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}),perFetch()])
+      .then(([j,per])=>{if(per)for(const k in per)if(j.pages[k])j.pages[k].perush=per[k];SRC=j;return j});
     return SRCLOAD}
+  /* פירוש הגמרא (פרומפט 17, 2.11.2026): גלוי למנהל בלבד, ואינו בקובצי האתר. נמשך מנקודת הקליטה במפתח
+     המנהל, ונשמר בזיכרון הדף בלבד. אצל גולש אין לו זכר בממשק. המתג: commentary_public שב-tools/site_settings.json */
+  function perOk(){return COMMENTARY_PUBLIC||(isAdmin()&&!!admKey())}
+  function srcView(){return perOk()?SRCVIEW:'gem'}
+  function perFetch(){
+    if(COMMENTARY_PUBLIC||!perOk())return Promise.resolve(null);
+    return fetch(SUGGEST_API+'/perush/masechet?slug='+encodeURIComponent(SLUG),{headers:{'x-admin-key':admKey()},cache:'no-store'})
+      .then(r=>{if(r.status===404)return null;if(!r.ok)throw new Error(r.status);return r.json()})
+      .catch(e=>{toast('פירוש הגמרא לא נטען ('+String(e.message||e)+')',6000);return null})}
   function barH(){const b=document.querySelector('.bar');
     document.documentElement.style.setProperty('--barH',(b?b.getBoundingClientRect().height:52)+'px')}
   function refDaf(ref){const m=/\.(\d+[ab])\.(\d+)$/.exec(ref||'');return m?[m[1],+m[2]]:null}
@@ -5582,7 +5592,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     return out}
   function srcPageHTML(i){
     const heb=SX.keys[i],pg=SRC.pages[heb];
-    const per=pg.perush||null,wantP=SRCVIEW!=='gem',wantG=SRCVIEW!=='per';
+    const per=pg.perush||null,wantP=srcView()!=='gem',wantG=srcView()!=='per';
     const mnl=n=>MNSEG[pg.refs[n]]?'<i class="mk">'+esc(MNSEG[pg.refs[n]])+'.</i> ':'';
     const one=n=>(wantG?'<p class="g">'+mnl(n)+(pg.gemara[n]||'')+'</p>':'')+
       (wantP&&per&&per[n]?'<div class="prs">'+per[n]+'</div>':'');
@@ -5706,8 +5716,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     document.documentElement.style.setProperty('--srch',h+'vh')}
   function srcMenuHTML(mode){
     const g=(grp,list,cur)=>list.map(x=>'<button data-'+grp+'="'+x[0]+'" class="'+(x[0]===cur?'on':'')+'">'+x[1]+'</button>').join('');
-    return '<div class="smpop" id="smpop"><div class="sml">מה מוצג</div>'+
-      g('v',[['gem','גמרא'],['both','גמרא ופירוש'],['per','פירוש']],SRCVIEW)+
+    return '<div class="smpop" id="smpop">'+(perOk()?'<div class="sml">מה מוצג</div>'+
+      g('v',[['gem','גמרא'],['both','גמרא ופירוש'],['per','פירוש']],SRCVIEW):'')+
       '<div class="sml">גודל המגירה</div>'+
       g('m',[['peek','הצצה'],['split','מסך מפוצל'],['full','מלא']],mode)+'</div>'}
   function openSrc(ref){
@@ -5728,7 +5738,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       '<span class="sp"></span>'+
       '<button id="ssync" title="צמוד לטקסט: המגירה עוקבת אחרי הסמן. דפדוף חופשי: אפשר לגלול בה בלי שתזוז">צמוד לטקסט</button>'+
       '<button id="sback" style="display:none" title="מחזיר את המגירה לקטע של הסמן ומחזיר את הצמידות">חזור למקום</button>'+
-      '<span class="smenu"><button id="smb" title="מה מוצג, וגודל המגירה">תצוגה ▾</button>'+srcMenuHTML(mode)+'</span>'+
+      '<span class="smenu"><button id="smb" title="'+(perOk()?'מה מוצג, וגודל המגירה':'גודל המגירה')+'">תצוגה ▾</button>'+srcMenuHTML(mode)+'</span>'+
       '<button onclick="closeSrc()" title="סגירה (Esc)">×</button></div>'+
       '<div class="srcbody" tabindex="-1"><div class="ld">טוען את הגמרא…</div></div>'+
       (mode==='split'?'<div class="srcdrag" id="srcdrag" title="גרור לשינוי היחס בין הטקסט והמקור; לחיצה כפולה: חצי-חצי"></div>':
@@ -6331,7 +6341,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
             '<button type="button" class="mttl" id="mttl" aria-label="בחירת מסכת או דף"><span class="mmn">'+masechet+'</span><span class="mdf" id="mdf"></span>'+_ic('down')+'</button>'
             '<button type="button" class="msr" id="msr" aria-label="חיפוש">'+_ic('search')+'</button></div><div id="mprog"><i></i></div>'
             '<nav id="mbot" aria-label="ניווט">'+''.join('<button type="button" data-a="%s">%s<span>%s</span></button>'%(a,_ic(i),t) for a,i,t in
-            [('shas','home','הש"ס'),('prev','right','דף קודם'),('next','left','דף הבא'),('perush','book','פירוש'),('tos','list','תוס&#39;'),('more','dots','עוד')])+'</nav>'
+            [('shas','home','הש"ס'),('prev','right','דף קודם'),('next','left','דף הבא'),('src','book','גמרא'),('tos','list','תוס&#39;'),('more','dots','עוד')])+'</nav>'
             '<div id="mscrim"></div><div id="msheet" role="dialog" aria-modal="true"></div>')
   LJV=build_lamed.js_hash()
   # קוד ונתונים מחוץ לדף (11.10.2026): הדף היה 1.1MB מוטבעים ולא נשמרו במטמון.
@@ -6348,13 +6358,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     except OSError:pass
     io.open(fp,'wb').write(b)
     return
-  _data_js='const DATA='+J+',SLUG="'+slug+'";'
+  _data_js='const DATA='+J+',SLUG="'+slug+'",COMMENTARY_PUBLIC='+('true' if perush_store.commentary_public() else 'false')+';'
   _wr(slug+'.data.js',_data_js); _wr('mas.js',_SHARED_BODY+chr(10))
   # גבולות הפרקים להדפסה (13.10.2026): ה-Worker של ההדפסה קורא אותם כדי לדחות
   # בקשה של מבקר שחורגת מפרק אחד. מפתח הפרק זהה לזה שבחלון ההדפסה (perek|perekName).
   _wr(slug+'.prn.json',json.dumps({'v':1,'pages':[[pg.get('daf',''),(pg.get('perek') or '')+'|'+(pg.get('perekName') or '')] for pg in pages]},ensure_ascii=False))
   # סכם (26.10.2026): לכל עמוד קובץ קטן לנקודת הקליטה - היחידות כפי שנבנו (לאימות שהטקסט
-  # שהדפדפן שולח אכן קיים באתר), ולשון הגמרא ופירוש הגמרא של אותו דף. ה-Worker קורא רק את
+  # שהדפדפן שולח אכן קיים באתר), ולשון הגמרא של אותו דף (הפירוש נשלף מן המחסן הפרטי). ה-Worker קורא רק את
   # העמודים של הקטע, ואינו מפענח את קובץ המסכת כולו (מגבלת זמן המעבד בתוכנית החינמית).
   os.makedirs(os.path.join(_outdir,'sk',slug),exist_ok=True)
   _SKV={'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,'ל':30,'מ':40,'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400}
@@ -6366,7 +6376,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     _sp=_srcp.get(_d) or {}
     _wr('sk/%s/%d.json'%(slug,_n*2+(1 if _d.endswith(':') else 0)),json.dumps(
       {'daf':_d,'units':[{k:_u.get(k) for k in ('id','k','a','w','l','mbw') if _u.get(k) is not None} for _u in _pg.get('units') or []],
-       'refs':_sp.get('refs') or [],'g':_sp.get('gemara') or [],'p':_sp.get('perush') or []},ensure_ascii=False,separators=(',',':')))
+       'refs':_sp.get('refs') or [],'g':_sp.get('gemara') or [],**({'p':_sp.get('perush') or []} if perush_store.commentary_public() else {})},ensure_ascii=False,separators=(',',':')))
   _DV=_hl.md5(_data_js.encode('utf-8')).hexdigest()[:8]
   _MV=_hl.md5((_SHARED_BODY+chr(10)).encode('utf-8')).hexdigest()[:8]
   _tail_s=_tail.strip()
@@ -6407,7 +6417,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
     <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
     <button onclick="document.body.classList.toggle('hc');this.classList.toggle('on')" title="ניגודיות גבוהה">ניגודיות</button></div></div>
-  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת והפירוש בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}{tosbtn}{altbtn}<button id="prbtn" class="ib" onclick="prnOpen()" title="הדפסה לקובץ PDF בשני טורים על A4: מסכת, פרק, דף או טווח"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg><span class="t">הדפסה</span></button><button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
+  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}{tosbtn}{altbtn}<button id="prbtn" class="ib" onclick="prnOpen()" title="הדפסה לקובץ PDF בשני טורים על A4: מסכת, פרק, דף או טווח"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg><span class="t">הדפסה</span></button><button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
   <div class="bg" data-pri="1" id="shbg"><button id="lkshbtn" class="ib lk-sh-btn" type="button" onclick="if(window.LKShare)LKShare.page()" aria-label="שיתוף הדף" title="שיתוף הדף והעמוד שעליהם אתה עומד: ווטסאפ, הודעה, מייל, טלגרם, קישור וקוד QR"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg><span class="t">שיתוף</span></button></div>
   <div class="bg dd" data-pri="2" data-label="כלים"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" aria-label="כלים" title="כלים: תוכן עניינים, אמוראים, הדפסה, הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-dots"/></svg><span class="t">כלים</span></button>
     <div class="ddp">

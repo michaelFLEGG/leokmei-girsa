@@ -35,6 +35,8 @@ jobs:
       - name: הורדה מהדרייב
         run: python tools/fetch.py
       - name: בנייה (להקשר הלאוקמי גירסא)
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
         run: python tools/build_all.py
       - name: הקשר לכל עמוד
         run: |

@@ -17,6 +17,11 @@ engine/laukmi-engine/aramaic_todo.md
 _work/tzura/
 worker/*/.dev.vars
 
+# פרומפט 17: פירוש הגמרא למנהל בלבד. מטמון מקומי של המחסן הפרטי (ראה tools/perush_store.py)
+data/perush/
+_work/units.json
+_work/sakem/
+
 # פרומפט 8: תוצרי המרת ממצאי הבקרה (ממצאים למנהל בלבד - לא במאגר הציבורי)
 _work/convert/
 _work/sakem/

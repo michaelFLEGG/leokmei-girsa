@@ -94,6 +94,9 @@ def build(heb, force=False):
         by_key.setdefault(k, []).append(b)
     keys = sorted(by_key)
     src = H.jload(os.path.join(H.ROOT, 'data', 'sources', slug + '.json'), {}) or {}
+    sys.path.insert(0, H.TOOLS)
+    import perush_store
+    perush_store.attach(src, slug)
     files = sorted(os.listdir(H.chav_json_dir(heb))) if os.path.isdir(H.chav_json_dir(heb)) else []
     outdir = os.path.join(H.CHAV, 'packs', slug)
     cov = {'slug': slug, 'heb': heb, 'chavruta_pages': 0, 'with_our_text': 0, 'without_our_text': [], 'built': 0, 'cached': 0,

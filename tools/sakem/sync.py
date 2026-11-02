@@ -61,6 +61,10 @@ def main():
     for it in ex:
         jid = it['job']['jid']
         pk = it['packet']
+        # פרומפט 17: הקובץ הזה נכנס לריפו הציבורי. גם אם שרת ישן שלח פירוש או חברותא - הם אינם נכתבים
+        pk.pop('hv', None)
+        for pg in pk.get('pages', []):
+            pg.pop('p', None)
         pk['job'] = it['job']
         pk['title'] = it['job'].get('title', '')
         fp = os.path.join(D, 'queue', jid + '.json')

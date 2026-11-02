@@ -1,6 +1,6 @@
   /* =================== סכם פרק: התור והסקירה קטע-קטע (פרומפט 15, 28.10.2026) ===================
      אין כאן שום קריאה למודל. "סכם פרק" (ליד בורר הפרק ובתפריט המנהל) בונה חבילה - יחידות הפרק
-     כפי שהן בנתונים, ולשון הגמרא ופירוש הגמרא של דפיו (sk/<מסכת>/<דף>.json) - ושולח אותה לתור
+     כפי שהן בנתונים, ולשון הגמרא של דפיו (sk/<מסכת>/<דף>.json) - ושולח אותה לתור. פירוש הגמרא וחברותא אינם בחבילה: היא יורדת לריפו הציבורי
      שבנקודת הקליטה. משם היא יורדת לריפו, המשימה המתוזמנת בענן כותבת הצעות (docs/sakem-runner.md),
      והן חוזרות לכאן. גם "סכם" על קטע מסומן נכנס לאותו תור.
 
@@ -26,7 +26,7 @@
     const dafs=[...new Set(os.map(o=>D.pages[o.pi].daf).filter(Boolean))];
     const pages=await Promise.all(dafs.map(async d=>{
       try{const r=await fetch('sk/'+SLUG+'/'+skpDafN(d)+'.json',{cache:'no-cache'});const j=await r.json();
-        return {daf:d,refs:j.refs||[],g:j.g||[],p:j.p||[]}}catch(e){return {daf:d,refs:[],g:[],p:[],miss:1}}}));
+        return {daf:d,refs:j.refs||[],g:j.g||[]}}catch(e){return {daf:d,refs:[],g:[],miss:1}}}));
     if(pages.some(p=>p.miss))throw new Error('לשון הגמרא לא נמצאה לחלק מן הדפים');
     const fu=flatU(),i0=fu.findIndex(o=>o.u.id===os[0].u.id),i1=fu.findIndex(o=>o.u.id===os[os.length-1].u.id);
     return {v:1,slug:SLUG,masechet:D.masechet,kind,units:os.map(skmPU),pages,

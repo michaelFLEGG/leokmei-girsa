@@ -141,16 +141,25 @@ function segRange(units, refs) {
   return [Math.max(0, Math.min(...keys) - 0), Math.min(refs.length - 1, Math.max(...keys) + 1)];
 }
 const strip = (h) => SKC.bare(h).replace(/[֑-ׇ]/g, '').replace(/\s+/g, ' ').trim();
+/* פירוש הגמרא של עמוד אחד מן המחסן הפרטי (פרומפט 17): כל עמוד בשורה משלו, ולכן אין צורך לפענח את המסכת כולה */
+function perushPage(txt, daf) {
+  const k = '\n' + JSON.stringify(daf) + ':', i = txt ? txt.indexOf(k) : -1;
+  if (i < 0) return [];
+  const a = i + k.length, e = txt.indexOf('\n', a);
+  try { return JSON.parse(txt.slice(a, e).replace(/,$/, '')); } catch (x) { return []; }
+}
 async function context(env, slug, units, pages) {
   let gem = '', per = '', hv = '';
+  const perTxt = await env.STORE.get('perush:' + slug, { cacheTtl: 300 });
   for (const pg of pages) {
     if (!pg) continue;
     const mine = units.filter((u) => u.daf === pg.daf);
     const rg = segRange(mine, pg.refs || []) || (pg.g && pg.g.length ? [0, pg.g.length - 1] : null);
     if (!rg) continue;
+    const ps = perushPage(perTxt, pg.daf);
     for (let i = rg[0]; i <= rg[1]; i++) {
       if (pg.g && pg.g[i]) gem += '[' + pg.daf + ' ' + (i + 1) + '] ' + strip(pg.g[i]) + '\n';
-      if (pg.p && pg.p[i]) per += '[' + pg.daf + ' ' + (i + 1) + '] ' + strip(pg.p[i]) + '\n';
+      if (ps[i]) per += '[' + pg.daf + ' ' + (i + 1) + '] ' + strip(ps[i]) + '\n';
     }
     /* חברותא: חבילת העמוד, ורק השורות שמיושרות ליחידות הקטע (ושכנותיהן) */
     const n = dafNum(pg.daf);

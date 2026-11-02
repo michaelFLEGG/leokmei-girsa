@@ -6,6 +6,7 @@
 היחידה היא BASE, בלי www. דפי עבודה (הגהה, מנהל, הגדרות) מסומנים noindex.
 """
 import os, io, re, json, datetime, urllib.request
+import perush_store
 
 BASE = 'https://leokmei.com'
 NAME = 'לאוקמי גירסא'
@@ -105,12 +106,15 @@ def lessons_static():
 
 def run(site, built, slug):
     now = datetime.date.today().isoformat()
-    io.open(os.path.join(site, 'about.html'), 'w', encoding='utf-8').write(about_html())
+    _about = about_html()
+    if not perush_store.commentary_public():
+        _about = _about.replace('הגמרא המנוקדת והפירוש מוצגים ברישיון, ומפורטים', 'הגמרא המנוקדת מוצגת ברישיון, ומפורטת')
+    io.open(os.path.join(site, 'about.html'), 'w', encoding='utf-8').write(_about)
     io.open(os.path.join(site, 'CNAME'), 'w', encoding='utf-8').write('leokmei.com\n')
     import indexnow     # קובץ המפתח של IndexNow (בינג): ציבורי מעצם הגדרתו
     io.open(os.path.join(site, indexnow.KEY + '.txt'), 'w', encoding='utf-8').write(indexnow.KEY)
     io.open(os.path.join(site, 'robots.txt'), 'w', encoding='utf-8').write(
-        'User-agent: *\nAllow: /\nDisallow: /galeria-lamed/\n\nSitemap: %s/sitemap.xml\n' % BASE)
+        'User-agent: *\nAllow: /\nDisallow: /galeria-lamed/\nDisallow: /sources/\nDisallow: /sk/\n\nSitemap: %s/sitemap.xml\n' % BASE)
     ld_home = [{'@context': 'https://schema.org', '@type': 'WebSite', '@id': BASE + '/#website', 'name': NAME, 'url': BASE + '/',
                 'inLanguage': 'he', 'alternateName': ['לאוקמי גרסא', 'קיצור הדף היומי', 'קיצור התלמוד הבבלי', 'קיצור הש"ס'],
                 'publisher': {'@id': BASE + '/#org'}},
@@ -130,7 +134,7 @@ def run(site, built, slug):
             'רשימת כל מסכתות התלמוד הבבלי, עם המסכתות שכבר עלו לאתר בקיצור לאוקמי גירסא.')
     rewrite(site, 'shas.html', 'מפת הש"ס · ' + NAME, 'מפת הש"ס לפי סדרים ומסכתות, עם התקדמות הלימוד.')
     rewrite(site, 'about.html', 'אודות · ' + NAME, 'על לאוקמי גירסא - קיצור התלמוד הבבלי: דרך הקיצור, ראשית המפעל, הסכמות גדולי ישראל וספרי המחבר.')
-    rewrite(site, 'mekorot.html', 'מקורות · ' + NAME, 'המקורות והרישיונות של הגמרא והפירוש המוצגים באתר.')
+    rewrite(site, 'mekorot.html', 'מקורות · ' + NAME, 'המקורות והרישיונות של הגמרא והפירוש המוצגים באתר.' if perush_store.commentary_public() else 'המקור והרישיון של הגמרא המוצגת באתר.')
     items = lessons_static()
     ld_v = [{'@context': 'https://schema.org', '@type': 'VideoObject', 'name': l['title'],
              'description': 'שיעור על %s %s' % (l['slug'], l['from']), 'thumbnailUrl': l['thumb'],

@@ -95,6 +95,8 @@ def unmark_tabs(s):
 
 def sources():
     d = json.load(io.open(os.path.join(REPO, 'data', 'sources', 'bekhorot.json'), encoding='utf-8'))
+    import perush_store
+    perush_store.attach(d, 'bekhorot')
     return d['pages']
 
 

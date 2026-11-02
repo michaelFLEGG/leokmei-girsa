@@ -24,12 +24,14 @@
       '<button type="button" class="msr" id="msr" aria-label="חיפוש">' + ic('search') + '</button>';
     var p0 = document.createElement('div'); p0.id = 'mprog'; p0.innerHTML = '<i></i>';
     var b0 = document.createElement('nav'); b0.id = 'mbot'; b0.setAttribute('aria-label', 'ניווט');
-    var BTN0 = [['shas', 'home', 'הש"ס'], ['prev', 'right', 'דף קודם'], ['next', 'left', 'דף הבא'], ['perush', 'book', 'פירוש'], ['tos', 'list', 'תוס&#39;'], ['more', 'dots', 'עוד']];
+    var BTN0 = [['shas', 'home', 'הש"ס'], ['prev', 'right', 'דף קודם'], ['next', 'left', 'דף הבא'], ['src', 'book', 'גמרא'], ['tos', 'list', 'תוס&#39;'], ['more', 'dots', 'עוד']];
     b0.innerHTML = BTN0.map(function (b) { return '<button type="button" data-a="' + b[0] + '">' + ic(b[1]) + '<span>' + b[2] + '</span></button>'; }).join('');
     var s0 = document.createElement('div'); s0.id = 'mscrim';
     var h0 = document.createElement('div'); h0.id = 'msheet'; h0.setAttribute('role', 'dialog'); h0.setAttribute('aria-modal', 'true');
     B.appendChild(t0); B.appendChild(p0); B.appendChild(b0); B.appendChild(s0); B.appendChild(h0);
   }
+  /* פירוש הגמרא (פרומפט 17): הכפתור נקרא "גמרא", ורק מי שרואה את הפירוש רואה אותו בשמו */
+  (function () { var s = document.querySelector('#mbot [data-a="src"] span'); if (s && typeof perOk === 'function' && perOk()) s.textContent = 'פירוש'; })();
   var top = document.getElementById('mtop'), prog = document.getElementById('mprog'), bot = document.getElementById('mbot'), scrim = document.getElementById('mscrim'), sheet = document.getElementById('msheet');
 
   function flash(el) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); buzz(10); }
@@ -237,7 +239,7 @@
     if (a === 'shas') location.href = 'masechet.html?m=' + SLUG;
     else if (a === 'prev') goDaf(-1);
     else if (a === 'next') goDaf(1);
-    else if (a === 'perush') { gemaraBtn(); setTimeout(syncPerush, 120); }
+    else if (a === 'src') { gemaraBtn(); setTimeout(syncPerush, 120); }
     else if (a === 'tos') {
       if (typeof tosBtn === 'function') { tosBtn(); }
       else { try { toast('עדיין אין תוס\' במסכת זו', 3500); } catch (x) { } }
@@ -250,7 +252,7 @@
     else if (b.id === 'mttl') { if (window.lkPick) window.lkPick(e.target.closest('.mmn') ? 'mas' : 'daf', b); else pickSheet(); }
     else if (b.id === 'msr') openSearch();
   });
-  function syncPerush() { B.classList.toggle('msrcopen', !!$('#srcx')); var b = $('#mbot [data-a="perush"]'); if (b) b.classList.toggle('on', !!$('#srcx')); }
+  function syncPerush() { B.classList.toggle('msrcopen', !!$('#srcx')); var b = $('#mbot [data-a="src"]'); if (b) b.classList.toggle('on', !!$('#srcx')); }
 
   /* ------------------------------------------------------------------ מגירת הפירוש: שלושה מצבים עם ידית */
   var SNAP = [0.34, 0.58, 0.92];
@@ -262,9 +264,9 @@
     box.insertBefore(h, box.firstChild);
     /* במסך מלא: לשוניות עליונות למעבר מהיר בין גמרא, פירוש וצורת הדף, בלי לאבד מקום */
     var tabs = document.createElement('div'); tabs.id = 'mtabs'; tabs.setAttribute('role', 'tablist');
-    tabs.innerHTML = '<button type="button" data-t="gem" role="tab">גמרא</button><button type="button" data-t="per" role="tab">פירוש</button>' + ($('#tzbtn') ? '<button type="button" data-t="tz" role="tab">צורת הדף</button>' : '');
+    tabs.innerHTML = '<button type="button" data-t="gem" role="tab">גמרא</button>' + (typeof perOk === 'function' && perOk() ? '<button type="button" data-t="per" role="tab">פירוש</button>' : '') + ($('#tzbtn') ? '<button type="button" data-t="tz" role="tab">צורת הדף</button>' : '');
     box.insertBefore(tabs, h.nextSibling);
-    function tabsUi() { var v = (typeof SRCVIEW !== 'undefined') ? SRCVIEW : 'both'; tabs.querySelectorAll('[data-t]').forEach(function (b) { b.classList.toggle('on', b.dataset.t === v); b.setAttribute('aria-selected', b.dataset.t === v ? 'true' : 'false'); }); }
+    function tabsUi() { var v = (typeof srcView === 'function') ? srcView() : 'gem'; tabs.querySelectorAll('[data-t]').forEach(function (b) { b.classList.toggle('on', b.dataset.t === v); b.setAttribute('aria-selected', b.dataset.t === v ? 'true' : 'false'); }); }
     tabs.addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return; buzz(8);
       if (b.dataset.t === 'tz') { tzBtn(); return; }

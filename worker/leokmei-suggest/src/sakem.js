@@ -24,13 +24,6 @@ import { sakemNow, nowStat, nowDone, NOW_PATHS } from './sakem_now.js';
 const norm = (t) => SKC.bare(t).replace(/[֑-ׇ]/g, '').replace(/[\s ]+/g, ' ').trim();
 const JOBS = 'skm:jobs';
 const jidOk = (j) => /^[a-z-]{2,30}-(p\d{1,2}|s\d{1,9}-[a-z0-9]{1,12})$/.test(j || '');
-const HVG = { 'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'כ': 20, 'ל': 30, 'מ': 40, 'נ': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'צ': 90, 'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400 };
-function dafNum(d) {
-  d = String(d || '').trim();
-  let n = 0;
-  for (const c of d.replace(/[^א-ת]/g, '')) n += HVG[c] || 0;
-  return n ? n * 2 + (/:$/.test(d) ? 1 : 0) : null;
-}
 async function jobs(env) { return (await env.STORE.get(JOBS, 'json')) || { items: [] }; }
 async function putJobs(env, j) { j.items = j.items.slice(-200); await env.STORE.put(JOBS, JSON.stringify(j)); }
 /* מה שמוצג לדף: בלי החבילה עצמה */
@@ -127,17 +120,10 @@ export async function sakemApi(req, env, url, p, h) {
     for (const it of J.items.filter((x) => x.st === 'wait' || (x.st === 'sent' && again.has(x.jid))).slice(0, 6)) {
       const pk = await env.STORE.get('skm:job:' + it.jid, 'json');
       if (!pk) continue;
-      /* ביאור חברותא לדפי החבילה, מן המחסן */
-      pk.hv = {};
-      for (const pg of pk.pages || []) {
-        const n = dafNum(pg.daf);
-        if (n === null) continue;
-        try {
-          const ch = await env.STORE.get('hv:' + it.slug + ':' + Math.floor(n / 12), 'json');
-          const hp = ch && ch[pg.daf];
-          if (hp && hp.segs) pk.hv[pg.daf] = hp.segs.map((s) => ({ p: s.p, g: s.g || '', e: String(s.e || '').replace(/\[\[הערה:\d+\]\]/g, '') }));
-        } catch (e) { /* בלי חברותא */ }
-      }
+      /* פרומפט 17: החבילה יורדת לריפו הציבורי, ולכן פירוש הגמרא וחברותא אינם בה.
+         הכלי של המשימה (tools/sakem/runner.mjs) מושך אותם בשעת העבודה במפתח המנהל. */
+      delete pk.hv;
+      (pk.pages || []).forEach((pg) => { delete pg.p; });
       out.push({ job: pub(it), packet: pk });
     }
     return json({ ok: true, items: out });

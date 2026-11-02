@@ -29,7 +29,12 @@ jobs:
         id: fetch
         run: python tools/fetch.py | tee fetch.log; grep -q CHANGED fetch.log && echo changed=1 >> $GITHUB_OUTPUT || echo changed=0 >> $GITHUB_OUTPUT
       - name: בנייה
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
         run: python tools/build_all.py
+      # פירוש הגמרא למנהל בלבד (פרומפט 17): אם הוא נמצא בקובצי האתר, הפרסום נעצר.
+      - name: שער הפירוש
+        run: python tools/perush_gate.py site
       # סוכן סריקת התצוגה. אינו חוסם את הפרסום: אם הוא נכשל או מתארך,
       # האתר עולה בכל זאת, והמונים פשוט לא יתחדשו בלוח הבקרה.
       - name: סריקת תצוגה

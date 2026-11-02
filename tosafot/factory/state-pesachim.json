@@ -147,6 +147,45 @@
     "flagged": 0,
     "questions": 37
    }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-11-02T18:40:35Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p09-u01",
+    "pesachim-p09-u02",
+    "pesachim-p09-u03"
+   ],
+   "result": {
+    "generated": 56,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 38
+   }
+  },
+  "10": {
+   "status": "published",
+   "published": "2026-11-02T18:40:36Z",
+   "unc_done": true,
+   "handoff_units": [
+    "pesachim-p10-u01",
+    "pesachim-p10-u02",
+    "pesachim-p10-u03",
+    "pesachim-p10-u04",
+    "pesachim-p10-u05",
+    "pesachim-p10-u06",
+    "pesachim-p10-u07",
+    "pesachim-p10-u08"
+   ],
+   "result": {
+    "generated": 200,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 138
+   }
   }
  },
  "created": "2026-10-26T18:16:29Z",
@@ -198,7 +237,20 @@
    "mean": 0.3,
    "n": 5,
    "at": "2026-11-01T12:39:35Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.41,
+   "n": 5,
+   "at": "2026-11-02T18:40:33Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.479,
+   "n": 15,
+   "at": "2026-11-02T18:40:35Z"
   }
  ],
- "updated": "2026-11-01T12:39:36Z"
+ "updated": "2026-11-02T18:40:36Z",
+ "done": "2026-11-02T18:40:36Z"
 }

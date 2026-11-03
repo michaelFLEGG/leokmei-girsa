@@ -2292,7 +2292,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(d&&/^d\d+$/.test(d.id)){pi=+d.id.slice(1);break}}
     if(pi<0){const sc=SEC[cur];pi=sc?sc.from:0}
     if(!D.pages[pi]||+ds.value===pi)return;
-    ds.value=pi;const cd=$('#curdaf');if(cd)cd.textContent=D.pages[pi].label||D.pages[pi].daf}
+    ds.value=pi;const cd=$('#curdaf');if(cd)cd.textContent=D.pages[pi].label||D.pages[pi].daf;hashDaf(pi)}
+  /* רשת המקומות (3.11.2026): הכתובת נושאת גם את הדף שבמסך, ולא רק את הפרק (p=), כדי שרענון,
+     שיתוף וקישור מאתר אחר ינחתו על אותו דף. replaceState - בלי רשומה חדשה בהיסטוריה. */
+  function hashDaf(pi){try{const d=D.pages[pi]&&D.pages[pi].daf;if(!d||/[?&]?me=/.test(location.hash))return;
+    history.replaceState(history.state,'',location.pathname+location.search+'#p='+cur+'&daf='+encodeURIComponent(d))}catch(e){}}
+  /* קישור לדף אחר באותה מסכת, כשהדף כבר פתוח (הכתובת משתנה בלי טעינה) */
+  addEventListener('hashchange',()=>{const d=new URLSearchParams(location.hash.slice(1)).get('daf');if(!d)return;
+    const pi=D.pages.findIndex(p=>p.daf===d);if(pi<0||+$('#dafsel').value===pi)return;render(secOf(pi));toDaf(pi)});
   function dafSoon(){clearTimeout(DAFT);DAFT=setTimeout(dafTrack,100)}
   (function(){const f=$('#flow');if(f)f.addEventListener('scroll',dafSoon,{passive:true});
     addEventListener('scroll',dafSoon,{passive:true});addEventListener('resize',dafSoon);
@@ -2975,7 +2982,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){DAFNAV=Date.now();const si=secOf(pi);if(si!==cur)render(si);
-    setTimeout(()=>{const e=$('#d'+pi);if(e){toEl(e);jumpMark(e)}$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi},20)}
+    setTimeout(()=>{const e=$('#d'+pi);if(e){toEl(e);jumpMark(e)}$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi;hashDaf(pi)},20)}
   function dafYomi(){const t=window.LGDaf&&LGDaf.today();if(!t)return;
     if(t.slug===SLUG){const pi=D.pages.findIndex(p=>p.daf===t.daf);
       if(pi<0){alert('הדף '+t.daf+' אינו במסכת '+D.masechet);return}

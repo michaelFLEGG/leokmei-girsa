@@ -379,6 +379,9 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     build_seo.run(SITE, built, SLUG)
     # צליל לחיצה ורטט קל (feel.js): העתקה ושתילת התג בכל הדפים, אחרי שכל הדפים כבר נוצרו
     shutil.copy(os.path.join(ROOT, 'tools', 'feel.js'), os.path.join(SITE, 'feel.js'))
+    # רשת המקומות (3.11.2026): זיהוי הפסוקים שבגמרא ומפתח הדפים לאתרים האחים, ושתילת rashut.js
+    import rashut_links
+    rashut_links.run(SITE)
     import add_feel
     add_feel.run(SITE)
     # נתוני גלישה ועיפרון המנהל: אחרון, כדי שיעטוף גם את הדפים הסטטיים (8.10.2026)

@@ -87,6 +87,7 @@
     '.rs-sis{display:inline-flex;align-items:center;margin-inline-start:6px;padding:1px 7px;border:1px solid rgba(201,162,74,.7);border-radius:12px;',
     '  color:#e9c35a!important;font:600 12px/1.5 Frank,serif;text-decoration:none!important;white-space:nowrap;flex:none}',
     '.rs-sis:hover{background:rgba(233,195,90,.15)}',
+    '#mtop .rs-sis-m{margin:0;padding:4px 9px;font-size:13px;height:28px;box-sizing:border-box}',
     '.rs-strip{display:flex;align-items:center;gap:14px;max-width:620px;margin:18px auto 6px;padding:14px 18px;border:1px solid #8f6a1e;border-radius:12px;box-sizing:border-box;',
     '  background:var(--velvet-bg,radial-gradient(ellipse 80% 60% at 50% 20%,#102a42,#091827 55%,#060f18));color:#f5edd6;text-decoration:none;box-shadow:0 6px 22px rgba(0,0,0,.35);direction:rtl}',
     '@media (max-width:660px){.rs-strip{margin:16px 12px 6px}}',
@@ -213,12 +214,20 @@
   }
 
   /* ---------------------------------------------------------------- האתר האח: סרגל, שער, סיום עמוד */
-  function sisBar() {
-    var loc = D.querySelector('#bar .bg.loc'); if (!loc || loc.querySelector('.rs-sis')) return;
+  function sisLink() {
     var a = D.createElement('a'); a.className = 'rs-sis'; a.href = NACH + '/'; a.target = '_blank'; a.rel = 'noopener';
     a.setAttribute('data-rs', 'נך-סרגל'); a.title = 'נ״ך המפורש - פירוש משולב על כל הנ״ך'; a.textContent = 'נ״ך';
-    loc.appendChild(a);
-    try { if (typeof W.barFit === 'function') W.barFit(); } catch (e) { /* */ }
+    return a;
+  }
+  function sisBar() {
+    var loc = D.querySelector('#bar .bg.loc');
+    if (loc && !loc.querySelector('.rs-sis')) {
+      loc.appendChild(sisLink());
+      try { if (typeof W.barFit === 'function') W.barFit(); } catch (e) { /* */ }
+    }
+    /* בטלפון הסרגל העליון הוא #mtop (#bar מוסתר): הכפתור בין שם המסכת לחיפוש, באותה שורה */
+    var mt = D.getElementById('mtop'), sr = mt && mt.querySelector('.msr');
+    if (mt && !mt.querySelector('.rs-sis')) { var m = sisLink(); m.classList.add('rs-sis-m'); mt.insertBefore(m, sr || null); }
   }
   function homeStrip() {
     var old = D.getElementById('lmNachLink'); if (!old || D.querySelector('.rs-strip')) return;

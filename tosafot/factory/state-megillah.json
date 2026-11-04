@@ -16,6 +16,56 @@
     "flagged": 0,
     "questions": 27
    }
+  },
+  "1": {
+   "status": "published",
+   "published": "2026-11-04T12:43:37Z",
+   "unc_done": true,
+   "handoff_units": [
+    "megillah-p01-u01",
+    "megillah-p01-u02",
+    "megillah-p01-u03",
+    "megillah-p01-u04"
+   ],
+   "result": {
+    "generated": 96,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 57
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-04T12:43:37Z",
+   "unc_done": true,
+   "handoff_units": [
+    "megillah-p03-u01",
+    "megillah-p03-u02"
+   ],
+   "result": {
+    "generated": 47,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 29
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-04T12:43:37Z",
+   "unc_done": true,
+   "handoff_units": [
+    "megillah-p04-u01",
+    "megillah-p04-u02"
+   ],
+   "result": {
+    "generated": 49,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 35
+   }
   }
  },
  "created": "2026-11-04T06:41:41Z",
@@ -25,7 +75,26 @@
    "mean": 0.321,
    "n": 3,
    "at": "2026-11-04T06:41:41Z"
+  },
+  {
+   "perek": 1,
+   "mean": 0.493,
+   "n": 8,
+   "at": "2026-11-04T12:43:36Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.356,
+   "n": 4,
+   "at": "2026-11-04T12:43:37Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.428,
+   "n": 4,
+   "at": "2026-11-04T12:43:37Z"
   }
  ],
- "updated": "2026-11-04T06:41:41Z"
+ "updated": "2026-11-04T12:43:37Z",
+ "done": "2026-11-04T12:43:37Z"
 }

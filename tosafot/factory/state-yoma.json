@@ -1,0 +1,143 @@
+{
+ "slug": "yoma",
+ "perakim": {
+  "2": {
+   "status": "published",
+   "published": "2026-11-04T12:43:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "yoma-p02-u01",
+    "yoma-p02-u02"
+   ],
+   "result": {
+    "generated": 42,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 43
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-04T12:43:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "yoma-p03-u01",
+    "yoma-p03-u02",
+    "yoma-p03-u03"
+   ],
+   "result": {
+    "generated": 60,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 62
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-04T12:43:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "yoma-p05-u01",
+    "yoma-p05-u02",
+    "yoma-p05-u03",
+    "yoma-p05-u04"
+   ],
+   "result": {
+    "generated": 91,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 97
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-04T12:43:39Z",
+   "unc_done": true,
+   "handoff_units": [
+    "yoma-p06-u01",
+    "yoma-p06-u02"
+   ],
+   "result": {
+    "generated": 41,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 46
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-04T12:43:39Z",
+   "unc_done": true,
+   "handoff_units": [
+    "yoma-p07-u01"
+   ],
+   "result": {
+    "generated": 22,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 23
+   }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-04T12:43:39Z",
+   "unc_done": true,
+   "handoff_units": [
+    "yoma-p08-u01",
+    "yoma-p08-u02"
+   ],
+   "result": {
+    "generated": 53,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 55
+   }
+  }
+ },
+ "created": "2026-11-04T12:43:38Z",
+ "calibration": [
+  {
+   "perek": 2,
+   "mean": 0.393,
+   "n": 4,
+   "at": "2026-11-04T12:43:38Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.355,
+   "n": 5,
+   "at": "2026-11-04T12:43:38Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.352,
+   "n": 7,
+   "at": "2026-11-04T12:43:38Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.629,
+   "n": 3,
+   "at": "2026-11-04T12:43:38Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.195,
+   "n": 2,
+   "at": "2026-11-04T12:43:39Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.422,
+   "n": 4,
+   "at": "2026-11-04T12:43:39Z"
+  }
+ ],
+ "updated": "2026-11-04T12:43:39Z"
+}

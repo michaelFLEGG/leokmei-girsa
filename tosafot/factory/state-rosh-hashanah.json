@@ -1,0 +1,74 @@
+{
+ "slug": "rosh-hashanah",
+ "perakim": {
+  "2": {
+   "status": "published",
+   "published": "2026-11-04T12:43:37Z",
+   "unc_done": true,
+   "handoff_units": [
+    "rosh-hashanah-p02-u01",
+    "rosh-hashanah-p02-u02"
+   ],
+   "result": {
+    "generated": 34,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 19
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-04T12:43:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "rosh-hashanah-p03-u01",
+    "rosh-hashanah-p03-u02"
+   ],
+   "result": {
+    "generated": 46,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 31
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-04T12:43:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "rosh-hashanah-p04-u01"
+   ],
+   "result": {
+    "generated": 22,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 22
+   }
+  }
+ },
+ "created": "2026-11-04T12:43:37Z",
+ "calibration": [
+  {
+   "perek": 2,
+   "mean": 0.697,
+   "n": 3,
+   "at": "2026-11-04T12:43:37Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.413,
+   "n": 3,
+   "at": "2026-11-04T12:43:37Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.729,
+   "n": 2,
+   "at": "2026-11-04T12:43:38Z"
+  }
+ ],
+ "updated": "2026-11-04T12:43:38Z"
+}

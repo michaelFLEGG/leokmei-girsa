@@ -417,13 +417,20 @@
       const e=add({op:'struct',kind:'unside',texts:[winT,nextT],res:[[cls,winH]],resT:[winT],daf:pgDaf(o.pi)});
       unsideApply(e,{u,pi:o.pi,daf:pgDaf(o.pi)});SLOTS=null;return u.l[0]}
     function fuse(pv,cu){
+      if(!pv||!cu)throw new Error('היחידה הקודמת לא נמצאה לאיחוד');
       const pl=usmPlan(pv,cu);if(pl.err||!pl.fuse)throw new Error(pl.err||'לא ניתן לאחד כאן שתי יחידות');
       const P=pv.u,U=cu.u,ph=P.l[P.l.length-1],nh=U.l[0];
       const texts=[plain(ph[1]),plain(nh[1])];
       const h=ph[1]+(/\s$/.test(texts[0])||/^\s/.test(texts[1])||!texts[0].trim()?'':' ')+nh[1];
       freezeEdits(texts);
       const e=add({op:'struct',kind:'unside-merge',texts,res:[[ph[0],h],[],[pl.where]],resT:[plain(h)],daf:pgDaf(cu.pi)});
-      usmData(e,pv,cu);SLOTS=null}
+      usmData(e,pv,cu);SLOTS=null;
+      /* איחוד "למטה" (העליונה התרוקנה ונמחקה): היחידה העליונה חיה מעתה בתוך התחתונה.
+         בלעדי זה האיטרציה הבאה חיפשה יחידה שאינה קיימת ונפלה (4.11.2026, ברכות פרק ו) */
+      if(!flatU().some(x=>x.u===P))GONE.set(P,U);
+      if(!flatU().some(x=>x.u===U))GONE.set(U,P)}
+    const GONE=new Map();
+    const live=u=>{let n=0;while(GONE.has(u)&&n++<50)u=GONE.get(u);return u};
     function merge(U,i,daf){
       const a=U.l[i],b=U.l[i+1],texts=[plain(a[1]),plain(b[1])];
       freezeEdits(texts);
@@ -501,7 +508,8 @@
           addFirst=vt[0].slice()}
         for(let j=Ou.length-1;j>=1;j--){const o=Ou[j];
           if(titlesOf(o).length){while(titlesOf(o).length)unside(o)}
-          else{const fu=flatU(),n=fu.findIndex(x=>x.u===o.u);fuse(fu[n-1],fu[n])}}
+          else{const fu=flatU(),lu=live(o.u),n=fu.findIndex(x=>x.u===lu);
+            if(n<1)throw new Error('היחידה לא נמצאה אחרי האיחוד');fuse(fu[n-1],fu[n])}}
         /* השורות של הקבוצה רצופות עכשיו ביחידה אחת, עד סופה */
         const firstLine=lead||(o1.u.l[0]);
         let at=unitAt(firstLine);if(!at)throw new Error('השורות לא נמצאו אחרי האיחוד');

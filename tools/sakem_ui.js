@@ -18,7 +18,10 @@
   function skmAllRows(){return [...$('#flow').querySelectorAll('.row')].filter(r=>/^u\d+$/.test(r.id)&&!r.closest('.skmghost'))}
   function skmSpan(a,b){const all=skmAllRows();let i=all.indexOf(a),j=all.indexOf(b);if(i<0||j<0)return null;if(i>j)[i,j]=[j,i];return all.slice(i,j+1)}
   /* היחידות שמאחורי השורות, לפי הסדר */
-  function skmUnits(ids){const by=new Map(flatU().map(o=>[o.u.id,o]));return ids.map(id=>by.get(id)).filter(Boolean)}
+  /* מזהה שחוזר פעמיים (יחידה שהוכפלה בנתונים, ברכות לו:, 4.11.2026): כל הופעה של המזהה ברשימה
+     מקבלת את היחידה הבאה בתור שנושאת אותו, ולא שתיהן את אותה יחידה - אחרת האיחוד נופל */
+  function skmUnits(ids){const by=new Map();flatU().forEach(o=>{const a=by.get(o.u.id);if(a)a.push(o);else by.set(o.u.id,[o])});
+    const used=new Map();return ids.map(id=>{const a=by.get(id);if(!a)return null;const n=used.get(id)||0;used.set(id,n+1);return a[Math.min(n,a.length-1)]}).filter(Boolean)}
   function skmTos(daf){const T=window.__TOS;if(!T||!T.items)return [];return T.items.filter(it=>it.daf===daf&&it.t).map(it=>({n:String(it.n),t:it.t}))}
   function skmPU(o){const u=o.u,pg=D.pages[o.pi];
     return {id:u.id,k:u.k,a:u.a||'',w:u.w||'',l:(u.l||[]).map(x=>[x[0],x[1]]),mbw:u.mbw||'',ref:u.ref||'',

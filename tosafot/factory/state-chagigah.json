@@ -1,0 +1,56 @@
+{
+ "slug": "chagigah",
+ "perakim": {
+  "2": {
+   "status": "published",
+   "published": "2026-11-04T06:41:41Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chagigah-p02-u01",
+    "chagigah-p02-u02",
+    "chagigah-p02-u03",
+    "chagigah-p02-u04"
+   ],
+   "result": {
+    "generated": 83,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 58
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-04T06:41:41Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chagigah-p03-u01",
+    "chagigah-p03-u02",
+    "chagigah-p03-u03"
+   ],
+   "result": {
+    "generated": 65,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 58
+   }
+  }
+ },
+ "created": "2026-11-04T06:41:41Z",
+ "calibration": [
+  {
+   "perek": 2,
+   "mean": 0.454,
+   "n": 7,
+   "at": "2026-11-04T06:41:41Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.455,
+   "n": 5,
+   "at": "2026-11-04T06:41:41Z"
+  }
+ ],
+ "updated": "2026-11-04T06:41:41Z"
+}

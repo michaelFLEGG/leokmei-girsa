@@ -1,0 +1,31 @@
+{
+ "slug": "megillah",
+ "perakim": {
+  "2": {
+   "status": "published",
+   "published": "2026-11-04T06:41:41Z",
+   "unc_done": true,
+   "handoff_units": [
+    "megillah-p02-u01",
+    "megillah-p02-u02"
+   ],
+   "result": {
+    "generated": 33,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 27
+   }
+  }
+ },
+ "created": "2026-11-04T06:41:41Z",
+ "calibration": [
+  {
+   "perek": 2,
+   "mean": 0.321,
+   "n": 3,
+   "at": "2026-11-04T06:41:41Z"
+  }
+ ],
+ "updated": "2026-11-04T06:41:41Z"
+}

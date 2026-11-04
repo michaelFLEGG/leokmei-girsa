@@ -1,0 +1,83 @@
+{
+ "slug": "moed-katan",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-04T06:41:42Z",
+   "unc_done": true,
+   "handoff_units": [
+    "moed-katan-p01-u01",
+    "moed-katan-p01-u02",
+    "moed-katan-p01-u03",
+    "moed-katan-p01-u04",
+    "moed-katan-p01-u05"
+   ],
+   "result": {
+    "generated": 107,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 65
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-04T06:41:42Z",
+   "unc_done": true,
+   "handoff_units": [
+    "moed-katan-p02-u01"
+   ],
+   "result": {
+    "generated": 14,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 10
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-04T06:41:42Z",
+   "unc_done": true,
+   "handoff_units": [
+    "moed-katan-p03-u01",
+    "moed-katan-p03-u02",
+    "moed-katan-p03-u03",
+    "moed-katan-p03-u04",
+    "moed-katan-p03-u05",
+    "moed-katan-p03-u06",
+    "moed-katan-p03-u07"
+   ],
+   "result": {
+    "generated": 171,
+    "decided": 0,
+    "unchecked": 4,
+    "flagged": 4,
+    "questions": 91
+   }
+  }
+ },
+ "created": "2026-11-04T06:41:41Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.574,
+   "n": 9,
+   "at": "2026-11-04T06:41:41Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.161,
+   "n": 1,
+   "at": "2026-11-04T06:41:42Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.443,
+   "n": 14,
+   "at": "2026-11-04T06:41:42Z"
+  }
+ ],
+ "updated": "2026-11-04T06:41:42Z",
+ "done": "2026-11-04T06:41:42Z"
+}

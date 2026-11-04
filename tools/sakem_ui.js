@@ -381,7 +381,11 @@
     return sz}
   function skmApply(p,newText){
     const os=skmUnits(p.ids);
-    if(os.length!==p.ids.length||skmInter(os)!==p.orig)throw new Error('הקטע השתנה מאז ההצעה. בקש הצעה חדשה');
+    let same=os.length===p.ids.length&&skmInter(os)===p.orig;
+    /* הצעה שנבנתה לפני תיקון המזהה הכפול ראתה את אותה יחידה פעמיים: משווים גם כך */
+    if(!same&&os.length===p.ids.length&&new Set(p.ids).size<p.ids.length){
+      const by=new Map(flatU().map(o=>[o.u.id,o]));same=skmInter(p.ids.map(id=>by.get(id)).filter(Boolean))===p.orig}
+    if(!same)throw new Error('הקטע השתנה מאז ההצעה. בקש הצעה חדשה');
     const NS=SKC.segments(SKC.parse(newText)),OS=skmOsegs(os);
     if(NS.length!==OS.length)throw new Error('מבנה הקטע אינו תואם (האלמנטים הנעולים)');
     const pis=[...new Set(os.map(o=>o.pi))];

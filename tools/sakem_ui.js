@@ -18,7 +18,17 @@
   function skmAllRows(){return [...$('#flow').querySelectorAll('.row')].filter(r=>/^u\d+$/.test(r.id)&&!r.closest('.skmghost'))}
   function skmSpan(a,b){const all=skmAllRows();let i=all.indexOf(a),j=all.indexOf(b);if(i<0||j<0)return null;if(i>j)[i,j]=[j,i];return all.slice(i,j+1)}
   /* היחידות שמאחורי השורות, לפי הסדר */
-  function skmUnits(ids){const by=new Map(flatU().map(o=>[o.u.id,o]));return ids.map(id=>by.get(id)).filter(Boolean)}
+  /* מזהה שחוזר פעמיים (יחידה שהוכפלה בנתונים, ברכות לו:, 4.11.2026): כל הופעה של המזהה ברשימה
+     מקבלת את היחידה הבאה בתור שנושאת אותו, ולא שתיהן את אותה יחידה - אחרת האיחוד נופל */
+  function skmUnits(ids){const by=new Map();flatU().forEach(o=>{const a=by.get(o.u.id);if(a)a.push(o);else by.set(o.u.id,[o])});
+    const used=new Map();return ids.map(id=>{const a=by.get(id);if(!a)return null;const n=used.get(id)||0;used.set(id,n+1);return a[Math.min(n,a.length-1)]}).filter(Boolean)}
+  /* הנוסח שההצעה נבנתה עליו עדיין בדף? הצעה שנבנתה לפני תיקון המזהה הכפול ראתה את אותה
+     יחידה פעמיים - משווים גם כך, כדי שלא תיראה כ"השתנה" */
+  function skmSame(ids,orig){
+    const os=skmUnits(ids);if(os.length!==ids.length)return false;
+    if(skmInter(os)===orig)return true;
+    if(new Set(ids).size===ids.length)return false;
+    const by=new Map(flatU().map(o=>[o.u.id,o]));return skmInter(ids.map(id=>by.get(id)).filter(Boolean))===orig}
   function skmTos(daf){const T=window.__TOS;if(!T||!T.items)return [];return T.items.filter(it=>it.daf===daf&&it.t).map(it=>({n:String(it.n),t:it.t}))}
   function skmPU(o){const u=o.u,pg=D.pages[o.pi];
     return {id:u.id,k:u.k,a:u.a||'',w:u.w||'',l:(u.l||[]).map(x=>[x[0],x[1]]),mbw:u.mbw||'',ref:u.ref||'',
@@ -141,7 +151,7 @@
     finally{SKM.busy.delete(key);rows.forEach(r=>r.classList.remove('skmbusy'))}}
   function skmArrive(p){
     /* הקטע השתנה בזמן היצירה: ההצעה כבר אינה מתאימה */
-    if(skmInter(skmUnits(p.ids))!==p.orig){flash('הקטע השתנה בזמן היצירה. סמן שוב ובקש הצעה חדשה');skmDone(p,'stale');return}
+    if(!skmSame(p.ids,p.orig)){flash('הקטע השתנה בזמן היצירה. סמן שוב ובקש הצעה חדשה');skmDone(p,'stale');return}
     if(SKM.ghost){SKM.wait.push(p);toast('הצעת סכם נוספת מוכנה, ותוצג אחרי שתסיים את הנוכחית');return}
     skmShow(p)}
 
@@ -192,6 +202,8 @@
     flush();return h}
   /* קריאה חזרה מן הרוח אחרי עריכה ישירה */
   function skmReadBack(g){
+    /* מה שהוצג לעיון בלבד (המילים שנמחקו בהצעה) אינו חלק מן הנוסח */
+    g=g.cloneNode(true);g.querySelectorAll('del.skpdel').forEach(x=>x.remove());
     const L=[];
     g.querySelectorAll('.skmbody > *').forEach(n=>{
       if(n.classList.contains('skmlock')){L.push(n.dataset.tok);return}
@@ -378,7 +390,7 @@
     return sz}
   function skmApply(p,newText){
     const os=skmUnits(p.ids);
-    if(os.length!==p.ids.length||skmInter(os)!==p.orig)throw new Error('הקטע השתנה מאז ההצעה. בקש הצעה חדשה');
+    if(!skmSame(p.ids,p.orig))throw new Error('הקטע השתנה מאז ההצעה. בקש הצעה חדשה');
     const NS=SKC.segments(SKC.parse(newText)),OS=skmOsegs(os);
     if(NS.length!==OS.length)throw new Error('מבנה הקטע אינו תואם (האלמנטים הנעולים)');
     const pis=[...new Set(os.map(o=>o.pi))];
@@ -417,13 +429,20 @@
       const e=add({op:'struct',kind:'unside',texts:[winT,nextT],res:[[cls,winH]],resT:[winT],daf:pgDaf(o.pi)});
       unsideApply(e,{u,pi:o.pi,daf:pgDaf(o.pi)});SLOTS=null;return u.l[0]}
     function fuse(pv,cu){
+      if(!pv||!cu)throw new Error('היחידה הקודמת לא נמצאה לאיחוד');
       const pl=usmPlan(pv,cu);if(pl.err||!pl.fuse)throw new Error(pl.err||'לא ניתן לאחד כאן שתי יחידות');
       const P=pv.u,U=cu.u,ph=P.l[P.l.length-1],nh=U.l[0];
       const texts=[plain(ph[1]),plain(nh[1])];
       const h=ph[1]+(/\s$/.test(texts[0])||/^\s/.test(texts[1])||!texts[0].trim()?'':' ')+nh[1];
       freezeEdits(texts);
       const e=add({op:'struct',kind:'unside-merge',texts,res:[[ph[0],h],[],[pl.where]],resT:[plain(h)],daf:pgDaf(cu.pi)});
-      usmData(e,pv,cu);SLOTS=null}
+      usmData(e,pv,cu);SLOTS=null;
+      /* איחוד "למטה" (העליונה התרוקנה ונמחקה): היחידה העליונה חיה מעתה בתוך התחתונה.
+         בלעדי זה האיטרציה הבאה חיפשה יחידה שאינה קיימת ונפלה (4.11.2026, ברכות פרק ו) */
+      if(!flatU().some(x=>x.u===P))GONE.set(P,U);
+      if(!flatU().some(x=>x.u===U))GONE.set(U,P)}
+    const GONE=new Map();
+    const live=u=>{let n=0;while(GONE.has(u)&&n++<50)u=GONE.get(u);return u};
     function merge(U,i,daf){
       const a=U.l[i],b=U.l[i+1],texts=[plain(a[1]),plain(b[1])];
       freezeEdits(texts);
@@ -501,7 +520,8 @@
           addFirst=vt[0].slice()}
         for(let j=Ou.length-1;j>=1;j--){const o=Ou[j];
           if(titlesOf(o).length){while(titlesOf(o).length)unside(o)}
-          else{const fu=flatU(),n=fu.findIndex(x=>x.u===o.u);fuse(fu[n-1],fu[n])}}
+          else{const fu=flatU(),lu=live(o.u),n=fu.findIndex(x=>x.u===lu);
+            if(n<1)throw new Error('היחידה לא נמצאה אחרי האיחוד');fuse(fu[n-1],fu[n])}}
         /* השורות של הקבוצה רצופות עכשיו ביחידה אחת, עד סופה */
         const firstLine=lead||(o1.u.l[0]);
         let at=unitAt(firstLine);if(!at)throw new Error('השורות לא נמצאו אחרי האיחוד');
@@ -583,7 +603,7 @@
     if(!SKM.q||!SKM.q.length){if(SKM.q)flash('התור הסתיים');SKM.q=null;return}
     const it=SKM.q.shift();
     const os=skmUnits(it.ids);
-    if(os.length!==it.ids.length||skmInter(os)!==it.orig){skmDone(it,'stale');return skmQNext()}
+    if(!skmSame(it.ids,it.orig)){skmDone(it,'stale');return skmQNext()}
     const r=document.getElementById('u'+it.ids[0]);if(r)r.scrollIntoView({block:'center'});
     skmShow({id:it.id,ids:it.ids,orig:it.orig,text:it.text,point:it.point||'',changes:it.changes||[],warn:it.warn||[],notes:it.notes||[],round:1})}
 

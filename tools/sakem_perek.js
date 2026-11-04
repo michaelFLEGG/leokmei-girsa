@@ -136,7 +136,7 @@
     R.items.forEach(it=>{
       if(!it.ids||!it.ids.length)return;
       if(it.kind!=='seg'){if(delta){const s=shift(it.ids);if(s){it.ids=s;if(it.anchor&&pos.has(it.anchor+delta))it.anchor+=delta}}return}
-      if(skmInter(skmUnits(it.ids))===it.orig)return;
+      if(skmSame(it.ids,it.orig))return;
       const T=skpNorm(it.orig),n=it.ids.length;
       let best=-1,bd=Infinity;
       if(T)for(let i=0;i+n<=fu.length;i++){
@@ -227,8 +227,7 @@
     else{
       const rows=skpRows(it.ids);
       if(!rows.length){skpDec(it,'stale');return skpMove(1)}
-      const now=skmInter(skmUnits(it.ids));
-      conflict=now!==it.orig;
+      conflict=!skmSame(it.ids,it.orig);
       p={id:R.jid+':'+it.iid,ids:it.ids,orig:it.orig,text:it.text,point:it.point||'',changes:it.changes||[],warn:[],notes:[],round:1};
       skmShow(p);
       const g=SKM.ghost;if(!g)return;
@@ -259,7 +258,7 @@
     g.appendChild(side);
     side.addEventListener('click',ev=>{const b=ev.target.closest('button');if(b)skpAct(b.dataset.a)});
     R.conflict=conflict;R.p=p;
-    skpBar();
+    skpBar();skpTzFollow();
     const top=(it.kind==='seg'?skpRows(it.ids)[0]:null)||g;
     (conflict||it.kind==='missing'?top:g).scrollIntoView({block:'center',behavior:'smooth'});
     /* המסך המפוצל (פירוש, חברותא, צורת הדף) נגלל יחד עם הקטע, אם הוא פתוח */
@@ -280,6 +279,7 @@
       '<span class="skpc">קיצורים מרחביים: '+sp+' · השלמות מהגמרא: '+ad+'</span>'+
       '<button data-a="allsug" title="קבל את כל הקטעים שטרם הוכרעו בסוגיה הזאת">קבל את כל הנותרים בסוגיה</button>'+
       '<button data-a="allper" title="קבל את כל הקטעים שטרם הוכרעו בפרק">קבל את כל הנותרים בפרק</button>'+
+      (window.tzOpen?'<button data-a="tz" title="צורת הדף של הקטע הנסקר (Alt+צ); נעה עם הקטע">צורת הדף</button>':'')+
       '<button data-a="pause" title="עצירה - אפשר לחזור ולהמשיך מן הקטע הבא שלא הוכרע (Esc)">עצור</button>'+
       '<i style="width:'+Math.round(100*Object.keys(R.dec).length/Math.max(1,R.items.length))+'%"></i>'+
       '<div class="skpmob"><button data-a="'+(R.conflict?'force':'ok')+'">קבל</button><button data-a="'+(R.conflict?'keep':'no')+'">דחה</button>'+(it&&it.kind==='seg'?'<button data-a="edit">ערוך</button>':'')+'</div>'}
@@ -341,21 +341,41 @@
     if(!confirm('לקבל '+rest.length+' קטעים שטרם הוכרעו '+(scope==='per'?'בפרק':'בסוגיה')+'?'))return;
     skmClose(true);let ok=0,skip=0;
     rest.forEach(([x,i])=>{
-      if(x.kind==='seg'&&skmInter(skmUnits(x.ids))!==x.orig){skip++;return}
+      if(x.kind==='seg'&&!skmSame(x.ids,x.orig)){skip++;return}
       try{const r=skpApplyOne(x,x.text);R.cnt.accept++;R.hist.push({i,iid:x.iid,act:'accept',undo:r.n>0});skpDec(x,'accept');ok++}catch(e){skip++}});
     toast('התקבלו '+ok+(skip?' · '+skip+' נשארו להכרעה (נערכו בינתיים או לא הוחלו)':''),5000);
     skpMove(1)}
   function skpEditOn(){const g=SKM.ghost;if(!g||SKP.rev.items[SKP.rev.i].kind!=='seg')return;
-    g.querySelectorAll('del.skpdel').forEach(x=>x.remove());g.querySelectorAll('span.skpadd').forEach(x=>x.replaceWith(...x.childNodes));
+    /* המילים שהמנוע מחק נשארות גלויות גם בעריכה (4.11.2026), פרושות במלואן ונעולות לעריכה:
+       הן מידע בלבד, ואינן נקראות בחזרה לנוסח (skmReadBack מסיר אותן) */
+    g.querySelectorAll('del.skpdel').forEach(x=>{if(x.classList.contains('long')){x.textContent=x.title;x.classList.remove('long')}
+      x.contentEditable='false';x.classList.add('skpdelro');x.title='נמחק בהצעה - לעיון בלבד';x.onclick=null});
+    g.querySelectorAll('span.skpadd').forEach(x=>x.replaceWith(...x.childNodes));
     g.querySelectorAll('ins.skpgem.off').forEach(x=>x.remove());
     g.classList.add('edit');const b=g.querySelector('.skmbody');b.setAttribute('contenteditable','');b.setAttribute('spellcheck','false');
     const p=b.querySelector('p');if(p){p.focus();const r=document.createRange();r.selectNodeContents(p);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r)}
-    toast('עריכה במקום: כל קיצורי העורך פועלים. Enter מסיים ומקבל, Esc מבטל את העריכה')}
+    toast('עריכה במקום: כל קיצורי העורך פועלים. המילים שנמחקו בהצעה מוצגות באפור לעיון בלבד. Enter מסיים ומקבל, Esc מבטל את העריכה')}
   function skpAct(a){
     if(!SKP.rev)return;
     ({ok:()=>skpAccept(),force:()=>skpAccept(true),no:skpReject,keep:skpReject,edit:skpEditOn,next:()=>skpMove(1),prev:()=>skpMove(-1),
       src:()=>{const it=SKP.rev.items[SKP.rev.i];skpRows(it.ids).forEach(r=>r.classList.toggle('skpshow'))},
-      allsug:()=>skpAll('sug'),allper:()=>skpAll('per'),pause:skpClose})[a]()}
+      allsug:()=>skpAll('sug'),allper:()=>skpAll('per'),pause:skpClose,tz:skpTz})[a]()}
+  /* צורת הדף בתוך הסקירה (4.11.2026): נפתחת על הקטע הנסקר, ונעה איתו בכל מעבר */
+  function skpRef(it){
+    if(!it)return '';
+    const ids=it.kind==='missing'?[it.anchor].concat(it.ids||[]):(it.ids||[]);
+    for(const r of skpRows(ids))if(r.dataset&&r.dataset.ref)return r.dataset.ref;
+    const fu=flatU(),n=fu.findIndex(o=>ids.indexOf(o.u.id)>-1);
+    for(let i=n;i>=0;i--)if(fu[i].u.ref)return fu[i].u.ref;
+    return ''}
+  function skpTz(){
+    if(!window.tzOpen){flash('אין צורת דף למסכת הזאת');return}
+    if(window.tzIsOpen&&tzIsOpen()){tzClose();return}
+    const r=skpRef(SKP.rev.items[SKP.rev.i]);if(!r){flash('לא נמצא מקום בגמרא לקטע הזה');return}
+    tzOpen(r)}
+  function skpTzFollow(){
+    if(!window.tzIsOpen||!tzIsOpen()||!SKP.rev)return;
+    const r=skpRef(SKP.rev.items[SKP.rev.i]);if(r)try{tzOpen(r)}catch(e){}}
   /* המקלדת: לפני העורך (שלב הלכידה), רק כשהסקירה פתוחה */
   document.addEventListener('keydown',e=>{
     const R=SKP.rev;if(!R||!SKM.ghost)return;
@@ -400,7 +420,7 @@
     '#skpbar{position:fixed;bottom:0;left:0;right:0;z-index:65;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:4px 12px 6px;background:rgba(255,255,255,.97);border-top:1px solid #d6dde4;font-size:12.5px;color:#3d4a55}'+
     '#skpbar>i{position:absolute;top:0;right:0;height:2px;background:#2e7d3c}#skpbar .skpttl{font-weight:700;color:#2e5b8a}#skpbar .skpc{color:#5d6b77}'+
     '#skpbar button{padding:1px 9px;border-radius:10px;border:1px solid #c9d3dc;background:#fff;color:#2e5b8a;font-size:12px;cursor:pointer}'+
-    '#skpbar .skpmob{display:none}body.skprev{padding-bottom:40px}'+
+    '.skmghost.edit del.skpdel.skpdelro{opacity:.55;user-select:none;cursor:default;font-size:.92em}'+'#skpbar .skpmob{display:none}body.skprev{padding-bottom:40px}'+
     '.skptab{width:100%;border-collapse:collapse;font-size:13px}.skptab td{border-bottom:1px solid #eee;padding:4px}'+
     '@media (max-width:820px),(pointer:coarse){#skpbar .skpmob{display:flex;flex-basis:100%;gap:8px}#skpbar .skpmob button{flex:1;font-size:16px;padding:10px 0;border-radius:10px}'+
       '#skpbar .skpmob button:first-child{background:#2e7d3c;color:#fff;border-color:#2e7d3c}body.skprev{padding-bottom:110px}.skpside{display:none}.skmghost.skp,.skmghost.skpmiss{padding-left:8px}}'+

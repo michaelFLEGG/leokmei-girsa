@@ -6308,7 +6308,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   tos_items=[]
   for _lf in sorted(_glob.glob(os.path.join(_root,'tosafot',slug,'live-*.json'))):
     _ld=json.load(io.open(_lf,encoding='utf-8'))
-    tos_items+=_ld.get('items',[])
+    # "הדרן עלך" אינו דיבור של פירוש - לא מוצג כהערת תוס' (5.11.2026)
+    tos_items+=[_x for _x in _ld.get('items',[]) if not str(_x.get('dh','')).strip().startswith('הדרן')]
   # פנים התוספות וקישור ספריא מחוץ לדף (13.10.2026): כשמסכת שלמה נכנסת, הם היו מוסיפים מאות קילובייט לזנב הדף.
   # הם נשמרים ב-tos-face-<מסכת>.json ונטענים בעצלתיים בלחיצה על "פנים". לא נכנס לשום קובץ אחר.
   tos_face={}

@@ -1,0 +1,102 @@
+{
+ "slug": "taanit",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-05T12:41:46Z",
+   "unc_done": true,
+   "handoff_units": [
+    "taanit-p01-u01",
+    "taanit-p01-u02",
+    "taanit-p01-u03",
+    "taanit-p01-u04",
+    "taanit-p01-u05",
+    "taanit-p01-u06"
+   ],
+   "result": {
+    "generated": 123,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 52
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-05T12:41:46Z",
+   "unc_done": true,
+   "handoff_units": [
+    "taanit-p02-u01",
+    "taanit-p02-u02"
+   ],
+   "result": {
+    "generated": 25,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 11
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-05T12:41:46Z",
+   "unc_done": true,
+   "handoff_units": [
+    "taanit-p03-u01",
+    "taanit-p03-u02"
+   ],
+   "result": {
+    "generated": 32,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 11
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-05T12:41:47Z",
+   "unc_done": true,
+   "handoff_units": [
+    "taanit-p04-u01",
+    "taanit-p04-u02"
+   ],
+   "result": {
+    "generated": 39,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 21
+   }
+  }
+ },
+ "created": "2026-11-05T12:41:46Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.381,
+   "n": 11,
+   "at": "2026-11-05T12:41:46Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.462,
+   "n": 3,
+   "at": "2026-11-05T12:41:46Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.427,
+   "n": 3,
+   "at": "2026-11-05T12:41:46Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.52,
+   "n": 3,
+   "at": "2026-11-05T12:41:46Z"
+  }
+ ],
+ "updated": "2026-11-05T12:41:47Z",
+ "done": "2026-11-05T12:41:47Z"
+}

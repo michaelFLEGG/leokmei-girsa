@@ -1,0 +1,123 @@
+{
+ "slug": "beitzah",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-05T12:41:45Z",
+   "unc_done": true,
+   "handoff_units": [
+    "beitzah-p01-u01",
+    "beitzah-p01-u02",
+    "beitzah-p01-u03",
+    "beitzah-p01-u04"
+   ],
+   "result": {
+    "generated": 101,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 85
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-05T12:41:45Z",
+   "unc_done": true,
+   "handoff_units": [
+    "beitzah-p02-u01",
+    "beitzah-p02-u02",
+    "beitzah-p02-u03"
+   ],
+   "result": {
+    "generated": 57,
+    "decided": 0,
+    "unchecked": 3,
+    "flagged": 3,
+    "questions": 47
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-05T12:41:45Z",
+   "unc_done": true,
+   "handoff_units": [
+    "beitzah-p03-u01",
+    "beitzah-p03-u02"
+   ],
+   "result": {
+    "generated": 28,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 27
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-05T12:41:45Z",
+   "unc_done": true,
+   "handoff_units": [
+    "beitzah-p04-u01",
+    "beitzah-p04-u02"
+   ],
+   "result": {
+    "generated": 53,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 40
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-05T12:41:46Z",
+   "unc_done": true,
+   "handoff_units": [
+    "beitzah-p05-u01",
+    "beitzah-p05-u02"
+   ],
+   "result": {
+    "generated": 30,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 29
+   }
+  }
+ },
+ "created": "2026-11-05T12:41:44Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.452,
+   "n": 8,
+   "at": "2026-11-05T12:41:44Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.491,
+   "n": 5,
+   "at": "2026-11-05T12:41:45Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.308,
+   "n": 3,
+   "at": "2026-11-05T12:41:45Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.446,
+   "n": 4,
+   "at": "2026-11-05T12:41:45Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.236,
+   "n": 3,
+   "at": "2026-11-05T12:41:45Z"
+  }
+ ],
+ "updated": "2026-11-05T12:41:46Z",
+ "done": "2026-11-05T12:41:46Z"
+}

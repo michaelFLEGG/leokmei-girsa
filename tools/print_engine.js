@@ -17,6 +17,22 @@
 
   /* ---------- טעינת נתוני התוספות והנוסחים שנבחרו ---------- */
   function tosItems(){return (window.__TOS&&window.__TOS.items)||[]}
+  /* ב1: מקום ההפניה מדלג על פיסוק צמוד (גם אחרי רווח שגוי) ועל "וכו'" / "וגו'" שאחרי העוגן */
+  var PUNCT_AFTER=[/^[.,:;!?\u05C3]+/,/^\s+[.,:;!?]+/,/^[\s,]*(?:וכו|וגו)['\u05F3](?:[.,:;!?]+)?/];
+  /* ב7 (5.11.2026): תווית ארוכה בעמודת השוליים אינה מתכווצת לגופן זעיר: מתחת ל-labelMinScale היא נשברת לשתי שורות
+     בגודלה הרגיל; ואם גם בשתי שורות אינה נכנסת - הקטנה מתונה עד labelMinScale בלבד */
+  var PROF=null;
+  function labelWrap(f){var LMIN=(PROF&&PROF.labelMinScale)||0.74;
+    [].slice.call(f.querySelectorAll('.rail > .win')).forEach(function(w){
+      var fs=parseFloat(w.style.fontSize);if(!fs||fs>=LMIN)return;
+      w.style.fontSize='';w.classList.add('w2');
+      var rail=w.parentElement,tw=rail.getBoundingClientRect().width;
+      var sc=1;while(w.scrollWidth>tw+1&&sc>LMIN){sc=Math.max(LMIN,sc-0.06);w.style.fontSize=sc.toFixed(2)+'em'}})}
+  function afterPunct(t,o){
+    for(var guard=0;guard<6;guard++){var r=t.slice(o),m=null;
+      for(var i=0;i<PUNCT_AFTER.length&&!m;i++)m=r.match(PUNCT_AFTER[i]);
+      if(!m||!m[0].length)break;o+=m[0].length}
+    return o}
   function tosHeb(it){return it.hnHeb||it.hn}
   function pageIdxOf(daf){for(var i=0;i<D.pages.length;i++)if(D.pages[i].daf===daf)return i;return -1}
 
@@ -104,7 +120,7 @@
     var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
     window.__PRN={state:'running',report:R};
     function W(m){R.warn.push(m);try{console.warn('[print] '+m)}catch(e){}}
-    var prof=await (await fetch('print-profiles/'+(QS.get('profile')||'a4')+'.json',{cache:'no-store'})).json();
+    var prof=await (await fetch('print-profiles/'+(QS.get('profile')||'a4')+'.json',{cache:'no-store'})).json();PROF=prof;
     (function(){var P=prof,n=P.notes,h=P.header,ft=P.footer;
       var c=document.createElement('style');
       c.textContent=
@@ -134,6 +150,9 @@
         '.pcut{position:absolute;left:0;right:0;bottom:11.5mm;text-align:center;font-family:Vilna,serif;font-size:'+ft.pt+'pt}'+
         '.main p[data-bul]{position:relative}.main p[data-bul]::before{content:"\\00b0";position:absolute;right:-1.15em;top:0;font-family:Vilna,serif;font-weight:900;font-size:.95em}'+
         /* סימן ההפנייה אינו תופס רוחב ואינו נוגע בגובה השורה: תיבה ברוחב אפס, מורמת אל הרווח שבין השורות (השורות חושבו במדויק) */
+        /* ב10 (5.11.2026): גופני וילנא צפופים - ריווח אחיד (vilnaLetterSpacingPt, 0.2) בכל השכבות שבהן הם משמשים */
+        '.phd,.pnum,.psite,.pcut,.pfn,#flow .row.pcont .main,.cv2,.cv3,.toct,.tocm,.tocr{letter-spacing:'+(P.vilnaLetterSpacingPt!=null?P.vilnaLetterSpacingPt:0.2)+'pt}'+
+        'span.tmg{unicode-bidi:isolate;white-space:nowrap;display:inline}span.tmg sup.tm{margin:0 .03em}'+
         'sup.tm{display:inline-block;position:relative;width:auto;height:0;overflow:visible;direction:ltr;white-space:nowrap;font-family:'+n.family+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0 .06em 0 .1em;padding:0;color:#7a7a7a}'+
         /* 5.11.2026: סימנים צמודים אינם עולים זה על זה - כל אחד תופס את רוחבו, ברווח קטן ביניהם, באפור; גובה השורה לא משתנה (גובה אפס) */
         'sup.tm+sup.tm{margin-right:.18em}.pg sup.tm,.pg sup.tm *{color:#7a7a7a!important}sup.tm a{text-decoration:none}'+
@@ -238,6 +257,32 @@
     sq.innerHTML='<div class="row"><div class="rail"></div><div class="main"><p></p></div></div>';
     document.body.appendChild(sq);
     var GM=sq.querySelector('.main'),GP=sq.querySelector('p');
+    /* ב2-ב3 (5.11.2026): המספור הנראה (dn) נקבע לפי סדר ההפניות בטקסט עצמו, ולא לפי שורת הגמרא של התוספות;
+       כך צירוף הפניות במקום אחד עולה תמיד, וסדר ההערות בטור תואם לסדר ההפניות */
+    var LNOF={};
+    var DNC={},ITN={};items.forEach(function(it){ITN[it.n]=it});
+    function renumberMarks(root){
+      [].slice.call(root.querySelectorAll('sup.tm')).forEach(function(mk){
+        var it=ITN[mk.getAttribute('data-n')];if(!it)return;
+        var q=inRange[it.daf],pk=q===undefined?'':(D.pages[q].perek||'');
+        DNC[pk]=(DNC[pk]||0)+1;it.dn=DNC[pk];
+        mk.textContent=prof.notes.numbering==='digits'?String(it.dn):tosHeb(it)});
+      /* צירוף: הפניות סמוכות (רק מפריד-מילה ביניהן) נעטפות בקבוצה אחת בכיוון קבוע מן הפרופיל */
+      var dir=(prof.notes.clusterDir||'ltr');
+      [].slice.call(root.querySelectorAll('sup.tm')).forEach(function(mk){
+        if(!mk.isConnected||mk.parentNode.classList.contains('tmg'))return;
+        var run=[mk],nx=mk.nextSibling;
+        while(nx){
+          if(nx.nodeType===3&&/^[\u2060\s]*$/.test(nx.nodeValue)){nx=nx.nextSibling;continue}
+          if(nx.nodeType===1&&nx.matches&&nx.matches('sup.tm')){run.push(nx);nx=nx.nextSibling;continue}
+          break}
+        if(run.length<2)return;
+        var g=document.createElement('span');g.className='tmg';g.setAttribute('dir',dir);
+        run[0].parentNode.insertBefore(g,run[0]);
+        run.sort(function(a,b){return ITN[a.getAttribute('data-n')].dn-ITN[b.getAttribute('data-n')].dn});
+        /* הצמתים שבין ההפניות (מפרידי מילה) נמחקים; ההפניות נכנסות לקבוצה לפי הסדר */
+        var n0=g.nextSibling;while(n0&&n0!==nx){var nn=n0.nextSibling;if(n0.nodeType===3)n0.remove();n0=nn}
+        run.forEach(function(m2,i){if(i)g.appendChild(document.createTextNode(' '));g.appendChild(m2)})})}
     for(var ci0=0;ci0<chunks.length;ci0++){
       var c0=chunks[ci0],crecs=recs.slice(c0[0],c0[1]);
       var curF=document.getElementById('flow');
@@ -270,6 +315,8 @@
             if(hit){
               /* אחרי הניקוד של האות האחרונה, כדי שהסימן לא יפריד אות מניקודה */
               var hv=hit[0].nodeValue,ho=hit[1];while(ho<hv.length&&NIKD.test(hv[ho]))ho++;
+              /* ב1 (5.11.2026): ההפניה באה אחרי סימן הפיסוק ואחרי "וכו'"/"וגו'", לעולם לא לפניהם */
+              ho=afterPunct(hv,ho);
               var rg=document.createRange();rg.setStart(hit[0],ho);rg.collapse(true);rg.insertNode(mk);
               mk.parentNode.insertBefore(document.createTextNode('\u2060'),mk);   /* צמד-מילה: הסימן לא יישבר מן המילה שלו */
               R.placed++;return}
@@ -281,6 +328,7 @@
             if(!m){W('עוגן תוספות '+tosHeb(it)+' לא נמצא ואין שורה להצמדה');return}
             var ps=m.querySelectorAll(':scope > p'),host=ps.length?ps[ps.length-1]:m;
             host.appendChild(document.createTextNode('\u2060'));host.appendChild(mk);R.placed++;R.moved.push(tosHeb(it))})})}
+      if(withTos)renumberMarks(f);
       await document.fonts.ready;
       /* קוד האתר עשוי להחליף את אלמנט הסרגל בזמן ההמתנה: מחזירים את שלנו (וכל המדידות אחריו) */
       var curF2=document.getElementById('flow');
@@ -294,6 +342,7 @@
       if(typeof setDafW==='function')setDafW();
       if(typeof fitAnchors==='function')fitAnchors();
       if(typeof ltFit==='function')ltFit(f);
+      labelWrap(f);
       /* איחוי שורה יתומה (כלל עימוד 4): בדיקה במקום, וניסיונות בסרגל; רק התוצאה נכתבת לפסקה */
       var tSq=performance.now();
       var ps0=[].slice.call(f.querySelectorAll('.main p')).filter(function(p){return p.textContent.trim().length>=12&&loneStrict(p)});
@@ -316,7 +365,7 @@
         if(t[2]){for(var g2=0;g2<t[2];g2++)glueLastWords(t[0]);t[0].dataset.glue=String(t[2]);fixedGlue++}
         fixedLone++});
       sqMs+=performance.now()-tSq;
-      if(todo.length&&typeof fitAnchors==='function')fitAnchors();
+      if(todo.length&&typeof fitAnchors==='function'){fitAnchors();labelWrap(f)}
       /* שער: מילה בודדת שנותרה אחרי הדחיסה והרווח הקשיח נרשמת בלוח התקלות (לעולם לא בשקט) */
       [].slice.call(f.querySelectorAll('.main p')).forEach(function(p){
         if(p.textContent.trim().length>=12&&loneStrict(p)){
@@ -344,7 +393,11 @@
           if(!bad)return;
           rl.classList.remove('dup');
           var cs=parseFloat(w.style.fontSize)||1;
-          [.66,.6,.55].some(function(sc){if(sc>=cs)return false;w.style.fontSize=sc+'em';return !hit(RC(dm),RC(wa))})})})();
+          /* ב7: קודם שבירה לשתי שורות בעמודה, ורק אחר כך הקטנה מתונה (לא פחות מ-labelMinScale) */
+          if(!w.classList.contains('w2')){w.classList.add('w2');w.style.fontSize='';if(!hit(RC(dm),RC(wa)))return}
+          var LMIN=prof.labelMinScale||0.74;
+          [.9,.82,LMIN].some(function(sc){if(sc>=cs||sc<LMIN)return false;w.style.fontSize=sc+'em';return !hit(RC(dm),RC(wa))});
+          if(hit(RC(dm),RC(wa)))R.issues.push({type:'תווית מתנגשת בציון הדף',detail:wa.textContent.trim().slice(0,30)})})})();
       /* ד: משיכת ציון הדף אל הטקסט, לפי המרווח הפנוי בפועל במסילה (אחרי ההתאמה של כותרות הצד) */
       (function(){var mx=(prof.dafPullMm||0)*MM;if(!mx)return;
         [].slice.call(f.querySelectorAll('.row')).forEach(function(row){
@@ -378,9 +431,11 @@
           if(Math.abs(h/lh-n)>0.2){var key=x.kind+':'+cs.fontSize;
             if(!odd[key]){odd[key]=1;W('גובה פסקה אינו כפולה של גובה השורה ('+x.kind+'): '+(h/lh).toFixed(2))}}
           var top=Ybase+br.top-fr.top+pt+bt;
+          var wc=n===1?(b.textContent.trim().split(/\s+/).filter(Boolean).length):99;   /* ב5: מילים בפסקה של שורה אחת */
+          var lbl=!!(rail&&rail.textContent.trim()&&bi===0);
           for(var k=0;k<n;k++){
             L.push({ri:ri,kind:x.kind,block:bi,k:k,n:n,y0:top+k*lh,y1:top+(k+1)*lh,
-                    daf:x.daf,perek:x.perek,perekName:x.perekName,notes:[],first:false,last:false})}});
+                    daf:x.daf,perek:x.perek,perekName:x.perekName,notes:[],first:false,last:false,wc:wc,lbl:lbl&&k===0})}});
         if(L.length>rowFirst){
           L[rowFirst].first=true;L[L.length-1].last=true;
           var lastL=L[L.length-1];
@@ -396,7 +451,7 @@
           var d=yy===null?0:(yy<L[j].y0?L[j].y0-yy:(yy>L[j].y1?yy-L[j].y1:0));
           if(d<bd){bd=d;best=j}}
         if(best<0){W('סימן תוספות '+n+' ללא שורה');return}
-        L[best].notes.push(n)});
+        L[best].notes.push(n);LNOF[n]=best});
       crecs.forEach(function(x){x.html2=x.el.outerHTML;x.el=null});
       Ybase+=fr.height;
       f.innerHTML=''}
@@ -445,6 +500,13 @@
       if(sp.length){
         o.html=sp.map(function(e){return noteHTML(e.n,e)}).join('');
         meas.className='pfn'+(sp.length<2?' one':'');meas.innerHTML=o.html;
+        /* ב6 (5.11.2026): מילה בודדת בשורה אחרונה של הערה - נדחסת לשורה הקודמת בכיווץ מתון, בגבולות notes.squeeze שבפרופיל */
+        var SQN=N.squeeze||[[-0.03,0],[-0.06,-0.01],[-0.09,-0.02]],sqd=0;
+        [].forEach.call(meas.children,function(d){if(!loneStrict(d))return;var h0=d.getBoundingClientRect().height;
+          for(var q=0;q<SQN.length;q++){d.style.wordSpacing=SQN[q][0]+'em';d.style.letterSpacing=SQN[q][1]?SQN[q][1]+'em':'';
+            if(d.getBoundingClientRect().height<h0-1){sqd++;return}}
+          d.style.wordSpacing='';d.style.letterSpacing=''});
+        if(sqd){o.html=meas.innerHTML;R.noteSqueeze=(R.noteSqueeze||0)+sqd}
         o.h=meas.getBoundingClientRect().height;
         o.parts=[].map.call(meas.children,function(d){var t=0;[].forEach.call(d.getClientRects(),function(r){t+=r.height});return t});
         o.one=sp.length<2}
@@ -466,14 +528,14 @@
     var STR=prof.stretch||{},NLH=N.linePt*PT,LH=prof.body.linePt*PT,HOLE=1.5*LH,STRMAX=(STR.maxLines||1.5)*LH,STRETCH=(STR.maxPtPerGap||3)*PT;
     var HFIX=QS.get('holefix')!=='0';                    /* holefix=0: בלי פיצול ומתיחה, לבקרת לפני/אחרי בלבד */
     function noteIds(a,b){var s=[];for(var i=a;i<b;i++)for(var t=0;t<L[i].notes.length;t++)s.push(L[i].notes[t]);
-      return s.sort(function(x,y){return x-y})}
+      return s.sort(function(x,y){return ((byN[x]&&byN[x].dn)||0)-((byN[y]&&byN[y].dn)||0)||x-y})}
 
     /* ---- כללי השבירה ---- */
     function isForce(i){var l=L[i];
       return l.first&&(l.kind==='perek-range'||(l.kind==='perek-start'&&!(i>0&&L[i-1].kind==='perek-range')))}
     /* ה (14.10.2026): שורה בודדת שנותרה מקטע (עד הכותרת הבאה) אינה פותחת טור: קודם דחיסה זעירה בטור הקודם
        (עד 2 נקודות, בהזזה מדורגת של השורות - לא בכיווץ אותיות), ואם אינה מספיקה - שורה נוספת עוברת אל הטור הבא */
-    var SQ=2*PT;
+    var SQ=2*PT,SOFT=false;   /* SOFT: כללי ב5 החדשים מוותרים כשבלעדיהם נשאר חור (חור גרוע מהם) */
     function segLen(i){
       if(i>=L.length)return 0;
       /* פרומפט 16: כותרת שפותחת את הטור אינה "שורה בודדת". ד"ה של שורה אחת שאחריו מיד כותרת נושא נספר כאן כקטע של
@@ -488,7 +550,13 @@
       var a=L[i-1],b=L[i];
       if(a.ri===b.ri&&a.block===b.block){                  /* בתוך פסקה: שתי שורות לפחות מכל צד */
         return b.k>=prof.widowOrphan&&(b.n-b.k)>=prof.widowOrphan}
+      /* ב5: בין שתי פסקאות של אותה יחידה (תיבת משנה, ערימה) - שתי שורות לפחות מכל צד, כמו בתוך פסקה */
+      if(HFIX&&(!SOFT||b.kind==='m')&&a.ri===b.ri){var ca=0,cb=0,ja=i-1,jb=i;while(ja>=0&&L[ja].ri===b.ri){ca++;ja--}while(jb<L.length&&L[jb].ri===b.ri){cb++;jb++}
+        if(ca<prof.widowOrphan||cb<prof.widowOrphan)return false}
       if(b.kind==='hadran')return false;                    /* הדרן אינו נפתח טור */
+      /* ב5 (5.11.2026): פסקה קצרה של שורה אחת (עד shortLineWords מילים, בלי תווית) שהיא המשך של הקטע אינה נשארת לבד
+         בתחתית טור - היא יורדת עם ההמשך שלה. וכן תווית צד של שורה אחת שאחריה ממשיך אותו קטע בלי תווית */
+      if(HFIX&&!SOFT&&a.n===1&&!HEADS[a.kind]&&!HEADS[b.kind]&&a.wc<=(prof.shortLineWords||2)&&!b.lbl)return false;
       /* כותרת אינה נפרדת מן התוכן שאחריה: שתי שורות תוכן לפחות אחריה באותו טור */
       var c=0,j=i-1;
       while(j>=0&&!HEADS[L[j].kind]){c++;j--;if(c>=prof.keepAfterHeading)break}
@@ -503,7 +571,7 @@
       while(j<L.length){
         if(j>i&&isForce(j))break;
         var nids=ids.concat(L[j].notes);
-        var nf=(nids.length||carry)?fnSpec(specOf(nids.slice().sort(function(x,y){return x-y}),carry,null)):null;
+        var nf=(nids.length||carry)?fnSpec(specOf(nids.slice().sort(function(x,y){return ((byN[x]&&byN[x].dn)||0)-((byN[y]&&byN[y].dn)||0)||x-y}),carry,null)):null;
         var fh=nf?nf.h+GAP:0;
         var th=L[j].y1-y0;
         if(th+fh>cap+0.5)break;
@@ -555,6 +623,9 @@
       if(HFIX&&!sq&&best<L.length&&!isForce(best)&&A-colUsed(i,best,null)>HOLE){
         var ts=trySplit(i,A);
         if(ts&&ts.e>best){best=ts.e;split=ts.split;R.splits=(R.splits||0)+1}}
+      if(HFIX&&!sq&&!split&&best<L.length&&!isForce(best)&&A-colUsed(i,best,null)>HOLE){
+        SOFT=true;var rs=fillCol(i,A,true);SOFT=false;
+        if(rs.best>best){best=rs.best;j=rs.j;R.softBreaks=(R.softBreaks||0)+1}}
       /* הסיבה לחור שנשאר (לבקרה): השורה הבאה אינה נכנסת בגלל ההערות שלה, או שכלל עימוד אוסר לשבור כאן */
       var why='';
       if(best<L.length&&!isForce(best)){
@@ -608,9 +679,13 @@
     /* ---- בניית העמודים ---- */
     var out=document.createElement('div');out.id='prnout';
     var tpl=document.createElement('template');
+    var MARKROOM=prof.notes.markRoomPt||1.5;   /* ב4: מקום להפניה המורמת של השורה הראשונה בטור */
     var nPages=Math.ceil(cols.length/prof.cols);
     var mname=D.masechet;
     var lastPerek=null;
+    /* ב9 (5.11.2026): "לאוקמי גירסא · leokmei.com" - הכתובת עטופה בכיוון שמאל-לימין, כדי שהנקודה לא תקפוץ לראשה */
+    function siteLine(){var F=prof.footer,t=String(F.siteText||'').replace(/\.?com$/,'').trim(),u=F.siteUrlText||'leokmei.com';
+      return ge(t)+' \u00B7 <bdi dir="ltr">'+ge(u)+'</bdi>'}
     function dafSpan(a,b){return a===b?a:(a+' - '+b)}
     for(var pgi=0;pgi<nPages;pgi++){
       var cs2=cols.slice(pgi*prof.cols,pgi*prof.cols+prof.cols);
@@ -646,16 +721,20 @@
           var rc=recs[ri];
           tpl.innerHTML=rc.html2;
           var cl=tpl.content.firstElementChild;
+          /* ב4 (5.11.2026): הפניה מודפסת רק בטור שבו יושבת השורה שלה. שורה שגולשת לטור הבא נמצאת בשני הטורים,
+             וההפניה המורמת של השורה הראשונה בטור הבא נראתה גם בתחתית הטור הקודם */
+          [].slice.call(cl.querySelectorAll('sup.tm')).forEach(function(mk){var li=LNOF[mk.getAttribute('data-n')];
+            if(li===undefined||li<c.s||li>=c.e){mk.style.visibility='hidden';mk.removeAttribute('id')}});
           cl.style.position='absolute';cl.style.top=(rc.gtop-yS-sqz*Math.max(0,Math.min(1,(rc.gtop-ln.y0)/spanY))+per*(ri-ln.ri))+'px';cl.style.right='0';cl.style.width=(prof.rail+prof.measure)+'mm';
           rowsHtml+=cl.outerHTML}
         body+='<div class="pcol" style="left:'+boxLeft+'mm;top:'+MG.top+'mm;width:'+(prof.rail+prof.measure)+'mm;height:'+A_mm+'mm">'+
-          '<div class="ptx flow" style="height:'+(yE-yS-sqz+per*nb)+'px">'+rowsHtml+'</div>'+
+          '<div class="ptx flow" style="height:'+(yE-yS-sqz+per*nb)+'px;overflow:visible;clip-path:inset(-'+MARKROOM+'pt 0 0 0)">'+rowsHtml+'</div>'+
           (fb?'<div class="pfnw" style="width:'+prof.measure+'mm"><div class="pfn'+(fb.one?' one':'')+'">'+fb.html+'</div></div>':'')+'</div>';
         c.notes.forEach(function(n){pageInfo.notes.push(n)});
         pageInfo.cols.push({lines:c.e-c.s,textMm:+((yE-yS)/MM).toFixed(1),notes:c.notes.length,noteMm:fb?+(fb.h/MM).toFixed(1):0,
           gapMm:+(gapPx/MM).toFixed(1),stretchPt:+(per/PT).toFixed(2),split:c.split?c.split.n:0,carry:c.carry?c.carry.n:0})});
       var foot='<div class="pnum" style="bottom:'+prof.footer.numberFromBottomMm+'mm">'+(pgi+1)+'</div>'+
-        '<div class="psite" style="left:'+(MG.left+dx)+'mm">'+(prof.footer.pageQr?'<span class="qr"></span>':'')+'<span class="st">'+ge(prof.footer.siteText)+'</span></div>';
+        '<div class="psite" style="left:'+(MG.left+dx)+'mm">'+(prof.footer.pageQr?'<span class="qr"></span>':'')+'<span class="st" dir="rtl">'+siteLine()+'</span></div>';
       pgEl.innerHTML=hd+body+foot;
       pgEl.setAttribute('data-daf',firstLine.daf);
       out.appendChild(pgEl);

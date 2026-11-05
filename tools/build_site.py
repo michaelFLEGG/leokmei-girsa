@@ -646,6 +646,9 @@ def _absorbed(e, history):
 # (ingest_repo) משתמש בה כדי לכתוב לוורד בדיוק את מה שהאתר מציג, ובאותו סדר.
 PLAN = []
 
+# מספור קטעי המשנה באותיות לפני ד"ה משנה - מוקפא בידי בעל הפרויקט (5.11.2026). להחזרה: False
+MN_FROZEN = True
+
 
 def _dedupe_windows(pages):
     """כותרת צד שנכפלה (חלון זהה ברצף באותה יחידה) מוצגת פעם אחת (5.11.2026)."""
@@ -1323,7 +1326,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       _n_mn_drop=0
       for _p in pages:
           for _u in _p['units']:
-              if _u.get('mn') and _u['k']!='dh':
+              # 5.11.2026: בעל הפרויקט הקפיא את מספור קטעי המשנה (לא עקבי) - MN_FROZEN
+              if _u.get('mn') and (MN_FROZEN or _u['k']!='dh'):
                   for _k in ('mn','mnh','mnr','mns'): _u.pop(_k,None)
                   _n_mn_drop+=1
       if _n_mn_drop:

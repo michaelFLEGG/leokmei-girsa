@@ -563,12 +563,15 @@
       if(prof.cols!==2||!cols.length)return;
       var k0=cols.length-(cols.length%2===0?2:1),c0=cols[k0];
       if(!c0||c0.sq||c0.split||(k0+1<cols.length&&cols[k0+1].split))return;
-      var s0=c0.s,cr0=c0.carry,keepCarry=carry,got=null;
+      var s0=c0.s,cr0=c0.carry,keepCarry=carry,got=null,bestH=1e9;
       for(var cap=A*0.3;cap<=A+0.5;cap+=NLH/3){
         carry=cr0;var a1=fillCol(s0,cap,true).best;
         if(a1<=s0||a1>=L.length)continue;
+        var u1=colUsed(s0,a1,null);
         carry=null;var a2=fillCol(a1,A,true);
-        if(a2.best>=L.length||a2.j>=L.length&&a2.best===L.length){got=a1;break}}
+        if(a2.best<L.length)continue;
+        var u2=colUsed(a1,L.length,null),h=Math.max(u1,u2)+Math.abs(u1-u2)*0.01;
+        if(h<bestH-0.5){bestH=h;got=a1}}
       carry=keepCarry;
       if(got===null)return;
       cols.length=k0;

@@ -1275,6 +1275,8 @@ def _apply_side(path, ops, author, masechet, log=print, dry=False):
     from styles_map import ROLE
     if is_open_in_word(path) and not wait_free(path, log=log):
         raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    if not dry:
+        heal_dup_windows(path, author, masechet, log=log)
     before = convert(path)
     norm_before = [_nw(b['text']) for b in before]
     win_style = _common_style(before, lambda s: ROLE.get(s) == 'anchor' and s == 'חלון 3') \
@@ -1292,6 +1294,13 @@ def _apply_side(path, ops, author, masechet, log=print, dry=False):
                     and ROLE.get(before[i]['style'], 'body').startswith('body')]
             if len(hits) != 1:
                 missed.append((op, 'לא אותרה פסקה יחידה (%d מועמדים)' % len(hits)))
+                continue
+            # כבר בוורד (5.11.2026): כותרת חדשה מעל פסקה שלא השתנתה - הפסקה עדיין
+            # מאותרת אחרי ההחלה, ולכן בלי בדיקה זו הכותרת נכפלה בכל קליטה
+            h0 = hits[0]
+            if (len(res) > 1 and _nw(res[0]) == want[0] and h0 > 0
+                    and ROLE.get(before[h0 - 1]['style']) == 'anchor'
+                    and norm_before[h0 - 1] == _nw(res[1])):
                 continue
             if not win_style:
                 missed.append((op, 'אין בקובץ סגנון חלון'))
@@ -1415,6 +1424,47 @@ def _apply_side(path, ops, author, masechet, log=print, dry=False):
     swap(tmp, path)
     log('נכתבו %d שינויי כותרת-צד, ואומתו' % done)
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
+
+
+def heal_dup_windows(path, author, masechet, log=print):
+    """ריפוי (5.11.2026): כותרת צד שנכפלה בקליטות חוזרות - פסקת חלון זהה לחלון
+    שמעליה, שכולה הוספה במעקב שלא אושרה עדיין, מוסרת (דחיית ההוספה בלבד; דבר
+    שכתב בעל הפרויקט אינו נוגע). אימות נוסח לפני ההחלפה."""
+    from styles_map import ROLE
+    before = convert(path)
+    nb = [_nw(b['text']) for b in before]
+    an = lambda j: ROLE.get(before[j]['style']) == 'anchor'
+    dups = [j for j in range(1, len(before)) if nb[j] and nb[j] == nb[j - 1] and an(j) and an(j - 1)]
+    if not dups:
+        return 0
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    z.close()
+    xml_ps = _paragraph_map(doc, before)
+    gone = []
+    for j in dups:
+        p = xml_ps.get(before[j]['i'])
+        if p is None or p.find('w:pPr/w:rPr/w:ins', ns) is None:
+            continue
+        runs = list(p.iter(W + 'r'))
+        if not runs or any(r.getparent().tag != W + 'ins' for r in runs):
+            continue
+        p.getparent().remove(p)
+        gone.append(j)
+    if not gone:
+        return 0
+    want = [t for k, t in enumerate(nb) if k not in gone]
+    bk = backup(path, masechet)
+    tmp = tmp_path(path)
+    _rezip(path, tmp, {'word/document.xml':
+                       etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True)})
+    if [_nw(b['text']) for b in convert(tmp)] != want:
+        os.remove(tmp)
+        log('ריפוי כותרות כפולות: האימות נכשל, הקובץ לא נגע')
+        return 0
+    swap(tmp, path)
+    log('ריפוי: הוסרו %d כותרות צד כפולות (גיבוי: %s)' % (len(gone), bk))
+    return len(gone)
 
 
 # ------------------------------------- Delete על שורה שיש לה כותרת צד (pusm, 25.10.2026)

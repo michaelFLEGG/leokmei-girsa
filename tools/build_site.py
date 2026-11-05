@@ -647,10 +647,29 @@ def _absorbed(e, history):
 PLAN = []
 
 
+def _dedupe_windows(pages):
+    """כותרת צד שנכפלה (חלון זהה ברצף באותה יחידה) מוצגת פעם אחת (5.11.2026)."""
+    for p in pages:
+        for u in p['units']:
+            if u['k'] not in ('u', 'm'):
+                continue
+            k = _wkey(u)
+            w = u.get(k) or ''
+            if '<br>' not in w:
+                continue
+            out = []
+            for x in w.split('<br>'):
+                if out and _wn(_bare(x)) and _wn(_bare(x)) == _wn(_bare(out[-1])):
+                    continue
+                out.append(x)
+            u[k] = '<br>'.join(out)
+
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
     del PLAN[:]
+    _dedupe_windows(pages)
     path = os.path.join(EDITS_DIR, slug + '.json')
     if not os.path.exists(path):
         return None
@@ -689,6 +708,12 @@ def _apply_site_edits(pages, slug, qa):
             if kind in ('side', 'unside', 'unside-merge'):
                 ap, dn = ((_side_apply, _side_done) if kind == 'side' else (_unside_apply, _unside_done)
                           if kind == 'unside' else (_usm_apply, _usm_done))
+                # כותרת צד: "כבר בוורד" נבדק קודם - הגוף נשאר מאותר גם אחרי ההחלה,
+                # והכותרת נכפלה בכל בנייה (5.11.2026)
+                if kind == 'side' and dn(pages, e):
+                    taken += 1
+                    history.append(('s', e))
+                    continue
                 if ap(pages, e):
                     done += 1
                     keep.append(e)
@@ -3591,7 +3616,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         continue}
       if(e.kind==='side'||e.kind==='unside'){
         const sd=e.kind==='side';
-        const h=sd?findRun(e.texts,e.daf):findWinUnit(e.texts[0],e.texts[1],e.daf);
+        if(sd&&!e._ap&&sideDone(e)){e.lost=0;e.done=1;EDTAKEN++,e.ing&&EDWORD++;continue}
+        const h=sd&&e._ap?null:sd?findRun(e.texts,e.daf):findWinUnit(e.texts[0],e.texts[1],e.daf);
         if(h){if(sd)sideApply(e,h); else unsideApply(e,h);e.lost=0;e._ap=1;any=true;SLOTS=null}
         else if(sd?sideDone(e):unsideDone(e)){e.lost=0;e.done=1;EDTAKEN++,e.ing&&EDWORD++}
         else e.lost=1;

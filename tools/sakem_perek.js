@@ -186,19 +186,41 @@
   function skpRows(ids){return ids.map(id=>document.getElementById('u'+id)).filter(Boolean)}
 
   /* השוואת מילים: מה נוסף ומה נמחק, על הטקסט שבתצוגה עצמה (כדי שהמילים יתאימו לצמתים) */
-  function skpWords(root){const out=[];const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest('.skmlock,.skmsrc,.skpdel')?2:1});
+  function skpWords(root){const out=[];const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest('.skmlock,.skmsrc,.skpdel,.tzc')?2:1});
     let n;while((n=w.nextNode()))n.nodeValue.split(/\s+/).forEach(x=>{if(x)out.push(x)});return out}
   const skpWn=w=>nonik(w).replace(/[.,:;!?"'״׳()[\]{}\-]/g,'');
+  /* זוגות המילים המשותפות (LCS) בלי מגבלת גודל (פרומפט 20, 5.11.2026): קידומת וסיומת
+     משותפות נחתכות, קטע קטן נפתר בטבלה, וקטע גדול מתפצל לפי הירשברג (זיכרון ליניארי).
+     קודם לכן קטע ארוך (n*m>400000) דילג בשקט, ולכן בסכם פרק לא נראה קו חוצה. */
+  function skpLcs(A,B){
+    const pairs=[];
+    function row(a0,a1,b0,b1,rev){const m=b1-b0;let pr=new Int32Array(m+1),cu=new Int32Array(m+1);
+      for(let i=0;i<a1-a0;i++){const ai=rev?A[a1-1-i]:A[a0+i];cu[0]=0;
+        for(let j=1;j<=m;j++){const bj=rev?B[b1-j]:B[b0+j-1];cu[j]=ai===bj?pr[j-1]+1:(pr[j]>cu[j-1]?pr[j]:cu[j-1])}
+        const t=pr;pr=cu;cu=t}
+      return pr}
+    function small(a0,a1,b0,b1){const n=a1-a0,m=b1-b0;const L=[...Array(n+1)].map(()=>new Int32Array(m+1));
+      for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)L[i][j]=A[a0+i]===B[b0+j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+      let i=0,j=0;while(i<n&&j<m){if(A[a0+i]===B[b0+j]){pairs.push([a0+i,b0+j]);i++;j++}else if(L[i+1][j]>=L[i][j+1])i++;else j++}}
+    function go(a0,a1,b0,b1){
+      while(a0<a1&&b0<b1&&A[a0]===B[b0]){pairs.push([a0,b0]);a0++;b0++}
+      const tail=[];while(a1>a0&&b1>b0&&A[a1-1]===B[b1-1]){a1--;b1--;tail.push([a1,b1])}
+      if(a1>a0&&b1>b0){
+        if((a1-a0)*(b1-b0)<=250000||a1-a0<2)small(a0,a1,b0,b1);
+        else{const mid=(a0+a1)>>1,L1=row(a0,mid,b0,b1,false),L2=row(mid,a1,b0,b1,true),m=b1-b0;
+          let k=0,best=-1;for(let j=0;j<=m;j++){const v=L1[j]+L2[m-j];if(v>best){best=v;k=j}}
+          go(a0,mid,b0,b0+k);go(mid,a1,b0+k,b1)}}
+      for(let t=tail.length-1;t>=0;t--)pairs.push(tail[t])}
+    go(0,A.length,0,B.length);return pairs}
   function skpDiff(root,origHtml){
     const tmp=document.createElement('div');tmp.innerHTML=origHtml;
     const A=skpWords(tmp).map(skpWn),Bw=skpWords(root),B=Bw.map(skpWn),n=A.length,m=B.length;
-    if(n*m>400000)return;
-    const L=[...Array(n+1)].map(()=>new Uint16Array(m+1));
-    for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)L[i][j]=A[i]===B[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
-    const add=new Array(m).fill(false),del=[...Array(m+1)].map(()=>[]);const Araw=skpWords(tmp);
-    let i=0,j=0;while(i<n||j<m){if(i<n&&j<m&&A[i]===B[j]){i++;j++}else if(j<m&&(i>=n||L[i][j+1]>=L[i+1][j])){add[j]=true;j++}else{del[j].push(Araw[i]);i++}}
+    const add=new Array(m).fill(true),del=[...Array(m+1)].map(()=>[]);const Araw=skpWords(tmp);
+    const P=skpLcs(A,B);let ai=0;
+    P.forEach(([i,j])=>{while(ai<i){del[j].push(Araw[ai]);ai++}add[j]=false;ai=i+1});
+    while(ai<n){del[m].push(Araw[ai]);ai++}
     /* הסימון בצמתים: מילה שנוספה - רקע עדין; מה שנמחק - קו חוצה אפור, לפני המילה שבאה במקומו */
-    let k=0;const nodes=[];const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:x=>x.parentElement.closest('.skmlock,.skmsrc')?2:1});
+    let k=0;const nodes=[];const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:x=>x.parentElement.closest('.skmlock,.skmsrc,.tzc')?2:1});
     let t;while((t=w.nextNode()))nodes.push(t);
     nodes.forEach(tn=>{const parts=tn.nodeValue.split(/(\s+)/);const fr=document.createDocumentFragment();
       parts.forEach(p=>{if(!p)return;if(/^\s+$/.test(p)){fr.appendChild(document.createTextNode(p));return}
@@ -236,15 +258,23 @@
       rows.forEach(r=>{r.classList.remove('skmold');if(!conflict)r.classList.add('skpold')});
       /* שלושת הסימונים */
       const body=g.querySelector('.skmbody');
-      try{skpDiff(body,skmGhostBody(it.orig,''))}catch(e){}
+      let dErr=null;try{skpDiff(body,skmGhostBody(it.orig,''))}catch(e){dErr=e;try{console.warn('skpDiff',e)}catch(_){}}
       body.querySelectorAll('ins.skmadd').forEach((x,k)=>{const a=(it.adds||[])[k]||{};x.classList.add('skpgem');x.dataset.k=k;
         x.title='השלמה מהגמרא'+(a.gem?': '+a.gem:'')+' · לחיצה מבטלת רק אותה';
+        x.addEventListener('click',ev=>{if(g.classList.contains('edit'))return;ev.preventDefault();x.classList.toggle('off')})});
+      /* כותרת חדשה (פרומפט 20): שורת (נושא) שאינה במקור - בחום, ולחיצה מבטלת רק אותה */
+      const hOld=new Set(SKC.parse(it.orig).filter(k=>(k.t==='line'&&k.sty==='nose')||(k.t==='lock'&&/^כותרת/.test(k.kind))).map(k=>nonik(SKC.plainI(k.v||k.val||'')).replace(/\s+/g,' ').trim()));
+      let nNew=0;
+      body.querySelectorAll('.skmmain p.nose').forEach(x=>{const t=nonik(x.textContent).replace(/\s+/g,' ').trim();if(!t||hOld.has(t))return;
+        nNew++;x.classList.add('skpnewh');x.dataset.h=t;x.title='כותרת חדשה · לחיצה מבטלת רק אותה';
         x.addEventListener('click',ev=>{if(g.classList.contains('edit'))return;ev.preventDefault();x.classList.toggle('off')})});
       const chips=document.createElement('div');chips.className='skpchips';chips.contentEditable='false';
       chips.innerHTML=(it.layers||[]).map(L=>L==='קיצור מרחבי'?'<span class="skpchip sp" tabindex="0" title="דולג: '+esc(it.skipped||'')+'">קיצור מרחבי</span>':
         L==='השלמה'?'<span class="skpchip gem" title="השלמה מהגמרא: לחיצה על ההשלמה בנוסח מבטלת רק אותה">השלמה מהגמרא</span>':'<span class="skpchip">ליטוש</span>').join('')+
+        (nNew?'<span class="skpchip newh" title="לחיצה על הכותרת החומה בנוסח מבטלת רק אותה">כותרת חדשה'+(nNew>1?' ('+nNew+')':'')+'</span>':'')+
         (it.skipped?'<span class="skpskip" hidden>דולג: '+esc(it.skipped)+'</span>':'')+
-        (conflict?'<span class="skpconf">הקטע נערך אצלך מאז שההצעה נכתבה. העריכה שלך מוצגת למעלה.</span>':'');
+        (conflict?'<span class="skpconf">הקטע נערך אצלך מאז שההצעה נכתבה. העריכה שלך מוצגת למעלה.</span>':'')+
+        (dErr?'<span class="skpconf" title="'+skpA(SKC.plainI(String(it.orig||'').split('\n').filter(x=>!/^\[(דף|משנה|גמרא|קבוע|מקור)/.test(x)).join(' ')))+'">לא ניתן להציג את המחיקות בקטע זה - הנוסח המקורי בריחוף, ו-⟲ מציג אותו</span>':'');
       g.prepend(chips);
       const sp=chips.querySelector('.skpchip.sp');if(sp)sp.onclick=()=>{const s=chips.querySelector('.skpskip');s.hidden=!s.hidden}}
     const g=SKM.ghost;
@@ -277,6 +307,7 @@
       '<span>קטע '+(R.i+1)+' מתוך '+R.items.length+'</span>'+
       '<span class="skpc">התקבלו '+R.cnt.accept+' · נדחו '+R.cnt.reject+' · נערכו '+R.cnt.edit+'</span>'+
       '<span class="skpc">קיצורים מרחביים: '+sp+' · השלמות מהגמרא: '+ad+'</span>'+
+      '<button data-a="unfold" title="פרוש את כל המחיקות המקופלות בקטע (Alt+ח)">פרוש מחיקות</button>'+
       '<button data-a="allsug" title="קבל את כל הקטעים שטרם הוכרעו בסוגיה הזאת">קבל את כל הנותרים בסוגיה</button>'+
       '<button data-a="allper" title="קבל את כל הקטעים שטרם הוכרעו בפרק">קבל את כל הנותרים בפרק</button>'+
       (window.tzOpen?'<button data-a="tz" title="צורת הדף של הקטע הנסקר (Alt+צ); נעה עם הקטע">צורת הדף</button>':'')+
@@ -299,17 +330,20 @@
     let p,t=text;
     if(it.kind==='missing'){const at=skpAnchor(it);if(!at)throw new Error('המקום לא נמצא');const o=skmInter([at]);p={id:SKP.rev.jid+':'+it.iid,ids:[at.u.id],orig:o};t=o+'\n'+it.text}
     else p={id:SKP.rev.jid+':'+it.iid,ids:it.ids,orig:orig||it.orig};
-    t=skpFixLocks(p.orig,t);
+    const rp=skmRepair(p.orig,t);t=rp.text;
     const errs=SKC.guard(p.orig,t,{edited:true}).filter(x=>/נעולים|קטע שלם|נוספו שורות|תג לא מוכר/.test(x));
-    if(errs.length)throw new Error(errs[0]);
+    if(errs.length)throw new Error(errs[0]+'. העריכה נשארה פתוחה - אפשר לתקן ולנסות שוב');
     const r=skmApply(p,t);
     skmRemember(p.id,t,r.recs||[]);
+    r.moved=rp.moved;
     return r}
   function skpAccept(force){
     const R=SKP.rev,it=R.items[R.i],g=SKM.ghost;if(!it||!g)return;
     const edited=g.classList.contains('edit');
     let text=it.kind==='missing'?it.text:edited?skmReadBack(g):it.text;
-    if(it.kind==='seg'&&!edited){const off=[...g.querySelectorAll('ins.skpgem.off')].map(x=>+x.dataset.k).sort((a,b)=>b-a);off.forEach(k=>{text=skpDropAdd(text,k)})}
+    if(it.kind==='seg'&&!edited){const off=[...g.querySelectorAll('ins.skpgem.off')].map(x=>+x.dataset.k).sort((a,b)=>b-a);off.forEach(k=>{text=skpDropAdd(text,k)});
+      const hOff=new Set([...g.querySelectorAll('p.skpnewh.off')].map(x=>x.dataset.h));
+      if(hOff.size)text=text.split('\n').filter(l=>!(/^\(נושא\)\s*/.test(l)&&hOff.has(nonik(SKC.plainI(l.replace(/^\(נושא\)\s*/,''))).replace(/\s+/g,' ').trim()))).join('\n')}
     else if(edited)g.querySelectorAll('ins.skpgem.off').forEach(x=>x.remove());
     let orig;if(R.conflict){if(!force)return;orig=skmInter(skmUnits(it.ids))}
     let r;try{r=skpApplyOne(it,text,orig)}catch(e){flash('לא הוחל: '+(e.message||e));return}
@@ -317,6 +351,7 @@
     const act=edited||text!==it.text?'edit':'accept';
     R.cnt[act]++;R.hist.push({i:R.i,iid:it.iid,act,undo:r.n>0});
     skpDec(it,act,{final:act==='edit'?text:''});
+    if(r.moved&&r.moved.length)toast('הוחזר למקום משוער - כדאי להציץ: '+r.moved.join(', '),6000);
     skpMove(1)}
   function skpReject(){const R=SKP.rev,it=R.items[R.i];if(!it)return;
     const act=R.conflict?'keep':'reject';R.cnt.reject++;R.hist.push({i:R.i,iid:it.iid,act:'reject'});skpDec(it,act);skpMove(1)}
@@ -351,15 +386,17 @@
     g.querySelectorAll('del.skpdel').forEach(x=>{if(x.classList.contains('long')){x.textContent=x.title;x.classList.remove('long')}
       x.contentEditable='false';x.classList.add('skpdelro');x.title='נמחק בהצעה - לעיון בלבד';x.onclick=null});
     g.querySelectorAll('span.skpadd').forEach(x=>x.replaceWith(...x.childNodes));
-    g.querySelectorAll('ins.skpgem.off').forEach(x=>x.remove());
-    g.classList.add('edit');const b=g.querySelector('.skmbody');b.setAttribute('contenteditable','');b.setAttribute('spellcheck','false');
+    g.querySelectorAll('ins.skpgem.off,p.skpnewh.off').forEach(x=>x.remove());
+    g.classList.add('edit');const b=g.querySelector('.skmbody');b.setAttribute('contenteditable','');b.setAttribute('spellcheck','false');skmGuardEdit(g);
     const p=b.querySelector('p');if(p){p.focus();const r=document.createRange();r.selectNodeContents(p);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r)}
     toast('עריכה במקום: כל קיצורי העורך פועלים. המילים שנמחקו בהצעה מוצגות באפור לעיון בלבד. Enter מסיים ומקבל, Esc מבטל את העריכה')}
+  function skpUnfold(){const g=SKM.ghost;if(!g)return;
+    g.querySelectorAll('del.skpdel.long').forEach(x=>{x.textContent=x.title;x.classList.remove('long')})}
   function skpAct(a){
     if(!SKP.rev)return;
     ({ok:()=>skpAccept(),force:()=>skpAccept(true),no:skpReject,keep:skpReject,edit:skpEditOn,next:()=>skpMove(1),prev:()=>skpMove(-1),
       src:()=>{const it=SKP.rev.items[SKP.rev.i];skpRows(it.ids).forEach(r=>r.classList.toggle('skpshow'))},
-      allsug:()=>skpAll('sug'),allper:()=>skpAll('per'),pause:skpClose,tz:skpTz})[a]()}
+      unfold:skpUnfold,allsug:()=>skpAll('sug'),allper:()=>skpAll('per'),pause:skpClose,tz:skpTz})[a]()}
   /* צורת הדף בתוך הסקירה (4.11.2026): נפתחת על הקטע הנסקר, ונעה איתו בכל מעבר */
   function skpRef(it){
     if(!it)return '';
@@ -384,6 +421,7 @@
     if(typing)return;
     const k=e.key,stop=()=>{e.preventDefault();e.stopPropagation()};
     if(ed){if(k==='Enter'&&!e.shiftKey&&!e.altKey){stop();skpAccept(R.conflict)}else if(k==='Escape'){stop();skpShow()}return}
+    if(e.altKey&&!e.ctrlKey&&(k==='ח'||e.code==='KeyJ')){stop();skpUnfold();return}
     if(e.ctrlKey&&!e.altKey&&(e.code==='KeyZ')){stop();skpUndo();return}
     if(e.ctrlKey||e.altKey||e.metaKey)return;
     if(k==='Enter'){stop();skpAccept(R.conflict)}
@@ -407,6 +445,9 @@
     '.skmghost del.skpdel.long{text-decoration:none;font-size:11.5px;background:#f1f1f1;border-radius:8px;padding:0 6px;cursor:pointer;white-space:nowrap}'+
     '.skmghost ins.skpgem{text-decoration:none;background:rgba(32,150,160,.14);border-bottom:2px solid #1f8f99;cursor:pointer}'+
     '.skmghost ins.skpgem::after{content:"⊕";font-size:10px;color:#1f8f99;vertical-align:super;margin-right:1px}'+
+    '.skmghost p.skpnewh{color:#8a5a1e;background:rgba(160,110,40,.10);border-radius:3px;cursor:pointer}.skmghost p.skpnewh::after{content:" ✦ כותרת חדשה";font-size:10px;color:#8a5a1e}'+
+    '.skmghost p.skpnewh.off{text-decoration:line-through;color:#9a9a9a;background:none}.skmghost.edit p.skpnewh{cursor:text}'+
+    '.skpchip.newh{background:rgba(160,110,40,.14);color:#7a4f17}'+
     '.skmghost ins.skpgem.off{background:none;border-bottom-style:dotted;color:#9a9a9a;text-decoration:line-through}'+
     '.skpchips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 4px;font-size:12px}'+
     '.skpchip{padding:0 8px;border-radius:9px;background:#eef1f4;color:#4d5a66;cursor:default}.skpchip.sp{background:#f3e9ff;color:#5b3d8a;cursor:pointer}.skpchip.sp::before{content:"⤧ "}'+

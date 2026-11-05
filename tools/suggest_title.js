@@ -40,6 +40,32 @@
       if(TS.bankP)return TS.bankP;
       TS.bankP=fetch('titlesug-'+SLUG+'.json').then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>{TS.bank=j||{};return TS.bank});
       return TS.bankP}
+    /* התאמה קרובה בשכבה המוכנה (פרומפט 20, 5.11.2026): המפתח הוא ראש הקטע שאחרי המקום, וכל עריכה
+       בראש הקטע שינתה אותו, ולכן הצעות מוכנות "נעלמו". כאן: אותו מפתח, ואם אין - המפתח שרוב
+       מילותיו (או קידומת של 15 תווים לפחות) משותפות */
+    function bankFind(bank,key){
+      if(!bank||!key)return null;if(bank[key]&&bank[key].length)return bank[key];
+      const W=key.split(' ').filter(w=>w.length>1).slice(0,7);if(W.length<2)return null;
+      let best=null,bs=0;
+      Object.keys(bank).forEach(k=>{const V=k.split(' ').filter(w=>w.length>1).slice(0,7);
+        let c=0;W.forEach(w=>{if(V.indexOf(w)>-1)c++});
+        let pre=0;while(pre<k.length&&pre<key.length&&k[pre]===key[pre])pre++;
+        const sc=Math.max(c/Math.max(W.length,V.length),pre>=15?0.7:0);
+        if(sc>bs){bs=sc;best=k}});
+      return bs>=0.6&&bank[best]&&bank[best].length?bank[best]:null}
+    /* אין הצעה מוכנה ואין שירות חי: הקטע נשלח לתור של סכם (המנוי, לא API), וההצעה לכותרת
+       מגיעה שם כשכבת "כותרת חדשה" עם שאר הליטוש */
+    function rowIds(P){
+      const el=P.el&&(P.el.closest?P.el:null);let r=el&&el.closest('[id^="u"]');if(!r)return [];
+      const out=[];for(let k=0;r&&k<4;k++){const id=r.id.slice(1);if(/^\d+$/.test(id))out.push(+id);else if(id)out.push(id);
+        r=r.nextElementSibling;while(r&&!(r.id&&/^u/.test(r.id)))r=r.nextElementSibling}
+      return out}
+    async function toSakem(){
+      const P=TS.pop;if(!P)return;const ids=rowIds(P);
+      if(!ids.length||!window.skpEnqueue){flash('לא נמצא הקטע לשליחה');return}
+      close();
+      try{await window.skpEnqueue('seg',ids)}catch(e){flash('לא נשלח: '+(e.message||e))}}
+    const TS_NOLIVE='אין הצעה מוכנה למקום הזה. אפשר לשלוח את הקטע לסכם (על המנוי): ההצעה לכותרת תגיע בסקירה, בחום, עם שאר הליטוש';
     /* דוגמאות לסגנון: כותרות הנושא הקיימות במסכת (שכתב המנהל או שבחר), עד 12 */
     function examples(){
       const out=[];
@@ -113,11 +139,11 @@
            '<div class="tsf"><button type="button" class="tsok" data-a="ok">אישור</button><button type="button" data-a="back">חזרה להצעות</button></div>'}
       else if(P.loading){h+='<div class="tsmsg"><span class="tsld"></span>מכין הצעות…</div>'}
       else if(P.err&&!P.shown.length){h+='<div class="tsmsg">'+esc(P.err)+'</div>'+
-        '<div class="tsf"><button type="button" data-a="more">נסה שוב</button><button type="button" data-a="x">סגור</button></div>'}
+        '<div class="tsf">'+(P.canSakem?'<button type="button" class="tsok" data-a="sakem">שלח לסכם</button>':'<button type="button" data-a="more">נסה שוב</button>')+'<button type="button" data-a="x">סגור</button></div>'}
       else{
         P.shown.forEach((ix,k)=>{h+='<button type="button" class="tsr" data-a="pick" data-i="'+k+'"><b>'+(k+1)+'</b><span>'+esc(P.cand[ix])+'</span></button>'});
         if(P.err)h+='<div class="tsmsg" style="padding:6px">'+esc(P.err)+'</div>';
-        h+='<div class="tsf"><button type="button" data-a="more">עוד הצעות</button><button type="button" data-a="x">סגור</button></div>'}
+        h+='<div class="tsf">'+(P.canSakem?'<button type="button" data-a="sakem">שלח לסכם</button>':'<button type="button" data-a="more">עוד הצעות</button>')+'<button type="button" data-a="x">סגור</button></div>'}
       p.innerHTML=h;
       place();
       const inp=p.querySelector('input');if(inp){inp.focus();inp.select()}}
@@ -129,6 +155,7 @@
       else if(a==='back'){delete P.editing;render()}
       else if(a==='ok')confirm();
       else if(a==='more')more();
+      else if(a==='sakem')toSakem();
       else if(a==='t'){P.head=b.dataset.v;render()}}
     function pick(k){const P=TS.pop;if(!P||P.shown[k]===undefined)return;P.editing=P.shown[k];render()}
     /* עוד הצעות: קודם מן השכבה המוכנה (עד שש בסך הכול), ואחר כך מן השכבה החיה */
@@ -150,7 +177,7 @@
       catch(err){
         if(TS.pop!==P)return;
         P.loading=false;
-        P.err=/טרם הופעל|503/.test(err.message||'')?'אין עוד הצעות מוכנות, ושירות ההצעות החי טרם הופעל':(err.message||'השירות אינו זמין כרגע');
+        P.err=TS_NOLIVE;P.canSakem=true;
         render()}}
     async function open(){
       if(!isAdmin()){flash('הצעת כותרת זמינה למנהל בלבד');return}
@@ -164,7 +191,7 @@
       const t0=performance.now();
       const bank=await loadBank();
       const P=TS.pop;if(!P||P!==TS.pop)return;
-      const got=bank&&bank[P.key];
+      const got=bankFind(bank,P.key);
       if(got&&got.length){
         P.cand=got.slice();P.shown=P.cand.slice(0,3).map((_,i)=>i);P.used=P.shown.slice();P.loading=false;
         P.readyMs=Math.round(performance.now()-t0);render();return}
@@ -180,7 +207,7 @@
       catch(err){
         if(TS.pop!==P)return;
         P.loading=false;
-        P.err=/טרם הופעל|503/.test(err.message||'')?'אין הצעה מוכנה למקום הזה, ושירות ההצעות החי טרם הופעל':(err.message||'השירות אינו זמין כרגע');
+        P.err=TS_NOLIVE;P.canSakem=true;
         render()}}
 
     function confirm(){

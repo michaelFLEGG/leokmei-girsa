@@ -275,10 +275,61 @@
     document.querySelectorAll('#flow .row.skmold').forEach(r=>r.classList.remove('skmold'));
     if(!keep&&SKM.wait.length){const n=SKM.wait.shift();setTimeout(()=>skmArrive(n),60)}
     else if(!keep&&SKM.q)setTimeout(skmQNext,60)}
+  /* שמירה על העריכה במקום (פרומפט 20, 5.11.2026): עוגני תוס' ומספרי משנה אינם נמחקים
+     ב-Backspace/Delete (הסמן מדלג עליהם), הדבקה נכנסת כטקסט פשוט, ופתיח שמקומו בכותרת צד
+     (שם אמורא עם נקודתיים, א. ב. ג., גופא, ת"ר...) מקבל הצעה עדינה "לכותרת צד" (Ctrl+.) */
+  const SKM_CHIP='i.tzc,i.mk';
+  const SKM_SIDE=/^\s*((?:[א-י]\.\s*)?(?:(?:ו?(?:ר'|רב|רבי|ר"|אמר|א"ל|אמרו|גופא|ת"ר|ת"ש|תניא|איתיביה|מיתיבי|ורמינהי|קשיא|קשה|תיובתא|אלא|והא|ואב"א|א"נ)[^\s:]*(?:\s[^\s:]{1,10}){0,2}:)|[^\s:]{2,10}(?:\s[^\s:]{1,10})?:|[א-י]\.)(?=\s))/;
+  function skmCaretNode(dir){
+    const sel=getSelection();if(!sel.rangeCount||!sel.isCollapsed)return null;
+    const r=sel.getRangeAt(0);let n=r.startContainer,o=r.startOffset;
+    if(n.nodeType===3){if(dir<0&&o>0)return null;if(dir>0&&o<n.nodeValue.length)return null;
+      let x=n;while(x&&!(dir<0?x.previousSibling:x.nextSibling)&&x.parentElement&&!x.parentElement.matches('p'))x=x.parentElement;
+      return x?(dir<0?x.previousSibling:x.nextSibling):null}
+    return n.childNodes[dir<0?o-1:o]||null}
+  function skmSideHint(g){
+    let h=g.querySelector('.skmsidehint');
+    const sel=getSelection();const p=sel.rangeCount&&sel.anchorNode&&(sel.anchorNode.nodeType===1?sel.anchorNode:sel.anchorNode.parentElement).closest('.skmmain p');
+    const m=p&&SKM_SIDE.exec(p.textContent||'');
+    if(!m){if(h)h.remove();return}
+    if(!h){h=document.createElement('button');h.type='button';h.className='skmsidehint';h.contentEditable='false';
+      h.onmousedown=e=>e.preventDefault();h.onclick=()=>skmToSide(g);g.appendChild(h)}
+    h.textContent='"'+m[1].trim()+'" לכותרת צד? (Ctrl+.)';h._p=p;h._t=m[1]}
+  /* העברת הפתיח של השורה לכותרת צד: השורה נפתחת שורה (skmrow) משלה אם אינה הראשונה בה */
+  function skmToSide(g){
+    const h=g.querySelector('.skmsidehint');if(!h||!h._p||!h._p.isConnected)return;
+    const p=h._p,pre=h._t,row=p.closest('.skmrow');if(!row)return;
+    const main=row.querySelector('.skmmain');let tr=row;
+    if(main.firstElementChild!==p){
+      tr=document.createElement('div');tr.className='skmrow';tr.innerHTML='<div class="skmrail"></div><div class="skmmain"></div>';
+      const nm=tr.querySelector('.skmmain');let x=p;while(x){const nx=x.nextElementSibling;nm.appendChild(x);x=nx}
+      row.after(tr)}
+    /* הסרת הפתיח מתחילת השורה, בלי לשבור את התגים שבה */
+    let left=pre.length;const w=document.createTreeWalker(p,NodeFilter.SHOW_TEXT);let t;
+    while(left>0&&(t=w.nextNode())){const k=Math.min(left,t.nodeValue.length);t.nodeValue=t.nodeValue.slice(k);left-=k}
+    w.currentNode=p;while((t=w.nextNode())){if(!t.nodeValue)continue;t.nodeValue=t.nodeValue.replace(/^\s+/,'');if(t.nodeValue)break}
+    p.querySelectorAll('i,b').forEach(e=>{if(!e.textContent.trim()&&!e.matches(SKM_CHIP))e.remove()});
+    const a=document.createElement('span');a.className='skmanc';a.textContent=pre.trim();
+    tr.querySelector('.skmrail').appendChild(a);
+    h.remove();
+    const r=document.createRange();r.selectNodeContents(p);r.collapse(true);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+  function skmGuardEdit(g){
+    const b=g.querySelector('.skmbody');if(!b||b._skmg)return;b._skmg=1;
+    b.addEventListener('keydown',e=>{
+      if((e.key==='Backspace'||e.key==='Delete')&&!e.ctrlKey){
+        const n=skmCaretNode(e.key==='Backspace'?-1:1),c=n&&(n.nodeType===1?n:n.parentElement);
+        if(c&&c.matches&&c.matches(SKM_CHIP)){e.preventDefault();e.stopPropagation();
+          const r=document.createRange();if(e.key==='Backspace')r.setStartBefore(c);else r.setStartAfter(c);r.collapse(true);
+          const s=getSelection();s.removeAllRanges();s.addRange(r);flash('עוגן נעול - נשמר אוטומטית')}}
+      if(e.ctrlKey&&!e.altKey&&(e.key==='.'||e.code==='Period')){const h=g.querySelector('.skmsidehint');if(h){e.preventDefault();e.stopPropagation();skmToSide(g)}}},true);
+    b.addEventListener('keyup',()=>skmSideHint(g));b.addEventListener('mouseup',()=>skmSideHint(g));
+    b.addEventListener('paste',e=>{const t=(e.clipboardData||window.clipboardData).getData('text/plain');if(t==null)return;
+      e.preventDefault();document.execCommand('insertText',false,t.replace(/\s*\n\s*/g,' '))});}
+  window.skmGuardEdit=skmGuardEdit;
   function skmEdit(){
     const g=SKM.ghost;if(!g)return;
     g.classList.add('edit');
-    const b=g.querySelector('.skmbody');b.setAttribute('contenteditable','');b.setAttribute('spellcheck','false');
+    const b=g.querySelector('.skmbody');b.setAttribute('contenteditable','');b.setAttribute('spellcheck','false');skmGuardEdit(g);
     const ok=g.querySelector('[data-a="ok"]');ok.hidden=false;ok.textContent='קבל את הנוסח הערוך';
     g.querySelector('[data-a="edit"]').hidden=true;
     const p=b.querySelector('p');if(p){p.focus();const r=document.createRange();r.selectNodeContents(p);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r)}}
@@ -296,18 +347,37 @@
     skmShow(Object.assign({},prev,{hist:p.hist.slice(0,-1)}))}
   function skmDone(p,act,fin){
     api('/sakem/done',{method:'POST',body:JSON.stringify({slug:SLUG,id:p.id,act,final:fin||''})}).catch(()=>{})}
+  /* תיקון אוטומטי של מה שעריכה ידנית עלולה לשבור, לפני השומר (פרומפט 20, 5.11.2026):
+     נעולים ברמת השורה (skpFixLocks), עוגני תוס' ומספרי משנה שבתוך השורה (SKC.fixInline),
+     ותגים שבורים (סוגר או פותח יתום). עריכת המנהל אינה נפסלת על דבר שאפשר לתקן לבד. */
+  function skmRepair(orig,text){
+    let t=String(text||'');
+    try{if(window.skpFixLocks)t=window.skpFixLocks(orig,t)}catch(e){}
+    let moved=[];
+    try{const r=SKC.fixInline(orig,t);t=r.text;moved=r.moved}catch(e){}
+    /* תג לא מוכר: פותח {x: שאינו ידוע - מוסר (התוכן נשאר); סוגר } יתום - מוסר */
+    t=t.split('\n').map(ln=>{const bad=[];SKC.i2h(ln,true,bad);if(!bad.length)return ln;
+      let out='',d=[];for(let i=0;i<ln.length;i++){const c=ln[i];
+        if(c==='{'){const m=/^\{([^{}:\s]{1,4}):/.exec(ln.slice(i,i+8));
+          if(m&&!SKC.T2C_OK(m[1])){d.push(0);i+=m[0].length-1;continue}d.push(1);out+=c;continue}
+        if(c==='}'){if(!d.length)continue;if(!d.pop())continue}
+        out+=c}
+      return out}).join('\n');
+    return {text:t,moved}}
+  window.skmRepair=skmRepair;
+  function skmMovedNote(m){if(m&&m.length)toast('הוחזר למקום משוער - כדאי להציץ: '+m.join(', '),6000)}
   function skmAccept(){
     const p=SKM.cur,g=SKM.ghost;if(!p||!g)return;
     const edited=g.classList.contains('edit');
-    const text=edited?skmReadBack(g):p.text;
+    const rp=skmRepair(p.orig,edited?skmReadBack(g):p.text),text=rp.text;
     const errs=SKC.guard(p.orig,text,{edited:true}).filter(x=>/נעולים|קטע שלם|נוספו שורות|תג לא מוכר/.test(x));
-    if(errs.length){flash('לא הוחל: '+errs[0]);return}
+    if(errs.length){flash('לא הוחל: '+errs[0]+'. העריכה שלך נשמרה פתוחה - אפשר לתקן ולנסות שוב');return}
     let r;
     try{r=skmApply(p,text)}catch(err){flash('לא הוחל: '+(err.message||err));return}
     skmClose();
     skmDone(p,edited?'edit':'accept',text);
     skmRemember(p.id,text,r.recs||[]);
-    flash(r.n?'הוחל: '+r.n+' שינויים, ויפורסמו עם שאר העריכות (Ctrl+Z מבטל)':'אין שינוי להחיל')}
+    flash(r.n?'הוחל: '+r.n+' שינויים, ויפורסמו עם שאר העריכות (Ctrl+Z מבטל)':'אין שינוי להחיל');skmMovedNote(rp.moved)}
 
   /* =================== עריכה מאוחרת של שורה שנכתבה ב"סכם" (27.10.2026) ===================
      גם תיקון שהמנהל עושה בעורך אחרי שקיבל את ההצעה הוא לקח: השורות שנכתבו נזכרות במכשיר
@@ -618,13 +688,15 @@
     '#skmbtn.dim{background:#8a98a8;border-color:#8a98a8}'+
     '#skmset{position:fixed;z-index:60;display:none;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid #2e5b8a;background:#fff;color:#2e5b8a;font-size:16px;line-height:28px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)}'+
     '.skmbar button.skmlink{border:none;background:none;text-decoration:underline;color:#4d5a4f;padding:3px 4px;margin-right:auto}'+
-    '.skmghost{margin:4px 0 10px;border:1px solid rgba(46,125,60,.35);background:rgba(46,125,60,.05);border-radius:6px;padding:6px 8px 4px}'+
+    '.skmghost{position:relative;margin:4px 0 10px;border:1px solid rgba(46,125,60,.35);background:rgba(46,125,60,.05);border-radius:6px;padding:6px 8px 4px}'+
     '.skmghost.skmbusy{opacity:.6}.skmghost.edit{background:#fff;border-color:#2e7d3c;box-shadow:0 0 0 2px rgba(46,125,60,.15)}'+
     '.skmrow{display:flex;gap:10px;margin:2px 0}.skmrail{flex:0 0 auto;min-width:3.4em;max-width:8em;text-align:left;font-size:.82em;color:#2e5d3a;font-weight:700;display:flex;flex-direction:column}'+
     '.skmmain{flex:1}.skmmain p{margin:0 0 2px;color:#1f4d2a}.skmmain p.in{padding-right:1.2em}.skmmain p.sp{margin-top:.6em}.skmmain p.nose,.skmhead{text-align:center;font-weight:700}'+
     '.skmhead{margin:4px 0;color:#1f4d2a}.skmlock{font-size:12px;color:#7a6a45;background:#f4ecd8;border-radius:4px;display:inline-block;padding:0 6px;margin:2px 0}.skmlock.skmhid,.skmsrc{display:none}'+
     '.skmghost i.am{font-weight:700}.skmghost i.hs{color:#5a6b78;font-size:.92em}.skmghost i.ps{font-style:italic}.skmghost i.b{font-weight:700}'+
     '.skmghost ins.skmadd,.skmghost ins.skmfix{text-decoration:underline;text-decoration-color:#e08a2c;text-decoration-thickness:2px;text-underline-offset:3px;background:rgba(224,138,44,.08)}'+
+    '.skmghost i.tzc{font-style:normal;font-size:9px;line-height:1;vertical-align:super;color:#8a6d2b;background:#f6efdc;border-radius:6px;padding:0 3px;margin:0 1px;user-select:none;cursor:default}'+
+    '.skmghost .skmsidehint{position:absolute;left:34px;bottom:4px;padding:1px 9px;border-radius:10px;border:1px solid #c9b27a;background:#fffaf0;color:#7a5a1a;font-size:12px;cursor:pointer;z-index:2}'+
     '.skmghost ins.skmadd::after,.skmghost ins.skmfix::after{content:"תוספת";font-size:10px;color:#b86b17;vertical-align:super;margin-right:2px}.skmghost ins.skmfix::after{content:"תיקון"}'+
     '.skmghost.edit ins::after{display:none}'+
     '.skmpoint{font-size:12.5px;color:#5d6b60;margin:0 0 4px;padding:0 0 3px;border-bottom:1px dotted rgba(46,125,60,.25);line-height:1.45}.skmpoint b{color:#2e5d3a;font-weight:600}'+

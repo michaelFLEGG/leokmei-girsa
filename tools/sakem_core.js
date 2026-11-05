@@ -33,7 +33,9 @@
     /* HTML של שורה -> שורת ביניים. תגית שאינה מוכרת נספרת ב-bad (הטקסט נשמר) */
     function h2i(h,bad){
       var out='',st=[],re=/<(\/?)([a-z0-9]+)([^>]*)>|([^<]+)/gi,m;
-      h=String(h||'');
+      /* צ'יפ עוגן התוס' (i2h עם keepMarks) חוזר להיות [תוס':N] */
+      h=String(h||'').replace(/<i\b[^>]*class="tzc"[^>]*>[\s\S]*?<\/i>/gi,function(x){
+        var n=/data-n="([^"]*)"/.exec(x);return n?''+dec(n[1])+'':''});
       while((m=re.exec(h))){
         if(m[4]!==undefined){out+=dec(m[4]).replace(/\t/g,'{טאב}').replace(/\n/g,' ');continue}
         var close=!!m[1],tag=m[2].toLowerCase(),at=m[3]||'';
@@ -47,7 +49,7 @@
         if(tag==='ins'&&(cls==='skmadd'||cls==='skmfix')){st.push('}');out+=cls==='skmadd'?'{+:':'{!:';continue}
         if(bad)bad.push(tag+(cls?'.'+cls:''));
         st.push('')}
-      return out.replace(/\{[^{}:]+:\}/g,'')}
+      return out.replace(/\{[^{}:]+:\}/g,'').replace(/([^]*)/g,function(x,n){return '[תוס\':'+n+']'})}
     /* שורת ביניים -> HTML. keepMarks: {+:} / {!:} נשמרים כ-<ins> (לתצוגת ההצעה); אחרת נפתחים */
     function i2h(s,keepMarks,bad){
       var out='',st=[],i=0;s=String(s||'');
@@ -68,8 +70,11 @@
         if(c==='['){
           var mk=/^\[מס:([^\]]{1,12})\]/.exec(s.slice(i,i+20));
           if(mk){out+='<i class="mk">'+escT(mk[1])+'</i>';i+=mk[0].length;continue}
-          var tz=/^\[תוס':[^\]]{1,12}\]/.exec(s.slice(i,i+20));
-          if(tz){i+=tz[0].length;continue}
+          var tz=/^\[תוס':([^\]]{1,12})\]/.exec(s.slice(i,i+20));
+          /* עוגן תוס': בתצוגת ההצעה (keepMarks) - צ'יפ אטומי שאינו נערך ונקרא חזרה ב-h2i,
+             כדי שעריכה במקום לא תאבד אותו (פרומפט 20, 5.11.2026). בדף עצמו - אינו נכתב */
+          if(tz){if(keepMarks)out+='<i class="tzc" contenteditable="false" data-n="'+escT(tz[1]).replace(/"/g,'&quot;')+'" title="עוגן תוס\' '+escT(tz[1])+' - נשמר אוטומטית">ת</i>';
+            i+=tz[0].length;continue}
         }
         if(c==='}'){if(bad)bad.push('}');i++;continue}
         out+=escT(c);i++}
@@ -272,8 +277,86 @@
         var x=spans(s,'אם')[0];if(!x||!/:\s*$/.test(plainI(x.v)))return;
         var n=lineLen(r.v);if(n>LINE)warns.push('דובר לכותרת צד? ('+plainI(x.v).trim()+' בשורה של '+n+' תווים, שורה מודפסת '+LINE+')')});
       nh.forEach(function(x){if(x.v.split(/\s+/).filter(Boolean).length>4)warns.push('הסבר ארוך: '+x.v.slice(0,40))});
+      /* שורה אלמנה (כלל 17ז, פרומפט 20): השורה המודפסת האחרונה של פסקה ובה מילה או שתיים */
+      R.forEach(function(r){if(r.k!=='line')return;var n=lineLen(r.v);if(n<=LINE)return;
+        var w=plainI(r.v).replace(NIK,'').replace(/\s+/g,' ').trim().split(' '),cur=0,last=[];
+        w.forEach(function(x){if(cur&&cur+1+x.length>LINE){cur=x.length;last=[x]}else{cur+=(cur?1:0)+x.length;last.push(x)}});
+        if(last.length<=2)warns.push('שורה אלמנה ('+last.join(' ')+') - להדק או לשבור מוקדם')});
       return {errs:errs,warns:warns}}
-    return {h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,
+    /* ---- החזרת עוגנים שבתוך השורה ([תוס':N], [מס:N]) אחרי עריכה ידנית (פרומפט 20, 5.11.2026) ----
+       עריכה של המנהל לעולם אינה נפסלת בגלל עוגן שנמחק או זז: עוגן שחסר מוחזר אחרי המילים
+       שקדמו לו במקור (אם הן עדיין בנוסח), ואם לא - במקום היחסי שלו, בסוף מילה. כשסדר העוגנים
+       בנוסח הערוך שונה מן המקור, כולם מוסרים ומוחזרים לפי אותו כלל, בסדר המקור.
+       מחזיר {text, moved:[שמות העוגנים שהוחזרו למקום משוער]} */
+    var INL=/\[(תוס'|מס):([^\]]{1,12})\]/g;
+    function inlScan(text){
+      /* מפת התווים הנקיים (בלי סימנים, בלי ניקוד, בלי שורות נעולות) -> מקומם בטקסט */
+      var P=[],I=[],A=[],lines=String(text).split('\n'),off=0;
+      lines.forEach(function(ln){
+        var t=ln.trim(),lock=LOCK_RE.test(t);
+        if(!lock){
+          var i=0,ls=P.length;
+          var m0=/^\s*(\((?:תשובה|רווח|נושא|דה|רקע|נקודה)\)\s*|\[צד:)/.exec(ln),end=ln.length;if(m0)i=m0[0].length;
+          if(m0&&m0[1]==='[צד:'&&/\]\s*$/.test(ln))end=ln.lastIndexOf(']');
+          while(i<end){
+            var c=ln[i];
+            if(c==='['){var mm=/^\[(תוס'|מס):([^\]]{1,12})\]/.exec(ln.slice(i,i+20));
+              if(mm){A.push({k:mm[1]+':'+mm[2],s:mm[0],at:off+i,pl:P.length,ls:P.length===ls});i+=mm[0].length;continue}}
+            if(c==='{'){var tb=/^\{(טאב|ריק)\}/.exec(ln.slice(i,i+6));if(tb){i+=tb[0].length;continue}
+              var op=/^\{[^{}:\s]{1,4}:/.exec(ln.slice(i,i+8));if(op){i+=op[0].length;continue}}
+            if(c==='}'){i++;continue}
+            if(/[֑-ׇ"'״׳]/.test(c)){i++;continue}
+            P.push(/\s/.test(c)?' ':c);I.push(off+i);i++}
+          P.push(' ');I.push(off+ln.length)}
+        off+=ln.length+1});
+      return {p:P.join(''),i:I,a:A}}
+    function fixInline(orig,text){
+      var O=inlScan(orig),T=inlScan(text),moved=[];
+      var ok=O.a.map(function(x){return x.k}),tk=T.a.map(function(x){return x.k});
+      if(ok.join('|')===tk.join('|'))return {text:text,moved:moved};
+      /* האם העוגנים שבנוסח הם תת-סדרה של המקור, באותו סדר (רק חסרים)? */
+      var keep=[],j=0;
+      for(var q=0;q<ok.length&&j<tk.length;q++)if(ok[q]===tk[j]){keep[q]=T.a[j];j++}
+      var sub=j===tk.length&&tk.every(function(k){return ok.indexOf(k)>-1});
+      if(!sub){
+        /* סדר אחר או עוגן זר: מסירים את כל העוגנים שבנוסח ומחזירים את כולם */
+        text=String(text).replace(INL,'');T=inlScan(text);keep=[]}
+      var ins=[];  /* {pos (מקום בטקסט), s} */
+      var Tp=T.p,n=O.a.length;
+      function plOf(q){return keep[q]?keep[q].pl:null}
+      for(var q2=0;q2<n;q2++){
+        if(keep[q2])continue;
+        var a=O.a[q2];
+        /* הגבולות: אחרי העוגן הקודם ולפני הבא (בתווים הנקיים של הנוסח) */
+        var lo=0,hi=Tp.length;
+        for(var b=q2-1;b>=0;b--){var x=plOf(b);if(x!==null){lo=x;break}
+          var y=ins.filter(function(z){return z.q===b})[0];if(y){lo=y.pl;break}}
+        for(var c2=q2+1;c2<n;c2++){var x2=plOf(c2);if(x2!==null){hi=x2;break}}
+        var ctx=O.p.slice(Math.max(0,a.pl-14),a.pl).replace(/^\S*\s/,'').replace(/\s+$/,'');
+        var pl=-1;
+        [ctx,ctx.slice(-7)].some(function(cx){
+          if(cx.replace(/\s/g,'').length<3)return false;
+          var f=Tp.indexOf(cx,lo);
+          if(f>-1&&f+cx.length<=hi){pl=f+cx.length;return true}return false});
+        var guess=pl<0;
+        if(guess){
+          var ratio=O.p.length?a.pl/O.p.length:0;
+          pl=Math.max(lo,Math.min(hi,Math.round(ratio*Tp.length)));
+          /* סוף מילה */
+          while(pl<hi&&pl<Tp.length&&Tp[pl]!==' ')pl++;
+          moved.push(a.k.replace(':',' '))}
+        /* מקום בטקסט: אחרי התו הנקי האחרון שלפני pl, ואחרי סוגרי סימנים שצמודים לו */
+        var pos;
+        if(pl<=0)pos=T.i.length?T.i[0]:0;
+        else{pos=T.i[pl-1]+1;while(pos<text.length&&text[pos]==='}')pos++;
+          /* עוגן שעמד בפתח שורה (מספר משנה) - בפתח השורה הבאה, אחרי סימן הסגנון */
+          if(a.ls){var nl=text.indexOf('\n',pos-1);if(nl>-1){pos=nl+1;
+            var pf=/^(\((?:תשובה|רווח|נושא|דה|רקע|נקודה)\)\s*)/.exec(text.slice(pos,pos+12));if(pf)pos+=pf[0].length}}}
+        ins.push({q:q2,pl:pl,pos:pos,s:a.s})}
+      ins.sort(function(x,y){return y.pos-x.pos||y.q-x.q});
+      ins.forEach(function(z){text=text.slice(0,z.pos)+z.s+text.slice(z.pos)});
+      return {text:text,moved:moved}}
+    return {h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
             C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

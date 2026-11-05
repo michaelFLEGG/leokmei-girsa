@@ -213,8 +213,21 @@ def cmd_savebatch(path, file_id=None, modified=None, bname=None):
         log('אצווה %s: שדות שאינם מוכרים לקולט (לא נקלטו): %s' % (bname, ', '.join(other)))
     os.makedirs(INBOX, exist_ok=True)
     n_put = n_old = 0
-    for uid in sorted(units):
-        out = units[uid]
+    def _norm(k):
+        # 5.11.2026: אצוות מ-2.11 ואילך כותבות מפתח בצורה out-<id>.json. מקבלים את שתי הצורות.
+        k = (k or '').strip()
+        if k.endswith('.json'):
+            k = k[:-5]
+        if k.startswith('out-'):
+            k = k[4:]
+        return k
+    for raw_uid in sorted(units):
+        out = units[raw_uid]
+        uid = _norm(raw_uid)
+        if isinstance(out, dict) and out.get('id') and _norm(out.get('id')) == uid and out.get('id') != uid:
+            out = dict(out, id=uid)
+        if isinstance(out, dict) and not out.get('id'):
+            out = dict(out, id=uid)
         if not isinstance(out, dict) or not re.match(r'^[a-z-]+-p\d\d-u\d\d$', uid) or out.get('id') != uid:
             raise SystemExit('עצירה: מזהה יחידה לא תקין באצווה: %s' % uid)
         dst = os.path.join(INBOX, 'out-%s.json' % uid)

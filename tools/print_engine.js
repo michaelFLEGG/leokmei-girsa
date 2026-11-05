@@ -166,9 +166,14 @@
       if(to){ti=pageIdxOf(to);if(ti<0)throw new Error('דף לא נמצא: '+to)}
       /* 5.11.2026: הדפסת פרק - רק עמודי הפרק עצמו. דף שבו מתחלף הפרק מופיע פעמיים, ו-pageIdxOf מחזיר את הראשון
          (שאריות הפרק הקודם). כך הפרק נפתח בראש העמוד בטור הימני */
-      var PK=QS.get('pk');
+      var PK=QS.get('pk'),PKI=false;
+      /* שירות ה-PDF אינו מעביר את pk: טווח של כמה דפים שכולו בפרק אחד - הפרק נגזר מדף הסוף, והטווח רק נחתך (לא מורחב) */
+      if(!PK&&from&&to&&from!==to&&ti>fi){var kT=perekKey(D.pages[ti]),one=true;
+        for(var q0=fi+1;q0<=ti;q0++)if(perekKey(D.pages[q0])!==kT){one=false;break}
+        if(one){PK=kT;PKI=true}}
       if(PK){var a=-1,b=-1;for(var q=0;q<D.pages.length;q++)if(perekKey(D.pages[q])===PK){if(a<0)a=q;b=q}
-        if(a>-1){fi=a;ti=b}
+        var fi0=fi,ti0=ti;
+        if(a>-1&&!PKI){fi=a;ti=b}
         /* דף שבו מתחלף פרק מכיל את שני הפרקים, ותיוגו אינו עקבי: הגבול נקבע לפי כותרות פתיחת הפרק עצמן */
         var keys=[],bd=[],pv=null;
         D.pages.forEach(function(pg,q){var kk=perekKey(pg);if(keys[keys.length-1]!==kk)keys.push(kk);
@@ -177,7 +182,10 @@
         if(nP>-1&&bd.length===keys.length){
           var e1=bd[nP+1]||{p:D.pages.length,k:0};
           PKS={n:nP+1,p0:bd[nP].p,k0:bd[nP].k,p1:e1.p,k1:e1.k};
-          fi=PKS.p0;ti=PKS.k1===0?PKS.p1-1:PKS.p1}}
+          if(PKI){
+            if(PKS.p0<fi0||PKS.p0>ti0){PKS.p0=-1}else fi=PKS.p0;
+            if(PKS.p1>ti0||PKS.p1<fi0){PKS.p1=-1;ti=ti0}else ti=PKS.k1===0?PKS.p1-1:PKS.p1}
+          else{fi=PKS.p0;ti=PKS.k1===0?PKS.p1-1:PKS.p1}}}
       if(ti<fi)throw new Error('סוף הטווח לפני תחילתו')}
     /* ---- נוסחי התוספות שנבחרו (נקודת הקליטה) ---- */
     var PUBN={};

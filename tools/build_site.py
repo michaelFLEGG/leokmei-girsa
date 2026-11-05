@@ -1713,6 +1713,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
                  f'{n_had_new} שורות "הדרן עלך" נוספו מן הבנייה בלבד (חסרות בוורד), {n_had_conv} שורות הדרן שהיו בסגנון אחר קיבלו את סגנון ההדרן'
                  +(f'; {n_had_noname} פרקים בלי שם בשורת הפתיחה - לא נוספה שורה' if n_had_noname else '')))
 
+  if MN_FROZEN:
+      # 5.11.2026: מספר הקטע (א. ב. ...) שבא מן הוורד בסגנון mk לפני ד"ה - מוסתר באתר ובהדפסה
+      _mkre=re.compile(r'<i class="mk"[^>]*>.*?</i>\s*',re.S)
+      mnseg={}
+      for _p in pages:
+          for _u in _p['units']:
+              if isinstance(_u.get('a'),str) and 'class="mk"' in _u['a']: _u['a']=_mkre.sub('',_u['a'])
+              for _ln in _u.get('l') or []:
+                  if len(_ln)>1 and isinstance(_ln[1],str) and 'class="mk"' in _ln[1]: _ln[1]=_mkre.sub('',_ln[1])
   data={'mbt':mbt,'mnseg':mnseg,'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 

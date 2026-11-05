@@ -136,7 +136,7 @@
         /* סימן ההפנייה אינו תופס רוחב ואינו נוגע בגובה השורה: תיבה ברוחב אפס, מורמת אל הרווח שבין השורות (השורות חושבו במדויק) */
         'sup.tm{display:inline-block;position:relative;width:auto;height:0;overflow:visible;direction:ltr;white-space:nowrap;font-family:'+n.family+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0 .06em 0 .1em;padding:0;color:#7a7a7a}'+
         /* 5.11.2026: סימנים צמודים אינם עולים זה על זה - כל אחד תופס את רוחבו, ברווח קטן ביניהם, באפור; גובה השורה לא משתנה (גובה אפס) */
-        'sup.tm+sup.tm{margin-right:.18em}sup.tm a{color:inherit!important;text-decoration:none}'+
+        'sup.tm+sup.tm{margin-right:.18em}.pg sup.tm,.pg sup.tm *{color:#7a7a7a!important}sup.tm a{text-decoration:none}'+
         '.pfn .fnum{font-size:'+n.numberScale+'em;line-height:0;position:relative;top:-'+n.numberRise+'em;vertical-align:baseline;margin-left:.18em;font-weight:'+n.numberWeight+';text-decoration:none}'+
         '.pfn .fnn{margin:'+n.betweenMm+'mm 0 0}.pfn .fnn:first-child{margin-top:0}'+
         '.pg .pfn .fnm{font-size:'+n.nameScale+'em;color:'+n.nameColor+'!important;font-weight:'+n.weight+'}'+

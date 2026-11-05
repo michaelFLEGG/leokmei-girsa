@@ -159,10 +159,25 @@
     var A=A_mm*MM;
     /* ---- טווח ---- */
     var fi=0,ti=D.pages.length-1;
+    var PKS=null;
     if(QS.get('all')!=='1'){
       var from=QS.get('from'),to=QS.get('to')||from;
       if(from){fi=pageIdxOf(from);if(fi<0)throw new Error('דף לא נמצא: '+from)}
       if(to){ti=pageIdxOf(to);if(ti<0)throw new Error('דף לא נמצא: '+to)}
+      /* 5.11.2026: הדפסת פרק - רק עמודי הפרק עצמו. דף שבו מתחלף הפרק מופיע פעמיים, ו-pageIdxOf מחזיר את הראשון
+         (שאריות הפרק הקודם). כך הפרק נפתח בראש העמוד בטור הימני */
+      var PK=QS.get('pk');
+      if(PK){var a=-1,b=-1;for(var q=0;q<D.pages.length;q++)if(perekKey(D.pages[q])===PK){if(a<0)a=q;b=q}
+        if(a>-1){fi=a;ti=b}
+        /* דף שבו מתחלף פרק מכיל את שני הפרקים, ותיוגו אינו עקבי: הגבול נקבע לפי כותרות פתיחת הפרק עצמן */
+        var keys=[],bd=[],pv=null;
+        D.pages.forEach(function(pg,q){var kk=perekKey(pg);if(keys[keys.length-1]!==kk)keys.push(kk);
+          pg.units.forEach(function(u,k){if(u.k==='perek-range'||(u.k==='perek-start'&&pv!=='perek-range'))bd.push({p:q,k:k});pv=u.k})});
+        var nP=keys.indexOf(PK);
+        if(nP>-1&&bd.length===keys.length){
+          var e1=bd[nP+1]||{p:D.pages.length,k:0};
+          PKS={n:nP+1,p0:bd[nP].p,k0:bd[nP].k,p1:e1.p,k1:e1.k};
+          fi=PKS.p0;ti=PKS.k1===0?PKS.p1-1:PKS.p1}}
       if(ti<fi)throw new Error('סוף הטווח לפני תחילתו')}
     /* ---- נוסחי התוספות שנבחרו (נקודת הקליטה) ---- */
     var PUBN={};
@@ -178,6 +193,7 @@
     var firstUnit=null;
     for(var pi=fi;pi<=ti;pi++){var p=D.pages[pi];if(!p.units.length)continue;var first=true;var g0=recs.length;
       for(var k=0;k<p.units.length;k++){var u=p.units[k];
+        if(PKS&&((pi===PKS.p0&&k<PKS.k0)||(pi===PKS.p1&&k>=PKS.k1)))continue;
         if(!firstUnit)firstUnit={u:u,p:p};
         recs.push({u:u,pi:pi,daf:p.daf,perek:p.perek||'',perekName:p.perekName||'',kind:u.k,
           html:prnFix(u.k,unitHTML(u,first?p.daf:null,first?pi:null))});
@@ -203,7 +219,7 @@
     TM('fontsload');
     var items=[],L=[],odd={},fixedLone=0,fixedGlue=0,Ybase=0,sqMs=0;
     var inRange={};for(var q=fi;q<=ti;q++)inRange[D.pages[q].daf]=q;
-    if(withTos)tosItems().forEach(function(it){if(inRange[it.daf]!==undefined)items.push(it)});
+    if(withTos)tosItems().forEach(function(it){if(inRange[it.daf]!==undefined&&!(PKS&&it.perek&&+it.perek!==PKS.n))items.push(it)});
     R.notes=items.length;
     /* ח1 (14.10.2026): מספור ההערות מתחיל ב-1 בכל פרק (מספר התצוגה it.dn); המזהה it.n נשאר לקישורים */
     (function(){var order=items.slice().sort(function(a,b){return (inRange[a.daf]-inRange[b.daf])||((a.line||0)-(b.line||0))||(a.n-b.n)}),cnt={};
@@ -541,6 +557,24 @@
       cols.push({s:i,e:best,notes:cn,sq:sq,carry:carry,split:split,why:why});
       carry=split?{n:split.n,k:split.k}:null;
       i=best}
+    /* 5.11.2026: סוף הטווח - שני הטורים של העמוד האחרון מאוזנים ככל האפשר (ולא טור מלא ושארית קטנה בשני).
+       מחפשים את הגובה הקטן ביותר לטור הימני שבו כל היתרה נכנסת בטור השמאלי */
+    (function(){
+      if(prof.cols!==2||!cols.length)return;
+      var k0=cols.length-(cols.length%2===0?2:1),c0=cols[k0];
+      if(!c0||c0.sq||c0.split||(k0+1<cols.length&&cols[k0+1].split))return;
+      var s0=c0.s,cr0=c0.carry,keepCarry=carry,got=null;
+      for(var cap=A*0.3;cap<=A+0.5;cap+=NLH/3){
+        carry=cr0;var a1=fillCol(s0,cap,true).best;
+        if(a1<=s0||a1>=L.length)continue;
+        carry=null;var a2=fillCol(a1,A,true);
+        if(a2.best>=L.length||a2.j>=L.length&&a2.best===L.length){got=a1;break}}
+      carry=keepCarry;
+      if(got===null)return;
+      cols.length=k0;
+      cols.push({s:s0,e:got,notes:noteIds(s0,got),sq:0,carry:cr0,split:null,why:'',bal:1});
+      cols.push({s:got,e:L.length,notes:noteIds(got,L.length),sq:0,carry:null,split:null,why:'',bal:1});
+      R.balanced=1})();
 
     /* ---- בדיקות אחרי העימוד (לוח התקלות): כותרת מנותקת, שורה יתומה או אלמנה, הערה שנפרדה מסימנה ---- */
     cols.forEach(function(c,ci){
@@ -585,7 +619,7 @@
         var spc=specOf(c.notes,c.carry,c.split),fb=spc.length?fnSpec(spc):null;
         /* פרומפט 16, ב: ריק קטן שנשאר (עד שורה וחצי) מתפזר בשווה בין גבולות הפסקאות שבטור - לא בתוך פסקה, ועד 3 נק'
            לכל גבול. טור שמסיים פרק (או את הטווח) נשאר כמות שהוא. ג: ריק גדול מזה נרשם בבקרה */
-        var endCol=c.e>=L.length||isForce(c.e);
+        var endCol=c.bal||c.e>=L.length||isForce(c.e);
         var gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0),nb=le.ri-ln.ri,per=0;
         if(HFIX&&!endCol&&!sqz&&gapPx>0.5&&gapPx<=STRMAX&&nb>0){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;R.stretched=(R.stretched||0)+1}
         if(!endCol&&gapPx>HOLE){
@@ -923,7 +957,7 @@
       else if(t==='perek'){
         var pk=document.getElementById('prn-p').value,a=-1,b=-1;
         tp.forEach(function(i){if(perekKey(D.pages[i])===pk){if(a<0)a=i;b=i}});
-        from=D.pages[a].daf;to=D.pages[b].daf}
+        from=D.pages[a].daf;to=D.pages[b].daf;var rpk=pk}
       else if(t==='daf'){
         var f1=keyOf(fd,'א'),f2=keyOf(fd,'ב');
         var pk2=isAdm()?null:document.getElementById('prn-p').value;
@@ -931,10 +965,11 @@
         from=has1?f1:f2;to=has2?f2:f1}
       else if(t==='amud'){from=keyOf(fd,fa);to=from}
       else{from=keyOf(fd,fa);to=keyOf(td,ta)}
-      return {t:t,from:from,to:to}}
+      return {t:t,from:from,to:to,pk:t==='perek'?rpk:null}}
     function prnQuery(r,extra){
       var q=new URLSearchParams();q.set('print','1');
       if(r.t==='all')q.set('all','1');else{q.set('from',r.from);q.set('to',r.to)}
+      if(r.pk)q.set('pk',r.pk);
       q.set('tos',tosOn()?'1':'0');
       q.set('duplex',document.getElementById('prn-dup').checked?'1':'0');
       if(extra)for(var k in extra)q.set(k,extra[k]);

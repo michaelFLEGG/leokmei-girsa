@@ -5712,6 +5712,17 @@
    "ntos": 22
   }
  ],
- "redo": ["chagigah-p01-u01", "chagigah-p01-u02", "eruvin-p01-u01", "eruvin-p01-u03", "eruvin-p01-u05", "eruvin-p04-u02", "eruvin-p06-u03", "eruvin-p09-u02", "eruvin-p10-u01", "rosh-hashanah-p01-u01", "yoma-p01-u02", "yoma-p01-u05", "yoma-p04-u02"],
+ "redo": [
+  "eruvin-p01-u03",
+  "eruvin-p01-u05",
+  "eruvin-p04-u02",
+  "eruvin-p06-u03",
+  "eruvin-p09-u02",
+  "eruvin-p10-u01",
+  "rosh-hashanah-p01-u01",
+  "yoma-p01-u02",
+  "yoma-p01-u05",
+  "yoma-p04-u02"
+ ],
  "updated": "2026-10-24T18:14:32Z"
 }

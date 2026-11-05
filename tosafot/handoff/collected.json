@@ -2508,7 +2508,8 @@
    "at": "2026-11-04T06:41:38Z",
    "ntos": 22,
    "flagged": 1,
-   "cal": 0.257
+   "cal": 0.257,
+   "published": "2026-11-05T18:39:09Z"
   },
   "chagigah-p01-u04": {
    "ok": true,
@@ -2516,7 +2517,8 @@
    "at": "2026-11-04T06:41:38Z",
    "ntos": 24,
    "flagged": 0,
-   "cal": 0.368
+   "cal": 0.368,
+   "published": "2026-11-05T18:39:09Z"
   },
   "chagigah-p01-u05": {
    "ok": true,
@@ -2524,7 +2526,8 @@
    "at": "2026-11-04T06:41:38Z",
    "ntos": 25,
    "flagged": 0,
-   "cal": 0.685
+   "cal": 0.685,
+   "published": "2026-11-05T18:39:09Z"
   },
   "chagigah-p01-u06": {
    "ok": true,
@@ -2532,7 +2535,8 @@
    "at": "2026-11-04T06:41:38Z",
    "ntos": 2,
    "flagged": 0,
-   "cal": 0.161
+   "cal": 0.161,
+   "published": "2026-11-05T18:39:09Z"
   },
   "chagigah-p02-u01": {
    "ok": true,
@@ -3595,6 +3599,40 @@
    "flagged": 1,
    "cal": 0.516,
    "published": "2026-11-05T12:41:47Z"
+  },
+  "bekhorot-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-05T14:19:05Z",
+   "at": "2026-11-05T18:39:06Z",
+   "ntos": 29,
+   "flagged": 0,
+   "cal": 0.625
+  },
+  "chagigah-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-05T16:30:23Z",
+   "at": "2026-11-05T18:39:06Z",
+   "ntos": 25,
+   "flagged": 2,
+   "cal": 0.453,
+   "published": "2026-11-05T18:39:09Z"
+  },
+  "chagigah-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-05T16:38:09Z",
+   "at": "2026-11-05T18:39:06Z",
+   "ntos": 23,
+   "flagged": 1,
+   "cal": 0.323,
+   "published": "2026-11-05T18:39:09Z"
+  },
+  "eruvin-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-05T16:46:46Z",
+   "at": "2026-11-05T18:39:06Z",
+   "ntos": 28,
+   "flagged": 1,
+   "cal": 0.318
   }
  },
  "files": {

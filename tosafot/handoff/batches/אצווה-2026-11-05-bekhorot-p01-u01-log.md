@@ -1,0 +1,1 @@
+- 05.11.2026 14:19 UTC - הושלמה bekhorot-p01-u01 (finalize: 29 תוספות, 0 לעיון המנהל, 2 כיול). מנועים: write [sonnet, fable], rv haiku, rewrite fable, rr sonnet.

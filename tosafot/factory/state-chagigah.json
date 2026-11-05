@@ -35,6 +35,26 @@
     "flagged": 1,
     "questions": 58
    }
+  },
+  "1": {
+   "status": "published",
+   "published": "2026-11-05T18:39:09Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chagigah-p01-u01",
+    "chagigah-p01-u02",
+    "chagigah-p01-u03",
+    "chagigah-p01-u04",
+    "chagigah-p01-u05",
+    "chagigah-p01-u06"
+   ],
+   "result": {
+    "generated": 117,
+    "decided": 0,
+    "unchecked": 4,
+    "flagged": 4,
+    "questions": 75
+   }
   }
  },
  "created": "2026-11-04T06:41:41Z",
@@ -50,7 +70,14 @@
    "mean": 0.455,
    "n": 5,
    "at": "2026-11-04T06:41:41Z"
+  },
+  {
+   "perek": 1,
+   "mean": 0.394,
+   "n": 11,
+   "at": "2026-11-05T18:39:09Z"
   }
  ],
- "updated": "2026-11-04T06:41:41Z"
+ "updated": "2026-11-05T18:39:09Z",
+ "done": "2026-11-05T18:39:09Z"
 }

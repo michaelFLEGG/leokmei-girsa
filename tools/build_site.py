@@ -1215,7 +1215,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           _rng=[x['i'] for x in _pre[:_op] if role_of(x)=='perek-range' and x['text'].strip()]
           PRE_DROP={x['i'] for x in _pre[:_op]}-set(_rng[-1:])
   pre_page=None; n_pre=0; n_pre_drop=0; daf_fix=[]
-  DAF_FIX={'כתובות':{36:('ג:','ג.'),422:('יג.','יג:')}}
+  # ציון דף שגוי בוורד: (הציון, התיקון, תחילת הטקסט שאחריו). מעוגן בטקסט ולא
+  # במספר הפסקה, כי קליטת תיקוני האתר לוורד מוסיפה פסקאות ומזיזה את המספרים.
+  DAF_FIX={'כתובות':[('ג:','ג.','אלא רבא מסברא'),('יג.','יג:','ג. דתניא: נכנסה')]}
+  def _next_text(bi):
+      for _y in blocks[bi+1:]:
+          if _y['text'].strip() and role_of(_y)!='skip': return _wn(_y['text'])
+      return ''
   for bi,b in enumerate(blocks):
       r=role_of(b); h=runs_html(b['runs']); t=b['text'].strip()
       # א: חציצה - העיטור האחיד, בלי תלות במספר הכוכביות שבוורד
@@ -1246,9 +1252,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           # ז (6.11.2026): ציוני דף שגויים בוורד, מתוקנים בתצוגה לפי מזהה
           # הפסקה, עד שיתוקנו בוורד עצמו. המזהים אינם משתנים. תיקון שהטקסט
           # שבוורד כבר אינו תואם לו (תוקן בוורד, או הפסקה זזה) אינו מופעל.
-          _fx=DAF_FIX.get(masechet,{}).get(b['i'])
-          if _fx and t==_fx[0]:
-              daf_fix.append((t,_fx[1],b['i'])); t=_fx[1]
+          for _fx in DAF_FIX.get(masechet,[]):
+              if t==_fx[0] and _next_text(bi).startswith(_fx[2]):
+                  daf_fix.append((t,_fx[1],b['i'])); t=_fx[1]; break
           # ב2: חלון שאין תחתיו טקסט אינו נעצר בציון הדף. הוא ממשיך
           # להמתין ליחידה הבאה, שתקבל אותו במסילתה יחד עם ציון הדף.
           cur={'daf':t,'perek':perek,'perekName':perekName,'units':[]}; pages.append(cur); unit=None

@@ -111,6 +111,14 @@ function perUnit(units) {
   }
   return out;
 }
+function mishnaOf(pk) {
+  try {
+    const f = path.join(ROOT, 'data', 'mishna', pk.slug + '.json');
+    const m = rd(f), n = +((pk.job && pk.job.perek) || pk.perek || 0);
+    const ch = (m.chapters || [])[n - 1];
+    return ch ? ch.join(' ') : '';
+  } catch (e) { return ''; }
+}
 function origOf(pk, from, to) {
   const a = pk.units.findIndex((u) => u.id === +from), b = pk.units.findIndex((u) => u.id === +to);
   if (a < 0 || b < 0 || b < a) die('טווח לא תקין: ' + from + '-' + to);
@@ -192,13 +200,17 @@ if (cmd === 'status') {
   if (!seg) die('מספר קטע לא תקין (1 עד ' + o.plan.length + ')');
   const r = origOf(pk, seg.from, seg.to);
   o.items = o.items.filter((x) => x.seg !== si);
+  /* פרומפט עבודה גרסה 2: לשון המשניות של הפרק (data/mishna), לבדיקת תיבת המשנה; ו"ללא שינוי" אינו מותר כשהנוסח הקיים פגום */
+  const mishna = mishnaOf(pk);
   if (s.nochange) {
+    const q0 = SKC.quality(r.text, { mishna });
+    if (q0.length) die('אי אפשר "ללא שינוי": הנוסח הקיים פגום - ' + q0.slice(0, 6).join(' · ') + '\nתקן בהצעה.');
     o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, nochange: true });
   } else {
     const text = String(s.text || '').replace(/\r/g, '').trim();
     if (!text) die('אין text');
     const gem = (pk.pages || []).filter((p) => r.ids.some((id) => (pk.units.find((u) => u.id === id) || {}).daf === p.daf)).map((p) => (p.g || []).map(strip).join(' ')).join(' ');
-    const ck = SKC.check(r.text, text, { gemara: gem });
+    const ck = SKC.check(r.text, text, { gemara: gem, mishna });
     /* אורך: בסכם פרק השלמה מהגמרא, גזע שנכתב או מספור עשויים להאריך - אזהרה למנהל, לא חסימה */
     const LEN = /קצר מהמקור|ארוך מהמקור/;
     ck.warns = (ck.warns || []).concat(ck.errs.filter((e) => LEN.test(e)));

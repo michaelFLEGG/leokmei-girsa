@@ -183,7 +183,9 @@
     /* שם (מתוך {אם:}) או מילה: בלי ניקוד, בלי סימני פיסוק, ובלי אותיות השימוש שבראשה */
     function nbase(w){w=String(w).replace(NIK,'').replace(/[:,.;!?()[\]]/g,'').trim();
       var k=0;while(k<2&&/^[ודלבהמשכ]/.test(w)&&w.length>3){w=w.slice(1);k++}return w}
-    function nameOk(b){return b.length>=3||/["']/.test(b)}
+    /* מילות מסגרת שסומנו בטעות בסגנון אמורא (אבל, דוקא, נחלקו...) אינן שם: הסרת הסגנון מהן היא תיקון ולא אובדן (פרומפט עבודה גרסה 2) */
+    var NOTNAME={'אבל':1,'דוקא':1,'נחלקו':1,'חלקו':1,'אי':1,'או':1,'אלא':1,'והך':1,'דהך':1};
+    function nameOk(b){return !NOTNAME[b]&&(b.length>=3||/["']/.test(b))}
     /* כמה פעמים כל שם מופיע כטקסט רגיל (מחוץ ל-{אם:}) בשורות */
     function plainNames(text){var c={};
       rows(text).filter(function(r){return r.k==='line'}).forEach(function(r){
@@ -282,7 +284,49 @@
         var w=plainI(r.v).replace(NIK,'').replace(/\s+/g,' ').trim().split(' '),cur=0,last=[];
         w.forEach(function(x){if(cur&&cur+1+x.length>LINE){cur=x.length;last=[x]}else{cur+=(cur?1:0)+x.length;last.push(x)}});
         if(last.length<=2)warns.push('שורה אלמנה ('+last.join(' ')+') - להדק או לשבור מוקדם')});
+      /* ---- פרומפט עבודה גרסה 2 (5.11.2026): שלמות, עקביות וסימטריה - חובה לפני העימוד ---- */
+      quality(newText,o).forEach(function(e){errs.push(e)});
       return {errs:errs,warns:warns}}
+    /* בדיקות האיכות של הפרק, משותפות לשומר (על ההצעה) ולבדיקת הפרק (tools/print/lint_chapter.mjs, על הנתונים).
+       o.mishna: לשון המשניות של הקטע (מ-data/mishna), לבדיקת תיבת המשנה */
+    var NIKQ=/[\u0591-\u05C7]/g;
+    function qnorm(t){return String(t).replace(NIKQ,'').replace(/["'״׳]/g,'').replace(/[^א-ת\s]/g,' ').replace(/\s+/g,' ').trim()}
+    function quality(text,o){
+      o=o||{};var E=[],R=rows(text),seen={};
+      /* א1: שורות כפולות או כמעט כפולות (שורה שכולה בתוך שורה אחרת) */
+      R.forEach(function(r,i){var n=qnorm(r.p);if(n.length<8)return;
+        if(seen[n]!==undefined){E.push('שורה כפולה: '+r.p.slice(0,40));return}
+        seen[n]=i});
+      R.forEach(function(r,i){var n=qnorm(r.p);if(n.length<14)return;
+        R.forEach(function(q,j){if(i===j)return;var m=qnorm(q.p);if(m.length>n.length&&m.indexOf(n)>-1&&m.length-n.length<n.length)E.push('שורה שחוזרת בתוך שורה אחרת: '+r.p.slice(0,40))})});
+      /* א5: סמלילים מיותרים */
+      R.forEach(function(r){var p=r.p;
+        if(/(^|\s)•(\s|$)/.test(p)||/:\s*•/.test(p))E.push('סמליל מיותר (•): '+p.slice(0,40));
+        if(/[א-ת'"]\.-[א-ת]/.test(p)||/(^|\s)-[א-ת]/.test(p))E.push('מקף מיותר צמוד למילה: '+p.slice(0,40));
+        /* א6: ניקיון */
+        if(/\s[,.:;!?](?![.])/.test(p))E.push('רווח לפני פיסוק: '+p.slice(0,40));
+        if(/[,;:!?][א-ת]/.test(p.replace(/[א-ת]"[א-ת]/g,'')))E.push('חסר רווח אחרי פיסוק: '+p.slice(0,40));
+        if(/\.\(/.test(p))E.push('חסר רווח בין נקודה לסוגריים: '+p.slice(0,40));
+        if(/[א-ת]''[א-ת]/.test(p))E.push("גרשיים כפולים ('') במקום גרשיים (\"): "+p.slice(0,40));
+        if(/[א-ת]\.[א-ת]/.test(p.replace(/(^|\s)[א-י]\.\s?/g,' ')))E.push('חסר רווח אחרי נקודה: '+p.slice(0,40))});
+      /* א4: מספור א. ב. ג. של אותה רשימה - כולו בכותרת צד או כולו בגוף */
+      var pos=[];parse(text).forEach(function(k){if(k.t==='title'){var m=/^([א-י])\./.exec(plainI(k.v).trim());if(m)pos.push([HV[m[1]],'צד'])}
+        else if(k.t==='line'){var m2=/^([א-י])\.\s/.exec(plainI(k.v).trim());if(m2)pos.push([HV[m2[1]],'גוף'])}});
+      for(var i=1;i<pos.length;i++)if(pos[i][0]===pos[i-1][0]+1&&pos[i][1]!==pos[i-1][1])
+        E.push('מספור לא עקבי: '+'אבגדהוזחטי'[pos[i-1][0]-1]+'. ב'+pos[i-1][1]+' ו-'+'אבגדהוזחטי'[pos[i][0]-1]+'. ב'+pos[i][1]);
+      /* א2-א3: תיבת המשנה - רק לשון המשנה, מנוקדת */
+      /* השוואה לפי שלד: כתיב מלא מול חסר (מדובללת / מדבללת) ואותיות סופיות אינם הבדל */
+      var skel=function(t){return qnorm(t).replace(/[וי]/g,'').replace(/ך/g,'כ').replace(/ם/g,'מ').replace(/ן/g,'נ').replace(/ף/g,'פ').replace(/ץ/g,'צ')};
+      if(o.mishna){var src=' '+skel(o.mishna)+' ',inM=false;
+        parse(text).forEach(function(k){
+          if(k.t==='lock'){if(k.kind!=='מקור')inM=k.kind==='משנה';return}
+          if(!inM||k.t!=='line')return;
+          var p=plainI(k.v),w=skel(p).split(' ').filter(function(x){return x.length>1});if(w.length<2)return;
+          var hit=w.filter(function(x){return src.indexOf(' '+x+' ')>-1||src.indexOf(x)>-1}).length;
+          /* הניקוד מועתק בבנייה מן המשנה המנוקדת רק למילה שאותיותיה זהות למקור (nikud_mishna.py): שורה רחוקה מן המקור
+             היא גם טקסט זר וגם משנה שלא תנוקד */
+          if(hit/w.length<0.6)E.push('טקסט שאינו מן המשנה בתוך תיבת המשנה (וגם לא ינוקד): '+p.slice(0,40))})}
+      return E}
     /* ---- החזרת עוגנים שבתוך השורה ([תוס':N], [מס:N]) אחרי עריכה ידנית (פרומפט 20, 5.11.2026) ----
        עריכה של המנהל לעולם אינה נפסלת בגלל עוגן שנמחק או זז: עוגן שחסר מוחזר אחרי המילים
        שקדמו לו במקור (אם הן עדיין בנוסח), ואם לא - במקום היחסי שלו, בסוף מילה. כשסדר העוגנים
@@ -357,6 +401,6 @@
       ins.forEach(function(z){text=text.slice(0,z.pos)+z.s+text.slice(z.pos)});
       return {text:text,moved:moved}}
     return {h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
-            C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
+            quality:quality,qnorm:qnorm,C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

@@ -31,7 +31,8 @@
   "footer": {
     "pt": 8,
     "numberFromBottomMm": 8.5,
-    "siteText": "לאוקמי גירסא.com",
+    "siteText": "לאוקמי גירסא",
+    "siteUrlText": "leokmei.com",
     "sitePt": 7,
     "qrMm": 10,
     "pageQr": false,
@@ -44,7 +45,7 @@
     "dhWeight": 400,
     "pt": 6.85,
     "linePt": 8.14,
-    "letterSpacingPt": 0.19,
+    "letterSpacingPt": 0.2,
     "cols": 2,
     "colGapMm": 3,
     "gapAboveMm": 2.6,
@@ -58,7 +59,10 @@
     "nameScale": 0.86,
     "parenLessPt": 2,
     "nameColor": "#6b6b6b",
-    "numbering": "digits"
+    "numbering": "digits",
+    "clusterDir": "ltr",
+    "markRoomPt": 1.5,
+    "squeeze": [[-0.03, 0], [-0.06, -0.01], [-0.09, -0.02]]
   },
   "continuationPt": 8.4,
   "stretch": {
@@ -68,5 +72,8 @@
   "_הערה_מתיחה": "פרומפט 16 (29.10.2026): ריק שנשאר בטור עד maxLines שורות (הוכרע 29.10.2026: שלוש) מתפזר בשווה בין גבולות הפסקאות, עד maxPtPerGap נק' לכל גבול. ריק גדול יותר נרשם בבקרת החורים.",
   "widowOrphan": 2,
   "keepAfterHeading": 2,
+  "vilnaLetterSpacingPt": 0.2,
+  "labelMinScale": 0.74,
+  "shortLineWords": 2,
   "_הערה_רוחב": "12.10: גרסה רחבה. שוליים ימין 4 (מסילת הדוברים קרובה לקצה), שמאל 15, מסילה 16, מידה 77.5; הגופנים מוגדלים ביחס 77.5/60 כדי לשמור על 20.75 אותיות בשורה. הגרסה הקודמת: a4-narrow.json"
 }

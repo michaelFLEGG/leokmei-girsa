@@ -5731,12 +5731,21 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       clearInterval(QQTIMER);QQTIMER=setInterval(queueLoad,60000);
       return}
     if(isAdmin())return;
+    /* הפקת PDF (6.11.2026): שירות ההדפסה פותח את הדף כמבקר. עד היום מנוע העימוד התחיל לעבוד לפני
+       שהתיקונים שפורסמו הגיעו מהשרת, וכשהגיעו הם נכתבו לתוך הדף באמצע העימוד: הקובץ יצא בלי
+       התיקונים, או משובש. מעכשיו העימוד מחכה להבטחה הזו (window.__LIVE), והתיקונים מוחלים בבת אחת לפני
+       שהוא מתחיל. */
+    const PRNQ=new URLSearchParams(location.search).get('print')==='1';
+    const job=liveLoad(PRNQ);
+    if(PRNQ)window.__LIVE=job;
+    return job}
+  async function liveLoad(PRNQ){
     try{const j=await api('/live?slug='+SLUG);const L=(j.doc&&j.doc.edits)||[];
       if(L.length){EDRO=true;ED=L.map(e=>Object.assign({pub:1},e));
         /* תיקונים מהשרת מוחלים על השורות שהשתנו בלבד: בעבר נבנה כל הפרק
            מחדש (2.5 שניות בטלפון איטי) והלומד נזרק לתחילתו (11.10.2026) */
         if(typeof applyStruct==='function'){
-          if(BOOK||PRINTING){applyStruct();render(cur)}
+          if(BOOK||PRINTING||PRNQ){applyStruct();render(cur)}
           else{
             const from=ALL?0:SEC[cur].from,to=ALL?D.pages.length-1:SEC[cur].to,snaps=[];
             for(let i=from;i<=to;i++)snaps.push(snapOf(i));

@@ -917,7 +917,9 @@
     document.head.appendChild(st);
     /* ההרצה אחרי טעינת כל הסקריפטים (הזנב הפרטי של המסכת, build ושאר הקוד של הדף): קודם לכן נתוני התוספות עדיין אינם קיימים,
        וקוד אחר של הדף עלול לשנות את גוף המסמך אחרי העימוד */
-    var go=function(){setTimeout(function(){runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};
+    /* 6.11.2026: קודם מחכים שהתיקונים שפורסמו יוחלו (window.__LIVE, ראה netInit), ורק אז מעמדים. עד 25 שניות. */
+    var go=function(){Promise.race([Promise.resolve(window.__LIVE),new Promise(function(r){setTimeout(r,25000)})]).catch(function(){}).then(go2)};
+    var go2=function(){setTimeout(function(){runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};
       try{console.error('[print] '+e)}catch(x){}})},100)};
     if(document.readyState==='complete')go();else window.addEventListener('load',go);
   }

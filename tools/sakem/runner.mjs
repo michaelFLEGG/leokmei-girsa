@@ -211,7 +211,13 @@ if (cmd === 'status') {
     const text = String(s.text || '').replace(/\r/g, '').trim();
     if (!text) die('אין text');
     const gem = (pk.pages || []).filter((p) => r.ids.some((id) => (pk.units.find((u) => u.id === id) || {}).daf === p.daf)).map((p) => (p.g || []).map(strip).join(' ')).join(' ');
-    const ck = SKC.check(r.text, text, { gemara: gem, mishna });
+    /* הקשר המספור (6.11.2026): רשימה שהתחילה לפני הקטע או נמשכת אחריו. בקטע הראשון של הפרק - הרשימה עשויה
+       להתחיל בפרק הקודם (סוכה ה, "ב. ג." אחרי "א." של פרק ד): אז ההקשר הוא המספר שהנוסח המקורי פותח בו */
+    let before = SKC.toInter(pk.units.slice(Math.max(0, r.a - 3), r.a)).text;
+    const after = SKC.toInter(pk.units.slice(r.b + 1, r.b + 4)).text;
+    const n0 = (SKC.nums(r.text) || [])[0] || 0;
+    if (r.a === 0 && n0 > 1) before = 'אבגדהוזחטי'[n0 - 2] + '. ';
+    const ck = SKC.check(r.text, text, { gemara: gem, mishna, before, after });
     /* אורך: בסכם פרק השלמה מהגמרא, גזע שנכתב או מספור עשויים להאריך - אזהרה למנהל, לא חסימה */
     const LEN = /קצר מהמקור|ארוך מהמקור/;
     ck.warns = (ck.warns || []).concat(ck.errs.filter((e) => LEN.test(e)));

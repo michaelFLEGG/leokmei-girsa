@@ -87,7 +87,7 @@ jobs:
           git commit -q -m "תיקונים שנקלטו בוורד הוסרו מן הקובץ [skip ci]"
           for i in 1 2 3; do
             git push -q && exit 0
-            git pull -q --rebase origin main || { git rebase --abort; echo "התנגשות בקובץ התיקונים - הניקוי נדחה לסבב הבא"; exit 0; }
+            git pull -q --rebase --autostash origin main || { git rebase --abort 2>/dev/null || true; echo "התנגשות בקובץ התיקונים - הניקוי נדחה לסבב הבא"; exit 0; }
             sleep $((i*3))
           done
           echo "הדחיפה לא הצליחה - הניקוי נדחה לסבב הבא"

@@ -52,6 +52,7 @@ jobs:
           sleep 3
           python tools/editor_qa/editor_qa.py --channel chrome --path /sukkah.html --path /shabbat.html             || { echo "ניסיון חוזר"; python tools/editor_qa/editor_qa.py --channel chrome --path /sukkah.html --path /shabbat.html; }
       - name: שמירת המקורות בריפו (גיבוי)
+        continue-on-error: true
         run: |
           git config user.name "leokmei-watcher"; git config user.email "watcher@users.noreply.github.com"
           git add -A input
@@ -61,7 +62,7 @@ jobs:
           # נשמר במאגר, ולכן פרסומי התיקונים בנו מוורד ישן. משיכה וניסיון חוזר.
           for i in 1 2 3 4; do
             git push -q && exit 0
-            git pull -q --rebase origin main || { git rebase --abort; break; }
+            git pull -q --rebase --autostash origin main || { git rebase --abort 2>/dev/null || true; break; }
             sleep $((i*3))
           done
           echo "שמירת המקורות לא נדחפה - תנוסה בסבב הבא"

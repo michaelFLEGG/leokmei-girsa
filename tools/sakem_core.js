@@ -96,7 +96,7 @@
           var w=u.k==='u'?u.a:u.w;
           String(w||'').split(/<br\s*\/?>/i).forEach(function(x){var t=h2i(x,bad).trim();if(t)L.push('[צד:'+t+']')});
           (u.l||[]).forEach(function(l){
-            var sty=String(l[0]||'').split(' ').filter(function(c){return P2T[c]})[0];
+            var sty=String(l[0]||'').split(' ').filter(function(c){return P2T[c]&&!(c==='mi'&&u.k==='m')})[0];   /* שורת משנה שכבר בתוך התיבה - בלי (משנה) */
             var t=h2i(l[1],bad).replace(/\s+/g,' ').trim();
             (u.tos||[]).forEach(function(z){if(!z.t)return;var p=t.indexOf(z.t);if(p<0||t.indexOf('[תוס\':'+z.n+']')>-1)return;
               var e=p+z.t.length;t=t.slice(0,e)+'[תוס\':'+z.n+']'+t.slice(e)});
@@ -166,7 +166,10 @@
     function numOf(p){var m=/^([א-י])\.(?:\s|$)/.exec(p);return m?HV[m[1]]:0}
     function afterNum(p){return p.replace(/^[א-י]\.\s*/,'')}
     /* המספרים שבפתח שורה ובכותרות צד, לפי הסדר */
-    function nums(text){return rows(text).map(function(r){return numOf(r.p)}).filter(Boolean)}
+    /* גם פריטים ממוספרים בתוך שורה אחת ("א. ... ב. ...") - כלל בעל הפרויקט: לא להרבות בשורות (6.11.2026) */
+    function numsIn(p){var a=[],n=numOf(p);if(!n)return a;a.push(n);
+      var r=/\s([א-י])\.\s/g,m;while((m=r.exec(p))){if(HV[m[1]]===a[a.length-1]+1)a.push(HV[m[1]])}return a}
+    function nums(text){var a=[];rows(text).forEach(function(r){a=a.concat(numsIn(r.p))});return a}
     /* מספור שלם ורציף. start: הרשימה התחילה לפני הקטע (המספר הבא שמותר לפתוח בו);
        next: המספר שבא מיד אחרי הקטע (רשימה שנמשכת אחריו אינה "פריט אחד") */
     function numbering(text,start,next){

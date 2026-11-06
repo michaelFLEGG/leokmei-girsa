@@ -34,9 +34,9 @@ def _slots(pages):
     out = []
     for pi, p in enumerate(pages):
         for u in p['units']:
-            def add(kk, holder, key):
+            def add(kk, holder, key, u=u):
                 out.append({'pi': pi, 'daf': p['daf'], 'k': 'u%s%s' % (u['id'], kk),
-                            'holder': holder, 'key': key})
+                            'holder': holder, 'key': key, 'unit': u})
             if u['k'] == 'u':
                 if u.get('a'): add('.0', u, 'a')
                 for i, l in enumerate(u['l']): add('.%d' % (i + 1), l, 1)
@@ -47,6 +47,25 @@ def _slots(pages):
                 add('.0', u, 'a')
             if u['k'] != 'u' and u.get('w'): add('.w', u, 'w')
     return out
+
+
+def _mishna_line(pages, s, h):
+    """שורת משנה (ps='mi', 6.11.2026): השורה האחרונה של יחידת גוף, שמיד אחריה תיבת משנה,
+    עוברת לראש התיבה. יחידה שהתרוקנה (בלי שורות ובלי חלון) יורדת. מחזיר את המפתח החדש,
+    או None כשהשורה אינה במקום כזה (ואז התיקון נאמר כתלוש ואינו מוחל בשקט)."""
+    u = s.get('unit')
+    if not u or u.get('k') != 'u' or not isinstance(s['key'], int) or not u['l'] or u['l'][-1] is not s['holder']:
+        return None
+    flat = [(pi, p, x) for pi, p in enumerate(pages) for x in p['units']]
+    i = next((j for j, (_, _, x) in enumerate(flat) if x is u), None)
+    if i is None or i + 1 >= len(flat) or flat[i + 1][2].get('k') != 'm':
+        return None
+    m = flat[i + 1][2]
+    u['l'].pop()
+    m['l'].insert(0, ['b0 a0', h])
+    if not u['l'] and not (u.get('a') or '').strip():
+        flat[i][1]['units'].remove(u)
+    return 'u%s.1' % m['id']
 
 
 def _bare(h):
@@ -811,6 +830,10 @@ def _apply_site_edits(pages, slug, qa):
                 history.append(('t', was, now))
                 continue
             lost.append(e); keep.append(e); continue
+        if e.get('ps') == 'mi' and s['t'] in (was, now) and (s.get('unit') or {}).get('k') == 'm':
+            taken += 1                  # שורת משנה שכבר בתוך התיבה (הגיעה מן הוורד)
+            history.append(('t', was, now))
+            continue
         if s['t'] == now and e.get('ps') is None:
             # הטקסט זהה גם כשרק סגנון התו השתנה (הדגשה, מפרשים וכד'), ולכן
             # "כבר בוורד" נקבע רק כשגם ה-HTML זהה. אחרת התיקון מוחל.
@@ -835,6 +858,19 @@ def _apply_site_edits(pages, slug, qa):
                 s['holder']['mb'] = mishna_box.num(_m.group(1))
                 s['holder']['mbh'] = 'word'
         ps = e.get('ps')
+        if ps == 'mi':
+            moved = _mishna_line(pages, s, h)
+            if moved is None:
+                lost.append(e); keep.append(e)
+                qa.append(('שורת משנה', 'שורה שסומנה להיכנס לתיבת המשנה אינה השורה האחרונה לפני תיבה: %r'
+                           % (now[:60],)))
+                continue
+            e['k'] = moved
+            done += 1
+            keep.append(e)
+            PLAN.append(('text', e, _eff))
+            reslot()
+            continue
         if ps is not None and s['key'] == 'a' and s['holder'].get('k') in ('dh', 'nose'):
             # נושא משנה / ד"ה משנה שהוחזר לגוף: היחידה הופכת ליחידת גוף רגילה,
             # והחלון שלה (אם יש) עובר למקום של יחידת גוף.
@@ -1615,6 +1651,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if _r in ('nose','dh'): _hn[_r][b['style']]+=1
   sty['p'].append(['nose','כותרת נושא',top(_hn['nose']) or 'נושא'])
   sty['p'].append(['dh','כותרת ד"ה משנה',top(_hn['dh']) or "ד''ה משנה"])
+  # שורת משנה (6.11.2026): שורה שעומדת לפני תיבת המשנה ונכנסת אליה (סכם / תיקון מנהל, ps='mi').
+  # אינה ב-sty['p'] (שם היא הייתה נעשית מחלקת פסקה בדף); שם הסגנון בוורד - השכיח בשורות המשנה.
+  _mi=collections.Counter(b['style'] for b in blocks if ROLE.get(b['style'])=='mishna')
+  sty['mi']=('חלק משנה מודגשת' if _mi.get('חלק משנה מודגשת') else top(_mi)) or 'חלק משנה מודגשת'
   # סגנון "רווח לפני" מוצע בעורך בכל קובץ שהוא מוגדר בו, גם כשאין בו עדיין
   # אף פסקה כזאת: אחרת אי אפשר להפעיל אותו בקובץ שבו טרם נעשה בו שימוש.
   if not any(p[0]=='sp' for p in sty['p']):
@@ -4896,7 +4936,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function psName(c){const f=PSTY.find(p=>p[0]===(c||''));return f?f[1]:(c||'גוף')}
   /* שם הסגנון בוורד, כפי שהוא בקובץ הזה. נשמר עם התיקון כדי שהקליטה
      לא תצטרך לנחש, ולא תמציא סגנון שאינו קיים. */
-  function wsty(c){const f=PSTY.find(p=>p[0]===(c||''));return f?f[2]:''}
+  function wsty(c){if(c==='mi')return (D.sty&&D.sty.mi)||'חלק משנה מודגשת';const f=PSTY.find(p=>p[0]===(c||''));return f?f[2]:''}
   function undoEd(i){const e=ED[i];if(!e)return;
     /* ביטול שינוי מבנה מחזיר את הנתונים למקורם, והדרך הבטוחה לכך
        היא לטעון את הדף מחדש: הוא נבנה מן הנתונים שבקובץ. */

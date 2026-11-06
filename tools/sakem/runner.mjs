@@ -255,7 +255,9 @@ if (cmd === 'status') {
   if (PUSH) push('סכם: ' + (pk.title || jid) + ' - מוכן לסקירה', [outF(jid)]);
 } else if (cmd === 'lessons') {
   const stF = path.join(D, 'lessons-state.json'), st = fs.existsSync(stF) ? rd(stF) : { done: [] };
-  const todo = ls(DEC).map((f) => f.slice(0, -5)).filter((j) => st.done.indexOf(j) < 0);
+  /* 6.11.2026: סבב שני על אותו פרק (אותו jid) נשא הכרעות חדשות והן דולגו. המפתח הוא עכשיו jid@זמן העבודה */
+  const dkey = (j) => j + '@' + (((rd(path.join(DEC, j + '.json')) || {}).job || {}).t || '');
+  const todo = ls(DEC).map((f) => f.slice(0, -5)).filter((j) => st.done.indexOf(dkey(j)) < 0);
   if (!todo.length) die('אין הכרעות חדשות.', 0);
   todo.forEach((jid) => {
     const d = rd(path.join(DEC, jid + '.json'));
@@ -268,7 +270,8 @@ if (cmd === 'status') {
   console.log('\nאחרי שכתבת את הלקחים: node tools/sakem/runner.mjs lessons-done ' + todo.join(' '));
 } else if (cmd === 'lessons-done') {
   const stF = path.join(D, 'lessons-state.json'), st = fs.existsSync(stF) ? rd(stF) : { done: [] };
-  st.done = [...new Set(st.done.concat(A))];
+  const dk2 = (j) => { const f = path.join(DEC, j + '.json'); return fs.existsSync(f) ? j + '@' + ((rd(f).job || {}).t || '') : j; };
+  st.done = [...new Set(st.done.concat(A.map(dk2)))];
   wr(stF, st);
   console.log('סומן.');
   if (PUSH) push('סכם: לקחים מהכרעות המנהל', [stF, path.join(ROOT, 'docs', 'sakem-lessons.md')]);

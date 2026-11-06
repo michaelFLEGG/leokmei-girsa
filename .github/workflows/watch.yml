@@ -54,7 +54,17 @@ jobs:
       - name: שמירת המקורות בריפו (גיבוי)
         run: |
           git config user.name "leokmei-watcher"; git config user.email "watcher@users.noreply.github.com"
-          git add -A input && (git commit -m "עדכון אוטומטי $(date -u +'%d.%m.%Y %H:%M')" && git push) || echo "אין שינוי"
+          git add -A input
+          git diff --cached --quiet && { echo "אין שינוי"; exit 0; }
+          git commit -q -m "עדכון אוטומטי $(date -u +'%d.%m.%Y %H:%M')"
+          # 6.11.2026: הדחיפה התנגשה בדחיפות של סכם והעותק החדש של הוורד לא
+          # נשמר במאגר, ולכן פרסומי התיקונים בנו מוורד ישן. משיכה וניסיון חוזר.
+          for i in 1 2 3 4; do
+            git push -q && exit 0
+            git pull -q --rebase origin main || { git rebase --abort; break; }
+            sleep $((i*3))
+          done
+          echo "שמירת המקורות לא נדחפה - תנוסה בסבב הבא"
       # האתר שנבנה כאן נשמר, כדי שפרסום של תיקון בודד יוכל לבנות מסכת
       # אחת בלבד במקום עשרים ושש. המפתח כולל את טביעת המקורות, ולכן
       # עותק שנבנה ממקור אחר לעולם אינו משוחזר.

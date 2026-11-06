@@ -481,6 +481,15 @@
       const cn=h=>SKC.h2i(h).replace(/\s+/g,' ').trim();
       if(cn(cur)===cn(nowH)&&!psCh)return 0;
       const now=plain(nowH);
+      /* תיקון 6.11.2026 (כתובות פרק א): מפתח של תיקון ישן הוא מקום (u<יחידה>.<שורה>), ואחרי פיצול,
+         איחוי או כותרת צד באותה קבלה הוא מצביע כבר על שורה אחרת. כאן נלקח בעבר התיקון הישן של
+         השורה הקודמת - "was" שלו נשאר הנוסח של שורה אחרת, ובשחזור הוא דרס אותה: שורות כפולות,
+         ושורות שנעלמו (אין להקשות מרב, ג' יוצר האדם, ועוד). מעתה תיקון ישן ממשיך רק כשהוא באמת
+         התיקון של השורה הזאת (הנוסח שלו הוא הנוסח שבמקום); אחרת הוא "קופא" כמו בשינוי מבנה,
+         ונוצר תיקון חדש. */
+      const tN=s=>String(s||'').replace(/\s+/g,' ').trim(),curT=tN(plain(cur));
+      ED.filter(x=>x.op!=='struct'&&x.k===k&&!x.fz&&tN(x._cur!==undefined?x._cur:x.now)!==curT).forEach(x=>{
+        OLDS.push([x,JSON.stringify(x)]);tomb(x.k);x.k=x.k+'~'+x.t;x.fz=1});
       const old=ED.find(x=>x.op!=='struct'&&x.k===k);
       if(old){OLDS.push([old,JSON.stringify(old)]);
         old.now=now;old.nowH=nowH;old.t=nt();old.pub=0;old._ap=1;old._cur=now;

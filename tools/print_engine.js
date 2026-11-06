@@ -152,10 +152,13 @@
         /* סימן ההפנייה אינו תופס רוחב ואינו נוגע בגובה השורה: תיבה ברוחב אפס, מורמת אל הרווח שבין השורות (השורות חושבו במדויק) */
         /* ב10 (5.11.2026): גופני וילנא צפופים - ריווח אחיד (vilnaLetterSpacingPt, 0.2) בכל השכבות שבהן הם משמשים */
         '.phd,.pnum,.psite,.pcut,.pfn,#flow .row.pcont .main,.cv2,.cv3,.toct,.tocm,.tocr{letter-spacing:'+(P.vilnaLetterSpacingPt!=null?P.vilnaLetterSpacingPt:0.2)+'pt}'+
-        'span.tmg{unicode-bidi:isolate;white-space:nowrap;display:inline}span.tmg sup.tm{margin:0 .03em}'+
-        'sup.tm{display:inline-block;position:relative;width:auto;height:0;overflow:visible;direction:ltr;white-space:nowrap;font-family:'+n.family+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0 .06em 0 .1em;padding:0;color:#7a7a7a}'+
-        /* 5.11.2026: סימנים צמודים אינם עולים זה על זה - כל אחד תופס את רוחבו, ברווח קטן ביניהם, באפור; גובה השורה לא משתנה (גובה אפס) */
-        'sup.tm+sup.tm{margin-right:.18em}.pg sup.tm,.pg sup.tm *{color:#7a7a7a!important}sup.tm a{text-decoration:none}'+
+        /* א (6.11.2026, הכרעת בעל הפרויקט): ההפנייה אינה תופסת דבר מן השורה. תיבה ברוחב אפס ובגובה אפס במקום שאחרי המילה;
+           הספרות גולשות ממנה ימינה (כיוון שמאל-לימין), כלומר אל מעל סוף המילה שלפניה, צמודות לראש האותיות.
+           צירוף של כמה הפניות הוא תיבה אחת ברוחב אפס, וההפניות שבתוכו זו לצד זו - לעולם אינן עולות זו על זו */
+        'span.tmg{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;line-height:0;vertical-align:baseline;margin:0;padding:0}'+
+        'sup.tm{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-family:'+n.family+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0;padding:0;color:#7a7a7a}'+
+        'span.tmg sup.tm{display:inline;width:auto;margin:0}span.tmg sup.tm+sup.tm{margin-left:.12em}'+
+        '.pg sup.tm,.pg sup.tm *{color:#7a7a7a!important}sup.tm a{text-decoration:none}'+
         '.pfn .fnum{font-size:'+n.numberScale+'em;line-height:0;position:relative;top:-'+n.numberRise+'em;vertical-align:baseline;margin-left:.18em;font-weight:'+n.numberWeight+';text-decoration:none}'+
         '.pfn .fnn{margin:'+n.betweenMm+'mm 0 0}.pfn .fnn:first-child{margin-top:0}'+
         '.pg .pfn .fnm{font-size:'+n.nameScale+'em;color:'+n.nameColor+'!important;font-weight:'+n.weight+'}'+
@@ -221,6 +224,9 @@
     for(var pi=fi;pi<=ti;pi++){var p=D.pages[pi];if(!p.units.length)continue;var first=true;var g0=recs.length;
       for(var k=0;k<p.units.length;k++){var u=p.units[k];
         if(PKS&&((pi===PKS.p0&&k<PKS.k0)||(pi===PKS.p1&&k>=PKS.k1)))continue;
+        /* ב (6.11.2026): "(לה. - מה.)" הוא סגנון מוסתר בוורד ("דפים בפרק"), עזר לעורך בלבד: אינו מודפס, והפרק נפתח ישר בכותרתו
+           ובמשנה. ציון הדף שהיה עליו עובר ליחידה הבאה (first נשאר) */
+        if(u.k==='perek-range')continue;
         if(!firstUnit)firstUnit={u:u,p:p};
         recs.push({u:u,pi:pi,daf:p.daf,perek:p.perek||'',perekName:p.perekName||'',kind:u.k,
           html:prnFix(u.k,unitHTML(u,first?p.daf:null,first?pi:null))});
@@ -888,7 +894,8 @@
       '.ptx{position:relative;overflow:hidden;width:100%}'+
       '.pfnw{position:absolute;left:0;bottom:0}'+
       '#prnmeas{position:absolute;left:0;top:0;visibility:hidden}'+
-      '.pfn .fnn{break-inside:avoid;margin:0}'+
+      /* ג (6.11.2026): הערה עוברת באמצעה מטור ההערות הימני לשמאלי שתחת אותו טור, כמו בוילנא - בלי "המשך"; שתי שורות לפחות בכל צד, והטורים מתאזנים */
+      '.pfn .fnn{break-inside:auto;orphans:2;widows:2;margin:0}'+
       '.pfn{direction:rtl;text-align:justify;hyphens:none;column-fill:balance}'+
       '.pfn.one{column-count:1!important}'+
       '.pnum{position:absolute;left:0;right:0;text-align:center;line-height:1}'+
@@ -972,6 +979,11 @@
           '<div class="pr" id="prn-tl"><label><input type="radio" name="prtos" id="prn-tos-n" value="0" checked>בלי תוס\'</label>'+
             '<label><input type="radio" name="prtos" id="prn-tos-y" value="1">עם תוס\' (הערות שוליים)</label></div>'+
           '<div class="pr"><label><input type="checkbox" id="prn-dup">דו-צדדי (שוליים פנימיים רחבים יותר לכריכה)</label></div>'+
+          /* 6.11.2026: פריסה למנהל בלבד. כל עמוד A4 מוקטן באותו יחס (0.707) לחצי גיליון A4 לרוחב, כלומר A5; היחסים בדף נשמרים */
+          (ADM?'<div class="pr" id="prn-lay"><span>פריסה:</span><label><input type="radio" name="prlay" value="a4" checked>A4 רגיל</label>'+
+            '<label><input type="radio" name="prlay" value="2up">שניים בעמוד</label>'+
+            '<label><input type="radio" name="prlay" value="book">הדפס לחוברת (A5, כריכה מימין)</label></div>'+
+            '<div class="pnote" id="prn-ln" hidden>להדפיס על A4 לרוחב, דו-צדדי, היפוך בצד הקצר, בגודל 100%; לקפל באמצע ולהדק.</div>':'')+
           '<div class="pnote" id="prn-tn"></div>'+
           '<div class="pcnt" id="prn-cnt"></div>'+
           '<div class="pbar" id="prn-bar"><i></i></div>'+
@@ -1071,6 +1083,7 @@
       document.getElementById('prn-from').style.display=(t==='daf'||t==='amud'||t==='range')?'':'none';
       document.getElementById('prn-fa').parentElement.style.display=(t==='daf')?'none':'';
       document.getElementById('prn-to').style.display=t==='range'?'':'none';
+      var lnEl=document.getElementById('prn-ln');if(lnEl)lnEl.hidden=prnLay()!=='book';
       var r=prnRange(),err=document.getElementById('prn-err'),go=document.getElementById('prn-go'),cnt=document.getElementById('prn-cnt');
       err.hidden=true;
       var a=pageIdxOf(r.from),b=pageIdxOf(r.to);
@@ -1094,6 +1107,38 @@
         else cnt.textContent='';
       }).catch(function(){cnt.textContent=''})},350)}
     function tosOn(){var y=document.getElementById('prn-tos-y');return !!(y&&y.checked&&!y.disabled)}
+    function prnLay(){if(!isAdm())return 'a4';var x=PRD&&PRD.querySelector('input[name=prlay]:checked');return x?x.value:'a4'}
+    /* ---- פריסה לחוברת / שניים בעמוד (6.11.2026, למנהל) ----
+       נעשית בדפדפן על הקובץ שהופק, ב-pdf-lib: אין שינוי בעימוד עצמו, ולכן העמודים זהים לגמרי לקובץ ה-A4, רק מוקטנים.
+       גיליון: A4 לרוחב; כל חצי = A5; העמוד מוקטן ביחס אחיד ומונח במרכז החצי. */
+    function prnLib(){
+      if(window.PDFLib)return Promise.resolve(window.PDFLib);
+      return new Promise(function(ok,no){var sc=document.createElement('script');
+        sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+        sc.onload=function(){window.PDFLib?ok(window.PDFLib):no(new Error('ספריית החוברת לא נטענה'))};
+        sc.onerror=function(){no(new Error('ספריית החוברת לא נטענה'))};document.head.appendChild(sc)})}
+    /* סדר העמודים. n = מספר העמודים; מחזיר רשימת צדדים, לכל צד [שמאל, ימין] (מספרי עמוד מ-1, 0 = ריק).
+       חוברת עברית (כריכה מימין): בחוץ - עמוד 1 משמאל לקפל ועמוד האחרון מימין; מאחוריו 2 מימין ו-(אחרון פחות 1) משמאל, וכן הלאה פנימה.
+       שניים בעמוד: לפי סדר הקריאה, הראשון מימין והשני משמאל. */
+    window.prnImposeOrder=function(n,mode){
+      var o=[],N,s;
+      if(mode==='book'){N=Math.ceil(n/4)*4;
+        for(s=0;s<N/4;s++){o.push([1+2*s,N-2*s]);o.push([N-1-2*s,2+2*s])}
+        return o.map(function(sd){return sd.map(function(p){return p<=n?p:0})})}
+      for(s=0;s<n;s+=2)o.push([s+2<=n?s+2:0,s+1]);
+      return o};
+    window.prnImpose=async function(bytes,mode,PDFLib){
+      PDFLib=PDFLib||await prnLib();
+      var src=await PDFLib.PDFDocument.load(bytes),out=await PDFLib.PDFDocument.create();
+      var n=src.getPageCount(),emb=await out.embedPages(src.getPages());
+      var SW=841.89,SH=595.28,HW=SW/2;              /* A4 לרוחב, בנקודות */
+      prnImposeOrder(n,mode).forEach(function(sd){
+        var pg=out.addPage([SW,SH]);
+        sd.forEach(function(p,side){if(!p)return;var e=emb[p-1];
+          var sc=Math.min(HW/e.width,SH/e.height);
+          var w=e.width*sc,h=e.height*sc;
+          pg.drawPage(e,{x:side*HW+(HW-w)/2,y:(SH-h)/2,width:w,height:h})})});
+      return await out.save()};
     var DRYFR=null;
     function prnDry(r){
       return new Promise(function(ok,no){
@@ -1126,6 +1171,11 @@
       fetch(PRINT_API+'/pdf?'+q.toString(),{signal:ctrl.signal,headers:admHdr()}).then(function(res){
         if(!res.ok){return res.text().then(function(t){var m='';try{m=JSON.parse(t).error||''}catch(e){}throw new Error(m||('קוד '+res.status))})}
         return res.blob()}).then(function(blob){
+        var lay=prnLay();
+        if(lay==='a4')return blob;
+        go.textContent=lay==='book'?'מסדר לחוברת...':'מסדר שניים בעמוד...';
+        fname=fname.replace(/\.pdf$/,lay==='book'?' - חוברת A5.pdf':' - שניים בעמוד.pdf');
+        return blob.arrayBuffer().then(function(b){return prnImpose(b,lay)}).then(function(u8){return new Blob([u8],{type:'application/pdf'})})}).then(function(blob){
         var a=document.createElement('a'),u=URL.createObjectURL(blob);
         a.href=u;a.download=fname;document.body.appendChild(a);a.click();
         setTimeout(function(){URL.revokeObjectURL(u);a.remove()},4000)})

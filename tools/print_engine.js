@@ -1016,6 +1016,15 @@
       var r=PRD.querySelector('input[name=prt][value=amud]');if(r)r.checked=true;
       PRD.classList.add('open');
       prnSync()};
+    /* 6.11.2026: כפתור נפרד "הדפס לחוברת" (מנהל) בתפריט כלים ובתפריט הנייד: פותח את חלון ההדפסה
+       כשהפריסה לחוברת כבר מסומנת והפרק הנוכחי נבחר */
+    window.prnOpenBook=function(){
+      prnOpen();if(!PRD)return;
+      var b=PRD.querySelector('input[name=prlay][value=book]');if(!b)return;
+      b.checked=true;
+      var r=PRD.querySelector('input[name=prt][value=perek]');if(r)r.checked=true;
+      var d=document.getElementById('prn-dup');if(d)d.checked=false;
+      prnSync()};
     function prnClose(){if(PRD)PRD.classList.remove('open');if(PRSEL.xhr){try{PRSEL.xhr.abort()}catch(e){}}}
     function prnFill(){
       var tp=textPages(),dafs=[],seen={};

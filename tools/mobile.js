@@ -169,6 +169,7 @@
     items.push(['my', 'clock', 'המקום שלי וההספק']);
     items.push(['share', 'share', 'שיתוף הדף']);
     if ($('#prbtn')) items.push(['prn', 'print', 'הדפסה ל-PDF']);
+    try { if ($('#prbtn') && typeof isAdmin === 'function' && isAdmin()) items.push(['book', 'print', 'הדפס לחוברת']); } catch (e) { }
     items.push(['toc', 'list', 'תוכן עניינים']);
     items.push(['full', 'gear', 'כלים מתקדמים']);
     var h = '<h3>עוד</h3><div class="mgrid">' + items.map(function (i) { return '<button type="button" class="mi" data-m="' + i[0] + '">' + ic(i[1]) + '<span>' + i[2] + '</span></button>'; }).join('') + '</div>';
@@ -210,6 +211,7 @@
       else if (m === 'my') location.href = 'lamed.html';
       else if (m === 'share') share();
       else if (m === 'prn') prnOpen();
+      else if (m === 'book') prnOpenBook();
       else if (m === 'toc') panel('toc');
       else if (m === 'full') { B.classList.toggle('showbar'); H.style.setProperty('--mtop', '0px'); try { barFit(); } catch (x) { } }
     }, 120);

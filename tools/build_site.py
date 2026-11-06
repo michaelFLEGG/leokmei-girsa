@@ -6511,6 +6511,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     <button onclick="panel('toc')" title="נושאי הסוגיות"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>תוכן העניינים</button>
     <button onclick="panel('am')" title="אמוראים ותנאים לפי הסימון בקובץ"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>אמוראים</button>
     <button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>הדפס פרק</button>
+    <button class="adm-b" onclick="prnOpenBook()" title="חוברת A5 (למנהל): הפרק או הטווח שתבחר, מסודר להדפסה על A4 לרוחב דו-צדדי, לקיפול באמצע"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>הדפס לחוברת</button>
     <button class="adm-b" onclick="toPdf()" title="כל המסכת (למנהל בלבד): בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>כל המסכת ל-PDF</button>
     <button id="dybtn" onclick="dafYomi()" title="פותח את הדף של היום לפי לוח הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg>הדף היומי</button>
     <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך"><svg class="ic" aria-hidden="true"><use href="#i-inbox"/></svg>הצעות ממתינות</button>

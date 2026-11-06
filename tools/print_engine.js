@@ -28,6 +28,30 @@
       w.style.fontSize='';w.classList.add('w2');
       var rail=w.parentElement,tw=rail.getBoundingClientRect().width;
       var sc=1;while(w.scrollWidth>tw+1&&sc>LMIN){sc=Math.max(LMIN,sc-0.06);w.style.fontSize=sc.toFixed(2)+'em'}})}
+  /* 6.11.2026 (בעל הפרויקט): כותרת צד ארוכה לעולם אינה פותחת שורה ריקה בטקסט שמולה.
+     שורה שהמסילה שלה גבוהה מן הטקסט: אם המסילה של השורה הבאה ריקה ויש בה מקום - הכותרת גולשת אליה
+     והשורה נשארת בגובה הטקסט. אחרת הכותרת מוקטנת לשורה אחת (עד 0.6), ורק אם גם זה אינו מספיק - נשארת. */
+  function railNoGap(f){
+    var rows=[].slice.call(f.children).filter(function(r){return r.classList&&r.classList.contains('row')});
+    var H=[];
+    rows.forEach(function(r){var rl=r.querySelector(':scope > .rail');if(rl){rl.style.height='';rl.style.overflow=''}});
+    rows.forEach(function(r,i){
+      var rl=r.querySelector(':scope > .rail');if(!rl)return;
+      var ws=[].slice.call(rl.querySelectorAll('.win')).filter(function(w){return w.textContent.trim()});
+      if(!ws.length)return;
+      rl.style.height='0px';rl.style.overflow='visible';
+      var rt=r.getBoundingClientRect(),h=rt.height;
+      var bottom=function(){return Math.max.apply(null,ws.map(function(w){return w.getBoundingClientRect().bottom}))-rt.top};
+      var need=bottom();
+      if(need<=h+1){rl.style.height='';rl.style.overflow='';return}
+      var nx=rows[i+1],nr=nx&&nx.querySelector(':scope > .rail');
+      var free=nx&&(!nr||!nr.textContent.trim())&&need-h<=nx.getBoundingClientRect().height+1;
+      if(free)return;
+      ws.forEach(function(w){w.classList.remove('w2');w.style.whiteSpace='nowrap'});
+      var sc=1;
+      while(sc>0.6&&(bottom()>h+1||ws.some(function(w){return w.scrollWidth>rl.clientWidth+1}))){
+        sc=Math.max(0.6,sc-0.05);ws.forEach(function(w){w.style.fontSize=sc.toFixed(2)+'em'})}
+      if(bottom()>h+1){ws.forEach(function(w){w.style.whiteSpace=''});rl.style.height='';rl.style.overflow=''}})}
   function afterPunct(t,o){
     for(var guard=0;guard<6;guard++){var r=t.slice(o),m=null;
       for(var i=0;i<PUNCT_AFTER.length&&!m;i++)m=r.match(PUNCT_AFTER[i]);
@@ -348,7 +372,7 @@
       if(typeof setDafW==='function')setDafW();
       if(typeof fitAnchors==='function')fitAnchors();
       if(typeof ltFit==='function')ltFit(f);
-      labelWrap(f);
+      labelWrap(f);railNoGap(f);
       /* איחוי שורה יתומה (כלל עימוד 4): בדיקה במקום, וניסיונות בסרגל; רק התוצאה נכתבת לפסקה */
       var tSq=performance.now();
       var ps0=[].slice.call(f.querySelectorAll('.main p')).filter(function(p){return p.textContent.trim().length>=12&&loneStrict(p)});
@@ -371,7 +395,7 @@
         if(t[2]){for(var g2=0;g2<t[2];g2++)glueLastWords(t[0]);t[0].dataset.glue=String(t[2]);fixedGlue++}
         fixedLone++});
       sqMs+=performance.now()-tSq;
-      if(todo.length&&typeof fitAnchors==='function'){fitAnchors();labelWrap(f)}
+      if(todo.length&&typeof fitAnchors==='function'){fitAnchors();labelWrap(f);railNoGap(f)}
       /* שער: מילה בודדת שנותרה אחרי הדחיסה והרווח הקשיח נרשמת בלוח התקלות (לעולם לא בשקט) */
       [].slice.call(f.querySelectorAll('.main p')).forEach(function(p){
         if(p.textContent.trim().length>=12&&loneStrict(p)){

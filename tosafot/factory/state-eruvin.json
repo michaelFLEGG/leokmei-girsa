@@ -164,6 +164,24 @@
     "flagged": 3,
     "questions": 40
    }
+  },
+  "10": {
+   "status": "published",
+   "published": "2026-11-06T18:39:58Z",
+   "unc_done": true,
+   "handoff_units": [
+    "eruvin-p10-u01",
+    "eruvin-p10-u02",
+    "eruvin-p10-u03",
+    "eruvin-p10-u04"
+   ],
+   "result": {
+    "generated": 85,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 64
+   }
   }
  },
  "created": "2026-11-04T12:43:34Z",
@@ -221,7 +239,14 @@
    "mean": 0.401,
    "n": 5,
    "at": "2026-11-06T12:41:04Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.592,
+   "n": 7,
+   "at": "2026-11-06T18:39:57Z"
   }
  ],
- "updated": "2026-11-06T12:41:04Z"
+ "updated": "2026-11-06T18:39:58Z",
+ "done": "2026-11-06T18:39:58Z"
 }

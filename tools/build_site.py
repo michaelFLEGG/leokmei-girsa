@@ -1003,7 +1003,11 @@ def _apply_site_edits(pages, slug, qa):
         print('קובץ התיקונים של %s: %d נשארו, %d נקלטו בוורד' % (slug, len(keep), taken))
     print('תיקוני האתר ב%s: %d הוחלו, %d נקלטו כבר, %d תלושים'
           % (slug, done, taken, len(lost)))
-    return {'n': len(edits), 'taken': taken, 'lost': len(lost), 'done': done}
+    # b (6.11.2026): התיקונים שכבר בנתונים (הוחלו בבנייה או נמצאו בוורד). הדפדפן אינו מחיל אותם שוב
+    # מעל הנתונים שכבר נושאים אותם: החלה חוזרת של כותרת צד / איחוי / פיצול כפלה שורות בדף ובהדפסה.
+    _lost_t = {x.get('t') for x in lost}
+    baked = sorted({x.get('t') for x in edits if x.get('t') is not None} - _lost_t)
+    return {'n': len(edits), 'taken': taken, 'lost': len(lost), 'done': done, 'b': baked}
 
 
 # סיווג המכשיר (טלפון / טאבלט / מחשב) לפני הציור הראשון, כדי שהמעטפת לא תקפוץ.
@@ -3800,8 +3804,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function* applyStructG(){
     let any=false;
     const todo=ED.filter(e=>!e._ap&&!e.done).sort((a,b)=>(a.t||0)-(b.t||0));
+    const BAKED=(D.ed&&D.ed.b)?(D.__bk||(D.__bk=new Set(D.ed.b))):null;
     for(const e of todo){
       yield;
+      /* כבר בנתונים מן הבנייה (6.11.2026): לא מוחל שוב, ונשאר ברשימה עד שייקלט בוורד */
+      if(BAKED&&BAKED.has(e.t)){e._ap=1;e.lost=0;if(e.op!=='struct')e._cur=e.now;continue}
       if(e.op!=='struct'){
         const k=locate(e);
         if(k===null){e.lost=1;continue}

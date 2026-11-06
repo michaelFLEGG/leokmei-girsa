@@ -3,7 +3,7 @@
  "jid": "sukkah-p2",
  "slug": "sukkah",
  "title": "סוכה פרק שני  הישן",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 576,
@@ -904,5 +904,11 @@
    ]
   }
  ],
- "t": 1793959444512
+ "t": 1793959456558,
+ "counts": {
+  "shown": 21,
+  "spatial": 1,
+  "adds": 7,
+  "missing": 0
+ }
 }

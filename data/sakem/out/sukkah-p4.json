@@ -3,7 +3,7 @@
  "jid": "sukkah-p4",
  "slug": "sukkah",
  "title": "סוכה פרק רביעי - לולב וערבה",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 1592,
@@ -873,5 +873,11 @@
    ]
   }
  ],
- "t": 1793959456927
+ "t": 1793959471706,
+ "counts": {
+  "shown": 24,
+  "spatial": 1,
+  "adds": 4,
+  "missing": 0
+ }
 }

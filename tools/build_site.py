@@ -1150,6 +1150,19 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if t: toc.append([len(pages)-1,b['i'],t,kind])
   n_skip=collections.Counter()
   mbw_pend=None
+  # ז (6.11.2026): העמוד שלפני ציון הדף הראשון. ציון "X:" - העמוד הוא
+  # "X."; ציון "X." - אותו עמוד עצמו, וציון הדף ממשיך אותו.
+  _first=next((x['text'].strip() for x in blocks if role_of(x)=='daf'),'')
+  pre_daf=(_first[:-1]+'.') if _first.endswith(':') else _first
+  # מופעל במסכת שנבדקה בלבד. בשאר המסכתות שיש בהן פתיחה לפני ציון הדף
+  # הראשון (נמדד 6.11.2026: שבת, עירובין, יבמות, נדרים, נזיר, סוטה, גיטין,
+  # מועד קטן, ע"ז, מנחות, ערכין, נדה ועוד) צריך לבדוק כל אחת לפני ההפעלה:
+  # בסוטה יש לפני הפתיחה דף שער, ובעירובין הציון הראשון הוא ג. ולא ב.
+  PRE_ON=('כתובות',)
+  if masechet not in PRE_ON: pre_daf=''
+  PRE_OPEN=('perek-num','perek-name','perek-range','perek-start','dh','mishna')
+  pre_page=None; n_pre=0; n_pre_drop=0; daf_fix=[]
+  DAF_FIX={'כתובות':{36:('ג:','ג.'),422:('יג.','יג:')}}
   for bi,b in enumerate(blocks):
       r=role_of(b); h=runs_html(b['runs']); t=b['text'].strip()
       # א: חציצה - העיטור האחיד, בלי תלות במספר הכוכביות שבוורד
@@ -1172,11 +1185,33 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if r=='perek-start' and b['style']=='פתיחת פרק':
           _pp=t.split(' - ',1); perek=_pp[0].strip(); perekName=(_pp[1].strip() if len(_pp)>1 else '')
       if r=='daf':
+          # ז (6.11.2026): הפתיחה שלפני ציון הדף הראשון (ראה למטה) כבר פתחה
+          # את העמוד הזה. ציון הדף הממשי ממשיך אותו, ואינו פותח עמוד כפול.
+          if cur is not None and cur is pre_page and t==cur['daf']:
+              pre_page=None; continue
+          pre_page=None
+          # ז (6.11.2026): ציוני דף שגויים בוורד, מתוקנים בתצוגה לפי מזהה
+          # הפסקה, עד שיתוקנו בוורד עצמו. המזהים אינם משתנים. תיקון שהטקסט
+          # שבוורד כבר אינו תואם לו (תוקן בוורד, או הפסקה זזה) אינו מופעל.
+          _fx=DAF_FIX.get(masechet,{}).get(b['i'])
+          if _fx and t==_fx[0]:
+              daf_fix.append((t,_fx[1],b['i'])); t=_fx[1]
           # ב2: חלון שאין תחתיו טקסט אינו נעצר בציון הדף. הוא ממשיך
           # להמתין ליחידה הבאה, שתקבל אותו במסילתה יחד עם ציון הדף.
           cur={'daf':t,'perek':perek,'perekName':perekName,'units':[]}; pages.append(cur); unit=None
           continue
-      if cur is None: continue
+      if cur is None:
+          # ז (6.11.2026): משנה או כותרת פרק שבאות לפני ציון הדף הראשון
+          # נזרקו כאן בשקט (כתובות: המשנה וכל דף ב.). מעתה הן פותחות את
+          # העמוד שלפני ציון הדף הראשון. מזהי הפסקאות אינם משתנים.
+          # ריהוט שלפני הפתיחה (שער, הקדמה) נשאר מחוץ לדף כמקודם.
+          if pre_daf and r in PRE_OPEN:
+              cur={'daf':pre_daf,'perek':perek,'perekName':perekName,'units':[]}; pages.append(cur); unit=None
+              pre_page=cur; n_pre+=1
+          else:
+              n_pre_drop+=1; continue
+      elif cur is pre_page:
+          n_pre+=1
       cur['perek']=perek; cur['perekName']=perekName
       # חציצה צמודה לכותרת (לפניה או אחריה) אינה מוצגת. זהו כלל תצוגה לכל
       # המסכתות; קובץ הוורד לא נגע.
@@ -1306,6 +1341,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   if n_stack_drop:
       qa.append(('לא ניתן לצרף',
                  f'{n_stack_drop} חלונות נערמו מעבר ל-{STACK_MAX} זה על זה - זהו אינדקס ולא חלון - ואינם מוצגים'))
+  if n_pre:
+      qa.append(('פתיחה לפני ציון הדף הראשון',
+                 f'{n_pre} פסקאות שלפני ציון הדף הראשון ({_first}) מוצגות בעמוד {pre_daf}. עד 6.11.2026 נזרקו בשקט'))
+  if n_pre_drop:
+      qa.append(('ריהוט לפני הפתיחה',
+                 f'{n_pre_drop} פסקאות שלפני הפתיחה (משנה או כותרת פרק) ולפני ציון הדף הראשון אינן מוצגות'))
+  for _a,_b,_i in daf_fix:
+      qa.append(('ציון דף תוקן בתצוגה',f'ציון הדף "{_a}" (פסקה {_i}) מוצג כ-"{_b}". לתקן גם בוורד'))
   if n_tail_win:
       qa.append(('לא ניתן לצרף',
                  f'{n_tail_win} חלונות כותרת בסוף המסכת אין אחריהם דבר. אינם מוצגים'))

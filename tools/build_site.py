@@ -68,6 +68,9 @@ def _mishna_line(pages, s, h):
     return 'u%s.1' % m['id']
 
 
+import punct_norm as _punct
+
+
 def _bare(h):
     return html.unescape(re.sub('<[^>]+>', '', h or ''))
 
@@ -76,13 +79,15 @@ def _wn(t):
     """השוואת טקסט של תיקון מול הוורד: רווח קשיח (nbsp) ורצפי רווחים נחשבים רווח אחד,
     והשוליים נחתכים. הדפדפן רושם nbsp בסוף פסקה, והוורד רווח רגיל; בלי הנרמול הזה
     התיקון נחשב תלוש ולא הוחל - בשקט, בכל בנייה."""
-    return re.sub(r'\s+', ' ', t or '').strip()
+    # 6.11.2026: גם הפיסוק האחיד (; -> נקודה, מקף ארוך, רווח לפני נקודה) אינו מפריד: הדף מוצג
+    # בפיסוק האחיד והוורד עדיין לא, ותיקון שנעשה על הדף חייב להיות מאותר בוורד ולהפך.
+    return _punct.text(re.sub(r'\s+', ' ', t or '').strip())
 
 
 def _norm_h(h):
     """צורה קנונית של HTML להשוואה: ללא ישויות, ציטוט אחיד ורווחים מכווצים."""
     h = html.unescape(h or '').replace("'", '"')
-    return re.sub(r'\s+', ' ', h).strip()
+    return _punct.text(re.sub(r'\s+', ' ', h).strip())
 
 
 def _daf_key(d):
@@ -1673,6 +1678,24 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # ואם זז - התאמה אחת ויחידה של הנוסח שהיה, בטווח דף אחד לכל צד.
   # תיקון שאיבד את עוגנו אינו מוחל בשקט: הוא נשאר בקובץ ונאמר בבקרה.
   ed_stat=_apply_site_edits(pages,os.path.basename(out_path)[:-5],qa)
+  # פיסוק אחיד בכל האתר (6.11.2026, בעל הפרויקט): ; -> נקודה, מקף ארוך -> מקף רגיל, בלי רווח לפני נקודה.
+  # אחרי תיקוני האתר (שמעוגנים בנוסח הוורד כפי שהוא) ולפני שכבת הניקוד (שנגזרת מן הטקסט הסופי).
+  try:
+      import punct_norm
+      _pn=punct_norm.pages(pages)
+      # פירוש הגמרא שמוצג לצד הדף - אותו כלל (לשון הגמרא עצמה אינה נוגעת)
+      for _sv in ((sources or {}).get('pages') or {}).values():
+          if isinstance(_sv,dict) and isinstance(_sv.get('perush'),list):
+              _sv['perush']=[punct_norm.html(_x) if isinstance(_x,str) else _x for _x in _sv['perush']]
+      for _t in toc:
+          if isinstance(_t,dict):
+              for _k,_v in list(_t.items()):
+                  if isinstance(_v,str): _t[_k]=punct_norm.html(_v)
+          elif isinstance(_t,list):
+              for _i,_v in enumerate(_t):
+                  if isinstance(_v,str): _t[_i]=punct_norm.html(_v)
+  except Exception as _e:
+      qa.append(('פיסוק אחיד','לא רץ: %s'%_e))
   # ט, י, יא (14.10.2026): ד"ה משנה חסר/כפול, וסגנון "תנאי המשנה" לשמות התנאים. אחרי תיקוני האתר (כדי שלא
   # לשבור עיגון של תיקון בטקסט) ולפני הניקוד (שנגזר מפסקאות המשנה).
   try:

@@ -728,7 +728,8 @@ def _apply_site_edits(pages, slug, qa):
                                else s['holder'].get(s['key'], '')))
             by_key[s['k']] = s
 
-    for e in edits:
+    def _one(e):
+        nonlocal done, taken
         # --- שינוי מבנה: פיצול פסקה או איחוי שתיים ---
         if e.get('op') == 'struct':
             kind = e.get('kind')
@@ -740,7 +741,7 @@ def _apply_site_edits(pages, slug, qa):
                 if kind == 'side' and dn(pages, e):
                     taken += 1
                     history.append(('s', e))
-                    continue
+                    return
                 if ap(pages, e):
                     done += 1
                     keep.append(e)
@@ -753,7 +754,7 @@ def _apply_site_edits(pages, slug, qa):
                 else:
                     lost.append(e)
                     keep.append(e)
-                continue
+                return
             if kind in ('hsplit', 'hmerge', 'hdel', 'hrep'):
                 ap, dn = ((_hsplit_apply, _hsplit_done) if kind == 'hsplit' else (_hmerge_apply, _hmerge_done)
                           if kind == 'hmerge' else (_deco_apply, _deco_done))
@@ -769,7 +770,7 @@ def _apply_site_edits(pages, slug, qa):
                 else:
                     lost.append(e)
                     keep.append(e)
-                continue
+                return
             texts = e.get('texts') or []
             res = e.get('res') or []
             # פסקה חדשה (Enter): הפסקה הקיימת נשארת בנוסחה, ולכן "texts" מאותר גם אחרי
@@ -778,7 +779,7 @@ def _apply_site_edits(pages, slug, qa):
             if e.get('ins') and _find_run(pages, e.get('resT') or [], e.get('daf')) is not None:
                 taken += 1
                 history.append(('s', e))
-                continue
+                return
             hit = _find_run(pages, texts, e.get('daf'))
             if hit is not None:
                 u, i, _ = hit
@@ -809,11 +810,11 @@ def _apply_site_edits(pages, slug, qa):
             else:
                 lost.append(e)
                 keep.append(e)
-            continue
+            return
         was, now = _wn(e.get('was', '')), _wn(e.get('now', ''))
         if e.get('ps') is None and _echo(e, history):
             taken += 1                  # הד של מצב שלפני שינוי מבנה
-            continue
+            return
         s = by_key.get(e.get('k'))
         if s is None or (s['t'] != was and s['t'] != now):
             k0 = _daf_key(e.get('daf'))
@@ -833,12 +834,12 @@ def _apply_site_edits(pages, slug, qa):
             if _absorbed(e, history):
                 taken += 1              # התוצאה כבר נעשתה בידי שינוי המבנה
                 history.append(('t', was, now))
-                continue
-            lost.append(e); keep.append(e); continue
+                return
+            lost.append(e); keep.append(e); return
         if e.get('ps') == 'mi' and s['t'] in (was, now) and (s.get('unit') or {}).get('k') == 'm':
             taken += 1                  # שורת משנה שכבר בתוך התיבה (הגיעה מן הוורד)
             history.append(('t', was, now))
-            continue
+            return
         if s['t'] == now and e.get('ps') is None:
             # הטקסט זהה גם כשרק סגנון התו השתנה (הדגשה, מפרשים וכד'), ולכן
             # "כבר בוורד" נקבע רק כשגם ה-HTML זהה. אחרת התיקון מוחל.
@@ -846,9 +847,9 @@ def _apply_site_edits(pages, slug, qa):
             if e.get('nowH') is None or _norm_h(raw) == _norm_h(e['nowH']):
                 taken += 1                  # כבר הגיע מן הוורד - יוצא מן הקובץ
                 history.append(('t', was, now))
-                continue
+                return
         if s['t'] != was and s['t'] != now and not rebased:
-            lost.append(e); keep.append(e); continue
+            lost.append(e); keep.append(e); return
         _eff = {'was': _bare(s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')),
                 'wasH': s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')}
         h = e.get('nowH')
@@ -869,13 +870,13 @@ def _apply_site_edits(pages, slug, qa):
                 lost.append(e); keep.append(e)
                 qa.append(('שורת משנה', 'שורה שסומנה להיכנס לתיבת המשנה אינה השורה האחרונה לפני תיבה: %r'
                            % (now[:60],)))
-                continue
+                return
             e['k'] = moved
             done += 1
             keep.append(e)
             PLAN.append(('text', e, _eff))
             reslot()
-            continue
+            return
         if ps is not None and s['key'] == 'a' and s['holder'].get('k') in ('dh', 'nose'):
             # נושא משנה / ד"ה משנה שהוחזר לגוף: היחידה הופכת ליחידת גוף רגילה,
             # והחלון שלה (אם יש) עובר למקום של יחידת גוף.
@@ -889,7 +890,7 @@ def _apply_site_edits(pages, slug, qa):
             keep.append(e)
             PLAN.append(('text', e, _eff))
             reslot()
-            continue
+            return
         if ps is not None and isinstance(s['key'], int):
             keepsp = ' '.join(c for c in (s['holder'][0] or '').split()
                               if c[:1] in 'ba' and c[1:].isdigit())
@@ -903,6 +904,23 @@ def _apply_site_edits(pages, slug, qa):
         e['k'] = s['k']
         keep.append(e)
         PLAN.append(('text', e, _eff))
+
+    for e in edits:
+        _one(e)
+    # ח (6.11.2026): תיקון שנשען על תוצאה של תיקון אחר שנרשם בזמן מאוחר יותר
+    # (כותרת צד על שורה שתיקון אחר כתב, הצעת סכם) לא אותר במעבר הראשון והיה
+    # תלוש - בדף נראה, באתר ובהדפסה לא. מעבר חוזר על התלושים עד שאין התקדמות.
+    # בטוח: תיקון מוחל רק כשהנוסח שלו נמצא בדיוק.
+    for _round in range(5):
+        _pend=[x for x in lost if not any(x is v for v in virtual)]
+        if not _pend: break
+        _before=len(_pend)
+        for x in _pend:
+            lost[:]=[y for y in lost if y is not x]; keep[:]=[y for y in keep if y is not x]
+        for x in sorted(_pend, key=lambda z: z.get('t') or 0):
+            _one(x)
+        if len([x for x in lost if not any(x is v for v in virtual)])>=_before: break
+    keep.sort(key=lambda z: z.get('t') or 0)
     lost.extend(virtual)
     if lost:
         qa.append(('תיקון תלוש',

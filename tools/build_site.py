@@ -692,6 +692,20 @@ def _dedupe_windows(pages):
             u[k] = '<br>'.join(out)
 
 
+_LBL = re.compile(r'^([א-ת]{1,2}\.)\s+')
+
+
+def _nolbl(t):
+    """הטקסט בלי אות הקטע שבראשו ("ב. "). בדף האות יושבת במסילה, ולכן תיקון שנעשה
+    בדף נרשם בלעדיה, ובוורד היא חלק מן הפסקה (6.11.2026)."""
+    return _LBL.sub('', t or '', 1)
+
+
+def _teq(a, b):
+    """השוואת נוסח פסקה בוורד (a) לנוסח בתיקון (b): זהים, או זהים בלי אות הקטע."""
+    return a == b or (bool(b) and _nolbl(a) == _nolbl(b))
+
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
@@ -816,7 +830,7 @@ def _apply_site_edits(pages, slug, qa):
             taken += 1                  # הד של מצב שלפני שינוי מבנה
             return
         s = by_key.get(e.get('k'))
-        if s is None or (s['t'] != was and s['t'] != now):
+        if s is None or not (_teq(s['t'], was) or _teq(s['t'], now)):
             k0 = _daf_key(e.get('daf'))
             win = [x for x in slots
                    if k0 is None or _daf_key(x['daf']) is None
@@ -824,6 +838,8 @@ def _apply_site_edits(pages, slug, qa):
             s = None
             for want in (was, now):
                 hits = [x for x in win if x['t'] == want]
+                if not hits and want:
+                    hits = [x for x in win if _teq(x['t'], want)]
                 if len(hits) == 1:
                     s = hits[0]; break
         rebased = False
@@ -835,12 +851,15 @@ def _apply_site_edits(pages, slug, qa):
                 taken += 1              # התוצאה כבר נעשתה בידי שינוי המבנה
                 history.append(('t', was, now))
                 return
+            if not now and any(h[0] == 't' and not h[2] and _teq(h[1], was) for h in history):
+                taken += 1              # מחיקה שנרשמה פעמיים: הראשונה כבר הוחלה (6.11.2026)
+                return
             lost.append(e); keep.append(e); return
         if e.get('ps') == 'mi' and s['t'] in (was, now) and (s.get('unit') or {}).get('k') == 'm':
             taken += 1                  # שורת משנה שכבר בתוך התיבה (הגיעה מן הוורד)
             history.append(('t', was, now))
             return
-        if s['t'] == now and e.get('ps') is None:
+        if _teq(s['t'], now) and e.get('ps') is None:
             # הטקסט זהה גם כשרק סגנון התו השתנה (הדגשה, מפרשים וכד'), ולכן
             # "כבר בוורד" נקבע רק כשגם ה-HTML זהה. אחרת התיקון מוחל.
             raw = s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')
@@ -848,12 +867,16 @@ def _apply_site_edits(pages, slug, qa):
                 taken += 1                  # כבר הגיע מן הוורד - יוצא מן הקובץ
                 history.append(('t', was, now))
                 return
-        if s['t'] != was and s['t'] != now and not rebased:
+        if not (_teq(s['t'], was) or _teq(s['t'], now)) and not rebased:
             lost.append(e); keep.append(e); return
         _eff = {'was': _bare(s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')),
                 'wasH': s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')}
         h = e.get('nowH')
         if h is None: h = html.escape(now)
+        # אות הקטע שבוורד נשמרת כשהתיקון נרשם בלעדיה (ראה _nolbl)
+        _lm = _LBL.match(s['t'])
+        if _lm and now and not _LBL.match(now) and not _LBL.match(was) and _nolbl(s['t']) == was:
+            h = _lm.group(1) + ' ' + h
         if isinstance(s['key'], int): s['holder'][s['key']] = h
         else: s['holder'][s['key']] = h
         s['t'] = _wn(_bare(h))

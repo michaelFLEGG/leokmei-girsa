@@ -77,6 +77,24 @@ def split_of(filename):
     return None
 
 
+def _pinned(fname):
+    """הצמדה לצילום וורד תקין (data/word-pin/pins.json, 6.11.2026): כשקובץ הוורד החי שובש,
+    המסכת נבנית מן הצילום התקין האחרון, ותיקוני האתר מוחלים עליו כרגיל."""
+    try:
+        pins = json.load(open(os.path.join(ROOT, 'data', 'word-pin', 'pins.json'), encoding='utf-8'))
+    except Exception:
+        return None
+    rel = pins.get(fname)
+    if not rel:
+        return None
+    pth = os.path.join(ROOT, rel)
+    if not os.path.exists(pth):
+        print('אזהרה: צילום הוורד המוצמד חסר:', rel)
+        return None
+    print('נבנה מצילום מוצמד:', fname, '<-', rel)
+    return pth
+
+
 def split_file(path, masechtot):
     """חותך קובץ שתי מסכתות במקום שבו ציון הדף חוזר לתחילת המסכת.
     מחזיר None אם מספר נקודות החיתוך אינו כמספר המסכתות פחות אחת."""
@@ -240,7 +258,7 @@ def main():
             if m in preconv:
                 blocks, f = preconv[m]
             elif len(files) == 1:
-                blocks = convert(os.path.join(ddir, files[0])); f = files[0]
+                blocks = convert(_pinned(files[0]) or os.path.join(ddir, files[0])); f = files[0]
             else:
                 blocks, f = merge_masechet(m, files, ddir)
             jp = os.path.join(SITE, SLUG[m] + '.json')

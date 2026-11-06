@@ -706,6 +706,48 @@ def _teq(a, b):
     return a == b or (bool(b) and _nolbl(a) == _nolbl(b))
 
 
+def _side_tidy(pages, qa):
+    """כותרות צד אחרי החלת התיקונים (6.11.2026, בעל הפרויקט):
+    א. אותה כותרת שנערמה פעמיים באותה יחידה - נשארת פעם אחת.
+    ב. שורת גוף ראשונה שהיא בדיוק הכותרת שמעליה - נמחקת (שארית של קליטה כפולה).
+    ג. כותרת צד היא שם האומר או מספר תירוץ - שתיים-שלוש מילים. כותרת של חמש מילים
+       ומעלה איננה כותרת צד: היא חוזרת לראש שורת הגוף שתחתיה."""
+    stats = [0, 0, 0]
+    for p in pages:
+        for u in p['units']:
+            if u.get('k') not in ('u', 'm'):
+                continue
+            k = _wkey(u)
+            w = u.get(k) or ''
+            if not w:
+                continue
+            seen, keep = set(), []
+            for x in w.split('<br>'):
+                t = _wn(_bare(x))
+                if t and t in seen:
+                    stats[0] += 1
+                    continue
+                seen.add(t)
+                keep.append(x)
+            L = u.get('l') or []
+            while L and len(L[0]) > 1 and _wn(_bare(L[0][1])) and _wn(_bare(L[0][1])) in seen:
+                L.pop(0)
+                stats[1] += 1
+                u.pop('lv', None)
+            if L:
+                short, long_ = [], []
+                for x in keep:
+                    (long_ if len(_bare(x).split()) >= 5 else short).append(x)
+                if long_:
+                    L[0] = [L[0][0], ' '.join(long_) + ' ' + L[0][1]]
+                    u.pop('lv', None)
+                    stats[2] += len(long_)
+                    keep = short
+            u[k] = '<br>'.join(keep)
+    if any(stats):
+        print('כותרות צד: %d כפולות הוסרו, %d שורות גוף כפולות הוסרו, %d ארוכות הוחזרו לגוף' % tuple(stats))
+
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
@@ -1779,6 +1821,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # ואם זז - התאמה אחת ויחידה של הנוסח שהיה, בטווח דף אחד לכל צד.
   # תיקון שאיבד את עוגנו אינו מוחל בשקט: הוא נשאר בקובץ ונאמר בבקרה.
   ed_stat=_apply_site_edits(pages,os.path.basename(out_path)[:-5],qa)
+  _side_tidy(pages,qa)
   # פיסוק אחיד בכל האתר (6.11.2026, בעל הפרויקט): ; -> נקודה, מקף ארוך -> מקף רגיל, בלי רווח לפני נקודה.
   # אחרי תיקוני האתר (שמעוגנים בנוסח הוורד כפי שהוא) ולפני שכבת הניקוד (שנגזרת מן הטקסט הסופי).
   try:

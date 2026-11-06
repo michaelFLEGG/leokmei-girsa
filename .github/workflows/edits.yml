@@ -72,12 +72,25 @@ jobs:
       # תיקון שכבר הגיע מן הוורד יוצא מקובץ התיקונים בבנייה עצמה.
       # הסימון [skip ci] הכרחי: בלעדיו הדחיפה הזאת היתה מפעילה שוב את
       # אותה עבודה, ללא סוף.
+      # 6.11.2026: דחיפה שהתנגשה בדחיפה אחרת (עריכה חדשה, סכם) הכשילה את
+      # העבודה, והפרסום שאחריה דולג - האתר לא עלה. מעתה: משיכה וניסיון
+      # חוזר; ואם גם זה לא הצליח (התנגשות בקובץ התיקונים), הניקוי נדחה לסבב
+      # הבא והפרסום ממשיך. הניקוי אינו תנאי לפרסום: תיקון שכבר נקלט בוורד
+      # מסומן בבנייה עצמה.
       - name: הוצאת תיקונים שכבר נקלטו בוורד
+        continue-on-error: true
         run: |
           git config user.name "leokmei-watcher"
           git config user.email "watcher@users.noreply.github.com"
           git add -A data/edits data/seo
-          git diff --cached --quiet || (git commit -m "תיקונים שנקלטו בוורד הוסרו מן הקובץ [skip ci]" && git push)
+          git diff --cached --quiet && exit 0
+          git commit -q -m "תיקונים שנקלטו בוורד הוסרו מן הקובץ [skip ci]"
+          for i in 1 2 3; do
+            git push -q && exit 0
+            git pull -q --rebase origin main || { git rebase --abort; echo "התנגשות בקובץ התיקונים - הניקוי נדחה לסבב הבא"; exit 0; }
+            sleep $((i*3))
+          done
+          echo "הדחיפה לא הצליחה - הניקוי נדחה לסבב הבא"
       # פירוש הגמרא למנהל בלבד (פרומפט 17): גם עותק משוחזר נבדק.
       - name: שער הפירוש
         run: python tools/perush_gate.py site

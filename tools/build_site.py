@@ -1150,17 +1150,29 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if t: toc.append([len(pages)-1,b['i'],t,kind])
   n_skip=collections.Counter()
   mbw_pend=None
-  # ז (6.11.2026): העמוד שלפני ציון הדף הראשון. ציון "X:" - העמוד הוא
-  # "X."; ציון "X." - אותו עמוד עצמו, וציון הדף ממשיך אותו.
-  _first=next((x['text'].strip() for x in blocks if role_of(x)=='daf'),'')
-  pre_daf=(_first[:-1]+'.') if _first.endswith(':') else _first
-  # מופעל במסכת שנבדקה בלבד. בשאר המסכתות שיש בהן פתיחה לפני ציון הדף
-  # הראשון (נמדד 6.11.2026: שבת, עירובין, יבמות, נדרים, נזיר, סוטה, גיטין,
-  # מועד קטן, ע"ז, מנחות, ערכין, נדה ועוד) צריך לבדוק כל אחת לפני ההפעלה:
-  # בסוטה יש לפני הפתיחה דף שער, ובעירובין הציון הראשון הוא ג. ולא ב.
-  PRE_ON=('כתובות',)
-  if masechet not in PRE_ON: pre_daf=''
-  PRE_OPEN=('perek-num','perek-name','perek-range','perek-start','dh','mishna')
+  # ז (6.11.2026): הפתיחה שלפני ציון הדף הראשון (כותרת הפרק והמשנה, ולעתים
+  # כל הגמרא של העמוד הראשון) נזרקה בשקט. מעתה היא נכנסת לעמוד הראשון:
+  # ציון ראשון "X:" - העמוד "X."; ציון ראשון ב. ג. או ג: - העמוד ב.
+  # (בעירובין ובתענית הציון הראשון ג.); ציון "X." אחר - אותו עמוד, וציון
+  # הדף ממשיך אותו. הפתיחה מתחילה בכותרת הפרק, במשנה או בד"ה. מה שלפניה
+  # (דף שער, רשימת ספרים, קטעי "דפים בפרק") אינו מוצג, חוץ משורת "דפים
+  # בפרק" האחרונה שלפני הפתיחה. מזהי הפסקאות אינם משתנים.
+  _fb=next((x for x in blocks if role_of(x)=='daf'),None)
+  _first=_fb['text'].strip() if _fb else ''
+  _fk=_daf_key(_first)
+  if not _first or not _fk: pre_daf=''
+  elif _fk<=_daf_key('ג:'): pre_daf='ב.'
+  elif _first.endswith(':'): pre_daf=_first[:-1]+'.'
+  else: pre_daf=_first
+  PRE_REAL=('perek-num','perek-name','perek-start','dh','mishna')
+  PRE_DROP=set()
+  if pre_daf:
+      _pre=[x for x in blocks[:blocks.index(_fb)] if role_of(x)!='skip']
+      _op=next((k for k,x in enumerate(_pre) if role_of(x) in PRE_REAL and x['text'].strip()),None)
+      if _op is None: pre_daf=''
+      else:
+          _rng=[x['i'] for x in _pre[:_op] if role_of(x)=='perek-range' and x['text'].strip()]
+          PRE_DROP={x['i'] for x in _pre[:_op]}-set(_rng[-1:])
   pre_page=None; n_pre=0; n_pre_drop=0; daf_fix=[]
   DAF_FIX={'כתובות':{36:('ג:','ג.'),422:('יג.','יג:')}}
   for bi,b in enumerate(blocks):
@@ -1200,12 +1212,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           # להמתין ליחידה הבאה, שתקבל אותו במסילתה יחד עם ציון הדף.
           cur={'daf':t,'perek':perek,'perekName':perekName,'units':[]}; pages.append(cur); unit=None
           continue
+      if b['i'] in PRE_DROP:
+          n_pre_drop+=1; continue
       if cur is None:
-          # ז (6.11.2026): משנה או כותרת פרק שבאות לפני ציון הדף הראשון
-          # נזרקו כאן בשקט (כתובות: המשנה וכל דף ב.). מעתה הן פותחות את
-          # העמוד שלפני ציון הדף הראשון. מזהי הפסקאות אינם משתנים.
-          # ריהוט שלפני הפתיחה (שער, הקדמה) נשאר מחוץ לדף כמקודם.
-          if pre_daf and r in PRE_OPEN:
+          # ז (6.11.2026): הפתיחה שלפני ציון הדף הראשון (ראה למעלה)
+          if pre_daf:
               cur={'daf':pre_daf,'perek':perek,'perekName':perekName,'units':[]}; pages.append(cur); unit=None
               pre_page=cur; n_pre+=1
           else:

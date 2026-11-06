@@ -19,12 +19,12 @@ STATE = os.path.join(D, 'sync-state.json')
 DRY = '--dry' in sys.argv
 
 
-def call(path, body=None):
+def call(path, body=None, method=None):
     key = os.environ.get('LEOKMEI_ADMIN_KEY', '')
     if not key:
         sys.exit('חסר LEOKMEI_ADMIN_KEY')
     data = None if body is None else json.dumps(body, ensure_ascii=False).encode('utf-8')
-    rq = urllib.request.Request(API + path, data=data, method='POST' if body is not None else 'GET',
+    rq = urllib.request.Request(API + path, data=data, method=method or ('POST' if body is not None else 'GET'),
                                 headers={'x-admin-key': key, 'content-type': 'application/json; charset=utf-8',
                                          'user-agent': 'leokmei-sakem-sync'})
     with urllib.request.urlopen(rq, timeout=60) as r:
@@ -123,6 +123,29 @@ def main():
         changed += 1
     if got and not DRY:
         call('/sakem/committed', {'jids': got})
+
+    # ד. תיקוני מנהל שהוכנו בריפו (6.11.2026): data/sakem/edits-put/<מסכת>-<שם>.json = {slug, edits:[...]}
+    #    נכנסים לנקודת הקליטה כמו עריכה מן הדף (PUT /edits), ומשם לאתר ולוורד בלילה. רשומה שמפתחה כבר
+    #    קיים שם אינה נדרסת - נאמרת ומדולגת. הקובץ עובר ל-done/ אחרי ההעלאה.
+    ep = os.path.join(D, 'edits-put')
+    for fn in sorted(os.listdir(ep)) if os.path.isdir(ep) else []:
+        if not fn.endswith('.json'):
+            continue
+        fp = os.path.join(ep, fn)
+        req = json.load(io.open(fp, encoding='utf-8'))
+        slug = req.get('slug', '')
+        cur = {e.get('k') for e in (call('/edits?slug=' + slug).get('doc') or {}).get('edits', [])}
+        new = [e for e in req.get('edits', []) if e.get('k') and e['k'] not in cur]
+        for e in req.get('edits', []):
+            if e.get('k') in cur:
+                print('  תיקון מנהל: המפתח כבר קיים בנקודת הקליטה, מדולג:', slug, e.get('k'))
+        print('תיקוני מנהל:', fn, len(new), 'רשומות')
+        if not DRY:
+            if new:
+                call('/edits', {'slug': slug, 'edits': new}, method='PUT')
+            os.makedirs(os.path.join(ep, 'done'), exist_ok=True)
+            os.replace(fp, os.path.join(ep, 'done', fn))
+        changed += 1
 
     if not DRY:
         wjson(STATE, st)

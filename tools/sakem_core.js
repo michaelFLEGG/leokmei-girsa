@@ -12,6 +12,7 @@
        [מקור:25a.5]        הפניה לגמרא - נעול (סדר בלבד)
        [צד:...]            כותרת צד לשורה שאחריו; כמה ברצף = ערימת כותרות
        (תשובה) / (רווח) / (נושא) / (דה) / (רקע) / (נקודה)   סגנון הפסקה, בראש השורה
+       (משנה)              שורת משנה: השורה האחרונה לפני [משנה] נכנסת לתיבת המשנה (6.11.2026)
        כל שורה אחרת = פסקה.
      בתוך שורה: {אם:..} אמוראים (במשנה: תנאי המשנה), {הס:..} הסבר, {פס:..} פסוק,
      {דה:..} ד"ה משנה, {נש:..} נושא משנה, {מש:..} משנה, {כב:..} כותרת בשורה, {אות:..} אות פותחת,
@@ -21,7 +22,7 @@
   var SKC=(function(){
     var C2T={am:'אם',hs:'הס',ps:'פס',dm:'דה',ns:'נש',mf:'מפ',b:'ב',tn:'מש',kt:'כב',ot:'אות'};
     var T2C={};Object.keys(C2T).forEach(function(k){T2C[C2T[k]]=k});
-    var P2T={'in':'תשובה',sp:'רווח',nose:'נושא',dh:'דה',hr:'רקע',nk:'נקודה'};
+    var P2T={'in':'תשובה',sp:'רווח',nose:'נושא',dh:'דה',hr:'רקע',nk:'נקודה',mi:'משנה'};
     var T2P={};Object.keys(P2T).forEach(function(k){T2P[P2T[k]]=k});
     var ENT={amp:'&',lt:'<',gt:'>',quot:'"',apos:"'",nbsp:' '};
     function dec(s){return String(s).replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi,function(m,e){
@@ -115,7 +116,7 @@
         m=/^\[צד:(.*)\]$/.exec(s);
         if(m){out.push({t:'title',v:m[1].trim()});return}
         var sty='';
-        m=/^\((תשובה|רווח|נושא|דה|רקע|נקודה)\)\s*/.exec(s);
+        m=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(s);
         if(m){sty=T2P[m[1]];s=s.slice(m[0].length)}
         else{m=/^\{נושא:(.*)\}$/.exec(s);if(m){sty='nose';s=m[1]}}
         out.push({t:'line',sty:sty,v:s})});
@@ -321,15 +322,27 @@
       /* א2-א3: תיבת המשנה - רק לשון המשנה, מנוקדת */
       /* השוואה לפי שלד: כתיב מלא מול חסר (מדובללת / מדבללת) ואותיות סופיות אינם הבדל */
       var skel=function(t){return qnorm(t).replace(/[וי]/g,'').replace(/ך/g,'כ').replace(/ם/g,'מ').replace(/ן/g,'נ').replace(/ף/g,'פ').replace(/ץ/g,'צ')};
+      /* שורת משנה (משנה): רק השורה האחרונה שלפני [משנה] (6.11.2026) */
+      var TK=parse(text).filter(function(k){return !(k.t==='lock'&&k.kind==='מקור')});
+      TK.forEach(function(k,i){if(k.t!=='line'||k.sty!=='mi')return;var nx=TK[i+1];
+        if(!nx||nx.t!=='lock'||nx.kind!=='משנה')E.push('(משנה) מותר רק בשורה שמיד לפני [משנה]: '+plainI(k.v).slice(0,40))});
       if(o.mishna){var src=' '+skel(o.mishna)+' ',inM=false;
-        parse(text).forEach(function(k){
-          if(k.t==='lock'){if(k.kind!=='מקור')inM=k.kind==='משנה';return}
-          if(!inM||k.t!=='line')return;
-          var p=plainI(k.v),w=skel(p).split(' ').filter(function(x){return x.length>1});if(w.length<2)return;
-          var hit=w.filter(function(x){return src.indexOf(' '+x+' ')>-1||src.indexOf(x)>-1}).length;
-          /* הניקוד מועתק בבנייה מן המשנה המנוקדת רק למילה שאותיותיה זהות למקור (nikud_mishna.py): שורה רחוקה מן המקור
-             היא גם טקסט זר וגם משנה שלא תנוקד */
-          if(hit/w.length<0.6)E.push('טקסט שאינו מן המשנה בתוך תיבת המשנה (וגם לא ינוקד): '+p.slice(0,40))})}
+        var ratio=function(p){var w=skel(p).split(' ').filter(function(x){return x.length>1});if(w.length<2)return -1;
+          return w.filter(function(x){return src.indexOf(' '+x+' ')>-1||src.indexOf(x)>-1}).length/w.length};
+        TK.forEach(function(k,i){
+          if(k.t==='lock'){inM=k.kind==='משנה';return}
+          if(k.t!=='line')return;
+          var p=plainI(k.v),r=ratio(p);if(r<0)return;
+          if(inM||k.sty==='mi'){
+            /* הניקוד מועתק בבנייה מן המשנה המנוקדת רק למילה שאותיותיה זהות למקור (nikud_mishna.py): שורה רחוקה מן המקור
+               היא גם טקסט זר וגם משנה שלא תנוקד */
+            if(r<0.6)E.push('טקסט שאינו מן המשנה בתוך תיבת המשנה (וגם לא ינוקד): '+p.slice(0,40));return}
+          /* שורה מלשון המשנה שעומדת מחוץ לתיבה, מיד לפניה (סוכה כו: "מעשה והביאו לריב"ז") - נכנסת לתיבה */
+          /* רק שורה בסגנון "רווח לפני" (כך נכתבה בוורד שורת הפתיחה של המשנה שנשארה מחוץ לתיבה), מלשון המשנה,
+             שמיד אחריה [משנה]. שורת גמרא שמסכמת את המשנה (סוכה כא: "א. עבדים פטורים...") אינה בסגנון הזה */
+          var nx=TK[i+1];
+          if(k.sty==='sp'&&nx&&nx.t==='lock'&&nx.kind==="משנה"&&r>=0.6&&p.split(/\s+/).length>=3)
+            E.push('שורה מלשון המשנה מחוץ לתיבה, מיד לפניה - לסמן (משנה) בראש השורה: '+p.slice(0,40))})}
       return E}
     /* ---- החזרת עוגנים שבתוך השורה ([תוס':N], [מס:N]) אחרי עריכה ידנית (פרומפט 20, 5.11.2026) ----
        עריכה של המנהל לעולם אינה נפסלת בגלל עוגן שנמחק או זז: עוגן שחסר מוחזר אחרי המילים

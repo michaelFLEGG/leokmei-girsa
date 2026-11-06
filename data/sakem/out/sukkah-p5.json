@@ -3,7 +3,7 @@
  "jid": "sukkah-p5",
  "slug": "sukkah",
  "title": "סוכה פרק חמישי - החליל",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 1949,
@@ -697,5 +697,11 @@
    "warn": []
   }
  ],
- "t": 1793959709221
+ "t": 1793959723591,
+ "counts": {
+  "shown": 18,
+  "spatial": 4,
+  "adds": 4,
+  "missing": 0
+ }
 }

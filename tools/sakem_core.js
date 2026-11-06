@@ -292,13 +292,17 @@
     var NIKQ=/[\u0591-\u05C7]/g;
     function qnorm(t){return String(t).replace(NIKQ,'').replace(/["'״׳]/g,'').replace(/[^א-ת\s]/g,' ').replace(/\s+/g,' ').trim()}
     function quality(text,o){
-      o=o||{};var E=[],R=rows(text),seen={};
+      o=o||{};var E=[],seen={};
+      /* שורות תיבת המשנה אינן נבדקות לכפילות: הגמרא מצטטת את המשנה, וזו חזרה מכוונת */
+      var R=rows(text),RD=[],inM0=false;parse(text).forEach(function(k){
+        if(k.t==='lock'){if(k.kind!=='מקור')inM0=k.kind==='משנה';return}
+        if((k.t==='line'||k.t==='title')&&!inM0)RD.push({k:k.t,v:k.v,p:plainI(k.v).replace(/\s+/g,' ').trim()})});
       /* א1: שורות כפולות או כמעט כפולות (שורה שכולה בתוך שורה אחרת) */
-      R.forEach(function(r,i){var n=qnorm(r.p);if(n.length<8)return;
+      RD.forEach(function(r,i){var n=qnorm(r.p);if(n.length<8)return;
         if(seen[n]!==undefined){E.push('שורה כפולה: '+r.p.slice(0,40));return}
         seen[n]=i});
-      R.forEach(function(r,i){var n=qnorm(r.p);if(n.length<14)return;
-        R.forEach(function(q,j){if(i===j)return;var m=qnorm(q.p);if(m.length>n.length&&m.indexOf(n)>-1&&m.length-n.length<n.length)E.push('שורה שחוזרת בתוך שורה אחרת: '+r.p.slice(0,40))})});
+      RD.forEach(function(r,i){var n=qnorm(r.p);if(n.length<14)return;
+        RD.forEach(function(q,j){if(i===j)return;var m=qnorm(q.p);if(m.length>n.length&&m.indexOf(n)>-1&&m.length-n.length<n.length)E.push('שורה שחוזרת בתוך שורה אחרת: '+r.p.slice(0,40))})});
       /* א5: סמלילים מיותרים */
       R.forEach(function(r){var p=r.p;
         if(/(^|\s)•(\s|$)/.test(p)||/:\s*•/.test(p))E.push('סמליל מיותר (•): '+p.slice(0,40));

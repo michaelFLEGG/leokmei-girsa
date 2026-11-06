@@ -3,7 +3,7 @@
    בודק כל הצעה בשומר של סכם (tools/sakem_core.js - אותו שומר שבדף), ושומר התקדמות אחרי כל קטע.
 
    node tools/sakem/runner.mjs status                    התור ומצב כל עבודה
-   node tools/sakem/runner.mjs next                      העבודה הבאה (או "התור ריק", קוד יציאה 3) והכנת חומר הקריאה
+   node tools/sakem/runner.mjs next [jid]                העבודה הבאה (או עבודה מסוימת) (או "התור ריק", קוד יציאה 3) והכנת חומר הקריאה
    node tools/sakem/runner.mjs rules                     כללי הניסוח, הדוגמאות והלקחים - לקרוא לפני הכתיבה
    node tools/sakem/runner.mjs orig  <jid> <from> <to>   נוסח הביניים של טווח יחידות (כפי שהדף יראה אותו)
    node tools/sakem/runner.mjs plan  <jid> <plan.json>   חלוקת הפרק לקטעים טבעיים (אחרי קריאת כל הסוגיה)
@@ -133,7 +133,8 @@ if (cmd === 'status') {
   js.forEach((f) => { const jid = f.slice(0, -5), pk = rd(path.join(Q, f)), o = outOf(jid);
     console.log(jid, '·', pk.title || '', '·', o ? (o.status === 'ready' ? 'מוכן לסקירה' : 'בעבודה ' + o.done + '/' + o.total) : 'ממתין'); });
 } else if (cmd === 'next') {
-  const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return !o || o.status !== 'ready'; });
+  /* next <jid>: עבודה מסוימת (כמה עובדים במקביל, כל אחד על פרק אחר; 6.11.2026) */
+  const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready'); });
   if (!jid) die('התור ריק.', 3);
   const pk = pkOf(jid), o = outOf(jid);
   const dir = path.join(WORK, jid);

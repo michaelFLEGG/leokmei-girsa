@@ -761,8 +761,24 @@ def _apply_site_edits(pages, slug, qa):
     except Exception as e:
         qa.append(('קובץ התיקונים', 'לא ניתן לקרוא את קובץ התיקונים של האתר: %s' % e))
         return None
+    # 7.11.2026: מסכת שנבנית מצילום וורד מוצמד - גם התיקונים שנעשו אחרי הצילום, נקלטו לוורד החי המשובש
+    # והוסרו מקובץ התיקונים (data/word-pin/recovered-<מסכת>.json). בלעדיהם הם נעלמו מן האתר ומן ההדפסה.
+    # מוחלים רק כל עוד ההצמדה לאותו צילום קיימת, ואינם נכתבים חזרה לקובץ התיקונים.
+    _rec = []
+    try:
+        _wp = os.path.join(os.path.dirname(EDITS_DIR), 'word-pin')
+        _rp = os.path.join(_wp, 'recovered-' + slug + '.json')
+        if os.path.exists(_rp):
+            _rd = json.load(io.open(_rp, encoding='utf-8'))
+            _pins = json.load(io.open(os.path.join(_wp, 'pins.json'), encoding='utf-8'))
+            if _rd.get('pin') in _pins.values():
+                _have = {(x.get('k'), x.get('t')) for x in (doc.get('edits') or [])}
+                _rec = [dict(x, _rec=1) for x in _rd.get('edits') or [] if (x.get('k'), x.get('t')) not in _have and not x.get('del')]
+                print('תיקונים משוחזרים ל-%s (נקלטו לוורד המשובש): %d' % (slug, len(_rec)))
+    except Exception as _e:
+        qa.append(('תיקונים משוחזרים', 'לא נקראו: %s' % _e))
     # סדר הזמן: שינוי מבנה נשען על הנוסח שאחרי התיקון שקדם לו (כמו בדפדפן)
-    edits = sorted(doc.get('edits') or [], key=lambda e: e.get('t') or 0)
+    edits = sorted((doc.get('edits') or []) + _rec, key=lambda e: e.get('t') or 0)
     if not edits:
         return {'n': 0, 'taken': 0, 'lost': 0, 'done': 0}
     slots = _slots(pages)
@@ -996,7 +1012,9 @@ def _apply_site_edits(pages, slug, qa):
     if taken:
         qa.append(('תיקון שנקלט',
                    '%d תיקונים כבר נמצאים בקובץ הוורד והוסרו מקובץ התיקונים' % taken))
-    if len(keep) != len(edits):
+    _nrec = len(_rec)
+    keep[:] = [x for x in keep if not x.get('_rec')]
+    if len(keep) != len(edits) - _nrec:
         doc['edits'] = keep
         io.open(path, 'w', encoding='utf-8', newline='\n').write(
             json.dumps(doc, ensure_ascii=False, indent=1))

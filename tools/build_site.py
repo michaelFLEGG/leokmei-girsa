@@ -5401,11 +5401,24 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       for(let n=0;n<3&&!ok;n++){
         let sha=null;
         const g=await fetch(url+'?ref=main&z='+Date.now(),{headers:H,cache:'no-store'});
-        if(g.status===200){const j=await g.json();sha=j.sha}
+        let cur=null;
+        if(g.status===200){const j=await g.json();sha=j.sha;
+          /* 7.11.2026: איחוד עם מה שכבר בקובץ, ולא דריסה. במכשיר יש רק חלק מן העריכות (כ-100 מתוך 1,700
+             בכתובות), ודחיפה של הרשימה שלו בלבד מחקה את השאר עד האיחוד הבא של משימת האפייה - ובדקות
+             האלה האתר וההדפסה נבנו בלעדיהן. לכל מפתח נשמרת הגרסה החדשה יותר. */
+          try{const rr=await fetch(url+'?ref=main&r='+Date.now(),{headers:Object.assign({},H,{Accept:'application/vnd.github.raw'}),cache:'no-store'});
+            if(rr.ok)cur=await rr.json()}catch(e){cur=null}
+          if(!cur){why='לא נקרא הקובץ הקיים - מנסה שוב';break}}
         else if(g.status===404)sha=null;
         else if(g.status===401||g.status===403){why='המפתח נדחה';break}
         else {why='שגיאה '+g.status;break}
-        const pl={message:'תיקוני '+D.masechet+' מן האתר',content:b64(body),branch:'main'};
+        let out=body;
+        if(cur&&Array.isArray(cur.edits)){const mine=JSON.parse(body),kf=e=>e.k||('s'+e.t),by=new Map();
+          cur.edits.forEach(e=>by.set(kf(e),e));
+          mine.edits.forEach(e=>{const o=by.get(kf(e));if(!o||(e.t||0)>=(o.t||0))by.set(kf(e),e)});
+          mine.edits=[...by.values()].filter(e=>!e.del).sort((a,b)=>(a.t||0)-(b.t||0));
+          out=JSON.stringify(mine,null,1)}
+        const pl={message:'תיקוני '+D.masechet+' מן האתר',content:b64(out),branch:'main'};
         if(sha)pl.sha=sha;
         const r=await fetch(url,{method:'PUT',headers:H,body:JSON.stringify(pl)});
         if(r.ok)ok=true;

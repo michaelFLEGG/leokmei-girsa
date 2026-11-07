@@ -809,6 +809,18 @@ async function mergeEdits(env, slug, edits, sty) {
 }
 const JR_MAX = 300;
 
+/* חותמת העריכות של מסכת (7.11.2026): רק זמן העדכון האחרון, בלי התוכן. שירות ההדפסה
+   מצרף אותה למפתח המטמון, וכך עריכה חדשה מפיקה PDF חדש מיד. */
+async function editsStamp(env, url) {
+  const slug = url.searchParams.get('slug') || '';
+  if (!slugOk(slug)) return bad('מסכת לא תקינה');
+  const raw = (await env.STORE.get('ed:' + slug)) || '';
+  const m = raw.match(/"t":(\d+)\}\s*$/);
+  let t = m ? +m[1] : 0;
+  if (!m && raw) { try { t = JSON.parse(raw).t || 0; } catch (e) { t = 0; } }
+  return json({ ok: true, t });
+}
+
 async function getEdits(req, env, url, pub) {
   if (!pub && !(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   const slug = url.searchParams.get('slug') || '';
@@ -1911,6 +1923,7 @@ export default {
       if (p === '/decide' && req.method === 'POST') return await decide(req, env);
       if (p === '/edits' && req.method === 'GET') return await getEdits(req, env, url, false);
       if (p === '/live' && req.method === 'GET') return await getEdits(req, env, url, true);
+      if (p === '/edt' && req.method === 'GET') return await editsStamp(env, url);
       if (p === '/edits' && req.method === 'PUT') return await putEdits(req, env);
       if (p === '/title' && req.method === 'POST') return await titleSuggest(req, env);
       if (p === '/ingested' && req.method === 'POST') return await ingested(req, env);

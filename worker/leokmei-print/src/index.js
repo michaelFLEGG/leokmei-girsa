@@ -93,7 +93,15 @@ async function pdf(req, env, ctx, url) {
   if (tos === '1') {
     try { const t = await (await fetch(`${SUGGEST}/tos?slug=${encodeURIComponent(m)}`, { cf: { cacheTtl: 30 } })).json(); pick = String(t && t.t || ''); } catch (e) { pick = 'x'; }
   }
-  const key = 'print:v1:' + await sha(JSON.stringify([m, all, from, to, tos, duplex, profile, ver, pick]));
+  /* 7.11.2026: חותמת העריכות החיות. בלעדיה קובץ שהופק לפני עריכה הוגש שוב עד הבנייה הבאה,
+     והמנהל לא יכול היה להדפיס מיד אחרי תיקון. בלי תשובה מהשרת - בלי מטמון (מפיקים מחדש). */
+  let live = '';
+  try {
+    const lr = await fetch(`${SUGGEST}/edt?slug=${encodeURIComponent(m)}`, { cache: 'no-store' });
+    const lj = lr.ok ? await lr.json() : null;
+    live = lj && lj.ok ? String(lj.t || 0) : 'nolive-' + Date.now();
+  } catch (e) { live = 'nolive-' + Date.now(); }
+  const key = 'print:v1:' + await sha(JSON.stringify([m, all, from, to, tos, duplex, profile, ver, pick, live]));
   const hn = { kiddushin: 'קידושין' }[m] || m;
   const dfile = (all ? `${hn}.pdf` : `${hn} ${from}${to !== from ? ' - ' + to : ''}.pdf`).replace(/:/g, '꞉');
   const inline = q.get('inline') === '1';

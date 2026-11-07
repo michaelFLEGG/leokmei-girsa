@@ -615,6 +615,13 @@ def _set_cstyle(p, find, sid, author, when, nextid, at=None):
         # ריצה בתוך הוספה במעקב (w:ins) היא טקסט חי: מפצלים אותה במקומה
         if r.getparent().tag not in (W + 'p', W + 'ins'):
             return False
+    # כבר בסגנון הזה (7.11.2026): בלי הבדיקה, כל קליטה עטפה את אותו קטע בשינוי-מעקב
+    # חדש, והקובץ השתנה בכל עשר דקות גם כשלא היה מה לכתוב. None = אין מה לעשות.
+    def _rs(r):
+        x = r.find('w:rPr/w:rStyle', ns)
+        return x.get(W + 'val') if x is not None else ''
+    if all(_rs(r) == (sid or '') for _, _, r in touched):
+        return None
     for pos, txt, r in touched:
         a = max(lo - pos, 0)
         b = min(hi - pos, len(txt))
@@ -791,11 +798,18 @@ def apply(path, ops, author, masechet, log=print, dry=False):
             else:
                 missed.append((op, 'הפסקה כבר בסגנון הזה'))
         else:
-            if _set_cstyle(p, op.get('find') or '', sid, author, when, nextid, op.get('at')):
+            r_ = _set_cstyle(p, op.get('find') or '', sid, author, when, nextid, op.get('at'))
+            if r_ is None:
+                continue                # כבר בוורד בסגנון הזה
+            if r_:
                 done += 1
             else:
                 missed.append((op, 'הקטע אינו יחיד בפסקה, או שהוא בתוך שינוי-מעקב'))
 
+    if not done:
+        # אין שינוי: הקובץ אינו נכתב מחדש (7.11.2026). קודם נכתב גם כך, והקולט "שינה" את
+        # הוורד בכל סבב בלי לשנות דבר.
+        return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': True}
     tmp = tmp_path(path)
     _rezip(path, tmp, dict({'word/document.xml':
                        etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
@@ -1302,6 +1316,20 @@ def _apply_side(path, ops, author, masechet, log=print, dry=False):
                     and ROLE.get(before[h0 - 1]['style']) == 'anchor'
                     and norm_before[h0 - 1] == _nw(res[1])):
                 continue
+            # 7.11.2026: גם כשהכותרת יושבת בערימת הכותרות שמעל (לא הראשונה), או
+            # כשהיא כבר שורת גוף ממש מעל (unside החזיר אותה לגוף) - אין להוסיף שוב.
+            # בלי זה נוצר "ה"ק:" כותרת ואותה שורה בגוף (כתובות יא:).
+            if len(res) > 1 and _nw(res[0]) == want[0] and h0 > 0:
+                win_n = _nw(res[1])
+                j = h0 - 1
+                seen = False
+                while j >= 0 and ROLE.get(before[j]['style']) == 'anchor':
+                    if norm_before[j] == win_n:
+                        seen = True
+                        break
+                    j -= 1
+                if seen or norm_before[h0 - 1] == win_n:
+                    continue
             if not win_style:
                 missed.append((op, 'אין בקובץ סגנון חלון'))
                 continue

@@ -6,7 +6,13 @@
 שכולן הוספה במעקב של "עריכה מהאתר". הוא אינו נוגע בשום פסקה אחרת, מגבה לפני
 הכתיבה, ומאמת אחרי: מספר הפסקאות יורד בדיוק במספר המוסר, והשאר זהה.
 
-    uv run --with lxml python tools/dedupe_ins_paras.py <קובץ.docx> [--apply]
+הרחבה (7.11.2026, הכפלת תיקונים בוורד): גם זוג "כותרת צד ואותה שורה בגוף" -
+פסקת חלון (תפקיד anchor), ומיד אחריה פסקת גוף באותו נוסח. נוצר כש-unside החזיר
+כותרת לגוף והקליטה החוזרת הוסיפה אותה שוב. מוסרת רק שורת הגוף, וגם זה רק כשהיא
+כולה הוספה במעקב של "עריכה מהאתר" - כמו שהאתר מציג (_side_tidy ב-build_site).
+זוג ששורת הגוף בו אינה הוספה שלנו נשאר, ומדווח.
+
+    uv run --with lxml python tools/dedupe_ins_paras.py <קובץ.docx> [--apply] [--list]
 בלי --apply: רק מדווח מה היה מוסר."""
 import os, sys, zipfile
 from lxml import etree
@@ -16,6 +22,42 @@ from docx2json import convert
 
 W, ns = w.W, w.ns
 AUTHOR = 'עריכה מהאתר'
+
+
+def _roles(styles_xml):
+    """styleId -> תפקיד הסגנון (styles_map.ROLE), דרך שם הסגנון."""
+    from styles_map import ROLE, ALIAS
+    out = {}
+    for name, (sid, kind) in w._style_ids(styles_xml).items():
+        r = ROLE.get(ALIAS.get(name, name))
+        if r and sid not in out:
+            out[sid] = r
+    return out
+
+
+def _ptxt(p):
+    return ''.join(x.text or '' for x in p.iter(W + 't')).replace('\xa0', ' ').strip()
+
+
+def _role(p, roles):
+    ps = p.find('w:pPr/w:pStyle', ns)
+    return roles.get(ps.get(W + 'val'), 'body') if ps is not None else 'body'
+
+
+def side_pairs(doc, roles):
+    """זוגות של כותרת צד ומיד אחריה שורת גוף באותו נוסח. מחזיר (להסרה, נשארים לדיווח)."""
+    ps = [p for p in doc.find('w:body', ns) if p.tag == W + 'p']
+    drop, kept = [], []
+    for a, b in zip(ps, ps[1:]):
+        t = _ptxt(a)
+        if not t or _ptxt(b) != t:
+            continue
+        if _role(a, roles) != 'anchor' or not _role(b, roles).startswith('body'):
+            continue
+        ins = b.findall('w:ins', ns)
+        mine = bool(ins) and all(i.get(W + 'author') == AUTHOR for i in ins) and not b.findall('w:r', ns)
+        (drop if mine else kept).append(b)
+    return drop, kept
 
 
 def plan(doc):
@@ -51,12 +93,24 @@ def main():
         print('הקובץ פתוח בוורד. לא נוגע.'); return 2
     z = zipfile.ZipFile(path)
     doc = etree.fromstring(z.read('word/document.xml'))
+    roles = _roles(z.read('word/styles.xml'))
     z.close()
     drop = plan(doc)
+    sdrop, skept = side_pairs(doc, roles)
+    sdrop = [p for p in sdrop if p not in drop]
     before = convert(path)
-    print('פסקאות בקובץ: %d; כפולות להסרה: %d' % (len(before), len(drop)))
-    for p in drop[:3]:
-        print('   לדוגמה:', repr(''.join(x.text or '' for x in p.iter(W + 't'))))
+    print('פסקאות בקובץ: %d; כפולות צמודות להסרה: %d; שורות גוף שחוזרות על כותרת הצד שמעליהן: %d (ועוד %d שאינן הוספה שלנו - נשארות)'
+          % (len(before), len(drop), len(sdrop), len(skept)))
+    for p in drop[:5]:
+        print('   כפולה:', repr(_ptxt(p)[:70]))
+    for p in sdrop[:5]:
+        print('   כותרת וגוף:', repr(_ptxt(p)[:70]))
+    for p in skept[:5]:
+        print('   נשארת (לא שלנו):', repr(_ptxt(p)[:70]))
+    if '--list' in sys.argv:
+        for p in drop + sdrop:
+            print('   *', repr(_ptxt(p)))
+    drop = drop + sdrop
     if not do or not drop:
         return 0
     bk = w.backup(path, 'dedupe')

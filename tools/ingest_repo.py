@@ -187,16 +187,30 @@ def replay_plan(masechet, doc, docx_path):
     was_clean = not dirty_before.strip()
     old = B.EDITS_DIR
     B.EDITS_DIR = T
+    real_ase = B._apply_site_edits
+    got = {}
+
+    def ase(*a, **k):
+        r = real_ase(*a, **k)
+        got['r'] = r
+        return r
+    B._apply_site_edits = ase
     try:
         B.build(bj, os.path.join(T, slug + '.html'), masechet, hagaha=False,
                 sources=sources, spacing={})
         plan = list(B.PLAN)
     finally:
         B.EDITS_DIR = old
+        B._apply_site_edits = real_ase
         shutil.rmtree(T, ignore_errors=True)
         if was_clean:
             git(HERE, 'checkout', '--', *derived)
+    # התיקונים שהבנייה מצאה (הוחלו או "כבר בוורד") - לפי זמן הרישום. השאר תלושים.
+    LAST['found'] = set((got.get('r') or {}).get('b') or [])
     return plan
+
+
+LAST = {'found': set()}
 
 
 def _apply_one(path, e, doc, masechet, bk, log, dry):
@@ -214,10 +228,109 @@ def _apply_one(path, e, doc, masechet, bk, log, dry):
     return res
 
 
+# ---------------------------------------------------------------- יומן הקליטה (7.11.2026)
+# הבאג (6.11.2026, כתובות וסוכה): הבנייה מריצה את כל היסטוריית התיקונים מעל הוורד
+# הנוכחי, ומחליטה לכל תיקון בנפרד אם הוא "כבר בוורד". כשתיקון מאוחר מבטל את מראהו של
+# תיקון מוקדם (כותרת צד, ואחריה unside ואיחוי, ואחריה כותרת צד חדשה), המוקדם נראה
+# "לא נעשה" - והקולט כתב אותו לוורד שוב בכל סבב של עשר דקות. התוצאה: כותרות צד כפולות,
+# "כותרת ואותה שורה בגוף", ותיקוני נוסח שנכתבו שוב על נוסח מתוקן.
+# התיקון: הקולט זוכר מה כבר הכניס לכל קובץ חי. תיקון שכבר נקלט (הוחל, או נבדק ולא
+# הוחל) אינו נכתב שוב לעולם. אם בעל הפרויקט דחה אותו בוורד - הוורד גובר.
+# היומן יושב ב-_שומר שליד הקבצים החיים (לא במאגר). שחזור הקובץ החי מצילום מאפס אותו:
+#     uv run --with lxml python tools/ingest_repo.py --restore-from <צילום.docx> --only <מסכת>
+
+def ledger_path(path):
+    d = os.path.join(word_apply.DRIVE, '_שומר', 'יומן קליטה')
+    return os.path.join(d, os.path.splitext(os.path.basename(path))[0] + '.json')
+
+
+def edit_key(e):
+    """מפתח יציב לתיקון: זמן הרישום ותוכנו (לא השדות שהבנייה מוסיפה לו)."""
+    import hashlib
+    core = {k: e.get(k) for k in ('t', 'op', 'kind', 'was', 'now', 'wasH', 'nowH',
+                                  'texts', 'resT', 'res', 'ps', 'psw', 'ins', 'where')}
+    h = hashlib.sha1(json.dumps(core, ensure_ascii=False, sort_keys=True).encode('utf-8')).hexdigest()[:16]
+    return '%s:%s' % (e.get('t'), h)
+
+
+def _sha(path):
+    import hashlib
+    with open(path, 'rb') as f:
+        return hashlib.sha1(f.read()).hexdigest()
+
+
+def load_ledger(path):
+    """done: נקלטו (נכתבו, נבדקו, או נמצאו כבר בוורד) - לעולם אינם נכתבים שוב.
+    lost: היו תלושים. מנוסים שוב רק אם הקובץ החי השתנה מאז הסבב האחרון שלא בידי
+    הקולט (בעל הפרויקט ערך בוורד) - שינוי של הקולט עצמו אינו "מגלה" להם עוגן חדש."""
+    try:
+        d = json.load(io.open(ledger_path(path), encoding='utf-8'))
+    except (OSError, ValueError):
+        d = {}
+    return set(d.get('done') or []), set(d.get('lost') or []), d.get('sha')
+
+
+def save_ledger(path, done, lost=(), sha=None):
+    lp = ledger_path(path)
+    os.makedirs(os.path.dirname(lp), exist_ok=True)
+    tmp = lp + '.%d.tmp' % os.getpid()
+    io.open(tmp, 'w', encoding='utf-8').write(json.dumps(
+        {'file': os.path.basename(path), 'sha': sha, 'done': sorted(done),
+         'lost': sorted(set(lost) - set(done))}, ensure_ascii=False, indent=0))
+    os.replace(tmp, lp)
+
+
+def adjacent_dups(path):
+    """מספר הפסקאות הצמודות בעלות נוסח זהה (כל סגנון: כותרת-כותרת, כותרת-גוף, גוף-גוף)."""
+    from docx2json import convert
+    v = [word_apply._nw(b['text']) for b in convert(path)]
+    return sum(1 for a, b in zip(v, v[1:]) if a and a == b)
+
+
+def restore_from(src, masechet, log=print):
+    """שלבים ג-ד של 6.11.2026: מחליף את הקובץ החי בצילום, אחרי גיבוי, ומאפס את היומן."""
+    path = docx_for(masechet)
+    if word_apply.is_open_in_word(path):
+        raise Refused('הקובץ פתוח בוורד. יש לסגור אותו ולהריץ שוב.')
+    # נקרא מתוך main, שכבר רץ בתוך word_apply.writer_lock()
+    bk = word_apply.backup(path, masechet)
+    log('גיבוי של הקובץ החי: ' + bk)
+    tmp = word_apply.tmp_path(path)
+    shutil.copyfile(src, tmp)
+    word_apply.swap(tmp, path)
+    try:
+        os.remove(ledger_path(path))
+    except OSError:
+        pass
+    log('הקובץ החי הוחלף בתוכן של %s, ויומן הקליטה אופס.' % src)
+
+
 def ingest_replay(masechet, doc, path, dry, log=print):
-    """קליטה לפי ההרצה: תיקון אחר תיקון, לפי הסדר. גיבוי אחד לפני הכתיבה הראשונה."""
+    """קליטה לפי ההרצה: תיקון אחר תיקון, לפי הסדר. גיבוי אחד לפני הכתיבה הראשונה.
+    תיקון שכבר רשום ביומן הקליטה של הקובץ אינו נכתב שוב; וכתיבה שהיתה יוצרת פסקאות
+    צמודות זהות מבוטלת ונאמרת."""
     plan = replay_plan(masechet, doc, path)
-    log('   תוכנית: %d תיקונים שהאתר מחיל בפועל' % len(plan))
+    done_keys, lost_keys, sha = load_ledger(path)
+    touched_outside = sha is not None and sha != _sha(path)
+    skip = done_keys | (set() if touched_outside else lost_keys)
+    full = len(plan)
+    plan = [x for x in plan if edit_key(x[1]) not in skip]
+    log('   תוכנית: %d תיקונים שהאתר מחיל בפועל; %d מהם כבר נקלטו בעבר ומדולגים'
+        % (full, full - len(plan)))
+    # מה שהבנייה מצאה כבר בוורד ואינו בתוכנית - נרשם כנקלט עכשיו, לפני הכתיבה: אחרי
+    # שתיקון מאוחר יותר ייכתב, הוא עלול להיראות "לא נעשה" ולהיכתב שוב (לפני רבי:, ה"ק:)
+    in_plan = {edit_key(x[1]) for x in plan}
+    found = LAST.get('found') or set()
+    for e in doc.get('edits') or []:
+        k = edit_key(e)
+        if k in in_plan:
+            continue
+        if e.get('t') in found:
+            done_keys.add(k)
+        else:
+            lost_keys.add(k)
+    if not dry:
+        save_ledger(path, done_keys, lost_keys, _sha(path))
     state = {'bk': None}
     real_backup = word_apply.backup
 
@@ -227,18 +340,35 @@ def ingest_replay(masechet, doc, path, dry, log=print):
         return state['bk']
 
     word_apply.backup = one_backup
-    ok = bad = 0
+    ok = bad = dup = 0
+    dups = None if dry else adjacent_dups(path)
+    keep = word_apply.tmp_path(path) + '.before'
     try:
         for item in plan:
             if item[0] == 'struct':
                 e = item[1]
             else:
                 e = dict(item[1], was=item[2]['was'], wasH=item[2]['wasH'])
+            if not dry:
+                shutil.copyfile(path, keep)
             try:
                 r = _apply_one(path, e, doc, masechet, None, lambda *a: None, dry)
             except Refused as x:
                 log('   נעצר: %s' % x)
                 break
+            if not dry:
+                # בדיקת ביטחון: כתיבה שהוסיפה פסקאות צמודות זהות - מוחזרת, ונאמרת
+                now_d = adjacent_dups(path)
+                if now_d > dups:
+                    word_apply.swap(keep, path)
+                    dup += 1
+                    log('    לא נכתב (היה יוצר פסקה כפולה): %s'
+                        % ((e.get('now') or ' | '.join(e.get('resT') or []))[:60]))
+                    r = {'applied': 0, 'missed': [(e, 'כפילות')]}
+                else:
+                    dups = now_d
+                done_keys.add(edit_key(item[1]))
+                save_ledger(path, done_keys, lost_keys, _sha(path))
             if r.get('failed') or (r['applied'] == 0 and r['missed']):
                 bad += 1
                 for o, why in r['missed'][:2]:
@@ -248,7 +378,11 @@ def ingest_replay(masechet, doc, path, dry, log=print):
                 ok += r['applied'] and 1 or 0
     finally:
         word_apply.backup = real_backup
-    log('   הוחלו %d תיקונים, %d לא' % (ok, bad))
+        try:
+            os.remove(keep)
+        except OSError:
+            pass
+    log('   הוחלו %d תיקונים, %d לא (מהם %d שהיו יוצרים כפילות)' % (ok, bad, dup))
     return ok, bad
 
 
@@ -260,9 +394,16 @@ def main():
     ap.add_argument('--legacy', action='store_true', help='הקליטה הישנה, אצווה אחת')
     ap.add_argument('--docx', default=None, help='קובץ וורד לבדיקה (במקום זה שבדרייב)')
     ap.add_argument('--install-task', action='store_true')
+    ap.add_argument('--restore-from', default=None,
+                    help='צילום docx שמחליף את הקובץ החי של --only (גיבוי לפני, ואיפוס יומן הקליטה)')
     a = ap.parse_args()
     if a.install_task:
         install_task(a.repo)
+        return
+    if a.restore_from:
+        if not a.only:
+            raise SystemExit('--restore-from דורש --only <מסכת>')
+        restore_from(a.restore_from, a.only)
         return
     docs = remote_edits(a.repo)
     if not docs:

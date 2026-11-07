@@ -1,7 +1,12 @@
 name: העלאת עריכות מן המאגר לנקודת הקליטה
 # 7.11.2026: כשהפרסום מן הדף אינו נקלט בשרת, העריכות נשמרות במאגר בלבד.
 # כאן הן עולות לשרת (מיזוג לפי מפתח וזמן), והשגיאה המדויקת נרשמת ביומן.
+# מ-7.11.2026 גם בכל דחיפה של עריכות מן הדף: עריכה שהגיעה למאגר (הדרך השלישית
+# של העורך) עולה לשרת תוך כדקה, ומוצגת ומודפסת מיד, בלי לחכות לבנייה.
 on:
+  push:
+    branches: [main]
+    paths: ['data/edits/**']
   workflow_dispatch:
     inputs:
       slugs:
@@ -10,6 +15,9 @@ on:
         default: ''
 permissions:
   contents: read
+concurrency:
+  group: push-edits-server
+  cancel-in-progress: false
 jobs:
   push:
     runs-on: ubuntu-latest
@@ -18,5 +26,5 @@ jobs:
       - name: העלאה
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
-          SLUGS: ${{ inputs.slugs }}
+          SLUGS: ${{ inputs.slugs || '' }}
         run: python tools/push_edits_server.py

@@ -10,6 +10,10 @@ import puppeteer from '@cloudflare/puppeteer';
 
 const SITE = 'https://leokmei.com';
 const SUGGEST = 'https://leokmei-suggest.m7654301.workers.dev';
+/* 7.11.2026: פנייה ישירה מ-Worker ל-Worker אחר באותו חשבון דרך כתובת workers.dev נחסמת
+   (Cloudflare 1042), ולכן בדיקת המנהל נכשלה תמיד - גם מנהל הוגבל לפרק אחד - וחותמת העריכות
+   לא נקראה. הפנייה עוברת בחיבור הפנימי (service binding) SUGGEST. */
+function sfetch(env, u, o) { return env && env.SUGGEST ? env.SUGGEST.fetch(u, o) : fetch(u, o); }
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
@@ -75,7 +79,7 @@ async function pdf(req, env, ctx, url) {
   /* הגבלת ההדפסה (13.10.2026): מבקר רגיל - פרק אחד לכל היותר בכל הפקה. מנהל (x-admin-key תקף) - בלי הגבלה.
      האכיפה כאן, ולא בממשק בלבד: בקשה ישירה לכתובת נבדקת כמו כל בקשה. הבדיקה קודמת למטמון, כדי ש-PDF
      רחב שהפיק מנהל לא יוגש למבקר. אם גבולות הפרקים אינם זמינים - נכשלים סגור. */
-  if (!(await isAdmin(req))) {
+  if (!(await isAdmin(req, env))) {
     if (all) return json({ error: ONE_MSG }, 403);
     const one = await oneChapter(m, from, to);
     if (one === null) return json({ error: 'ההדפסה אינה זמינה כרגע, נסה שוב בעוד רגע' }, 503);
@@ -91,13 +95,13 @@ async function pdf(req, env, ctx, url) {
   } catch (e) { return json({ error: 'האתר אינו זמין כרגע' }, 502); }
   let pick = '';
   if (tos === '1') {
-    try { const t = await (await fetch(`${SUGGEST}/tos?slug=${encodeURIComponent(m)}`, { cf: { cacheTtl: 30 } })).json(); pick = String(t && t.t || ''); } catch (e) { pick = 'x'; }
+    try { const t = await (await sfetch(env, `${SUGGEST}/tos?slug=${encodeURIComponent(m)}`, { cf: { cacheTtl: 30 } })).json(); pick = String(t && t.t || ''); } catch (e) { pick = 'x'; }
   }
   /* 7.11.2026: חותמת העריכות החיות. בלעדיה קובץ שהופק לפני עריכה הוגש שוב עד הבנייה הבאה,
      והמנהל לא יכול היה להדפיס מיד אחרי תיקון. בלי תשובה מהשרת - בלי מטמון (מפיקים מחדש). */
   let live = '';
   try {
-    const lr = await fetch(`${SUGGEST}/edt?slug=${encodeURIComponent(m)}`, { cache: 'no-store' });
+    const lr = await sfetch(env, `${SUGGEST}/edt?slug=${encodeURIComponent(m)}`, { cache: 'no-store' });
     const lj = lr.ok ? await lr.json() : null;
     live = lj && lj.ok ? String(lj.t || 0) : 'nolive-' + Date.now();
   } catch (e) { live = 'nolive-' + Date.now(); }
@@ -173,16 +177,18 @@ async function saveIssues(env, req, issues, warns) {
     await env.STORE.put(ISSUES_KEY, JSON.stringify(fresh.concat(cur).slice(0, 300)));
   } catch (e) { /* */ }
 }
-async function isAdmin(req) {
+async function isAdmin(req, env) {
   const k = req.headers.get('x-admin-key') || '';
   if (!k) return false;
   try {
-    const r = await fetch(`${SUGGEST}/stats/summary?days=1`, { headers: { 'x-admin-key': k } });
-    return r.ok;
+    const r = await sfetch(env, `${SUGGEST}/whoami`, { headers: { 'x-admin-key': k } });
+    if (!r.ok) return false;
+    const j = await r.json();
+    return !!(j && j.admin === true);
   } catch (e) { return false; }
 }
 async function issues(req, env) {
-  if (!(await isAdmin(req))) return json({ error: 'למנהל בלבד' }, 403);
+  if (!(await isAdmin(req, env))) return json({ error: 'למנהל בלבד' }, 403);
   if (req.method === 'POST') {
     let b; try { b = await req.json(); } catch (e) { return json({ error: 'גוף הבקשה אינו JSON' }, 400); }
     const cur = JSON.parse((await env.STORE.get(ISSUES_KEY)) || '[]');

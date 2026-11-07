@@ -20,3 +20,8 @@ database_id = "09171730-3be8-40a6-96c3-cee2059ab64a"
 
 [observability]
 enabled = false
+
+# 7.11.2026: חיבור פנימי לשרת העריכות (בדיקת מנהל, חותמת עריכות, נוסחי תוספות)
+[[services]]
+binding = "SUGGEST"
+service = "leokmei-suggest"

@@ -99,3 +99,5 @@ jobs:
         with: { path: site }
       - id: deployment
         uses: actions/deploy-pages@v4
+        # 7.11.2026: הסנכרון של גיטהאב נמשך יותר מ-10 דקות (ברירת המחדל), וכל העלאה בוטלה מאתמול
+        with: { timeout: 2400000 }

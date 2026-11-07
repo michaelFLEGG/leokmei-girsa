@@ -5339,7 +5339,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     return JSON.stringify({v:1,slug:SLUG,masechet:D.masechet,
       when:new Date().toISOString(),sty:D.sty,
       edits:ED.filter(e=>!e.lost).map(e=>e.op==='struct'
-        ? {op:'struct',kind:e.kind,ins:e.ins,where:e.where,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,cl:e.cl,
+        ? {k:e.k||('s'+e.t),op:'struct',kind:e.kind,ins:e.ins,where:e.where,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,cl:e.cl,
            daf:e.daf,t:e.t}
         : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
            ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t})},null,1)}

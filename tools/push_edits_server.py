@@ -22,7 +22,13 @@ def main():
     bad = 0
     for slug in slugs:
         rep = json.load(open(os.path.join(HERE, 'data', 'edits', slug + '.json'), encoding='utf-8'))
-        body = json.dumps({'slug': slug, 'edits': rep.get('edits') or [], 'sty': rep.get('sty')},
+        eds = rep.get('edits') or []
+        # עריכת מבנה (פיצול/איחוד) נשמרת במאגר בלי מפתח, והשרת מדלג על עריכה בלי מפתח.
+        # המפתח זהה לזה שהעורך נותן לה (edKeys בדף): 's' + הזמן.
+        for e in eds:
+            if not e.get('k') and e.get('op') == 'struct' and e.get('t'):
+                e['k'] = 's' + str(e['t'])
+        body = json.dumps({'slug': slug, 'edits': eds, 'sty': rep.get('sty')},
                           ensure_ascii=False).encode('utf-8')
         req = urllib.request.Request(API + '/edits', data=body, method='PUT', headers={
             'content-type': 'application/json; charset=utf-8', 'x-admin-key': key,

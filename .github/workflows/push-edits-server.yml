@@ -1,0 +1,22 @@
+name: העלאת עריכות מן המאגר לנקודת הקליטה
+# 7.11.2026: כשהפרסום מן הדף אינו נקלט בשרת, העריכות נשמרות במאגר בלבד.
+# כאן הן עולות לשרת (מיזוג לפי מפתח וזמן), והשגיאה המדויקת נרשמת ביומן.
+on:
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: 'מסכתות, מופרדות ברווח (ריק = כולן)'
+        required: false
+        default: ''
+permissions:
+  contents: read
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: העלאה
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+          SLUGS: ${{ inputs.slugs }}
+        run: python tools/push_edits_server.py

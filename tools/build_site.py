@@ -2152,7 +2152,22 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .og{display:inline-block;width:1.3em;height:0}
   .rail b.rlt{font-weight:900}
   /* 7.11.2026: העיטור שלפני משנה הוסר מן הבנייה; במקומו רווח (כמו Ctrl+0 בוורד) לפני תיבת המשנה. בהדפסה הרווח בא מ-gapm */
-  @media screen{body:not(.prn) .flow:not(.book) .row:not(:has(>.main.mishna)):not(.perek-start):not(.perek-num):not(.perek-name):not(.perek-range)+.row:has(>.main.mishna)>.main.mishna{margin-top:.6em}}
+  /* ח (7.11.2026): הרווח לפני משנה ואחריה לבן, מחוץ לתיבה האפורה. הרווח שבא מן הוורד (b/a בפסקה הראשונה
+     והאחרונה) יושב עכשיו על התיבה עצמה ולא בתוכה. גובה כולל לא השתנה. במסך בלבד; בהדפסה gapm. */
+  @media screen{
+    body:not(.prn) .main.mishna>p:first-child{margin-top:0}
+    body:not(.prn) .main.mishna>p:last-child{margin-bottom:0}
+    body:not(.prn) .main.mishna:has(>p.b1:first-child){margin-top:calc(var(--lhpx) * .5)}
+    body:not(.prn) .main.mishna:has(>p.b2:first-child){margin-top:var(--lhpx)}
+    body:not(.prn) .main.mishna:has(>p.b3:first-child){margin-top:calc(var(--lhpx) * 1.5)}
+    body:not(.prn) .main.mishna:has(>p.b4:first-child){margin-top:calc(var(--lhpx) * 2)}
+    body:not(.prn) .main.mishna:has(>p.a1:last-child){margin-bottom:calc(var(--lhpx) * .5)}
+    body:not(.prn) .main.mishna:has(>p.a2:last-child){margin-bottom:var(--lhpx)}
+    body:not(.prn) .main.mishna:has(>p.a3:last-child){margin-bottom:calc(var(--lhpx) * 1.5)}
+    body:not(.prn) .main.mishna:has(>p.a4:last-child){margin-bottom:calc(var(--lhpx) * 2)}
+    body:not(.prn) .flow:not(.book) .row:not(:has(>.main.mishna)):not(.perek-start):not(.perek-num):not(.perek-name):not(.perek-range)+.row:has(>.main.mishna>p.b0:first-child)>.main.mishna{margin-top:calc(var(--lhpx) * .5)}}
+  /* י (7.11.2026): ציון הדף של וילנא (ב. ג: ...) מרוחק מעט יותר מן הטקסט */
+  .rail:not(.hw) .dafmark{margin-left:.45em}
   .main.mishna p.hatz{font-size:calc(1.1em * var(--mr))}
   /* פתיחת פרק (6.10.2026): גוש עצמאי לפני המשנה הראשונה, ואינו מתנתק ממנה
      בהדפסה ובטורים: שמור עם הבא. */
@@ -4342,13 +4357,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const s=getSelection();if(!s.rangeCount)return false;
     const r=s.getRangeAt(0);if(!r.collapsed)return false;
     const q=document.createRange();q.selectNodeContents(el);q.setStart(r.endContainer,r.endOffset);
-    return q.toString().replace(/\s+$/,'').length===0}
+    return q.toString().replace(/[\s\u00a0\u200e\u200f\u200b\ufeff]+$/,'').length===0}
   /* מחיקה אחורה בראש פסקה: רק כשהסמן באמת בתו הראשון ואין בחירה */
   function atStart(el){
     const s=getSelection();if(!s.rangeCount)return false;
     const r=s.getRangeAt(0);if(!r.collapsed)return false;
     const q=document.createRange();q.selectNodeContents(el);q.setEnd(r.startContainer,r.startOffset);
-    return q.toString().length===0}
+    /* 7.11.2026: רווחים, רווח קשיח וסימני כיוון בראש הפסקה אינם תו. בלעדי זה מחיקה אחורה בפסקה
+       שנפתחת ברווח לא איחדה אותה עם הקודמת, אלא רק מחקה רווח, והאיחוי "לא עבד" */
+    return q.toString().replace(/[\s\u00a0\u200e\u200f\u200b\ufeff]/g,'').length===0}
 
   /* =================== כותרת צד: Ctrl+נקודה ===================
      מילה (או בחירה, או פסקה שלמה) עוברת לחלון כותרת במסילה הימנית,

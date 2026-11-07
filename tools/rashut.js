@@ -64,9 +64,11 @@
   var css = [
     'i.ps.rs-ps{cursor:pointer;border-radius:3px;transition:background .15s}',
     'i.ps.rs-ps:hover{background:rgba(209,162,58,.16);box-shadow:0 1px 0 rgba(143,106,30,.55)}',
-    '.rs-zg{display:flex;align-items:center;justify-content:center;margin:3px auto 0;width:18px;height:18px;border-radius:50%;border:1px solid #c9a24a;',
-    '  background:#0f263b;color:#e9c35a;font:700 10px/1 Frank,serif;cursor:pointer;padding:0}',
-    '.rs-zg:hover{background:#173a58}',
+    /* ט (7.11.2026): סימן הזוהר צף מעל המסילה ואינו תופס מקום - אסור לו להזיז שורה. שקוף למחצה, מלא במעבר עכבר */
+    '.rail:has(>.rs-zg){position:relative}',
+    '.rs-zg{position:absolute;top:1.25em;left:.4em;right:auto;margin:0;width:15px;height:15px;border-radius:50%;border:1px solid rgba(201,162,74,.6);display:flex;align-items:center;justify-content:center;',
+    '  background:rgba(15,38,59,.28);color:rgba(233,195,90,.9);font:700 9px/1 Frank,serif;cursor:pointer;padding:0;z-index:2;opacity:.55;line-height:1}',
+    '.rs-zg:hover{opacity:1;background:#173a58}',
     '#rsPeek{position:fixed;z-index:2147483000;top:0;left:0;bottom:0;width:min(400px,92vw);background:#fffdf8;color:#1b1b1b;box-shadow:0 0 0 1px #e3dacb,0 10px 40px rgba(11,28,42,.28);',
     '  display:flex;flex-direction:column;transform:translateX(-104%);transition:transform .22s ease;direction:rtl;font-family:Frank,"Frank Ruehl CLM",serif}',
     '#rsPeek.open{transform:none}',

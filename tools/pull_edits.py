@@ -74,19 +74,33 @@ def main(emit=True):
     for slug, doc in allx.items():
         if slug not in known:
             continue
-        edits = [e for e in doc.get('edits') or [] if not e.get('del') and not e.get('ing')]
-        edits.sort(key=lambda e: e.get('t') or 0)
         path = os.path.join(OUT, slug + '.json')
-        if not edits and not os.path.exists(path):
-            continue
-        new = {'v': 1, 'slug': slug, 'masechet': names.get(slug, ''), 'sty': doc.get('sty'),
-               'edits': edits}
         old = None
         if os.path.exists(path):
             try:
                 old = json.load(io.open(path, encoding='utf-8'))
             except Exception:
                 old = None
+        # 7.11.2026 - איחוד ולא דריסה. מאז 6.11 15:57 נקודת הקליטה אינה מקבלת פרסום, והעורך שבדף עובר
+        # לדרך השלישית: דחיפת כל העריכות שבמכשיר לקובץ הזה במאגר. ההרצה הזאת דרסה את הקובץ בכל 5 דקות
+        # בגרסה הישנה שבנקודת הקליטה, והעריכות נעלמו מן האתר ומן ההדפסה (נשארו רק במכשיר של המנהל).
+        # עכשיו: כל עריכה שבקובץ או בנקודת הקליטה נשמרת, ולאותו מפתח - הגרסה החדשה יותר.
+        # ועוד: מסכת שנבנית מצילום וורד מוצמד - עריכה שנקלטה לוורד החי (ing) נשארת, כי הצילום אינו מכיל אותה.
+        _pinned = os.path.exists(os.path.join(HERE, 'data', 'word-pin', 'recovered-%s.json' % slug))
+        _key = lambda e: e.get('k') or ('s%s' % e.get('t'))
+        by = {}
+        for e in doc.get('edits') or []:
+            by[_key(e)] = e
+        for e in (old or {}).get('edits') or []:
+            o = by.get(_key(e))
+            if o is None or (e.get('t') or 0) > (o.get('t') or 0):
+                by[_key(e)] = e
+        edits = [e for e in by.values() if not e.get('del') and (_pinned or not e.get('ing'))]
+        edits.sort(key=lambda e: e.get('t') or 0)
+        if not edits and not os.path.exists(path):
+            continue
+        new = {'v': 1, 'slug': slug, 'masechet': names.get(slug, ''), 'sty': doc.get('sty') or (old or {}).get('sty'),
+               'edits': edits}
         if old is not None and cmp(old) == cmp(new):
             continue
         if not edits and old is not None and not (old.get('edits') or []):

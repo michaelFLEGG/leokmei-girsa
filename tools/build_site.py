@@ -2168,6 +2168,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .row.hatz{break-after:avoid-column}
   /* 7.11.2026: רווח בין שתי דעות באותה שורה (ראה lgLook), ואות מספור מודגשת בכותרת צד */
   .og{display:inline-block;width:1.3em;height:0}
+  @media screen{body:not(.prn) .dupmark{outline:2px solid #d0342c;outline-offset:1px;background:rgba(208,52,44,.09)}}
+  @media print{.dupmark{outline:0!important;background:none!important}}
   .rail b.rlt{font-weight:900}
   /* 7.11.2026: העיטור שלפני משנה הוסר מן הבנייה; במקומו רווח (כמו Ctrl+0 בוורד) לפני תיבת המשנה. בהדפסה הרווח בא מ-gapm */
   /* ח (7.11.2026): הרווח לפני משנה ואחריה לבן, מחוץ לתיבה האפורה. הרווח שבא מן הוורד (b/a בפסקה הראשונה
@@ -3455,6 +3457,30 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* מצב הצעה (מנה 2, 7.10.2026): מציע תיקון עובד באותו עורך בדיוק; כל פעולה נרשמת כהצעה ואינה מתפרסמת (suggest_edit.js) */
   let SUGM=false;
   function isAdmin(){try{return localStorage.getItem(AKEY)==='1'}catch(e){return false}}
+  /* 7.11.2026: סימון שורות כפולות - למנהל בלבד, במסך בלבד. שתי שורות סמוכות כמעט זהות (אחת בנוסח ישן
+     ואחת בחדש, או שורה שחוזרת גם בכותרת הצד): העליונה מסומנת באדום, כדי למחוק אותה. הסימון אינו
+     משנה דבר בנתונים או בפריסה (outline), ואינו מופיע בהדפסה. */
+  function dupNorm(t){return (t||'').replace(/[֑-ׇ]/g,'').replace(/[\s '"׳״\-–—.,:;!?()\[\]•·]/g,'')}
+  function dupSim(a,b){
+    if(a===b)return 1;
+    const s=a.length<b.length?a:b,l=a.length<b.length?b:a;
+    if(s.length>=6&&l.indexOf(s)>-1&&s.length/l.length>=.6)return .95;
+    const g=x=>{const m=new Map();for(let i=0;i<x.length-1;i++){const k=x.substr(i,2);m.set(k,(m.get(k)||0)+1)}return m};
+    const A=g(a),B=g(b);let n=0;A.forEach((v,k)=>{n+=Math.min(v,B.get(k)||0)});
+    return 2*n/Math.max(1,(a.length-1)+(b.length-1))}
+  let DUPT=0;
+  function dupMark(){
+    if(!isAdmin()||document.body.classList.contains('prn'))return;
+    const f=document.getElementById('flow');if(!f)return;
+    f.querySelectorAll('.dupmark').forEach(x=>{x.classList.remove('dupmark');x.removeAttribute('title')});
+    const els=[...f.querySelectorAll('.row .anchor, .row .main p')];
+    let pv=null,pt='',n=0;
+    for(const el of els){const t=dupNorm(el.textContent);if(!t)continue;
+      if(pv&&t.length>=6&&pt.length>=6&&dupSim(pt,t)>=.86){pv.classList.add('dupmark');pv.title='שורה כפולה: מחק את השורה המסומנת';n++}
+      pv=el;pt=t}
+    window.__DUPS=n}
+  function dupSoon(){clearTimeout(DUPT);DUPT=setTimeout(dupMark,700)}
+  try{new MutationObserver(m=>{if(!EDIT)dupSoon()}).observe(document.documentElement,{childList:true,subtree:true})}catch(e){}
   function ghTok(){try{return localStorage.getItem(TKEY)||''}catch(e){return ''}}
   /* אצל לומד שאינו מנהל ED הוא שכבת התיקונים שהתקבלו (מנקודת הקליטה),
      והיא אינה נשמרת במכשיר */

@@ -1209,7 +1209,13 @@
          הקובץ הישן; ועוד, הדפדפן עצמו שמר את התשובה 5 דקות. מעכשיו: גרסת העריכות שפורסמו (טביעה של
          תשובת /live) נצמדת לשם הפרופיל, שהוא חלק ממפתח השמירה של השירות - כל פרסום נותן קובץ חדש,
          ובלי פרסום חדש הקובץ השמור עדיין מוגש מיד. והבקשה עצמה אינה נשמרת בדפדפן. */
-      fetch(SUGGEST_API+'/live?slug='+encodeURIComponent(SLUG),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).catch(function(){return ''})
+      /* 7.11.2026: עריכה שעוד ממתינה בתור הפרסום נשלחת קודם, וההדפסה מחכה לה */
+      /* ומנהל שהמכשיר שלו אינו רשום בשרת: בלי מפתח המכשיר שירות ההפקה מגביל לפרק אחד.
+         מבקשים פעם אחת את מילת המנהל לפני ההפקה. */
+      var needKey=isAdm()&&!admHdr()['x-admin-key']&&typeof askAdminWord==='function';
+      var prePub=Promise.resolve().then(function(){return needKey?askAdminWord():null}).catch(function(){})
+        .then(function(){return (isAdm()&&typeof pubNow==='function'&&typeof pubPending==='function'&&pubPending())?pubNow(1):null}).catch(function(){});
+      prePub.then(function(){return fetch(SUGGEST_API+'/live?slug='+encodeURIComponent(SLUG),{cache:'no-store'})}).then(function(r){return r.ok?r.text():''}).catch(function(){return ''})
       .then(function(t){
         if(!t)t=String(Date.now());
         var h=2166136261;for(var i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}

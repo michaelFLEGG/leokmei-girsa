@@ -5276,7 +5276,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      בספירה מן התיקון הראשון שבתור. ביציאה מהדף התור נשלח מיד (pubFlush),
      ואם הדפדפן לא מאפשר - הוא נשמר ויישלח בכניסה הבאה. תיקון חוזר לאותה
      שורה מתאחד מאליו: ED מחזיק רשומה אחת לכל מקום. */
-  const PUBWIN=5*60*1000;
+  /* 7.11.2026: מ-5 דקות ל-10 שניות. בעל הפרויקט מדפיס מיד אחרי עריכה; השרת מקבל
+     עכשיו פרסום בזול (שמירה אחת ויומן בתקרה), ולכן אין צורך לרכז. */
+  const PUBWIN=10*1000;
+  let ADMASKED=false;
   let PUBNEXT=0, PUBDIRTY=false, PUBAT=0, PUBFAIL=0, PUBTK=null;
   function agoText(ms){const m=Math.floor(ms/60000);
     return m<1?'זה עתה':(m===1?'לפני דקה':'לפני '+m+' דקות')}
@@ -5360,6 +5363,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* הדרך הראשונה: נקודת הקליטה, ממכשיר מוכר. אין בה מפתח להזין, אין
        תלות במחשב הראשי, והתיקון מוצג לכל הלומדים מיד בטעינת הדף. משם
        נאפה לנתוני האתר ונקלט לוורד. */
+    /* 7.11.2026: מכשיר מנהל בלי מפתח מכשיר (מפרסם רק דרך המאגר) - העריכה הגיעה לאתר
+       ולהדפסה רק אחרי בנייה, וההדפסה הוגבלה לפרק אחד. מבקשים פעם אחת את מילת המנהל,
+       ומאז הפרסום ישיר ומיידי וההדפסה ללא הגבלה. */
+    if(!admKey()&&!ADMASKED&&typeof askAdminWord==='function'){ADMASKED=true;try{await askAdminWord()}catch(e){}}
     if(admKey()){
       try{
         const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty})});

@@ -144,7 +144,8 @@
     var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
     window.__PRN={state:'running',report:R};
     function W(m){R.warn.push(m);try{console.warn('[print] '+m)}catch(e){}}
-    var prof=await (await fetch('print-profiles/'+(QS.get('profile')||'a4')+'.json',{cache:'no-store'})).json();PROF=prof;
+    /* 7.11.2026: לשם הפרופיל עשויה להיצמד גרסת העריכות (a4v...), ראה prnGo. הקובץ הוא שם הפרופיל בלעדיה */
+    var prof=await (await fetch('print-profiles/'+((QS.get('profile')||'a4').replace(/v[0-9a-z]+$/,'')||'a4')+'.json',{cache:'no-store'})).json();PROF=prof;
     (function(){var P=prof,n=P.notes,h=P.header,ft=P.footer;
       var c=document.createElement('style');
       c.textContent=
@@ -1203,7 +1204,17 @@
       go.textContent='מכין את הקובץ...';
       var t0=Date.now(),iv=setInterval(function(){go.textContent='מכין את הקובץ... '+Math.round((Date.now()-t0)/1000)+' שניות'},1000);
       var ctrl=new AbortController();PRSEL.xhr={abort:function(){ctrl.abort()}};
-      fetch(PRINT_API+'/pdf?'+q.toString(),{signal:ctrl.signal,headers:admHdr()}).then(function(res){
+      /* 7.11.2026 - ההדפסה לא כללה עריכה שפורסמה זה עתה. השורש: שירות ההפקה שומר כל PDF שהפיק (14 יום) לפי
+         גרסת דף המסכת בלבד. עריכה שפורסמה אינה משנה את הדף עד הבנייה הבאה (5 עד 30 דקות ויותר), ולכן חזר
+         הקובץ הישן; ועוד, הדפדפן עצמו שמר את התשובה 5 דקות. מעכשיו: גרסת העריכות שפורסמו (טביעה של
+         תשובת /live) נצמדת לשם הפרופיל, שהוא חלק ממפתח השמירה של השירות - כל פרסום נותן קובץ חדש,
+         ובלי פרסום חדש הקובץ השמור עדיין מוגש מיד. והבקשה עצמה אינה נשמרת בדפדפן. */
+      fetch(SUGGEST_API+'/live?slug='+encodeURIComponent(SLUG),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).catch(function(){return ''})
+      .then(function(t){
+        if(!t)t=String(Date.now());
+        var h=2166136261;for(var i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}
+        q.set('profile','a4v'+('0000'+((h>>>0)%60466176).toString(36)).slice(-5));
+        return fetch(PRINT_API+'/pdf?'+q.toString(),{signal:ctrl.signal,headers:admHdr(),cache:'no-store'})}).then(function(res){
         if(!res.ok){return res.text().then(function(t){var m='';try{m=JSON.parse(t).error||''}catch(e){}throw new Error(m||('קוד '+res.status))})}
         return res.blob()}).then(function(blob){
         var lay=prnLay();

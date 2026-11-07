@@ -1933,6 +1933,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
               if isinstance(_u.get('a'),str) and 'class="mk"' in _u['a']: _u['a']=_mkre.sub('',_u['a'])
               for _ln in _u.get('l') or []:
                   if len(_ln)>1 and isinstance(_ln[1],str) and 'class="mk"' in _ln[1]: _ln[1]=_mkre.sub('',_ln[1])
+  # 7.11.2026 (בקשת בעל הפרויקט): אין עיטור לפני משנה. חציצה שמיד אחריה משנה אינה מוצגת, ובמקומה רווח
+  # לפני תיבת המשנה (באתר ב-CSS, בהדפסה gapm). חציצה שיש בה חלון צד נשארת, כדי שלא ייעלם תוכן. הוורד לא נגע.
+  _fl2=[(pg,u) for pg in pages for u in pg['units']]
+  _drop=set(id(u) for j,(pg,u) in enumerate(_fl2[:-1]) if u['k']=='hatz' and not u.get('w') and _fl2[j+1][1]['k']=='m')
+  if _drop:
+      for _p in pages: _p['units']=[u for u in _p['units'] if id(u) not in _drop]
+      qa.append(('טופל בתצוגה: עיטור לפני משנה','%d עיטורים שלפני משנה אינם מוצגים, ובמקומם רווח. הוורד לא נגע'%len(_drop)))
   data={'mbt':mbt,'mnseg':mnseg,'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 
@@ -2141,6 +2148,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* א8: חציצה אינה נשארת לבדה בתחתית טור. בעמוד המודפס מנוע הגיליונות
      מצמיד אותה לפסקה שאחריה. */
   .row.hatz{break-after:avoid-column}
+  /* 7.11.2026: רווח בין שתי דעות באותה שורה (ראה lgLook), ואות מספור מודגשת בכותרת צד */
+  .og{display:inline-block;width:1.3em;height:0}
+  .rail b.rlt{font-weight:900}
+  /* 7.11.2026: העיטור שלפני משנה הוסר מן הבנייה; במקומו רווח (כמו Ctrl+0 בוורד) לפני תיבת המשנה. בהדפסה הרווח בא מ-gapm */
+  @media screen{body:not(.prn) .flow:not(.book) .row:not(:has(>.main.mishna)):not(.perek-start):not(.perek-num):not(.perek-name):not(.perek-range)+.row:has(>.main.mishna)>.main.mishna{margin-top:.6em}}
   .main.mishna p.hatz{font-size:calc(1.1em * var(--mr))}
   /* פתיחת פרק (6.10.2026): גוש עצמאי לפני המשנה הראשונה, ואינו מתנתק ממנה
      בהדפסה ובטורים: שמור עם הבא. */
@@ -3103,7 +3115,26 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const d=document.createElement('div');d.innerHTML=h;
     d.querySelectorAll('i.ns,i.mk').forEach(x=>x.remove());
     return !d.textContent.replace(/[\s‏‎]/g,'')}
-  function unitHTML(u,daf,pi){return LTX(unitHTML0(u,daf,pi))}
+  function unitHTML(u,daf,pi){const h=LTX(unitHTML0(u,daf,pi));return (u.k==='u'&&!EDIT)?lgLook(h):h}
+  /* תצוגה בלבד (7.11.2026, בקשת בעל הפרויקט). אינו נוגע בנתונים ובוורד, ואינו פועל במצב עריכה.
+     א. שתי דעות באותה שורה: רווח קבוע לפני הדעה השנייה (פסיק או נקודה, ואחריו שם בסגנון אמוראים
+        או אות מספור). הרווח הוא רהיט (bkx) ולכן אינו נכנס לעולם לנוסח שנשלח לוורד. רווחים
+        שהוקלדו ידנית באותו מקום מתאחדים לתוכו, כדי שכל המקומות ייראו אותו דבר.
+     ב. אות מספור בראש כותרת צד (א. ב. ג.) - מודגשת.
+     ג. המילים לכו"ע ונחלקו - בסגנון אמוראים, כשאינן כבר בתוך סגנון אחר. */
+  const LG_AMW=/(^|[^א-ת])(ו?(?:לכו(?:"|&quot;|''|&#x27;&#x27;|״|”)ע|נחלקו))(?![א-ת])/g;
+  function lgAmWords(h){
+    if(h.indexOf('לכו')<0&&h.indexOf('נחלקו')<0)return h;
+    let dep=0;
+    return h.replace(/(<[^>]+>)|([^<]+)/g,(m,tag,txt)=>{
+      if(tag){if(/^<(i|b)[\s>]/.test(tag))dep++;else if(/^<\/(i|b)>/.test(tag))dep=Math.max(0,dep-1);return tag}
+      return dep?txt:txt.replace(LG_AMW,'$1<i class="am">$2</i>')})}
+  function lgLook(h){
+    const k=h.indexOf('<div class="main"');if(k<0)return h;
+    let r=h.slice(0,k),m=h.slice(k);
+    r=r.replace(/(<span class="anchor">(?:<i class="[a-z]+">)?)([א-ת]{1,2}\.)(?=[\s<&])/,'$1<b class="rlt">$2</b>');
+    m=m.replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,'$1<span class="bkx og" contenteditable="false"></span> ');
+    return lgAmWords(r)+lgAmWords(m)}
   function unitHTML0(u,daf,pi){
     const mk=daf!=null?dafMark(pi):'';
     const H=(u.ref?' data-ref="'+u.ref+'"':''),

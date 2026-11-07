@@ -777,6 +777,7 @@ async function mergeEdits(env, slug, edits, sty) {
   const doc = (await env.STORE.get(key, 'json')) || { slug, edits: [], sty: null };
   const by = {};
   for (const e of doc.edits) by[e.k] = e;
+  const fresh = [];
   for (const raw of edits) {
     const e = cleanEdit(raw);
     if (!e.k) continue;
@@ -786,15 +787,27 @@ async function mergeEdits(env, slug, edits, sty) {
       if (old && old.by && !e.by) e.by = old.by;
       if (old && old.sg && !e.sg) e.sg = old.sg;
       by[e.k] = e;
-      if (!old || (e.t || 0) > (old.t || 0)) await jrFromEdit(env, slug, e);
+      if (!old || (e.t || 0) > (old.t || 0)) fresh.push(e);
     }
   }
   doc.edits = Object.values(by).sort((a, b) => (a.t || 0) - (b.t || 0));
   if (sty) doc.sty = sty;
   doc.t = Date.now();
-  await env.STORE.put(key, JSON.stringify(doc));
+  /* 7.11.2026: העריכות נשמרות קודם, והיומן אחריהן ובתקרה. קודם נכתב היומן
+     לפני השמירה, רשומה לכל עריכה חדשה; פרסום שהביא יותר מכ-1000 עריכות
+     חדשות חרג ממכסת הפעולות של בקשה אחת ונכשל לפני השמירה - והכישלון חזר
+     בכל פרסום, כי אותן עריכות נשארו "חדשות". מ-6.11 15:57 לא נקלטה עריכה. */
+  const body = JSON.stringify(doc);
+  try { await env.STORE.put(key, body); }
+  catch (err) {
+    /* KV מגביל כתיבה אחת בשנייה לאותו מפתח: ניסיון חוזר אחד */
+    await new Promise((r) => setTimeout(r, 1100));
+    await env.STORE.put(key, body);
+  }
+  for (const e of fresh.slice(-JR_MAX)) await jrFromEdit(env, slug, e);
   return doc;
 }
+const JR_MAX = 300;
 
 async function getEdits(req, env, url, pub) {
   if (!pub && !(await isAdmin(req, env))) return bad('אין הרשאה', 401);

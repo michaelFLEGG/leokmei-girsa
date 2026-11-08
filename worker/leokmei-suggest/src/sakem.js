@@ -150,8 +150,15 @@ export async function sakemApi(req, env, url, p, h) {
   if (p === '/sakem/import') {
     const jid = String(b.jid || ''), o = b.out;
     if (!jidOk(jid) || !o || !Array.isArray(o.items)) return bad('תוצאה לא תקינה');
-    const J = await jobs(env), it = J.items.find((x) => x.jid === jid);
-    if (!it) return json({ ok: true, skipped: 'no-job' });
+    const J = await jobs(env);
+    let it = J.items.find((x) => x.jid === jid);
+    if (!it) {
+      /* עבודה שנשמטה מן הרשימה אך החבילה שלה קיימת - משוחזרת, לא מדולגת בשקט */
+      const pk = await env.STORE.get('skm:job:' + jid, 'json');
+      if (!pk) return json({ ok: true, skipped: 'no-job' });
+      it = { jid, slug: String(pk.slug || ''), kind: pk.kind === 'seg' ? 'seg' : 'perek', perek: +pk.perek || 0, title: String(pk.title || '').slice(0, 120), t: Date.now(), st: 'work', back: 1 };
+      J.items.push(it);
+    }
     await env.STORE.put('skm:out:' + jid, JSON.stringify(o));
     it.total = +o.total || 0;
     it.n = +o.done || 0;

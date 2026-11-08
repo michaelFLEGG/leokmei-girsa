@@ -1,0 +1,1 @@
+ - 08.11.2026 UTC - הושלמה bekhorot-p04-u02. finalize: 17 תוספות, 0 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku", "rewrite": "fable", "rr": "sonnet"}.

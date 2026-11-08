@@ -1,0 +1,1 @@
+ - 08.11.2026 UTC - הושלמה bekhorot-p03-u03. finalize: 5 תוספות, 0 לעיון המנהל. מנועים: {"write": ["sonnet"], "rv": "haiku"}.

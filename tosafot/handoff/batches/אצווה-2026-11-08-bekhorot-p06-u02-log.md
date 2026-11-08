@@ -1,0 +1,1 @@
+ - 08.11.2026 UTC - הושלמה bekhorot-p06-u02. finalize: 13 תוספות, 0 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku"}.

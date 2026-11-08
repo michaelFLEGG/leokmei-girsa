@@ -1,0 +1,1 @@
+ - 08.11.2026 UTC - הושלמה bekhorot-p01-u05. finalize: 6 תוספות, 0 לעיון המנהל. מנועים: {"write": ["sonnet"], "rv": "haiku", "rewrite": "fable", "rr": "sonnet"}.

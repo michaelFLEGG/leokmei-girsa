@@ -98,6 +98,41 @@
     "flagged": 1,
     "questions": 55
    }
+  },
+  "1": {
+   "status": "published",
+   "published": "2026-11-08T06:40:11Z",
+   "unc_done": true,
+   "handoff_units": [
+    "yoma-p01-u01",
+    "yoma-p01-u02",
+    "yoma-p01-u03",
+    "yoma-p01-u04",
+    "yoma-p01-u05"
+   ],
+   "result": {
+    "generated": 127,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 132
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-08T06:40:11Z",
+   "unc_done": true,
+   "handoff_units": [
+    "yoma-p04-u01",
+    "yoma-p04-u02"
+   ],
+   "result": {
+    "generated": 51,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 49
+   }
   }
  },
  "created": "2026-11-04T12:43:38Z",
@@ -137,7 +172,20 @@
    "mean": 0.422,
    "n": 4,
    "at": "2026-11-04T12:43:39Z"
+  },
+  {
+   "perek": 1,
+   "mean": 0.538,
+   "n": 10,
+   "at": "2026-11-08T06:40:11Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.449,
+   "n": 4,
+   "at": "2026-11-08T06:40:11Z"
   }
  ],
- "updated": "2026-11-04T12:43:39Z"
+ "updated": "2026-11-08T06:40:11Z",
+ "done": "2026-11-08T06:40:11Z"
 }

@@ -1,0 +1,166 @@
+{
+ "slug": "bekhorot",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-08T06:40:09Z",
+   "unc_done": true,
+   "handoff_units": [
+    "bekhorot-p01-u01",
+    "bekhorot-p01-u02",
+    "bekhorot-p01-u03",
+    "bekhorot-p01-u04",
+    "bekhorot-p01-u05"
+   ],
+   "result": {
+    "generated": 111,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 80
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-08T06:40:09Z",
+   "unc_done": true,
+   "handoff_units": [
+    "bekhorot-p02-u01",
+    "bekhorot-p02-u02"
+   ],
+   "result": {
+    "generated": 49,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 41
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-08T06:40:09Z",
+   "unc_done": true,
+   "handoff_units": [
+    "bekhorot-p03-u01",
+    "bekhorot-p03-u02",
+    "bekhorot-p03-u03"
+   ],
+   "result": {
+    "generated": 63,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 56
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-08T06:40:10Z",
+   "unc_done": true,
+   "handoff_units": [
+    "bekhorot-p04-u01",
+    "bekhorot-p04-u02"
+   ],
+   "result": {
+    "generated": 41,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 31
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-08T06:40:10Z",
+   "unc_done": true,
+   "handoff_units": [
+    "bekhorot-p05-u01",
+    "bekhorot-p05-u02"
+   ],
+   "result": {
+    "generated": 56,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 44
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-08T06:40:10Z",
+   "unc_done": true,
+   "handoff_units": [
+    "bekhorot-p06-u01",
+    "bekhorot-p06-u02"
+   ],
+   "result": {
+    "generated": 38,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 28
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-08T06:40:11Z",
+   "unc_done": true,
+   "handoff_units": [
+    "bekhorot-p07-u01"
+   ],
+   "result": {
+    "generated": 24,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 18
+   }
+  }
+ },
+ "created": "2026-11-08T06:40:08Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.462,
+   "n": 9,
+   "at": "2026-11-08T06:40:08Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.414,
+   "n": 4,
+   "at": "2026-11-08T06:40:09Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.272,
+   "n": 5,
+   "at": "2026-11-08T06:40:09Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.494,
+   "n": 3,
+   "at": "2026-11-08T06:40:09Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.272,
+   "n": 4,
+   "at": "2026-11-08T06:40:10Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.429,
+   "n": 3,
+   "at": "2026-11-08T06:40:10Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.268,
+   "n": 2,
+   "at": "2026-11-08T06:40:10Z"
+  }
+ ],
+ "updated": "2026-11-08T06:40:11Z"
+}

@@ -1226,6 +1226,97 @@ def _apply_deco(path, ops, author, masechet, log=print, dry=False):
     return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
 
 
+# ------------------------------------- מחיקת כותרת צד שלמה (pdelwin, 8.11.2026)
+# באתר: עריכת טקסט של חלון הכותרת (u<N>.0 / u<N>.w) לנוסח ריק - "כותרת הצד נמחקת"
+# בסקירה (כותרת נושא נכנסה מעליה), או מחיקה ידנית של כל הכותרת בעורך.
+# כתיקון טקסט רגיל היא נכשלה תמיד באימות: הטקסט נמחק, הפסקה התרוקנה ונעלמה מן
+# ההמרה, ומספר הפסקאות "השתנה". כאן הפסקה נמחקת כולה במעקב, כמו עיטור.
+# op: {kind: pdelwin, texts: [נוסח הכותרת], after: תחילת השורה שאחריה, daf}
+
+def _apply_delwin(path, ops, author, masechet, log=print, dry=False):
+    from styles_map import role_of
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    before = convert(path)
+    nb = [_nw(b['text']) for b in before]
+    role = [role_of(b) for b in before]
+
+    def next_body(i):
+        j = i + 1
+        while j < len(before) and role[j] in ('anchor', 'skip', 'daf'):
+            j += 1
+        return nb[j] if j < len(before) else ''
+
+    plan, missed = [], []
+    for op in ops:
+        w = _nw((op.get('texts') or [''])[0])
+        if not w:
+            missed.append((op, 'אין נוסח כותרת למחיקה'))
+            continue
+        cands = [i for i in range(len(before)) if role[i] == 'anchor' and nb[i] == w]
+        k0 = hagaha.daf_key(op.get('daf')) if op.get('daf') else None
+        if len(cands) > 1 and k0 is not None:
+            near = [i for i in cands if hagaha.daf_key(before[i].get('daf')) is not None
+                    and abs(hagaha.daf_key(before[i]['daf']) - k0) <= 1]
+            cands = near or cands
+        aw = _nw(op.get('after') or '')
+        if len(cands) > 1 and aw:
+            cands = [i for i in cands if next_body(i).startswith(aw)] or cands
+        if not cands:
+            missed.append((op, 'כותרת הצד אינה בוורד (אולי כבר נמחקה, או שנוסחה שונה)'))
+            continue
+        if len(cands) != 1:
+            missed.append((op, 'לא אותרה כותרת צד יחידה למחיקה (%d מועמדים)' % len(cands)))
+            continue
+        plan.append((cands[0], op))
+    if not plan:
+        return {'applied': 0, 'missed': missed, 'backup': None, 'verified': True}
+    gone = {i for i, _ in plan}
+    want_after = [t for n, t in enumerate(nb) if n not in gone]
+    if dry:
+        return {'applied': len(plan), 'missed': missed, 'backup': None, 'verified': None,
+                'plan': [(i, o['kind']) for i, o in plan]}
+
+    bk = backup(path, masechet)
+    log('גיבוי: ' + bk)
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    settings = z.read('word/settings.xml')
+    z.close()
+    counter = [9800]
+
+    def nextid():
+        counter[0] += 1
+        return counter[0]
+
+    when = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    xml_ps = _paragraph_map(doc, before)
+    done = 0
+    for i, op in sorted(plan, key=lambda x: -x[0]):
+        p = xml_ps.get(before[i]['i'])
+        if p is None or not _delete_paragraph(p, author, when, nextid):
+            missed.append((op, 'לא ניתן למחוק את כותרת הצד כאן (שינוי מעקב קיים או פסקה חסרה)'))
+            want_after = None
+            continue
+        done += 1
+    if want_after is None or not done:
+        return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': True}
+
+    tmp = tmp_path(path)
+    _rezip(path, tmp, {'word/document.xml':
+                       etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True),
+                       'word/settings.xml': _ensure_track(settings)[0]})
+    after = convert(tmp)
+    got = [_nw(b['text']) for b in after]
+    if got != want_after:
+        os.remove(tmp)
+        log('האימות נכשל. הקובץ לא נגע.')
+        return {'applied': 0, 'missed': missed, 'backup': bk, 'verified': False}
+    swap(tmp, path)
+    log('נמחקו %d כותרות צד, ואומתו' % done)
+    return {'applied': done, 'missed': missed, 'backup': bk, 'verified': True}
+
+
 # ------------------------------------- כותרת צד: Ctrl+נקודה (pside / punside)
 
 def apply_struct(path, ops, author, masechet, log=print, dry=False):
@@ -1236,7 +1327,9 @@ def apply_struct(path, ops, author, masechet, log=print, dry=False):
     side = [o for o in ops if o.get('kind') in ('pside', 'punside')]
     deco = [o for o in ops if o.get('kind') in ('pdel', 'prep')]
     usm = [o for o in ops if o.get('kind') == 'pusm']
-    rest = [o for o in ops if o not in old and o not in side and o not in hs and o not in deco and o not in usm]
+    delwin = [o for o in ops if o.get('kind') == 'pdelwin']
+    rest = [o for o in ops if o not in old and o not in side and o not in hs and o not in deco
+            and o not in usm and o not in delwin]
     out = {'applied': 0, 'missed': [(o, 'סוג שינוי מבנה לא מוכר') for o in rest],
            'backup': None, 'verified': True}
     # כותרת בשתיים: קודם הפיצול (הפסקה השנייה יורשת את סגנון הכותרת), ואחריו
@@ -1261,7 +1354,8 @@ def apply_struct(path, ops, author, masechet, log=print, dry=False):
         out['missed'] += r2.get('missed') or []
         if r2.get('verified') is False:
             out['verified'] = False
-    for fn, batch in ((_apply_split_merge, old), (_apply_side, side), (_apply_deco, deco), (_apply_usm, usm)):
+    for fn, batch in ((_apply_split_merge, old), (_apply_side, side), (_apply_deco, deco), (_apply_usm, usm),
+                      (_apply_delwin, delwin)):
         if not batch:
             continue
         r = fn(path, batch, author, masechet, log=log, dry=dry)

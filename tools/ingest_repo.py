@@ -122,6 +122,12 @@ def ops_of(doc):
                 skipped.append((e, 'סוג שינוי מבנה לא מוכר: %r' % kind))
             continue
         was, now = e.get('was', ''), e.get('now', '')
+        # ---- כותרת צד שנמחקה כולה (8.11.2026): מחיקת הפסקה, לא ריקון טקסט ----
+        # ריקון כתיקון טקסט נכשל תמיד באימות (הפסקה הריקה נעלמת מן ההמרה).
+        if re.match(r'^u\d+\.(0|w)(~|$)', e.get('k') or '') and was.strip() and not now.strip():
+            mops.append({'kind': 'pdelwin', 'texts': [was], 'daf': e.get('daf', ''),
+                         'after': (e.get('ctx') or {}).get('a', '')})
+            continue
         if was != now:
             find, repl = minimal_span(was, now)
             if find or repl:

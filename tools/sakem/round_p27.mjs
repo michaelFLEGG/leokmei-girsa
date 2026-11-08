@@ -15,7 +15,9 @@ const B = JSON.parse(fs.readFileSync(baseF, 'utf8'));
 const RU = JSON.parse(fs.readFileSync(rulesF, 'utf8'));
 const HZ = new Set(JSON.parse(fs.readFileSync(hatzF, 'utf8')));
 const plainHead = (s) => SKC.plainI(String(s).replace(/^\((נושא|דה)\)\s*/, '').replace(/^\[כותרת-(נושא|דה):/, '').replace(/\]$/, '')).trim();
-const items = [], stat = [];
+const items = [], stat = [], soft = [];
+/* כלל שלא נמצא (המנהל כבר עשה אותו בעצמו, או שהנוסח השתנה מאז) - מדולג ונרשם, לא עוצר את כל הסבב */
+const miss = (iid, m) => soft.push(iid + ': ' + m);
 for (const b of B) {
   const orig = b.text; if (!orig) continue;
   let L = orig.split('\n');
@@ -50,19 +52,19 @@ for (const b of B) {
       if (/\{ב:[^}]*$/.test(before)) { done = true; break }
       L[i] = before + '{ב:' + w + '}' + L[i].slice(p + w.length); done = true; cnt.bold++; ch.push('הודגש במשנה: ' + w);
     }
-    if (!done) throw new Error(b.iid + ': לא נמצא במשנה: ' + r);
+    if (!done) miss(b.iid, 'לא נמצא במשנה: ' + r);
   }
   /* ג. כותרת צד: {from: תחילת השורה כפי שהיא, title: הכותרת, rest: תחילת השורה החדשה} */
   for (const r of (RU.side[b.iid] || [])) {
     const i = L.findIndex((l) => l.startsWith(r.from));
-    if (i < 0) throw new Error(b.iid + ': לא נמצאה שורה לכותרת צד: ' + r.from);
+    if (i < 0) { miss(b.iid, 'לא נמצאה שורה לכותרת צד: ' + r.from); continue; }
     L.splice(i, 1, '[צד:' + r.title + ']', r.rest + L[i].slice(r.from.length));
     cnt.side++; ch.push('כותרת צד: ' + r.title);
   }
   /* ד. רווח לפני */
   for (const r of (RU.space[b.iid] || [])) {
     const i = L.findIndex((l) => l.startsWith(r));
-    if (i < 0) throw new Error(b.iid + ': לא נמצאה שורה לרווח: ' + r);
+    if (i < 0) { miss(b.iid, 'לא נמצאה שורה לרווח: ' + r); continue; }
     L[i] = '(רווח) ' + L[i]; cnt.space++; ch.push('רווח לפני: ' + SKC.plainI(r).slice(0, 40));
   }
   const text = L.join('\n');
@@ -79,14 +81,21 @@ for (const b of B) {
   const errs = ck.errs.filter((e) => !/קצר מהמקור|ארוך מהמקור/.test(e) && !pre.has(e));
   if (errs.length) throw new Error(b.iid + ': השומר דחה: ' + errs.join(' · '));
   /* מספר היחידות שבקטע אחרי ההכרעות (לאיתור מחדש לפי התוכן בדף): קבוע + כותרות + יחידות טקסט */
-  const toks = SKC.parse(orig);
-  let n = toks.filter((k) => k.t === 'lock' && (k.kind === 'קבוע' || /^כותרת/.test(k.kind))).length;
-  SKC.segments(toks).forEach((s, si) => { n += s.units.length; if (si === 0 && s.units[0] && !s.units[0].titles.length && b.lead) n--; });
-  const ids = Array.from({ length: n }, (_, k) => b.ids[0] + k);
+  /* b.real: המזהים נלקחו מן הדף החי עצמו (פרומפט 27 ב, אחרי שהסבב הראשון לא נקלט) - הם המזהים האמיתיים */
+  let ids;
+  if (b.real) ids = b.ids;
+  else {
+    const toks = SKC.parse(orig);
+    let n = toks.filter((k) => k.t === 'lock' && (k.kind === 'קבוע' || /^כותרת/.test(k.kind))).length;
+    SKC.segments(toks).forEach((s, si) => { n += s.units.length; if (si === 0 && s.units[0] && !s.units[0].titles.length && b.lead) n--; });
+    ids = Array.from({ length: n }, (_, k) => b.ids[0] + k);
+  }
   items.push({ iid: b.iid, kind: 'seg', seg: b.seg, sugya: b.sugya, ids, orig, text, point: '', changes: ch, layers: ['ליטוש'], skipped: '', adds: [], warn: [], read: [], round: 'p27' });
 }
 const out = { v: 1, jid, slug: 'bava-batra', title, status: 'ready', plan: B.map((b) => ({ iid: b.iid })), total: items.length, done: items.length, items, t: Date.now(), rev: 'p27', counts: {} };
 fs.writeFileSync('data/sakem/out/' + jid + '.json', JSON.stringify(out, null, 1));
 fs.writeFileSync('_work/p27/round-stat.json', JSON.stringify(stat, null, 1));
 const tot = stat.reduce((a, s) => { for (const k of ['hatz', 'bold', 'side', 'space']) a[k] = (a[k] || 0) + s[k]; return a }, {});
+fs.writeFileSync('_work/p27/round-soft.json', JSON.stringify(soft, null, 1));
+console.log('דולגו:', soft.length);
 console.log('קטעים עם שינוי:', items.length, 'מתוך', B.length, JSON.stringify(tot));

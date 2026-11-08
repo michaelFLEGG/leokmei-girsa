@@ -1,0 +1,6 @@
+R=json.load(io.open('_work/p27/ranges.json',encoding='utf-8'))
+pg.evaluate("()=>{if(typeof setEdit==='function')setEdit(true)}")
+pg.wait_for_timeout(9000)
+out=pg.evaluate("""(R)=>{const H=window.__p27;return R.map(r=>{try{return {iid:r.iid,ids:r.ids,text:H.skmInter(H.skmUnits(r.ids))}}catch(e){return {iid:r.iid,ids:r.ids,err:String(e.message||e)}}})}""",R)
+io.open('_work/p27/base-live.json','w',encoding='utf-8').write(json.dumps(out,ensure_ascii=False,indent=1))
+print('errs',[o['iid'] for o in out if 'err' in o])

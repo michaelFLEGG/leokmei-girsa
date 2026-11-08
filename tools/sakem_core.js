@@ -718,8 +718,11 @@
       for(k=0;k<L.length;k++){m=HDEL_RE.exec(L[k]);if(m&&+m[1]===+id){i=k;break}}
       if(i<0)return false;
       var skip=function(s){return !String(s).trim()||/^\s*\[(מקור|דף|צד)[:\]]/.test(s)};
-      for(k=i-1;k>=0;k--){if(skip(L[k]))continue;if(isHeadLine(L[k]))return true;break}
-      for(k=i+1;k<L.length;k++){if(skip(L[k]))continue;return isHeadLine(L[k])}
+      /* כותרת נושא שבדף שמורה לעתים ככותרת צד ארוכה ([צד:המוכר שטר לחבירו]) - גם היא כותרת לעניין זה */
+      var topic=function(s){var m=/^\s*\[צד:(.+)\]\s*$/.exec(s);if(!m)return false;var v=m[1].trim();return !/:$/.test(v)&&!/^[א-ת]{1,2}\.$/.test(v)&&v.split(/\s+/).length>=2};
+      var head=function(s){return isHeadLine(s)||topic(s)};
+      for(k=i-1;k>=0;k--){if(head(L[k]))return true;if(skip(L[k]))continue;break}
+      for(k=i+1;k<L.length;k++){if(head(L[k]))return true;if(skip(L[k]))continue;return false}
       return false}
     return {hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
             quality:quality,qnorm:qnorm,aramNew:aramNew,aramWords:aramWords,squeeze:squeeze,SQ:{SEG:SQ_SEG,LINE:SQ_LINE,MIN:SQ_MIN},C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}

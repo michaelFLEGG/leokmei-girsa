@@ -3,7 +3,7 @@
  "jid": "bava-batra-p5",
  "slug": "bava-batra",
  "title": "בבא בתרא פרק חמישי - המוכר את הספינה",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 3799,
@@ -2011,5 +2011,11 @@
    ]
   }
  ],
- "t": 1794143215561
+ "t": 1794143224980,
+ "counts": {
+  "shown": 48,
+  "spatial": 0,
+  "adds": 2,
+  "missing": 0
+ }
 }

@@ -580,13 +580,17 @@
       for(let q=0;q<targets.length-1;q++){acc+=targets[q].length;
         let c=Math.round(L*acc/tot),best=-1;
         for(let d=0;d<L;d++){for(const x of [c-d,c+d])if(x>0&&x<L&&was[x]===' '&&(!cuts.length||x>cuts[cuts.length-1]+1)){best=x;break}if(best>-1)break}
-        if(best<0)throw new Error('לא ניתן לפצל שורה קצרה לכמה שורות');
-        cuts.push(best)}
+        /* פרומפט 27: בלי חסימה. אין גבול מילה מתאים - חותכים בתו כלשהו; אין גם תו - נוספת שורה
+           ריקה בסוף. כל חלק מקבל אחר כך את נוסחו המלא (setText), ולכן מקום החיתוך אינו משנה דבר בנוסח. */
+        if(cuts.length&&cuts[cuts.length-1]<0){cuts.push(-1);continue}
+        if(best<0)for(let d=0;d<L&&best<0;d++)for(const x of [c-d,c+d])if(x>0&&x<L&&(!cuts.length||x>cuts[cuts.length-1]+1)){best=x;break}
+        cuts.push(best<0?-1:best)}
       let prev=0;
       cuts.forEach((c,q)=>{const el=document.createElement('div');el.innerHTML=U.l[i+q][1];
-        const off=c-prev,pa=posAt(el,off),pb=posAt(el,off+1);
+        if(c<0){split(U,i+q,U.l[i+q][1],'',daf);return}
+        const sp=was[c]===' ',off=c-prev,pa=posAt(el,off),pb=posAt(el,sp?off+1:off);
         const h1=pieceHTML(el,null,pa),h2=pieceHTML(el,pb,null);
-        split(U,i+q,h1,h2,daf);prev=c+1})}
+        split(U,i+q,h1,h2,daf);prev=sp?c+1:c})}
     function side(U,pi,i,titleH,daf){
       const L=U.l[i],was=plain(L[1]);
       freezeEdits([was]);
@@ -606,15 +610,21 @@
         /* כותרת צד שנשארה כמות שהיא מפרידה בין קבוצות: היא אינה נמחקת ונכתבת מחדש (פחות שינויים בוורד).
            ההתאמה: תת-הרצף המשותף הארוך ביותר של כותרות היחידות שאחרי הראשונה */
         const OT=O.units.map(titlesOf),VT=N.units.map(v=>v.titles);
-        const A=OT.map(t=>t.join('|')),B=VT.map(t=>t.join('|'));
+        /* פרומפט 27 (8.11.2026, בבא בתרא עה. "כדכד"): כותרת חדשה בראש הקטע, לפני כותרת הצד הראשונה,
+           נקראת כיחידה בלי כותרת. בלי ההיסט הזה כל ההתאמה זזה ביחידה אחת: היחידה הראשונה במקור הותאמה
+           לשורת הכותרת לבדה, והשנייה לשתי יחידות - והמנוע ניסה לפצל שורה קצרה לשבע ונחסם. כאן היחידה
+           החדשה שבלי כותרת מצטרפת לקבוצה הראשונה, וההתאמה נמשכת מן היחידה שאחריה. */
+        const sh=(N.units.length>O.units.length&&!VT[0].length&&OT[0].length&&VT.length>1)?1:0;
+        const A=OT.map(t=>t.join('|')),B=VT.slice(sh).map(t=>t.join('|'));
         const L=[...Array(A.length+1)].map(()=>new Array(B.length+1).fill(0));
         for(let i=A.length-1;i>=1;i--)for(let j=B.length-1;j>=1;j--)
           L[i][j]=A[i]&&A[i]===B[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
         const cuts=[[0,0]];
         for(let i=1,j=1;i<A.length&&j<B.length;){
           if(A[i]&&A[i]===B[j]){cuts.push([i,j]);i++;j++}else if(L[i+1][j]>=L[i][j+1])i++;else j++}
+        const jb=(j,n)=>n?j+sh:j;
         const groups=cuts.map((c,n)=>{const nx=cuts[n+1]||[A.length,B.length];
-          return {O:O.units.slice(c[0],nx[0]),N:N.units.slice(c[1],nx[1])}});
+          return {O:O.units.slice(c[0],nx[0]),N:N.units.slice(jb(c[1],n),jb(nx[1],1))}});
         groups.forEach(g=>group(g.O,g.N,daf));
       });
       /* קבוצה: יחידות מקור שהראשונה בהן פותחת אותה, מול יחידות ההצעה המקבילות */

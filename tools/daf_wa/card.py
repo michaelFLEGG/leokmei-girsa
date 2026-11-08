@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""כרטיס התצוגה המקדימה של כל דף (פרומפט 23): 1200x630 JPEG ל-og:image.
+"""כרטיס התצוגה המקדימה של כל דף (פרומפט 23): 1200x480 JPEG ל-og:image (8.11.2026: נמוך יותר, לבקשת בעל הפרויקט).
 
 רץ אצל מי שכותב את תוכן ההודעה (שיחה במחשב או משימה בענן), אחרי שהבודק אישר את התוכן,
 ושומר ל-data/daf-wa/og/<slug>-<n>.jpg. הבנייה באתר רק מעתיקה (build.py) - כדי שבניית האתר
@@ -35,7 +35,7 @@ def render(jobs):
     os.makedirs(OG, exist_ok=True)
     with sync_playwright() as p:
         b = p.chromium.launch()
-        pg = b.new_page(viewport={'width': 1200, 'height': 630}, device_scale_factor=1)
+        pg = b.new_page(viewport={'width': 1200, 'height': 480}, device_scale_factor=1)
         for name, daf, line in jobs:
             pg.set_content(tpl.replace('@@DAF@@', H.escape(daf)).replace('@@LINE@@', H.escape(line)), wait_until='load')
             pg.evaluate('document.fonts.ready')

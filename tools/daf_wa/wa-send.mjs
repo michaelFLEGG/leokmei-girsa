@@ -117,7 +117,7 @@ async function close(cn) {
   cn.sock.end(undefined);
 }
 
-/** הכרטיס הגדול: התצוגה המקדימה של הקישור שבשורה הראשונה, בנויה מן הכרטיס של הדף (1200x630) - בלי לגרד את הדף */
+/** הכרטיס הגדול: התצוגה המקדימה של הקישור שבשורה הראשונה, בנויה מן הכרטיס של הדף (1200x480) - בלי לגרד את הדף */
 async function linkPreview(sock, text) {
   const m = String(text).match(/^(?:https?:\/\/)?(leokmei\.com\/daf\/([a-z-]+-\d+))\s*$/m);
   if (!m) return undefined;
@@ -130,7 +130,7 @@ async function linkPreview(sock, text) {
   if (img) {
     try {
       const { imageMessage } = await prepareWAMessageMedia({ image: img }, { upload: sock.waUploadToServer, mediaTypeOverride: 'thumbnail-link', logger });
-      if (imageMessage) { imageMessage.width = imageMessage.width || 1200; imageMessage.height = imageMessage.height || 630; lp.highQualityThumbnail = imageMessage; }
+      if (imageMessage) { imageMessage.width = imageMessage.width || 1200; imageMessage.height = imageMessage.height || 480; lp.highQualityThumbnail = imageMessage; }
       lp.jpegThumbnail = imageMessage && imageMessage.jpegThumbnail ? Buffer.from(imageMessage.jpegThumbnail) : img;
     } catch (e) { console.error('העלאת הכרטיס נכשלה, יוצא כרטיס קטן:', String(e && e.message || e).slice(0, 120)); lp.jpegThumbnail = img; }
   }

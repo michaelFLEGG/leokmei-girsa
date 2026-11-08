@@ -4,6 +4,7 @@
 /* כרטיס התצוגה המקדימה של הדף (פרומפט 23): 1200x480, כחול קטיפה ומסגרת זהב כפולה.
    כל התוכן בתוך המרכז (917 פיקסלים), כדי שגם חיתוך ליחס 1.91 (פייסבוק ודומיו) לא יקצץ אותו.
    8.11.2026 ערב (בעל הפרויקט): בלי ה-ל' - מיותר; גופן וילנא של בית אלף (BA Vilna) שלו; זהב שנראה זהב;
+   (ובהמשך הערב: שורת המותג, הכותרת והתאריך גדולים יותר ובוילנא - שייקראו גם כשווטסאפ במחשב מקטין את הכרטיס לרבע.)
    היום והתאריך בתוך התמונה, כדי שלא יתפסו שורות בהודעה; והשורה שמתחת לשם הדף - כותרת שמגדירה את הדף, לא עניין צדדי. */
 @font-face{font-family:'BAV';src:url(@@BA_B@@);font-weight:700}
 @font-face{font-family:'BAV';src:url(@@BA_R@@);font-weight:400}
@@ -16,15 +17,15 @@ body{background:radial-gradient(85% 130% at 50% 38%,#1b4467 0%,#11304a 45%,#0a1a
 .gold{background:linear-gradient(180deg,#fff8d6 0%,#ffe9a0 18%,#f4c95a 38%,#d99a26 52%,#b77514 60%,#e8b545 74%,#fbe08c 88%,#c98a1e 100%);
       -webkit-background-clip:text;background-clip:text;color:transparent;
       filter:drop-shadow(0 1px 0 #6b4308) drop-shadow(0 3px 2px rgba(20,10,0,.65)) drop-shadow(0 0 22px rgba(255,205,100,.22))}
-.txt{position:absolute;right:150px;left:150px;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.brand{font-family:'BAV',serif;font-weight:400;font-size:26px;letter-spacing:.18em;color:#d9b45e}
-.daf{font-family:'BAV',serif;font-weight:700;font-size:118px;line-height:1.05;margin:4px 0 2px;white-space:nowrap}
-.rule{display:flex;align-items:center;gap:14px;margin:6px 0 14px}
+.txt{position:absolute;right:120px;left:120px;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.brand{font-family:'BAV',serif;font-weight:700;font-size:40px;letter-spacing:.08em;color:#e2bf68}
+.daf{font-family:'BAV',serif;font-weight:700;font-size:112px;line-height:1.02;margin:0 0 0;white-space:nowrap}
+.rule{display:flex;align-items:center;gap:14px;margin:4px 0 10px}
 .rule i{display:block;width:150px;height:1.5px;background:linear-gradient(90deg,transparent,#e6c063 60%,#f7dc8a)}
 .rule i:last-child{background:linear-gradient(270deg,transparent,#e6c063 60%,#f7dc8a)}
 .rule b{display:block;width:9px;height:9px;transform:rotate(45deg);background:linear-gradient(135deg,#fff1bf,#d99a26)}
-.line{font-family:'Frank',serif;font-size:40px;line-height:1.25;color:#f3e7c8;max-width:840px;white-space:nowrap}
-.date{font-family:'BAV',serif;font-weight:400;font-size:27px;color:#cfae63;margin-top:16px;letter-spacing:.04em}
+.line{font-family:'BAV',serif;font-weight:700;font-size:54px;line-height:1.15;color:#f6ead0;max-width:880px;white-space:nowrap}
+.date{font-family:'BAV',serif;font-weight:700;font-size:36px;color:#dcb862;margin-top:12px;letter-spacing:.02em}
 </style></head><body>
 <div class="f1"></div><div class="f2"></div>
 <div class="txt">
@@ -51,7 +52,7 @@ body{background:radial-gradient(85% 130% at 50% 38%,#1b4467 0%,#11304a 45%,#0a1a
 /* שם מסכת ארוך או כותרת ארוכה: מקטינים עד שנכנסים בשורה אחת */
 window.fit=function(){
   var w=document.querySelector('.txt').clientWidth;
-  [['.daf',118,64],['.line',40,26]].forEach(function(a){var d=document.querySelector(a[0]),f=a[1];d.style.fontSize=f+'px';while(d.scrollWidth>w&&f>a[2]){f-=2;d.style.fontSize=f+'px'}});
+  [['.daf',112,64],['.line',54,34]].forEach(function(a){var d=document.querySelector(a[0]),f=a[1];d.style.fontSize=f+'px';while(d.scrollWidth>w&&f>a[2]){f-=2;d.style.fontSize=f+'px'}});
 };fit();
 </script>
 </body></html>

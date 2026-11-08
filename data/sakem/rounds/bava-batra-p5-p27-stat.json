@@ -1,0 +1,394 @@
+[
+ {
+  "iid": "s1",
+  "daf": "עג.",
+  "hatz": 0,
+  "bold": 1,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s2",
+  "daf": "",
+  "hatz": 1,
+  "bold": 0,
+  "side": 2,
+  "space": 1
+ },
+ {
+  "iid": "s3",
+  "daf": "עד.",
+  "hatz": 0,
+  "bold": 0,
+  "side": 1,
+  "space": 0
+ },
+ {
+  "iid": "s4",
+  "daf": "",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s5",
+  "daf": "",
+  "hatz": 1,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s6",
+  "daf": "עה.",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s7",
+  "daf": "",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s8",
+  "daf": "",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s9",
+  "daf": "",
+  "hatz": 2,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s10",
+  "daf": "עה:",
+  "hatz": 1,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s11",
+  "daf": "",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s12",
+  "daf": "עו.",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s13",
+  "daf": "עז.",
+  "hatz": 2,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s14",
+  "daf": "",
+  "hatz": 0,
+  "bold": 4,
+  "side": 2,
+  "space": 0
+ },
+ {
+  "iid": "s15",
+  "daf": "עח.",
+  "hatz": 0,
+  "bold": 1,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s16",
+  "daf": "עח.",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s17",
+  "daf": "",
+  "hatz": 1,
+  "bold": 6,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s18",
+  "daf": "עח:",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s19",
+  "daf": "עט.",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s20",
+  "daf": "פ.",
+  "hatz": 0,
+  "bold": 4,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s21",
+  "daf": "פ:",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s22",
+  "daf": "",
+  "hatz": 0,
+  "bold": 0,
+  "side": 1,
+  "space": 0
+ },
+ {
+  "iid": "s23",
+  "daf": "פא.",
+  "hatz": 0,
+  "bold": 2,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s24",
+  "daf": "פא:",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s25",
+  "daf": "פב:",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s26",
+  "daf": "",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s27",
+  "daf": "",
+  "hatz": 1,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s28",
+  "daf": "פג:",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s29",
+  "daf": "",
+  "hatz": 0,
+  "bold": 4,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s30",
+  "daf": "פד.",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s31",
+  "daf": "פד:",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s32",
+  "daf": "פד:",
+  "hatz": 0,
+  "bold": 2,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s33",
+  "daf": "",
+  "hatz": 1,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s34",
+  "daf": "פה:",
+  "hatz": 0,
+  "bold": 0,
+  "side": 5,
+  "space": 0
+ },
+ {
+  "iid": "s35",
+  "daf": "פו:",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s36",
+  "daf": "פז.",
+  "hatz": 1,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s37",
+  "daf": "פז:",
+  "hatz": 0,
+  "bold": 3,
+  "side": 1,
+  "space": 0
+ },
+ {
+  "iid": "s38",
+  "daf": "פח.",
+  "hatz": 0,
+  "bold": 1,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s39",
+  "daf": "",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s40",
+  "daf": "פח:",
+  "hatz": 0,
+  "bold": 5,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s41",
+  "daf": "",
+  "hatz": 1,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s42",
+  "daf": "פט.",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s43",
+  "daf": "פט:",
+  "hatz": 0,
+  "bold": 0,
+  "side": 1,
+  "space": 0
+ },
+ {
+  "iid": "s44",
+  "daf": "",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s45",
+  "daf": "צ.",
+  "hatz": 0,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s46",
+  "daf": "",
+  "hatz": 1,
+  "bold": 0,
+  "side": 0,
+  "space": 0
+ },
+ {
+  "iid": "s47",
+  "daf": "",
+  "hatz": 1,
+  "bold": 0,
+  "side": 3,
+  "space": 0
+ },
+ {
+  "iid": "s48",
+  "daf": "צא.",
+  "hatz": 1,
+  "bold": 0,
+  "side": 1,
+  "space": 0
+ },
+ {
+  "iid": "s49",
+  "daf": "",
+  "hatz": 0,
+  "bold": 0,
+  "side": 2,
+  "space": 0
+ }
+]

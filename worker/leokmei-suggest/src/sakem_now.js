@@ -27,6 +27,8 @@ const SITE = 'https://leokmei.com';
 const CAP_MSG = 'הגעת לתקרת החודש';
 const CREDIT_MSG = 'נגמר הקרדיט';
 const HVG = { 'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'כ': 20, 'ל': 30, 'מ': 40, 'נ': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'צ': 90, 'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400 };
+/* פרומפט 27 (8.11.2026): [מחק-עיטור:N] - העיטור יוצא מן המקור לפני השומר; רק עיטור שצמוד לכותרת (הקבלה בדף מוודאת שזה עיטור) */
+function ckH(orig, text, g) { const hd = SKC.hatzDel(orig, text); const ck = SKC.check(hd.orig, hd.text, g); const e = ck.errs.slice(); if (hd.bad && hd.bad.length) e.push("מחיקת עיטור שאינו בקטע: " + hd.bad.join(",")); for (const id of hd.ids) if (!SKC.hatzNearHead([(g && g.before) || "", text, (g && g.after) || ""].join(String.fromCharCode(10)), id)) e.push("עיטור " + id + " אינו צמוד לכותרת"); return { errs: e, warns: ck.warns }; }
 function dafNum(d) {
   d = String(d || '').trim();
   let n = 0;
@@ -244,7 +246,7 @@ async function generate(env, key, sys, msgs, orig, gemara, around) {
     /* פרומפט 22: כותרת צד ארוכה וכפילות ברורה אחרי כותרת מתוקנות אוטומטית, לפני השומר */
     const af = SKC.autofixTitles(p.text);
     if (af.changed) { p.text = af.text; p.changes = (p.changes || []).concat(af.notes.map((x) => 'אוטומטי: ' + x)).slice(0, 8); }
-    const ck = SKC.check(orig, p.text, g);
+    const ck = ckH(orig, p.text, g);
     errs = ck.errs; notes = ck.warns;
     if (!errs.length) break;
     if (round === 0) msgs = msgs.concat([{ role: 'assistant', content: p.raw }, { role: 'user', content: 'השומר שבקוד מצא בתשובה: ' + errs.join(' · ') +
@@ -254,7 +256,7 @@ async function generate(env, key, sys, msgs, orig, gemara, around) {
   /* פרומפט 26 (8.11.2026): הידוק יתר - קורא נפרד (מודל קטן, בלי המקור ובלי הגמרא) כותב במשפט מה כל שורה
      שהודקה בחוזקה אומרת; המודל הראשי משווה למקור וכותב מחדש בפחות הידוק את מה שלא הובן. */
   if (!errs.length) {
-    const sq = SKC.squeeze(orig, out.text);
+    const sq = SKC.squeeze(SKC.hatzDel(orig, out.text).orig, SKC.hatzDel(orig, out.text).text);
     if (sq.flag) {
       const lines = (sq.lines.length ? sq.lines.map((x) => x.now) : SKC.rows(out.text).filter((r) => r.k === 'line').map((r) => r.v)).map((l) => SKC.plainI(l)).slice(0, 12);
       const NL = String.fromCharCode(10);
@@ -274,7 +276,7 @@ async function generate(env, key, sys, msgs, orig, gemara, around) {
             if (!p2.err) {
               const af2 = SKC.autofixTitles(p2.text);
               if (af2.changed) p2.text = af2.text;
-              const ck2 = SKC.check(orig, p2.text, g);
+              const ck2 = ckH(orig, p2.text, g);
               if (!ck2.errs.length) { if (SKC.qnorm(p2.text) !== SKC.qnorm(out.text)) p2.changes = (p2.changes || []).concat(['קורא נפרד: הוחזרו מילים בשורה שהודקה מדי']).slice(0, 8); out = p2; notes = ck2.warns; rounds++; }
             }
           }

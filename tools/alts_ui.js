@@ -117,8 +117,8 @@
    '#altbar.dock{left:50%!important;top:auto!important;bottom:10px;transform:translateX(-50%);width:auto;min-width:330px;display:none;align-items:center;gap:10px;padding:5px 10px}'+
    '#altbar.dock.open{display:flex}#altbar.dock .ab{flex:0 0 auto}#altbar.dock button{flex:0 0 auto;padding:3px 14px}#altbar.dock .am2{margin:0;gap:8px}#altbar.dock .atg{margin:0}'+
    'body.altmode.altmob{padding-bottom:120px}'+
-   /* בטלפון, בזמן ההכרעה בלבד: הכפתורים הצפים מוסתרים כדי שלא יכסו את הפס */
-   'html.altmob #lk-fab{display:none!important}'+
+   /* בזמן ההכרעה בלבד: הכפתורים הצפים (עיפרון, תפריט) מוסתרים כדי שלא יכסו את הפס */
+   'html.altmode #lk-fab{display:none!important}'+
    '@media print{.alm,#alml,#altpg,#altbar{display:none!important}#flow .altv{display:none!important}#flow [data-ek].altsrc{display:revert!important}}'+
    '#altpg .alr{border-top:1px solid #eadfc2;padding:.5em 0}'+
    '#altpg .alr.dn{opacity:.7}'+
@@ -344,14 +344,14 @@
     locateAll();
     var start=id||firstHere();
     if(!start){finish();return}
-    M.on=true;M.id=start;M.ai=0;document.body.classList.add('altmode');
+    M.on=true;M.id=start;M.ai=0;document.body.classList.add('altmode');document.documentElement.classList.add('altmode');
     var p=document.getElementById('altpg');if(p&&p.classList.contains('open')&&typeof panel==='function')panel('altpg');
     show(true)}
   function exit(){
     if(M.edit){M.edit=false}
     clearView();M.on=false;M.id=null;
     var b=document.getElementById('altbar');if(b){b.classList.remove('open','mob','dock')}
-    document.body.classList.remove('altmode','altmob');document.documentElement.classList.remove('altmob');btnDraw();layerSoon()}
+    document.body.classList.remove('altmode','altmob');document.documentElement.classList.remove('altmob','altmode');btnDraw();layerSoon()}
   function finish(){
     exit();
     var miss=0;locateAll();AL.items.forEach(function(it){if(!DEC[it.id]&&!LOC[it.id])miss++});

@@ -48,7 +48,7 @@ jobs:
           git add data/daf-wa/og
           git diff --cached --quiet && exit 0
           git commit -q -m "כרטיסי הדף היומי [skip ci]"
-          for i in 1 2 3; do git pull --rebase -q origin main && git push -q && exit 0; sleep 5; done
+          for i in 1 2 3; do git pull --rebase --autostash -q origin main && git push -q && exit 0; sleep 5; done
           echo "אזהרה: הכרטיסים לא נדחפו - יצוירו שוב בסבב הבא"
       # פירוש הגמרא למנהל בלבד (פרומפט 17): אם הוא נמצא בקובצי האתר, הפרסום נעצר.
       - name: שער הפירוש

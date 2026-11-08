@@ -125,7 +125,7 @@ function origOf(pk, from, to) {
   return { text: SKC.toInter(pk.units.slice(a, b + 1)).text, ids: pk.units.slice(a, b + 1).map((u) => u.id), a, b };
 }
 
-const cmd = process.argv[2], A = process.argv.slice(3).filter((x) => x !== '--push'), PUSH = process.argv.includes('--push');
+const cmd = process.argv[2], A = process.argv.slice(3).filter((x) => x !== '--push' && x !== '--dry'), PUSH = process.argv.includes('--push'), DRY = process.argv.includes('--dry');
 
 if (cmd === 'status') {
   const js = ls(Q);
@@ -230,6 +230,15 @@ if (cmd === 'status') {
        seg.json: "read": [{"line": "<השורה כפי שבהצעה>", "said": "<מה הקורא הבין>", "ok": true|false}].
        ok=false (לא הבין, או הבין אחרת מן המקור) - כותבים את השורה מחדש בפחות הידוק. */
     const sq = SKC.squeeze(r.text, text);
+    /* --dry (פרומפט 26): בדיקה בלבד, בלי לשמור - לכותבים שעובדים במקביל על קטעים של אותו פרק */
+    if (DRY) {
+      const nAdd0 = SKC.parse(text).reduce((n, k) => n + ((k.v || '').match(/\{\+:/g) || []).length, 0);
+      console.log('השומר: עבר' + (ck.warns.length ? ' · אזהרות: ' + ck.warns.join(' · ') : ''));
+      if (nAdd0 !== (Array.isArray(s.adds) ? s.adds.length : 0)) console.log('שגיאה: מספר {+:} (' + nAdd0 + ') אינו כמספר הפריטים ב-adds');
+      console.log('אורך הגוף: ' + Math.round(sq.ratio * 100) + '% מן המקור' + (sq.flag ? ' · לקורא נפרד: ' + (sq.lines.length ? sq.lines.map((x) => x.r + '% ' + SKC.plainI(x.now).slice(0, 50)).join(' | ') : 'כל הקטע') : ''));
+      console.log('ארמית חדשה: ' + (SKC.aramNew(r.text, text).join(', ') || 'אין'));
+      process.exit(0);
+    }
     let read = [];
     if (sq.flag) {
       const need = sq.lines.length ? sq.lines.map((x) => x.now) : SKC.rows(text).filter((x) => x.k === 'line').map((x) => x.v);

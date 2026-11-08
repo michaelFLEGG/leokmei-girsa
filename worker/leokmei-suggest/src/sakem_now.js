@@ -257,20 +257,16 @@ async function generate(env, key, sys, msgs, orig, gemara, around) {
     const sq = SKC.squeeze(orig, out.text);
     if (sq.flag) {
       const lines = (sq.lines.length ? sq.lines.map((x) => x.now) : SKC.rows(out.text).filter((r) => r.k === 'line').map((r) => r.v)).map((l) => SKC.plainI(l)).slice(0, 12);
-      const rc = await callModel(env, key, READER_SYS, [{ role: 'user', content: lines.map((l, i) => (i + 1) + '. ' + l).join('
-') }], READER_SCHEMA, READER_MODEL);
+      const NL = String.fromCharCode(10);
+      const rc = await callModel(env, key, READER_SYS, [{ role: 'user', content: lines.map((l, i) => (i + 1) + '. ' + l).join(NL) }], READER_SCHEMA, READER_MODEL);
       if (!rc.err) {
         usd += usdOf(rc.j.usage, READER_MODEL);
         let said = [];
         try { said = JSON.parse((rc.j.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('')).said || []; } catch (e) { said = []; }
         if (said.length) {
-          const m2 = msgs.concat([{ role: 'assistant', content: out.raw }, { role: 'user', content: 'קורא נפרד, שאינו רואה את המקור ולא את הגמרא, קרא את השורות שהידקת ביותר וכתב במשפט מה כל אחת אומרת:
-' +
-            lines.map((l, i) => (i + 1) + '. ' + l + '
-   הקורא הבין: ' + (said[i] || '(לא הבין)')).join('
-') +
-            '
-השווה כל הבנה למקור. שורה שהקורא לא הבין, או הבין אחרת מן המקור - כתוב אותה מחדש בפחות הידוק: החזר מילים שהיו במקור, או הוסף {הס:...}. אם הבין הכל נכון - החזר את אותו JSON בדיוק.' }]);
+          const m2 = msgs.concat([{ role: 'assistant', content: out.raw }, { role: 'user', content: 'קורא נפרד, שאינו רואה את המקור ולא את הגמרא, קרא את השורות שהידקת ביותר וכתב במשפט מה כל אחת אומרת:' + NL +
+            lines.map((l, i) => (i + 1) + '. ' + l + NL + '   הקורא הבין: ' + (said[i] || '(לא הבין)')).join(NL) + NL +
+            'השווה כל הבנה למקור. שורה שהקורא לא הבין, או הבין אחרת מן המקור - כתוב אותה מחדש בפחות הידוק: החזר מילים שהיו במקור, או הוסף {הס:...}. אם הבין הכל נכון - החזר את אותו JSON בדיוק.' }]);
           const c2 = await callModel(env, key, sys, m2);
           if (!c2.err) {
             usd += usdOf(c2.j.usage);

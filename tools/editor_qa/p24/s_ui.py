@@ -29,13 +29,15 @@ st = pg.evaluate("()=>({sel:getSelection().toString(),btn:!!(document.querySelec
 row('לחיצה כפולה על מילה - סכם אינו קופץ', '', st, st['sel'] and not st['btn'] and not st['top'] and st['rows'] == 0)
 sty = over('#stybar')
 row('בועת הסגנונות (מילה מסומנת) אינה על טקסט', '', sty, (not sty['vis']) or (not sty['hits'] and sty['inter'] == 0))
+import os
+LIVE = bool(os.environ.get('P24LIVE'))   # באתר החי: בלי שליחה לסכם ובלי אישור כותרת צד
 # Ctrl+Shift+S בפריסה עברית (המקש S הוא ד) - סכם יוצא לדרך גם על מילה
 cdp = pg.context.new_cdp_session(pg)
-for t in ('rawKeyDown', 'keyUp'):
+for t in ([] if LIVE else ('rawKeyDown', 'keyUp')):
     cdp.send('Input.dispatchKeyEvent', {'type': t, 'modifiers': 2 | 8, 'key': 'ד', 'code': 'KeyS', 'windowsVirtualKeyCode': 83, 'nativeVirtualKeyCode': 83})
 pg.wait_for_timeout(800)
 went = pg.evaluate("()=>document.querySelectorAll('#flow .row.skmbusy').length+(document.querySelector('.skmghost')?1:0)")
-row('Ctrl+Shift+S בפריסה עברית על מילה אחת - סכם יוצא לדרך', '', went, True, 'בקשה לנקודת הקליטה נחסמה ונרשמה (ראו BLOCKED)')
+if not LIVE: row('Ctrl+Shift+S בפריסה עברית על מילה אחת - סכם יוצא לדרך', '', went, True, 'בקשה לנקודת הקליטה נחסמה ונרשמה (ראו BLOCKED)')
 pg.keyboard.press('Escape'); pg.wait_for_timeout(300)
 pg.evaluate("()=>{document.querySelectorAll('.skmghost').forEach(g=>g.remove());document.querySelectorAll('.skmbusy').forEach(r=>r.classList.remove('skmbusy'))}")
 # 1א/ב: פסקה שלמה מסומנת - סכם מופיע, בשוליים או בסרגל, לא על טקסט
@@ -79,7 +81,7 @@ before = pg.evaluate("()=>__c()")
 pg.keyboard.press('Control+Period'); pg.wait_for_timeout(500)
 sa = pg.evaluate("()=>{const i=document.querySelector('#sideask input');return i?{dir:i.getAttribute('dir'),focus:document.activeElement===i,cs:getComputedStyle(i).direction}:null}")
 row('חלונית כותרת צד נפתחת עם dir=rtl', before, sa, sa and sa['dir'] == 'rtl' and sa['focus'])
-if sa:
+if sa and not LIVE:
     pg.keyboard.type('כותרת בדיקה', delay=10)
     def ss(): return pg.evaluate("()=>{const i=document.querySelector('#sideask input');return [i.selectionStart,i.selectionEnd]}")
     v0 = ss(); pg.keyboard.press('ArrowRight'); v1 = ss()

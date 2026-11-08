@@ -206,6 +206,7 @@ if (cmd === 'status') {
   if (s.nochange) {
     const q0 = SKC.quality(r.text, { mishna });
     if (q0.length) die('אי אפשר "ללא שינוי": הנוסח הקיים פגום - ' + q0.slice(0, 6).join(' · ') + '\nתקן בהצעה.');
+    if (DRY) { console.log('השומר: עבר (ללא שינוי). לא נשמר דבר (--dry).'); process.exit(0); }
     o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, nochange: true });
   } else {
     let text = String(s.text || '').replace(/\r/g, '').trim();

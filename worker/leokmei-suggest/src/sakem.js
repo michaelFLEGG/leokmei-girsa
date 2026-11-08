@@ -161,7 +161,7 @@ export async function sakemApi(req, env, url, p, h) {
       /* עבודה שנשמטה מן הרשימה אך החבילה שלה קיימת - משוחזרת, לא מדולגת בשקט */
       const pk = await env.STORE.get('skm:job:' + jid, 'json');
       if (!pk) return json({ ok: true, skipped: 'no-job' });
-      it = { jid, slug: String(pk.slug || ''), kind: pk.kind === 'seg' ? 'seg' : 'perek', perek: +pk.perek || 0, title: String(pk.title || '').slice(0, 120), t: Date.now(), st: 'work', back: 1 };
+      it = { jid, slug: String(pk.slug || ''), kind: pk.kind === 'seg' ? 'seg' : 'perek', perek: +pk.perek || 0, title: String(pk.title || o.title || '').slice(0, 120), t: Date.now(), st: 'work', back: 1 };
       J.items.push(it);
     }
     await env.STORE.put('skm:out:' + jid, JSON.stringify(o));

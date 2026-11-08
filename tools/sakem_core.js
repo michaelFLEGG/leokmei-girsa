@@ -526,7 +526,7 @@
       if(unknown.length)errs.push('שם אמורא שאינו במקור: '+unknown.slice(0,3).join(', '));
       /* מספור א. ב. ג. (כלל 18): שלם ורציף, ובלי ואב"א / א"נ שנשארו במקום מספר */
       var st=lastNum(o.before),nx=nums(o.after||'')[0]||0;
-      if(numbering(newText,st?st+1:0,nx))errs.push('מספור חסר או כפול');
+      if(numbering(newText,st?st+1:0,nx)&&!numbering(origText,st?st+1:0,nx))errs.push('מספור חסר או כפול');
       var altA=rows(origText).some(function(r){return ALT.test(afterNum(r.p))}),altB=rows(newText).some(function(r){return ALT.test(afterNum(r.p))});
       if(altB&&(altA||nums(newText).length))errs.push('ואב"א / א"נ נשאר במקום מספור (ב.)');
       /* שמות: שם שהיה {אם:} במקור אינו נשאר בשורה כטקסט רגיל */

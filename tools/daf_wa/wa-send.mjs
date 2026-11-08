@@ -181,8 +181,7 @@ async function doCommunity(job) {
       const r = await sock.query({ tag: 'iq', attrs: { type: 'set', xmlns: 'w:g2', to: '@g.us' }, content: [{ tag: 'create', attrs: { subject: name }, content: [
         { tag: 'description', attrs: { id: Math.random().toString(16).slice(2, 12).toUpperCase() }, content: [{ tag: 'body', attrs: {}, content: Buffer.from(desc, 'utf-8') }] },
         { tag: 'parent', attrs: { default_membership_approval_mode: 'request_required' } },
-        { tag: 'allow_non_admin_sub_group_creation', attrs: {} },
-        { tag: 'create_general_chat', attrs: {} }] }] });
+        { tag: 'allow_non_admin_sub_group_creation', attrs: {} }] }] });   // בלי create_general_chat: קבוצה אחת בלבד (בעל הפרויקט, 8.11)
       const g = (r.content || []).find((n) => n.tag === 'group');
       if (!g || !g.attrs || !g.attrs.id) throw new Error('הקהילה לא הוחזרה');
       community = g.attrs.id.includes('@') ? g.attrs.id : g.attrs.id + '@g.us';

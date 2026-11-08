@@ -92,6 +92,12 @@ const P22 = {
   'כפילות נושא-שורה נתפסת': G('אבג דהו', '(נושא) בכור שנפל בו מום\nבכור שנפל בו מום - מותר').errs.some((x) => /כפילות/.test(x)),
   'אחרי תיקון אין כפילות': !SKC.titleIssues(af22.text, '').errs.length,
   'ללא חפיפה - נקי': !SKC.titleIssues('[צד:רבא:]\nבכור שנפל בו מום מותר', '').errs.length,
+  // השלמת 8.11.2026: שם עם תואר אינו נחתך
+  'תואר ושם נשארים יחד': SKC.splitTitle('רב יוסף לא הלך לשם').anchor === 'רב יוסף:' && SKC.splitTitle('רב יוסף לא הלך לשם').rest === 'לא הלך לשם',
+  'שם עם בר נשאר שלם': SKC.splitTitle('רב חנא בר קטינא:').rest === '' && /^רב חנא בר קטינא/.test(SKC.splitTitle('רב חנא בר קטינא:').anchor),
+  'שם בלבד (ארוך) - ידני ולא פיצול': SKC.autofixTitles('[צד:רבי יוסי בן המשולם:]\nשורה ארוכה דיה כאן').items.every((x) => x.manual),
+  'שם קצר בלי שארית - ידני': SKC.autofixTitles('[צד:רב יוסף לא הלך]\nשורה ארוכה דיה כאן').items.every((x) => x.manual),
+  'מילת מהלך בודדת עדיין נפרדת': SKC.splitTitle('קשה הלכתא על ההלכה!').anchor === 'קשה',
 };
 Object.keys(P22).forEach((k) => { if (!P22[k]) { fail++; console.log('שומר פרומפט 22 נכשל:', k); } });
 console.log(`עמודים ${pages}, שורות ${lines}, תגיות לא מוכרות ${bad}, כשלים ${fail}`);

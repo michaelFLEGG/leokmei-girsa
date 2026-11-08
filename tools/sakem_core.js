@@ -156,13 +156,22 @@
       if(n<=2)return '';
       if(n>3)return 'long';
       var mv=w.some(isMoveW);return mv?'':'three'}
+    /* השלמת 8.11.2026: תואר (רב, רבי, ר', רבן, מר, ריש) אינו נפרד מן השם שאחריו, וגם לא "בר/בן" ושם האב.
+       בלי זה "רב יוסף לא הלך" נחתך לכותרת צד "רב:" ולכותרת נושא "יוסף לא הלך". מחזיר את מקום המילה האחרונה שנלקחה */
+    var TITLE_W={"ר'":1,'רבי':1,'רב':1,'רבן':1,'מר':1,'ריש':1};
+    function takeName(w,i,a){
+      var k=String(w[i]).replace(NIK,'').replace(/[:,]$/,'');
+      if(!TITLE_W[k]||/[:,]$/.test(w[i])||i+1>=w.length)return i;
+      a.push(w[++i]);
+      while(i+2<w.length&&/^(בר|בן|ב"ר)$/.test(String(w[i+1]).replace(NIK,''))&&!/[:,]$/.test(w[i])){a.push(w[++i]);a.push(w[++i])}
+      return i}
     /* עוגן קצר מתוך כותרת ארוכה: [מספור] + עד שתי המילים הראשונות אם הן דובר/מהלך. מחזיר {anchor,rest} */
     function splitTitle(p){var num=(/^\s*([א-י]\.)\s*/.exec(p)||[])[1]||'';
       var w=twWords(p),a=[];
       for(var i=0;i<w.length&&a.length<2;i++){
         var x=w[i];
-        if(i===0&&(isMoveW(x)||isSpkW(x))){a.push(x);continue}
-        if(i>0&&(isMoveW(x)||isSpkW(x)||/^[א-ת]"[א-ת]$/.test(x.replace(NIK,'').replace(/:$/,''))))a.push(x);else break}
+        if(i===0&&(isMoveW(x)||isSpkW(x))){a.push(x);i=takeName(w,i,a);continue}
+        if(i>0&&(isMoveW(x)||isSpkW(x)||/^[א-ת]"[א-ת]$/.test(x.replace(NIK,'').replace(/:$/,'')))){a.push(x);i=takeName(w,i,a)}else break}
       if(!a.length)return {anchor:num,rest:w.join(' ')};
       var anchor=(num?num+' ':'')+a.join(' ').replace(/:$/,'')+(/:$/.test(String(p).trim())||a.length&&isSpkW(a[0])&&!/אמר$/.test(a.join(' '))?':':'');
       return {anchor:anchor.replace(/\s+/g,' ').trim(),rest:w.slice(a.length).join(' ')}}

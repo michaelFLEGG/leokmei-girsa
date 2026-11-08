@@ -32,6 +32,24 @@ jobs:
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
         run: python tools/build_all.py
+      # כרטיסי הדף היומי בווטסאפ (8.11.2026): הכותב היומי בענן כותב רק את התוכן
+      # הבדוק; כאן, אחרי שגופני האתר נבנו, מצוירים הכרטיסים החסרים בלבד, מועתקים
+      # לאתר ונשמרים במאגר. אינו חוסם את הפרסום.
+      - name: כרטיסי הדף היומי
+        continue-on-error: true
+        timeout-minutes: 8
+        run: |
+          python -m playwright install chromium > /dev/null 2>&1 || true
+          miss=$(for f in data/daf-wa/*.json; do n=$(basename "$f" .json); [ -f "data/daf-wa/og/$n.jpg" ] || echo "$n"; done)
+          [ -z "$miss" ] && { echo "אין כרטיס חסר"; exit 0; }
+          python tools/daf_wa/card.py $miss
+          python tools/daf_wa/build.py site
+          git config user.name "leokmei-watcher"; git config user.email "watcher@users.noreply.github.com"
+          git add data/daf-wa/og
+          git diff --cached --quiet && exit 0
+          git commit -q -m "כרטיסי הדף היומי [skip ci]"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q && exit 0; sleep 5; done
+          echo "אזהרה: הכרטיסים לא נדחפו - יצוירו שוב בסבב הבא"
       # פירוש הגמרא למנהל בלבד (פרומפט 17): אם הוא נמצא בקובצי האתר, הפרסום נעצר.
       - name: שער הפירוש
         run: python tools/perush_gate.py site

@@ -50,9 +50,12 @@ def main():
                 out['count_after_open'] = t
                 break
             pg.wait_for_timeout(500)
-        out['tosDisabled'] = pg.is_disabled('#prn-tos')
+        out['tosDisabled'] = pg.is_disabled('#prn-tos-y')  # 13.10.2026: הכפתור הוחלף בבחירה בלי/עם תוס'
         out['tosNote'] = pg.inner_text('#prn-tn')
-        pg.check('input[name=prt][value=all]')
+        # 13.10.2026: "מסכת שלמה" מוצגת למנהל בלבד; מבקר (כמו כאן, בלי מפתח) מדפיס פרק שלם
+        whole = 'all' if pg.query_selector('input[name=prt][value=all]') else 'perek'
+        out['whole'] = whole
+        pg.check('input[name=prt][value=%s]' % whole)
         for _ in range(120):
             t = pg.inner_text('#prn-cnt')
             if 'מספר העמודים' in t and t != out['count_after_open']:

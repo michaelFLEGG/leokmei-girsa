@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>השוואת סכם · לאוקמי גירסא</title>
+<!-- דף השוואה למנהל בלבד (פרומפט 26): מקור / הצעה ישנה / הצעה חדשה. החומר נשמר בשרת (/sakem/cmp) ולא בדף. -->
+<style>
+:root { --paper:#faf7ef; --card:#fff; --ink:#232323; --ink2:#6b675c; --line:#e4e1d8; --del:#b3261e; --delbg:#fbe4e1; --add:#1d6b2f; --addbg:#dff2e2; --hs:#1f3a63; --hsbg:#e1eaf7; }
+@media (prefers-color-scheme: dark) {
+  :root { --paper:#14161c; --card:#1c1f27; --ink:#e8e5dc; --ink2:#9a968a; --line:#2b3140; --del:#f2a7a0; --delbg:#3a1f1f; --add:#9bd8a6; --addbg:#1b3322; --hs:#9fbbe6; --hsbg:#1d2a40; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:"Segoe UI", system-ui, sans-serif; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+h1 { font-size: 1.4rem; margin: 10px 0 4px; }
+.sub { color: var(--ink2); font-size: .88rem; margin-bottom: 16px; line-height:1.6; }
+.leg span { display:inline-block; padding:0 6px; border-radius:4px; margin-left:8px; }
+.seg { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:22px; }
+.seg h2 { font-size:1.05rem; margin:0 0 6px; }
+.note { color:var(--ink2); font-size:.85rem; margin:0 0 10px; }
+.cols { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+@media (max-width: 860px) { .cols { grid-template-columns:1fr; } }
+.col h3 { font-size:.85rem; color:var(--ink2); margin:0 0 6px; }
+.txt { white-space:pre-wrap; line-height:1.75; font-size:.95rem; font-family:"David","Frank Ruehl CLM","Times New Roman",serif; }
+del { color:var(--del); background:var(--delbg); text-decoration:line-through; }
+ins { color:var(--add); background:var(--addbg); text-decoration:none; }
+.hs { color:var(--hs); background:var(--hsbg); border-radius:3px; }
+.ch { font-size:.82rem; color:var(--ink2); margin:8px 0 0; padding-right:18px; }
+.err { color:var(--del); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>השוואת סכם: לפני ואחרי התיקון</h1>
+  <div class="sub" id="sub">טוען...</div>
+  <div class="sub leg"><span style="background:var(--delbg);color:var(--del)">נמחק</span><span style="background:var(--addbg);color:var(--add)">נוסף או הוחלף</span><span class="hs">הסבר שהמנוע הוסיף ביוזמתו</span> מה שבלי סימון - נשמר כמו שהוא.</div>
+  <div id="list"></div>
+</div>
+<script>
+(function () {
+  var API = 'https://leokmei-suggest.m7654301.workers.dev';
+  function key() { try { return localStorage.getItem('lg-adm') || ''; } catch (e) { return ''; } }
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+  function toks(s) { return String(s || '').match(/\n|[^\s]+/g) || []; }
+  /* הפרש מילים (LCS) בין המקור לנוסח: מה נמחק, מה נשמר ומה נוסף */
+  function diff(a, b) {
+    var A = toks(a), B = toks(b), n = A.length, m = B.length, i, j;
+    var L = []; for (i = 0; i <= n; i++) { L.push(new Int32Array(m + 1)); }
+    for (i = n - 1; i >= 0; i--) for (j = m - 1; j >= 0; j--) L[i][j] = A[i] === B[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+    var out = [], d = [], s = [];
+    function flush() { if (d.length) out.push('<del>' + esc(d.join(' ')) + '</del> '); if (s.length) out.push('<ins>' + hs(s.join(' ')) + '</ins> '); d = []; s = []; }
+    function put(t, kind) { if (t === '\n') { flush(); out.push('\n'); return; } if (kind === 'd') d.push(t); else s.push(t); }
+    i = 0; j = 0;
+    while (i < n || j < m) {
+      if (i < n && j < m && A[i] === B[j]) { flush(); out.push(A[i] === '\n' ? '\n' : hs(A[i]) + ' '); i++; j++; }
+      else if (j < m && (i >= n || L[i][j + 1] >= L[i + 1][j])) { put(B[j], 'a'); j++; }
+      else { put(A[i], 'd'); i++; }
+    }
+    flush();
+    return out.join('');
+  }
+  function hs(t) { return esc(t).replace(/\{הס:([^}]*)\}/g, '<span class="hs">$1</span>'); }
+  function plain(t) { return hs(t); }
+  var id = (/[?&]id=([a-z0-9-]+)/.exec(location.search) || [])[1] || 'p26';
+  fetch(API + '/sakem/cmp?id=' + id, { headers: { 'x-admin-key': key() }, cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j.ok) { document.getElementById('sub').innerHTML = '<span class="err">' + esc(j.error || 'אין הרשאה: הדף פתוח רק למנהל.') + '</span>'; return; }
+      var c = j.cmp; if (!c) { document.getElementById('sub').textContent = 'אין חומר להשוואה.'; return; }
+      document.getElementById('sub').textContent = c.intro || '';
+      document.getElementById('list').innerHTML = (c.items || []).map(function (x) {
+        return '<div class="seg"><h2>' + esc(x.title) + '</h2>' + (x.note ? '<p class="note">' + esc(x.note) + '</p>' : '') +
+          '<div class="cols"><div class="col"><h3>המקור (הנוסח שכתבת)</h3><div class="txt">' + plain(x.orig) + '</div></div>' +
+          '<div class="col"><h3>ההצעה הישנה (לפני התיקון)</h3><div class="txt">' + diff(x.orig, x.old) + '</div></div>' +
+          '<div class="col"><h3>ההצעה החדשה</h3><div class="txt">' + diff(x.orig, x.now) + '</div></div></div>' +
+          (x.changes && x.changes.length ? '<ul class="ch">' + x.changes.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ul>' : '') + '</div>';
+      }).join('');
+    })
+    .catch(function () { document.getElementById('sub').innerHTML = '<span class="err">השרת לא ענה.</span>'; });
+})();
+</script>
+</body>
+</html>

@@ -95,6 +95,11 @@ export async function sakemApi(req, env, url, p, h) {
     const f = (a) => (a || []).filter((x) => !slug || x.slug === slug);
     return json({ ok: true, jid, dec: D ? D.dec : null, log: D ? D.log : null, lg: lg ? { pairs: f(lg.pairs), rj: f(lg.rj) } : null });
   }
+  if (p === '/sakem/cmp') {
+    /* דף ההשוואה למנהל (פרומפט 26): מקור / ישן / חדש. החומר שמור בשרת ולא בריפו הציבורי */
+    const id = String(url.searchParams.get('id') || 'p26').replace(/[^a-z0-9-]/g, '').slice(0, 30);
+    return json({ ok: true, cmp: (await env.STORE.get('skm:cmp:' + id, 'json')) || null });
+  }
   if (p === '/sakem/dec') {
     const jid = String(b.jid || ''), iid = String(b.iid || '').slice(0, 24), act = String(b.act || '');
     if (!jidOk(jid) || !iid || !/^(accept|reject|edit|undo|stale|keep)$/.test(act)) return bad('הכרעה לא תקינה');

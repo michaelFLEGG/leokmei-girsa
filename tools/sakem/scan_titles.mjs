@@ -4,9 +4,10 @@
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
 const require = createRequire(import.meta.url);
 const SKC = require('../sakem_core.js');
-const OUT = path.join(path.dirname(new URL(import.meta.url).pathname), '..', '..', 'data', 'sakem', 'titles-scan');
+const OUT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'data', 'sakem', 'titles-scan');
 fs.mkdirSync(OUT, { recursive: true });
 const order = ['bekhorot', 'berakhot', 'sukkah', 'ketubot', 'shabbat'];
 const files = process.argv.slice(2).sort((a, b) => {

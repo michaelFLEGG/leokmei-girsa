@@ -3896,6 +3896,92 @@
    "flagged": 1,
    "cal": 0.447,
    "published": "2026-11-08T06:40:11Z"
+  },
+  "bekhorot-p08-u01": {
+   "ok": true,
+   "done_at": "2026-11-08T06:41:40Z",
+   "at": "2026-11-08T09:35:00Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.207,
+   "published": "2026-11-08T09:35:05Z"
+  },
+  "bekhorot-p08-u02": {
+   "ok": true,
+   "done_at": "2026-11-08T06:53:01Z",
+   "at": "2026-11-08T09:35:01Z",
+   "ntos": 28,
+   "flagged": 1,
+   "cal": 0.286,
+   "published": "2026-11-08T09:35:05Z"
+  },
+  "bekhorot-p08-u03": {
+   "ok": true,
+   "done_at": "2026-11-08T06:57:00Z",
+   "at": "2026-11-08T09:35:01Z",
+   "ntos": 7,
+   "flagged": 0,
+   "cal": 0.207,
+   "published": "2026-11-08T09:35:05Z"
+  },
+  "bekhorot-p09-u01": {
+   "ok": true,
+   "done_at": "2026-11-08T07:07:13Z",
+   "at": "2026-11-08T09:35:01Z",
+   "ntos": 30,
+   "flagged": 2,
+   "cal": 0.236,
+   "published": "2026-11-08T09:35:06Z"
+  },
+  "bekhorot-p09-u02": {
+   "ok": true,
+   "done_at": "2026-11-08T07:15:58Z",
+   "at": "2026-11-08T09:35:01Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.256,
+   "published": "2026-11-08T09:35:06Z"
+  },
+  "bekhorot-p09-u03": {
+   "ok": true,
+   "done_at": "2026-11-08T07:18:11Z",
+   "at": "2026-11-08T09:35:01Z",
+   "ntos": 3,
+   "flagged": 0,
+   "cal": 0.741,
+   "published": "2026-11-08T09:35:06Z"
+  },
+  "nazir-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-08T08:33:46Z",
+   "at": "2026-11-08T09:35:02Z",
+   "ntos": 27,
+   "flagged": 1,
+   "cal": 0.54
+  },
+  "nazir-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-08T08:39:06Z",
+   "at": "2026-11-08T09:35:02Z",
+   "ntos": 22,
+   "flagged": 0,
+   "cal": 0.468
+  },
+  "nazir-p01-u03": {
+   "ok": true,
+   "done_at": "2026-11-08T08:45:36Z",
+   "at": "2026-11-08T09:35:02Z",
+   "ntos": 27,
+   "flagged": 0,
+   "cal": 0.402
+  },
+  "nazir-p01-u04": {
+   "ok": true,
+   "done_at": "2026-11-08T08:47:42Z",
+   "at": "2026-11-08T09:35:02Z",
+   "ntos": 21,
+   "flagged": 0,
+   "cal": 0.519
   }
  },
  "files": {

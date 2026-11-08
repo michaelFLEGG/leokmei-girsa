@@ -115,6 +115,40 @@
     "flagged": 0,
     "questions": 18
    }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-08T09:35:05Z",
+   "unc_done": true,
+   "handoff_units": [
+    "bekhorot-p08-u01",
+    "bekhorot-p08-u02",
+    "bekhorot-p08-u03"
+   ],
+   "result": {
+    "generated": 59,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 57
+   }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-11-08T09:35:06Z",
+   "unc_done": true,
+   "handoff_units": [
+    "bekhorot-p09-u01",
+    "bekhorot-p09-u02",
+    "bekhorot-p09-u03"
+   ],
+   "result": {
+    "generated": 56,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 47
+   }
   }
  },
  "created": "2026-11-08T06:40:08Z",
@@ -160,7 +194,20 @@
    "mean": 0.268,
    "n": 2,
    "at": "2026-11-08T06:40:10Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.239,
+   "n": 5,
+   "at": "2026-11-08T09:35:04Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.345,
+   "n": 5,
+   "at": "2026-11-08T09:35:05Z"
   }
  ],
- "updated": "2026-11-08T06:40:11Z"
+ "updated": "2026-11-08T09:35:06Z",
+ "done": "2026-11-08T09:35:06Z"
 }

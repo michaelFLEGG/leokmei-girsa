@@ -1,0 +1,1 @@
+ - 08.11.2026 UTC - הושלמה bekhorot-p09-u01. finalize: 30 תוספות, 2 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku", "rewrite": "fable", "rr": "sonnet"}.

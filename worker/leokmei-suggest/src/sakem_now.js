@@ -186,9 +186,13 @@ const SCHEMA = {
   type: 'object', additionalProperties: false, required: ['point', 'text', 'changes'],
   properties: { point: { type: 'string' }, text: { type: 'string' }, changes: { type: 'array', items: { type: 'string' } } },
 };
-async function callModel(env, key, sys, messages, schema) {
+/* הקורא הנפרד (פרומפט 26): רואה רק את השורות שהודקו, בלי מקור ובלי גמרא */
+const READER_MODEL = 'claude-haiku-5-5';
+const READER_SYS = 'אתה לומד גמרא שלא למד את הדף הזה עכשיו. לפניך שורות מתוך קיצור של התלמוד. לכל שורה כתוב משפט אחד בלשון פשוטה: מה היא אומרת (מי אומר, מה הדין או הטענה, ולמה). אם שורה אינה מובנת לך - כתוב "לא הבנתי" ומה חסר. אל תנחש מעבר לכתוב. החזר JSON: {"said": [משפט לכל שורה, לפי הסדר]}.';
+const READER_SCHEMA = { type: 'object', additionalProperties: false, required: ['said'], properties: { said: { type: 'array', items: { type: 'string' } } } };
+async function callModel(env, key, sys, messages, schema, model) {
   const SCHEMA_ = schema || SCHEMA;
-  const base = { model: MODEL, max_tokens: 16000, system: [{ type: 'text', text: sys, cache_control: { type: 'ephemeral' } }], messages };
+  const base = { model: model || MODEL, max_tokens: model ? 2000 : 16000, system: [{ type: 'text', text: sys, cache_control: { type: 'ephemeral' } }], messages };
   /* הבקשה המלאה: מאמץ בינוני, פלט JSON במבנה קבוע, וגיבוי אוטומטי בסירוב. אם השרת דוחה פרמטר
      (400) - פעם אחת בלי הגיבוי ובלי המבנה, וההנחיה עצמה דורשת JSON. */
   const tries = [
@@ -247,6 +251,41 @@ async function generate(env, key, sys, msgs, orig, gemara, around) {
       (notes.length ? '. ושקול גם: ' + notes.join(' · ') : '') + '. תקן והחזר את כל ה-JSON מחדש.' }]);
   }
   if (!out) return { err: errs[0] || 'לא התקבלה הצעה', usd };
+  /* פרומפט 26 (8.11.2026): הידוק יתר - קורא נפרד (מודל קטן, בלי המקור ובלי הגמרא) כותב במשפט מה כל שורה
+     שהודקה בחוזקה אומרת; המודל הראשי משווה למקור וכותב מחדש בפחות הידוק את מה שלא הובן. */
+  if (!errs.length) {
+    const sq = SKC.squeeze(orig, out.text);
+    if (sq.flag) {
+      const lines = (sq.lines.length ? sq.lines.map((x) => x.now) : SKC.rows(out.text).filter((r) => r.k === 'line').map((r) => r.v)).map((l) => SKC.plainI(l)).slice(0, 12);
+      const rc = await callModel(env, key, READER_SYS, [{ role: 'user', content: lines.map((l, i) => (i + 1) + '. ' + l).join('
+') }], READER_SCHEMA, READER_MODEL);
+      if (!rc.err) {
+        usd += usdOf(rc.j.usage, READER_MODEL);
+        let said = [];
+        try { said = JSON.parse((rc.j.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('')).said || []; } catch (e) { said = []; }
+        if (said.length) {
+          const m2 = msgs.concat([{ role: 'assistant', content: out.raw }, { role: 'user', content: 'קורא נפרד, שאינו רואה את המקור ולא את הגמרא, קרא את השורות שהידקת ביותר וכתב במשפט מה כל אחת אומרת:
+' +
+            lines.map((l, i) => (i + 1) + '. ' + l + '
+   הקורא הבין: ' + (said[i] || '(לא הבין)')).join('
+') +
+            '
+השווה כל הבנה למקור. שורה שהקורא לא הבין, או הבין אחרת מן המקור - כתוב אותה מחדש בפחות הידוק: החזר מילים שהיו במקור, או הוסף {הס:...}. אם הבין הכל נכון - החזר את אותו JSON בדיוק.' }]);
+          const c2 = await callModel(env, key, sys, m2);
+          if (!c2.err) {
+            usd += usdOf(c2.j.usage);
+            const p2 = parseOut(c2.j);
+            if (!p2.err) {
+              const af2 = SKC.autofixTitles(p2.text);
+              if (af2.changed) p2.text = af2.text;
+              const ck2 = SKC.check(orig, p2.text, g);
+              if (!ck2.errs.length) { if (SKC.qnorm(p2.text) !== SKC.qnorm(out.text)) p2.changes = (p2.changes || []).concat(['קורא נפרד: הוחזרו מילים בשורה שהודקה מדי']).slice(0, 8); out = p2; notes = ck2.warns; rounds++; }
+            }
+          }
+        }
+      }
+    }
+  }
   return { out, warn: errs, notes, usd, msgs, rounds };
 }
 
@@ -259,7 +298,7 @@ function userText(orig, before, after, ctx) {
     ctx.per ? 'פירוש הגמרא לשורות המקבילות:\n<פירוש>\n' + ctx.per + '</פירוש>' : '',
     ctx.hv ? 'ביאור חברותא לאותו מקום:\n<חברותא>\n' + ctx.hv + '</חברותא>' : '',
     'הפירוש, החברותא ולשון הגמרא הם להבנת הפשט ולבדיקת שלמות בלבד - לא למילוי. ' +
-    'החזר את הקטע המסומן מהודק באמת (יעד: לפחות כשליש פחות תווים), כתוב מחדש מתוך שלד הסוגיה ולא כהחלפת מילים, ומתוקן - כ-JSON.',
+    'החזר את הקטע המסומן מובן, בלשון הקודש וקליט - מחק רק מלל מיותר באמת, הוסף מילה מבהירה היכן שחסרה, ותקן - כ-JSON. אין יעד אחוזים: שורה מובנת עדיפה על שורה קצרה (פרומפט 26).',
   ].filter(Boolean).join('\n\n');
 }
 
@@ -334,7 +373,7 @@ export async function sakemNow(env, p, b, h) {
     const pr = await env.STORE.get('skm:p:' + String(b.id || '').slice(0, 40), 'json');
     if (!pr) return bad('ההצעה לא נמצאה (פגה)', 404);
     const msgs = (pr.msgs || []).concat([{ role: 'assistant', content: JSON.stringify({ point: pr.point || '', text: pr.text, changes: pr.changes || [] }) },
-      { role: 'user', content: 'קצר עוד: אותו קטע, בערך שליש פחות מן ההצעה שלך, וברור באותה מידה - בלי לאבד שלב בסוגיה, דעה או מסקנה. השאלה נכללת בתשובה, ושורות שאומרות דבר אחד מתאחדות. החזר JSON.' }]);
+      { role: 'user', content: 'קצר עוד: אותו קטע, קצר יותר מן ההצעה שלך במה שעוד מיותר באמת (כפילות, חזרה, מילות פתיחה ריקות) - וברור באותה מידה, בלשון הקודש, בלי לאבד שלב בסוגיה, דעה או מסקנה, ובלי לדחוס שורה עד שאינה נקראת לבדה. החזר JSON.' }]);
     const g = await generate(env, key, systemText(await examples(env)), msgs, pr.orig, pr.gemara || '', { before: pr.before || '', after: pr.after || '' });
     if (g.usd) await addCost(env, g.usd);
     if (g.err) return fail(g);

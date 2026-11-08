@@ -448,6 +448,43 @@
     function movedNames(a,b){var A=spkPos(a),B=spkPos(b),N=amNames(a),M=amNames(b);Object.keys(M).forEach(function(k){N[k]=1});
       return Object.keys(N).filter(function(n){return A.t[n]&&B.l[n]&&!A.l[n]||A.l[n]&&B.t[n]&&!B.l[n]})}
     /* סוגי התיקון שבין שני נוסחים - ליומן הלמידה: מספור / דובר / הסבר */
+    /* ---- פרומפט 26 (8.11.2026): לשון הקודש ולא ארמית, ומובנות לפני הידוק ----
+       aramNew: מילה ארמית מן הרשימה שמספר מופעיה בהצעה גדול ממספרם במקור (נוספה, או שהחליפה מילה עברית).
+       נספר על הטקסט הנקי, בלי פסוקים ({פס:}) ובלי לשון גמרא מובאת ({כב:}). מונחי הסוגיה הקבועים אינם ברשימה. */
+    var ARAM='איכא ליכא הוי הואי נמי הכי היכי מיהו דהא תרי תרתי קמא שקיל שקלה שקלי שדי שדיא שדו אמאי מאי היכא לאו אית ליה ביה בהו להו להון דידיה נפשיה איהו איהי הוה הות קאמר קתני טייעא גמלא מסא בריש תנורא זימנא זימני השתא מיבעיא איפכא כוותיה כוותייהו תלינן חדא לאיתויי אתי אתא אזל אזיל הכא התם אמינא ניהו מיניה מינה גביה בהדי כוליה טובא פורתא מנלן ומפרשא אתריה אתרא אפילו'.split(' ').filter(function(w){return w!=='אפילו'});
+    var ARAM_S={};ARAM.forEach(function(w){ARAM_S[w]=1});
+    function aramWords(text){var c={};
+      rows(text).forEach(function(r){var v=cutSp(cutSp(r.v,spans(r.v,'כב')),[]);v=cutSp(v,spans(v,'פס'));
+        plainI(v).replace(NIK,'').replace(/'[^']*'/g,' ').split(/[\s,.:!?;()\[\]\-]+/).forEach(function(w){
+          w=w.replace(/["״׳]/g,'');if(!w)return;var k=null;
+          if(ARAM_S[w])k=w;else if(w.length>2&&/^[ודשהבלכ]/.test(w)&&ARAM_S[w.slice(1)])k=w.slice(1);
+          else if(w==='אי'||w==='ואי'||w==='דאי')k='אי';
+          if(k)c[k]=(c[k]||0)+1})});
+      return c}
+    function aramNew(origText,newText){var a=aramWords(origText),b=aramWords(newText);
+      return Object.keys(b).filter(function(k){return b[k]>(a[k]||0)})}
+    /* squeeze: הידוק יתר. כל שורה בהצעה מוצמדת לשורת המקור שחולקת איתה הכי הרבה מילים; שורת מקור (25 תווים ומעלה)
+       שכל השורות שהוצמדו לה יחד קצרות ממחצית אורכה - חשודה. וגם הקטע כולו: גוף ההצעה (בלי {הס:} חדש) מתחת ל-65%
+       ממקורו. הסף כויל על ההכרעות בבכורות (data/sakem/decisions/bekhorot-review-8.11.json). שורה חשודה עוברת
+       לקורא נפרד שאינו רואה את המקור (runner: השדה read; בדף: קריאה נוספת למודל). */
+    var SQ_SEG=0.65,SQ_LINE=0.5,SQ_MIN=25;
+    function sqW(t){return qnorm(t).split(' ').filter(function(w){return w.length>1})}
+    function squeeze(origText,newText){
+      var A=rows(origText).filter(function(r){return r.k==='line'}),nh=newHs(origText,newText);
+      var Ball=rows(newText),B=[];
+      Ball.forEach(function(r,ri){if(r.k!=='line')return;var v=cutSp(r.v,nh.filter(function(x){return x.ri===ri}));
+        B.push({v:r.v,p:r.p,len:plainI(v).replace(NIK,'').replace(/\s+/g,'').length})});
+      var lenOf=function(r){return r.p.replace(NIK,'').replace(/\s+/g,'').length};
+      var la=A.reduce(function(n,r){return n+lenOf(r)},0),lb=B.reduce(function(n,r){return n+r.len},0);
+      var aw=A.map(function(r){var o={};sqW(r.p).forEach(function(w){o[w]=(o[w]||0)+1});return o});
+      var got=A.map(function(){return {n:0,rows:[]}});
+      B.forEach(function(b){var best=-1,bs=1;sqW(b.p).forEach(function(){});
+        var ws=sqW(b.p);aw.forEach(function(o,i){var c={},sc=0;ws.forEach(function(w){if(o[w]&&(c[w]||0)<o[w]){c[w]=(c[w]||0)+1;sc++}});if(sc>bs){bs=sc;best=i}});
+        if(best>-1){got[best].n+=b.len;got[best].rows.push(b.v)}});
+      var lines=[];A.forEach(function(r,i){var L=lenOf(r);if(L<SQ_MIN||!got[i].rows.length)return;
+        if(got[i].n<L*SQ_LINE)lines.push({orig:r.v,now:got[i].rows.join('\n'),r:Math.round(100*got[i].n/L)})});
+      var ratio=la?lb/la:1;
+      return {ratio:Math.round(ratio*100)/100,lines:lines,seg:ratio<SQ_SEG,flag:ratio<SQ_SEG||lines.length>0}}
     function diffKinds(a,b){var k=[];
       var sig=function(t){return rows(t).map(function(r){return r.k[0]+numOf(r.p)}).filter(function(x){return +x.slice(1)}).join(',')};
       if(sig(a)!==sig(b))k.push('מספור');
@@ -509,7 +546,14 @@
       var lenA=plainI(A.filter(function(k){return k.t!=='lock'}).map(function(k){return k.v}).join(' ')).replace(/\s+/g,'').length;
       var lenB=plainI(R.map(function(r,ri){return cutSp(r.v,nh.filter(function(x){return x.ri===ri}))}).join(' ')).replace(/\s+/g,'').length;
       var marked=/\{[+!]:/.test(newText);
-      if(!o.edited&&(marked?lenB>lenA:lenB>=lenA))errs.push(marked?'ארוך מהמקור, גם עם התוספת':'אינו קצר מהמקור');
+      /* פרומפט 26: אין חובה לקצר (מובנות לפני הידוק). רק הצעה שהתארכה ממש נעצרת: מעבר ל-15% (ועוד 10 תווים),
+         ועם תוספת מסומנת - 30% (ועוד 20). מילות {הס:} חדשות אינן נספרות */
+      if(!o.edited&&lenB>(marked?lenA*1.3+20:lenA*1.15+10))errs.push(marked?'ארוך מהמקור, גם עם התוספת':'ארוך מהמקור');
+      var an=aramNew(origText,newText);
+      if(an.length)errs.push('ארמית במקום לשון הקודש: '+an.slice(0,5).join(', '));
+      var sq=squeeze(origText,newText);
+      if(sq.seg)warns.push('הידוק יתר: הקטע ירד ל-'+Math.round(sq.ratio*100)+'% מאורכו - לבדיקת מובנות');
+      sq.lines.forEach(function(x){warns.push('הידוק יתר ('+x.r+'%): '+plainI(x.now).slice(0,60))});
       /* אזהרות בלבד: דובר ארוך בתוך השורה (כלל 17), הסבר ארוך (כלל 6) */
       R.forEach(function(r){if(r.k!=='line')return;var s=r.v.replace(/^[א-י]\.\s*/,'');if(s.indexOf('{אם:')!==0)return;
         var x=spans(s,'אם')[0];if(!x||!/:\s*$/.test(plainI(x.v)))return;
@@ -654,6 +698,6 @@
       ins.forEach(function(z){text=text.slice(0,z.pos)+z.s+text.slice(z.pos)});
       return {text:text,moved:moved}}
     return {h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
-            quality:quality,qnorm:qnorm,C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
+            quality:quality,qnorm:qnorm,aramNew:aramNew,aramWords:aramWords,squeeze:squeeze,SQ:{SEG:SQ_SEG,LINE:SQ_LINE,MIN:SQ_MIN},C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

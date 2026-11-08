@@ -11,6 +11,7 @@
    POST /sakem/cancel     {jid}                                              הוצאה מן התור
    GET  /sakem/jobs       ?slug                                              התור ומצבו (ממתין / בעבודה N מתוך M / מוכן לסקירה)
    GET  /sakem/out        ?jid                                               ההצעות וההכרעות של עבודה אחת
+   GET  /sakem/declog     ?jid [&lg=1&slug]                                  היומן המלא של ההכרעות (לקריאה בלבד, פרומפט 26)
    POST /sakem/dec        {jid, iid, act, layers, final, prop, orig, slug}   הכרעה על פריט (accept/reject/edit/undo)
    GET  /sakem/export                                                        (פעולת הסנכרון) חבילות שטרם ירדו לריפו
    POST /sakem/exported   {jids}
@@ -82,6 +83,17 @@ export async function sakemApi(req, env, url, p, h) {
     const dec = (await env.STORE.get('skm:dec:' + jid, 'json')) || { dec: {}, log: [] };
     const J = await jobs(env), it = J.items.find((x) => x.jid === jid);
     return json({ ok: true, out, dec: dec.dec, job: it ? pub(it) : null });
+  }
+  /* פרומפט 26 (8.11.2026): היומן המלא של עבודה אחת (מקור, הצעה, נוסח סופי לכל הכרעה) - לקריאה בלבד, למנהל.
+     /sakem/out מחזיר רק את ההכרעה האחרונה לכל פריט; הלמידה צריכה גם את מה שהמנהל כתב. ?lg=1 - גם יומן הלמידה הכללי. */
+  if (p === '/sakem/declog') {
+    const jid = url.searchParams.get('jid') || '';
+    if (jid && !jidOk(jid)) return bad('מזהה עבודה לא תקין');
+    const D = jid ? ((await env.STORE.get('skm:dec:' + jid, 'json')) || { dec: {}, log: [] }) : null;
+    const lg = url.searchParams.get('lg') ? ((await env.STORE.get('skm:lg', 'json')) || { pairs: [], rj: [] }) : null;
+    const slug = url.searchParams.get('slug') || '';
+    const f = (a) => (a || []).filter((x) => !slug || x.slug === slug);
+    return json({ ok: true, jid, dec: D ? D.dec : null, log: D ? D.log : null, lg: lg ? { pairs: f(lg.pairs), rj: f(lg.rj) } : null });
   }
   if (p === '/sakem/dec') {
     const jid = String(b.jid || ''), iid = String(b.iid || '').slice(0, 24), act = String(b.act || '');

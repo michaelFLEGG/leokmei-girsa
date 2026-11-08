@@ -225,6 +225,29 @@ if (cmd === 'status') {
     ck.warns = (ck.warns || []).concat(ck.errs.filter((e) => LEN.test(e)));
     ck.errs = ck.errs.filter((e) => !LEN.test(e));
     if (ck.errs.length) die('השומר דחה: ' + ck.errs.join(' · ') + '\nתקן והרץ שוב.');
+    /* פרומפט 26 (8.11.2026): הידוק יתר - קורא נפרד. שורה שקוצצה ביותר מחצי (או קטע שירד מתחת ל-65%) נשלחת
+       לקורא שאינו רואה את המקור ולא את הגמרא (סוכן-משנה נפרד בהקשר נקי), והוא כותב במשפט מה השורה אומרת.
+       seg.json: "read": [{"line": "<השורה כפי שבהצעה>", "said": "<מה הקורא הבין>", "ok": true|false}].
+       ok=false (לא הבין, או הבין אחרת מן המקור) - כותבים את השורה מחדש בפחות הידוק. */
+    const sq = SKC.squeeze(r.text, text);
+    let read = [];
+    if (sq.flag) {
+      const need = sq.lines.length ? sq.lines.map((x) => x.now) : SKC.rows(text).filter((x) => x.k === 'line').map((x) => x.v);
+      const got = Array.isArray(s.read) ? s.read : [];
+      const nk = (t) => SKC.qnorm(SKC.plainI(String(t || '')));
+      const miss = need.filter((l) => !got.some((g) => nk(g.line) && (nk(g.line) === nk(l) || nk(l).indexOf(nk(g.line)) > -1 || nk(g.line).indexOf(nk(l)) > -1)));
+      if (miss.length) {
+        const rf = path.join(WORK, jid, 'read-' + (si + 1) + '.txt');
+        fs.mkdirSync(path.dirname(rf), { recursive: true });
+        fs.writeFileSync(rf, miss.map((l) => SKC.plainI(l)).join('\n') + '\n');
+        die('הידוק יתר (' + (sq.seg ? 'הקטע ' + Math.round(sq.ratio * 100) + '% מאורכו' : sq.lines.map((x) => x.r + '%').join(', ')) + '): השורות האלה צריכות קורא נפרד.\n' +
+            'תן את ' + path.relative(ROOT, rf) + ' לקורא שאינו רואה את המקור ולא את הגמרא, ובקש ממנו לכתוב לכל שורה במשפט אחד מה היא אומרת.\n' +
+            'אחר כך הוסף ל-seg.json את "read": [{"line","said","ok"}] - ok=false כשלא הבין או הבין אחרת מן המקור, ואז כתוב את השורה בפחות הידוק.');
+      }
+      const bad = got.filter((g) => g.ok === false);
+      if (bad.length) die('הקורא הנפרד לא הבין ' + bad.length + ' שורות: ' + bad.map((g) => SKC.plainI(g.line).slice(0, 50)).join(' · ') + '\nכתוב אותן בפחות הידוק והרץ שוב (השדה read מתעדכן לנוסח החדש).');
+      read = got.map((g) => ({ line: String(g.line || '').slice(0, 600), said: String(g.said || '').slice(0, 600), ok: g.ok !== false }));
+    }
     const adds = (Array.isArray(s.adds) ? s.adds : []).map((a) => ({ t: String(a.t || ''), gem: String(a.gem || '').slice(0, 600) }));
     const nAdd = SKC.parse(text).reduce((n, k) => n + ((k.v || '').match(/\{\+:/g) || []).length, 0);
     if (nAdd !== adds.length) die('מספר ההשלמות {+:...} בנוסח (' + nAdd + ') אינו כמספר הפריטים ב-adds (' + adds.length + '). לכל השלמה - לשון הגמרא שממנה נלקחה.');
@@ -232,7 +255,7 @@ if (cmd === 'status') {
     if (s.skipped) layers.push('קיצור מרחבי');
     if (adds.length) layers.push('השלמה');
     o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, orig: r.text, text, point: String(s.point || ''),
-                   changes: (s.changes || []).map(String).slice(0, 6), layers, skipped: String(s.skipped || ''), adds, warn: ck.warns || [] });
+                   changes: (s.changes || []).map(String).slice(0, 6), layers, skipped: String(s.skipped || ''), adds, warn: ck.warns || [], read });
   }
   /* חסר גדול מן הגמרא: פריט נפרד במקומו, אחרי הקטע */
   (Array.isArray(s.missing) ? s.missing : []).forEach((m, k) => {

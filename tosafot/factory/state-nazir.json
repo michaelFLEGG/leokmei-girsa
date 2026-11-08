@@ -1,0 +1,35 @@
+{
+ "slug": "nazir",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-08T12:39:45Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nazir-p01-u01",
+    "nazir-p01-u02",
+    "nazir-p01-u03",
+    "nazir-p01-u04",
+    "nazir-p01-u05",
+    "nazir-p01-u06"
+   ],
+   "result": {
+    "generated": 134,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 72
+   }
+  }
+ },
+ "created": "2026-11-08T12:39:45Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.446,
+   "n": 11,
+   "at": "2026-11-08T12:39:45Z"
+  }
+ ],
+ "updated": "2026-11-08T12:39:45Z"
+}

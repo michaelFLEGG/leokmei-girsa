@@ -1642,6 +1642,24 @@
    "units": 1,
    "out": 1,
    "older_kept": 0
+  },
+  "1Uc_UqWhA8hsSxaPvvgBn4CDB0bOEP-KA|2026-11-08T12:32:07.042Z": {
+   "name": "אצווה-2026-11-08-nazir-p01-u06.json",
+   "id": "1Uc_UqWhA8hsSxaPvvgBn4CDB0bOEP-KA",
+   "modified": "2026-11-08T12:32:07.042Z",
+   "opened": "2026-11-08T12:39:43Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1Pl3PbbwoxlKgxiNW3LYvv1mB28mlqgL3|2026-11-08T12:33:50.197Z": {
+   "name": "אצווה-2026-11-08-nazir-p01-u05.json",
+   "id": "1Pl3PbbwoxlKgxiNW3LYvv1mB28mlqgL3",
+   "modified": "2026-11-08T12:33:50.197Z",
+   "opened": "2026-11-08T12:39:43Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
   }
  }
 }

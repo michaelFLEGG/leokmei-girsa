@@ -77,10 +77,22 @@
     /* התג בסרגל: כל פרק שמוכן לסקירה, גם במסכת אחרת */
     let t=$('#skptag');const rd=SKP.all.filter(x=>x.st==='ready');
     if(!rd.length){if(t)t.remove();return}
-    if(!t){t=document.createElement('button');t.id='skptag';t.type='button';($('#bar')||document.body).appendChild(t)}
+    /* פרומפט 27: תג קטן בתוך הסרגל עצמו (פריט בשורה, לא צף מעליו), ולכן לעולם אינו מכסה כפתור.
+       השם המלא בריחוף; כמה פרקים מוכנים - הלחיצה פותחת רשימה קצרה */
+    const bar=$('#bar');
+    if(!t){t=document.createElement('button');t.id='skptag';t.type='button';(bar||document.body).appendChild(t)}
+    if(!bar)t.classList.add('float');
     const f=rd.find(x=>x.slug===SLUG)||rd[0];
-    t.textContent='סכם - מוכן לסקירה: '+(f.title||f.jid)+(rd.length>1?' (+'+(rd.length-1)+')':'');
-    t.onclick=()=>{if(f.slug===SLUG)skpOpen(f.jid);else location.href=f.slug+'.html#p='+Math.max(0,f.perek-1)+'&skp='+f.jid}}
+    const go=x=>{if(x.slug===SLUG)skpOpen(x.jid);else location.href=x.slug+'.html#p='+Math.max(0,x.perek-1)+'&skp='+x.jid};
+    t.textContent='סכם'+(rd.length>1?' ('+rd.length+')':'');
+    t.title='מוכן לסקירה: '+rd.map(x=>x.title||x.jid).join(' · ');
+    t.onclick=ev=>{ev.stopPropagation();const old=$('#skptagm');if(old){old.remove();return}
+      if(rd.length===1){go(f);return}
+      const m=document.createElement('div');m.id='skptagm';m.dir='rtl';
+      rd.forEach(x=>{const b=document.createElement('button');b.type='button';b.textContent=x.title||x.jid;b.onclick=()=>{m.remove();go(x)};m.appendChild(b)});
+      document.body.appendChild(m);const r=t.getBoundingClientRect();
+      m.style.top=Math.round(r.bottom+4)+'px';m.style.left=Math.max(8,Math.min(innerWidth-m.offsetWidth-8,Math.round(r.left+r.width/2-m.offsetWidth/2)))+'px';
+      setTimeout(()=>addEventListener('click',function c(e){if(!m.contains(e.target)){m.remove();removeEventListener('click',c)}}),0)}}
   const skpR0=render;
   render=function(){const r=skpR0.apply(this,arguments);try{skpDraw()}catch(e){}return r};
   function skpPanel(){
@@ -436,7 +448,7 @@
     '.skpbtn{margin-inline-start:6px;padding:2px 10px;border-radius:12px;border:1px solid #2e5b8a;background:#fff;color:#2e5b8a;font:600 13px inherit;cursor:pointer;display:inline-block}.skpbtn.on{background:#eef3f9}.skpbtn.ready{background:#2e7d3c;border-color:#2e7d3c;color:#fff}'+
     '.skphead{margin:4px auto 6px;max-width:30em;text-align:center;font-size:12.5px;color:#4f6274;background:rgba(70,120,190,.07);border-radius:10px;padding:2px 10px}'+
     '.skphead.ready{color:#1f5a2c;background:rgba(46,125,60,.10);cursor:pointer}'+
-    '#skptag{position:fixed;top:6px;left:50%;transform:translateX(-50%);z-index:70;padding:3px 12px;border-radius:12px;border:1px solid #2e7d3c;background:#2e7d3c;color:#fff;font:600 12.5px inherit;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)}'+
+    '#skptag{position:static;flex:0 0 auto;align-self:center;white-space:nowrap;margin:0 4px;padding:2px 10px;border-radius:12px;border:1px solid #2e7d3c;background:#2e7d3c;color:#fff;font:600 12.5px inherit;cursor:pointer;line-height:1.5}'+'#skptag.float{position:fixed;top:6px;left:8px;z-index:70}'+'@media (max-width:700px){#skptag{margin:0 2px;padding:1px 7px;font-size:11.5px}}'+'#skptagm{position:fixed;z-index:80;display:flex;flex-direction:column;gap:2px;padding:4px;background:#fff;border:1px solid #2e7d3c;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.18);max-width:calc(100vw - 16px)}'+'#skptagm button{border:none;background:none;text-align:right;padding:5px 10px;font:inherit;cursor:pointer;border-radius:5px}#skptagm button:hover{background:#eef6ef}'+
     '#flow .row.skpold{display:none}#flow .row.skpold.skpshow{display:flex;opacity:.75}#flow .row.skpold.skpshow .main{text-decoration:line-through;text-decoration-color:rgba(120,120,120,.6)}'+
     '.skmghost.skp,.skmghost.skpmiss{position:relative;border-color:rgba(46,91,138,.45);background:rgba(46,91,138,.04);box-shadow:0 0 0 3px rgba(46,91,138,.10);padding-left:34px}'+
     '.skmghost .skmmain p{color:inherit}.skmghost.skp .skmrail{color:inherit}'+
@@ -465,6 +477,6 @@
     '.skptab{width:100%;border-collapse:collapse;font-size:13px}.skptab td{border-bottom:1px solid #eee;padding:4px}'+
     '@media (max-width:820px),(pointer:coarse){#skpbar .skpmob{display:flex;flex-basis:100%;gap:8px}#skpbar .skpmob button{flex:1;font-size:16px;padding:10px 0;border-radius:10px}'+
       '#skpbar .skpmob button:first-child{background:#2e7d3c;color:#fff;border-color:#2e7d3c}body.skprev{padding-bottom:110px}.skpside{display:none}.skmghost.skp,.skmghost.skpmiss{padding-left:8px}}'+
-    '@media print{#skpbar,#skptag,.skphead,.skpbtn{display:none!important}}';
+    '@media print{#skpbar,#skptag,#skptagm,.skphead,.skpbtn{display:none!important}}';
     document.head.appendChild(s)})();
   if(skpOK())setTimeout(()=>{skpLoad().then(()=>{const m=/skp=([a-z0-9-]+)/.exec(SKP_H0);if(m)skpOpen(m[1])})},2500);

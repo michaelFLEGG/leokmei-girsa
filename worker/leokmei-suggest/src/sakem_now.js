@@ -237,6 +237,9 @@ async function generate(env, key, sys, msgs, orig, gemara, around) {
     const p = parseOut(c.j);
     if (p.err) { errs = [p.err]; out = null; if (round === 0) { msgs = msgs.concat([{ role: 'assistant', content: p.raw || '{}' }, { role: 'user', content: 'התשובה אינה JSON תקין בשלושת השדות. החזר JSON בלבד.' }]); continue; } break; }
     out = p;
+    /* פרומפט 22: כותרת צד ארוכה וכפילות ברורה אחרי כותרת מתוקנות אוטומטית, לפני השומר */
+    const af = SKC.autofixTitles(p.text);
+    if (af.changed) { p.text = af.text; p.changes = (p.changes || []).concat(af.notes.map((x) => 'אוטומטי: ' + x)).slice(0, 8); }
     const ck = SKC.check(orig, p.text, g);
     errs = ck.errs; notes = ck.warns;
     if (!errs.length) break;

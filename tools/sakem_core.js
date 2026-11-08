@@ -140,6 +140,110 @@
         if(!cur.units.length)cur.units.push({titles:[],lines:[]});
         cur.units[cur.units.length-1].lines.push({sty:k.sty,v:k.v})});
       return segs}
+
+    /* =========== כותרת צד קצרה בלבד, וללא כפילות אחרי כותרת (פרומפט 22, 8.11.2026) ===========
+       הכרעת בעל הפרויקט: כותרת צד = עוגן (דובר, מפרש, מילת מהלך, מספור), עד שתי מילים; שלוש - רק
+       דובר + מילת מהלך. כל מה שמעבר הוא נושא: שורת (נושא) מעל, ומתחתיה כותרת צד קצרה. ומה שכתוב
+       בכותרת אינו חוזר בפתח השורה שאחריה. */
+    var MOVE_W={'קשה':1,'קשיא':1,'אלא':1,'והא':1,'הא':1,'תש':1,'מיתיבי':1,'איתיביה':1,'גופא':1,'תר':1,'ואבא':1,'ומיירי':1,'והיינו':1,'היינו':1,'נפקמ':1,'דחה':1,'דחייה':1,'תיובתא':1,'ורמינהי':1,'רמינהי':1,'פשיטא':1,'קמל':1,'איבעיא':1,'תיקו':1,'וצריכי':1,'צריכא':1,'וצריכא':1,'ולכוע':1,'נחלקו':1,'ותיובתא':1,'אמר':1,'אומר':1,'אמרי':1,'סבר':1,'סברי':1};
+    function twWords(p){return String(p||'').replace(NIK,'').replace(/^\s*[א-י]\.\s*/,'').replace(/\s*[:.]\s*$/,'').replace(/\s+/g,' ').trim().split(' ').filter(function(w){return w&&!/^[-:,.]+$/.test(w)})}
+    function moveKey(w){return String(w).replace(NIK,'').replace(/["'״׳.:,]/g,'')}
+    function isMoveW(w){var k=moveKey(w);return !!MOVE_W[k]||(k.length>3&&k[0]==='ו'&&!!MOVE_W[k.slice(1)])}
+    var SPK_RE=/^(ר'|רבי|רב|רבא|אביי|שמואל|מר|ר"[א-ת]+|רבה|ריש|רבן|אמימר|בר|ת"ר|תנא|תנן|דתניא|אמר)/;
+    function isSpkW(w){var k=String(w).replace(NIK,'');return SPK_RE.test(k)||/^[א-ת]"[א-ת]/.test(k)||/^ר[א-ת]{1,2}'?$/.test(k)}
+    /* כותרת צד ארוכה: 'long' (מעל שלוש), 'three' (שלוש שאינן דובר + מהלך), או '' */
+    function titleLen(p){var w=twWords(p),n=w.length;
+      if(n<=2)return '';
+      if(n>3)return 'long';
+      var mv=w.some(isMoveW);return mv?'':'three'}
+    /* עוגן קצר מתוך כותרת ארוכה: [מספור] + עד שתי המילים הראשונות אם הן דובר/מהלך. מחזיר {anchor,rest} */
+    function splitTitle(p){var num=(/^\s*([א-י]\.)\s*/.exec(p)||[])[1]||'';
+      var w=twWords(p),a=[];
+      for(var i=0;i<w.length&&a.length<2;i++){
+        var x=w[i];
+        if(i===0&&(isMoveW(x)||isSpkW(x))){a.push(x);continue}
+        if(i>0&&(isMoveW(x)||isSpkW(x)||/^[א-ת]"[א-ת]$/.test(x.replace(NIK,'').replace(/:$/,''))))a.push(x);else break}
+      if(!a.length)return {anchor:num,rest:w.join(' ')};
+      var anchor=(num?num+' ':'')+a.join(' ').replace(/:$/,'')+(/:$/.test(String(p).trim())||a.length&&isSpkW(a[0])&&!/אמר$/.test(a.join(' '))?':':'');
+      return {anchor:anchor.replace(/\s+/g,' ').trim(),rest:w.slice(a.length).join(' ')}}
+    /* חפיפה בין כותרת לפתח השורה שאחריה: כמה מילים מתחילת הכותרת (או חלקה) חוזרות בראש השורה.
+       מחזיר מספר מילים חוזרות בראש השורה (0 = אין). כפילות: 2 ומעלה, או הכותרת כולה (גם מילה אחת) */
+    function overlapN(titleP,lineV){
+      var tw=twWords(titleP).map(function(w){return nbaseQ(w)}).filter(Boolean);
+      var lw=twWords(plainI(lineV)).map(function(w){return nbaseQ(w)}).filter(Boolean).slice(0,tw.length+3);
+      if(!tw.length||!lw.length)return 0;
+      var best=0;
+      for(var i=0;i<tw.length;i++){var k=0;while(i+k<tw.length&&k<lw.length&&tw[i+k]===lw[k])k++;if(k>best)best=k}
+      return (best>=2||(best>=1&&best===tw.length))?best:0}
+    function nbaseQ(w){return qnorm(String(w)).replace(/\s/g,'')}
+    /* הסרת n מילים מראש שורת ביניים (בלי לשבור סימון), כולל "אמר/אומר" אחרי שם הדובר */
+    function stripWords(v,n,dropSay){
+      var o='',i=0,left=n,seenWord=false,inW=false;v=String(v);
+      /* דילוג על מספור בפתח */
+      var m=/^([א-י]\.\s*)/.exec(v);if(m){o=m[1];i=m[1].length}
+      while(i<v.length&&left>0){
+        var c=v[i];
+        if(c==='{'){var mm=/^\{[^{}:\s]{1,4}:/.exec(v.slice(i,i+8));if(mm){o+=mm[0];i+=mm[0].length;continue}}
+        if(c==='}'){o+=c;i++;continue}
+        if(/\s/.test(c)){i++;if(inW){inW=false;left--}continue}
+        inW=true;i++}
+      if(inW)left--;
+      var rest=v.slice(i);
+      if(dropSay){rest=rest.replace(/^((?:\}|\s)*)(אמר|אומר)(?=[\s}:]|$)/,function(x,a){return a.replace(/\s/g,'')})}
+      var r=(o+rest.replace(/^[\s:]+/,'')).replace(/\{[^{}:]+:\}/g,'').replace(/^\s+/,'');
+      return r}
+    /* תיקון אוטומטי של כותרות צד ארוכות וכפילויות ברורות. מחזיר {text,notes,changed} */
+    function autofixTitles(text){
+      var T=String(text||'').replace(/\r/g,'').split('\n'),out=[],notes=[],ch=0;
+      var P=parse(text);
+      /* עוברים על השורות בסדר, ומזהים כותרות צד לפי התחביר */
+      for(var i=0;i<T.length;i++){
+        var raw=T[i],s=raw.trim(),m=/^\[צד:(.*)\]$/.exec(s);
+        if(m){var p=plainI(m[1]).replace(/\s+/g,' ').trim();
+          if(titleLen(p)==='long'){
+            /* עוגן קצר + נושא. אם כבר בא מיד לפני שורת (נושא) - לא מוסיפים עוד אחת */
+            var sp=splitTitle(p);
+            if(sp.rest){
+              var prev=out.length?out[out.length-1]:'';
+              if(!/^\((נושא)\)/.test(prev)&&!/^\[כותרת-נושא:/.test(prev))out.push('(נושא) '+sp.rest.replace(/:$/,''));
+              else notes.push('כותרת ארוכה הוחלפה בעוגן; הנושא כבר קיים: '+sp.rest.slice(0,30));
+              if(sp.anchor&&sp.anchor!==''&&twWords(sp.anchor).length)out.push('[צד:'+sp.anchor+']');
+              notes.push('כותרת צד ארוכה פוצלה: '+p.slice(0,40));ch++;continue}}
+        }
+        out.push(raw)}
+      /* כפילות: כותרת (צד / נושא) והשורה הבאה */
+      for(var j=0;j<out.length-1;j++){
+        var a=out[j].trim(),tm=/^\[צד:(.*)\]$/.exec(a),tn=/^\((נושא)\)\s*(.*)$/.exec(a),tl=/^\[כותרת-(?:נושא|דה):(.*)\]$/.exec(a);
+        var tp=tm?tm[1]:tn?tn[2]:tl?tl[1]:null;if(tp===null)continue;
+        /* השורה הבאה: דילוג על כותרות צד נוספות רק כשזו כותרת צד */
+        var k=j+1;while(k<out.length&&/^\[צד:/.test(out[k].trim()))k++;
+        if(k>=out.length)continue;
+        var nl=out[k].trim();if(/^\[(?:דף|משנה|גמרא|קבוע|מקור|כותרת-נושא|כותרת-דה)/.test(nl))continue;
+        var sty=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(nl),body=sty?nl.slice(sty[0].length):nl;
+        if(tn&&sty&&sty[1]==='נושא')continue;
+        var n=overlapN(tp,body);if(!n)continue;
+        var tw=twWords(plainI(tp));
+        /* תיקון רק כשהחפיפה פותחת את השורה והשארית אינה ריקה (ברור) */
+        var firstOverlap=n===tw.length||n>=2;
+        var fixed=stripWords(body,n,tw.length<=2);
+        if(firstOverlap&&plainI(fixed).replace(/\s+/g,'').length>=4&&fixed!==body){
+          out[k]=(sty?sty[0]:'')+fixed;notes.push('כפילות אחרי כותרת הוסרה: '+tw.join(' ').slice(0,30));ch++}}
+      return {text:out.join('\n'),notes:notes,changed:ch}}
+    /* שגיאות/אזהרות של כותרות צד וכפילות, על נוסח. orig: הנוסח המקורי (כותרות שלא השתנו - אזהרה, לא שגיאה) */
+    function titleIssues(newText,origText){
+      var E=[],W=[],origT={};
+      if(origText!=null)parse(origText).forEach(function(k){if(k.t==='title')origT[pnorm(plainI(k.v))]=1});
+      var P=parse(newText);
+      P.forEach(function(k,i){
+        if(k.t==='title'){var p=plainI(k.v).replace(/\s+/g,' ').trim(),L=titleLen(p);
+          if(L==='long'){(origT[pnorm(p)]?W:E).push('כותרת צד ארוכה (מעל שלוש מילים) - נושא לכותרת נושא: '+p.slice(0,40))}
+          else if(L==='three')W.push('כותרת צד של שלוש מילים שאינה דובר + מילת מהלך: '+p.slice(0,40))}
+        if(k.t==='title'||(k.t==='line'&&k.sty==='nose')||(k.t==='lock'&&(k.kind==='כותרת-נושא'||k.kind==='כותרת-דה'))){
+          var tp=k.t==='lock'?k.val:k.v,j=i+1;
+          if(k.t==='title')while(j<P.length&&P[j].t==='title')j++;
+          var nx=P[j];if(!nx||nx.t!=='line'||(k.t==='line'&&nx.sty==='nose'))return;
+          if(overlapN(plainI(tp),nx.v))E.push('כפילות בין כותרת לשורה שאחריה: '+plainI(tp).slice(0,30)+' | '+plainI(nx.v).slice(0,30))}});
+      return {errs:E,warns:W}}
     var META=/(הטקסט|הקטע|הסוגיה)\s+(עוסק|עוסקת|דן|דנה|מתאר|מתארת)|לסיכום|בקטע זה|בסוגיה זו/;
     /* שורה מודפסת אחת, בתווים (עם רווחים, בלי ניקוד ובלי סימני הביניים). נגזר ממנוע התצוגה
        וההדפסה ולא נוחש: הטור הוא 20.75em של frank.ttf (בדפדפן; 60 מ"מ בהדפסה, כיול מול וורד
@@ -291,6 +395,7 @@
         w.forEach(function(x){if(cur&&cur+1+x.length>LINE){cur=x.length;last=[x]}else{cur+=(cur?1:0)+x.length;last.push(x)}});
         if(last.length<=2)warns.push('שורה אלמנה ('+last.join(' ')+') - להדק או לשבור מוקדם')});
       /* ---- פרומפט עבודה גרסה 2 (5.11.2026): שלמות, עקביות וסימטריה - חובה לפני העימוד ---- */
+      var ti=titleIssues(newText,origText);ti.errs.forEach(function(e){errs.push(e)});ti.warns.forEach(function(e){warns.push(e)});
       quality(newText,o).forEach(function(e){errs.push(e)});
       return {errs:errs,warns:warns}}
     /* בדיקות האיכות של הפרק, משותפות לשומר (על ההצעה) ולבדיקת הפרק (tools/print/lint_chapter.mjs, על הנתונים).
@@ -422,7 +527,7 @@
       ins.sort(function(x,y){return y.pos-x.pos||y.q-x.q});
       ins.forEach(function(z){text=text.slice(0,z.pos)+z.s+text.slice(z.pos)});
       return {text:text,moved:moved}}
-    return {h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
+    return {h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
             quality:quality,qnorm:qnorm,C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

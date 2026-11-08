@@ -15,7 +15,7 @@ function canon(h) {
 }
 let fail = 0, lines = 0, pages = 0, bad = 0;
 for (const f of process.argv.slice(2)) {
-  let s = fs.readFileSync(f, 'utf8').replace(/^const DATA=/, '').replace(/,SLUG="[^"]*";\s*$/, '');
+  let s = fs.readFileSync(f, 'utf8').replace(/^const DATA=/, '').replace(/,SLUG="[^"]*"(?:,[A-Z_]+=[^;]*)?;\s*$/, '');
   const D = JSON.parse(s);
   D.pages.forEach((p, pi) => {
     pages++;
@@ -41,7 +41,7 @@ for (const f of process.argv.slice(2)) {
       if (g[0] !== w[0] || g[1] !== w[1]) { fail++; if (fail < 6) console.log('שורה שונה', p.daf, JSON.stringify(w).slice(0, 160), '\n      ', JSON.stringify(g).slice(0, 160)); }
     });
     /* כללי המספור (פרומפט 7) מחייבים את ההצעה, לא את הספר כפי שהוא: עמוד שלם אינו ממוספר עדיין */
-    const e = SKC.guard(r.text, r.text).filter((x) => x !== 'אינו קצר מהמקור' && x !== 'מקף ארוך' && !/מספור/.test(x));
+    const e = SKC.guard(r.text, r.text).filter((x) => x !== 'אינו קצר מהמקור' && x !== 'מקף ארוך' && !/מספור/.test(x) && !/כותרת צד ארוכה|כפילות בין כותרת/.test(x));
     if (e.length) { fail++; if (fail < 6) console.log('השומר נכשל על הקטע עצמו', p.daf, e); }
   });
 }
@@ -74,5 +74,25 @@ const P7 = {
   'סוגי תיקון ליומן': SKC.diffKinds(q3, a3).join(',') === 'מספור,הסבר' && SKC.diffKinds('[צד:רבא:]\nאבג', '{אם:רבא:} אבג').join(',') === 'דובר',
 };
 Object.keys(P7).forEach((k) => { if (!P7[k]) { fail++; console.log('שומר פרומפט 7 נכשל:', k); } });
+
+// פרומפט 22 (8.11.2026): כותרת צד קצרה בלבד, ובלי כפילות אחרי כותרת
+const T22 = '[דף:כה.]\n[צד:רבא: בכור שנפל בו מום ונתערב]\nרבא אמר בכור שנפל בו מום מותר\n[צד:קשה]\nהא קשיא';
+const af22 = SKC.autofixTitles(T22);
+const P22 = {
+  'כותרת של עד שתי מילים עוברת': SKC.titleLen('רבא:') === '' && SKC.titleLen('ר\' יוחנן') === '' && SKC.titleLen('ב. רבא:') === '',
+  'מספור ונקודתיים אינם נספרים': SKC.titleLen('א. אלא') === '' && SKC.titleLen('ב. ר"י:') === '',
+  'שלוש מילים דובר + מהלך מותר': SKC.titleLen('רבא: וצריכי') === '' && SKC.titleLen('ר\' יוחנן אמר') === '',
+  'שלוש מילים בלי דובר ומהלך - אזהרה': SKC.titleLen('בכור שנפל בו') === 'three' || SKC.titleLen('בכור שנפל מום') === 'three',
+  'ארבע מילים נדחית': SKC.titleLen('בכור שנפל בו מום') === 'long' && G('[צד:א]\nשורה', '[צד:בכור שנפל בו מום]\nשורה').errs.some((x) => /כותרת צד ארוכה/.test(x)),
+  'כותרת ארוכה שהייתה במקור - אזהרה בלבד': !G('[צד:בכור שנפל בו מום]\nשורה ארוכה יותר', '[צד:בכור שנפל בו מום]\nשורה').errs.some((x) => /כותרת צד ארוכה/.test(x)),
+  'תיקון אוטומטי: נושא + צד קצרה': /\(נושא\) בכור שנפל בו מום ונתערב\n\[צד:רבא:\]/.test(af22.text),
+  'תיקון אוטומטי: אחרי רבא לא "רבא אמר"': !/^רבא/m.test(af22.text.split('\n')[3]) && af22.text.split('\n')[3].startsWith('בכור'),
+  'תיקון אוטומטי: אחרי קשה לא "הא" שחוזר': af22.text.includes('[צד:קשה]\nהא קשיא'),
+  'חפיפה של שתי מילים נתפסת': G('[צד:אלא]\nאחר', '[צד:הילכתא כרבא]\nהילכתא כרבא בכל מקום').errs.some((x) => /כפילות/.test(x)),
+  'כפילות נושא-שורה נתפסת': G('אבג דהו', '(נושא) בכור שנפל בו מום\nבכור שנפל בו מום - מותר').errs.some((x) => /כפילות/.test(x)),
+  'אחרי תיקון אין כפילות': !SKC.titleIssues(af22.text, '').errs.length,
+  'ללא חפיפה - נקי': !SKC.titleIssues('[צד:רבא:]\nבכור שנפל בו מום מותר', '').errs.length,
+};
+Object.keys(P22).forEach((k) => { if (!P22[k]) { fail++; console.log('שומר פרומפט 22 נכשל:', k); } });
 console.log(`עמודים ${pages}, שורות ${lines}, תגיות לא מוכרות ${bad}, כשלים ${fail}`);
 process.exit(fail ? 1 : 0);

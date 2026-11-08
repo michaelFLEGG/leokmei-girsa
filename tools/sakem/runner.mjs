@@ -208,8 +208,10 @@ if (cmd === 'status') {
     if (q0.length) die('אי אפשר "ללא שינוי": הנוסח הקיים פגום - ' + q0.slice(0, 6).join(' · ') + '\nתקן בהצעה.');
     o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, nochange: true });
   } else {
-    const text = String(s.text || '').replace(/\r/g, '').trim();
+    let text = String(s.text || '').replace(/\r/g, '').trim();
     if (!text) die('אין text');
+    /* פרומפט 22: כותרת צד ארוכה וכפילות ברורה אחרי כותרת - תיקון אוטומטי לפני השומר */
+    { const af = SKC.autofixTitles(text); if (af.changed) { text = af.text; s.changes = (s.changes || []).concat(af.notes.map((x) => 'אוטומטי: ' + x)); } }
     const gem = (pk.pages || []).filter((p) => r.ids.some((id) => (pk.units.find((u) => u.id === id) || {}).daf === p.daf)).map((p) => (p.g || []).map(strip).join(' ')).join(' ');
     /* הקשר המספור (6.11.2026): רשימה שהתחילה לפני הקטע או נמשכת אחריו. בקטע הראשון של הפרק - הרשימה עשויה
        להתחיל בפרק הקודם (סוכה ה, "ב. ג." אחרי "א." של פרק ד): אז ההקשר הוא המספר שהנוסח המקורי פותח בו */

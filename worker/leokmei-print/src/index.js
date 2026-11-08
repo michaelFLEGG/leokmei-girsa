@@ -105,7 +105,7 @@ async function pdf(req, env, ctx, url) {
     const lj = lr.ok ? await lr.json() : null;
     live = lj && lj.ok ? String(lj.t || 0) : 'nolive-' + Date.now();
   } catch (e) { live = 'nolive-' + Date.now(); }
-  const key = 'print:v2-frank:' + await sha(JSON.stringify([m, all, from, to, tos, duplex, profile, ver, pick, live]));
+  const key = 'print:v3-frank685:' + await sha(JSON.stringify([m, all, from, to, tos, duplex, profile, ver, pick, live]));
   const hn = { kiddushin: 'קידושין' }[m] || m;
   const dfile = (all ? `${hn}.pdf` : `${hn} ${from}${to !== from ? ' - ' + to : ''}.pdf`).replace(/:/g, '꞉');
   const inline = q.get('inline') === '1';

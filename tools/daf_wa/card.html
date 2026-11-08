@@ -1,37 +1,57 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl"><head><meta charset="utf-8">
 <style>
-/* כרטיס התצוגה המקדימה של הדף (פרומפט 23): 1200x480, בשפת הסמל של האתר (og-image): כחול קטיפה, מסגרת זהב כפולה, ל' מזהב.
+/* כרטיס התצוגה המקדימה של הדף (פרומפט 23): 1200x480, כחול קטיפה ומסגרת זהב כפולה.
    כל התוכן בתוך המרכז (917 פיקסלים), כדי שגם חיתוך ליחס 1.91 (פייסבוק ודומיו) לא יקצץ אותו.
-   8.11.2026 (בעל הפרויקט): שם הדף בוילנא, הכרטיס נמוך - שלא יתפוס יותר מדי מן המסך, ונראות מכובדת. בלי רקעי הדגשה מאחורי טקסט. */
+   8.11.2026 ערב (בעל הפרויקט): בלי ה-ל' - מיותר; גופן וילנא של בית אלף (BA Vilna) שלו; זהב שנראה זהב;
+   היום והתאריך בתוך התמונה, כדי שלא יתפסו שורות בהודעה; והשורה שמתחת לשם הדף - כותרת שמגדירה את הדף, לא עניין צדדי. */
+@font-face{font-family:'BAV';src:url(@@BA_B@@);font-weight:700}
+@font-face{font-family:'BAV';src:url(@@BA_R@@);font-weight:400}
 @font-face{font-family:'Frank';src:url(@@FONTS@@/frank.woff2) format('woff2');font-weight:400}
-@font-face{font-family:'Vilna';src:url(@@FONTS@@/vilna-r.woff2) format('woff2');font-weight:400}
-@font-face{font-family:'Vilna';src:url(@@FONTS@@/vilna-b.woff2) format('woff2');font-weight:700}
 html,body{margin:0;width:1200px;height:480px;overflow:hidden}
-body{background:radial-gradient(90% 120% at 60% 30%,#173d5c 0%,#10283d 48%,#0a1824 100%);font-family:'Frank',serif;position:relative}
-.f1{position:absolute;inset:18px;border:3px solid #c9a24a}
-.f2{position:absolute;inset:28px;border:1px solid rgba(214,180,100,.55)}
-.gold{background:linear-gradient(180deg,#fbe7a6 0%,#efc96a 38%,#d9a53f 62%,#b98327 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
-      filter:drop-shadow(0 3px 0 rgba(40,24,6,.75)) drop-shadow(0 0 18px rgba(240,200,110,.18))}
-.lam{position:absolute;right:178px;top:50%;transform:translateY(-52%);font-family:'Vilna',serif;font-weight:700;font-size:330px;line-height:1}
-.sep{position:absolute;right:400px;top:78px;bottom:78px;width:1px;background:linear-gradient(180deg,transparent,rgba(214,180,100,.75),transparent)}
-.txt{position:absolute;right:420px;left:150px;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.brand{font-family:'Vilna',serif;font-weight:700;font-size:27px;letter-spacing:.2em;color:#c9a24a}
-.daf{font-family:'Vilna',serif;font-weight:700;font-size:104px;line-height:1.08;margin:10px 0 6px;white-space:nowrap}
-.rule{width:300px;height:1.5px;background:linear-gradient(90deg,transparent,#d6b464 20%,#f0d690 50%,#d6b464 80%,transparent);margin:6px 0 18px}
-.line{font-family:'Frank',serif;font-size:36px;line-height:1.3;color:#efe3c4;max-width:620px}
+body{background:radial-gradient(85% 130% at 50% 38%,#1b4467 0%,#11304a 45%,#0a1a28 100%);font-family:'Frank',serif;position:relative}
+/* מסגרת זהב: פס רחב בשיפוע מתכתי, ופס דק בתוכו */
+.f1{position:absolute;inset:16px;border:4px solid transparent;border-image:linear-gradient(135deg,#8a5a12,#f7dc8a 18%,#c8902c 34%,#fff1bf 50%,#c08524 66%,#f3d27a 82%,#8a5a12) 1}
+.f2{position:absolute;inset:28px;border:1px solid transparent;border-image:linear-gradient(135deg,#a8741d,#f6dc90 50%,#a8741d) 1;opacity:.85}
+.gold{background:linear-gradient(180deg,#fff8d6 0%,#ffe9a0 18%,#f4c95a 38%,#d99a26 52%,#b77514 60%,#e8b545 74%,#fbe08c 88%,#c98a1e 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      filter:drop-shadow(0 1px 0 #6b4308) drop-shadow(0 3px 2px rgba(20,10,0,.65)) drop-shadow(0 0 22px rgba(255,205,100,.22))}
+.txt{position:absolute;right:150px;left:150px;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.brand{font-family:'BAV',serif;font-weight:400;font-size:26px;letter-spacing:.18em;color:#d9b45e}
+.daf{font-family:'BAV',serif;font-weight:700;font-size:118px;line-height:1.05;margin:4px 0 2px;white-space:nowrap}
+.rule{display:flex;align-items:center;gap:14px;margin:6px 0 14px}
+.rule i{display:block;width:150px;height:1.5px;background:linear-gradient(90deg,transparent,#e6c063 60%,#f7dc8a)}
+.rule i:last-child{background:linear-gradient(270deg,transparent,#e6c063 60%,#f7dc8a)}
+.rule b{display:block;width:9px;height:9px;transform:rotate(45deg);background:linear-gradient(135deg,#fff1bf,#d99a26)}
+.line{font-family:'Frank',serif;font-size:40px;line-height:1.25;color:#f3e7c8;max-width:840px;white-space:nowrap}
+.date{font-family:'BAV',serif;font-weight:400;font-size:27px;color:#cfae63;margin-top:16px;letter-spacing:.04em}
 </style></head><body>
 <div class="f1"></div><div class="f2"></div>
-<div class="lam gold">ל</div>
-<div class="sep"></div>
 <div class="txt">
   <div class="brand">לאוקמי גירסא · הדף היומי</div>
   <div class="daf gold">@@DAF@@</div>
-  <div class="rule"></div>
+  <div class="rule"><i></i><b></b><i></i></div>
   <div class="line">@@LINE@@</div>
+  <div class="date" id="date" data-iso="@@DATE@@"></div>
 </div>
 <script>
-/* שם מסכת ארוך: מקטינים עד שנכנס בשורה אחת */
-window.fit=function(){var d=document.querySelector('.daf'),w=d.parentNode.clientWidth,f=104;d.style.fontSize=f+'px';while(d.scrollWidth>w&&f>60){f-=4;d.style.fontSize=f+'px'}};fit();
+/* היום והתאריך העברי - אותו חישוב כמו בשרת (Intl, לוח עברי) */
+(function(){
+  var el=document.getElementById('date'),k=el.getAttribute('data-iso');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(k)){el.remove();return}
+  var DAY=864e5,dn=Math.floor(Date.UTC(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8,10))/DAY),w=((dn%7)+11)%7;
+  var L1=[[400,'ת'],[300,'ש'],[200,'ר'],[100,'ק'],[90,'צ'],[80,'פ'],[70,'ע'],[60,'ס'],[50,'נ'],[40,'מ'],[30,'ל'],[20,'כ'],[10,'י'],[9,'ט'],[8,'ח'],[7,'ז'],[6,'ו'],[5,'ה'],[4,'ד'],[3,'ג'],[2,'ב'],[1,'א']];
+  function lt(n){if(n===15)return 'טו';if(n===16)return 'טז';var t='';L1.forEach(function(p){while(n>=p[0]){t+=p[1];n-=p[0]}});return t.replace(/יה$/,'טו').replace(/יו$/,'טז')}
+  function gq(n){var t=lt(n);return t.length>1?t.slice(0,-1)+'״'+t.slice(-1):t+'׳'}
+  var MB={Tishri:'בתשרי',Heshvan:'בחשון',Kislev:'בכסלו',Tevet:'בטבת',Shevat:'בשבט',Adar:'באדר','Adar I':'באדר א׳','Adar II':'באדר ב׳',Nisan:'בניסן',Iyar:'באייר',Sivan:'בסיון',Tamuz:'בתמוז',Av:'באב',Elul:'באלול'};
+  var DOW=['יום ראשון','יום שני','יום שלישי','יום רביעי','יום חמישי','יום שישי','שבת קודש'],o={};
+  new Intl.DateTimeFormat('en-u-ca-hebrew',{timeZone:'UTC',day:'numeric',month:'long',year:'numeric'}).formatToParts(new Date(dn*DAY+432e5)).forEach(function(p){o[p.type]=p.value});
+  el.textContent=DOW[w]+' · '+gq(+o.day)+' '+(MB[o.month]||o.month)+' ה'+gq(+o.year%1000);
+})();
+/* שם מסכת ארוך או כותרת ארוכה: מקטינים עד שנכנסים בשורה אחת */
+window.fit=function(){
+  var w=document.querySelector('.txt').clientWidth;
+  [['.daf',118,64],['.line',40,26]].forEach(function(a){var d=document.querySelector(a[0]),f=a[1];d.style.fontSize=f+'px';while(d.scrollWidth>w&&f>a[2]){f-=2;d.style.fontSize=f+'px'}});
+};fit();
 </script>
 </body></html>

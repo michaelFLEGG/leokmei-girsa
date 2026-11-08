@@ -38,8 +38,14 @@ jobs:
       - name: כרטיסי הדף היומי
         continue-on-error: true
         timeout-minutes: 8
+        # גופן BA Vilna של בעל הפרויקט (בית אלף, ברישיון שלו): המאגר ציבורי, ולכן הגופן אינו בו - רק בסודות (עותק מצומצם לאותיות).
+        # אין סוד - card.py מתריע ביומן ואינו מצייר בגופן אחר.
+        env:
+          BA_B: ${{ secrets.LEOKMEI_BA_VILNA_B }}
+          BA_R: ${{ secrets.LEOKMEI_BA_VILNA_R }}
         run: |
           python -m playwright install chromium > /dev/null 2>&1 || true
+          if [ -n "$BA_B" ] && [ -n "$BA_R" ]; then mkdir -p "$RUNNER_TEMP/ba"; echo "$BA_B" | base64 -d > "$RUNNER_TEMP/ba/ba-vilna-b.otf"; echo "$BA_R" | base64 -d > "$RUNNER_TEMP/ba/ba-vilna-r.otf"; export LEOKMEI_BA_FONTS="$RUNNER_TEMP/ba"; fi
           miss=$(for f in data/daf-wa/*.json; do n=$(basename "$f" .json); [ -f "data/daf-wa/og/$n.jpg" ] || echo "$n"; done)
           [ -z "$miss" ] && { echo "אין כרטיס חסר"; exit 0; }
           python tools/daf_wa/card.py $miss

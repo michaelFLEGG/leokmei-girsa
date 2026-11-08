@@ -102,23 +102,25 @@ function dafimFor(k) {
 }
 
 /* ---------- הרכבת ההודעה (סעיף 2) ---------- */
-const lineOf = (c, i, bold) => '◂ ' + (bold ? '*' + c.lines[i].t.replace(/\*/g, '') + '*' : c.lines[i].t);
+const lineOf = (c, i) => '◂ ' + c.lines[i].t.replace(/\*/g, '');
+/* מבנה ההודעה (הכרעת בעל הפרויקט, 8.11.2026 ערב):
+   השאלה ראשונה ומודגשת - ורק היא מודגשת (בלי הכותרת "הידעת?"), ולכן ההודעה מיושרת לימין;
+   שם הדף, היום והתאריך - בתוך הכרטיס שבתצוגה המקדימה, לא בשורות ההודעה;
+   "עוד X דפים" בגופן קוד של ווטסאפ; והקישור בסוף (התצוגה המקדימה נבנית ממנו גם שם). */
 function compose(meta, items, rec) {
   const first = items[0], c0 = first.c;
   const pick = rec && Number.isInteger(rec.pick) && c0.alts && c0.alts[rec.pick] ? c0.alts[rec.pick] : null;
   const hook = pick || c0.hook;
-  const same = items.every((x) => x.slug === first.slug);
-  const labels = items.map((x) => gq(x.n));
-  const title = '*הדף היומי · ' + first.name + ' ' + (same ? labels.join('-') : labels[0]) + (same ? '' : ' ועוד') + '*';
-  const out = ['leokmei.com/daf/' + first.slug + '-' + first.n, title, meta.line, '', '*הידעת?*', hook.q, ''];
+  const out = ['*' + String(hook.q).replace(/\*/g, '') + '*', ''];
   items.forEach((x, j) => {
-    out.push(items.length > 1 ? '*' + x.name + ' ' + gq(x.n) + ' בקצרה*' : '*הדף בקצרה*');
-    x.c.lines.forEach((_, i) => out.push(lineOf(x.c, i, j === 0 && i === hook.ans)));
+    out.push(items.length > 1 ? x.name + ' ' + gq(x.n) + ' בקצרה' : 'הדף בקצרה');
+    x.c.lines.forEach((_, i) => out.push(lineOf(x.c, i)));
     if (j > 0) out.push('לדף המלא: leokmei.com/daf/' + x.slug + '-' + x.n);
     out.push('');
   });
   const last = items[items.length - 1], left = last.last - last.n;
-  out.push(left > 0 ? 'עוד ' + left + (left === 1 ? ' דף' : ' דפים') + ' לסיום ' + last.name : 'היום מסיימים את מסכת ' + last.name);
+  out.push('```' + (left > 0 ? 'עוד ' + left + (left === 1 ? ' דף' : ' דפים') + ' לסיום ' + last.name : 'היום מסיימים את מסכת ' + last.name) + '```');
+  out.push('leokmei.com/daf/' + first.slug + '-' + first.n);
   return out.join('\n');
 }
 

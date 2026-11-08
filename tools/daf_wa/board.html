@@ -39,6 +39,7 @@ h2{font-family:'Vilna',serif;font-size:19px;margin:22px 0 8px;color:var(--blue)}
 .links a{color:var(--blue)}
 textarea{width:100%;min-height:330px;font-family:inherit;font-size:15px;line-height:1.5;padding:8px;border:1px solid #c9b993;border-radius:8px;direction:rtl}
 .wa{background:var(--wabg);border-radius:10px;padding:10px}
+.wa code{font-family:Consolas,'Courier New',monospace;font-size:.92em}
 .bub{background:var(--wa);border-radius:8px;padding:4px 4px 8px;box-shadow:0 1px .5px rgba(0,0,0,.13);font-family:system-ui,'Segoe UI',Arial,sans-serif;font-size:14.2px;line-height:1.42;color:#111}
 .pv{background:#d9f2c9;border-radius:6px;overflow:hidden;margin-bottom:6px}
 .pv img{display:block;width:100%;aspect-ratio:1200/480;object-fit:cover;background:#123049}
@@ -81,7 +82,7 @@ function login(err){
 }
 var STATE={auto:'יישלח אוטומטית',approved:'אושר - יישלח',sent:'נשלח',await:'ממתין לאישורך',missing:'חסר תוכן שנבדק - לא יישלח',stopped:'נעצר - לא יישלח',holy:'אין שליחה',pilot:'פיילוט - לעיון ואישור'};
 function wa(t){
-  return esc(t).replace(/\*([^*\n]+)\*/g,'<b>$1</b>').replace(/(^|\s)(leokmei\.com\/[^\s]*)/g,'$1<a href="https://$2" target="_blank" rel="noopener">$2</a>');
+  return esc(t).replace(/```([^`\n]+)```/g,'<code>$1</code>').replace(/\*([^*\n]+)\*/g,'<b>$1</b>').replace(/(^|\s)(leokmei\.com\/[^\s]*)/g,'$1<a href="https://$2" target="_blank" rel="noopener">$2</a>');
 }
 function bubble(v){
   var f=v.dafim[0]||{};

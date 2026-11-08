@@ -342,8 +342,13 @@
     let p,t=text;
     if(it.kind==='missing'){const at=skpAnchor(it);if(!at)throw new Error('המקום לא נמצא');const o=skmInter([at]);p={id:SKP.rev.jid+':'+it.iid,ids:[at.u.id],orig:o};t=o+'\n'+it.text}
     else p={id:SKP.rev.jid+':'+it.iid,ids:it.ids,orig:orig||it.orig};
-    const rp=skmRepair(p.orig,t);t=rp.text;
-    const errs=SKC.guard(p.orig,t,{edited:true}).filter(x=>/נעולים|קטע שלם|נוספו שורות|תג לא מוכר/.test(x));
+    /* פרומפט 27: עיטור ליד כותרת שההצעה מוחקת - יוצא מן המקור ומן ההצעה, ונמחק בהחלה */
+    const hd=SKC.hatzDel(p.orig,t);
+    if(hd.bad.length)throw new Error('עיטור למחיקה שאינו בקטע ('+hd.bad.join(', ')+')');
+    if(hd.ids.length){t=hd.text;p.hdel=hd.ids}
+    const o2=hd.ids.length?hd.orig:p.orig;
+    const rp=skmRepair(o2,t);t=rp.text;
+    const errs=SKC.guard(o2,t,{edited:true}).filter(x=>/נעולים|קטע שלם|נוספו שורות|תג לא מוכר/.test(x));
     if(errs.length)throw new Error(errs[0]+'. העריכה נשארה פתוחה - אפשר לתקן ולנסות שוב');
     const r=skmApply(p,t);
     skmRemember(p.id,t,r.recs||[]);

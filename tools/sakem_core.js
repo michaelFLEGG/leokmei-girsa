@@ -697,7 +697,31 @@
       ins.sort(function(x,y){return y.pos-x.pos||y.q-x.q});
       ins.forEach(function(z){text=text.slice(0,z.pos)+z.s+text.slice(z.pos)});
       return {text:text,moved:moved}}
-    return {h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
+    /* =========== מחיקת עיטור ליד כותרת (פרומפט 27, 8.11.2026) ===========
+       הכרעת בעל הפרויקט: הכותרת עצמה היא החציצה, ולכן עיטור שצמוד לכותרת נושא או לכותרת ד"ה נמחק.
+       [קבוע] נשאר נעול לכל דבר אחר. ההצעה כותבת במקום השורה [קבוע:<מזהה>] את השורה [מחק-עיטור:<מזהה>].
+       hatzDel מוציא את שתיהן (מן המקור ומן ההצעה), וכל השאר (השומר, השחזור, ההחלה) עובד כרגיל.
+       מי שמחיל מוחק את העיטור עצמו (hdel: אותו מנגנון כמו "מחק עיטור" בעורך - עד הוורד). */
+    var HDEL_RE=/^\s*\[מחק-עיטור:(\d+)\]\s*$/;
+    function hatzDel(orig,text){
+      var ids=[],bad=[],seen={};
+      var T=String(text||'').split('\n').filter(function(s){var m=HDEL_RE.exec(s);if(m){ids.push(+m[1]);return false}return true});
+      if(!ids.length)return {orig:orig,text:text,ids:[],bad:[]};
+      var O=String(orig||'').split('\n').filter(function(s){var m=/^\s*\[קבוע:(\d+)\]\s*$/.exec(s);if(m&&ids.indexOf(+m[1])>-1){seen[m[1]]=1;return false}return true});
+      ids.forEach(function(id){if(!seen[id])bad.push(id)});
+      return {orig:O.join('\n'),text:T.join('\n'),ids:ids,bad:bad}}
+    /* האם השורה היא כותרת (נושא / ד"ה) */
+    function isHeadLine(s){s=String(s||'').trim();return /^\((נושא|דה)\)/.test(s)||/^\[כותרת-(נושא|דה)/.test(s)||/^\{(נושא|דה):/.test(s)}
+    /* העיטור צמוד לכותרת: השורה שמעליו או שמתחתיו (בדילוג על [מקור], [דף] וכותרות צד) היא כותרת */
+    function hatzNearHead(text,id){
+      var L=String(text||'').split('\n'),i=-1,k,m;
+      for(k=0;k<L.length;k++){m=HDEL_RE.exec(L[k]);if(m&&+m[1]===+id){i=k;break}}
+      if(i<0)return false;
+      var skip=function(s){return !String(s).trim()||/^\s*\[(מקור|דף|צד)[:\]]/.test(s)};
+      for(k=i-1;k>=0;k--){if(skip(L[k]))continue;if(isHeadLine(L[k]))return true;break}
+      for(k=i+1;k<L.length;k++){if(skip(L[k]))continue;return isHeadLine(L[k])}
+      return false}
+    return {hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
             quality:quality,qnorm:qnorm,aramNew:aramNew,aramWords:aramWords,squeeze:squeeze,SQ:{SEG:SQ_SEG,LINE:SQ_LINE,MIN:SQ_MIN},C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

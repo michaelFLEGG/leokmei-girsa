@@ -220,7 +220,16 @@ if (cmd === 'status') {
     const after = SKC.toInter(pk.units.slice(r.b + 1, r.b + 4)).text;
     const n0 = (SKC.nums(r.text) || [])[0] || 0;
     if (r.a === 0 && n0 > 1) before = 'אבגדהוזחטי'[n0 - 2] + '. ';
-    const ck = SKC.check(r.text, text, { gemara: gem, mishna, before, after });
+    /* פרומפט 27 (8.11.2026): עיטור צמוד לכותרת נמחק - [מחק-עיטור:<מזהה>] במקום [קבוע:<מזהה>]. רק עיטור, ורק ליד כותרת */
+    const hd = SKC.hatzDel(r.text, text);
+    if (hd.bad.length) die('עיטור למחיקה שאינו בקטע: ' + hd.bad.join(', '));
+    for (const id of hd.ids) {
+      const u = pk.units.find((x) => x.id === id);
+      if (!u || u.k !== 'hatz') die('[מחק-עיטור:' + id + '] - מותר רק לעיטור (לא פתיחת פרק, לא הדרן)');
+      if (!SKC.hatzNearHead(text, id)) die('[מחק-עיטור:' + id + '] - מותר רק לעיטור שצמוד לכותרת נושא או ד"ה');
+    }
+    const rT = hd.orig, tT = hd.text;
+    const ck = SKC.check(rT, tT, { gemara: gem, mishna, before, after });
     /* אורך: בסכם פרק השלמה מהגמרא, גזע שנכתב או מספור עשויים להאריך - אזהרה למנהל, לא חסימה */
     const LEN = /קצר מהמקור|ארוך מהמקור/;
     ck.warns = (ck.warns || []).concat(ck.errs.filter((e) => LEN.test(e)));
@@ -230,7 +239,7 @@ if (cmd === 'status') {
        לקורא שאינו רואה את המקור ולא את הגמרא (סוכן-משנה נפרד בהקשר נקי), והוא כותב במשפט מה השורה אומרת.
        seg.json: "read": [{"line": "<השורה כפי שבהצעה>", "said": "<מה הקורא הבין>", "ok": true|false}].
        ok=false (לא הבין, או הבין אחרת מן המקור) - כותבים את השורה מחדש בפחות הידוק. */
-    const sq = SKC.squeeze(r.text, text);
+    const sq = SKC.squeeze(rT, tT);
     /* --dry (פרומפט 26): בדיקה בלבד, בלי לשמור - לכותבים שעובדים במקביל על קטעים של אותו פרק */
     if (DRY) {
       const nAdd0 = SKC.parse(text).reduce((n, k) => n + ((k.v || '').match(/\{\+:/g) || []).length, 0);

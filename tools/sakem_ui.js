@@ -237,6 +237,9 @@
           h+='<div class="skmhead '+(k.kind==='כותרת-נושא'?'nose':'dh')+'" data-kind="'+k.kind+'">'+SKC.i2h(k.val,true)+'</div>';return}
         const lab=(LAB[k.kind]||(()=>''))(k.val);
         h+='<div class="skmlock'+(lab?'':' skmhid')+'" contenteditable="false" data-tok="'+esc(raw).replace(/"/g,'&quot;')+'">'+esc(lab)+'</div>';return}
+      /* פרומפט 27: עיטור שנמחק ליד כותרת - בקו חוצה, ונשמר כאסימון בקריאה חזרה */
+      if(k.t==='line'&&/^\[מחק-עיטור:\d+\]$/.test(k.v.trim())){flush();
+        h+='<div class="skmlock skphdel" contenteditable="false" data-tok="'+esc(k.v.trim())+'" title="העיטור נמחק: הכותרת עצמה היא החציצה"><del>***</del> עיטור נמחק</div>';return}
       if(k.t==='title'){if(row&&row.l.length)flush();if(!row)row={t:[],l:[]};row.t.push({v:k.v,m:MK[ri++]});return}
       if(!row)row={t:[],l:[]};row.l.push(Object.assign({},k,{m:MK[ri++]}))});
     flush();return h}
@@ -499,15 +502,31 @@
     const sz=[];let i=n;for(let j=m;j>=1;j--){const h=P[i][j];sz.unshift(i-h);i=h}
     return sz}
   function skmApply(p,newText){
-    const os=skmUnits(p.ids);
+    let os=skmUnits(p.ids);
     if(!skmSame(p.ids,p.orig))throw new Error('הקטע השתנה מאז ההצעה. בקש הצעה חדשה');
-    const NS=SKC.segments(SKC.parse(newText)),OS=skmOsegs(os);
-    if(NS.length!==OS.length)throw new Error('מבנה הקטע אינו תואם (האלמנטים הנעולים)');
     const pis=[...new Set(os.map(o=>o.pi))];
     const pre=pis.map(pi=>({pi,snap:JSON.stringify(D.pages[pi].units)})),befores=pis.map(snapOf);
     const RECS=[],OLDS=[];let T0=Date.now();
     const nt=()=>(T0=Math.max(T0+1,Date.now()));
     const add=e=>{e.t=nt();e.pub=0;e._ap=1;ED.push(e);RECS.push(e);if(SKM.seenS)SKM.seenS.add(e.t);return e};
+    /* פרומפט 27: עיטור ליד כותרת שההצעה מוחקת ([מחק-עיטור:<מזהה>], ראה SKC.hatzDel). רק יחידת עיטור
+       (k=hatz), ובאותה רשומה בדיוק שהעורך כותב ב"מחק עיטור" (hdel) - כך המחיקה עוברת לאתר ולוורד */
+    const undoAll=()=>{pre.forEach(z=>{D.pages[z.pi].units=JSON.parse(z.snap)});
+      RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});SLOTS=null;befores.forEach(b=>patchPage(b))};
+    if(p.hdel&&p.hdel.length){
+      try{p.hdel.forEach(id=>{
+          const o=os.find(x=>x.u.id===id);
+          if(!o||o.u.k!=='hatz')throw new Error('אפשר למחוק רק עיטור (לא פתיחת פרק ולא הדרן)');
+          const items=decoItems(),i=items.findIndex(x=>x.deco&&x.j===null&&x.u.id===id);
+          if(i<0)throw new Error('העיטור לא אותר בדף');
+          const [prev,next]=decoNb(items,i);
+          const se={op:'struct',kind:'hdel',texts:[prev,next],res:[],resT:[],daf:o.u.daf||D.pages[o.pi].daf||''};
+          if(!decoApplyData({pi:o.pi,u:o.u,j:null},se))throw new Error('העיטור לא נמחק');
+          add(se)});
+        SLOTS=null;os=skmUnits(p.ids.filter(id=>p.hdel.indexOf(id)<0))}
+      catch(err){undoAll();throw err}}
+    const NS=SKC.segments(SKC.parse(newText)),OS=skmOsegs(os);
+    if(NS.length!==OS.length){undoAll();throw new Error('מבנה הקטע אינו תואם (האלמנטים הנעולים)')}
     const pgDaf=pi=>D.pages[pi].daf||'';
     const unitAt=line=>{for(const o of unitsAll()){const i=o.u.l.indexOf(line);if(i>-1)return {u:o.u,pi:o.pi,i}}return null};
     /* תיקון טקסט ו/או סגנון פסקה במקום אחד - כמו capture: רשומה אחת לכל מקום */
@@ -742,6 +761,7 @@
     '#flow .row.skmbusy{position:relative;opacity:.75}#flow .row.skmbusy::after{content:"";position:absolute;inset:0;pointer-events:none;'+
       'background:linear-gradient(90deg,transparent,rgba(70,120,190,.10),transparent);background-size:200% 100%;animation:skmsh 1.4s linear infinite}'+
     '@keyframes skmsh{from{background-position:200% 0}to{background-position:-200% 0}}'+
+    '.skmghost .skmlock.skphdel{display:block;text-align:center;color:#9a6a62;font-size:12px;margin:2px 0}.skmghost .skmlock.skphdel del{color:#b0574c;text-decoration-thickness:2px;margin-left:6px}'+
     '#flow .row.skmold{background:rgba(190,60,50,.05)}#flow .row.skmold .main,#flow .row.skmold .anchor{text-decoration:line-through;text-decoration-color:rgba(190,60,50,.55);color:#8a5a55}'+
     '#skmbtn{position:fixed;z-index:60;display:none;padding:5px 14px;border-radius:16px;border:1px solid #2e5b8a;background:#2e5b8a;color:#fff;font:600 14px inherit;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18)}'+
     '#skmbtn.dim{background:#8a98a8;border-color:#8a98a8}#skmtop.dim{opacity:.6}'+

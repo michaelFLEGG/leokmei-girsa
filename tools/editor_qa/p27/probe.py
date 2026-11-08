@@ -21,10 +21,14 @@ for f in a.fake:
 HOOK = ("window.__p27={get SKP(){return SKP},get SKM(){return SKM},skpOpen:(...a)=>skpOpen(...a),skpAccept:(...a)=>skpAccept(...a),"
         "skpEditOn:()=>skpEditOn(),skpApplyOne:(...a)=>skpApplyOne(...a),skmApply:(...a)=>skmApply(...a),skmSame:(...a)=>skmSame(...a),"
         "skmUnits:(...a)=>skmUnits(...a),skmReadBack:(g)=>skmReadBack(g),skpShow:()=>skpShow(),skpMove:(d)=>skpMove(d),"
-        "get ED(){return ED},get D(){return D},render:(n)=>render(n),flatU:()=>flatU()};")
+        "skpPacket:(...a)=>skpPacket(...a),skmInter:(...a)=>skmInter(...a),get SEC(){return SEC},get ED(){return ED},get D(){return D},render:(n)=>render(n),flatU:()=>flatU()};")
 def seal(route):
     rq = route.request
     for k, v in FAKE.items():
+        # "PUT:<נתיב>" - כתיבה שנחסמת אך מחזירה תשובה מדומה (למשל סנכרון העריכות של המנהל, שמחזיר את המסמך)
+        if k.startswith('PUT:') and k[4:] in rq.url and rq.method.upper() == 'PUT':
+            BLOCKED.append('PUT ' + rq.url.split('?')[0] + ' (faked)')
+            return route.fulfill(status=200, content_type='application/json; charset=utf-8', body=v)
         if k in rq.url and rq.method.upper() == 'GET':
             return route.fulfill(status=200, content_type='application/json; charset=utf-8', body=v)
     if rq.method.upper() not in ('GET', 'HEAD', 'OPTIONS'):

@@ -3129,7 +3129,8 @@
    "at": "2026-11-04T12:43:33Z",
    "ntos": 25,
    "flagged": 0,
-   "cal": 0.308
+   "cal": 0.308,
+   "published": "2026-11-08T00:38:45Z"
   },
   "rosh-hashanah-p01-u03": {
    "ok": true,
@@ -3137,7 +3138,8 @@
    "at": "2026-11-04T12:43:33Z",
    "ntos": 27,
    "flagged": 1,
-   "cal": 0.227
+   "cal": 0.227,
+   "published": "2026-11-08T00:38:45Z"
   },
   "rosh-hashanah-p01-u04": {
    "ok": true,
@@ -3145,7 +3147,8 @@
    "at": "2026-11-04T12:43:33Z",
    "ntos": 24,
    "flagged": 0,
-   "cal": 0.322
+   "cal": 0.322,
+   "published": "2026-11-08T00:38:45Z"
   },
   "rosh-hashanah-p01-u05": {
    "ok": true,
@@ -3153,7 +3156,8 @@
    "at": "2026-11-04T12:43:33Z",
    "ntos": 25,
    "flagged": 0,
-   "cal": 0.681
+   "cal": 0.681,
+   "published": "2026-11-08T00:38:45Z"
   },
   "rosh-hashanah-p01-u06": {
    "ok": true,
@@ -3161,7 +3165,8 @@
    "at": "2026-11-04T12:43:33Z",
    "ntos": 26,
    "flagged": 0,
-   "cal": 0.382
+   "cal": 0.382,
+   "published": "2026-11-08T00:38:45Z"
   },
   "rosh-hashanah-p01-u07": {
    "ok": true,
@@ -3169,7 +3174,8 @@
    "at": "2026-11-04T12:43:33Z",
    "ntos": 27,
    "flagged": 0,
-   "cal": 0.516
+   "cal": 0.516,
+   "published": "2026-11-08T00:38:45Z"
   },
   "rosh-hashanah-p01-u08": {
    "ok": true,
@@ -3177,7 +3183,8 @@
    "at": "2026-11-04T12:43:33Z",
    "ntos": 24,
    "flagged": 0,
-   "cal": 0.275
+   "cal": 0.275,
+   "published": "2026-11-08T00:38:45Z"
   },
   "rosh-hashanah-p01-u09": {
    "ok": true,
@@ -3185,7 +3192,8 @@
    "at": "2026-11-04T12:43:33Z",
    "ntos": 24,
    "flagged": 0,
-   "cal": 0.236
+   "cal": 0.236,
+   "published": "2026-11-08T00:38:45Z"
   },
   "rosh-hashanah-p02-u01": {
    "ok": true,
@@ -3703,6 +3711,23 @@
    "flagged": 0,
    "cal": 0.16,
    "published": "2026-11-06T18:39:58Z"
+  },
+  "rosh-hashanah-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-07T20:30:14Z",
+   "at": "2026-11-08T00:38:43Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.681,
+   "published": "2026-11-08T00:38:45Z"
+  },
+  "yoma-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-08T00:33:29Z",
+   "at": "2026-11-08T00:38:44Z",
+   "ntos": 25,
+   "flagged": 1,
+   "cal": 0.621
   }
  },
  "files": {

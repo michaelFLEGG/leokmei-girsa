@@ -1372,6 +1372,24 @@
    "units": 1,
    "out": 0,
    "older_kept": 1
+  },
+  "1AP6VCZvtX9e2-Uas9xgEezzT6KyucoQd|2026-11-07T20:30:35.444Z": {
+   "name": "אצווה-2026-11-07-rosh-hashanah-p01-u01.json",
+   "id": "1AP6VCZvtX9e2-Uas9xgEezzT6KyucoQd",
+   "modified": "2026-11-07T20:30:35.444Z",
+   "opened": "2026-11-08T00:38:42Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1gBpe8bVC5njQUtMxTbFlX8DfXPsCKvXm|2026-11-08T00:33:54.246Z": {
+   "name": "אצווה-2026-11-08-yoma-p01-u02.json",
+   "id": "1gBpe8bVC5njQUtMxTbFlX8DfXPsCKvXm",
+   "modified": "2026-11-08T00:33:54.246Z",
+   "opened": "2026-11-08T00:38:42Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
   }
  }
 }

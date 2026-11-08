@@ -47,6 +47,29 @@
     "flagged": 0,
     "questions": 22
    }
+  },
+  "1": {
+   "status": "published",
+   "published": "2026-11-08T00:38:45Z",
+   "unc_done": true,
+   "handoff_units": [
+    "rosh-hashanah-p01-u01",
+    "rosh-hashanah-p01-u02",
+    "rosh-hashanah-p01-u03",
+    "rosh-hashanah-p01-u04",
+    "rosh-hashanah-p01-u05",
+    "rosh-hashanah-p01-u06",
+    "rosh-hashanah-p01-u07",
+    "rosh-hashanah-p01-u08",
+    "rosh-hashanah-p01-u09"
+   ],
+   "result": {
+    "generated": 226,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 147
+   }
   }
  },
  "created": "2026-11-04T12:43:37Z",
@@ -68,7 +91,14 @@
    "mean": 0.729,
    "n": 2,
    "at": "2026-11-04T12:43:38Z"
+  },
+  {
+   "perek": 1,
+   "mean": 0.403,
+   "n": 18,
+   "at": "2026-11-08T00:38:44Z"
   }
  ],
- "updated": "2026-11-04T12:43:38Z"
+ "updated": "2026-11-08T00:38:45Z",
+ "done": "2026-11-08T00:38:45Z"
 }

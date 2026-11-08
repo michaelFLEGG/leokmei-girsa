@@ -1,0 +1,1 @@
+- 07.11.2026 UTC - הושלמה rosh-hashanah-p01-u01 (redo). finalize: 25 תוספות, 0 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku", "rewrite": "fable", "rr": "sonnet"}.

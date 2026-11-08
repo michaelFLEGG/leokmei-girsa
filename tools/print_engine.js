@@ -168,20 +168,21 @@
         '.phd{font-family:'+h.family+',serif;font-weight:'+h.weight+';font-size:'+h.pt+'pt}'+
         '.pfn{width:'+P.measure+'mm;font-family:'+n.family+',serif;font-weight:'+n.weight+';font-size:'+n.pt+'pt;line-height:'+n.linePt+'pt;letter-spacing:'+n.letterSpacingPt+'pt;column-count:'+n.cols+';column-gap:'+n.colGapMm+'mm}'+
         '#prnmeas{width:'+P.measure+'mm}'+
-        '.pfn .fdh{font-weight:'+n.dhWeight+'}'+
+        '.pfn .fdh{font-family:'+(n.dhFamily||n.family)+',serif;font-weight:'+n.dhWeight+(n.dhPt?';font-size:'+n.dhPt+'pt':'')+';letter-spacing:'+(n.dhLetterSpacingPt!=null?n.dhLetterSpacingPt:0)+'pt}'+
         /* ח4: קו מפריד דק מעל בלוק ההערות; ט"ו: מחרוזת ארוכה נשברת ואינה חורגת מעמודת ההערות */
         '.pfn{border-top:.35pt solid #000;padding-top:.5mm;overflow-wrap:anywhere}'+
         '.cnt{font-size:.62em;font-weight:400;letter-spacing:0}'+
         '.pcut{position:absolute;left:0;right:0;bottom:11.5mm;text-align:center;font-family:Vilna,serif;font-size:'+ft.pt+'pt}'+
         '.main p[data-bul]{position:relative}.main p[data-bul]::before{content:"\\00b0";position:absolute;right:-1.15em;top:0;font-family:Vilna,serif;font-weight:900;font-size:.95em}'+
         /* סימן ההפנייה אינו תופס רוחב ואינו נוגע בגובה השורה: תיבה ברוחב אפס, מורמת אל הרווח שבין השורות (השורות חושבו במדויק) */
-        /* ב10 (5.11.2026): גופני וילנא צפופים - ריווח אחיד (vilnaLetterSpacingPt, 0.2) בכל השכבות שבהן הם משמשים */
-        '.phd,.pnum,.psite,.pcut,.pfn,#flow .row.pcont .main,.cv2,.cv3,.toct,.tocm,.tocr{letter-spacing:'+(P.vilnaLetterSpacingPt!=null?P.vilnaLetterSpacingPt:0.2)+'pt}'+
+        /* ב10 (5.11.2026): גופני וילנא צפופים - ריווח אחיד (vilnaLetterSpacingPt, 0.2) בכל השכבות שבהן הם משמשים.
+           פרומפט 22 (8.11.2026): גוף הערות התוספות בפרנקריהל, ללא ריווח; הריווח חל רק על הד"ה (dhLetterSpacingPt) */
+        '.phd,.pnum,.psite,.pcut,#flow .row.pcont .main,.cv2,.cv3,.toct,.tocm,.tocr{letter-spacing:'+(P.vilnaLetterSpacingPt!=null?P.vilnaLetterSpacingPt:0.2)+'pt}'+
         /* א (6.11.2026, הכרעת בעל הפרויקט): ההפנייה אינה תופסת דבר מן השורה. תיבה ברוחב אפס ובגובה אפס במקום שאחרי המילה;
            הספרות גולשות ממנה ימינה (כיוון שמאל-לימין), כלומר אל מעל סוף המילה שלפניה, צמודות לראש האותיות.
            צירוף של כמה הפניות הוא תיבה אחת ברוחב אפס, וההפניות שבתוכו זו לצד זו - לעולם אינן עולות זו על זו */
         'span.tmg{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;line-height:0;vertical-align:baseline;margin:0;padding:0}'+
-        'sup.tm{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-family:'+n.family+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0;padding:0;color:#7a7a7a}'+
+        'sup.tm{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-family:'+(n.markFamily||n.family)+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0;padding:0;color:#7a7a7a}'+
         'span.tmg sup.tm{display:inline;width:auto;margin:0}span.tmg sup.tm+sup.tm{margin-left:.12em}'+
         '.pg sup.tm,.pg sup.tm *{color:#7a7a7a!important}sup.tm a{text-decoration:none}'+
         '.pfn .fnum{font-size:'+n.numberScale+'em;line-height:0;position:relative;top:-'+n.numberRise+'em;vertical-align:baseline;margin-left:.18em;font-weight:'+n.numberWeight+';text-decoration:none}'+

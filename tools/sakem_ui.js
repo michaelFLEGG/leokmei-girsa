@@ -36,15 +36,25 @@
   function skmInter(os){return SKC.toInter(os.map(skmPU)).text}
 
   /* ---- הסימון: מתרחב לשורות שלמות ---- */
-  function skmMark(rows){
+  /* show: האם הסימון מצדיק את "סכם" (פרומפט 24, 8.11.2026): שורה שלמה ומעלה, גרירה על כמה שורות
+     או Shift+לחיצה. סימון מילה לשם סגנון אינו מקפיץ את סכם, אבל Ctrl+Shift+S פועל גם עליו. */
+  function skmMark(rows,show){
     document.querySelectorAll('#flow .row.skmsel').forEach(r=>r.classList.remove('skmsel'));
     SKM.sel=null;
     if(!rows||!rows.length){skmBtnHide();return}
     const os=skmUnits(rows.map(r=>+r.id.slice(1)));
     const pis=[...new Set(os.map(o=>o.pi))];
+    SKM.sel={rows,ids:os.map(o=>o.u.id),long:pis.length>SKM_MAXPG,show:show!==false};
+    if(!SKM.sel.show){skmBtnHide();return}
     rows.forEach(r=>r.classList.add('skmsel'));
-    SKM.sel={rows,ids:os.map(o=>o.u.id),long:pis.length>SKM_MAXPG};
     skmBtnShow()}
+  /* הבחירה מכסה פסקה שלמה (מארח עריכה שלם), או חוצה פסקאות */
+  function skmWhole(r){
+    const h=n=>{const e=n&&(n.nodeType===3?n.parentElement:n);return e&&e.closest?e.closest('[contenteditable="true"]'):null};
+    const ha=h(r.startContainer),hb=h(r.endContainer);
+    if(!ha||ha!==hb)return true;
+    const all=(ha.textContent||'').replace(/\s+/g,''),got=r.toString().replace(/\s+/g,'');
+    return !!all.length&&got.length>=all.length-1}
   let SKMT=null;
   document.addEventListener('selectionchange',()=>{clearTimeout(SKMT);SKMT=setTimeout(skmSelChanged,160)});
   function skmSelChanged(){
@@ -56,7 +66,7 @@
     if(SKM.dragged&&SKM.sel&&SKM.sel.rows.some(x=>x.contains(r.startContainer)))return;
     const a=skmRowOf(r.startContainer),b=skmRowOf(r.endContainer);
     if(!a||!b){return}
-    SKM.anchor=a;skmMark(skmSpan(a,b))}
+    SKM.anchor=a;skmMark(skmSpan(a,b),a!==b||skmWhole(r))}
   /* גרירה על פני כמה שורות: בחירה בדפדפן נעצרת בגבול הפסקה הנערכת, ולכן הסימון עוקב אחרי
      העכבר עצמו - כל שורה שהעכבר עובר עליה בזמן הגרירה נכנסת (27.10.2026, בקשת המנהל) */
   let SKD=null;
@@ -71,46 +81,76 @@
     if(!r||r===SKD.last||r.closest('.skmghost'))return;
     SKD.last=r;
     if(r===SKD.a&&!SKM.dragged)return;
-    SKM.dragged=true;SKM.anchor=SKD.a;skmMark(skmSpan(SKD.a,r))},true);
+    SKM.dragged=true;SKM.anchor=SKD.a;skmMark(skmSpan(SKD.a,r),true)},true);
   document.addEventListener('mouseup',()=>{SKD=null},true);
   /* הרחבה בלחיצה עם Shift על שורה אחרת */
   document.addEventListener('mousedown',e=>{
     if(!e.shiftKey||!skmOK()||!SKM.sel||!SKM.anchor)return;
     const r=skmRowOf(e.target);if(!r||r.closest('.skmghost'))return;
-    e.preventDefault();skmMark(skmSpan(SKM.anchor,r))},true);
+    e.preventDefault();skmMark(skmSpan(SKM.anchor,r),true)},true);
   document.addEventListener('keydown',e=>{
     if(e.ctrlKey&&e.shiftKey&&!e.altKey&&(e.code==='KeyS')){
       if(!skmOK())return;
-      e.preventDefault();e.stopPropagation();skmGo();return}
+      e.preventDefault();e.stopPropagation();
+      if(!SKM.sel){const s=getSelection(),r=s&&s.rangeCount?s.getRangeAt(0):null,a=r&&skmRowOf(r.startContainer),b=r&&skmRowOf(r.endContainer);
+        if(a&&b){SKM.anchor=a;skmMark(skmSpan(a,b),false)}}
+      skmGo();return}
     if(e.key==='Escape'&&SKM.sel&&!SKM.ghost){skmMark(null)}
     /* ההצעה פתוחה והמיקוד אינו בתוכה ואינו בשדה כתיבה: Enter ו-Esc חלים עליה */
     if(SKM.ghost&&!SKM.ghost.classList.contains('edit')&&!SKM.ghost.contains(e.target)&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&
        (e.key==='Escape'||e.key==='Enter'&&!(e.target.closest&&e.target.closest('[contenteditable="true"],[contenteditable=""],input,textarea,select,button')))){
       e.preventDefault();e.stopPropagation();skmQuick(e.key)}},true);
 
-  /* ---- הכפתור הצף ---- */
+  /* ---- הכפתור: בשוליים או בסרגל, לעולם לא על הטקסט (פרומפט 24, 8.11.2026) ----
+     במחשב, כשיש שוליים משמאל לטור: "סכם" וגלגל השיניים בשוליים השמאליים, מחוץ ל-.main של השורה,
+     בגובה השורה הראשונה של הסימון, אחד מתחת לשני, וצמודים לסימון בגלילה. כשאין שוליים (מסך צר):
+     "סכם קטע" בסרגל העליון, ליד "סכם פרק". לפני כן הכפתור ישב בקצה השמאלי של השורה הבאה - על המילים. */
+  function skmMk(id,txt,fn,cls){let b=$('#'+id);
+    if(!b){b=document.createElement('button');b.id=id;b.type='button';if(cls)b.className=cls;b.textContent=txt;
+      b.addEventListener('mousedown',e=>e.preventDefault());b.addEventListener('click',fn);document.body.appendChild(b)}
+    return b}
   function skmBtnShow(){
-    let b=$('#skmbtn');
-    if(!b){b=document.createElement('button');b.id='skmbtn';b.type='button';
-      b.addEventListener('mousedown',e=>e.preventDefault());
-      b.addEventListener('click',()=>skmGo());document.body.appendChild(b)}
-    const nokey=false;
-    b.textContent='סכם';
-    b.title=SKM.sel&&SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הידוק ותיקון הקטע המסומן, מיד (Ctrl+Shift+S). להרחבה: גרירה על כמה שורות, או Shift+לחיצה על שורה אחרת';
-    if(SKM.sel&&SKM.sel.rows.length>1)b.textContent+=' · '+SKM.sel.rows.length+' שורות';
-    b.classList.toggle('dim',!!(nokey||SKM.sel&&SKM.sel.long));
-    const last=SKM.sel.rows[SKM.sel.rows.length-1].getBoundingClientRect();
-    const top=Math.min(innerHeight-44,Math.max(8,last.bottom+4));
-    b.style.top=top+'px';b.style.left=Math.max(8,last.left+8)+'px';b.style.display='block';
-    /* גלגל השיניים שליד הכפתור: מפתח, עלויות, למידה ותור הסולמיות (27.10.2026) */
-    let g=$('#skmset');
-    if(!g){g=document.createElement('button');g.id='skmset';g.type='button';g.textContent='⚙';
-      g.title='סכם: התור';g.setAttribute('aria-label','סכם: התור');
-      g.addEventListener('mousedown',e=>e.preventDefault());
-      g.addEventListener('click',()=>skmPanel());document.body.appendChild(g)}
-    g.style.top=top+'px';g.style.left=(Math.max(8,last.left+8)+b.offsetWidth+6)+'px';g.style.display='block'}
-  function skmBtnHide(){['#skmbtn','#skmset'].forEach(s=>{const b=$(s);if(b)b.style.display='none'})}
-  addEventListener('scroll',()=>{if(SKM.sel&&$('#skmbtn')&&$('#skmbtn').style.display==='block')skmBtnShow()},{passive:true,capture:true});
+    if(!SKM.sel||!SKM.sel.show){skmBtnHide();return}
+    const b=skmMk('skmbtn','סכם',()=>skmGo());
+    const g=skmMk('skmset','⚙',()=>skmPanel());g.title='סכם: התור';g.setAttribute('aria-label','סכם: התור');
+    const tip=SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הידוק ותיקון הקטע המסומן, מיד (Ctrl+Shift+S). להרחבה: גרירה על כמה שורות, או Shift+לחיצה על שורה אחרת';
+    const n=SKM.sel.rows.length;
+    b.textContent='סכם'+(n>1?' · '+n+' שורות':'');b.title=tip;b.classList.toggle('dim',!!SKM.sel.long);
+    const rows=SKM.sel.rows.filter(r=>r.isConnected);if(!rows.length){skmBtnHide();return}
+    const first=rows[0],last=rows[rows.length-1];
+    const m=first.querySelector(':scope > .main')||first;
+    const mr=m.getBoundingClientRect(),lr=last.getBoundingClientRect();
+    const fl=$('#flow'),fr=fl?fl.getBoundingClientRect():{left:0,top:0,bottom:innerHeight};
+    const barB=(($('#bar')||{}).getBoundingClientRect?$('#bar').getBoundingClientRect().bottom:44);
+    b.style.display='block';g.style.display='block';
+    const bw=b.offsetWidth,bh=b.offsetHeight,gw=g.offsetWidth,gh=g.offsetHeight;
+    const room=mr.left-Math.max(0,fr.left);
+    const tb=$('#skmtop');
+    if(room>=Math.max(bw,gw)+20){
+      if(tb)tb.style.display='none';
+      /* גובה השורה הראשונה של הסימון: המלבן הראשון של הבחירה, אם היא מתחילה בשורה הראשונה */
+      let top=mr.top;
+      const s=getSelection();
+      if(s&&s.rangeCount&&!s.getRangeAt(0).collapsed&&first.contains(s.getRangeAt(0).startContainer)){
+        const rc=[...s.getRangeAt(0).getClientRects()].find(x=>x.width>0&&x.height>0);if(rc)top=rc.top}
+      const lo=Math.max(barB+6,fr.top+4),hi=Math.min(innerHeight-bh-gh-14,lr.bottom-bh);
+      if(lr.bottom<lo||mr.top>innerHeight){skmBtnHide();return}
+      top=Math.max(lo,Math.min(hi,top));
+      const right=mr.left-10;
+      b.style.top=top+'px';b.style.left=(right-bw)+'px';
+      g.style.top=(top+bh+6)+'px';g.style.left=(right-gw)+'px';
+      return}
+    /* אין שוליים: לסרגל העליון */
+    b.style.display='none';g.style.display='none';
+    let t=tb;
+    if(!t){const anchor=$('#skpbtn')||$('#peresel');
+      t=document.createElement('button');t.id='skmtop';t.type='button';t.className='skpbtn';
+      t.addEventListener('mousedown',e=>e.preventDefault());t.addEventListener('click',()=>skmGo());
+      if(anchor)anchor.after(t);else ($('#bar')||document.body).appendChild(t)}
+    t.textContent='סכם קטע'+(n>1?' · '+n:'');t.title=tip;t.classList.toggle('dim',!!SKM.sel.long);t.style.display=''}
+  function skmBtnHide(){['#skmbtn','#skmset','#skmtop'].forEach(s=>{const b=$(s);if(b)b.style.display='none'})}
+  addEventListener('scroll',()=>{if(SKM.sel&&SKM.sel.show)skmBtnShow()},{passive:true,capture:true});
+  addEventListener('resize',()=>{if(SKM.sel&&SKM.sel.show)skmBtnShow()});
   /* כפתור גם בחלונית הסגנונות הצפה, כשיש בחירה */
   const skmSty0=styHtml;
   styHtml=function(el,sel){const h=skmSty0(el,sel);
@@ -694,7 +734,7 @@
     '@keyframes skmsh{from{background-position:200% 0}to{background-position:-200% 0}}'+
     '#flow .row.skmold{background:rgba(190,60,50,.05)}#flow .row.skmold .main,#flow .row.skmold .anchor{text-decoration:line-through;text-decoration-color:rgba(190,60,50,.55);color:#8a5a55}'+
     '#skmbtn{position:fixed;z-index:60;display:none;padding:5px 14px;border-radius:16px;border:1px solid #2e5b8a;background:#2e5b8a;color:#fff;font:600 14px inherit;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18)}'+
-    '#skmbtn.dim{background:#8a98a8;border-color:#8a98a8}'+
+    '#skmbtn.dim{background:#8a98a8;border-color:#8a98a8}#skmtop.dim{opacity:.6}'+
     '#skmset{position:fixed;z-index:60;display:none;width:30px;height:30px;padding:0;border-radius:50%;border:1px solid #2e5b8a;background:#fff;color:#2e5b8a;font-size:16px;line-height:28px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)}'+
     '.skmbar button.skmlink{border:none;background:none;text-decoration:underline;color:#4d5a4f;padding:3px 4px;margin-right:auto}'+
     '.skmghost{position:relative;margin:4px 0 10px;border:1px solid rgba(46,125,60,.35);background:rgba(46,125,60,.05);border-radius:6px;padding:6px 8px 4px}'+

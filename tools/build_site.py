@@ -2303,6 +2303,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .stybar{position:fixed;z-index:12;display:none;flex-direction:column;width:244px;max-height:calc(100vh - 110px);overflow:auto;
      background:var(--pal);color:var(--pal-ink);border:1px solid var(--pal-line);border-radius:14px;
      padding:0 0 8px;box-shadow:var(--shadow);font-size:14px;direction:rtl}
+  /* פס הסגנונות כשאין שוליים (פרומפט 24): שורה אחת מתחת לסרגל, גלילה אופקית, והטור מתחתיו */
+  .stybar.strip{width:100vw;max-width:none;max-height:none;border-radius:0;flex-direction:row;align-items:center;
+     overflow-x:auto;overflow-y:hidden;padding:0;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+  .stybar.strip .sthd{position:static;border-radius:0;padding:4px 8px;flex:none}
+  .stybar.strip .stbody{flex-direction:row;align-items:center;flex-wrap:nowrap;padding:3px 4px;gap:4px}
+  .stybar.strip .stgrp{flex-direction:row;align-items:center;flex-wrap:nowrap;border-bottom:0;border-right:1px solid var(--pal-line);padding:0 6px;margin:0}
+  .stybar.strip .stgrp:first-child{border-right:0}
+  .stybar.strip.more .strare{flex-direction:row}
+  .stybar.strip button{width:auto;white-space:nowrap;flex:none}
+  .stybar.strip .stmore{width:auto;margin:0}
+  .stybar.strip .stclr{border-top:0;margin:0;padding-top:4px}
   .stybar .sthd{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 6px 10px;position:sticky;top:0;background:var(--pal);border-radius:14px 14px 0 0}
   .stybar .stgrip{cursor:grab;color:var(--pal-ink);font-weight:700;font-size:13px;flex:1;user-select:none;touch-action:none}
   .stybar .stbody{display:flex;flex-direction:column;gap:2px;padding:2px 6px}
@@ -4514,7 +4525,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     return !!t.length&&!!findRun([t[0]].concat(t[1]?[t[1]]:[]),e.daf)}
 
   /* הפעולה מן הדף: לוכדת מצב לביטול, מחילה, רושמת ומציירת מחדש */
-  function sideCommit(e,pi,hit,keyOf){
+  function sideCommit(e,pi,hit,keyOf,back){
     const snap=JSON.stringify(D.pages[pi].units), before=snapOf(pi);
     freezeEdits(e.texts||[]);
     const key=keyOf(e,hit);
@@ -4522,7 +4533,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     ED.push(e);UNDO.push({e,pi,snap,t:Date.now()});
     saveED();
     patchPage(before);
-    if(key)placeCaret(key,0);
+    if(back)back(key);else if(key)placeCaret(key,0);
     drawEd();pubSoon();syncSoon()}
   function edUndoBtn(){if(!undoLast())document.execCommand('undo')}
   function undoLast(){
@@ -4566,14 +4577,21 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const rc=el.getBoundingClientRect();
     box.style.top=Math.max(8,Math.min(innerHeight-60,rc.top-4))+'px';
     box.style.right=Math.max(8,innerWidth-rc.right)+'px';
-    const inp=box.querySelector('input');inp.focus();
+    const inp=box.querySelector('input');inp.setAttribute('dir','rtl');
+    /* פרומפט 24: אחרי "אישור" (או Esc) הסמן חוזר לגוף השורה, למקום שבו היה, כדי להמשיך להקליד בלי עכבר */
+    const s0=getSelection(),r0=s0&&s0.rangeCount?s0.getRangeAt(0):null;
+    const coff=r0&&el.contains(r0.startContainer)?cutOff(el,r0.startContainer,r0.startOffset):0;
+    const back=key=>{const t=key&&$('#flow').querySelector('[data-ek="'+key+'"]');
+      if(t)placeCaret(key,Math.min(coff,txtOf(t).length));
+      else if(el.isConnected){const q=posAt(el,coff);el.focus({preventScroll:true});const ss=getSelection();ss.collapse(q[0],q[1])}};
+    inp.focus();
     const close=()=>{box.remove()};
-    const ok=()=>{const v=inp.value.trim();close();if(v)sideDo(el,info,txtOf(el),0,0,esc(v),true)};
+    const ok=()=>{const v=inp.value.trim();close();if(v)sideDo(el,info,txtOf(el),0,0,esc(v),true,back);else back(null)};
     inp.addEventListener('keydown',ev=>{ev.stopPropagation();
       if(ev.key==='Enter'){ev.preventDefault();ok()}
-      else if(ev.key==='Escape'){ev.preventDefault();close();el.focus()}});
+      else if(ev.key==='Escape'){ev.preventDefault();close();back(null)}});
     box.querySelector('button').onclick=ok}
-  function sideDo(el,info,text,a,b,winH,typed){
+  function sideDo(el,info,text,a,b,winH,typed,back){
     const was=plain(info.u.l[info.i][1]);
     if(was!==text){flash('הטקסט שעל המסך אינו תואם את הנתונים. רענן את הדף ונסה שוב');return}
     let cs=a,ce=b;
@@ -4589,7 +4607,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const e={op:'struct',kind:'side',texts:[was],
       res:[[cls,whole?'':bodyH],[wH],[whole?0:cs,whole?text.length:ce-cs]],
       resT:[whole?'':bodyT,plain(wH)],daf:dafOf(el),t:Date.now(),pub:0};
-    sideCommit(e,info.pi,{u:info.u,i:info.i,pi:info.pi},(e,h)=>sideApply(e,h))}
+    sideCommit(e,info.pi,{u:info.u,i:info.i,pi:info.pi},(e,h)=>sideApply(e,h),back)}
   /* הכניסה: מקש, כפתור הסרגל או כל קריאה אחרת */
   function sideCmd(){
     if(!EDIT)return;
@@ -4910,7 +4928,25 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      האירוע מחדש - והדף נתקע בלולאה אינסופית. נמדד. */
   let STYSIG='', STYT=null;
   function styLater(){clearTimeout(STYT);STYT=setTimeout(showSty,60)}
-  function hideSty(){STYSIG='';const b=$('#stybar');if(b)b.style.display='none';document.body.classList.remove('stystrip')}
+  /* בפס (מסך צר) המקום נשמר גם כשהחלונית נסתרת, כדי שהטקסט לא יקפוץ בכל תזוזת סמן (פרומפט 24) */
+  function hideSty(){STYSIG='';const b=$('#stybar');if(b)b.style.display='none';if(!(b&&b.classList.contains('strip')&&EDIT)){document.body.classList.remove('stystrip');stripFlow(0)}}
+  /* הטור מתקצר בגובה הפס ויורד מתחתיו. הגובה עצמו מתקצר, ולא רק נדחף: דחיפה בלבד הגדילה את
+     הדף מעבר לחלון, והדפדפן גלל את הדף כולו (והסרגל העליון ברח מן המסך) */
+  function stripFlow(H){
+    const f=$('#flow');if(!f)return;
+    if(!H){if(f.__sh){f.style.marginTop=f.__m0||'';f.style.height=f.__h0||'';f.__sh=0}return}
+    if(f.__sh===H&&f.__w===innerWidth&&f.__bh===(($('#bar')||{}).offsetHeight||0))return;
+    if(!f.__sh){f.__m0=f.style.marginTop;f.__h0=f.style.height}
+    f.style.marginTop=f.__m0||'';f.style.height=f.__h0||'';
+    const h=f.getBoundingClientRect().height;
+    f.style.marginTop=H+'px';f.style.height=Math.max(120,h-H)+'px';f.__sh=H;f.__w=innerWidth;f.__bh=(($('#bar')||{}).offsetHeight||0);
+    const se=document.scrollingElement;if(se&&se.scrollTop)se.scrollTop=0;
+    if(document.body.scrollTop)document.body.scrollTop=0;
+    const bar=$('#stybar'),bb=$('#bar');if(bar&&bb)bar.style.top=Math.max(0,bb.getBoundingClientRect().bottom)+'px'}
+  /* הסרגל העליון משנה גובה (כפתור "סכם פרק" שנוסף אחרי הטעינה, שבירת שורה בסרגל): הפס והטור נמדדים מחדש */
+  try{new ResizeObserver(()=>{const sb=$('#stybar');if(document.body.classList.contains('stystrip')&&sb&&sb.classList.contains('strip'))stripFlow(sb.offsetHeight)}).observe($('#bar'))}catch(e){}
+  /* בפס: גוף הדף אינו נגלל (גלילה למרכז של שורה גללה אותו בכמה פיקסלים, והפס נפרד מן הסרגל) */
+  document.body.addEventListener('scroll',()=>{if(document.body.classList.contains('stystrip')&&document.body.scrollTop)document.body.scrollTop=0},{passive:true});
   /* חלונית הסגנונות (6.10.2026): אינה צמודה לשורה ואינה מכסה טקסט.
      מקומה המועדף: בשוליים השמאליים, כ-3 ס"מ (113 פיקסלים) משמאל לטקסט
      הנראה הקרוב ביותר לשוליים - בצד שאין בו מסילת העוגנים, שהיא תמיד
@@ -4973,7 +5009,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(let i=0;i<8;i++){a=a&&a.previousElementSibling;b=b&&b.nextElementSibling;if(a)out.push(a);if(b)out.push(b)}
     return out}
   function styPlace(bar,el){
-    document.body.classList.remove('stystrip');bar.classList.remove('strip');
+    document.body.classList.remove('stystrip');bar.classList.remove('strip');stripFlow(0);
     const bw=bar.offsetWidth,bh=bar.offsetHeight,sv=stySavedPos();
     const topMin=(($('#bar')||{}).offsetHeight||44)+6;
     if(sv){bar.style.left=Math.max(4,Math.min(innerWidth-bw-4,sv.x))+'px';
@@ -4996,11 +5032,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const rc=el.getBoundingClientRect();
       let y=Math.max(topMin,Math.min(innerHeight-bh-40,rc.top));
       bar.style.left=x+'px';bar.style.top=y+'px';bar.style.bottom='auto';return}
-    /* אין מקום בשוליים: צף ליד הבחירה, מתחתיה, ואם אין מקום - מעליה */
-    const rc2=el.getBoundingClientRect();
-    let y2=rc2.bottom+10;if(y2+bh>innerHeight-8)y2=rc2.top-bh-10;
-    const x2=Math.max(8,Math.min(innerWidth-bw-8,rc2.left+(rc2.width-bw)/2));
-    bar.style.left=x2+'px';bar.style.top=Math.max(topMin,Math.min(innerHeight-bh-8,y2))+'px';bar.style.bottom='auto'}
+    /* אין מקום בשוליים (פרומפט 24, 8.11.2026): פס אופקי צמוד מתחת לסרגל העליון, והטור יורד
+       מתחתיו - כדי שהחלונית לא תצוף על המילים. לפני כן היא צפה ליד הבחירה, באמצע הטקסט. */
+    bar.classList.add('strip');document.body.classList.add('stystrip');
+    const bb=$('#bar');const top0=bb?bb.getBoundingClientRect().bottom:0;
+    bar.style.left='0px';bar.style.top=Math.max(0,top0)+'px';bar.style.bottom='auto';
+    stripFlow(bar.offsetHeight)}
   function styDrag(ev){
     const bar=$('#stybar');if(!bar)return;
     if(!ev.target.closest('.stgrip'))return;
@@ -5037,7 +5074,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     bar.style.display='flex';
     if(bar.__ek!==(el.dataset.ek||'')||col!==bar.__col||!bar.__placed){styPlace(bar,el);bar.__placed=1}
     bar.__ek=el.dataset.ek||'';bar.__col=col}
-  addEventListener('resize',()=>{const b=$('#stybar');if(b)b.__placed=0;STYSIG='';if(EDIT)styLater()});
+  addEventListener('resize',()=>{const b=$('#stybar');if(b)b.__placed=0;STYSIG='';stripFlow(0);if(EDIT)styLater()});
   /* "ללא סגנון": סגנון התו מהמילים שנבחרו; ואם אין בהן סגנון תו - סגנון הפסקה */
   function noStyle(){
     const el=edEl();if(!el)return;
@@ -6236,35 +6273,191 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(Math.abs(d)>f.clientWidth*1.2)beh='auto';
       if(Math.abs(d)>1)f.scrollTo({left:f.scrollLeft+d,behavior:beh})}}
   let KEYNAV=0;
+  /* =================== החצים כמו בוורד (פרומפט 24, 8.11.2026) ===================
+     כל פסקה היא מארח עריכה נפרד, והדפדפן אינו חוצה בין מארחים. לכן:
+     א. למעלה/למטה: שורה חזותית אחת בכל לחיצה. השורה הבאה נמצאת לפי מלבני השורות של המארח, ואם
+        אין עוד שורה בו - בשורה הראשונה (או האחרונה) של המארח הסמוך, באותה עמודה אופקית. העמודה
+        נשמרת לאורך לחיצות רצופות (יורדים דרך שורה קצרה וחוזרים לאותו מקום). קודם לכן הלחיצה
+        הראשונה בשורה של שורה-אחת רק קפצה לסוף השורה או לתחילתה. Shift מרחיב את הבחירה שורה.
+     ב. ימין/שמאל: תנועה חזותית ב-Selection.modify ('left'/'right' חזותיים בכל הדפדפנים): חץ ימין
+        זז ימינה, חץ שמאל שמאלה. בקצה המארח, גם עם Ctrl או Shift - למארח הסמוך.
+     ג. Ctrl+חץ: פונקציית מילה משלנו על טקסט המארח (wStarts). Ctrl+שמאל - לתחילת המילה הבאה;
+        Ctrl+ימין - לתחילת המילה הנוכחית, ואם כבר בתחילתה - הקודמת. גרש וגרשיים בתוך מילה הם
+        חלק ממנה; מקף וסימני פיסוק לבדם אינם עצירה.
+     ד. Home/End: תחילת השורה החזותית (ימין) וסופה (שמאל), לא של כל הפסקה.
+     ה. בקצה הפרק - הפרק הבא או הקודם, כמו קודם. */
+  let VCOL=null,VEXT=null;
+  document.addEventListener('mousedown',()=>{VCOL=null;VEXT=null},true);
+  function hostOf(n){const e=n&&(n.nodeType===3?n.parentElement:n);return e&&e.closest?e.closest('[contenteditable="true"]'):null}
+  /* מלבן נקודה בטקסט; בגבול שורה או בגבול אלמנט - לפי התו שאחריה או שלפניה (עברית: תחילת תו = קצהו הימני) */
+  function ptRect(node,off){
+    const r=document.createRange();
+    try{r.setStart(node,off);r.collapse(true)}catch(e){return null}
+    let b=[...r.getClientRects()].find(x=>x.height>0);if(b)return b;
+    const t=node.nodeType===3?node:null;
+    try{
+      if(t&&off<t.length){r.setStart(t,off);r.setEnd(t,off+1);b=[...r.getClientRects()].find(x=>x.height>0);
+        if(b)return {left:b.right,right:b.right,top:b.top,bottom:b.bottom,width:0,height:b.height}}
+      if(t&&off>0){r.setStart(t,off-1);r.setEnd(t,off);b=[...r.getClientRects()].find(x=>x.height>0);
+        if(b)return {left:b.left,right:b.left,top:b.top,bottom:b.bottom,width:0,height:b.height}}
+    }catch(e){}
+    const e=node.nodeType===1?node:node.parentElement;return e?e.getBoundingClientRect():null}
+  /* השורות החזותיות של מארח, מלמעלה למטה */
+  function hostLines(h){
+    const r=document.createRange();r.selectNodeContents(h);
+    const L=[];
+    [...r.getClientRects()].filter(x=>x.height>0&&x.width>0).sort((a,b)=>a.top-b.top).forEach(x=>{
+      const mid=(x.top+x.bottom)/2,l=L.find(l=>mid>l.top&&mid<l.bottom);
+      if(l){l.top=Math.min(l.top,x.top);l.bottom=Math.max(l.bottom,x.bottom)}else L.push({top:x.top,bottom:x.bottom})});
+    if(!L.length){const b=h.getBoundingClientRect();if(b.height>0)L.push({top:b.top,bottom:b.bottom})}
+    return L}
+  /* המארח הסמוך למעלה או למטה: הראשון שחופף אופקית את העמודה (כותרת צד - בטור הצד, גוף - בגוף) */
+  function nextHost(host,dir,x){
+    const els=editHosts(),i=els.indexOf(host);if(i<0)return null;
+    let first=null;
+    for(let j=i+dir,n=0;j>=0&&j<els.length&&n<40;j+=dir,n++){
+      const h=els[j];
+      if(!first&&!h.classList.contains('anchor'))first=h;
+      const b=h.getBoundingClientRect();
+      if(b.width>0&&x>=b.left-1&&x<=b.right+1)return h}
+    return first||els[i+dir]||null}
+  /* הנקודה בטקסט הקרובה ל-x,y בתוך המארח (null אם אינה בו) */
+  function ptAt(h,x,y){
+    const hb=h.getBoundingClientRect();x=Math.max(hb.left+1,Math.min(hb.right-1,x));
+    try{
+      if(document.caretPositionFromPoint){const c=document.caretPositionFromPoint(x,y);
+        if(c&&h.contains(c.offsetNode))return [c.offsetNode,c.offset]}
+      else if(document.caretRangeFromPoint){const c=document.caretRangeFromPoint(x,y);
+        if(c&&h.contains(c.startContainer))return [c.startContainer,c.startOffset]}
+    }catch(e){}
+    return null}
+  /* שורה שמחוץ לחלון הטור: גוללים אליה קודם, כדי שמדידת הנקודה תעבוד */
+  function lineIntoView(ln){
+    const f=$('#flow'),fr=f.getBoundingClientRect(),m=4;
+    let d=0;if(ln.top<fr.top+m)d=ln.top-fr.top-m;else if(ln.bottom>fr.bottom-m)d=ln.bottom-fr.bottom+m;
+    if(Math.abs(d)>0.5){f.scrollBy({top:d,behavior:'auto'});return d}
+    return 0}
+  /* מרחיב את הבחירה אל נקודה; אם הדפדפן אינו מאפשר בחירה בין שני מארחים - הסימון של סכם
+     מסמן את השורות השלמות, שורה אחר שורה */
+  function extendTo(s,node,off,tgtHost,dir){
+    try{s.extend(node,off)}catch(e){}
+    if(hostOf(s.focusNode)===tgtHost){VEXT=null;return}
+    if(typeof skmMark!=='function'||typeof skmRowOf!=='function')return;
+    const rows=skmAllRows();
+    if(!VEXT){const a=skmRowOf(s.anchorNode);if(!a)return;VEXT={a,f:a}}
+    const tr=skmRowOf(tgtHost);
+    if(tr&&rows.indexOf(tr)>-1)VEXT.f=tr;
+    else{const j=rows.indexOf(VEXT.f)+dir;if(j>=0&&j<rows.length)VEXT.f=rows[j]}
+    SKM.anchor=VEXT.a;SKM.dragged=true;skmMark(skmSpan(VEXT.a,VEXT.f),true)}
+  function vMove(dir,ext){
+    const s=getSelection();if(!s||!s.rangeCount)return false;
+    const host=hostOf(s.focusNode);if(!host)return false;
+    const b=ptRect(s.focusNode,s.focusOffset);if(!b)return false;
+    const x=VCOL!=null?VCOL:b.left,mid=(b.top+b.bottom)/2;
+    const L=hostLines(host);
+    let ci=L.findIndex(l=>mid>=l.top-1&&mid<=l.bottom+1);
+    if(ci<0)ci=dir>0?L.length-1:0;
+    let tgt=host,ln=L[ci+dir];
+    if(!ln){
+      tgt=nextHost(host,dir,x);
+      if(!tgt){if(!ext){VCOL=null;edgeChapter(dir)}return true}
+      let L2=hostLines(tgt);ln=dir>0?L2[0]:L2[L2.length-1];
+      if(!ln)return false;
+      if(lineIntoView(ln)){L2=hostLines(tgt);ln=dir>0?L2[0]:L2[L2.length-1]}
+    }else if(lineIntoView(ln)){const L3=hostLines(host);ln=L3[ci+dir]||ln}
+    let p=ptAt(tgt,x,(ln.top+ln.bottom)/2);
+    if(!p){const r=document.createRange();r.selectNodeContents(tgt);r.collapse(dir>0);p=[r.startContainer,r.startOffset]}
+    if(ext){if(tgt===host){s.extend(p[0],p[1]);VEXT=null}else extendTo(s,p[0],p[1],tgt,dir)}
+    else{if(tgt!==host)tgt.focus({preventScroll:true});s.collapse(p[0],p[1]);VEXT=null}
+    VCOL=x;followCaret();
+    return true}
+  /* תחילות המילים בטקסט: רצף שאינו רווח או מקף ויש בו לפחות אות או ספרה. גרש וגרשיים בתוך הרצף
+     שייכים למילה (ה"מ, ר'), ופיסוק לבדו אינו מילה */
+  const WSEP=/[\s\-־‐-―]/,WLET=/[א-תA-Za-z0-9À-ɏ]/;
+  function wStarts(t){const out=[];let i=0;
+    while(i<t.length){while(i<t.length&&WSEP.test(t[i]))i++;if(i>=t.length)break;
+      const st=i;let has=false;while(i<t.length&&!WSEP.test(t[i])){if(WLET.test(t[i]))has=true;i++}
+      if(has)out.push(st)}
+    return out}
+  /* Ctrl+שמאל (fw=1): תחילת המילה הבאה; Ctrl+ימין (fw=-1): תחילת המילה הנוכחית, ואם כבר בה - הקודמת */
+  function wordStep(t,p,fw){const W=wStarts(t);
+    if(fw>0){const n=W.find(w=>w>p);return n===undefined?null:n}
+    let r=null;for(const w of W){if(w<p)r=w;else break}return r}
+  function wordMove(fw,ext){
+    const s=getSelection();if(!s||!s.rangeCount)return;
+    let host=hostOf(s.focusNode);if(!host)return;
+    let p=wordStep(txtOf(host),cutOff(host,s.focusNode,s.focusOffset),fw);
+    if(p===null){
+      /* קצה המארח: למארח הסמוך - Ctrl+שמאל לתחילת המילה הראשונה בשורה הבאה, Ctrl+ימין לתחילת המילה האחרונה בשורה הקודמת */
+      const els=editHosts().filter(h=>h.classList.contains('anchor')===host.classList.contains('anchor')),i=els.indexOf(host);
+      const nh=els[i+fw];
+      if(!nh){if(ext)return;p=fw>0?txtOf(host).length:0}
+      else{const W=wStarts(txtOf(nh));host=nh;p=fw>0?(W.length?W[0]:0):(W.length?W[W.length-1]:0)}}
+    const q=posAt(host,p);
+    if(ext){if(hostOf(s.focusNode)===host)s.extend(q[0],q[1]);else extendTo(s,q[0],q[1],host,fw)}
+    else{if(document.activeElement!==host)host.focus({preventScroll:true});s.collapse(q[0],q[1])}
+    followCaret()}
   document.addEventListener('keydown',e=>{
     if(!EDIT||!e.target.isContentEditable)return;
     if(/^(Arrow|Home$|End$|Page|Enter$|Backspace$|Delete$)/.test(e.key)||(e.key.length===1&&!e.ctrlKey&&!e.altKey))KEYNAV=Date.now();
-    /* כל פסקה היא מארח עריכה נפרד, והדפדפן אינו חוצה בין מארחים. לכן חץ
-       שהסמן לא זז בעקבותיו עובר ידנית לפסקה הסמוכה (ובקצה הפרק - לפרק
-       הסמוך), באותו מקום אופקי. */
-    /* ג-ו: חצים ימינה ושמאלה - תנועה חזותית, כמו בוורד בעברית: חץ ימין זז
-       ימינה (לעבר תחילת השורה העברית), חץ שמאל זז שמאלה; Ctrl קופץ מילה,
-       Shift מסמן. מבצעים זאת במפורש ב-Selection.modify ('left'/'right' הם
-       כיוונים חזותיים בכל הדפדפנים), כדי שהתנועה לא תיגזר מהגדרת הדפדפן
-       לתנועת סמן לוגית או חזותית בטקסט דו-כיווני. */
-    if((e.key==='ArrowLeft'||e.key==='ArrowRight')&&!e.altKey&&!e.metaKey){
+    if(e.key!=='ArrowUp'&&e.key!=='ArrowDown')VCOL=null;
+    if(!e.shiftKey||!/^(Arrow|Home$|End$)/.test(e.key))VEXT=null;
+    if(e.altKey||e.metaKey)return;
+    /* רצף אנכי: עריכה במחשב (vert), וגם הטלפון והמסך הצר - טור אחד שנגלל למטה */
+    const fl=$('#flow'),fcs=getComputedStyle(fl),vert=fl.classList.contains('vert')||(fcs.columnCount==='1'||fcs.columnCount==='auto')&&fcs.columnWidth==='auto';
+    /* ד: Home/End בשורה החזותית */
+    if((e.key==='Home'||e.key==='End')&&!e.ctrlKey){
+      const s=getSelection();
+      if(s&&s.modify){e.preventDefault();s.modify(e.shiftKey?'extend':'move',e.key==='Home'?'backward':'forward','lineboundary');followCaret();return}}
+    /* ב-ג: ימין ושמאל */
+    if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+      const fw=e.key==='ArrowLeft'?1:-1;
+      if(e.ctrlKey){e.preventDefault();wordMove(fw,e.shiftKey);return}
       const s0=getSelection();
       if(s0&&s0.modify){
         const a0=s0.focusNode,o0=s0.focusOffset,host0=e.target.closest('[contenteditable="true"]'),b0=caretRect();
         e.preventDefault();
-        s0.modify(e.shiftKey?'extend':'move',e.key==='ArrowLeft'?'left':'right',e.ctrlKey?'word':'character');
-        if(s0.focusNode===a0&&s0.focusOffset===o0&&!e.shiftKey&&!e.ctrlKey)
-          crossHost(e.key==='ArrowLeft'?'l':'r',b0,host0);
+        s0.modify(e.shiftKey?'extend':'move',e.key==='ArrowLeft'?'left':'right','character');
+        if(s0.focusNode===a0&&s0.focusOffset===o0){
+          if(!e.shiftKey)crossHost(e.key==='ArrowLeft'?'l':'r',b0,host0);
+          else if(host0){const els=editHosts().filter(h=>h.classList.contains('anchor')===host0.classList.contains('anchor')),nh=els[els.indexOf(host0)+fw];
+            if(nh){const r=document.createRange();r.selectNodeContents(nh);r.collapse(fw>0);extendTo(s0,r.startContainer,r.startOffset,nh,fw);followCaret()}}}
         else followCaret();
         return}}
-    const dirs={ArrowDown:'d',ArrowUp:'u',ArrowLeft:'l',ArrowRight:'r',PageDown:'pd',PageUp:'pu'};
-    if(dirs[e.key]&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey){
+    /* א: למעלה ולמטה */
+    if((e.key==='ArrowDown'||e.key==='ArrowUp')&&!e.ctrlKey&&vert){
+      if(vMove(e.key==='ArrowDown'?1:-1,e.shiftKey)){e.preventDefault();return}}
+    const dirs={ArrowDown:'d',ArrowUp:'u',PageDown:'pd',PageUp:'pu'};
+    if(dirs[e.key]&&!e.ctrlKey&&!e.shiftKey){
       const s=getSelection(),a=s.anchorNode,o=s.anchorOffset,k=dirs[e.key];
       const before=caretRect(),host=e.target.closest('[contenteditable="true"]');
       if(k==='pd'||k==='pu'){e.preventDefault();pageMove(k==='pd'?1:-1,before,host);return}
       setTimeout(()=>{const s2=getSelection();
         if(s2.anchorNode===a&&s2.anchorOffset===o)crossHost(k,before,host)},40)}
   },true);
+  /* =================== שדות כתיבה בעורך (פרומפט 24) ===================
+     החלונית "כותרת צד:", חלונות סכם, ההצעות והחיפוש: כיוון מימין לשמאל במפורש, והחצים מטופלים
+     כאן ולא בדפדפן - חץ ימין = תו אחד אחורה (ימינה בעברית), חץ שמאל = תו אחד קדימה, Ctrl = מילה
+     (כמו בגוף), Shift = הרחבה, Home = תחילה, End = סוף. כך הכיוון אינו תלוי בהגדרת הדפדפן
+     לתנועת סמן חזותית או לוגית, ולא בשפת המקלדת. */
+  function fldOK(t){return !!t&&(t.tagName==='TEXTAREA'||t.tagName==='INPUT'&&/^(text|search|)$/i.test(t.getAttribute('type')||''))}
+  document.addEventListener('focusin',e=>{if(EDIT&&fldOK(e.target)&&!e.target.getAttribute('dir'))e.target.setAttribute('dir','rtl')},true);
+  document.addEventListener('keydown',e=>{
+    const t=e.target;
+    if(!EDIT||!fldOK(t)||e.altKey||e.metaKey||!/^(ArrowLeft|ArrowRight|Home|End)$/.test(e.key))return;
+    if(!t.getAttribute('dir'))t.setAttribute('dir','rtl');
+    const v=t.value,a=t.selectionStart,b=t.selectionEnd,back=t.selectionDirection==='backward';
+    const fo=back?a:b,an=back?b:a,k=e.key,ta=t.tagName==='TEXTAREA';
+    let n;
+    if(k==='Home'||k==='End'){
+      if(ta&&!e.ctrlKey){n=k==='Home'?v.lastIndexOf('\n',fo-1)+1:(v.indexOf('\n',fo)<0?v.length:v.indexOf('\n',fo))}
+      else n=k==='Home'?0:v.length}
+    else if(!e.shiftKey&&!e.ctrlKey&&a!==b)n=k==='ArrowRight'?a:b;
+    else if(e.ctrlKey){const w=wordStep(v,fo,k==='ArrowLeft'?1:-1);n=w===null?(k==='ArrowLeft'?v.length:0):w}
+    else n=k==='ArrowRight'?Math.max(0,fo-1):Math.min(v.length,fo+1);
+    e.preventDefault();
+    if(e.shiftKey)t.setSelectionRange(Math.min(an,n),Math.max(an,n),n<an?'backward':'forward');
+    else t.setSelectionRange(n,n)},true);
   document.addEventListener('selectionchange',()=>{
     if(EDIT&&Date.now()-KEYNAV<700)setTimeout(()=>followCaret(),0);
     if(SX)srcSyncSoon()});

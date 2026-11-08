@@ -164,6 +164,9 @@ async function isAdmin(req, env) {
 /* ---------- השולח: OIDC של .github/workflows/daf-wa.yml בלבד (מועתק מ-zyomi-oidc.js) ---------- */
 const ISS = 'https://token.actions.githubusercontent.com', AUD = 'leokmei-daf', REPO = 'michaelflegg/leokmei-girsa';
 const WF = REPO + '/.github/workflows/daf-wa.yml@';
+// 8.11.2026: ארבעת המכשירים המקושרים של בעל הפרויקט תפוסים, ולכן השליחה עוברת דרך המכשיר של הזוהר היומי -
+// ריצת zyomi-wa.yml במאגר הזוהר (באותה קבוצת ריצה שלו, כך שלעולם אינן רצות יחד)
+const SENDERS = [[REPO, WF], ['michaelflegg/zohar-nikud', 'michaelflegg/zohar-nikud/.github/workflows/zyomi-wa.yml@']];
 const b64u = (s) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
 const part = (s) => JSON.parse(new TextDecoder().decode(b64u(s)));
 async function isSender(req) {
@@ -173,8 +176,8 @@ async function isSender(req) {
     if (!sig) return false;
     const head = part(h), c = part(p), t = Date.now() / 1000;
     if (head.alg !== 'RS256' || c.iss !== ISS || c.aud !== AUD) return false;
-    if (String(c.repository || '').toLowerCase() !== REPO) return false;
-    if (!String(c.workflow_ref || '').toLowerCase().startsWith(WF)) return false;
+    const repo = String(c.repository || '').toLowerCase(), wf = String(c.workflow_ref || '').toLowerCase();
+    if (!SENDERS.some(([r, w]) => repo === r && wf.startsWith(w))) return false;
     if (!(c.exp > t) || (c.nbf && c.nbf > t + 60)) return false;
     const r = await fetch(ISS + '/.well-known/jwks', { cf: { cacheTtl: 3600, cacheEverything: true } });
     const jwk = ((await r.json()).keys || []).find((k) => k.kid === head.kid);
@@ -255,6 +258,7 @@ async function handle(req, env, url) {
     let b = {};
     try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
     if (p === '/wa-sess') {
+      if (b.shared) { await jput(env, 'own', { linked: true, shared: true, at: new Date().toISOString() }); return json({ ok: true }); }
       if (!b.sess) { await env.DAF.delete('own:sess'); await jput(env, 'own', { linked: false, at: new Date().toISOString(), why: 'הקישור בוטל' }); return json({ ok: true }); }
       await env.DAF.put('own:sess', String(b.sess));
       await jput(env, 'own', { linked: !!b.linked, at: new Date().toISOString(), me: String(b.me || '').replace(/\D/g, '').slice(-4) });
@@ -311,7 +315,7 @@ async function handle(req, env, url) {
     }
     const own = await jget(env, 'own', { linked: false });
     const last = await jget(env, 'last', null);
-    return json({ ok: true, today, days, pilot, own: { linked: !!own.linked, at: own.at || '', why: own.why || '' }, cfg: { announce: !!cfg.announce, name: cfg.name || '', invite: cfg.invite || '', sent: cfg.sent || 0, approveFirst: APPROVE_FIRST }, last, cmd: await jget(env, 'cmd', null) });
+    return json({ ok: true, today, days, pilot, own: { linked: !!own.linked, shared: !!own.shared, at: own.at || '', why: own.why || '' }, cfg: { announce: !!cfg.announce, name: cfg.name || '', invite: cfg.invite || '', sent: cfg.sent || 0, approveFirst: APPROVE_FIRST }, last, cmd: await jget(env, 'cmd', null) });
   }
   if (p === '/own' && req.method === 'GET') {
     const own = await jget(env, 'own', { linked: false }), qr = await jget(env, 'own:qr', null);
@@ -362,6 +366,7 @@ async function handle(req, env, url) {
     await jput(env, 'cmd', { op: 'send', d, at: Date.now() });
     return json({ ok: true });
   }
+  if (p === '/link' && (await jget(env, 'own', {})).shared) return bad('הדף היומי משתמש במכשיר המקושר של הזוהר היומי - אין צורך לסרוק');
   if (p === '/link') { await env.DAF.delete('own:qr'); await jput(env, 'cmd', { op: 'link', at: Date.now() }); return json({ ok: true }); }
   if (p === '/setup') { await jput(env, 'cmd', { op: 'community', name: 'לאוקמי גירסא - הדף היומי', at: Date.now() }); return json({ ok: true }); }
   if (p === '/test') { await jput(env, 'cmd', { op: 'test', d: /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : '', at: Date.now() }); return json({ ok: true }); }

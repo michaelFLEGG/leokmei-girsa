@@ -7,6 +7,9 @@
   {"ins": {"after"|"before": עוגן, "end": true, "text": ..., "cs": "hs"}}   הוספה בסגנון "הסבר", בסוגריים מרובעים
   {"style": {"range": ..., "cs": "am"|"ps"|"plain"}}  החלת/הסרת סגנון תו
   {"anchor": {...}} | {"heading": {...}} | {"nikud": {x,y}} | {"split": {at}} | {"join": 1}   (26.10.2026, ראה convert.py)
+  {"multi": [פעולה, פעולה]}                          כמה פעולות בקבלה אחת (8.11.2026), למשל
+      {"multi": [{"heading": {"text": ..., "above": 1}}, {"anchor": {"text": ...}}]}  כותרת נושא מעל + כותרת צד קצרה;
+      {"anchor": {"clear": 1}} מוחק את כותרת הצד (תוכנה עבר לכותרת הנושא). המקור: tools/sakem/titles_review.mjs
   {"ask": "..."}                                       בדיקה/שאלה: אין מה להחיל; "קבל" = נבדק, בלי שינוי
   {"none": "..."}                                      אין עדיין מטען: הדף מבקש הצעה ועובר הלאה
 החלפה "ישן ⟵ חדש" וסגנון ("להחיל סגנון ...") נגזרים בדף עצמו מתוך fix, ולכן כאן אינם נכתבים שוב.
@@ -91,7 +94,10 @@ def punct_op(f):
 def derive(f, hand=None):
     """המטען של ממצא אחד (לא נוגע בממצא)."""
     ex = f.get('op')
-    if ex and any(k in ex for k in ('rep', 'ins', 'style', 'del', 'anchor', 'heading', 'nikud', 'split', 'join')):   # מטען אמיתי נשמר; none / ask נגזרים מחדש
+    if ex and any(k in ex for k in ('rep', 'ins', 'style', 'del', 'anchor', 'heading', 'nikud', 'split', 'join', 'multi')):   # מטען אמיתי נשמר; none / ask נגזרים מחדש
+        return ex
+    # פרומפט 22 (8.11.2026): כותרת צד ארוכה / כפילות שאין לה הצעה ברורה - שאלה להכרעה, נשמרת כמות שהיא
+    if ex and 'ask' in ex and f.get('det') in ('side_long', 'title_dup'):
         return ex
     if hand and f.get('id') in hand:
         return hand[f['id']]

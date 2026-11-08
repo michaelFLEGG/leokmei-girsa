@@ -17,8 +17,10 @@
   const BKSEV={'חמור':['#c0392b','bk-hi'],'בינוני':['#c9770f','bk-mid'],'קל':['#6f7f9a','bk-lo']};
   /* סוגי הערות קבועים (סקירה, 13.10.2026): כל ממצא שייך לסוג אחד. typ מפורש גובר; אחרת לפי הגלאי */
   const SKT={a:['טעות בפשט','#b3261e'],b:['חסר שלב','#c9770f'],c:['לא מובן','#8a5a00'],d:['כותרת','#2e5b8a'],
-             e:['ניסוח','#6a4c93'],f:['מבנה','#2e6b3f'],g:['מכני','#6f7f9a'],h:['שאלה למחבר','#0b7285'],i:['בחר נוסח','#a0527c'],j:['המפרשים חלוקים','#7a5a00']};
-  const SKMAP={sem_hav:'a',sem_yih:'a',sem_hsr:'b',sem_lo:'c',cl_head:'d',nose_long:'d',
+             e:['ניסוח','#6a4c93'],f:['מבנה','#2e6b3f'],g:['מכני','#6f7f9a'],h:['שאלה למחבר','#0b7285'],i:['בחר נוסח','#a0527c'],j:['המפרשים חלוקים','#7a5a00'],
+             /* פרומפט 22 (8.11.2026): כותרת צד של יותר משלוש מילים (פיצול לכותרת נושא + כותרת צד קצרה), וכפילות בין כותרת לשורה שאחריה */
+             k:['כותרת צד ארוכה / כפילות','#9c3d10']};
+  const SKMAP={sem_hav:'a',sem_yih:'a',sem_hsr:'b',sem_lo:'c',cl_head:'d',nose_long:'d',side_long:'k',title_dup:'k',
     aram:'e',cl_aram:'e',sem_hash:'e',hash:'e',amor_long:'e',cl_adv:'e',
     cl_mnum:'f',cl_hdr:'f',anchor:'f',cl_src:'f',cl_daf:'f',dafpos:'f',
     joined:'g',split:'g',dbl:'g',typo:'g',orphan:'g',punct:'g',abbr:'g',amor_miss:'g',psuk_bad:'g',psuk_nik:'g',psuk_miss:'g',
@@ -49,16 +51,23 @@
        {heading:{text}}       כותרת נושא חדשה לפני הפסקה ("ניסוח קלוד")
        {nikud:{x,y}}          הפסוק בנוסח המנוקד מן המקרא (החלפה)
        {split:{at}}           פיצול השורה אחרי המילים at
-       {join:1}               איחוי הפסקה עם הבאה אחריה */
+       {join:1}               איחוי הפסקה עם הבאה אחריה
+     (8.11.2026, פרומפט 22) נוספו:
+       {multi:[...]}          כמה פעולות בקבלה אחת (למשל כותרת נושא + כותרת צד קצרה); ביטול אחד מבטל את כולן
+       {heading:{text,above}} above: הכותרת נכנסת מעל היחידה (אחרי הפסקה שלפניה), כמו Enter מעל כותרת צד בעורך
+       {anchor:{clear:1}}     כותרת הצד נמחקת (תוכנה עבר לכותרת הנושא) */
   function bkOpRaw(o){
     if(!o||typeof o!=='object')return null;
+    if(Array.isArray(o.multi)){const ops=o.multi.map(bkOpRaw).filter(x=>x&&/^(rep|ins|style|anchor|heading|split|join)$/.test(x.t));
+      return ops.length?{t:'multi',ops}:null}
+    if(o.anchor&&o.anchor.clear)return {t:'anchor',clear:true,text:'',rest:'',take:'',unside:false};
     if(o.rep&&o.rep.x&&o.rep.y!==undefined&&o.rep.x!==o.rep.y)return {t:'rep',x:o.rep.x,y:o.rep.y,unsure:!!o.rep.unsure};
     if(o.nikud&&o.nikud.x&&o.nikud.y&&o.nikud.x!==o.nikud.y)return {t:'rep',x:o.nikud.x,y:o.nikud.y,nik:1};
     if(o.ins&&o.ins.text)return {t:'ins',after:o.ins.after,before:o.ins.before,end:!!o.ins.end,text:String(o.ins.text),cs:o.ins.cs||'hs'};
     if(o.style&&(o.style.cs||o.style.cs===''))return {t:'style',cs:o.style.cs==='plain'?'':o.style.cs,range:o.style.range||''};
     if(o.del&&o.del.range)return {t:'rep',x:o.del.range,y:''};
     if(o.anchor&&(o.anchor.text||o.anchor.take||o.anchor.unside))return {t:'anchor',text:String(o.anchor.text||'').trim(),rest:String(o.anchor.rest||'').trim(),take:String(o.anchor.take||'').trim(),unside:!!o.anchor.unside};
-    if(o.heading&&o.heading.text)return {t:'heading',text:String(o.heading.text).trim()};
+    if(o.heading&&o.heading.text)return {t:'heading',text:String(o.heading.text).trim(),above:!!o.heading.above};
     if(o.split&&o.split.at)return {t:'split',at:String(o.split.at)};
     if(o.join)return {t:'join'};
     if(o.ask)return {t:'q',why:String(o.ask)};
@@ -78,12 +87,13 @@
   /* עד שלושה נוסחים: המטען עצמו ואחריו החלופות (f.alts, באותו מבנה של f.op). מקש 1/2/3 בוחר ומחיל */
   function bkOpts(f){
     const a=[bkOp(f)];
-    for(const x of (Array.isArray(f.alts)?f.alts:[])){const o=bkOpRaw(x);if(o&&/^(rep|ins|style|anchor|heading|split|join)$/.test(o.t))a.push(o)}
+    for(const x of (Array.isArray(f.alts)?f.alts:[])){const o=bkOpRaw(x);if(o&&/^(rep|ins|style|anchor|heading|split|join|multi)$/.test(o.t))a.push(o)}
     return a.slice(0,3)}
   /* שער התור (26.10.2026): רק ממצא שיש לו פעולה מוכנה להחלה נכנס לתור של המחבר. שאלה למחבר
      (סוג ח) היא היחידה שמותרת בלי מטען. השאר חוזר להפקה, ומוצג בלשונית "ניהול" בלבד */
-  const BKEXEC={rep:1,ins:1,style:1,anchor:1,heading:1,split:1,join:1};
-  function bkReady(f){const o=bkOp(f);return !!BKEXEC[o.t]||(o.t==='q'&&bkTyp(f)==='h')}
+  const BKEXEC={rep:1,ins:1,style:1,anchor:1,heading:1,split:1,join:1,multi:1};
+  /* (8.11.2026) כותרת צד ארוכה / כפילות שאין לה הצעה ברורה (ידני): מוצגת להכרעה בתור, בלי מטען */
+  function bkReady(f){const o=bkOp(f);return !!BKEXEC[o.t]||(o.t==='q'&&(bkTyp(f)==='h'||bkTyp(f)==='k'))}
   window.bkReady=bkReady;
   function bkRep(f){const o=bkOp(f);return o.t==='rep'?o:null}
   function bkAction(f){
@@ -91,7 +101,7 @@
     if(o.t==='style')return o.cs==='am'?'am':(o.cs==='ps'?'ps':'plain');
     return o.t}
   const BKACT={rep:'החלפה בנוסח',ins:'הוספת הסבר בסוגריים',am:'סגנון אמוראים',ps:'סגנון פסוק',plain:'חזרה לסגנון רגיל',
-               anchor:'כותרת צד',heading:'כותרת נושא חדשה',split:'פיצול שורה',join:'איחוי עם השורה הבאה',
+               anchor:'כותרת צד',heading:'כותרת נושא חדשה',split:'פיצול שורה',join:'איחוי עם השורה הבאה',multi:'כותרת נושא + כותרת צד קצרה',
                q:'בדיקה או שאלה: אין שינוי בטקסט',none:'אין עדיין הצעה מוכנה'};
   /* ---- התיישנות (19.10.2026): ממצא שהטקסט הנוכחי (כולל עריכות המנהל) כבר מכסה אותו אינו מוצג ---- */
   const BKUSE=/^[ודלכמשבה]{1,3}(?=ר)/;
@@ -410,11 +420,13 @@
     if(op.t==='rep')return op.y?'<del>'+esc(op.x)+'</del> ← <ins>'+esc(op.y)+'</ins>'+(op.nik?' <span class="dim">(ניקוד המקרא)</span>':''):'מחיקת <del>'+esc(op.x)+'</del>';
     if(op.t==='ins')return '<ins class="hs">['+esc(bkInsText(op.text))+']</ins> <span class="dim">'+(op.end?'בסוף הפסקה':(op.before!==undefined&&op.after===undefined?'לפני ':'אחרי ')+(op.end?'':q(op.after||op.before||f.mark||'')))+'</span>';
     if(op.t==='style')return esc(BKACT[op.cs==='am'?'am':(op.cs==='ps'?'ps':'plain')])+': <mark>'+esc(op.range||f.mark||'')+'</mark>';
+    if(op.t==='multi')return op.ops.map(s=>bkSugHtml(f,s)).join(' <span class="dim">+</span> ');
     if(op.t==='anchor'){
+      if(op.clear)return 'כותרת הצד נמחקת <span class="dim">(עוברת לכותרת הנושא)</span>';
       if(op.unside)return 'כותרת הצד חוזרת לשורה';
       if(op.take)return 'הדובר '+q(op.take)+' יוצא לכותרת צד'+(op.text&&op.text!==op.take?': <ins>'+esc(op.text)+'</ins>':'');
       return 'כותרת צד: <ins>'+esc(op.text)+'</ins>'+(op.rest?' · לשורה: <ins>'+esc(op.rest)+'</ins>':'')}
-    if(op.t==='heading')return 'כותרת נושא: <ins>'+esc(op.text)+'</ins>';
+    if(op.t==='heading')return 'כותרת נושא: <ins>'+esc(op.text)+'</ins>'+(op.above?' <span class="dim">(מעל)</span>':'');
     if(op.t==='split')return 'פיצול השורה אחרי '+q(op.at);
     if(op.t==='join')return 'איחוי עם השורה הבאה';
     if(op.t==='q')return esc(op.why||f.fix||'שאלה למחבר')+' <span class="dim">(Enter: נענתה, בלי שינוי בטקסט)</span>';
@@ -676,7 +688,9 @@
       if(cs<0&&mkc){const c2=h.sc.c.indexOf(xc);if(c2>-1&&h.sc.c.indexOf(xc,c2+1)<0)cs=c2-h.pos;else return 'הקטע "'+rp.x+'" אינו בשורה כפי שנרשם.'}
       else if(cs<0)return 'הקטע "'+rp.x+'" אינו בשורה כפי שנרשם.';
       const cStart=h.pos+cs,cEnd=cStart+xc.length-1;
-      const oStart=h.sc.m[cStart],oEnd=h.sc.m[cEnd]+1;
+      const oStart=h.sc.m[cStart];let oEnd=h.sc.m[cEnd]+1;
+      /* מחיקה בפתח השורה או אחרי רווח: הרווח שאחריה נמחק עמה, שלא תיפתח השורה ברווח ולא ייכפל רווח */
+      if(!rp.y)while(oEnd<curT.length&&/\s/.test(curT[oEnd])&&(oStart===0||/\s/.test(curT[oStart-1])))oEnd++;
       return {nowT:curT.slice(0,oStart)+rp.y+curT.slice(oEnd),nowH:bkReplaceAt(curH,oStart,oEnd-oStart,rp.y)}})}
   /* הוספה: [הסבר] בסגנון "הסבר" אחרי עוגן מדויק, לפניו, או בסוף הפסקה */
   function bkInsText(t){t=String(t||'').trim().replace(/^\[+|\]+$/g,'').trim().replace(/[.\s]+$/,'');return t}
@@ -772,6 +786,14 @@
     const u=x.u,wk=wkey(u),daf=x.daf;
     if(u.k!=='u'&&u.k!=='m')return 'כותרת צד אפשרית רק בפסקת גוף.';
     const head=u[wk]||'';
+    if(op.clear){
+      /* (8.11.2026) כותרת הצד נמחקת: תוכנה עבר לכותרת הנושא שמעל. עריכת טקסט רגילה של החלון (בוורד: מחיקה במעקב) */
+      if(!plain(head).trim())return 'אין כותרת צד למחוק.';
+      const hk0='u'+u.id+(wk==='a'?'.0':'.w'),ls=head.split('<br>');let j0=ls.length-1;
+      if(f.mark){const mc=bkCompact(f.mark).c;const jj=ls.findIndex(l=>bkCompact(plain(l)).c.indexOf(mc)>-1||mc.indexOf(bkCompact(plain(l)).c)>-1);if(jj>-1)j0=jj}
+      ls.splice(j0,1);
+      const r0=bkEditKey(hk0,ls.join('<br>'),daf);if(!r0)return 'כותרת הצד לא נמצאה בנתונים.';
+      BK.undo={id:f.id,f,multi:[r0]};return {k:hk0}}
     if(op.unside){
       const lines=head.split('<br>'),winH=lines[lines.length-1],winT=plain(winH);
       if(!winT.trim())return 'אין כותרת צד להחזיר לשורה.';
@@ -808,7 +830,42 @@
       const lk='u'+u.id+'.1',cur=dataHtml(lk)||'';
       const r2=bkEditKey(lk,esc(op.rest)+' '+cur.replace(/^\s+/,''),daf);if(r2)recs.push(r2)}
     BK.undo={id:f.id,f,multi:recs};return {k:hk}}
+  /* הפסקה שלפני יחידה (באותו עמוד או בעמוד הקודם): {u,i,pi} או null */
+  function bkRowBefore(x){
+    let pi=x.pi,us=D.pages[pi].units,j=us.indexOf(x.u)-1;
+    while(j<0&&pi>0){pi--;us=D.pages[pi].units;j=us.length-1}
+    if(j<0)return null;
+    const pu=us[j];
+    if(pu.k==='nose'||pu.k==='dh')return {u:pu,i:-1,pi,head:1};
+    if(pu.k!=='u'||!pu.l||!pu.l.length)return null;
+    return {u:pu,i:pu.l.length-1,pi}}
+  /* (8.11.2026) כותרת נושא מעל היחידה, כמו Enter מעל כותרת צד בעורך: פסקה חדשה אחרי הפסקה שלפניה.
+     כך כותרת הצד נשארת צמודה לשורה שלה, ובוורד הכותרת נכנסת לפני מסגרת כותרת הצד ולא אחריה.
+     כותרת נושא שכבר יושבת מיד מעל - לא מוסיפים עוד אחת. */
+  function bkApplyHeadingAbove(f,op){
+    const x=bkUnitOf(f);if(!x)return 'הממצא לא אותר בטקסט הנוכחי.';
+    const pv=bkRowBefore(x);
+    if(!pv)return 'אין פסקת גמרא מעל היחידה (למשל משנה): כותרת הנושא נכנסת ידנית (E).';
+    if(pv.head||/(^|\s)nose(\s|$)/.test(pv.u.l[pv.i][0]||''))return {k:'u'+x.u.id+'.0',skip:1};
+    const A=pv.u.l[pv.i],aT=plain(A[1]);
+    const sp=(A[0]||'').split(' ').filter(c=>/^a\d$/.test(c));
+    const nRow=[['nose','b1'].concat(sp.length?sp:['a0']).join(' '),esc(op.text)];
+    const e={op:'struct',kind:'split',ins:1,where:'after',texts:[aT],res:[[A[0],A[1]],nRow],resT:[aT,op.text],
+             psw:wsty('nose'),daf:x.daf,t:Date.now(),pub:0,cl:{sug:op.text,fin:op.text,i:0,dec:0}};
+    bkStructCommit(f,e,pv.pi,()=>{pv.u.l.splice(pv.i+1,0,nRow);delete pv.u.lv});
+    return {k:'u'+pv.u.id+'.'+(pv.i+2)}}
+  /* (8.11.2026) כמה פעולות בקבלה אחת: כותרת הנושא קודם (היא ביחידה שלפני ואינה מזיזה את מפתחות היחידה),
+     ואחריה כותרת הצד. כשל באחת מבטל את מה שכבר הוחל, וביטול (Ctrl+Z) מבטל את כולן יחד. */
+  function bkApplyMulti(f,op){
+    const ord=op.ops.slice().sort((a,b)=>(a.t==='heading'?0:1)-(b.t==='heading'?0:1));
+    const seq=[];let last=null;
+    for(const s of ord){
+      BK.undo=null;const r=bkApplyOp(f,s);
+      if(typeof r==='string'){const back=seq.slice().reverse();BK.undo=null;back.forEach(u=>bkUndoRec(u,1));return r}
+      if(BK.undo)seq.push(BK.undo);last=r}
+    BK.undo=seq.length?{id:f.id,f,seq}:null;return last||{k:''}}
   function bkApplyHeading(f,op){
+    if(op.above)return bkApplyHeadingAbove(f,op);
     const x=bkUnitOf(f);if(!x||x.i<0||!x.u.l[x.i])return 'כותרת נושא נכנסת לפני פסקת גוף בלבד.';
     const u=x.u,i=x.i,A=u.l[i],aT=plain(A[1]);
     const sp=(A[0]||'').split(' ').filter(c=>/^a\d$/.test(c));
@@ -841,6 +898,7 @@
     return {k:'u'+u.id+'.'+(i+1)}}
   /* החלה לפי סוג המטען. מחזיר מחרוזת הסבר כשאי אפשר; אחרת אובייקט (עריכה או {k}) */
   function bkApplyOp(f,op){
+    if(op.t==='multi')return bkApplyMulti(f,op);
     if(op.t==='rep')return bkApplyRep(f,op);
     if(op.t==='ins')return bkApplyIns(f,op);
     if(op.t==='style')return bkApplyStyle(f,op);
@@ -851,6 +909,8 @@
     return 'אין מה להחיל.'}
   /* הנוסח שנשמר בהכרעה (ללמידה): מה שהוחל בפועל */
   function bkSugText(op){
+    if(op.t==='multi')return op.ops.map(bkSugText).join(' | ');
+    if(op.t==='anchor'&&op.clear)return '(כותרת הצד נמחקה)';
     if(op.t==='rep')return op.y;
     if(op.t==='ins')return '['+bkInsText(op.text)+']';
     if(op.t==='anchor')return op.unside?'(כותרת הצד חזרה לשורה)':(op.take?'כותרת צד: '+(op.text||op.take):'כותרת צד: '+op.text+(op.rest?' | לשורה: '+op.rest:''));
@@ -883,6 +943,10 @@
   function bkPrevShow(f,op){
     bkPrevClear();
     if(!f||!op||!BKEXEC[op.t])return;
+    if(op.t==='multi'){op.ops.forEach(s=>bkPrevOne(f,s));return}
+    bkPrevOne(f,op)}
+  function bkPrevOne(f,op){
+    if(!f||!op||!BKEXEC[op.t])return;
     const L=BK.loc[f.id];if(!L)return;
     const el=$('#flow').querySelector('[data-ek="'+L.k+'"]');if(!el)return;
     const T=bkElText(el,null),at=T.at,text=T.text;
@@ -905,12 +969,12 @@
         const x=bkUnitOf(f);if(!x)return;
         const hk='u'+x.u.id+(wkey(x.u)==='a'?'.0':'.w'),hel=$('#flow').querySelector('[data-ek="'+hk+'"]');
         if(op.take){const tc=bkCC(text),kc=bkCompact(op.take).c,p=tc.c.indexOf(kc);if(p>-1)mark('bk-del',rng(tc.m[p],tc.m[p+kc.length-1]+1))}
-        if(op.unside&&hel){const r=document.createRange();r.selectNodeContents(hel);mark('bk-del',r)}
+        if((op.unside||op.clear)&&hel){const r=document.createRange();r.selectNodeContents(hel);mark('bk-del',r)}
         if(op.text&&hel&&plain(x.u[wkey(x.u)]||'').trim()){const r=document.createRange();r.selectNodeContents(hel);mark('bk-del',r);hel.appendChild(span('bkx-ins',' '+op.text))}
         else if(op.text||op.take)el.insertBefore(span('bkx-ins bkx-side',(op.text||op.take)+' '),el.firstChild);
         if(op.rest)el.insertBefore(span('bkx-ins',op.rest+' '),el.firstChild)}
       else if(op.t==='heading'){const d=document.createElement('div');d.className='bkx bkx-head';d.setAttribute('contenteditable','false');d.textContent=op.text;
-        el.parentNode.insertBefore(d,el)}
+        const at0=op.above?(el.closest('.row')||el):el;at0.parentNode.insertBefore(d,at0)}
       else if(op.t==='split'){const tc=bkCC(text),ac=bkCompact(op.at).c,p=tc.c.indexOf(ac);if(p<0)return;put(tc.m[p+ac.length-1]+1,span('bkx-br',' ¶ '))}
       else if(op.t==='join')el.appendChild(span('bkx-br',' ⤶'));
       BK.prevId=f.id}catch(e){bkPrevClear()}}
@@ -929,7 +993,7 @@
       if(ar!==null&&typeof ar!=='string'){
         now=bkSugText(op);bkAfterEdit();
         msg={rep:'התיקון הוחל כעריכת מנהל.',ins:'ההוספה הוחלה בסגנון הסבר.',am:'סגנון אמוראים הוחל.',ps:'סגנון פסוק הוחל.',plain:'הסגנון הוסר.',
-             anchor:'כותרת הצד עודכנה.',heading:'כותרת הנושא נוספה.',split:'השורה פוצלה.',join:'השורות אוחו.'}[act]+' Ctrl+Z מבטל.'}
+             anchor:'כותרת הצד עודכנה.',heading:'כותרת הנושא נוספה.',split:'השורה פוצלה.',join:'השורות אוחו.',multi:'כותרת הנושא וכותרת הצד הוחלו.'}[act]+' Ctrl+Z מבטל.'}
       else if(act==='am'||act==='plain'||act==='ps'){
         /* גיבוי: כשההחלה על הנתונים אינה אפשרית - בדף, במצב עריכה, כמו קודם */
         if(!EDIT)setEdit(true);if(!EDIT)return;
@@ -985,8 +1049,10 @@
     if(r.prev)ED.push(r.prev);
     dataSet(r.k,r.wasH);SLOTS=null;saveED();
     const el=$('#flow').querySelector('[data-ek="'+r.k+'"]');if(el)setHTML(el,r.wasH)}
-  function bkUndoRec(u){
+  function bkUndoRec(u,quiet){
     bkPrevClear();
+    /* (8.11.2026) קבלה מורכבת (multi): כל חלקיה מבוטלים בסדר הפוך */
+    if(u.seq){u.seq.slice().reverse().forEach(x=>bkUndoRec(x,1));if(!quiet){bkPut(u.f,'pending');bkSave()}return}
     if(u.k){bkUndoOne(u);drawEd();pubSoon();syncSoon()}
     /* כמה עריכות (כותרת צד והמשכה בשורה): מבוטלות בסדר הפוך */
     if(u.multi){u.multi.slice().reverse().forEach(bkUndoOne);drawEd();pubSoon();syncSoon()}
@@ -996,7 +1062,7 @@
       const i=ED.indexOf(x.e);if(i>-1){edKeys();tomb(x.e.k);ED.splice(i,1)}
       const j=UNDO.findIndex(y=>y.e===x.e);if(j>-1)UNDO.splice(j,1);
       SLOTS=null;saveED();patchPage(before);drawEd();pubSoon();syncSoon()}
-    bkPut(u.f,'pending');bkSave()}
+    if(!quiet){bkPut(u.f,'pending');bkSave()}}
   window.bkUndoRec=bkUndoRec;
   function bkUndo(){
     const u=BK.undo;if(!u)return false;BK.undo=null;

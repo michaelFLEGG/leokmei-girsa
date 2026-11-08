@@ -7,7 +7,7 @@
      ה. יומן "תוקן אוטומטית" עם ביטול, ועזרה מובנית. */
   Object.assign(SK,{mode:'',scope:'all',last:'',lastOrd:null,pool:null,end:null,list:false,rng:null,
                     autoQ:new Set(),behind:new Set(),batch:null,passIds:[],bulk:null,helpOn:false,autoOff:{},undoRec:{}});
-  const SKORDER=['g','f','e','d','i','h','c','b','a'];
+  const SKORDER=['k','g','f','e','d','i','h','c','b','a'];   /* k (8.11.2026): כותרת צד ארוכה / כפילות - ראשון, מעבר מהיר */
   const SKEXP={g:'תיקון מכני - אין בו שיקול דעת תוכני',f:'מבנה הדף - ציוני דף, מספור וסדר',e:'ניסוח וסגנון',d:'כותרות',
                i:'בחירת נוסח',h:'שאלה שמופנית אליך',c:'מקום שאינו מובן',b:'שלב חסר בהסבר',a:'טעות בפשט'};
   const SKACT={rep:'החלפה בנוסח המוצע',am:'החלת סגנון: המילים המסומנות יקבלו סגנון אמוראים',

@@ -9,63 +9,64 @@
    "unit": 126,
    "kind": "long",
    "manual": 1,
-   "title": "אלא ליישב לר''ח א."
+   "title": "אלא ליישב לר''ח א.",
+   "why": "name"
   },
   {
    "daf": "יז.",
    "unit": 963,
    "kind": "long",
+   "manual": 1,
    "title": "• ושאני מהא דתנן:",
-   "heading": "• ושאני מהא דתנן",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יח:",
    "unit": 1057,
    "kind": "long",
+   "manual": 1,
    "title": "רבה לא אמר כר\"ז:",
-   "heading": "לא אמר כר\"ז",
-   "side": "רבה:"
+   "why": "name"
   },
   {
    "daf": "יח:",
    "unit": 1057,
    "kind": "long",
+   "manual": 1,
    "title": "ר\"ז לא אמר כרבה:",
-   "heading": "לא אמר כרבה",
-   "side": "ר\"ז:"
+   "why": "name"
   },
   {
    "daf": "כ.",
    "unit": 1157,
    "kind": "long",
+   "manual": 1,
    "title": "אביי: אף לא כשמואל:",
-   "heading": "אף לא כשמואל",
-   "side": "אביי:"
+   "why": "name"
   },
   {
    "daf": "כב:",
    "unit": 1321,
    "kind": "long",
+   "manual": 1,
    "title": "יב. והך דרי''ו מר''ש:",
-   "heading": "יב. והך דרי''ו מר''ש",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כג.",
    "unit": 1356,
    "kind": "long",
+   "manual": 1,
    "title": "-א. דחה ר\"ז מרבא:",
-   "heading": "-א. דחה ר\"ז מרבא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כג.",
    "unit": 1356,
    "kind": "long",
+   "manual": 1,
    "title": "-ב. אלא ר\"ז מרבא:",
-   "heading": "-ב. אלא ר\"ז מרבא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כה:",
@@ -79,17 +80,17 @@
    "daf": "כז.",
    "unit": 1648,
    "kind": "long",
+   "manual": 1,
    "title": "וכן שנו לפני ר''נ:",
-   "heading": "וכן שנו לפני ר''נ",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כט:",
    "unit": 1835,
    "kind": "long",
+   "manual": 1,
    "title": "וכן הורה רב יוסף:",
-   "heading": "וכן הורה רב יוסף",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ל.",
@@ -143,16 +144,17 @@
    "daf": "עה.",
    "unit": 4985,
    "kind": "long",
+   "manual": 1,
    "title": "תני ר''ח לסייע לרי''צ",
-   "heading": "תני ר''ח לסייע לרי''צ",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "עה:",
    "unit": 5018,
    "kind": "long",
    "manual": 1,
-   "title": "רבי אמי ורבי אסי:"
+   "title": "רבי אמי ורבי אסי:",
+   "why": "name"
   },
   {
    "daf": "פב.",
@@ -174,9 +176,9 @@
    "daf": "קז:",
    "unit": 7627,
    "kind": "long",
+   "manual": 1,
    "title": "• מכריז רבי אמי:",
-   "heading": "• מכריז רבי אמי",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קיא.",

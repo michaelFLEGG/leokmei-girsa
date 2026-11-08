@@ -8,41 +8,41 @@
    "daf": "ה.",
    "unit": 209,
    "kind": "long",
+   "manual": 1,
    "title": "• לימא מסייע לר\"ע:",
-   "heading": "• לימא מסייע לר\"ע",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ה:",
    "unit": 251,
    "kind": "long",
+   "manual": 1,
    "title": "• ריב\"א מבר קפרא:",
-   "heading": "• ריב\"א מבר קפרא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ו.",
    "unit": 288,
    "kind": "long",
+   "manual": 1,
    "title": "• מ\"ט גזרו רבנן:",
-   "heading": "• מ\"ט גזרו רבנן",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ז.",
    "unit": 349,
    "kind": "long",
+   "manual": 1,
    "title": "• מתקיף יהודה ברשב\"פ:",
-   "heading": "• מתקיף יהודה ברשב\"פ",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ז:",
    "unit": 391,
    "kind": "long",
+   "manual": 1,
    "title": "שמע רבי ויצא לקראתו:",
-   "heading": "שמע רבי ויצא לקראתו",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ח",
@@ -72,9 +72,9 @@
    "daf": "ט.",
    "unit": 516,
    "kind": "long",
+   "manual": 1,
    "title": "כדבעא ר' אבא מר\"ה:",
-   "heading": "כדבעא ר' אבא מר\"ה",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "נד.",
@@ -89,7 +89,8 @@
    "unit": 4359,
    "kind": "long",
    "manual": 1,
-   "title": "מר בר רב אשי:"
+   "title": "מר בר רב אשי:",
+   "why": "name"
   },
   {
    "daf": "צג:",
@@ -151,32 +152,33 @@
    "daf": "קלב:",
    "unit": 5655,
    "kind": "long",
+   "manual": 1,
    "title": "ולא היא, דתניא רש\"א:",
-   "heading": "ולא היא, דתניא רש\"א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קלג.",
    "unit": 5701,
    "kind": "long",
    "manual": 1,
-   "title": "רב ספרא לרב יוסף:"
+   "title": "רב ספרא לרב יוסף:",
+   "why": "name"
   },
   {
    "daf": "קלד.",
    "unit": 5763,
    "kind": "long",
+   "manual": 1,
    "title": "כשבא ר\"ד, רשב\"ל לרי\"ו:",
-   "heading": "כשבא ר\"ד, רשב\"ל לרי\"ו",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קלד.",
    "unit": 5763,
    "kind": "long",
+   "manual": 1,
    "title": "דאר\"ח, וכן תני ר\"ח:",
-   "heading": "דאר\"ח, וכן תני ר\"ח",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קלד.",

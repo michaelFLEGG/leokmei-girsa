@@ -16,9 +16,9 @@
    "daf": "לב.",
    "unit": 2254,
    "kind": "long",
+   "manual": 1,
    "title": "וכך תתרץ את ר\"נ:",
-   "heading": "וכך תתרץ את ר\"נ",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לב.",
@@ -40,9 +40,9 @@
    "daf": "מה.",
    "unit": 3251,
    "kind": "long",
+   "manual": 1,
    "title": "• ת\"כ דרב יוסף:",
-   "heading": "• ת\"כ דרב יוסף",
-   "side": ""
+   "why": "name"
   }
  ]
 }

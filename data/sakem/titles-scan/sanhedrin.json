@@ -9,12 +9,15 @@
    "unit": 242,
    "kind": "long",
    "manual": 1,
-   "title": "רב נחמן וכן ר''ח:"
+   "title": "רב נחמן וכן ר''ח:",
+   "why": "name"
   },
   {
    "daf": "ז.",
    "unit": 449,
    "kind": "long",
+   "manual": 1,
+   "why": "topic",
    "title": "יח. דרש בר קפרא:",
    "heading": "יח. דרש בר קפרא",
    "side": ""
@@ -23,25 +26,25 @@
    "daf": "י.",
    "unit": 589,
    "kind": "long",
+   "manual": 1,
    "title": "וכן תני רב יוסף:",
-   "heading": "וכן תני רב יוסף",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יד:",
    "unit": 911,
    "kind": "long",
+   "manual": 1,
    "title": "דלא כי האי דתניא",
-   "heading": "דלא כי האי דתניא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "טז:",
    "unit": 1071,
    "kind": "long",
+   "manual": 1,
    "title": "המקור לזה רב יוסף:",
-   "heading": "המקור לזה רב יוסף",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יח:",
@@ -56,12 +59,15 @@
    "unit": 1690,
    "kind": "long",
    "manual": 1,
-   "title": "רב נחמן וכן ר''ח:"
+   "title": "רב נחמן וכן ר''ח:",
+   "why": "name"
   },
   {
    "daf": "ז.",
    "unit": 1892,
    "kind": "long",
+   "manual": 1,
+   "why": "topic",
    "title": "יח. דרש בר קפרא:",
    "heading": "יח. דרש בר קפרא",
    "side": ""
@@ -70,17 +76,17 @@
    "daf": "יד:",
    "unit": 2236,
    "kind": "long",
+   "manual": 1,
    "title": "דלא כי האי דתניא",
-   "heading": "דלא כי האי דתניא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "טז:",
    "unit": 2396,
    "kind": "long",
+   "manual": 1,
    "title": "המקור לזה רב יוסף:",
-   "heading": "המקור לזה רב יוסף",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יח:",
@@ -118,48 +124,49 @@
    "daf": "לג.",
    "unit": 4047,
    "kind": "long",
+   "manual": 1,
    "title": "תירוץ ג. רב חסדא",
-   "heading": "תירוץ ג. רב חסדא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לז:",
    "unit": 4391,
    "kind": "long",
    "manual": 1,
-   "title": "רבי שמעון בן שטח:"
+   "title": "רבי שמעון בן שטח:",
+   "why": "name"
   },
   {
    "daf": "לח.",
    "unit": 4433,
    "kind": "long",
+   "manual": 1,
    "title": "דרש מרי בר מר:",
-   "heading": "דרש מרי בר מר",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לט.",
    "unit": 4577,
    "kind": "long",
+   "manual": 1,
    "title": "יב. מין לרבי אבהו:",
-   "heading": "יב. מין לרבי אבהו",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לט.",
    "unit": 4577,
    "kind": "long",
+   "manual": 1,
    "title": "יג. מין לרבי אבינא:",
-   "heading": "יג. מין לרבי אבינא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מ:",
    "unit": 4702,
    "kind": "long",
+   "manual": 1,
    "title": "מגדף בה רבי אבהו:",
-   "heading": "מגדף בה רבי אבהו",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מא.",
@@ -174,14 +181,16 @@
    "unit": 4990,
    "kind": "long",
    "manual": 1,
-   "title": "רבי יהושע בן לוי:"
+   "title": "רבי יהושע בן לוי:",
+   "why": "name"
   },
   {
    "daf": "מג:",
    "unit": 4990,
    "kind": "long",
    "manual": 1,
-   "title": "רבי יהושע בן לוי:"
+   "title": "רבי יהושע בן לוי:",
+   "why": "name"
   },
   {
    "daf": "מד:",
@@ -204,39 +213,40 @@
    "unit": 5666,
    "kind": "long",
    "manual": 1,
-   "title": "אלא רבא: לר''י: •"
+   "title": "אלא רבא: לר''י: •",
+   "why": "name"
   },
   {
    "daf": "נו.",
    "unit": 6074,
    "kind": "long",
+   "manual": 1,
    "title": "וחלקו על ר מישא:",
-   "heading": "וחלקו על ר מישא",
-   "side": ""
+   "why": "few"
   },
   {
    "daf": "סד:",
    "unit": 6763,
    "kind": "long",
+   "manual": 1,
    "title": "• בעי רב אשי:",
-   "heading": "• בעי רב אשי",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ע.",
    "unit": 7220,
    "kind": "long",
+   "manual": 1,
    "title": "והך דרבה ורב יוסף",
-   "heading": "והך דרבה ורב יוסף",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "עו.",
    "unit": 7724,
    "kind": "long",
+   "manual": 1,
    "title": "למ''ד דון מינה ומינה:",
-   "heading": "למ''ד דון מינה ומינה",
-   "side": ""
+   "why": "few"
   },
   {
    "daf": "פ:",
@@ -250,6 +260,8 @@
    "daf": "צ:",
    "unit": 8889,
    "kind": "long",
+   "manual": 1,
+   "why": "topic",
    "title": "מין לגביהא בן פסיסא:",
    "heading": "מין לגביהא בן פסיסא",
    "side": ""
@@ -266,17 +278,17 @@
    "daf": "צט.",
    "unit": 9835,
    "kind": "long",
+   "manual": 1,
    "title": "והיינו דא\"ל מין לר'א",
-   "heading": "דא\"ל מין לר'א",
-   "side": "והיינו"
+   "why": "name"
   },
   {
    "daf": "ק.",
    "unit": 10003,
    "kind": "long",
+   "manual": 1,
    "title": "לוי בר שמואל ורהב\"ח",
-   "heading": "לוי בר שמואל ורהב\"ח",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קג:",
@@ -290,9 +302,9 @@
    "daf": "קט.",
    "unit": 11068,
    "kind": "long",
+   "manual": 1,
    "title": "דרש רבי יוסי בציפורי:",
-   "heading": "דרש רבי יוסי בציפורי",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קט.",

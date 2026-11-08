@@ -159,9 +159,20 @@
     /* השלמת 8.11.2026: תואר (רב, רבי, ר', רבן, מר, ריש) אינו נפרד מן השם שאחריו, וגם לא "בר/בן" ושם האב.
        בלי זה "רב יוסף לא הלך" נחתך לכותרת צד "רב:" ולכותרת נושא "יוסף לא הלך". מחזיר את מקום המילה האחרונה שנלקחה */
     var TITLE_W={"ר'":1,'רבי':1,'רב':1,'רבן':1,'מר':1,'ריש':1};
+    /* תואר עם תחילית (ור', דרב, לרבי). לא "ריש"/"מר": "דריש", "ומר" הן מילים רגילות */
+    var PFX_TITLE={"ר'":1,'רבי':1,'רב':1,'רבן':1};
     function takeName(w,i,a){
       var k=String(w[i]).replace(NIK,'').replace(/[:,]$/,'');
+      /* תואר עם תחילית (ור', ורב, דרבי): גם הוא אינו נפרד מן השם */
+      if(!TITLE_W[k]&&/^[ודכלמש]/.test(k)&&PFX_TITLE[k.slice(1)])k=k.slice(1);
       if(!TITLE_W[k]||/[:,]$/.test(w[i])||i+1>=w.length)return i;
+      /* "רבי" ו"רב" עומדים גם לבדם (רבי, רב): לא לוקחים אחריהם פועל, מילת קשר או שם אחר (ושמואל, דרבנן) */
+      var nk=String(w[i+1]).replace(NIK,'').replace(/[:,.!?]+$/,'');
+      if((k==='רבי'||k==='רב')&&((/^[וד]/.test(nk)&&!NAME_W[nk])||NOT_NAME[nk]||(TRANS_W&&TRANS_W[nk])||(REL_W&&REL_W[nk])))return i;
+      /* "מר בר רב אשי": התואר הוא השם, ו"בר" מתחיל את שם האב */
+      if(/^(בר|בן|ב"ר)$/.test(nk)){
+        if(i+2<w.length){a.push(w[++i]);a.push(w[++i]);if(TITLE_W[String(w[i]).replace(NIK,'')]&&i+1<w.length)a.push(w[++i])}
+        return i}
       a.push(w[++i]);
       while(i+2<w.length&&/^(בר|בן|ב"ר)$/.test(String(w[i+1]).replace(NIK,''))&&!/[:,]$/.test(w[i])){a.push(w[++i]);a.push(w[++i])}
       return i}
@@ -174,7 +185,81 @@
         if(i>0&&(isMoveW(x)||isSpkW(x)||/^[א-ת]"[א-ת]$/.test(x.replace(NIK,'').replace(/:$/,'')))){a.push(x);i=takeName(w,i,a)}else break}
       if(!a.length)return {anchor:num,rest:w.join(' ')};
       var anchor=(num?num+' ':'')+a.join(' ').replace(/:$/,'')+(/:$/.test(String(p).trim())||a.length&&isSpkW(a[0])&&!/אמר$/.test(a.join(' '))?':':'');
-      return {anchor:anchor.replace(/\s+/g,' ').trim(),rest:w.slice(a.length).join(' ')}}
+      return {anchor:anchor.replace(/\s+/g,' ').trim().replace(/,(:?)$/,'$1'),rest:w.slice(a.length).join(' ')}}
+    /* ===== כותרת צד מול כותרת נושא (הכרעת בעל הפרויקט, 8.11.2026, אחרי סקירת בכורות) =====
+       שני עולמות: כותרת צד היא עוגן (בעל השמועה, דובר, מילת מהלך); כותרת נושא היא כותרת שעומדת
+       בראש כמה שורות. שם של אמורא אינו כותרת נושא לעולם: מקצרים את כותרת הצד עד בעל השמועה
+       ("תרגמה שמואל אליבא דרב" -> "שמואל אליבא דרב"; "והך דתני ר' אבהו" -> "והך דר' אבהו";
+       "תני תנא לפני ר"י" -> "תני לפני ר"י"; "תרגמה רהב"ס בדרבא בריגלא" -> "רהב"ס"). תוכן שנכתב
+       ככותרת צד ושם בסופו ("ומפצי ביומי תשרי- כשמואל") חוזר לשורה. כותרת נושא מוצעת רק כשאין בה
+       שם ושמועה, ויש תחתיה לפחות שלוש שורות עד הכותרת הבאה. */
+    var NOT_NAME={};'בשם דריש הורה גזר שונה מתני חזר דייק לא אומר היא הוא אמר סבר בעי קאמר'.split(' ').forEach(function(x){NOT_NAME[x]=1});
+    var EPITHET={};'הקטן הגדול הזקן הבבלי איש הכהן החסיד בגדתאה בנו בריה אחוה'.split(' ').forEach(function(x){EPITHET[x]=1});
+    var NAME_W={};('שמואל רבא אביי רבה רבינא אמימר עולא זעירי חזקיה לוי רבנן חכמים שמעיה הלל שמאי זומא עזאי אחאי '+
+      'יוסי יהודה מאיר שמעון אליעזר יהושע עקיבא טרפון ישמעאל יוחנן אלעזר חנינא יצחק נחמן ששת יוסף הונא חסדא פפא זירא אשי '+
+      'כהנא ירמיה אבהו אמי אסי ספרא דימי אבין יונתן נתן גמליאל חייא אושעיא ינאי שמלאי אידי מני אחא אבא הושעיא פנחס ב"ש ב"ה').split(' ').forEach(function(x){NAME_W[x]=1});
+    var TRANS_W={};('תני תאני תנא תנן תניא תרגמה תרגמא תרגמי נהג משמיה משום אליבא מתקיף איתיביה אמר אמרי אמרו קרי אישתמיטתיה '+
+      'בעי בעא דבעי סבר סברי סברה קתני דקתני דתנן שאל שאלו א"ל וא"ל א"ר וא"ר דא"ר ה"ק וה"ק').split(' ').forEach(function(x){TRANS_W[x]=1});
+    var REL_W={'לפני':1,'לפניו':1,'אליבא':1,'משום':1,'משמיה':1,'בשם':1,'על':1,'והך':1,'הך':1,'הא':1,'תני':1,'אמר':1};
+    function bareW(w){return String(w).replace(NIK,'').replace(/[:,.!?;]+$/,'').replace(/''/g,'"').replace(/״/g,'"').replace(/׳/g,"'")}
+    /* האם המילה היא שם חכם (כולל תחילית ד/ו/כ/ל/מ/ש): תואר, שם ידוע או ראשי תיבות של חכם (ר"ט, רהב"ס, אר"א) */
+    function isNameW(w){var k=bareW(w);
+      for(var cut=0;cut<=2;cut++){var x=k.slice(cut);if(cut&&!/^[דוכלמש]/.test(k.slice(cut-1)))break;
+        if((cut?PFX_TITLE[x]:TITLE_W[x])||NAME_W[x]||/^(ר|אר|רש|ראב|רהב|ריב|רי)[א-ת]*"[א-ת]+$/.test(x)||/^ר'$/.test(x))return true;
+        if(cut<2&&!/^[דוכלמש]/.test(x))break}
+      return false}
+    function isTransW(w){var k=bareW(w);return !!TRANS_W[k]||(k.length>3&&/^[וד]/.test(k)&&!!TRANS_W[k.slice(1)])||/^דתני(א)?$/.test(k)||/^וכך$|^כך$/.test(k)}
+    /* כותרת שיש בה שם חכם או לשון שמועה */
+    function speakerTitle(p){return twWords(p).some(function(w){return isNameW(w)||isTransW(w)})}
+    /* קיצור כותרת צד של שמועה עד בעל השמועה. מחזיר {text} או {unside:1} או null (להכרעה) */
+    function shortSide(p){
+      var raw=String(p||'').replace(NIK,'').replace(/\s+/g,' ').trim(),num=(/^\s*([א-י]\.)\s*/.exec(raw)||[])[1]||'';
+      var w=twWords(raw);if(!w.length)return null;
+      /* תוכן ואחריו מקף ושם ("ומפצי ביומי תשרי- כשמואל"): התוכן חוזר לשורה */
+      var dm=/^(.*\S)\s*-\s*(\S+(?:\s+\S+)?)\s*:?$/.exec(raw.replace(/^\s*[א-י]\.\s*/,''));
+      if(dm&&!isNameW(w[0])&&!isTransW(w[0])&&twWords(dm[2]).every(isNameW))return {unside:1};
+      var i=0;
+      while(i<w.length&&/^(ו?כך|והכי|נהג|תרגמה|תרגמא|תרגמי)$/.test(bareW(w[i])))i++;
+      if(i>=w.length)return null;
+      var a=[];
+      for(;i<w.length;i++){var x=w[i],k=bareW(x);
+        if(/^(תני|תאני)$/.test(k)&&w[i+1]&&bareW(w[i+1])==='תנא'){a.push('תני');i++;continue}
+        /* "והך דתני X" בלבד (בפתח): לא "רבי וראבר"ש דתניא, רבי" */
+        if(/^(ו?)דתני(א)?$/.test(k)&&w[i+1]&&isNameW(w[i+1])&&a.every(function(y){return /^ו?הך$/.test(bareW(y))})){
+          var nx=String(w[i+1]);a.push((k[0]==='ו'?'וד':'ד')+nx);i++;
+          if(TITLE_W[bareW(nx)]&&w[i+1]){a.push(w[++i])}continue}
+        if(isNameW(x)){
+          /* שם שני צמוד בלי ו/ד/ל/מ/אר ובלי מילת קשר לפניו ("ור"א ר"א היא") - נשוא, לא המשך השרשרת */
+          var pv=a.length?bareW(a[a.length-1]):'';
+          if(a.some(isNameW)&&!REL_W[pv]&&!/^(ו|ד|ל|מ|ב|אר)/.test(k)){break}
+          a.push(x);var ii=takeName(w,i,a);i=ii;continue}
+        if(REL_W[k]&&a.length<4){a.push(x);continue}
+        if(/^(ד|מ)/.test(k)&&isNameW(k.slice(1))&&!/^(ריש|מר)$/.test(k.slice(1))){a.push(x);continue}
+        break}
+      /* תואר נלווה לשם ("שמואל הקטן", "רב יוסף איש הוצל"): אין לחתוך - להכרעה */
+      if(i<w.length&&EPITHET[bareW(w[i])])return null;
+      /* מילות קישור בסוף ("לפני", "בשם") בלי שם אחריהן: המקור שאחריהן אינו מוכר כשם - להכרעה */
+      if(a.length&&/^(בשם|משום|משמיה|אליבא|לפני|לפניו)$/.test(bareW(a[a.length-1]))&&i<w.length)return null;
+      /* המשך השרשרת אחרי החיתוך ("מבר קפרא", "מר"ח"): בעל השמועה הוא שם, לא חותכים - להכרעה */
+      if(w.slice(i).some(function(x){return /^מ(בי|בר|בן|ר'|רב|רבי|ר"|רש|רי)/.test(bareW(x))}))return null;
+      while(a.length&&REL_W[bareW(a[a.length-1])]&&!isNameW(a[a.length-1]))a.pop();
+      if(!a.length||!a.some(isNameW))return null;
+      if(i<w.length&&!w.slice(i).every(function(x){return isNameW(x)||REL_W[bareW(x)]})){
+        /* אחרי בעל השמועה בא תוכן: נשאר רק בעל השמועה (כמו "רהב"ס"), ובתנאי שהתחלנו בשם,
+           ושבהמשך אין עוד שם, ראשי תיבות או סוגריים - אחרת אולי חותכים את שרשרת המסירה */
+        if(w.slice(i).some(function(x){return isNameW(x)||/["'\[\]()]/.test(bareW(x))||/^(בר|בן)$/.test(bareW(x))}))return null;
+        if(!isNameW(w[0])&&!/^(ו?כך|נהג|תרגמה|תרגמא|תרגמי|תני|תאני|ו?דתני|ו?הך)$/.test(bareW(w[0])))return null}
+      if(a.length>4)return null;
+      var t=a.join(' ').replace(/(^|\s)(ו?ד?)רבי(?=\s)/g,"$1$2ר'").replace(/[:,]+$/,'');
+      t=/[?!]$/.test(t)?t:t+':';
+      if(bareW(t)===bareW(raw)||twWords(t).length>=w.length)return null;
+      return {text:(num?num+' ':'')+t}}
+    /* כמה שורות גוף מתחת לשורה i עד הכותרת הבאה (נושא, ד"ה, משנה, גמרא, דף) */
+    function linesUnder(T,i){var n=0;
+      for(var k=i+1;k<T.length;k++){var s=T[k].trim();if(!s)continue;
+        if(/^\((נושא|דה)\)|^\[(כותרת-|משנה|גמרא|דף|קבוע|מקור)/.test(s))break;
+        if(/^\[צד:/.test(s))continue;n++}
+      return n}
     /* חפיפה בין כותרת לפתח השורה שאחריה: כמה מילים מתחילת הכותרת (או חלקה) חוזרות בראש השורה.
        מחזיר מספר מילים חוזרות בראש השורה (0 = אין). כפילות: 2 ומעלה, או הכותרת כולה (גם מילה אחת) */
     function overlapN(titleP,lineV){
@@ -213,11 +298,33 @@
             /* עוגן קצר + נושא. אם כבר בא מיד לפני שורת (נושא) - לא מוסיפים עוד אחת */
             var sp=splitTitle(p);
             var restW=twWords(sp.rest).filter(function(w){return w.replace(/[^א-ת]/g,'').length>=2});
+            /* (8.11.2026) שם ושמועה אינם נושא, וכותרת נושא רק מעל שלוש שורות לפחות */
+            /* נושא אמיתי: בלי שם, בלי לשון שמועה, בלי ראשי תיבות (ת"ל, וה"ק, ב"ש - לשון הסוגיה ולא נושא),
+               ובלי עוגן שנגמר בתואר או באמירה (א"ר, ר', אמר: מה שאחריו הוא שם) */
+            var ancW=twWords(sp.anchor),ancLast=ancW.length?bareW(ancW[ancW.length-1]):'';
+            var notTopic=speakerTitle(sp.rest)||/"/.test(bareW(sp.rest).replace(/''/g,'"'))||/^(בן|בר)\s/.test(sp.rest)||
+              !!TITLE_W[ancLast]||!!TITLE_W[ancLast.slice(1)]||/^(ו?ד?א"ר|ו?אמר|ו?ד?אמר)$/.test(ancLast);
+            if(notTopic||restW.length<3||linesUnder(T,i)<3){
+              var ss=speakerTitle(p)?shortSide(p):null;
+              if(ss&&ss.text){out.push('[צד:'+ss.text+']');items.push({kind:'long',title:p,heading:'',side:ss.text});
+                notes.push('כותרת צד של שמועה קוצרה עד בעל השמועה: '+p.slice(0,40));ch++;continue}
+              if(ss&&ss.unside){items.push({kind:'long',title:p,heading:'',side:'',unside:1});
+                notes.push('כותרת צד שהיא תוכן - מוצע להחזירה לשורה: '+p.slice(0,40));out.push(raw);continue}
+              notes.push('כותרת צד ארוכה - דורשת עריכה ידנית: '+p.slice(0,40));
+              items.push({kind:'long',manual:1,title:p,why:speakerTitle(p)?'name':(restW.length<3?'short':'few')});out.push(raw);continue}
             if(restW.length<3){notes.push('כותרת צד ארוכה - דורשת עריכה ידנית: '+p.slice(0,40));items.push({kind:'long',manual:1,title:p});out.push(raw);continue}
             if(sp.rest){
               var prev=out.length?out[out.length-1]:'';
-              if(!/^\((נושא)\)/.test(prev)&&!/^\[כותרת-נושא:/.test(prev))out.push('(נושא) '+sp.rest.replace(/:$/,''));
-              else notes.push('כותרת ארוכה הוחלפה בעוגן; הנושא כבר קיים: '+sp.rest.slice(0,30));
+              /* (8.11.2026, אחרי סקירת בכורות) כותרת נושא אינה נוצרת בקוד: הקוד אינו יודע אם היא באמת עומדת
+                 בראש כמה שורות. מסומן להכרעה, עם החלוקה האפשרית כרמז בלבד */
+              if(!/^\((נושא)\)/.test(prev)&&!/^\[כותרת-נושא:/.test(prev)){
+                /* פותחת בשם (רבא: ...): הפעולה המוכנה היא קיצור עד בעל השמועה, כמו בתיקוני בכורות */
+                var ss2=speakerTitle(p)?shortSide(p):null;
+                if(ss2&&ss2.text){out.push('[צד:'+ss2.text+']');items.push({kind:'long',title:p,heading:'',side:ss2.text,maybe:sp.rest.replace(/:$/,'')});
+                  notes.push('כותרת צד של שמועה קוצרה עד בעל השמועה: '+p.slice(0,40));ch++;continue}
+                notes.push('ייתכן שזו כותרת נושא - להכרעה: '+p.slice(0,40));
+                items.push({kind:'long',manual:1,why:'topic',title:p,heading:sp.rest.replace(/:$/,''),side:sp.anchor});out.push(raw);continue}
+              notes.push('כותרת ארוכה הוחלפה בעוגן; הנושא כבר קיים: '+sp.rest.slice(0,30));
               if(sp.anchor&&sp.anchor!==''&&twWords(sp.anchor).length)out.push('[צד:'+sp.anchor+']');
               items.push({kind:'long',title:p,heading:sp.rest.replace(/:$/,''),side:sp.anchor});
               notes.push('כותרת צד ארוכה פוצלה: '+p.slice(0,40));ch++;continue}}
@@ -546,7 +653,7 @@
       ins.sort(function(x,y){return y.pos-x.pos||y.q-x.q});
       ins.forEach(function(z){text=text.slice(0,z.pos)+z.s+text.slice(z.pos)});
       return {text:text,moved:moved}}
-    return {h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
+    return {h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
             quality:quality,qnorm:qnorm,C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

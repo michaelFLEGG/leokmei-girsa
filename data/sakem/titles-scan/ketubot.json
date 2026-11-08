@@ -16,16 +16,17 @@
    "daf": "ז:",
    "unit": 268,
    "kind": "long",
+   "manual": 1,
    "title": "ר\"נ: קרא דר' אבהו",
-   "heading": "קרא דר' אבהו",
-   "side": "ר\"נ:"
+   "why": "name"
   },
   {
    "daf": "ז:",
    "unit": 268,
    "kind": "long",
    "manual": 1,
-   "title": "ר' אבהו: קרא דר\"נ"
+   "title": "ר' אבהו: קרא דר\"נ",
+   "why": "name"
   },
   {
    "daf": "ז:",
@@ -39,9 +40,9 @@
    "daf": "ח.",
    "unit": 291,
    "kind": "long",
+   "manual": 1,
    "title": "מל' עד י\"ב חודש:",
-   "heading": "מל' עד י\"ב חודש",
-   "side": ""
+   "why": "few"
   },
   {
    "daf": "ט.",
@@ -64,15 +65,16 @@
    "unit": 488,
    "kind": "long",
    "manual": 1,
-   "title": "רב אושעיא ויקשה לרב:"
+   "title": "רב אושעיא ויקשה לרב:",
+   "why": "name"
   },
   {
    "daf": "טו.",
    "unit": 690,
    "kind": "long",
+   "manual": 1,
    "title": "'וארב לו וקם עליו'",
-   "heading": "'וארב לו וקם עליו'",
-   "side": ""
+   "why": "few"
   },
   {
    "daf": "טו.",
@@ -86,47 +88,49 @@
    "daf": "לא.",
    "unit": 1325,
    "kind": "long",
-   "manual": 1,
-   "title": "רב אחא דייק מסיפא:"
+   "title": "רב אחא דייק מסיפא:",
+   "heading": "",
+   "side": "רב אחא:"
   },
   {
    "daf": "לג.",
    "unit": 1387,
    "kind": "long",
+   "manual": 1,
    "title": "רי\"ו לא אמר כעולא:",
-   "heading": "רי\"ו לא אמר כעולא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לג:",
    "unit": 1410,
    "kind": "long",
+   "manual": 1,
    "title": "הקשה ר\"י מנהר פקוד:",
-   "heading": "הקשה ר\"י מנהר פקוד",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לד:",
    "unit": 1444,
    "kind": "long",
+   "manual": 1,
    "title": "ר\"ל לא אמר כרי\"ו:",
-   "heading": "לא אמר כרי\"ו",
-   "side": "ר\"ל:"
+   "why": "name"
   },
   {
    "daf": "לה.",
    "unit": 1465,
    "kind": "long",
+   "manual": 1,
    "title": "וא\"ד שהקשה רי\"ו לר\"ל:",
-   "heading": "וא\"ד שהקשה רי\"ו לר\"ל",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לה:",
    "unit": 1480,
    "kind": "long",
    "manual": 1,
-   "title": "רב מתנא לאביי: לר\"ל"
+   "title": "רב מתנא לאביי: לר\"ל",
+   "why": "name"
   },
   {
    "daf": "לט.",
@@ -140,6 +144,8 @@
    "daf": "לט:",
    "unit": 1613,
    "kind": "long",
+   "manual": 1,
+   "why": "topic",
    "title": "והא חזינן שיש לה?",
    "heading": "חזינן שיש לה?",
    "side": "והא"
@@ -148,9 +154,9 @@
    "daf": "לט:",
    "unit": 1613,
    "kind": "long",
+   "manual": 1,
    "title": "רבא לא אמר כאביי:",
-   "heading": "לא אמר כאביי",
-   "side": "רבא:"
+   "why": "name"
   },
   {
    "daf": "מא.",

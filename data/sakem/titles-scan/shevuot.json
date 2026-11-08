@@ -24,17 +24,17 @@
    "daf": "יב:",
    "unit": 537,
    "kind": "long",
+   "manual": 1,
    "title": "ואף שמואל ס''ל כן",
-   "heading": "ואף שמואל ס''ל כן",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כד:",
    "unit": 1222,
    "kind": "long",
+   "manual": 1,
    "title": "מתיב רבא בריה דרבה:",
-   "heading": "מתיב רבא בריה דרבה",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כו.",
@@ -57,16 +57,16 @@
    "unit": 2067,
    "kind": "long",
    "title": "והך דתני ר' חייא:",
-   "heading": "והך דתני ר' חייא",
-   "side": ""
+   "heading": "",
+   "side": "והך דר' חייא:"
   },
   {
    "daf": "לח.",
    "unit": 2067,
    "kind": "long",
+   "manual": 1,
    "title": "בעא רבא מרב נחמן:",
-   "heading": "בעא רבא מרב נחמן",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לח.",
@@ -80,9 +80,9 @@
    "daf": "מז.",
    "unit": 2658,
    "kind": "long",
+   "manual": 1,
    "title": "איתמר בשם ר' יוסי:",
-   "heading": "איתמר בשם ר' יוסי",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מח.",

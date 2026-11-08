@@ -8,9 +8,9 @@
    "daf": "כט.",
    "unit": 1560,
    "kind": "long",
+   "manual": 1,
    "title": "לרב אחא בר יעקב:",
-   "heading": "לרב אחא בר יעקב",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כט.",
@@ -24,9 +24,9 @@
    "daf": "לג.",
    "unit": 1793,
    "kind": "long",
+   "manual": 1,
    "title": "אביי מחזקיה ורבא מר\"ה:",
-   "heading": "מחזקיה ורבא מר\"ה",
-   "side": "אביי:"
+   "why": "name"
   },
   {
    "daf": "נג.",
@@ -56,9 +56,9 @@
    "daf": "קח.",
    "unit": 5827,
    "kind": "long",
+   "manual": 1,
    "title": "אין להוכיח דר\"ש ס'ל",
-   "heading": "אין להוכיח דר\"ש ס'ל",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קט.",
@@ -72,58 +72,64 @@
    "daf": "קי.",
    "unit": 5936,
    "kind": "long",
+   "manual": 1,
    "title": "• רב דימי מנהרדעא",
-   "heading": "• רב דימי מנהרדעא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קיג.",
    "unit": 6235,
    "kind": "long",
+   "manual": 1,
    "title": "מרב יוסף איש הוצל:",
-   "heading": "יוסף איש הוצל",
-   "side": "מרב:"
+   "why": "name"
   },
   {
    "daf": "קיז.",
    "unit": 6544,
    "kind": "long",
    "manual": 1,
-   "title": "רבי יוסי מר\"א בנו"
+   "title": "רבי יוסי מר\"א בנו",
+   "why": "name"
   },
   {
    "daf": "קיח.",
    "unit": 6742,
    "kind": "long",
    "manual": 1,
-   "title": "אמר גבריאל לפני ה':"
+   "title": "אמר גבריאל לפני ה':",
+   "why": "name"
   },
   {
    "daf": "קיח.",
    "unit": 6742,
    "kind": "long",
+   "manual": 1,
    "title": "דרש רבי שמעון השלוני:",
-   "heading": "דרש רבי שמעון השלוני",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קיח.",
    "unit": 6742,
    "kind": "long",
    "manual": 1,
-   "title": "א\"ל ה' לנחל קישון:"
+   "title": "א\"ל ה' לנחל קישון:",
+   "why": "name"
   },
   {
    "daf": "קיח.",
    "unit": 6742,
    "kind": "long",
    "manual": 1,
-   "title": "• א\"ל ה' לגבריאל:"
+   "title": "• א\"ל ה' לגבריאל:",
+   "why": "name"
   },
   {
    "daf": "קיח.",
    "unit": 6742,
    "kind": "long",
+   "manual": 1,
+   "why": "topic",
    "title": "• ועוד שלח לו:",
    "heading": "• ועוד שלח לו",
    "side": ""
@@ -132,16 +138,17 @@
    "daf": "קיח.",
    "unit": 6742,
    "kind": "long",
+   "manual": 1,
    "title": "• ר\"ש ברבי לרבי,",
-   "heading": "• ר\"ש ברבי לרבי,",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קיט:",
    "unit": 6878,
    "kind": "long",
-   "manual": 1,
-   "title": "מר זוטרא מתני הכי:"
+   "title": "מר זוטרא מתני הכי:",
+   "heading": "",
+   "side": "מר זוטרא:"
   }
  ]
 }

@@ -8,9 +8,9 @@
    "daf": "ג:",
    "unit": 62,
    "kind": "long",
+   "manual": 1,
    "title": "א\"כ, מה ת\"ל איש?",
-   "heading": "מה ת\"ל איש?",
-   "side": "א\"כ,:"
+   "why": "few"
   },
   {
    "daf": "ג:",
@@ -32,87 +32,89 @@
    "daf": "ה.",
    "unit": 199,
    "kind": "long",
+   "manual": 1,
    "title": "ר\"י ורבי יוסי ור\"ש:",
-   "heading": "ורבי יוסי ור\"ש",
-   "side": "ר\"י:"
+   "why": "name"
   },
   {
    "daf": "ה.",
    "unit": 199,
    "kind": "long",
    "manual": 1,
-   "title": "והא מר הוא דאמר:"
+   "title": "והא מר הוא דאמר:",
+   "why": "name"
   },
   {
    "daf": "ו:",
    "unit": 330,
    "kind": "long",
    "manual": 1,
-   "title": "א\"ל ר\"א כך ארי\"ו:"
+   "title": "א\"ל ר\"א כך ארי\"ו:",
+   "why": "name"
   },
   {
    "daf": "ח:",
    "unit": 504,
    "kind": "long",
+   "manual": 1,
    "title": "וחלקו בדר\"א וריב\"ח דאר\"א:",
-   "heading": "וחלקו בדר\"א וריב\"ח דאר\"א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ט:",
    "unit": 549,
    "kind": "long",
+   "manual": 1,
    "title": "ואף שמואל סבר כר\"ה:",
-   "heading": "ואף שמואל סבר כר\"ה",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ט:",
    "unit": 549,
    "kind": "long",
+   "manual": 1,
    "title": "והיה רבי תמיה ואומר:",
-   "heading": "והיה רבי תמיה ואומר",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יא.",
    "unit": 660,
    "kind": "long",
+   "manual": 1,
    "title": "ומ\"ד לוים היו, סבר:",
-   "heading": "ומ\"ד לוים היו, סבר",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יא.",
    "unit": 660,
    "kind": "long",
+   "manual": 1,
    "title": "מ\"ד עבדים היו, סבר:",
-   "heading": "עבדים היו, סבר",
-   "side": "מ\"ד:"
+   "why": "name"
   },
   {
    "daf": "יא.",
    "unit": 660,
    "kind": "long",
+   "manual": 1,
    "title": "מ\"ד לוים היו, סבר:",
-   "heading": "לוים היו, סבר",
-   "side": "מ\"ד:"
+   "why": "name"
   },
   {
    "daf": "יא.",
    "unit": 660,
    "kind": "long",
+   "manual": 1,
    "title": "והך דרשב\"נ מר' יונתן:",
-   "heading": "והך דרשב\"נ מר' יונתן",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יא.",
    "unit": 660,
    "kind": "long",
+   "manual": 1,
    "title": "משכח\"ל כדתני ר' יוסי:",
-   "heading": "משכח\"ל כדתני ר' יוסי",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יא:",
@@ -142,25 +144,25 @@
    "daf": "יג:",
    "unit": 838,
    "kind": "long",
+   "manual": 1,
    "title": "דתניא, בן בג בג:",
-   "heading": "בן בג בג",
-   "side": "דתניא,:"
+   "why": "name"
   },
   {
    "daf": "יד.",
    "unit": 894,
    "kind": "long",
+   "manual": 1,
    "title": "אם ר\"ש אימא סיפא:",
-   "heading": "אם ר\"ש אימא סיפא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יד:",
    "unit": 938,
    "kind": "long",
+   "manual": 1,
    "title": "לימא מתני' דלא כר\"ע,",
-   "heading": "לימא מתני' דלא כר\"ע,",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "טו:",
@@ -174,25 +176,25 @@
    "daf": "טז:",
    "unit": 1105,
    "kind": "long",
+   "manual": 1,
    "title": "תני ר\"ד אחוה דר\"ס:",
-   "heading": "תני ר\"ד אחוה דר\"ס",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "טז:",
    "unit": 1150,
    "kind": "long",
+   "manual": 1,
    "title": "בעא ר\"י בריה דר\"ש:",
-   "heading": "בעא ר\"י בריה דר\"ש",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "טז:",
    "unit": 1150,
    "kind": "long",
+   "manual": 1,
    "title": "עד היכן תוכחה? רב:",
-   "heading": "עד היכן תוכחה? רב",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "טז:",
@@ -206,17 +208,17 @@
    "daf": "יח.",
    "unit": 1290,
    "kind": "long",
+   "manual": 1,
    "title": "שאני שם, דאמר קרא:",
-   "heading": "שאני שם, דאמר קרא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יח.",
    "unit": 1290,
    "kind": "long",
+   "manual": 1,
    "title": "לימא מתני' דלא כרבי,",
-   "heading": "לימא מתני' דלא כרבי,",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יח.",
@@ -230,9 +232,9 @@
    "daf": "יח:",
    "unit": 1336,
    "kind": "long",
+   "manual": 1,
    "title": "שנה האמורה בקדשים, אראב\"י:",
-   "heading": "שנה האמורה בקדשים, אראב\"י",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כ.",
@@ -262,24 +264,25 @@
    "daf": "כג:",
    "unit": 1754,
    "kind": "long",
+   "manual": 1,
    "title": "שלחה ריבד\"ר לפני ר\"פ:",
-   "heading": "שלחה ריבד\"ר לפני ר\"פ",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כג:",
    "unit": 1754,
    "kind": "long",
+   "manual": 1,
    "title": "מתניתין דלא כרשב\"ג דאומר:",
-   "heading": "מתניתין דלא כרשב\"ג דאומר",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כד.",
    "unit": 1803,
    "kind": "long",
-   "manual": 1,
-   "title": "רב ושמואל דאמרו שניהם:"
+   "title": "רב ושמואל דאמרו שניהם:",
+   "heading": "",
+   "side": "רב ושמואל:"
   },
   {
    "daf": "כד.",
@@ -301,9 +304,9 @@
    "daf": "כו:",
    "unit": 1983,
    "kind": "long",
+   "manual": 1,
    "title": "לימא בזה חלקו דלר\"מ:",
-   "heading": "לימא בזה חלקו דלר\"מ",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כו:",
@@ -317,9 +320,9 @@
    "daf": "כח.",
    "unit": 2133,
    "kind": "long",
+   "manual": 1,
    "title": "והא מדסיפא אמר רבי:",
-   "heading": "מדסיפא אמר רבי",
-   "side": "והא:"
+   "why": "name"
   },
   {
    "daf": "כט.",
@@ -333,17 +336,17 @@
    "daf": "ל:",
    "unit": 2326,
    "kind": "long",
+   "manual": 1,
    "title": "א\"ל ההוא מרבנן לאביי:",
-   "heading": "ההוא מרבנן לאביי",
-   "side": "א\"ל:"
+   "why": "name"
   },
   {
    "daf": "לא.",
    "unit": 2377,
    "kind": "long",
    "title": "ורבנן? ההוא צריך לו:",
-   "heading": "ורבנן? ההוא צריך לו",
-   "side": ""
+   "heading": "",
+   "side": "ורבנן?"
   },
   {
    "daf": "לא.",
@@ -357,24 +360,25 @@
    "daf": "לא:",
    "unit": 2415,
    "kind": "long",
+   "manual": 1,
    "title": "מתקיף רבינא ולימא לו:",
-   "heading": "מתקיף רבינא ולימא לו",
-   "side": ""
-  },
-  {
-   "daf": "לא:",
-   "unit": 2415,
-   "kind": "long",
-   "title": "הא תו למה לי?",
-   "heading": "תו למה לי?",
-   "side": "הא"
+   "why": "name"
   },
   {
    "daf": "לא:",
    "unit": 2415,
    "kind": "long",
    "manual": 1,
-   "title": "אמרוה רבנן לפני ר\"פ:"
+   "title": "הא תו למה לי?",
+   "why": "few"
+  },
+  {
+   "daf": "לא:",
+   "unit": 2415,
+   "kind": "long",
+   "manual": 1,
+   "title": "אמרוה רבנן לפני ר\"פ:",
+   "why": "name"
   },
   {
    "daf": "לא:",
@@ -397,15 +401,16 @@
    "unit": 2520,
    "kind": "long",
    "manual": 1,
-   "title": "דתניא, ר\"א בר יוסי:"
+   "title": "דתניא, ר\"א בר יוסי:",
+   "why": "name"
   },
   {
    "daf": "לג.",
    "unit": 2568,
    "kind": "long",
+   "manual": 1,
    "title": "ופליגא דר' אושעיא דאר\"א:",
-   "heading": "ופליגא דר' אושעיא דאר\"א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לג:",
@@ -420,8 +425,8 @@
    "unit": 2662,
    "kind": "long",
    "title": "תרגמה ריבדר\"ס לפני ר\"פ:",
-   "heading": "תרגמה ריבדר\"ס לפני ר\"פ",
-   "side": ""
+   "heading": "",
+   "side": "ריבדר\"ס לפני ר\"פ:"
   }
  ]
 }

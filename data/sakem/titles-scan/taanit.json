@@ -8,25 +8,25 @@
    "daf": "ב.",
    "unit": 0,
    "kind": "long",
+   "manual": 1,
    "title": "תנא שנה במסכת ר'ה:",
-   "heading": "שנה במסכת ר'ה",
-   "side": "תנא:"
+   "why": "name"
   },
   {
    "daf": "ב.",
    "unit": 0,
    "kind": "long",
+   "manual": 1,
    "title": "ואגב כך שואל כאן:",
-   "heading": "ואגב כך שואל כאן",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ז.",
    "unit": 268,
    "kind": "long",
+   "manual": 1,
    "title": "וחלק על רב יוסף:",
-   "heading": "וחלק על רב יוסף",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ז.",
@@ -48,13 +48,16 @@
    "daf": "יד.",
    "unit": 806,
    "kind": "long",
-   "manual": 1,
-   "title": "רבי הורה לבני נינוה:"
+   "title": "רבי הורה לבני נינוה:",
+   "heading": "",
+   "side": "רבי:"
   },
   {
    "daf": "כא.",
    "unit": 1207,
    "kind": "long",
+   "manual": 1,
+   "why": "topic",
    "title": "שנה לו סבא ברייתא:",
    "heading": "שנה לו סבא ברייתא",
    "side": ""
@@ -71,25 +74,25 @@
    "daf": "כד.",
    "unit": 1400,
    "kind": "long",
+   "manual": 1,
    "title": "ועזב את ר\"י דמ\"י:",
-   "heading": "ועזב את ר\"י דמ\"י",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כד:",
    "unit": 1446,
    "kind": "long",
+   "manual": 1,
    "title": "ר\"מ בן בת שמואל:",
-   "heading": "בן בת שמואל",
-   "side": "ר\"מ:"
+   "why": "name"
   },
   {
    "daf": "כה:",
    "unit": 1547,
    "kind": "long",
+   "manual": 1,
    "title": "ירד ר\"ע אחריו ואמר:",
-   "heading": "ירד ר\"ע אחריו ואמר",
-   "side": ""
+   "why": "name"
   }
  ]
 }

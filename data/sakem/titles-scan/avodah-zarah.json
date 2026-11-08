@@ -8,9 +8,9 @@
    "daf": "יג:",
    "unit": 785,
    "kind": "long",
+   "manual": 1,
    "title": "מצאו ר' יונה לר\"א",
-   "heading": "מצאו ר' יונה לר\"א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "טו.",
@@ -25,63 +25,64 @@
    "unit": 1366,
    "kind": "long",
    "title": "והך דתני רב יוסף",
-   "heading": "והך דתני רב יוסף",
-   "side": ""
+   "heading": "",
+   "side": "והך דרב יוסף:"
   },
   {
    "daf": "כו.",
    "unit": 1581,
    "kind": "long",
+   "manual": 1,
    "title": "• סבר רב יוסף",
-   "heading": "• סבר רב יוסף",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כח:",
    "unit": 1715,
    "kind": "long",
+   "manual": 1,
    "title": "• ורי\"ו נהג כן",
-   "heading": "• ורי\"ו נהג כן",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כט.",
    "unit": 1802,
    "kind": "long",
    "manual": 1,
-   "title": "רב אחא בריה דרבא"
+   "title": "רב אחא בריה דרבא",
+   "why": "name"
   },
   {
    "daf": "לה.",
    "unit": 2137,
    "kind": "long",
+   "manual": 1,
    "title": "מגדף בה ר' ירמיה:",
-   "heading": "מגדף בה ר' ירמיה",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מב:",
    "unit": 2656,
    "kind": "long",
+   "manual": 1,
    "title": "• מנקיט רב ששת",
-   "heading": "• מנקיט רב ששת",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מג.",
    "unit": 2689,
    "kind": "long",
+   "manual": 1,
    "title": "• מגדף בה ר\"ח",
-   "heading": "• מגדף בה ר\"ח",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "נ.",
    "unit": 3037,
    "kind": "long",
+   "manual": 1,
    "title": "דא''כ מאי ס''ל לר''ש",
-   "heading": "דא''כ מאי ס''ל לר''ש",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "סג.",
@@ -95,9 +96,9 @@
    "daf": "סח.",
    "unit": 3792,
    "kind": "long",
+   "manual": 1,
    "title": "• הקשה ר\"ח לעולא:",
-   "heading": "• הקשה ר\"ח לעולא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "עב.",

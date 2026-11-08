@@ -8,16 +8,17 @@
    "daf": "ב:",
    "unit": 30,
    "kind": "long",
+   "manual": 1,
    "title": "אפשר כו\"ע לא כר''א:",
-   "heading": "אפשר כו\"ע לא כר''א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ג:",
    "unit": 72,
    "kind": "long",
    "manual": 1,
-   "title": "רב דימי שמע בא\"י:"
+   "title": "רב דימי שמע בא\"י:",
+   "why": "name"
   },
   {
    "daf": "ז.",
@@ -40,7 +41,8 @@
    "unit": 493,
    "kind": "long",
    "manual": 1,
-   "title": "רב בשם אדא הצייד:"
+   "title": "רב בשם אדא הצייד:",
+   "why": "name"
   },
   {
    "daf": "יז.",
@@ -54,17 +56,17 @@
    "daf": "כ.",
    "unit": 1132,
    "kind": "long",
+   "manual": 1,
    "title": "כשמת בן ר' אחייה:",
-   "heading": "כשמת בן ר' אחייה",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כ.",
    "unit": 1132,
    "kind": "long",
+   "manual": 1,
    "title": "וכן הורה רב לרבב\"ח:",
-   "heading": "וכן הורה רב לרבב\"ח",
-   "side": ""
+   "why": "name"
   }
  ]
 }

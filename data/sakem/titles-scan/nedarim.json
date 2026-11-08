@@ -16,25 +16,25 @@
    "daf": "טז.",
    "unit": 518,
    "kind": "long",
+   "manual": 1,
    "title": "ורב אשי לא כאביי:",
-   "heading": "ורב אשי לא כאביי",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כט.",
    "unit": 1100,
    "kind": "long",
+   "manual": 1,
    "title": "ר\"פ דבר פדא ה\"ק:",
-   "heading": "דבר פדא ה\"ק",
-   "side": "ר\"פ:"
+   "why": "name"
   },
   {
    "daf": "לה.",
    "unit": 1357,
    "kind": "long",
+   "manual": 1,
    "title": "• איתיביה רחב\"א לרבא:",
-   "heading": "• איתיביה רחב\"א לרבא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מח.",
@@ -48,33 +48,33 @@
    "daf": "מח:",
    "unit": 1913,
    "kind": "long",
+   "manual": 1,
    "title": "• תנן, אמרו חכמים:",
-   "heading": "• תנן, אמרו חכמים",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מט.",
    "unit": 1935,
    "kind": "long",
+   "manual": 1,
    "title": "ובמקומו של תנא דמתני'",
-   "heading": "ובמקומו של תנא דמתני'",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מט:",
    "unit": 1967,
    "kind": "long",
+   "manual": 1,
    "title": "א\"ל כך אמר רב:",
-   "heading": "כך אמר רב",
-   "side": "א\"ל:"
+   "why": "name"
   },
   {
    "daf": "נה.",
    "unit": 2293,
    "kind": "long",
+   "manual": 1,
    "title": "שמע רבא ובא לפניו",
-   "heading": "שמע רבא ובא לפניו",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "נה:",
@@ -88,17 +88,17 @@
    "daf": "עה.",
    "unit": 3145,
    "kind": "long",
+   "manual": 1,
    "title": "ת\"כ דר' אמי דתני:",
-   "heading": "דר' אמי דתני",
-   "side": "ת\"כ:"
+   "why": "name"
   },
   {
    "daf": "עז.",
    "unit": 3209,
    "kind": "long",
+   "manual": 1,
    "title": "ת\"ש דתני ר\"ז דר'פ:",
-   "heading": "דתני ר\"ז דר'פ",
-   "side": "ת\"ש:"
+   "why": "name"
   }
  ]
 }

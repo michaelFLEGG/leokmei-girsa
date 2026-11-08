@@ -9,15 +9,16 @@
    "unit": 33,
    "kind": "long",
    "manual": 1,
-   "title": "רב שמואל בר יצחק:"
+   "title": "רב שמואל בר יצחק:",
+   "why": "name"
   },
   {
    "daf": "ג.",
    "unit": 33,
    "kind": "long",
+   "manual": 1,
    "title": "מתקיף רב נחמן ב\"י:",
-   "heading": "מתקיף רב נחמן ב\"י",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ז:",
@@ -31,84 +32,89 @@
    "daf": "טז.",
    "unit": 430,
    "kind": "long",
+   "manual": 1,
    "title": "ובבור שבין ב' חצרות",
-   "heading": "ובבור שבין ב' חצרות",
-   "side": ""
-  },
-  {
-   "daf": "יח.",
-   "unit": 497,
-   "kind": "long",
-   "title": "דרש ר' יהודה ב\"א:",
-   "heading": "דרש ר' יהודה ב\"א",
-   "side": ""
+   "why": "few"
   },
   {
    "daf": "יח.",
    "unit": 497,
    "kind": "long",
    "manual": 1,
-   "title": "ר' ישמעאל ב\"ר יוסי:"
+   "title": "דרש ר' יהודה ב\"א:",
+   "why": "name"
+  },
+  {
+   "daf": "יח.",
+   "unit": 497,
+   "kind": "long",
+   "manual": 1,
+   "title": "ר' ישמעאל ב\"ר יוסי:",
+   "why": "name"
   },
   {
    "daf": "כ.",
    "unit": 566,
    "kind": "long",
    "manual": 1,
-   "title": "ר' ישמעאל ב\"ר יוסי:"
+   "title": "ר' ישמעאל ב\"ר יוסי:",
+   "why": "name"
   },
   {
    "daf": "כד:",
    "unit": 781,
    "kind": "long",
    "manual": 1,
-   "title": "רב אחא בר יעקב:"
+   "title": "רב אחא בר יעקב:",
+   "why": "name"
   },
   {
    "daf": "כו.",
    "unit": 846,
    "kind": "long",
+   "manual": 1,
    "title": "ואין עושין שם סוכה:",
-   "heading": "ואין עושין שם סוכה",
-   "side": ""
+   "why": "few"
   },
   {
    "daf": "כו.",
    "unit": 846,
    "kind": "long",
+   "manual": 1,
    "title": "ולר' אחא בר אדא:",
-   "heading": "ולר' אחא בר אדא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מה.",
    "unit": 1726,
    "kind": "long",
+   "manual": 1,
    "title": "מרימר משום מר זוטרא:",
-   "heading": "משום מר זוטרא",
-   "side": "מרימר:"
+   "why": "name"
   },
   {
    "daf": "מז.",
    "unit": 1857,
    "kind": "long",
    "manual": 1,
-   "title": "ר' לוי בר חמא:"
+   "title": "ר' לוי בר חמא:",
+   "why": "name"
   },
   {
    "daf": "נא.",
    "unit": 2023,
    "kind": "long",
    "manual": 1,
-   "title": "ר' ירמיה בר אבא:"
+   "title": "ר' ירמיה בר אבא:",
+   "why": "name"
   },
   {
    "daf": "נב.",
    "unit": 2075,
    "kind": "long",
+   "manual": 1,
    "title": "חלקו ר' דוסא ורבנן:",
-   "heading": "חלקו ר' דוסא ורבנן",
-   "side": ""
+   "why": "name"
   }
  ]
 }

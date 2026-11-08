@@ -9,39 +9,40 @@
    "unit": 119,
    "kind": "long",
    "manual": 1,
-   "title": "רב אידי אב רי\"ע:"
+   "title": "רב אידי אב רי\"ע:",
+   "why": "name"
   },
   {
    "daf": "ט.",
    "unit": 309,
    "kind": "long",
    "title": "דהלל לבר הא הא:",
-   "heading": "דהלל לבר הא הא",
-   "side": ""
+   "heading": "",
+   "side": "דהלל:"
   },
   {
    "daf": "ט.",
    "unit": 309,
    "kind": "long",
    "title": "הלל לבר הא הא:",
-   "heading": "הלל לבר הא הא",
-   "side": ""
+   "heading": "",
+   "side": "הלל:"
   },
   {
    "daf": "ט.",
    "unit": 309,
    "kind": "long",
+   "manual": 1,
    "title": "אליהו לבר הא הא:",
-   "heading": "אליהו לבר הא הא",
-   "side": ""
+   "why": "few"
   },
   {
    "daf": "יד:",
    "unit": 681,
    "kind": "long",
+   "manual": 1,
    "title": "בן זומא הורה א.",
-   "heading": "בן זומא הורה א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יט.",

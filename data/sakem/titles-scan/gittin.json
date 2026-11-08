@@ -8,25 +8,25 @@
    "daf": "כב.",
    "unit": 1197,
    "kind": "long",
+   "manual": 1,
    "title": "והך דחלקו ר''מ ור''י:",
-   "heading": "והך דחלקו ר''מ ור''י",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לב:",
    "unit": 1919,
    "kind": "long",
+   "manual": 1,
    "title": "וכן סבר רי''א דאושא:",
-   "heading": "וכן סבר רי''א דאושא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לד:",
    "unit": 2052,
    "kind": "long",
+   "manual": 1,
    "title": "שלחו בני מה''י לר\"ג:",
-   "heading": "שלחו בני מה''י לר\"ג",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לה.",
@@ -40,17 +40,17 @@
    "daf": "מז:",
    "unit": 3071,
    "kind": "long",
+   "manual": 1,
    "title": "הקשה רי''ו לר''ל א.",
-   "heading": "הקשה רי''ו לר''ל א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מח.",
    "unit": 3100,
    "kind": "long",
+   "manual": 1,
    "title": "רנב\"י: אף לרי ור'ש:",
-   "heading": "רנב\"י: אף לרי ור'ש",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מח:",
@@ -64,17 +64,17 @@
    "daf": "נו.",
    "unit": 3669,
    "kind": "long",
+   "manual": 1,
    "title": "קרי עליה רב יוסף:",
-   "heading": "קרי עליה רב יוסף",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "נו.",
    "unit": 3669,
    "kind": "long",
+   "manual": 1,
    "title": "יצתה בת קול וא\"ל:",
-   "heading": "יצתה בת קול וא\"ל",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "סז:",
@@ -88,56 +88,57 @@
    "daf": "סז:",
    "unit": 4753,
    "kind": "long",
-   "manual": 1,
-   "title": "אביי, אמרה לי אם:"
+   "title": "אביי, אמרה לי אם:",
+   "heading": "",
+   "side": "אביי:"
   },
   {
    "daf": "עג:",
    "unit": 5269,
    "kind": "long",
+   "manual": 1,
    "title": "מחלוקת ר\"י ור' יוסי:",
-   "heading": "מחלוקת ר\"י ור' יוסי",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "עז.",
    "unit": 5557,
    "kind": "long",
+   "manual": 1,
    "title": "לא שר' יוסי ס\"ל:",
-   "heading": "לא שר' יוסי ס\"ל",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "עז.",
    "unit": 5557,
    "kind": "long",
+   "manual": 1,
    "title": "ר\"ז לפני רבי יוסי:",
-   "heading": "לפני רבי יוסי",
-   "side": "ר\"ז:"
+   "why": "name"
   },
   {
    "daf": "פב.",
    "unit": 6000,
    "kind": "long",
+   "manual": 1,
    "title": "טעם ר\"א:- ר''י מזקן:",
-   "heading": "טעם ר\"א:- ר''י מזקן",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "פה.",
    "unit": 6188,
    "kind": "long",
+   "manual": 1,
    "title": "• תני אבי דר\"א:",
-   "heading": "• תני אבי דר\"א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "פח:",
    "unit": 6511,
    "kind": "long",
+   "manual": 1,
    "title": "אביי מצא לרב יוסף:",
-   "heading": "מצא לרב יוסף",
-   "side": "אביי:"
+   "why": "name"
   }
  ]
 }

@@ -8,9 +8,9 @@
    "daf": "ב.",
    "unit": 22,
    "kind": "long",
+   "manual": 1,
    "title": "ויש מעילה מדרבנן דארי\"ו:",
-   "heading": "ויש מעילה מדרבנן דארי\"ו",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ב.",
@@ -32,41 +32,41 @@
    "daf": "ד:",
    "unit": 86,
    "kind": "long",
+   "manual": 1,
    "title": "כלל אמר רבי יהושע:",
-   "heading": "כלל אמר רבי יהושע",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ה:",
    "unit": 129,
    "kind": "long",
+   "manual": 1,
    "title": "והך דבעא ר\"ל מרי\"ו:",
-   "heading": "והך דבעא ר\"ל מרי\"ו",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ז.",
    "unit": 183,
    "kind": "long",
+   "manual": 1,
    "title": "והא דבעי ר\"א מרי\"ו:",
-   "heading": "דבעי ר\"א מרי\"ו",
-   "side": "והא:"
+   "why": "name"
   },
   {
    "daf": "ז:",
    "unit": 204,
    "kind": "long",
+   "manual": 1,
    "title": "אר\"ל משום רב אושעיא:",
-   "heading": "אר\"ל משום רב אושעיא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ז:",
    "unit": 204,
    "kind": "long",
+   "manual": 1,
    "title": "אישתיק, אמר ר' יוחנן:",
-   "heading": "אישתיק, אמר ר' יוחנן",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ח:",
@@ -80,41 +80,41 @@
    "daf": "יא.",
    "unit": 379,
    "kind": "long",
+   "manual": 1,
    "title": "למ\"ד אין מועלין כעולא:",
-   "heading": "למ\"ד אין מועלין כעולא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יא:",
    "unit": 413,
    "kind": "long",
+   "manual": 1,
    "title": "לימא מתני' דלא כראבר\"צ:",
-   "heading": "לימא מתני' דלא כראבר\"צ",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "טו.",
    "unit": 573,
    "kind": "long",
+   "manual": 1,
    "title": "אלא כך אמרו דר\"ינ:",
-   "heading": "כך אמרו דר\"ינ",
-   "side": "אלא:"
+   "why": "name"
   },
   {
    "daf": "טז.",
    "unit": 633,
    "kind": "long",
+   "manual": 1,
    "title": "אמר לך רב אסי:",
-   "heading": "לך רב אסי",
-   "side": "אמר:"
+   "why": "name"
   },
   {
    "daf": "טז:",
    "unit": 653,
    "kind": "long",
+   "manual": 1,
    "title": "אמר לו רב יוסף:",
-   "heading": "לו רב יוסף",
-   "side": "אמר:"
+   "why": "name"
   },
   {
    "daf": "טז:",
@@ -128,40 +128,41 @@
    "daf": "יז.",
    "unit": 675,
    "kind": "long",
+   "manual": 1,
    "title": "אר\"ח מר\"ז וכן אריב\"ח:",
-   "heading": "אר\"ח מר\"ז וכן אריב\"ח",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יז:",
    "unit": 705,
    "kind": "long",
+   "manual": 1,
    "title": "אמר להם רבי יוסי:",
-   "heading": "להם רבי יוסי",
-   "side": "אמר:"
+   "why": "name"
   },
   {
    "daf": "יז:",
    "unit": 705,
    "kind": "long",
+   "manual": 1,
    "title": "בכה ר' שמעון ואמר:",
-   "heading": "בכה ר' שמעון ואמר",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יט:",
    "unit": 816,
    "kind": "long",
    "manual": 1,
-   "title": "היינו ת\"ק! אמר רבא:"
+   "title": "היינו ת\"ק! אמר רבא:",
+   "why": "name"
   },
   {
    "daf": "כב.",
    "unit": 976,
    "kind": "long",
+   "manual": 1,
    "title": "ר\"י ורבי יוסי ור\"ש:",
-   "heading": "ורבי יוסי ור\"ש",
-   "side": "ר\"י:"
+   "why": "name"
   }
  ]
 }

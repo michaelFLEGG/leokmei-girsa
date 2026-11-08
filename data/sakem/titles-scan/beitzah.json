@@ -9,15 +9,16 @@
    "unit": 45,
    "kind": "long",
    "manual": 1,
-   "title": "רב יוסף: לא כרי\"צ:"
+   "title": "רב יוסף: לא כרי\"צ:",
+   "why": "name"
   },
   {
    "daf": "ו.",
    "unit": 187,
    "kind": "long",
+   "manual": 1,
    "title": "רבינא ישב לפני ר\"א",
-   "heading": "ישב לפני ר\"א",
-   "side": "רבינא:"
+   "why": "name"
   },
   {
    "daf": "ז.",
@@ -31,17 +32,17 @@
    "daf": "כ.",
    "unit": 1087,
    "kind": "long",
+   "manual": 1,
    "title": "מצאו א' מתלמידי ב\"ש",
-   "heading": "מצאו א' מתלמידי ב\"ש",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מ.",
    "unit": 2343,
    "kind": "long",
+   "manual": 1,
    "title": "אפי' דר\"ה תלמיד רב",
-   "heading": "אפי' דר\"ה תלמיד רב",
-   "side": ""
+   "why": "name"
   }
  ]
 }

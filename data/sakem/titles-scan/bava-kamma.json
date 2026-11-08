@@ -24,9 +24,9 @@
    "daf": "כ:",
    "unit": 1234,
    "kind": "long",
+   "manual": 1,
    "title": "יא. ר\"ס מר\"ה מרב:",
-   "heading": "יא. ר\"ס מר\"ה מרב",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כה:",
@@ -40,65 +40,65 @@
    "daf": "לז.",
    "unit": 2403,
    "kind": "long",
+   "manual": 1,
    "title": "ואת\"ל גם איתא לר\"פ:",
-   "heading": "ואת\"ל גם איתא לר\"פ",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מג:",
    "unit": 2841,
    "kind": "long",
+   "manual": 1,
    "title": "• א\"ד: מרבה ה\"ק:",
-   "heading": "• א\"ד: מרבה ה\"ק",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מד:",
    "unit": 2904,
    "kind": "long",
+   "manual": 1,
    "title": "ת\"כ כשמואל ותיובתא דרב:",
-   "heading": "כשמואל ותיובתא דרב",
-   "side": "ת\"כ:"
+   "why": "name"
   },
   {
    "daf": "מד:",
    "unit": 2904,
    "kind": "long",
    "title": "ור\"י לא למד מקטליה:",
-   "heading": "ור\"י לא למד מקטליה",
-   "side": ""
+   "heading": "",
+   "side": "ור\"י:"
   },
   {
    "daf": "מד:",
    "unit": 2904,
    "kind": "long",
    "title": "ור\"ש לא יליף מכופר:",
-   "heading": "ור\"ש לא יליף מכופר",
-   "side": ""
+   "heading": "",
+   "side": "ור\"ש:"
   },
   {
    "daf": "מו.",
    "unit": 3010,
    "kind": "long",
+   "manual": 1,
    "title": "טעם ר''א: א. רבה:",
-   "heading": "טעם ר''א: א. רבה",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "נג.",
    "unit": 3577,
    "kind": "long",
+   "manual": 1,
    "title": "תני ר\"ח לסיע לרב:",
-   "heading": "תני ר\"ח לסיע לרב",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "סו.",
    "unit": 4513,
    "kind": "long",
+   "manual": 1,
    "title": "ולא קשה על רב:",
-   "heading": "ולא קשה על רב",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "סו.",
@@ -112,17 +112,17 @@
    "daf": "עא:",
    "unit": 4845,
    "kind": "long",
+   "manual": 1,
    "title": "ור\"מ סבר כר' יעקב:",
-   "heading": "ור\"מ סבר כר' יעקב",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "עו:",
    "unit": 5164,
    "kind": "long",
+   "manual": 1,
    "title": "תהי בה רבי אלעזר:",
-   "heading": "תהי בה רבי אלעזר",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "עו:",
@@ -136,17 +136,17 @@
    "daf": "פב:",
    "unit": 5555,
    "kind": "long",
+   "manual": 1,
    "title": "ועל אותה שעה שנינו:",
-   "heading": "ועל אותה שעה שנינו",
-   "side": ""
+   "why": "few"
   },
   {
    "daf": "צו.",
    "unit": 6745,
    "kind": "long",
+   "manual": 1,
    "title": "• בעי ופשט רבא:",
-   "heading": "• בעי ופשט רבא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קב.",
@@ -161,61 +161,64 @@
    "unit": 7653,
    "kind": "long",
    "manual": 1,
-   "title": "ר''כ ב. בעי רבא:"
+   "title": "ר''כ ב. בעי רבא:",
+   "why": "name"
   },
   {
    "daf": "קח:",
    "unit": 7653,
    "kind": "long",
    "manual": 1,
-   "title": "ר\"ט ב. בעי רבא:"
+   "title": "ר\"ט ב. בעי רבא:",
+   "why": "name"
   },
   {
    "daf": "קח:",
    "unit": 7653,
    "kind": "long",
+   "manual": 1,
    "title": "ולא חלק על ר''ה:",
-   "heading": "ולא חלק על ר''ה",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קיא:",
    "unit": 7880,
    "kind": "long",
+   "manual": 1,
    "title": "-דתני רבי לבנו ר\"ש:",
-   "heading": "-דתני רבי לבנו ר\"ש",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קיב.",
    "unit": 7910,
    "kind": "long",
    "manual": 1,
-   "title": "רב אדא בר אהבה:"
+   "title": "רב אדא בר אהבה:",
+   "why": "name"
   },
   {
    "daf": "קיב:",
    "unit": 7951,
    "kind": "long",
+   "manual": 1,
    "title": "בן חמיו של רי\"ר:",
-   "heading": "בן חמיו של רי\"ר",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קיג:",
    "unit": 8087,
    "kind": "long",
+   "manual": 1,
    "title": "• רב אשי לר''ה:",
-   "heading": "• רב אשי לר''ה",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קיט.",
    "unit": 8681,
    "kind": "long",
    "title": "ר''ה ור''י: חד אמר:",
-   "heading": "ור''י: חד אמר",
-   "side": "ר''ה:"
+   "heading": "",
+   "side": "ר''ה ור''י:"
   },
   {
    "daf": "קיט:",

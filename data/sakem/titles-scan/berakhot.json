@@ -9,23 +9,24 @@
    "unit": 1784,
    "kind": "long",
    "manual": 1,
-   "title": "רבי אמי ורבי אסי:"
+   "title": "רבי אמי ורבי אסי:",
+   "why": "name"
   },
   {
    "daf": "ל.",
    "unit": 2119,
    "kind": "long",
+   "manual": 1,
    "title": "ר\"ח לפני רבי ינאי:",
-   "heading": "לפני רבי ינאי",
-   "side": "ר\"ח:"
+   "why": "name"
   },
   {
    "daf": "לו.",
    "unit": 2907,
    "kind": "long",
+   "manual": 1,
    "title": "ואף דרי\"ו ושמואל לר\"י:",
-   "heading": "ואף דרי\"ו ושמואל לר\"י",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לח:",
@@ -39,17 +40,17 @@
    "daf": "מא.",
    "unit": 3797,
    "kind": "long",
+   "manual": 1,
    "title": "והברייתא חסורי מחסרא וה\"ק:",
-   "heading": "והברייתא חסורי מחסרא וה\"ק",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מג.",
    "unit": 3959,
    "kind": "long",
+   "manual": 1,
    "title": "שאלו את בן זומא:",
-   "heading": "שאלו את בן זומא",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "מז:",

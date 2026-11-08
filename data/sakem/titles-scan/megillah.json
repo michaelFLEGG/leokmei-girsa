@@ -8,9 +8,9 @@
    "daf": "ב.",
    "unit": 3,
    "kind": "long",
+   "manual": 1,
    "title": "מרי\"ו: זו דברי ר''ע:",
-   "heading": "זו דברי ר''ע",
-   "side": "מרי\"ו:"
+   "why": "name"
   },
   {
    "daf": "ה.",
@@ -32,25 +32,25 @@
    "daf": "יב.",
    "unit": 664,
    "kind": "long",
+   "manual": 1,
    "title": "◦ דרש ר\"נ בר\"ח:",
-   "heading": "◦ דרש ר\"נ בר\"ח",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יז.",
    "unit": 1066,
    "kind": "long",
+   "manual": 1,
    "title": "אמתא דרבי לרבנן: א.",
-   "heading": "אמתא דרבי לרבנן: א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "כב.",
    "unit": 1345,
    "kind": "long",
+   "manual": 1,
    "title": "רבא דכיו''ב שמע דתנן:",
-   "heading": "דכיו''ב שמע דתנן",
-   "side": "רבא:"
+   "why": "name"
   }
  ]
 }

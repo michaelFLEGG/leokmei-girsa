@@ -16,9 +16,9 @@
    "daf": "י.",
    "unit": 620,
    "kind": "long",
+   "manual": 1,
    "title": "יב. ר\"ד ברבי ינאי:",
-   "heading": "יב. ר\"ד ברבי ינאי",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "יט:",
@@ -40,33 +40,33 @@
    "daf": "ל.",
    "unit": 2001,
    "kind": "long",
+   "manual": 1,
    "title": "• ההוא דאמר לחברו:",
-   "heading": "• ההוא דאמר לחברו",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "לח:",
    "unit": 2343,
    "kind": "long",
+   "manual": 1,
    "title": "• וא\"ד ר''י מרב:",
-   "heading": "• וא\"ד ר''י מרב",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "ס:",
    "unit": 3255,
    "kind": "long",
+   "manual": 1,
    "title": "נטפל להן ר' יהושע,",
-   "heading": "נטפל להן ר' יהושע,",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "עז.",
    "unit": 4032,
    "kind": "long",
+   "manual": 1,
    "title": "תני ר\"ת לפני ר\"א",
-   "heading": "תני ר\"ת לפני ר\"א",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "צט:",
@@ -80,9 +80,9 @@
    "daf": "ק.",
    "unit": 5274,
    "kind": "long",
+   "manual": 1,
    "title": "א\"ר יוסי בר' חנינא:",
-   "heading": "יוסי בר' חנינא",
-   "side": "א\"ר:"
+   "why": "name"
   },
   {
    "daf": "קד.",
@@ -97,15 +97,16 @@
    "unit": 5709,
    "kind": "long",
    "manual": 1,
-   "title": "רב יימר לרב אשי:"
+   "title": "רב יימר לרב אשי:",
+   "why": "name"
   },
   {
    "daf": "קכג:",
    "unit": 6143,
    "kind": "long",
+   "manual": 1,
    "title": "בעא ר' חלבו מרשב\"נ",
-   "heading": "בעא ר' חלבו מרשב\"נ",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קמו",
@@ -127,9 +128,9 @@
    "daf": "קסה.",
    "unit": 8150,
    "kind": "long",
+   "manual": 1,
    "title": "תיבעי אליבא דר' נתן,",
-   "heading": "תיבעי אליבא דר' נתן,",
-   "side": ""
+   "why": "name"
   },
   {
    "daf": "קעא.",

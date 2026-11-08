@@ -12,7 +12,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('mas'); ap.add_argument('width', type=int); ap.add_argument('scenario')
 ap.add_argument('--page', default='bava-batra.html'); ap.add_argument('--hash', default='')
 ap.add_argument('--fake', action='append', default=[]); ap.add_argument('--h', type=int, default=800)
-ap.add_argument('--mobile', action='store_true'); ap.add_argument('--css', default='')
+ap.add_argument('--mobile', action='store_true'); ap.add_argument('--live-worker', action='store_true'); ap.add_argument('--css', default='')  # --live-worker: קריאות GET אמיתיות מן ה-Worker (כתיבה עדיין חסומה)
 a = ap.parse_args()
 BLOCKED = []
 FAKE = {}
@@ -36,6 +36,8 @@ def seal(route):
         return route.fulfill(status=200, content_type='application/json', body='{"ok":true,"doc":{"edits":[]}}')
     if '127.0.0.1:8760' in rq.url or 'localhost:8760' in rq.url:
         BLOCKED.append('bridge ' + rq.url); return route.fulfill(status=200, body='{}')
+    if '.workers.dev' in rq.url and a.live_worker:
+        return route.continue_()
     if '.workers.dev' in rq.url:
         return route.fulfill(status=200, content_type='application/json', body='{}')
     return route.continue_()
@@ -46,13 +48,20 @@ with sync_playwright() as pw:
         kw.update(is_mobile=True, has_touch=True, device_scale_factor=2)
     ctx = br.new_context(**kw)
     ctx.route('**/*', seal)
-    if a.mas != '-':
+    if a.mas == 'live':
+        # הקוד החי עצמו, עם הוו בלבד (נמשך דרך הדפדפן, לא בבקשה חיצונית)
+        def _live(r):
+            resp = r.fetch(); body = resp.text()
+            assert 'window.skpPanel=skpPanel;' in body, 'hook anchor missing (live)'
+            r.fulfill(response=resp, body=body.replace('window.skpPanel=skpPanel;', 'window.skpPanel=skpPanel;' + HOOK, 1))
+        ctx.route('**/mas.js*', _live)
+    elif a.mas != '-':
         body = io.open(a.mas, encoding='utf-8').read()
         # הוו נכנס מיד אחרי הגדרת skpPanel הגלובלית - באותו תחום שבו חיות פונקציות סכם
         assert 'window.skpPanel=skpPanel;' in body, 'hook anchor missing'
         body = body.replace('window.skpPanel=skpPanel;', 'window.skpPanel=skpPanel;' + HOOK, 1).encode('utf-8')
         ctx.route('**/mas.js*', lambda r: r.fulfill(status=200, content_type='application/javascript; charset=utf-8', body=body))
-    ctx.add_init_script("try{localStorage.setItem('lg-admin','1');localStorage.setItem('lg-adm','TEST-LOCAL-TOKEN')}catch(e){}")
+    ctx.add_init_script("try{localStorage.setItem('lg-admin','1');localStorage.setItem('lg-adm',"+json.dumps(os.environ.get('LG_ADM','TEST-LOCAL-TOKEN'))+")}catch(e){}")
     pg = ctx.new_page()
     errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)[:300]))

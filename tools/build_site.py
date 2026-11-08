@@ -5939,7 +5939,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(PRNQ)window.__LIVE=job;
     return job}
   async function liveLoad(PRNQ){
-    try{const j=await api('/live?slug='+SLUG);const L=(j.doc&&j.doc.edits)||[];
+    try{let j=await api('/live?slug='+SLUG);
+      /* 8.11.2026: שירות ההדפסה רץ במקום אחר בעולם, ושם השרת עלול להחזיק עד כדקה את הגרסה הקודמת של התיקונים.
+         הלקוח שולח את חותמת הגרסה שהוא רואה (et); כאן מחכים עד שהיא מגיעה, ומדווחים מה הוחל (__LIVET). */
+      const want=PRNQ?+(new URLSearchParams(location.search).get('et')||0):0;
+      for(let k=0;want&&k<15&&((j.doc&&j.doc.t)||0)<want;k++){await new Promise(r=>setTimeout(r,2000));j=await api('/live?slug='+SLUG+'&_='+Date.now())}
+      if(PRNQ)window.__LIVET=(j.doc&&j.doc.t)||0;
+      const L=(j.doc&&j.doc.edits)||[];
       if(L.length){EDRO=true;ED=L.map(e=>Object.assign({pub:1},e));
         /* תיקונים מהשרת מוחלים על השורות שהשתנו בלבד: בעבר נבנה כל הפרק
            מחדש (2.5 שניות בטלפון איטי) והלומד נזרק לתחילתו (11.10.2026) */

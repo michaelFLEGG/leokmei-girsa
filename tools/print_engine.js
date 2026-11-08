@@ -944,7 +944,14 @@
     /* ההרצה אחרי טעינת כל הסקריפטים (הזנב הפרטי של המסכת, build ושאר הקוד של הדף): קודם לכן נתוני התוספות עדיין אינם קיימים,
        וקוד אחר של הדף עלול לשנות את גוף המסמך אחרי העימוד */
     /* 6.11.2026: קודם מחכים שהתיקונים שפורסמו יוחלו (window.__LIVE, ראה netInit), ורק אז מעמדים. עד 25 שניות. */
-    var go=function(){Promise.race([Promise.resolve(window.__LIVE),new Promise(function(r){setTimeout(r,25000)})]).catch(function(){}).then(go2)};
+    /* 8.11.2026: בלי הפקה שקטה בלי התיקונים. אם התיקונים לא נטענו בזמן, או שנטענה גרסה ישנה מזו שהמנהל ראה
+       (et), ההפקה נעצרת בהודעה - ולא מוציאה קובץ חסר. */
+    var go=function(){var late=false;
+      Promise.race([Promise.resolve(window.__LIVE).then(function(){return 'ok'}),new Promise(function(r){setTimeout(function(){late=true;r('late')},50000)})]).catch(function(){return 'ok'}).then(function(w){
+        var et=+(new URLSearchParams(location.search).get('et')||0);
+        if(window.__LIVE&&w==='late'){window.__PRN={state:'error',error:'התיקונים שפורסמו לא נטענו בזמן. נסה שוב בעוד דקה'};return}
+        if(window.__LIVE&&et&&(window.__LIVET||0)<et){window.__PRN={state:'error',error:'התיקונים האחרונים עוד לא הגיעו לשירות ההדפסה. נסה שוב בעוד דקה'};return}
+        go2()})};
     var go2=function(){setTimeout(function(){runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};
       try{console.error('[print] '+e)}catch(x){}})},100)};
     if(document.readyState==='complete')go();else window.addEventListener('load',go);
@@ -1218,6 +1225,8 @@
         .then(function(){return (isAdm()&&typeof pubNow==='function'&&typeof pubPending==='function'&&pubPending())?pubNow(1):null}).catch(function(){});
       prePub.then(function(){return fetch(SUGGEST_API+'/live?slug='+encodeURIComponent(SLUG),{cache:'no-store'})}).then(function(r){return r.ok?r.text():''}).catch(function(){return ''})
       .then(function(t){
+        /* חותמת גרסת התיקונים שהמנהל רואה: השירות מחכה לה (ראה liveLoad) */
+        try{var et=JSON.parse(t).doc.t;if(et)q.set('et',String(et))}catch(e){}
         if(!t)t=String(Date.now());
         var h=2166136261;for(var i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}
         q.set('profile','a4v'+('0000'+((h>>>0)%60466176).toString(36)).slice(-5));

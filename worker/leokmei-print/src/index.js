@@ -75,6 +75,8 @@ async function pdf(req, env, ctx, url) {
   const tos = q.get('tos') === '1' ? '1' : '0';
   const duplex = q.get('duplex') === '1' ? '1' : '0';
   const profile = /^[a-z0-9]{2,8}$/.test(q.get('profile') || '') ? q.get('profile') : 'a4';
+  /* 8.11.2026: חותמת גרסת התיקונים שהלקוח רואה - הדף מחכה לה לפני העימוד, ואחרת נעצר בהודעה */
+  const et = /^\d{10,15}$/.test(q.get('et') || '') ? q.get('et') : '';
 
   /* הגבלת ההדפסה (13.10.2026): מבקר רגיל - פרק אחד לכל היותר בכל הפקה. מנהל (x-admin-key תקף) - בלי הגבלה.
      האכיפה כאן, ולא בממשק בלבד: בקשה ישירה לכתובת נבדקת כמו כל בקשה. הבדיקה קודמת למטמון, כדי ש-PDF
@@ -105,7 +107,7 @@ async function pdf(req, env, ctx, url) {
     const lj = lr.ok ? await lr.json() : null;
     live = lj && lj.ok ? String(lj.t || 0) : 'nolive-' + Date.now();
   } catch (e) { live = 'nolive-' + Date.now(); }
-  const key = 'print:v3-frank685:' + await sha(JSON.stringify([m, all, from, to, tos, duplex, profile, ver, pick, live]));
+  const key = 'print:v3-frank685:' + await sha(JSON.stringify([m, all, from, to, tos, duplex, profile, ver, pick, live, et]));
   const hn = { kiddushin: 'קידושין' }[m] || m;
   const dfile = (all ? `${hn}.pdf` : `${hn} ${from}${to !== from ? ' - ' + to : ''}.pdf`).replace(/:/g, '꞉');
   const inline = q.get('inline') === '1';
@@ -122,6 +124,7 @@ async function pdf(req, env, ctx, url) {
   }
 
   const target = new URLSearchParams({ print: '1', tos, duplex, profile });
+  if (et) target.set('et', et);
   if (all) target.set('all', '1'); else { target.set('from', from); target.set('to', to); }
   let browser;
   try {

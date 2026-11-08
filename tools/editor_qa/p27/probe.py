@@ -12,7 +12,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('mas'); ap.add_argument('width', type=int); ap.add_argument('scenario')
 ap.add_argument('--page', default='bava-batra.html'); ap.add_argument('--hash', default='')
 ap.add_argument('--fake', action='append', default=[]); ap.add_argument('--h', type=int, default=800)
-ap.add_argument('--mobile', action='store_true'); ap.add_argument('--live-worker', action='store_true'); ap.add_argument('--css', default='')  # --live-worker: קריאות GET אמיתיות מן ה-Worker (כתיבה עדיין חסומה)
+ap.add_argument('--mobile', action='store_true'); ap.add_argument('--live-worker', action='store_true'); ap.add_argument('--css', default=''); ap.add_argument('--visitor', action='store_true')  # --live-worker: קריאות GET אמיתיות מן ה-Worker (כתיבה עדיין חסומה)
 a = ap.parse_args()
 BLOCKED = []
 FAKE = {}
@@ -61,7 +61,7 @@ with sync_playwright() as pw:
         assert 'window.skpPanel=skpPanel;' in body, 'hook anchor missing'
         body = body.replace('window.skpPanel=skpPanel;', 'window.skpPanel=skpPanel;' + HOOK, 1).encode('utf-8')
         ctx.route('**/mas.js*', lambda r: r.fulfill(status=200, content_type='application/javascript; charset=utf-8', body=body))
-    ctx.add_init_script("try{localStorage.setItem('lg-admin','1');localStorage.setItem('lg-adm',"+json.dumps(os.environ.get('LG_ADM','TEST-LOCAL-TOKEN'))+")}catch(e){}")
+    if not a.visitor: ctx.add_init_script("try{localStorage.setItem('lg-admin','1');localStorage.setItem('lg-adm',"+json.dumps(os.environ.get('LG_ADM','TEST-LOCAL-TOKEN'))+")}catch(e){}")
     pg = ctx.new_page()
     errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)[:300]))

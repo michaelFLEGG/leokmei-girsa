@@ -305,7 +305,9 @@
     if (menu) { closeMenu(); return; }
     menu = D.createElement('div'); menu.id = 'lk-menu'; menu.className = 'lk-ui';
     var cfg = LK.cfg;
-    menu.innerHTML = '<button type="button" data-a="pencil">עריכת טקסטי האתר (Ctrl+Alt+P)</button>' +
+    /* פרומפט 23 (8.11.2026): לוח הדף היומי בווטסאפ - ראשון ובולט */
+    menu.innerHTML = '<a href="/daf-board.html" style="font-weight:700;color:#e8c876;border-bottom:1px solid rgba(201,162,74,.4)">לוח הדף היומי בווטסאפ</a>' +
+      '<button type="button" data-a="pencil">עריכת טקסטי האתר (Ctrl+Alt+P)</button>' +
       '<button type="button" data-a="hidden">טקסטים נסתרים בדף זה</button>' +
       '<a href="/admin-texts.html">טקסטים ששיניתי</a>' +
       '<button type="button" data-a="stats">נתוני גלישה</button>';

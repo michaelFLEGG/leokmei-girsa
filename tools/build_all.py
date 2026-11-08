@@ -405,6 +405,13 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     # נתוני גלישה ועיפרון המנהל: אחרון, כדי שיעטוף גם את הדפים הסטטיים (8.10.2026)
     import lk_inject
     lk_inject.run(SITE)
+    # הדף היומי בווטסאפ (פרומפט 23, 8.11.2026): דפי הטלפון הקלים (/daf), הכרטיסים והלוח (/daf-board.html).
+    # אחרי lk_inject בכוונה: הדפים הקלים אינם נושאים את מעטפת האתר. תקלה כאן מדווחת בקול ואינה מפילה את בניית האתר.
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location('daf_wa_build', os.path.join(ROOT, 'tools', 'daf_wa', 'build.py'))
+    daf_wa_build = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(daf_wa_build)
+    daf_wa_build.run(SITE)
     print(len(built), 'מסכתות נבנו')
 
 def write_privacy(site):

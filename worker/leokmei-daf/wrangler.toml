@@ -1,0 +1,19 @@
+# leokmei-daf - "הדף היומי בווטסאפ" של לאוקמי גירסא (פרומפט 23, 8.11.2026).
+# הלוח למנהל (leokmei.com/daf-board), הרכבת ההודעה, תנאי השליחה, ומצב החיבור לווטסאפ.
+# נפרד לגמרי מממלכת הזוהר. התוכנית החינמית. אין בו סוד: המנהל נבדק ב-leokmei-suggest,
+# והשולח (ריצת .github/workflows/daf-wa.yml) - באסימון OIDC של גיטהאב.
+name = "leokmei-daf"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "DAF"
+id = "c5886a3cfe1843cba7199130a7b010eb"
+
+[[services]]
+binding = "SUGGEST"
+service = "leokmei-suggest"
+
+[observability]
+enabled = false

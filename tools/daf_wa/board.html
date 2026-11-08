@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>לוח הדף היומי - לאוקמי גירסא</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<style>
+/* לוח "הדף היומי בווטסאפ" (פרומפט 23) - למנהל בלבד. הועתק בתבניתו מלוח "הזוהר היומי". */
+@font-face{font-family:'Frank';src:url(/fonts/frank.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Vilna';src:url(/fonts/vilna-b.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{--paper:#faf6ec;--card:#fffdf8;--ink:#2a2520;--soft:#7d715c;--gold:#c9a24a;--blue:#123049;--ok:#2f6b3a;--warn:#9a5b12;--bad:#9b2c2c;--wa:#e7ffdb;--wabg:#efe7dc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Frank',serif;font-size:16px;line-height:1.5}
+header{background:var(--blue);color:#f3ead6;padding:14px 16px 12px;border-bottom:2px solid var(--gold)}
+header h1{margin:0;font-family:'Vilna',serif;font-size:22px;color:#e8c876}
+header .sub{font-size:14px;opacity:.85}
+main{max-width:980px;margin:0 auto;padding:14px 16px 60px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px;padding:12px;background:var(--card);border:1px solid #e3d8bf;border-radius:10px}
+.bar .st{flex:1 1 260px;font-size:15px}
+button,.btn{font-family:inherit;font-size:15px;padding:7px 14px;border-radius:8px;border:1px solid #b9a678;background:#fff;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-block}
+button.main{background:var(--blue);color:#f6eedb;border-color:var(--blue)}
+button.go{background:var(--ok);color:#fff;border-color:var(--ok)}
+button:disabled{opacity:.45;cursor:default}
+h2{font-family:'Vilna',serif;font-size:19px;margin:22px 0 8px;color:var(--blue)}
+.note{font-size:14px;color:var(--soft);margin:0 0 10px}
+.day{background:var(--card);border:1px solid #e3d8bf;border-radius:12px;margin:0 0 14px;padding:12px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,360px);gap:14px}
+@media (max-width:760px){.day{grid-template-columns:1fr}}
+.dh{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;margin-bottom:6px}
+.dh b{font-family:'Vilna',serif;font-size:18px}
+.badge{font-size:13px;padding:1px 9px;border-radius:20px;border:1px solid currentColor}
+.s-auto,.s-approved,.s-sent{color:var(--ok)}.s-await,.s-pilot{color:var(--warn)}.s-missing,.s-stopped{color:var(--bad)}.s-holy{color:var(--soft)}
+.ctl{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.ctl label{font-size:14px;color:var(--soft)}
+.ctl input[type=time]{font-family:inherit;font-size:15px;padding:4px 6px;border:1px solid #c9b993;border-radius:6px}
+.alts{margin:8px 0 0;padding:8px 10px;border:1px dashed #d6c79f;border-radius:8px;font-size:15px}
+.alts div{margin:3px 0}
+.alts .k{font-size:12.5px;color:var(--soft)}
+.links{font-size:14px;margin-top:8px}
+.links a{color:var(--blue)}
+textarea{width:100%;min-height:330px;font-family:inherit;font-size:15px;line-height:1.5;padding:8px;border:1px solid #c9b993;border-radius:8px;direction:rtl}
+.wa{background:var(--wabg);border-radius:10px;padding:10px}
+.bub{background:var(--wa);border-radius:8px;padding:4px 4px 8px;box-shadow:0 1px .5px rgba(0,0,0,.13);font-family:system-ui,'Segoe UI',Arial,sans-serif;font-size:14.2px;line-height:1.42;color:#111}
+.pv{background:#d9f2c9;border-radius:6px;overflow:hidden;margin-bottom:6px}
+.pv img{display:block;width:100%;aspect-ratio:1200/630;object-fit:cover;background:#123049}
+.pv .t{font-weight:600;padding:6px 8px 0;font-size:13.5px}
+.pv .d{padding:0 8px;font-size:12.5px;color:#444}
+.pv .u{padding:0 8px 6px;font-size:12px;color:#666}
+.tx{white-space:pre-wrap;padding:0 6px;overflow-wrap:anywhere}
+.tx a{color:#027eb5}
+.miss{color:var(--bad);font-size:15px}
+#login{max-width:420px;margin:40px auto;background:var(--card);padding:18px;border:1px solid #e3d8bf;border-radius:12px}
+#login input{width:100%;font-family:inherit;font-size:16px;padding:8px;margin:8px 0;border:1px solid #c9b993;border-radius:8px}
+#qr{margin:10px 0;padding:12px;background:#fff;border:1px solid #e3d8bf;border-radius:10px;display:none;text-align:center}
+#qr svg{width:260px;height:260px}
+.msg{position:fixed;bottom:16px;left:16px;right:16px;max-width:520px;margin:0 auto;background:var(--blue);color:#fff;padding:10px 14px;border-radius:10px;display:none;z-index:9;text-align:center}
+.learn{font-size:13.5px;color:var(--soft)}
+</style></head><body>
+<header><h1>לוח הדף היומי</h1><div class="sub">לאוקמי גירסא · ההודעה היומית לקבוצת "לאוקמי גירסא - הדף היומי" בווטסאפ</div></header>
+<main id="app"><p class="note">טוען...</p></main>
+<div class="msg" id="msg"></div>
+<script>
+(function(){
+var API='https://leokmei-daf.m7654301.workers.dev', AUTH='https://leokmei-suggest.m7654301.workers.dev';
+var KEY=''; try{KEY=localStorage.getItem('lg-adm')||''}catch(e){}
+var app=document.getElementById('app'), D=null;
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function toast(t){var m=document.getElementById('msg');m.textContent=t;m.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(function(){m.style.display='none'},3200)}
+function call(path,body){
+  return fetch(API+path,{method:body?'POST':'GET',headers:Object.assign({'x-admin-key':KEY},body?{'content-type':'application/json'}:{}),body:body?JSON.stringify(body):undefined})
+    .then(function(r){return r.json().then(function(j){if(!j.ok)throw new Error(j.error||'תקלה');return j})});
+}
+function login(err){
+  app.innerHTML='<div id="login"><b>כניסת מנהל</b><p class="note">הלוח פתוח למנהל בלבד. במכשיר שכבר מחובר כמנהל באתר - הכניסה אוטומטית.</p>'+
+    '<input id="w" type="password" placeholder="מילת הכניסה של המנהל" autocomplete="current-password"><button class="main" id="go">כניסה</button>'+(err?'<p class="miss">'+esc(err)+'</p>':'')+'</div>';
+  document.getElementById('go').onclick=function(){
+    var w=document.getElementById('w').value.trim(); if(!w)return;
+    fetch(AUTH+'/auth',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({word:w,label:'לוח הדף היומי'})})
+      .then(function(r){return r.json()}).then(function(j){if(!j.ok||!j.token)throw new Error(j.error||'המילה אינה נכונה');KEY=j.token;try{localStorage.setItem('lg-adm',KEY)}catch(e){}load()})
+      .catch(function(e){login(e.message)});
+  };
+}
+var STATE={auto:'יישלח אוטומטית',approved:'אושר - יישלח',sent:'נשלח',await:'ממתין לאישורך',missing:'חסר תוכן שנבדק - לא יישלח',stopped:'נעצר - לא יישלח',holy:'אין שליחה',pilot:'פיילוט - לעיון ואישור'};
+function wa(t){
+  return esc(t).replace(/\*([^*\n]+)\*/g,'<b>$1</b>').replace(/(^|\s)(leokmei\.com\/[^\s]*)/g,'$1<a href="https://$2" target="_blank" rel="noopener">$2</a>');
+}
+function bubble(v){
+  var f=v.dafim[0]||{};
+  return '<div class="wa"><div class="bub"><div class="pv"><img loading="lazy" src="'+esc(f.og)+'" alt=""><div class="t">לאוקמי גירסא - קיצור הדף היומי</div><div class="d">'+esc(f.card||'')+'</div><div class="u">leokmei.com</div></div>'+
+    '<div class="tx">'+wa(v.text)+'</div></div></div>';
+}
+function dayHtml(v,pilot){
+  var s=v.state, f=v.dafim[0]||{}, i=v.d;
+  var h='<div class="day" data-d="'+esc(i)+'"><div>';
+  h+='<div class="dh"><b>'+esc(v.dafim.map(function(x){return x.label}).join(' + '))+'</b><span>'+esc(v.meta.line)+'</span><span class="badge s-'+s+'">'+esc(STATE[s]||s)+(s==='holy'&&v.meta.why?' - '+esc(v.meta.why):'')+'</span>'+(v.edited?'<span class="badge s-await">נערך בידך</span>':'')+'</div>';
+  if(s==='holy'){h+='<p class="note">הדף של היום הזה יוצא בהודעה של היום שלפניו.</p></div><div></div></div>';return h}
+  if(v.missing&&v.missing.length)h+='<p class="miss">חסר תוכן שעבר את הבודק: '+esc(v.missing.join(', '))+'. ההודעה לא תצא, ולא תצא שום הודעת "בהכנה".</p>';
+  if(v.err)h+='<p class="miss">השליחה האחרונה נכשלה: '+esc(v.err)+'</p>';
+  if(v.text){
+    h+='<textarea data-k="text" hidden>'+esc(v.text)+'</textarea>';
+    if(f.alts&&f.alts.length&&f.hook){
+      h+='<div class="alts"><b>הידעת?</b> - בחר שאלה (ברירת המחדל מסומנת)';
+      var opts=[{q:f.hook.q,kind:f.hook.kind,i:''}].concat(f.alts.map(function(a,j){return {q:a.q,kind:a.kind,i:j}}));
+      opts.forEach(function(o){var on=(v.pick===null&&o.i==='')||(v.pick===o.i);
+        h+='<div><label><input type="radio" name="p-'+esc(i)+'" data-pick="'+o.i+'"'+(on?' checked':'')+'> '+esc(o.q)+' <span class="k">('+esc(o.kind||'')+(o.i===''?', ברירת מחדל':'')+')</span></label></div>'});
+      h+='</div>';
+    }
+    h+='<div class="ctl"><button data-a="edit">ערוך את הנוסח</button><button data-a="save" hidden class="main">שמור</button>';
+    if(v.edited)h+='<button data-a="restore">חזור לנוסח המקורי</button>';
+    if(!v.sentAt){
+      if(s!=='approved'&&s!=='stopped')h+='<button data-a="approve" class="go">אשר</button>';
+      if(!pilot){
+        h+=s==='stopped'?'<button data-a="resume">בטל את העצירה</button>':'<button data-a="stop">עצור את ההודעה הזאת</button>';
+        h+='<button data-a="sendnow" class="main"'+(D.cfg.announce?'':' disabled title="קבוצת ההכרזות עוד לא הוקמה"')+'>שלח עכשיו</button>';
+        h+='<label>שעת שליחה <input type="time" data-k="time" value="'+esc(v.time)+'"></label>';
+      }
+    } else h+='<span class="badge s-sent">נשלח ב-'+new Date(v.sentAt).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+'</span>';
+    h+='</div>';
+  }
+  h+='<div class="links">'+v.dafim.map(function(x){return '<a href="'+esc(x.url)+'" target="_blank" rel="noopener">תצוגת הטלפון של '+esc(x.label)+'</a> · <a href="'+esc(x.og)+'" target="_blank" rel="noopener">הכרטיס</a>'}).join('<br>')+'</div>';
+  h+='</div><div>'+(v.text?bubble(v):'')+'</div></div>';
+  return h;
+}
+function render(){
+  var o=D.own, c=D.cfg, h='';
+  h+='<div class="bar"><div class="st">';
+  h+=(o.linked?'✓ הווטסאפ מחובר':'✗ הווטסאפ עוד לא מחובר')+' · '+(c.announce?'✓ קבוצת ההכרזות "'+esc(c.name||'לאוקמי גירסא - הדף היומי')+'" קיימת':'✗ קבוצת ההכרזות עוד לא הוקמה');
+  h+='<br>נשלחו עד היום: '+c.sent+'. '+(c.sent<c.approveFirst?'שלוש ההודעות הראשונות יוצאות רק אחרי שתלחץ "אשר"; מן הרביעית - אוטומטית בשעה שנקבעה.':'ההודעות יוצאות אוטומטית בשעה שנקבעה, אלא אם עצרת.');
+  if(D.cmd)h+='<br><b>ממתין לביצוע:</b> '+esc({send:'שליחה',link:'חיבור הווטסאפ',community:'הקמת הקהילה',test:'הודעת ניסיון אליך'}[D.cmd.op]||D.cmd.op)+' (עד עשר דקות) <button data-g="cancel">בטל</button>';
+  if(D.last)h+='<br><span class="learn">הפעולה האחרונה: '+esc({send:'שליחה',test:'הודעת ניסיון',community:'הקמת הקהילה',link:'חיבור'}[D.last.kind]||D.last.kind)+' - '+(D.last.ok?'הצליחה':'נכשלה'+(D.last.why?': '+esc(D.last.why):''))+'</span>';
+  h+='</div>';
+  h+='<button data-g="link"'+(o.linked?'':' class="main"')+'>'+(o.linked?'חבר מחדש':'חבר את הווטסאפ')+'</button>';
+  h+='<button data-g="setup"'+(o.linked&&!c.announce?' class="main"':'')+(o.linked?'':' disabled')+'>'+(c.announce?'הקם מחדש':'הקם את הקהילה')+'</button>';
+  h+='<button data-g="test"'+(o.linked?'':' disabled')+'>שלח הודעת ניסיון אליי</button>';
+  if(c.invite)h+='<a class="btn" href="'+esc(c.invite)+'" target="_blank" rel="noopener">קישור ההצטרפות</a>';
+  h+='</div><div id="qr"></div>';
+  h+='<h2>הימים הקרובים</h2><p class="note">הדף היומי של כל יום. בשבת וביום טוב אין שליחה, והדפים שלהם יוצאים יחד בהודעה של יום שישי או של ערב החג. כל עריכה ובחירה שלך נרשמות, והכותב לומד מהן לימים הבאים.</p>';
+  D.days.forEach(function(v){h+=dayHtml(v,false)});
+  if(D.pilot&&D.pilot.length){h+='<h2>הפיילוט: בכורות ל"ב עד ל"ח</h2><p class="note">שבעת דפי הניסיון, כדי לראות את הנוסח, את הכרטיס ואת תצוגת הטלפון. הם אינם נשלחים לקבוצה. "אשר" כאן פירושו שהנוסח טוב בעיניך, ונרשם ללמידה.</p>';
+    D.pilot.forEach(function(v){h+=dayHtml(v,true)});}
+  app.innerHTML=h;
+}
+function load(){
+  if(!KEY){login();return}
+  call('/days').then(function(j){D=j;render()}).catch(function(e){if(/הרשאה/.test(e.message)){try{localStorage.removeItem('lg-adm')}catch(x){}KEY='';login('המכשיר אינו מזוהה כמנהל')}else app.innerHTML='<p class="miss">'+esc(e.message)+'</p>'});
+}
+function find(d){return D.days.concat(D.pilot||[]).filter(function(v){return v.d===d})[0]}
+var qrT=0;
+function pollQr(n){
+  clearTimeout(qrT); var box=document.getElementById('qr'); if(!box)return;
+  call('/own').then(function(j){
+    box.style.display='block';
+    if(j.linked&&(!j.qr||j.qr.done)){box.innerHTML='<b>✓ הווטסאפ מחובר.</b>';setTimeout(load,1500);return}
+    if(j.qr&&j.qr.err){box.innerHTML='<p class="miss">'+esc(j.qr.err)+'</p>';return}
+    if(j.qr&&j.qr.svg)box.innerHTML='<p><b>סרוק בטלפון:</b> ווטסאפ ← הגדרות ← מכשירים מקושרים ← קישור מכשיר</p>'+j.qr.svg;
+    else box.innerHTML='<p>מכין קוד לסריקה... (עד עשר דקות, עד שהריצה הבאה מתחילה)</p>';
+    if(n<240)qrT=setTimeout(function(){pollQr(n+1)},5000);
+  }).catch(function(e){box.innerHTML='<p class="miss">'+esc(e.message)+'</p>'});
+}
+app.addEventListener('click',function(e){
+  var g=e.target.closest('[data-g]');
+  if(g){var op=g.getAttribute('data-g');
+    if(op==='setup'&&!confirm('להקים את הקהילה "לאוקמי גירסא - הדף היומי" ואת קבוצת ההכרזות שלה בווטסאפ שלך?'))return;
+    call('/'+op,{d:(D.days[0]||{}).d}).then(function(){toast(op==='cancel'?'בוטל':'נרשם. הביצוע מתחיל בריצה הבאה, תוך עשר דקות לכל היותר.');if(op==='link')pollQr(0);else load()}).catch(function(x){toast(x.message)});return}
+  var b=e.target.closest('[data-a]'); if(!b)return;
+  var box=b.closest('.day'), d=box.getAttribute('data-d'), a=b.getAttribute('data-a'), v=find(d), ta=box.querySelector('textarea');
+  if(a==='edit'){ta.hidden=false;ta.focus();b.hidden=true;box.querySelector('[data-a=save]').hidden=false;return}
+  var body={d:d};
+  if(a==='save'){a='edit';body.text=ta.value;body.before=v.text}
+  if(a==='approve')body.text=v.text;
+  if(a==='stop'){var why=prompt('למה לעצור? (לא חובה - עוזר לכותב ללמוד)','');if(why===null)return;body.why=why}
+  if(a==='sendnow'&&!confirm('לשלוח עכשיו את ההודעה לקבוצת הדף היומי?'))return;
+  call('/'+a,body).then(function(){toast({edit:'נשמר',restore:'הנוסח המקורי חזר',approve:'אושר',stop:'נעצר',resume:'העצירה בוטלה',sendnow:'נשלח לתור - יוצא תוך עשר דקות'}[a]||'בוצע');load()}).catch(function(x){toast(x.message)});
+});
+app.addEventListener('change',function(e){
+  var t=e.target, box=t.closest('.day'); if(!box)return; var d=box.getAttribute('data-d');
+  if(t.hasAttribute('data-pick')){var i=t.getAttribute('data-pick'), v=find(d), f=v.dafim[0];
+    var q=i===''?f.hook.q:f.alts[+i].q;
+    call('/pick',{d:d,i:i===''?null:+i,q:q}).then(function(){toast('נבחר');load()}).catch(function(x){toast(x.message)})}
+  if(t.getAttribute('data-k')==='time')call('/time',{d:d,hm:t.value}).then(function(){toast('שעת השליחה נשמרה')}).catch(function(x){toast(x.message)});
+});
+load();
+})();
+</script>
+</body></html>

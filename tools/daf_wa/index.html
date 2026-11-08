@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>לאוקמי גירסא - קיצור הדף היומי</title>
+<meta name="description" content="הדף היומי בקיצור לאוקמי גירסא - בתצוגה קלה לטלפון">
+<meta property="og:type" content="website"><meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="לאוקמי גירסא"><meta property="og:title" content="לאוקמי גירסא - קיצור הדף היומי">
+<meta property="og:description" content="הדף היומי בקיצור לאוקמי גירסא - בתצוגה קלה לטלפון">
+<meta property="og:url" content="https://leokmei.com/daf/">
+<meta property="og:image" content="https://leokmei.com/daf/og/_general.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://leokmei.com/daf/">
+<style>html,body{margin:0;background:#fdfbf6;color:#2a2520;font-family:serif}p{text-align:center;margin-top:30vh;font-size:15px;color:#9a9080}</style>
+<script src="/daf-yomi.js"></script>
+<script>
+/* leokmei.com/daf - תמיד הדף של היום (לפי שעון ירושלים). פרומפט 23 */
+(function(){
+  try{
+    var p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    var t=window.LGDaf.forStr(p);
+    location.replace('/daf/'+t.slug+'-'+t.n+location.search);
+  }catch(e){location.replace('/hadaf-hayomi.html')}
+})();
+</script></head><body><p>פותח את הדף של היום...</p></body></html>

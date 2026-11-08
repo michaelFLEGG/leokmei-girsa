@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<style>
+/* כרטיס התצוגה המקדימה של הדף (פרומפט 23): 1200x630, כחול קטיפה וזהב של האתר. בלי רקעי הדגשה מאחורי טקסט. */
+@font-face{font-family:'Frank';src:url(@@FONTS@@/frank.woff2) format('woff2');font-weight:400}
+@font-face{font-family:'Vilna';src:url(@@FONTS@@/vilna-r.woff2) format('woff2');font-weight:400}
+@font-face{font-family:'Vilna';src:url(@@FONTS@@/vilna-b.woff2) format('woff2');font-weight:700}
+@font-face{font-family:'VilnaX';src:url(@@FONTS@@/vilna-xb.woff2) format('woff2');font-weight:900}
+html,body{margin:0;width:1200px;height:630px;overflow:hidden}
+body{background:radial-gradient(120% 95% at 50% 38%,#163a57 0%,#0f2a40 46%,#0b1c2a 100%);color:#f3ead6;font-family:'Frank',serif;position:relative}
+.frame{position:absolute;inset:26px;border:1.5px solid rgba(201,162,74,.55)}
+.frame:after{content:'';position:absolute;inset:7px;border:.75px solid rgba(201,162,74,.28)}
+.wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.gate{width:66px;height:66px;margin-bottom:14px;opacity:.95}
+.brand{font-family:'Vilna',serif;font-weight:700;font-size:30px;letter-spacing:.14em;color:#c9a24a}
+.rule{width:150px;height:1px;background:linear-gradient(90deg,transparent,#c9a24a,transparent);margin:20px 0 24px}
+.daf{font-family:'VilnaX','Vilna',serif;font-weight:900;font-size:118px;line-height:1.02;color:#f6eedb;letter-spacing:.01em}
+.line{font-family:'Frank',serif;font-size:44px;line-height:1.3;color:#e2cf9f;margin-top:26px;max-width:1000px}
+.foot{position:absolute;bottom:52px;left:0;right:0;text-align:center;font-family:'Vilna',serif;font-size:24px;letter-spacing:.08em;color:rgba(201,162,74,.85)}
+</style></head><body>
+<div class="frame"></div>
+<div class="wrap">
+  <img class="gate" src="@@GATE@@" alt="">
+  <div class="brand">לאוקמי גירסא</div>
+  <div class="rule"></div>
+  <div class="daf">@@DAF@@</div>
+  <div class="line">@@LINE@@</div>
+</div>
+<div class="foot">קיצור הדף היומי</div>
+</body></html>

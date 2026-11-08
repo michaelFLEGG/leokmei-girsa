@@ -1,0 +1,51 @@
+# הדף היומי בווטסאפ (פרומפט 23, 8.11.2026): השולח - הווטסאפ של בעל הפרויקט כמכשיר מקושר. חינם, בלי שירות בתשלום,
+# ועובד גם כשהמחשב כבוי. הועתק מן השולח של "הזוהר היומי" (zyomi-wa.yml בממלכת הזוהר); מכשיר מקושר נפרד ממנו.
+#
+# מי מפעיל: התזמון כאן, כל עשר דקות. הצעד הראשון רק שואל את השרת (leokmei-daf, /poll - ציבורי ובלי סוד) אם יש מה לעשות:
+# שליחה של הבוקר, "שלח עכשיו", חיבור, הקמת הקהילה או הודעת ניסיון. אין - הריצה נגמרת בתוך שניות, בלי להתקין דבר.
+# ההרשאה מול השרת: אסימון OIDC של קובץ ההרצה הזה בלבד (קהל leokmei-daf). אין כאן שום סוד, ושום מספר טלפון אינו נכתב ליומן.
+
+name: הדף היומי - שולח לווטסאפ
+
+on:
+  schedule:
+    - cron: '7,17,27,37,47,57 * * * *'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: daf-wa
+  cancel-in-progress: false
+
+jobs:
+  wa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: יש מה לעשות?
+        id: poll
+        run: |
+          r=$(curl -s --max-time 20 https://leokmei-daf.m7654301.workers.dev/poll || echo '{}')
+          echo "$r"
+          if echo "$r" | grep -q '"go":true'; then echo "go=1" >> "$GITHUB_OUTPUT"; else echo "go=0" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/checkout@v4
+        if: steps.poll.outputs.go == '1'
+        with:
+          sparse-checkout: |
+            tools/daf_wa/wa-send.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        if: steps.poll.outputs.go == '1'
+        with:
+          node-version: '20'
+      - name: ספריות
+        if: steps.poll.outputs.go == '1'
+        run: |
+          npm init -y >/dev/null
+          npm i @whiskeysockets/baileys@6.7.9 qrcode@1.5.4 pino@9.5.0 --no-audit --no-fund --loglevel=error
+      - name: הרצה
+        if: steps.poll.outputs.go == '1'
+        run: node tools/daf_wa/wa-send.mjs

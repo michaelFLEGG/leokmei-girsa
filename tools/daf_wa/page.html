@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>@@TITLE@@</title>
+<meta name="description" content="@@DESC@@">
+<meta name="robots" content="noindex,follow">
+<meta property="og:type" content="article"><meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="לאוקמי גירסא"><meta property="og:title" content="@@OGTITLE@@">
+<meta property="og:description" content="@@DESC@@"><meta property="og:url" content="@@URL@@">
+<meta property="og:image" content="@@OG@@"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="@@DAF@@"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#fdfbf6">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preload" href="/fonts/frank.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* תצוגת הטלפון הקלה (פרומפט 23). האנטרים של הוורד נשמרים: עמודת הטקסט 20.75em בפרנק - אותו כיול של האתר.
+   הגודל נגזר מרוחב המסך, כדי שהשורה תישבר באותו מקום בכל טלפון. */
+@font-face{font-family:'Frank';src:url(/fonts/frank.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Frank';src:url(/fonts/frank-b.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Vilna';src:url(/fonts/vilna-r.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Vilna';src:url(/fonts/vilna-b.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{--paper:#fdfbf6;--ink:#2a2520;--ink2:#1d1a16;--soft:#9a8c6e;--hs:#958c7d;--gold:#cdbf9c;--fs:min(15.1px,calc((100vw - 14px) / 24.9))}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font-family:'Frank',serif;font-size:var(--fs);line-height:1.55;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+main{width:24.85em;margin:0 auto;padding:0 0 22px}
+.top{border-bottom:.5px solid var(--gold);margin:0 0 10px;padding:12px 4px 8px;display:flex;justify-content:space-between;align-items:baseline;gap:.6em}
+.top .d{font-family:'Vilna',serif;font-weight:700;font-size:1.13em;color:var(--ink2)}
+.top .s{font-family:'Vilna',serif;font-size:.8em;color:#9a9080}
+.r{display:grid;grid-template-columns:3.6em 20.75em;column-gap:.45em}
+.r p{margin:0;white-space:pre-wrap;text-align:justify}
+.r.in p{padding-right:1em}
+.sp{margin-top:.75em}
+.h{font-family:'Vilna',serif;font-weight:700;font-size:.74em;line-height:1.35;color:var(--soft);text-align:left;padding-top:.45em;overflow-wrap:anywhere}
+.h .am,.h i{font-style:normal;font-size:1em;font-family:inherit}
+.dafrow{font-family:'Vilna',serif;font-weight:700;font-size:.8em;color:var(--ink2);width:4.5em;text-align:left;margin:.6em 0 -.35em;line-height:1}
+i{font-style:normal}
+.am{font-family:'Vilna',serif;font-weight:400;font-size:.9em}
+.hs,.mf{font-size:.8em;color:var(--hs)}
+.ps{font-family:'Vilna',serif;font-weight:400;font-size:.95em}
+.dm,.ns{font-family:'Vilna',serif;font-weight:700}
+.b{font-weight:400}
+.nose{text-align:center;font-family:'Vilna',serif;font-weight:700;font-size:.98em;margin:1.2em 0 .2em;padding-right:4.05em;letter-spacing:.01em}
+.nose .am{font-weight:700;font-size:1em}
+.dh{text-align:center!important;font-family:'Vilna',serif;font-weight:700;font-size:1em}
+.hadran{text-align:center;font-family:'Vilna',serif;margin:1.1em 0 0;padding-right:4.05em;color:#9a9080;font-size:.85em}
+.perek{text-align:center;font-family:'Vilna',serif;font-weight:700;font-size:1.05em;margin:.1em 0 .5em;padding-right:4.05em}
+.mrow{margin-top:.4em}
+.mrow .h{padding-top:.55em}
+.ml{color:var(--soft)}
+.mish{border-top:.5px solid var(--gold);border-bottom:.5px solid var(--gold);padding:.35em 0 .4em;font-family:'Vilna',serif;font-weight:400;font-size:1.06em;line-height:1.7}
+.mish p{margin:0;text-align:justify}
+.mish .am{font-size:1em}
+.hatz{text-align:center;color:var(--gold);margin:.4em 0;padding-right:4.05em;font-size:.7em;letter-spacing:.4em}
+.foot{margin:1.6em 0 0;padding-top:.7em;border-top:.5px solid var(--gold);text-align:center;font-family:'Vilna',serif;font-size:.82em;color:#9a9080}
+.foot a{color:var(--ink2);text-decoration:none;border-bottom:.5px solid var(--gold)}
+@media (min-width:700px){:root{--fs:18px}}
+</style></head><body><main>
+<div class="top"><span class="d">@@DAF@@</span><span class="s">לאוקמי גירסא<span id="hd"></span></span></div>
+@@BODY@@
+<div class="foot"><a href="@@FULL@@">לדף המלא באתר</a> · <a href="/">לאוקמי גירסא</a></div>
+</main>
+<script>
+/* התאריך העברי שבו נלמד הדף (תאריכים עבריים בלבד) */
+(function(){try{var d=new Date('@@DATE@@T12:00:00'),f=new Intl.DateTimeFormat('he-u-ca-hebrew',{day:'numeric',month:'long'}).formatToParts(d),
+day=0,mon='';f.forEach(function(p){if(p.type==='day')day=+p.value;if(p.type==='month')mon=p.value});
+var L=[[400,'ת'],[300,'ש'],[200,'ר'],[100,'ק'],[90,'צ'],[80,'פ'],[70,'ע'],[60,'ס'],[50,'נ'],[40,'מ'],[30,'ל'],[20,'כ'],[10,'י'],[9,'ט'],[8,'ח'],[7,'ז'],[6,'ו'],[5,'ה'],[4,'ד'],[3,'ג'],[2,'ב'],[1,'א']],t='',n=day;
+if(n===15)t='טו';else if(n===16)t='טז';else L.forEach(function(p){while(n>=p[0]){t+=p[1];n-=p[0]}});
+t=t.length>1?t.slice(0,-1)+'"'+t.slice(-1):t+"'";mon=mon.replace(/^ב?/,'').replace('חשוון','חשון');
+if(day&&mon)document.getElementById('hd').textContent=' · '+t+' ב'+mon}catch(e){}})();
+</script>
+</body></html>

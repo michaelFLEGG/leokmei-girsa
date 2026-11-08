@@ -190,11 +190,11 @@
       if(inW)left--;
       var rest=v.slice(i);
       if(dropSay){rest=rest.replace(/^((?:\}|\s)*)(אמר|אומר)(?=[\s}:]|$)/,function(x,a){return a.replace(/\s/g,'')})}
-      var r=(o+rest.replace(/^[\s:]+/,'')).replace(/\{[^{}:]+:\}/g,'').replace(/^\s+/,'');
+      var r=(o+rest.replace(/^[\s:,\-]+/,'')).replace(/\{[^{}:]+:\}/g,'').replace(/^\s+/,'').replace(/^((?:\}\s*)*)[-:,]+\s*/,'$1');
       return r}
     /* תיקון אוטומטי של כותרות צד ארוכות וכפילויות ברורות. מחזיר {text,notes,changed} */
     function autofixTitles(text){
-      var T=String(text||'').replace(/\r/g,'').split('\n'),out=[],notes=[],ch=0;
+      var T=String(text||'').replace(/\r/g,'').split('\n'),out=[],notes=[],ch=0,items=[];
       var P=parse(text);
       /* עוברים על השורות בסדר, ומזהים כותרות צד לפי התחביר */
       for(var i=0;i<T.length;i++){
@@ -203,11 +203,14 @@
           if(titleLen(p)==='long'){
             /* עוגן קצר + נושא. אם כבר בא מיד לפני שורת (נושא) - לא מוסיפים עוד אחת */
             var sp=splitTitle(p);
+            var restW=twWords(sp.rest).filter(function(w){return w.replace(/[^א-ת]/g,'').length>=2});
+            if(restW.length<3){notes.push('כותרת צד ארוכה - דורשת עריכה ידנית: '+p.slice(0,40));items.push({kind:'long',manual:1,title:p});out.push(raw);continue}
             if(sp.rest){
               var prev=out.length?out[out.length-1]:'';
               if(!/^\((נושא)\)/.test(prev)&&!/^\[כותרת-נושא:/.test(prev))out.push('(נושא) '+sp.rest.replace(/:$/,''));
               else notes.push('כותרת ארוכה הוחלפה בעוגן; הנושא כבר קיים: '+sp.rest.slice(0,30));
               if(sp.anchor&&sp.anchor!==''&&twWords(sp.anchor).length)out.push('[צד:'+sp.anchor+']');
+              items.push({kind:'long',title:p,heading:sp.rest.replace(/:$/,''),side:sp.anchor});
               notes.push('כותרת צד ארוכה פוצלה: '+p.slice(0,40));ch++;continue}}
         }
         out.push(raw)}
@@ -226,9 +229,16 @@
         /* תיקון רק כשהחפיפה פותחת את השורה והשארית אינה ריקה (ברור) */
         var firstOverlap=n===tw.length||n>=2;
         var fixed=stripWords(body,n,tw.length<=2);
-        if(firstOverlap&&plainI(fixed).replace(/\s+/g,'').length>=4&&fixed!==body){
+        var fp=plainI(fixed).trim(),fw=twWords(fp).length;
+        /* ברור: החפיפה פותחת את השורה, ומיד אחריה מפריד (מקף / נקודתיים / פסיק) או שהכותרת כולה חזרה */
+        var pb=plainI(body),pw=pb.split(/(\s+)/),cnt=0,endAt=0;
+        for(var q=0;q<pw.length&&cnt<n;q++){endAt+=pw[q].length;if(pw[q]&&!/^\s+$/.test(pw[q]))cnt++}
+        var sepOk=/^\s*[-:,.]/.test(pb.slice(endAt))||n===tw.length&&/^\s*(אמר|אומר)?\s*[א-ת{]/.test(pb.slice(endAt));
+        if(firstOverlap&&!sepOk){items.push({kind:'dup',manual:1,title:plainI(tp),line:pb});continue}
+        if(firstOverlap&&fw>=4&&!/^[\[(•]/.test(fp)&&fixed!==body){
+          items.push({kind:'dup',title:plainI(tp),line:plainI(body),fixed:plainI(fixed)});
           out[k]=(sty?sty[0]:'')+fixed;notes.push('כפילות אחרי כותרת הוסרה: '+tw.join(' ').slice(0,30));ch++}}
-      return {text:out.join('\n'),notes:notes,changed:ch}}
+      return {text:out.join('\n'),notes:notes,changed:ch,items:items}}
     /* שגיאות/אזהרות של כותרות צד וכפילות, על נוסח. orig: הנוסח המקורי (כותרות שלא השתנו - אזהרה, לא שגיאה) */
     function titleIssues(newText,origText){
       var E=[],W=[],origT={};

@@ -94,7 +94,11 @@ def gate(keys):
         # 9.11.2026 (בעל הפרויקט): לעולם לא נקודה-פסיק בתוכן - רק נקודה
         if any(';' in s for s in [x.get('t', '') for x in lines] + [c.get('card', '')] + [q.get('q', '') for q in [c.get('hook') or {}] + (c.get('alts') or [])]):
             e.append('נקודה-פסיק (;) בתוכן - רק נקודה')
-        if NIKUD.search(blob):
+        # 9.11.2026: ניקוד מותר רק בציטוט פסוק, בתוך גרשים בודדים בשורות; ומרכאות כפולות לציטוט - לא (רק גרש לפני ואחרי)
+        bare = json.dumps({k: v for k, v in c.items() if k != 'lines'}, ensure_ascii=False) + ' '.join(re.sub(r"'[^']*'", '', x.get('t', '')) for x in lines)
+        if any(re.search(r'(?:^|[\s(:\-])"[א-ת]|[א-ת.?!]"(?:[\s.,:)?!\-]|$)', s) for s in [x.get('t', '') for x in lines] + [c.get('card', '')] + [q.get('q', '') for q in [c.get('hook') or {}] + (c.get('alts') or [])]):
+            e.append("ציטוט במרכאות כפולות - רק גרש לפני ואחרי ('...')")
+        if NIKUD.search(bare):
             e.append('ניקוד בתוכן')
         if f[:-5] != '%s-%s' % (c.get('slug'), c.get('n')):
             e.append('שם הקובץ אינו תואם slug-n')

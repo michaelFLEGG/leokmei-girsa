@@ -313,7 +313,7 @@
   function skpScore(S){
     if(!S)return '';
     const M=(S.model&&S.model.perSeg)||{},P=S.perSeg||{},f=n=>(Math.round((+n||0)*100)/100).toString(),
-      pc=n=>(n>0?'+':'')+(+n||0)+'%';
+      pc=n=>'<bdi dir="ltr">'+(n>0?'+':'')+(+n||0)+'%</bdi>';
     const row=(t,k)=>'<tr><td>'+t+'</td><td>'+f(P[k])+'</td><td>'+(S.model?f(M[k]):'-')+'</td></tr>';
     return '<details class="skpscore"><summary>כרטיס ציון: '+(S.block?'<b class="skpbad">'+S.block+' חוסמות</b>':'0 חוסמות')+
       ' · '+S.warnLeft+' אזהרות · הדגשות '+S.bold+' · רווחים '+S.space+' · מקפי תירוץ '+S.dash+' · כותרות צד חדשות '+S.side+

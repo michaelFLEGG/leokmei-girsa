@@ -1,0 +1,40 @@
+name: סכם - המקליט
+# פרומפט 28 (9.11.2026). כל עריכה של המנהל שנכנסת ל-data/edits נרשמת מיד ללמידה של סכם
+# (data/sakem/learn/<מסכת>.jsonl), לפני שהקליטה לוורד מוחקת אותה מן הקובץ. הסנכרון המתוזמן
+# (sakem-sync.yml) מריץ את אותה הקלטה, אבל השעון של גיטהאב אינו אמין; כאן ההקלטה רצה בכל דחיפה של עריכות.
+# --since-last עובר גם על כל קומיט מאז ההקלטה הקודמת, כך שעריכה שנמחקה בינתיים אינה אובדת.
+on:
+  push:
+    branches: [main]
+    paths: ['data/edits/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: sakem-sync
+  cancel-in-progress: false
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 400
+      - name: הקלטה ודפוסים
+        run: |
+          node tools/sakem/learn.mjs record --since-last
+          node tools/sakem/learn.mjs patterns
+      - name: שמירה בריפו
+        run: |
+          git config user.name "leokmei-sakem"
+          git config user.email "sakem@leokmei.com"
+          git add data/sakem/learn
+          if git diff --cached --quiet; then echo "אין שינוי"; exit 0; fi
+          git commit -m "סכם: הקלטת עריכות המנהל ללמידה [skip ci]"
+          ok=0
+          for i in 1 2 3; do
+            if git pull --rebase -q -X theirs && git push -q; then ok=1; break; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 5
+          done
+          if [ "$ok" != 1 ]; then echo "::error::הדחיפה לריפו נכשלה שלוש פעמים"; exit 1; fi

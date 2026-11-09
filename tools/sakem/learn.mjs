@@ -114,8 +114,18 @@ function record() {
     if (!f.endsWith('.json')) continue;
     try { take(f.replace(/\.json$/, ''), JSON.parse(fs.readFileSync(path.join(ED, f), 'utf8')), 'now'); } catch (e) { console.error('עצירה: קובץ עריכות פגום', f, e.message); process.exit(1); }
   }
-  if (has('--backfill')) {
-    const log = execFileSync('git', ['log', '--since=' + SINCE, '--format=@%H', '--name-only', '--', 'data/edits/'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64e6 });
+  /* --since-last (9.11.2026): גם כל קומיט של data/edits מאז ההקלטה הקודמת - כדי שעריכה שנקלטה לוורד ונמחקה
+     מן הקובץ בין שתי הרצות לא תאבד. נקודת ההתחלה נשמרת ב-data/sakem/learn/state.json */
+  const stF = path.join(LD, 'state.json');
+  let st = {}; try { st = JSON.parse(fs.readFileSync(stF, 'utf8')); } catch (e) { /* ראשונה */ }
+  const head = (() => { try { return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim(); } catch (e) { return ''; } })();
+  let range = null;
+  if (has('--since-last') && st.commit) {
+    try { execFileSync('git', ['cat-file', '-e', st.commit + '^{commit}'], { cwd: ROOT, stdio: 'ignore' }); range = st.commit + '..HEAD'; }
+    catch (e) { console.error('עצירה: נקודת ההקלטה הקודמת', st.commit, 'אינה בהיסטוריה שנמשכה (fetch-depth קצר?) - לא ממשיכים בשקט'); process.exit(1); }
+  }
+  if (has('--backfill') || range) {
+    const log = execFileSync('git', range ? ['log', range, '--format=@%H', '--name-only', '--', 'data/edits/'] : ['log', '--since=' + SINCE, '--format=@%H', '--name-only', '--', 'data/edits/'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 64e6 });
     let h = '', n = 0;
     for (const l of log.split('\n')) {
       if (l.startsWith('@')) { h = l.slice(1); n++; continue; }
@@ -125,8 +135,9 @@ function record() {
         try { take(path.basename(l, '.json'), JSON.parse(txt), 'git'); } catch (e) { /* גרסה פגומה בהיסטוריה - מדולגת */ }
       }
     }
-    console.log('היסטוריה: עברו', n, 'קומיטים מ-' + SINCE);
+    console.log('היסטוריה: עברו', n, 'קומיטים ' + (range ? 'מאז ההקלטה הקודמת' : 'מ-' + SINCE));
   }
+  if (head) { st.commit = head; st.t = Date.now(); fs.writeFileSync(stF, JSON.stringify(st, null, 1)); }
   let tot = 0;
   for (const slug in add) {
     add[slug].sort((a, b) => a.t - b.t);

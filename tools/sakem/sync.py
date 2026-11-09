@@ -169,7 +169,7 @@ def main():
             changed += 1
         print('מה סכם למד: ביטולים מן הדף:', n)
     import subprocess
-    for a in ((['patterns'],) if DRY else (['record'], ['patterns'])):
+    for a in ((['patterns'],) if DRY else (['record', '--since-last'], ['patterns'])):
         rc = subprocess.run(['node', os.path.join(ROOT, 'tools', 'sakem', 'learn.mjs')] + a + (['--dry'] if DRY and a[0] == 'patterns' else []), cwd=ROOT)
         if rc.returncode:
             raise SystemExit('עצירה: המקליט נכשל (' + a[0] + ')')

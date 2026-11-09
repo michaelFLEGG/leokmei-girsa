@@ -1741,6 +1741,51 @@
    "units": 1,
    "out": 1,
    "older_kept": 0
+  },
+  "1CAbz_S78MyVCQ8D3NeLIOG40s1449iX8|2026-11-09T10:31:56.034Z": {
+   "name": "אצווה-2026-11-09-sotah-p01-u01.json",
+   "id": "1CAbz_S78MyVCQ8D3NeLIOG40s1449iX8",
+   "modified": "2026-11-09T10:31:56.034Z",
+   "opened": "2026-11-09T12:40:48Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1uYMjyZHMX_SZzL8gur5-WS0Uaf9phQ7h|2026-11-09T10:39:06.112Z": {
+   "name": "אצווה-2026-11-09-sotah-p01-u02.json",
+   "id": "1uYMjyZHMX_SZzL8gur5-WS0Uaf9phQ7h",
+   "modified": "2026-11-09T10:39:06.112Z",
+   "opened": "2026-11-09T12:40:48Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1s-BWqJuBFAs2mCS_WfnAzhMOnK9ZYAFt|2026-11-09T10:45:28.269Z": {
+   "name": "אצווה-2026-11-09-sotah-p01-u03.json",
+   "id": "1s-BWqJuBFAs2mCS_WfnAzhMOnK9ZYAFt",
+   "modified": "2026-11-09T10:45:28.269Z",
+   "opened": "2026-11-09T12:40:48Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1uSHs1kswMMVKeHZzpHCoU4GZhwnjxj9v|2026-11-09T10:46:35.680Z": {
+   "name": "אצווה-2026-11-09-sotah-p01-u04.json",
+   "id": "1uSHs1kswMMVKeHZzpHCoU4GZhwnjxj9v",
+   "modified": "2026-11-09T10:46:35.680Z",
+   "opened": "2026-11-09T12:40:48Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1JkAb0Kev6gAJ_Wm0OCKWDp9s9DrPPwsf|2026-11-09T12:35:12.543Z": {
+   "name": "אצווה-2026-11-09-sotah-p02-u01.json",
+   "id": "1JkAb0Kev6gAJ_Wm0OCKWDp9s9DrPPwsf",
+   "modified": "2026-11-09T12:35:12.543Z",
+   "opened": "2026-11-09T12:40:48Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
   }
  }
 }

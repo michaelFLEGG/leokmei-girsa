@@ -1,0 +1,33 @@
+{
+ "slug": "sotah",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-09T12:40:50Z",
+   "unc_done": true,
+   "handoff_units": [
+    "sotah-p01-u01",
+    "sotah-p01-u02",
+    "sotah-p01-u03",
+    "sotah-p01-u04"
+   ],
+   "result": {
+    "generated": 83,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 63
+   }
+  }
+ },
+ "created": "2026-11-09T12:40:50Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.222,
+   "n": 7,
+   "at": "2026-11-09T12:40:50Z"
+  }
+ ],
+ "updated": "2026-11-09T12:40:50Z"
+}

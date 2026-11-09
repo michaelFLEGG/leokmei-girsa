@@ -3,7 +3,7 @@
  "jid": "bekhorot-p9",
  "slug": "bekhorot",
  "title": "בכורות פרק תשיעי - מעשר בהמה",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 8014,
@@ -1804,5 +1804,11 @@
    "read": []
   }
  ],
- "t": 1794215119341
+ "t": 1794215121689,
+ "counts": {
+  "shown": 50,
+  "spatial": 2,
+  "adds": 5,
+  "missing": 0
+ }
 }

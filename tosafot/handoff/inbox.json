@@ -1714,6 +1714,33 @@
    "units": 1,
    "out": 1,
    "older_kept": 0
+  },
+  "1YwmTaVA10EWpXAcuEsdPc269R-QLDQ9-|2026-11-08T20:30:28.607Z": {
+   "name": "אצווה-2026-11-08-nazir-p03-u01.json",
+   "id": "1YwmTaVA10EWpXAcuEsdPc269R-QLDQ9-",
+   "modified": "2026-11-08T20:30:28.607Z",
+   "opened": "2026-11-09T00:39:37Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1E_bN7wDOS7xjBiQGJ34gJPUZPE41kw2n|2026-11-08T20:35:10.548Z": {
+   "name": "אצווה-2026-11-08-nazir-p03-u02.json",
+   "id": "1E_bN7wDOS7xjBiQGJ34gJPUZPE41kw2n",
+   "modified": "2026-11-08T20:35:10.548Z",
+   "opened": "2026-11-09T00:39:37Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1tFq62DbOCSbB6n5FBUWqOymAdDhUarGP|2026-11-08T20:39:01.023Z": {
+   "name": "אצווה-2026-11-08-nazir-p03-u03.json",
+   "id": "1tFq62DbOCSbB6n5FBUWqOymAdDhUarGP",
+   "modified": "2026-11-08T20:39:01.023Z",
+   "opened": "2026-11-09T00:39:37Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
   }
  }
 }

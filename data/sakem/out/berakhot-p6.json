@@ -3,7 +3,7 @@
  "jid": "berakhot-p6",
  "slug": "berakhot",
  "title": "ברכות פרק שישי - כיצד מברכין",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 2668,
@@ -2046,5 +2046,20 @@
    "read": []
   }
  ],
- "t": 1794232143408
+ "t": 1794232161073,
+ "summary": "בפרק: 38 הדגשות במשנה, 27 רווחים, 14 מקפי תירוץ, 75 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 38,
+  "space": 27,
+  "dash": 14,
+  "side": 75,
+  "hatz": 0
+ },
+ "learnedNew": 25,
+ "counts": {
+  "shown": 39,
+  "spatial": 0,
+  "adds": 3,
+  "missing": 0
+ }
 }

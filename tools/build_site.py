@@ -2710,7 +2710,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function toEl(e,top){const f=$('#flow');
     if(LZ&&e.closest&&e.closest('.row.lz'))revealTail();   /* היעד בזנב שטרם נפרס: מכאן אי אפשר למדוד מיקום */
     /* מעבר לדף (top): ראש הדף בראש המסך, ולא באמצעו (פרומפט 28 - הנחיתה מן הווטסאפ "בראש הדף") */
-    if(f.classList.contains('vert')){e.scrollIntoView({block:top?'start':'center'});return}
+    if(f.classList.contains('vert')){e.scrollIntoView({block:top?'start':'center'});
+      /* בזמן הטעינה שורות ומפרשים מעל היעד עוד מתמלאים ומזיזים אותו: מיישרים שוב כל עוד הלומד לא גלל בעצמו */
+      if(top){const t0=Date.now();if(!window.__uin){window.__uin=1;['wheel','touchmove','keydown','pointerdown'].forEach(ev=>f.addEventListener(ev,()=>{window.__ut=Date.now()},{passive:true}))}
+        [250,700,1500,3000].forEach(ms=>setTimeout(()=>{if((window.__ut||0)>t0||!e.isConnected)return;
+          const d=e.getBoundingClientRect().top-f.getBoundingClientRect().top;if(Math.abs(d)>3)e.scrollIntoView({block:'start'})},ms))}
+      return}
     f.scrollLeft += e.getBoundingClientRect().right - f.getBoundingClientRect().right;}
   /* ---- איחוי שורה יתומה ----
      מילה בודדת שגלשה לשורה משלה נמשכת אל השורה שמעליה בדחיסה עדינה:

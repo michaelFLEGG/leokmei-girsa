@@ -100,18 +100,19 @@
     /* הסימן יוצא מן הכתובת מיד, כדי ששיתוף מכאן לא יישא אותו הלאה */
     try { q.delete('src'); var qs = q.toString(); history.replaceState(history.state, '', location.pathname + (qs ? '?' + qs : '') + location.hash); } catch (e) { /* */ }
     try { if (W.LK && LK.event) LK.event('נחיתה מווטסאפ'); } catch (e) { /* */ }
-    setTimeout(function () {
-      if (Dc.getElementById('wastrip')) return;
-      var s = Dc.createElement('div'); s.id = 'wastrip'; s.setAttribute('role', 'region'); s.setAttribute('aria-label', 'קיצור הדף היומי');
-      var mas = (typeof D !== 'undefined' && D.masechet) || '';
-      s.innerHTML = '<span class="wst"><span class="wsl">קיצור הדף היומי</span><span class="wsd">·</span><b>' + mas + ' ' + gq(curDaf()) + '</b></span>' +
-        '<a class="wsj" href="' + WA + '" target="_blank" rel="noopener" data-join="strip">' + ic('wa') + 'הצטרפות לקבלה יומית בווטסאפ</a>' +
-        '<button type="button" class="wsx" aria-label="סגירה" title="סגירה">×</button>';
-      s.querySelector('.wsx').onclick = function () { s.remove(); B.classList.remove('wastrip'); remeasure(); };
-      var b = Dc.getElementById('bar');
-      if (b && b.parentNode === B) b.after(s); else B.insertBefore(s, B.firstChild);
-      B.classList.add('wastrip'); remeasure();
-    }, 450);
+    /* הרצועה נכנסת מיד, לפני שהדף נוחת על הדף של היום, כדי שהנחיתה תחושב כשהיא כבר במקומה (כניסה מאוחרת דחפה את הדף) */
+    if (Dc.getElementById('wastrip')) return;
+    var lbl = '';
+    try { var m = decodeURIComponent(location.hash).match(/daf=([^&]+)/); lbl = m ? m[1] : ''; } catch (e) { lbl = ''; }
+    var s = Dc.createElement('div'); s.id = 'wastrip'; s.setAttribute('role', 'region'); s.setAttribute('aria-label', 'קיצור הדף היומי');
+    var mas = (typeof D !== 'undefined' && D.masechet) || ((Dc.getElementById('pkmas') || {}).textContent || '').trim();
+    s.innerHTML = '<span class="wst"><span class="wsl">קיצור הדף היומי</span><span class="wsd">·</span><b>' + mas + ' ' + gq(lbl || curDaf()) + '</b></span>' +
+      '<a class="wsj" href="' + WA + '" target="_blank" rel="noopener" data-join="strip">' + ic('wa') + 'הצטרפות לקבלה יומית בווטסאפ</a>' +
+      '<button type="button" class="wsx" aria-label="סגירה" title="סגירה">×</button>';
+    s.querySelector('.wsx').onclick = function () { s.remove(); B.classList.remove('wastrip'); remeasure(); };
+    var b = Dc.getElementById('bar');
+    if (b && b.parentNode === B) b.after(s); else B.insertBefore(s, B.firstChild);
+    B.classList.add('wastrip'); remeasure();
   }
   strip();
 

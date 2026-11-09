@@ -51,7 +51,7 @@
   if (W.MutationObserver && bar) new MutationObserver(function () { clearTimeout(gT); gT = setTimeout(gather, 30); }).observe(bar, { childList: true, subtree: true });
   gather();
   /* כיתוב הריחוף של "עריכה" לפי התפקיד: לגולש זו הצעת תיקון */
-  function edTitle() { var b = Dc.getElementById('edbtn'); if (b) b.title = adm() ? 'עריכה (Ctrl+Alt+E)' : 'הצעת תיקון'; }
+  function edTitle() { var b = Dc.getElementById('edbtn'); if (b) b.title = adm() ? 'עריכה (Ctrl+Alt+ק)' : 'הצעת תיקון'; }
   edTitle(); setTimeout(edTitle, 1500);
 
   /* ------------------------------------------------ ב. כפתור צף אחד למנהל */

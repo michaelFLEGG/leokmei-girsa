@@ -276,6 +276,6 @@
 
     window.tsOpen=open;
     document.addEventListener('keydown',e=>{
-      if(!EDIT||!e.ctrlKey||!e.altKey||e.shiftKey||e.metaKey||e.code!=='KeyK')return;
+      if(!EDIT||e.shiftKey||e.metaKey||!((e.ctrlKey&&e.altKey)||(e.getModifierState&&e.getModifierState('AltGraph')))||!(e.code==='KeyK'||e.key==='ל'))return;  /* 9.11: גם AltGr והתו העברי */
       e.preventDefault();e.stopPropagation();open()},true);
   })();

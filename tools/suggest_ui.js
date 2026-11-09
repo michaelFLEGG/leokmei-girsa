@@ -574,8 +574,8 @@
     const cur=rows[SQCUR],id=cur&&cur.dataset.id;
     if(e.ctrlKey&&!e.altKey&&e.code==='KeyZ'){e.preventDefault();sqUndo();return}
     if(e.ctrlKey||e.altKey||e.metaKey)return;
-    if(e.key==='ArrowDown'||e.key==='j'){e.preventDefault();SQCUR=Math.min(rows.length-1,SQCUR+1);sqCurPaint()}
-    else if(e.key==='ArrowUp'||e.key==='k'){e.preventDefault();SQCUR=Math.max(0,SQCUR-1);sqCurPaint()}
+    if(e.key==='ArrowDown'||e.key==='j'||e.key==='ח'){e.preventDefault();SQCUR=Math.min(rows.length-1,SQCUR+1);sqCurPaint()}
+    else if(e.key==='ArrowUp'||e.key==='k'||e.key==='ל'){e.preventDefault();SQCUR=Math.max(0,SQCUR-1);sqCurPaint()}
     else if(!id)return;
     else if(e.code==='KeyA'||(e.key==='Enter'&&SQF.ty==='style')){e.preventDefault();sqDecide(id,'accepted')}
     else if(e.code==='KeyD'){e.preventDefault();sqDecide(id,'rejected')}
@@ -673,7 +673,11 @@
     try{await api('/notes',{method:'POST',body:JSON.stringify({op:'del',id})});NT=NT.filter(y=>y.id!==id);ntDraw();ntBadge()}catch(e){alert(e.message)}}
   async function ntLearned(id,on){try{await api('/notes',{method:'POST',body:JSON.stringify({op:'learned',id,on:!!on})});
     const x=NT.find(y=>y.id===id);if(x)x.learned=on?Date.now():0;ntDraw();ntBadge();if(typeof ntMark==='function')ntMark()}catch(e){alert(e.message)}}
+  /* 9.11.2026: "הערה לקלוד" - Ctrl+Alt+י, ובחלופה Ctrl+Shift+י. במקלדת העברית התקנית Ctrl+Alt הוא AltGr,
+     ולכן מזהים גם לפי התו (י) וגם לפי מצב AltGraph, ומאזינים בשלב הלכידה - לפני שהעורך בולע את הלחיצה */
   document.addEventListener('keydown',e=>{
-    if(!EDIT||!isAdmin())return;
-    if(e.ctrlKey&&e.altKey&&!e.shiftKey&&!e.metaKey&&e.code==='KeyH'){e.preventDefault();ntAdd()}});
+    if(!EDIT||!isAdmin()||e.metaKey)return;
+    const hk=e.code==='KeyH'||e.key==='י'||e.key==='h'||e.key==='H';
+    const ag=(e.ctrlKey&&e.altKey)||(e.getModifierState&&e.getModifierState('AltGraph'));
+    if(hk&&((ag&&!e.shiftKey)||(e.ctrlKey&&e.shiftKey&&!e.altKey))){e.preventDefault();e.stopPropagation();ntAdd()}},true);
   setTimeout(ntLoad,4000);

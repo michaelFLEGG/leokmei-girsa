@@ -365,7 +365,9 @@
       P.forEach(function(k,i){
         if(k.t==='title'){var p=plainI(k.v).replace(/\s+/g,' ').trim(),L=titleLen(p);
           if(L==='long'){(origT[pnorm(p)]?W:E).push('כותרת צד ארוכה (מעל שלוש מילים) - נושא לכותרת נושא: '+p.slice(0,40))}
-          else if(L==='three')W.push('כותרת צד של שלוש מילים שאינה דובר + מילת מהלך: '+p.slice(0,40))}
+          /* 9.11.2026 (בעל הפרויקט): כותרת צד - עד שתי מילים, בלי יוצא מן הכלל. שלוש - לקצר: שם בראשי תיבות
+             (רב אחא בר יעקב - רב אחא, או רא"ב"י), להשמיט "אמר" / "ותירץ", או להעביר את המילה השלישית לשורה */
+          else if(twWords(p).length===3)(origT[pnorm(p)]?W:E).push('כותרת צד של שלוש מילים - עד שתיים בלבד; לקצר (ראשי תיבות לשם, בלי "אמר", או המילה השלישית לשורה): '+p.slice(0,40))}
         if(k.t==='title'||(k.t==='line'&&k.sty==='nose')||(k.t==='lock'&&(k.kind==='כותרת-נושא'||k.kind==='כותרת-דה'))){
           var tp=k.t==='lock'?k.val:k.v,j=i+1;
           if(k.t==='title')while(j<P.length&&P[j].t==='title')j++;
@@ -764,13 +766,14 @@
         if(sty&&sty[1]!=='רווח'&&sty[1]!=='תשובה'){out.push(raw);continue}
         var body=sty?s.slice(sty[0].length):s,num=(/^[א-י]\.\s+/.exec(body)||[''])[0];body=body.slice(num.length);
         var m=/^\{אם:([^{}]+)\}\s*/.exec(body);
-        if(!m){out.push(raw);continue}
+        /* 9.11: שורה ממוספרת (א. ב.) - המספר נשאר בגוף, ולכן גם הדובר נשאר (אחרת "ב." עובר לצד ו"א." נשאר בגוף) */
+        if(!m||num){out.push(raw);continue}
         var nm=m[1].trim(),rest=body.slice(m[0].length);
         /* רק דובר שאומר (נקודתיים), עד שלוש מילים, ושאחריו יש תוכן */
         /* (שורה קצרה מאוד - צלע של מחלוקת או תשובה בת מילים ספורות - נשארת בשורה, כדי שלא תיוותר שורה בת מילה) */
         /* רק שם חכם (לא "ושמא תאמר", לא "א"ל" לבדו), ולא סימון שכבר נושא מקף או מספור בתוך הסגנון */
         if(/^[-\s]|^[א-י]\./.test(nm)||!isNameW(twWords(nm)[0]||'')){out.push(raw);continue}
-        if(!/:$/.test(nm)||twWords(nm).length>3||plainI(rest).replace(NIK,'').trim().length<20){out.push(raw);continue}
+        if(!/:$/.test(nm)||twWords(nm).length>2||plainI(rest).replace(NIK,'').trim().length<20){out.push(raw);continue}
         /* צלע במחלוקת שכולה בשורה אחת ("לב"ש: ... וב"ה: ...") - נשארת בשורה (כלל 8 וכלל 17ג) */
         if(/\{אם:[^{}]*:\}/.test(rest)){out.push(raw);continue}
         var prev=out.length?out[out.length-1].trim():'';
@@ -826,7 +829,7 @@
     function comply(origText,newText,o){
       o=o||{};var E=[],W=[],st={bold:0,space:0,dash:0,side:0,hatz:(o.hatzDel||0)};
       /* 1. כל משנה (שנסגרה בקטע) - יש בה הדגשת עיקר */
-      mishnaBlocks(newText).forEach(function(b){var has=b.lines.some(function(v){return v.indexOf('{ב:')>-1});
+      mishnaBlocks(newText).forEach(function(b){var has=b.lines.some(function(v){return v.indexOf('{ב:')>-1||v.indexOf('{נש:')>-1});/* 9.11: בסוכה עיקר המשנה מסומן כנושא משנה {נש:} - גם הוא הדגשה */
         if(has)st.bold+=b.lines.reduce(function(n,v){return n+spans(v,'ב').length},0);
         else if(b.closed)E.push('משנה בלי הדגשת עיקר: '+plainI(b.lines[0]).slice(0,40)+' - להדגיש {ב:...} 2-5 מילים מלשון המשנה, לכל דין העיקר שלו');
         else W.push('משנה בלי הדגשת עיקר (נמשכת לקטע הבא): '+plainI(b.lines[0]).slice(0,40))});

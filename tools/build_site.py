@@ -1101,14 +1101,14 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
   '</div></span></div>'
   # ---- מצב העריכה (מנהל, בזמן עריכה בלבד). "איחוי שורות" עבר לכאן: כלי מנהל בעורך בלבד
   '<div class="bg edonly dd" id="edstat" data-pri="0"><button class="ddb ib" id="edpubbtn" onclick="ddToggle(this)" aria-haspopup="menu" title="מצב הפרסום">' + ic('upload') + '<span id="edpub" class="edpub"></span></button><span id="edn" hidden></span>'
-  '<div class="ddp"><button id="edpushbtn" class="primary" onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>'
+  '<div class="ddp"><button id="edpushbtn" class="primary" onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+ד)">פרסם עכשיו</button>'
   '<button onclick="panel(\'ed\')" title="רשימת העריכות שלי">העריכות שלי</button>'
   '<button onclick="keysCard()" title="קיצורי מקשים (Ctrl+/)">קיצורי מקשים</button>'
   '<button id="fbtn" class="adm-only-b keep" onclick="squeeze()" title="דחיסה עדינה של מילה בודדת שגלשה לשורה (מנהל)">איחוי שורות</button>'
-  '<button id="ntedit" class="adm-b" onmousedown="event.preventDefault()" onclick="ntAdd()" title="הערה פרטית לקלוד (Ctrl+Alt+H)">הערה לקלוד</button>'
+  '<button id="ntedit" class="adm-b" onmousedown="event.preventDefault()" onclick="ntAdd()" title="הערה פרטית לקלוד (Ctrl+Alt+י)">הערה לקלוד</button>'
   '<button id="mineedit" style="display:none" onclick="mineOpen()" title="ההצעות ששלחת">ההצעות שלי</button></div>'
   '<span id="procnote" class="edpub"></span>'
-  '<button class="ib" onmousedown="event.preventDefault()" onclick="edUndoBtn()" aria-label="בטל" title="בטל (Ctrl+Z)">' + ic('undo') + '<span class="t">בטל</span></button></div>'
+  '<button class="ib" onmousedown="event.preventDefault()" onclick="edUndoBtn()" aria-label="בטל" title="בטל (Ctrl+ז)">' + ic('undo') + '<span class="t">בטל</span></button></div>'
   # ---- מנהל: אזור נפרד בקצה השמאלי. לגולש רגיל נשאר בו רק "הצע תיקון" העדין.
   '<div class="bg admz edsw" data-pri="0" id="admz">'
   '<span class="admlbl" aria-hidden="true">מנהל</span>'
@@ -1125,7 +1125,7 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
   ('<span class="admhg">' + hgbtn + '</span>' if hgbtn else '') +
   '<div id="admx"></div>'
   '</div></span>'
-  '<button id="edbtn" class="tgl" role="switch" aria-checked="false" onclick="editBtn()" title="עריכה (Ctrl+Alt+E)">עריכה</button>'
+  '<button id="edbtn" class="tgl" role="switch" aria-checked="false" onclick="editBtn()" title="עריכה (Ctrl+Alt+ק)">עריכה</button>'
   '</div>'
   '<div class="bg" id="edtools" hidden></div></div>')
 
@@ -3139,7 +3139,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function jumpMark(e){JEL=e;const g=$('#flow');JPOS=g?[g.scrollLeft,g.scrollTop]:null}
   /* ---- ד6: ההדפסה עוברת כולה במנוע הגיליונות ----
      רק הוא יודע לעמד בזהירות (כותרת אינה נפרדת מן התוכן שאחריה) ולתת
-     כותרת רצה. שני הכפתורים וגם Ctrl+P של הדפדפן עוברים דרכו. */
+     כותרת רצה. שני הכפתורים וגם Ctrl+פ של הדפדפן עוברים דרכו. */
   let PRINTING=0, PREBOOK=0;
   function printNow(all){
     const wasB=BOOK, wasA=ALL;
@@ -3149,7 +3149,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   }
   function toPdf(){printNow(isAdmin())}
   function printPerek(){printNow(false)}
-  /* הדפסה רגילה מן הדפדפן (Ctrl+P), 13.10.2026: מבקר שאינו מנהל מדפיס רק את
+  /* הדפסה רגילה מן הדפדפן (Ctrl+פ), 13.10.2026: מבקר שאינו מנהל מדפיס רק את
      הפרק שעליו הוא עומד, גם אם התצוגה היא "רצף" של כל המסכת. לאחר ההדפסה
      התצוגה חוזרת למה שהיתה. למנהל אין הגבלה. */
   let PRENA=0;
@@ -4176,8 +4176,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
 
   /* =================== Delete על שורה שיש לה כותרת צד (25.10.2026) ===================
      Delete בסוף שורה (או Backspace בתחילת הבאה), כשהשורה הבאה פותחת יחידה משלה:
-     כותרת הצד שלה נמחקת (לא חוזרת לגוף כמו ב-Ctrl+Q), והשורה עולה ומתאחה.
-     לחיצה אחת, ביטול אחד (Ctrl+Z מחזיר את הכותרת ואת הפיצול). רשומה אחת:
+     כותרת הצד שלה נמחקת (לא חוזרת לגוף כמו ב-Ctrl+/), והשורה עולה ומתאחה.
+     לחיצה אחת, ביטול אחד (Ctrl+ז מחזיר את הכותרת ואת הפיצול). רשומה אחת:
        kind  'unside-merge'
        texts [נוסח העליונה, נוסח התחתונה, ...נוסחי הכותרות שנמחקו]
        res   [[סגנון העליונה, HTML מאוחד], [HTML הכותרות שנמחקו], [מקום]]
@@ -4284,7 +4284,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(pl.note==='near')msg+=' (בערימה נמחקה רק הקרובה לשורה)';
     else if(pl.keep.length)msg+='; '+pl.keep.map(x=>q(plain(x).trim())).join(', ')+' נשאר בצד';
     if(pv.pi!==info.pi)msg+='; ציון הדף נשמר';
-    flash(msg+'. Ctrl+Z מחזיר');
+    flash(msg+'. Ctrl+ז מחזיר');
     return true}
 
   /* =================== חופש עריכה מלא: כותרות (5.10.2026) ===================
@@ -4414,7 +4414,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function hMergeDone(e){
     return flatU().some(x=>isHeadU(x.u)?plain(x.u.a)===e.resT[0]:
       ((x.u.k==='u'||x.u.k==='m')&&x.u.l.some(l=>plain(l[1])===e.resT[0])))}
-  /* Ctrl+Q: הפסקה חוזרת לסגנון רגיל (כמו בוורד). בכותרת צד - חוזרת לגוף. */
+  /* Ctrl+/: הפסקה חוזרת לסגנון רגיל (כמו בוורד). בכותרת צד - חוזרת לגוף. */
   function plainPara(){
     const el=edEl();
     if(!el){flash('העמד את הסמן בתוך שורה');return}
@@ -4538,7 +4538,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const WCH=/[^\s.,:;!?()\[\]{}]/;
   const wkey=u=>u.k==='u'?'a':'w';
   const UNDO=[]; let LASTIN=0;
-  /* ביטול לסגנונות: Ctrl+Z מחזיר את הפסקה למצבה לפני החלת סגנון תו או פסקה */
+  /* ביטול לסגנונות: Ctrl+ז מחזיר את הפסקה למצבה לפני החלת סגנון תו או פסקה */
   const SUNDO=[];
   function sPush(el){if(el&&el.dataset&&el.dataset.ek){SUNDO.push({k:el.dataset.ek,h:el.innerHTML,c:el.className,t:Date.now()});
     if(SUNDO.length>60)SUNDO.shift()}}
@@ -4660,7 +4660,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(x.key)placeCaret(x.key,0);
     drawEd();pubSoon();syncSoon();
     flash('בוטל');return true}
-  /* חזרה (Ctrl+Y) לפעולת מבנה או סגנון שבוטלה זה עתה, כל עוד לא נעשה דבר אחריה */
+  /* חזרה (Ctrl+ט) לפעולת מבנה או סגנון שבוטלה זה עתה, כל עוד לא נעשה דבר אחריה */
   const REDO=[];
   function redoLast(){
     const r=REDO.pop();if(!r)return false;
@@ -4806,16 +4806,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const m=document.createElement('div');m.className='modal';m.id='keyscard';
     const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
       ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון פסקה: כותרת נושא (שוב - חוזרת לגוף)'],
-      ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון פסקה: כותרת ד"ה משנה (שוב - חוזרת לגוף)'],['Ctrl+6','סגנון תו: ד"ה משנה בתוך שורה'],['Ctrl+7','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+H','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+B','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+Q','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
-      ['Ctrl+L (או Ctrl+Shift+L)','טאב יישור לשמאל: מה שאחרי הסמן נדחף לקצה השמאלי של השורה, כמו טאב שמאלי בוורד'],
-      ['Alt+J','במגירת המקור: מעבר בין "פירוש הגמרא" ל"חברותא" (מנהל בלבד; פותח את המגירה אם סגורה)'],
-      ['Alt+N','רשימת כל דפי המסכת (כמו לחיצה על הדף בסרגל): קפיצה בלי לצאת מהעריכה ובלי לאבד שינויים'],['Ctrl+Alt+K','הצע כותרת: שלוש הצעות לכותרת על הקטע שאחרי המקום (על עיטור, או על שורה)'],
+      ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון פסקה: כותרת ד"ה משנה (שוב - חוזרת לגוף)'],['Ctrl+6','סגנון תו: ד"ה משנה בתוך שורה'],['Ctrl+7','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+י','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+נ','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+/','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
+      ['Ctrl+ך (או Ctrl+Shift+ך)','טאב יישור לשמאל: מה שאחרי הסמן נדחף לקצה השמאלי של השורה, כמו טאב שמאלי בוורד'],
+      ['Alt+ח','במגירת המקור: מעבר בין "פירוש הגמרא" ל"חברותא" (מנהל בלבד; פותח את המגירה אם סגורה)'],
+      ['Alt+מ','רשימת כל דפי המסכת (כמו לחיצה על הדף בסרגל): קפיצה בלי לצאת מהעריכה ובלי לאבד שינויים'],['Ctrl+Alt+ל','הצע כותרת: שלוש הצעות לכותרת על הקטע שאחרי המקום (על עיטור, או על שורה)'],
       ['עיטור (***)','לחיצה על העיטור מסמנת אותו: Delete או "מחק עיטור" מוחקים, "החלף בכותרת" הופך לשורה ריקה בסגנון נושא או ד"ה משנה'],
-      ['Ctrl+Z','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+Y','חזרה'],
-      ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+S','שמירה ופרסום מיידי'],
+      ['Ctrl+ז','ביטול (כותרת צד שנעשתה זה עתה, ואחרת ביטול ההקלדה)'],['Ctrl+ט','חזרה'],
+      ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+ד','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl (בזמן בקרה עם כרטיס ממצא פתוח, Alt+1/2/3 = אשר / דחה / ערוך)'],
       ['Enter','בסוף פסקה - פסקה חדשה מתחתיה; בתחילתה - פסקה חדשה מעליה; באמצעה - פיצול. בכותרת: החלק החדש נעשה גוף רגיל'],
-      ['Backspace בתחילת פסקה / Delete בסופה','איחוי עם הקודמת / איחוי עם הבאה. אם לשורה השנייה יש כותרת צד - הכותרת נמחקת והשורות מתאחות (Ctrl+Z מחזיר הכול)'],
+      ['Backspace בתחילת פסקה / Delete בסופה','איחוי עם הקודמת / איחוי עם הבאה. אם לשורה השנייה יש כותרת צד - הכותרת נמחקת והשורות מתאחות (Ctrl+ז מחזיר הכול)'],
       ['חצים, Home, End, PageUp, PageDown (עריכה)','הסמן זז, והדף נגלל אחריו; חץ בקצה הפרק עובר לפרק הסמוך'],
       ['חצים, Home, End, PageUp, PageDown (קריאה)','גלילת שורה / תחילת הפרק וסופו / גלילת מסך'],
       ['Alt+חץ ימינה / שמאלה (במגירת המקור)','הדף הקודם / הבא בגמרא'],
@@ -4909,7 +4909,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const eb=$('#edpushbtn');
     if(on){
       if(eb){eb.textContent=SUGM?'שלח הצעות':'פרסם עכשיו';eb.setAttribute('onclick',SUGM?'sugPush(1)':'pubNow(1)');
-        eb.title=SUGM?'שליחת ההצעות לעורך (Ctrl+S)':'שמירה ופרסום מיידי (Ctrl+S)'}
+        eb.title=SUGM?'שליחת ההצעות לעורך (Ctrl+ד)':'שמירה ופרסום מיידי (Ctrl+ד)'}
       const nt=$('#ntedit');if(nt)nt.style.display=(isAdmin()&&!SUGM)?'':'none';
       const mn=$('#mineedit');if(mn)mn.style.display=SUGM?'':'none';
       pubDraw()}
@@ -5062,7 +5062,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const SPOS='lg-stypos', SCOL='lg-stycol';
   function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
   function lsSet(k,v){try{if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
-  function shortOf(code){if(code==='ns')return 'Ctrl+7, במשנה Ctrl+B';for(const k in CK)if(CK[k]===code)return 'Ctrl+'+k.slice(5);return code==='b'?'Ctrl+B':''}
+  function shortOf(code){if(code==='ns')return 'Ctrl+7, במשנה Ctrl+נ';for(const k in CK)if(CK[k]===code)return 'Ctrl+'+k.slice(5);return code==='b'?'Ctrl+נ':''}
   function activeChar(el){
     const s=getSelection();if(!s.rangeCount)return {};
     const r=s.getRangeAt(0);let n=r.collapsed?r.startContainer:r.commonAncestorContainer;
@@ -5088,8 +5088,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         btn(false,'sideCmd()','כותרת צד','Ctrl+.')+btn(false,"noStyle()",'ללא סגנון','Ctrl+רווח','טקסט רגיל: מסיר את סגנון התו מהמילים שנבחרו, ואם אין כזה - את סגנון הפסקה')+'</div>';
       rare+=CSTY.filter(c=>ST_C.indexOf(c[0])<0).map(cb).join('')}
     if(isHeadEl(el))h+='<div class="stgrp"><span class="ttl">'+(el.classList.contains('nose')?'נושא משנה':'ד"ה משנה')+'</span>'+
-      btn(false,'headBody()','הפוך לגוף','Ctrl+Q','הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים')+'</div>';
-    if(isTxt(el)&&isAdmin()&&typeof tsOpen==='function')h+='<div class="stgrp"><span class="ttl">כותרת</span>'+btn(false,'tsOpen()','הצע כותרת','Ctrl+Alt+K','שלוש הצעות לכותרת על הקטע שאחרי המקום')+'</div>';
+      btn(false,'headBody()','הפוך לגוף','Ctrl+/','הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים')+'</div>';
+    if(isTxt(el)&&isAdmin()&&typeof tsOpen==='function')h+='<div class="stgrp"><span class="ttl">כותרת</span>'+btn(false,'tsOpen()','הצע כותרת','Ctrl+Alt+ל','שלוש הצעות לכותרת על הקטע שאחרי המקום')+'</div>';
     if(el.tagName==='P'){
       const now=pcls(el);
       const pb=p=>btn(p[0]==='sp'?el.classList.contains('sp'):now===p[0],
@@ -5097,8 +5097,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       h+='<div class="stgrp"><span class="ttl">סגנון פסקה</span>'+PSTY.filter(p=>ST_P.indexOf(p[0])>-1).map(pb).join('')+'</div>';
       rare+=PSTY.filter(p=>p[0]&&ST_P.indexOf(p[0])<0).map(pb).join('')}
     if(isTxt(el)){
-      rare+=btn(false,'plainPara()','הסר סגנון פסקה','Ctrl+Q')+
-        (isAdmin()?btn(false,'ntAdd()','הערה לקלוד','Ctrl+Alt+H','הערה פרטית שמסבירה לקלוד את הרעיון שמאחורי התיקון'):'')}
+      rare+=btn(false,'plainPara()','הסר סגנון פסקה','Ctrl+/')+
+        (isAdmin()?btn(false,'ntAdd()','הערה לקלוד','Ctrl+Alt+י','הערה פרטית שמסבירה לקלוד את הרעיון שמאחורי התיקון'):'')}
     if(rare)h+='<button class="stmore" onmousedown="event.preventDefault()" onclick="styMore()"><span class="m1">עוד ▾</span><span class="m2">פחות ▴</span></button>'+
       '<div class="strare">'+rare+'</div>';
     if(isTxt(el))h+=btn(false,'clearFmt()','נקה','Ctrl+Shift+רווח','מסיר כל סגנון תו והדגשה מכל הפסקה, ומחזיר אותה לגוף','stclr');
@@ -5247,7 +5247,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      זה שינוי של הנתונים עצמם (D) ולא רק של מחלקה על ה-DOM: בלעדיו נשארה
      השורה אלמנט של כותרת, וכל פעולה שדורשת פסקת גוף (כותרת צד, איחוי)
      נחסמה בהודעה אדומה. השורה מצוירת מחדש כפסקת גוף, הסמן נשאר במקומו,
-     והפעולה ניתנת לביטול ב-Ctrl+Z ולחזרה ב-Ctrl+Y. מחזיר את מפתח הפסקה
+     והפעולה ניתנת לביטול ב-Ctrl+ז ולחזרה ב-Ctrl+ט. מחזיר את מפתח הפסקה
      החדשה, או '' אם אי אפשר. */
   function headToBody(el,c){
     const h=hostOf(el);
@@ -5613,20 +5613,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       e.preventDefault();headKey(e.code==='Digit3'?'nose':'dh');return}
     if(!e.shiftKey&&!e.metaKey&&((e.ctrlKey&&!e.altKey)||(e.altKey&&!e.ctrlKey))&&CK[e.code]){
       e.preventDefault();csToggle(CK[e.code]);return}
-    /* Ctrl+B בתוך משנה = "נושא משנה" (שוב - מסיר); מחוץ למשנה - מודגש רגיל */
+    /* Ctrl+נ בתוך משנה = "נושא משנה" (שוב - מסיר); מחוץ למשנה - מודגש רגיל */
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyB'){e.preventDefault();
       csToggle(el.closest&&el.closest('.main.mishna')&&OKCLS.indexOf('ns')>-1?'ns':'b');return}
     if(e.ctrlKey&&!e.altKey&&e.shiftKey&&e.code==='Space'){e.preventDefault();clearFmt();return}
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='Space'){e.preventDefault();setCs('');return}
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyS'){e.preventDefault();capture(el);pubNow(1);flash('נשמר');return}
     if(e.ctrlKey&&!e.altKey&&e.key==='/'){e.preventDefault();keysCard();return}
-    /* Ctrl+Z מבטל כותרת צד שנעשתה זה עתה, כל עוד לא הוקלד דבר אחריה */
+    /* Ctrl+ז מבטל כותרת צד שנעשתה זה עתה, כל עוד לא הוקלד דבר אחריה */
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyZ'&&SUNDO.length&&
        SUNDO[SUNDO.length-1].t>LASTIN&&(!UNDO.length||SUNDO[SUNDO.length-1].t>=UNDO[UNDO.length-1].t)){
       e.preventDefault();sUndo();return}
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&e.code==='KeyZ'&&UNDO.length&&
        UNDO[UNDO.length-1].t>LASTIN){e.preventDefault();undoLast();return}
-    /* Ctrl+Y (וגם Ctrl+Shift+Z): חזרה לפעולת ניקוי או סגנון שבוטלה זה עתה,
+    /* Ctrl+ט (וגם Ctrl+Shift+ז): חזרה לפעולת ניקוי או סגנון שבוטלה זה עתה,
        כל עוד לא נעשה דבר אחריה. בכל מקרה אחר - ההקלדה שייכת לדפדפן. */
     if(e.ctrlKey&&!e.altKey&&!e.metaKey&&((!e.shiftKey&&e.code==='KeyY')||(e.shiftKey&&e.code==='KeyZ'))){
       const ru=REDO.length?REDO[REDO.length-1]:null, rs=SREDO.length?SREDO[SREDO.length-1]:null;
@@ -5655,7 +5655,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       else if(atStart(el))newParaP(el,'before');
       else splitAtCaret(el);
       return}
-    /* Ctrl+Q: מסיר את סגנון הפסקה ומחזיר לרגיל, כמו בוורד */
+    /* Ctrl+/: מסיר את סגנון הפסקה ומחזיר לרגיל, כמו בוורד */
     if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey&&e.code==='KeyQ'){e.preventDefault();plainPara();return}
     /* Delete בסוף פסקה מעלה את הפסקה הבאה ומצרפת אותה לנוכחית, כמו בוורד.
        הפסקה המאוחדת נושאת את סגנון העליונה (mergeBack), וסגנונות התו של

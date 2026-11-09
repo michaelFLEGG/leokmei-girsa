@@ -7,7 +7,7 @@
      ההשוואה היא של "סכם פרק" (skpDiff, שנשען על skpWords ו-skpLcs), ואין כאן מנוע השוואה משלו.
      ליד הפסקה, בשוליים: קבל · השאר · ערוך, המונה, ותווית הנוסח החלופי. בטלפון הפס צף בתחתית.
      כניסה: הכפתור "בחר נוסח" בסרגל, או המקש N (ובמקלדת עברית נ: במקלדת עברית המקש N הוא מ, של הגמרא).
-     Enter קבל · Delete השאר · E ערוך (Enter מסיים ומקבל) · חצים הבא/הקודם · Tab החלופה הבאה · Ctrl+Z ביטול · Esc יציאה.
+     Enter קבל · Delete השאר · E ערוך (Enter מסיים ומקבל) · חצים הבא/הקודם · Tab החלופה הבאה · Ctrl+ז ביטול · Esc יציאה.
 
      השמירה לא השתנתה: קבלה = עריכת מנהל רגילה (applyText: רשומת ED, pubSoon, syncSoon), מתפרסמת בפרסום
      המרוכז ונכתבת לוורד בקליטה הבאה; כל הכרעה נרשמת ביומן ההכרעות בנקודת הקליטה (logDec, /alt), ממנו לומד המנוע. */
@@ -196,7 +196,7 @@
     var edit={k:s.k,was:wasT,now:nowT,wasH:wasH,nowH:nowH,wasP:old?old.wasP:cls,daf:s.daf,
               ctx:el&&typeof ctxOf==='function'?ctxOf(el):{b:'',a:''},t:Date.now(),pub:0,by:'בחירת נוסח'};
     if(old&&old.ps!==undefined){edit.ps=old.ps;edit.psw=old.psw}
-    /* לביטול (Ctrl+Z): מה שהיה לפני ההחלה */
+    /* לביטול (Ctrl+ז): מה שהיה לפני ההחלה */
     M.lastApply={k:s.k,old:old||null,curH:curH,edit:edit};
     if(old)ED=ED.filter(function(x){return x!==old});
     ED.push(edit);saveED();applyTextNow(edit);drawEd();pubSoon();syncSoon();
@@ -393,7 +393,7 @@
     logDec(it,-1,txt,true);
     M.edit=false;advance()}
   function editNo(){M.edit=false;show(false)}
-  /* Ctrl+Z: ביטול ההכרעה האחרונה. הנוסח שבדף חוזר כפי שהיה, וההכרעה נמחקת מן הרשימה שבמכשיר */
+  /* Ctrl+ז: ביטול ההכרעה האחרונה. הנוסח שבדף חוזר כפי שהיה, וההכרעה נמחקת מן הרשימה שבמכשיר */
   function undo(){
     var h=M.hist.pop();if(!h){say('אין הכרעה לבטל');return}
     var a=h.ap;

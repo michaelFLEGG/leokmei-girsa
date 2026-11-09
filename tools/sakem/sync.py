@@ -147,6 +147,40 @@ def main():
             os.replace(fp, os.path.join(ep, 'done', fn))
         changed += 1
 
+    # ה. המקליט (פרומפט 28, 9.11.2026): כל עריכה של המנהל ב-data/edits נשמרת ב-data/sakem/learn/<מסכת>.jsonl
+    #    לפני שהקליטה לוורד מרוקנת אותה, נספרת לדפוסים, ורשימת הכללים עולה לשרת לדף "מה סכם למד".
+    #    "בטל כלל" שנלחץ בדף יורד קודם ונרשם בריפו - כלל מבוטל אינו מוצג עוד לסכם.
+    lr = os.path.join(D, 'learn', 'rules.json')
+    try:
+        srv = call('/sakem/learn')
+    except Exception as e:  # השרת עדיין בלי הנתיב - ממשיכים בלי הביטולים
+        print('מה סכם למד: השרת לא ענה -', e)
+        srv = {}
+    if os.path.exists(lr) and srv.get('off'):
+        R = json.load(io.open(lr, encoding='utf-8'))
+        n = 0
+        for r in R.get('rules', []):
+            o = srv['off'].get(r.get('id'))
+            if o is not None and bool(o.get('off')) != bool(r.get('off')):
+                r['off'] = bool(o.get('off'))
+                n += 1
+        if n and not DRY:
+            wjson(lr, R)
+            changed += 1
+        print('מה סכם למד: ביטולים מן הדף:', n)
+    import subprocess
+    for a in ((['patterns'],) if DRY else (['record'], ['patterns'])):
+        rc = subprocess.run(['node', os.path.join(ROOT, 'tools', 'sakem', 'learn.mjs')] + a + (['--dry'] if DRY and a[0] == 'patterns' else []), cwd=ROOT)
+        if rc.returncode:
+            raise SystemExit('עצירה: המקליט נכשל (' + a[0] + ')')
+    if os.path.exists(lr) and not DRY and srv:
+        R = json.load(io.open(lr, encoding='utf-8'))
+        mine = sorted((r.get('id'), bool(r.get('off')), r.get('text')) for r in R.get('rules', []))
+        theirs = sorted((r.get('id'), bool(r.get('off')), r.get('text')) for r in (srv.get('rules') or []))
+        if mine != theirs:
+            call('/sakem/learn/put', {'rules': R.get('rules', [])})
+            print('מה סכם למד: הרשימה עלתה לשרת,', len(R.get('rules', [])), 'כללים')
+
     if not DRY:
         wjson(STATE, st)
     print('שינויים:', changed)

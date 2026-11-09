@@ -114,7 +114,7 @@
       (SK.split?'<button onclick="skSplit(\'off\')" title="סגירת המסך המפוצל">×</button>':'')+'</span>'+
       '<button onclick="skTab(\'req\')" title="בקשת סקירה לטווח: הבדיקות המהירות מוכנות מיד">סקור עכשיו</button>')};
 
-  /* ---- מקלדת: Enter קבל, Delete דחה, חצים, E ערוך, C שוחח, Ctrl+Z ביטול ---- */
+  /* ---- מקלדת: Enter קבל, Delete דחה, חצים, E ערוך, C שוחח, Ctrl+ז ביטול ---- */
   function skTyping(t){return t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))}
   document.addEventListener('keydown',e=>{
     if(!BK.ON||e.ctrlKey||e.metaKey||e.altKey||e.defaultPrevented)return;

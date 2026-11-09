@@ -307,9 +307,10 @@
     var cfg = LK.cfg;
     /* פרומפט 23 (8.11.2026): לוח הדף היומי בווטסאפ - ראשון ובולט */
     menu.innerHTML = '<a href="/daf-board.html" style="font-weight:700;color:#e8c876;border-bottom:1px solid rgba(201,162,74,.4)">לוח הדף היומי בווטסאפ</a>' +
-      '<button type="button" data-a="pencil">עריכת טקסטי האתר (Ctrl+Alt+P)</button>' +
+      '<button type="button" data-a="pencil">עריכת טקסטי האתר (Ctrl+Alt+פ)</button>' +
       '<button type="button" data-a="hidden">טקסטים נסתרים בדף זה</button>' +
       '<a href="/admin-texts.html">טקסטים ששיניתי</a>' +
+      '<a href="/admin-sakem-learn.html">מה סכם למד</a>' +
       '<button type="button" data-a="stats">נתוני גלישה</button>';
     D.documentElement.appendChild(menu);
     menu.onclick = function (e) {

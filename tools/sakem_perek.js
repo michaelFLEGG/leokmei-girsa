@@ -7,7 +7,7 @@
      הסקירה נפתחת בתוך הדף: הקטע הנוכחי מודגש, הנוסח החדש במקום הישן, ושלושה סימונים -
      ליטוש (מילים שנוספו ברקע עדין, מה שנמחק בקו חוצה אפור), קיצור מרחבי (סמליל, ובריחוף "דולג: ..."),
      והשלמה מהגמרא (צבע נפרד, ובריחוף לשון הגמרא; לחיצה מבטלת רק אותה). חסר גדול הוא פריט משלו.
-     Enter קבל · Delete דחה · E ערוך (Enter מסיים ומקבל) · חצים הבא/קודם · Ctrl+Z ביטול ההכרעה האחרונה.
+     Enter קבל · Delete דחה · E ערוך (Enter מסיים ומקבל) · חצים הבא/קודם · Ctrl+ז ביטול ההכרעה האחרונה.
      הקבלה עוברת ב-skmApply - אותן רשומות שהעורך כותב, ומשם לפרסום ולוורד כמו כל עריכה. */
   const SKP={jobs:[],all:[],rev:null,tm:null};
   const SKP_H0=location.hash;   /* הקישור הישיר (#skp=...) נקרא לפני שהדף כותב את מספר הפרק בכתובת */
@@ -319,6 +319,9 @@
       '<span>קטע '+(R.i+1)+' מתוך '+R.items.length+'</span>'+
       '<span class="skpc">התקבלו '+R.cnt.accept+' · נדחו '+R.cnt.reject+' · נערכו '+R.cnt.edit+'</span>'+
       '<span class="skpc">קיצורים מרחביים: '+sp+' · השלמות מהגמרא: '+ad+'</span>'+
+      /* פרומפט 28: שורת הציות (הדגשות, רווחים, מקפי תירוץ...) ומה סכם למד מאז הפרק הקודם */
+      (R.out.summary||R.out.learnedNew!=null?'<span class="skpsum">'+esc(R.out.summary||'')+
+        (R.out.learnedNew!=null?(R.out.summary?' · ':'')+'<a href="/admin-sakem-learn.html" target="_blank">למדתי מאז הפרק הקודם: '+(+R.out.learnedNew||0)+' כללים חדשים</a>':'')+'</span>':'')+
       '<button data-a="unfold" title="פרוש את כל המחיקות המקופלות בקטע (Alt+ח)">פרוש מחיקות</button>'+
       '<button data-a="allsug" title="קבל את כל הקטעים שטרם הוכרעו בסוגיה הזאת">קבל את כל הנותרים בסוגיה</button>'+
       '<button data-a="allper" title="קבל את כל הקטעים שטרם הוכרעו בפרק">קבל את כל הנותרים בפרק</button>'+
@@ -476,7 +479,7 @@
     '.skpside button{width:24px;height:24px;padding:0;border-radius:50%;border:1px solid #c9d3dc;background:#fff;color:#2e5b8a;font-size:13px;line-height:22px;cursor:pointer}'+
     '.skpside button[data-a="ok"],.skpside button[data-a="force"]{border-color:#2e7d3c;color:#2e7d3c}.skpside button[data-a="no"],.skpside button[data-a="keep"]{color:#a8452f}'+
     '#skpbar{position:fixed;bottom:0;left:0;right:0;z-index:65;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:4px 12px 6px;background:rgba(255,255,255,.97);border-top:1px solid #d6dde4;font-size:12.5px;color:#3d4a55}'+
-    '#skpbar>i{position:absolute;top:0;right:0;height:2px;background:#2e7d3c}#skpbar .skpttl{font-weight:700;color:#2e5b8a}#skpbar .skpc{color:#5d6b77}'+
+    '#skpbar>i{position:absolute;top:0;right:0;height:2px;background:#2e7d3c}#skpbar .skpttl{font-weight:700;color:#2e5b8a}#skpbar .skpc{color:#5d6b77}#skpbar .skpsum{flex-basis:100%;order:-1;color:#1f5a2c;font-size:12px}#skpbar .skpsum a{color:inherit}'+
     '#skpbar button{padding:1px 9px;border-radius:10px;border:1px solid #c9d3dc;background:#fff;color:#2e5b8a;font-size:12px;cursor:pointer}'+
     '.skmghost.edit del.skpdel.skpdelro{opacity:.55;user-select:none;cursor:default;font-size:.92em}'+'#skpbar .skpmob{display:none}body.skprev{padding-bottom:40px}'+
     '.skptab{width:100%;border-collapse:collapse;font-size:13px}.skptab td{border-bottom:1px solid #eee;padding:4px}'+

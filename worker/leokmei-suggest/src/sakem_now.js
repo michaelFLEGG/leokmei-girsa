@@ -246,6 +246,9 @@ async function generate(env, key, sys, msgs, orig, gemara, around) {
     /* פרומפט 22: כותרת צד ארוכה וכפילות ברורה אחרי כותרת מתוקנות אוטומטית, לפני השומר */
     const af = SKC.autofixTitles(p.text);
     if (af.changed) { p.text = af.text; p.changes = (p.changes || []).concat(af.notes.map((x) => 'אוטומטי: ' + x)).slice(0, 8); }
+    /* פרומפט 28: דובר בפתח שורה לכותרת צד, אות נסמכת לשם, רווח לפני גופא/ת"ר - בקוד, אינם משנים מילה */
+    const ff = SKC.autofixForm(p.text);
+    if (ff.changed) { p.text = ff.text; p.changes = (p.changes || []).concat(ff.notes.map((x) => 'אוטומטי: ' + x)).slice(0, 12); }
     const ck = ckH(orig, p.text, g);
     errs = ck.errs; notes = ck.warns;
     if (!errs.length) break;
@@ -276,6 +279,7 @@ async function generate(env, key, sys, msgs, orig, gemara, around) {
             if (!p2.err) {
               const af2 = SKC.autofixTitles(p2.text);
               if (af2.changed) p2.text = af2.text;
+              { const ff2 = SKC.autofixForm(p2.text); if (ff2.changed) p2.text = ff2.text; }
               const ck2 = ckH(orig, p2.text, g);
               if (!ck2.errs.length) { if (SKC.qnorm(p2.text) !== SKC.qnorm(out.text)) p2.changes = (p2.changes || []).concat(['קורא נפרד: הוחזרו מילים בשורה שהודקה מדי']).slice(0, 8); out = p2; notes = ck2.warns; rounds++; }
             }

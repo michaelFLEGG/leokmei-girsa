@@ -458,7 +458,7 @@
       for(const f of jobs.no.slice(0,600)){bkPut(f,'no','','','auto_'+(f.auto?'v':(H.bySig[skSig(f)]?'sig':'type')));nNo++}
       /* החלה אוטומטית כעריכת מנהל רגילה (נכנסת לוורד בעקוב אחר שינויים), על הנתונים, בפרוסות בזמן מנוחה
          של הדפדפן - כך שגם מאות תיקונים אינם מקפיאים את הדף. לכל אחד נשמר "בטל" */
-      let nOk=0;const userUndo=BK.undo;   /* ביטול ההכרעה האחרונה של המחבר (Ctrl+Z) אינו נדרס בתיקון אוטומטי */
+      let nOk=0;const userUndo=BK.undo;   /* ביטול ההכרעה האחרונה של המחבר (Ctrl+ז) אינו נדרס בתיקון אוטומטי */
       const idle=()=>new Promise(r=>(window.requestIdleCallback||setTimeout)(r,{timeout:300}));
       for(let i=0;i<jobs.ok.length;i++){
         if(i&&i%15===0)await idle();

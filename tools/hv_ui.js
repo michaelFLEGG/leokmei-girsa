@@ -217,12 +217,12 @@
      ליד "פירוש הגמרא", למנהל המחובר בלבד: אצל גולש ואורח הלשונית אינה נוצרת כלל (hvTabsHTML מחזיר ריק).
      אותו רכיב תצוגה של הלוח (hvSecHtml, hvOpenDaf, hvFollow, hvPage), במיכל #hvt. כל הדף ברצף, נגלל
      עם הסמן כמו פירוש הגמרא, השורה המקבילה מודגשת בעדינות, וקודם/הבא. החבילה נטענת פעם אחת לדף
-     ונשמרת בזיכרון הדף (HV.cache) - לא במכשיר, לא במטמון, לא בהדפסה ולא בייצוא. Alt+J מחליף לשונית. */
+     ונשמרת בזיכרון הדף (HV.cache) - לא במכשיר, לא במטמון, לא בהדפסה ולא בייצוא. Alt+ח מחליף לשונית. */
   function hvTabOk(){return isAdmin()&&!!admKey()}
   function hvTabsHTML(){
     if(!hvTabOk())return '';
-    return '<span class="srctabs" role="tablist"><button id="st-per" role="tab" class="'+(HV.tab||HV.tabWas?'':'on')+'" onclick="hvTabSet(\'per\')" title="פירוש הגמרא (Alt+J מחליף לחברותא)">פירוש הגמרא</button>'+
-      '<button id="st-hv" role="tab" class="'+(HV.tab||HV.tabWas?'on':'')+'" onclick="hvTabSet(\'hv\')" title="ביאור חברותא, לעיון המנהל בלבד (Alt+J)">חברותא</button></span>'}
+    return '<span class="srctabs" role="tablist"><button id="st-per" role="tab" class="'+(HV.tab||HV.tabWas?'':'on')+'" onclick="hvTabSet(\'per\')" title="פירוש הגמרא (Alt+ח מחליף לחברותא)">פירוש הגמרא</button>'+
+      '<button id="st-hv" role="tab" class="'+(HV.tab||HV.tabWas?'on':'')+'" onclick="hvTabSet(\'hv\')" title="ביאור חברותא, לעיון המנהל בלבד (Alt+ח)">חברותא</button></span>'}
   function hvTabCss(){
     if(document.getElementById('hvtcss'))return;
     const st=document.createElement('style');st.id='hvtcss';

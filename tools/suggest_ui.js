@@ -444,7 +444,7 @@
     if(QQERR)h+='<div class="edsum" style="color:#a83c2f">לא ניתן לקרוא את התור: '+esc(QQERR)+'</div>';
     h+=sqFilterBar()+sqBulkBar();
     h+='<div class="sgbar"><button onclick="sqBulkPage()">אשר/דחה לפי דף</button><button onclick="sqBulkWho()">דחה את כל הצעות מציע</button>'+
-       '<button onclick="sqUndo()" title="Ctrl+Z">בטל פעולה אחרונה</button></div><div class="sgkeys dr">מקשים: <kbd>↑</kbd><kbd>↓</kbd> מעבר · אשר <kbd>A</kbd> · דחה <kbd>D</kbd> · דלג <kbd>S</kbd> · ערוך <kbd>E</kbd> · השב <kbd>R</kbd></div>';
+       '<button onclick="sqUndo()" title="Ctrl+ז">בטל פעולה אחרונה</button></div><div class="sgkeys dr">מקשים: <kbd>↑</kbd><kbd>↓</kbd> מעבר · אשר <kbd>A</kbd> · דחה <kbd>D</kbd> · דלג <kbd>S</kbd> · ערוך <kbd>E</kbd> · השב <kbd>R</kbd></div>';
     if(SQSKIP.size)h+='<div class="dr">'+SQSKIP.size+' הצעות נדחו לאחר כך <button onclick="SQSKIP.clear();drawSq()">הצג שוב</button></div>';
     if(lost.length){h+='<h3>התיישנו או לא אותרו</h3><div class="dr">הטקסט השתנה מאז ההצעה, או שהמקום לא נמצא. אינן נכנסות בעיוורון.</div>';
       lost.forEach(([g])=>{h+=sqRow(g,null)})}
@@ -528,7 +528,7 @@
     catch(e){if(edit){ED=ED.filter(x=>x!==edit);saveED();if(SQUNDO&&SQUNDO.prev)ED.push(SQUNDO.prev)}sqAlert('ההכרעה לא נרשמה: '+e.message);return}
     if(!accept)jrLog([{id:'sg-'+id,t:Date.now(),slug:SLUG,daf:g.daf,k:g.k,src:'suggest',was:g.was,now:g.note,neg:1,why:reason,ctx:g.ctx}]);   /* הדחייה היא דוגמה שלילית; האישור נרשם בצד השרת מן העריכה עצמה */
     QQ=QQ.filter(x=>x.id!==id);QQTOT=Math.max(0,QQTOT-1);
-    if(edit){applyTextNow(edit);drawEd();pubSoon();syncSoon();toast('התיקון הוחל. Ctrl+Z מבטל.')}
+    if(edit){applyTextNow(edit);drawEd();pubSoon();syncSoon();toast('התיקון הוחל. Ctrl+ז מבטל.')}
     else toast(accept?'ההצעה סומנה כמאושרת. ההחלה ידנית.':st==='stale'?'ההצעה סומנה כהתיישנה.':'ההצעה נדחתה והמציע יראה את הסיבה.');
     sqBadge();drawSq()}
   async function sqUndo(){
@@ -566,7 +566,7 @@
     try{await api('/bulk',{method:'POST',body:JSON.stringify({ids,st:'rejected',reason})})}catch(e){alert(e.message);return}
     jrLog(QQ.filter(g=>ids.indexOf(g.id)>-1).map(g=>({id:'sg-'+g.id,t:Date.now(),slug:SLUG,daf:g.daf,k:g.k,src:'suggest',was:g.was,now:g.note,neg:1,why:reason,ctx:g.ctx})));
     QQ=QQ.filter(g=>ids.indexOf(g.id)<0);QQTOT=Math.max(0,QQTOT-ids.length);sqBadge();drawSq();toast('נדחו '+ids.length+' הצעות.')}
-  /* מקשים בתור: חצים, A אשר, D דחה, S דלג, E ערוך ואשר, R השב, Ctrl+Z ביטול */
+  /* מקשים בתור: חצים, A אשר, D דחה, S דלג, E ערוך ואשר, R השב, Ctrl+ז ביטול */
   document.addEventListener('keydown',e=>{
     const p=$('#sgq');if(!p||!p.classList.contains('open')||!isAdmin())return;
     const t=e.target;if(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable)return;
@@ -608,7 +608,7 @@
   setTimeout(lnLoad,3500);
 
   /* ---- הערות המנהל לקלוד (6.10.2026) - פרטיות מוחלטת ----
-     כפתור "הערה לקלוד" (Ctrl+Alt+H) בעורך: שדה קצר שבו המנהל מסביר את הרעיון
+     כפתור "הערה לקלוד" (Ctrl+Alt+י) בעורך: שדה קצר שבו המנהל מסביר את הרעיון
      שמאחורי התיקון. ההערה נשמרת בנקודת הקליטה הפרטית (מאחורי הרשאת מנהל) יחד עם
      המסכת, הדף, הטקסט המסומן, הנוסח לפני ואחרי, ותאריך. אינה עוברת לריפו, לבנייה,
      לקובצי הוורד או לתיקיית השומר. הלומד קורא אותה בכל סבב למידה. */
@@ -654,7 +654,7 @@
   function ntDraw(){const box=$('#ntb');if(!box)return;
     if(!NT){box.innerHTML='<div class="edsum">אי אפשר לטעון את ההערות (בדוק שיש מפתח מנהל במכשיר).</div>';return}
     let h='<div class="dr">ההערות פרטיות: גלויות רק לך ולקלוד, ואינן נכנסות לאתר, לריפו או לקובצי הוורד.</div>';
-    if(!NT.length)h+='<div class="edsum">עדיין אין הערות. בעורך: Ctrl+Alt+H, או הכפתור "הערה לקלוד" בחלונית הסגנונות.</div>';
+    if(!NT.length)h+='<div class="edsum">עדיין אין הערות. בעורך: Ctrl+Alt+י, או הכפתור "הערה לקלוד" בחלונית הסגנונות.</div>';
     /* מצב: חדשה (קלוד טרם למד) / נלמדה. נלמדה יורדת מהתצוגה ונשמרת בארכיון הלמידה */
     const arch=NT.filter(x=>x.learned).length,show=NT.filter(x=>NTARCH?x.learned:!x.learned);
     h+='<div class="sgbar"><button class="'+(NTARCH?'':'on')+'" onclick="NTARCH=false;ntDraw()">חדשות ('+NT.filter(x=>!x.learned).length+')</button>'+

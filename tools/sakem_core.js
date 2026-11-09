@@ -146,7 +146,7 @@
        דובר + מילת מהלך. כל מה שמעבר הוא נושא: שורת (נושא) מעל, ומתחתיה כותרת צד קצרה. ומה שכתוב
        בכותרת אינו חוזר בפתח השורה שאחריה. */
     var MOVE_W={'קשה':1,'קשיא':1,'אלא':1,'והא':1,'הא':1,'תש':1,'מיתיבי':1,'איתיביה':1,'גופא':1,'תר':1,'ואבא':1,'ומיירי':1,'והיינו':1,'היינו':1,'נפקמ':1,'דחה':1,'דחייה':1,'תיובתא':1,'ורמינהי':1,'רמינהי':1,'פשיטא':1,'קמל':1,'איבעיא':1,'תיקו':1,'וצריכי':1,'צריכא':1,'וצריכא':1,'ולכוע':1,'נחלקו':1,'ותיובתא':1,'אמר':1,'אומר':1,'אמרי':1,'סבר':1,'סברי':1};
-    function twWords(p){return String(p||'').replace(NIK,'').replace(/^\s*[א-י]\.\s*/,'').replace(/\s*[:.]\s*$/,'').replace(/\s+/g,' ').trim().split(' ').filter(function(w){return w&&!/^[-:,.]+$/.test(w)})}
+    function twWords(p){return String(p||'').replace(NIK,'').replace(/^\s*-\s*/,'').replace(/^\s*[א-י]\.\s*/,'').replace(/\s*[:.]\s*$/,'').replace(/\s+/g,' ').trim().split(' ').filter(function(w){return w&&!/^[-:,.]+$/.test(w)})}
     function moveKey(w){return String(w).replace(NIK,'').replace(/["'״׳.:,]/g,'')}
     function isMoveW(w){var k=moveKey(w);return !!MOVE_W[k]||(k.length>3&&k[0]==='ו'&&!!MOVE_W[k.slice(1)])}
     var SPK_RE=/^(ר'|רבי|רב|רבא|אביי|שמואל|מר|ר"[א-ת]+|רבה|ריש|רבן|אמימר|בר|ת"ר|תנא|תנן|דתניא|אמר)/;
@@ -294,6 +294,8 @@
       for(var i=0;i<T.length;i++){
         var raw=T[i],s=raw.trim(),m=/^\[צד:(.*)\]$/.exec(s);
         if(m){var p=plainI(m[1]).replace(/\s+/g,' ').trim();
+          /* פרומפט 28: כותרת צד של מקף תירוץ ([צד:-], [צד:- היינו]) - של בעל הפרויקט, לעולם לא נוגעים בה */
+          if(isDashTitle(m[1])){out.push(raw);continue}
           if(titleLen(p)==='long'){
             /* עוגן קצר + נושא. אם כבר בא מיד לפני שורת (נושא) - לא מוסיפים עוד אחת */
             var sp=splitTitle(p);
@@ -513,6 +515,9 @@
       B.forEach(function(k){if(k.t==='line'||k.t==='title')i2h(k.v,true,bad)});
       if(bad.length)errs.push('תג לא מוכר: '+bad.slice(0,3).join(' '));
       if(/[–—]/.test(newText))errs.push('מקף ארוך');
+      /* פרומפט 28: מקף התירוץ של בעל הפרויקט ([צד:- ...]) אינו נמחק ואינו משתנה */
+      var dl=dashLost(origText,newText).filter(function(x){return (o.dropDash||[]).indexOf(x)<0});
+      if(dl.length)errs.push('מקף תירוץ נמחק או שונה: '+dl.map(function(x){return '[צד:'+x+']'}).join(', ')+' - להחזיר בדיוק כפי שהוא');
       /* 6.11.2026 (בעל הפרויקט): אין ; בשום מקום באתר - נקודה רגילה במקומה */
       if(/;/.test(newText))errs.push('נקודה-פסיק (;) - לכתוב נקודה');
       if(META.test(newText))errs.push('לשון מטא ("הטקסט עוסק", "לסיכום")');
@@ -522,7 +527,7 @@
       var amNew=[];B.forEach(function(k){if(k.t==='line'||k.t==='title'){var r=/\{אם:([^{}]*)\}/g,m;while((m=r.exec(k.v)))amNew.push(m[1])}});
       var unknown=amNew.filter(function(n){
         var w=n.replace(/[֑-ׇ]/g,'').replace(/["'״׳:!?.,]/g,'').trim().split(/\s+/).filter(function(x){return x.length>1});
-        return w.length&&!w.some(function(x){var y=x.replace(/^[ודשהכלבמ](?=..)/,'');return src.indexOf(x)>-1||src.indexOf(y)>-1})});
+        return w.length&&!w.some(function(x){var y=x.replace(/^[ודשהכלבמ](?=..)/,''),y2=x.replace(/^[ודשהכלבמ]{1,3}(?=..)/,'');return src.indexOf(x)>-1||src.indexOf(y)>-1||src.indexOf(y2)>-1})});
       if(unknown.length)errs.push('שם אמורא שאינו במקור: '+unknown.slice(0,3).join(', '));
       /* מספור א. ב. ג. (כלל 18): שלם ורציף, ובלי ואב"א / א"נ שנשארו במקום מספר */
       var st=lastNum(o.before),nx=nums(o.after||'')[0]||0;
@@ -587,7 +592,7 @@
       /* א5: סמלילים מיותרים */
       R.forEach(function(r){var p=r.p;
         if(/(^|\s)•(\s|$)/.test(p)||/:\s*•/.test(p))E.push('סמליל מיותר (•): '+p.slice(0,40));
-        if(/[א-ת'"]\.-[א-ת]/.test(p)||/(^|\s)-[א-ת]/.test(p))E.push('מקף מיותר צמוד למילה: '+p.slice(0,40));
+        if(/[א-ת'"]\.-[א-ת]/.test(p)||/(^|\s)-[א-ת]/.test(r.k==='title'?p.replace(/^\s*-/,''):p))E.push('מקף מיותר צמוד למילה: '+p.slice(0,40));
         /* א6: ניקיון */
         if(/\s[,.:;!?](?![.])/.test(p))E.push('רווח לפני פיסוק: '+p.slice(0,40));
         if(/[,;:!?][א-ת]/.test(p.replace(/[א-ת]"[א-ת]/g,'')))E.push('חסר רווח אחרי פיסוק: '+p.slice(0,40));
@@ -724,7 +729,139 @@
       for(k=i-1;k>=0;k--){if(head(L[k]))return true;if(skip(L[k]))continue;break}
       for(k=i+1;k<L.length;k++){if(head(L[k]))return true;if(skip(L[k]))continue;return false}
       return false}
-    return {hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
+    /* =========== פרומפט 28 (9.11.2026): מקף התירוץ, דובר לכותרת צד, רווח לפני, ובודק הציות ===========
+       כללי בעל הפרויקט, נאכפים בקוד ולא רק כתובים בהנחיה:
+       א. מקף התירוץ: כותרת צד שפותחת במקף - [צד:-], [צד:- היינו], [צד:- א"ל:] - מסמנת לעין "כאן התירוץ".
+          אינו נמחק ואינו משתנה (השומר חוסם), autofixTitles אינו נוגע בו, והמקף אינו נספר במגבלת שתי המילים.
+       ב. שם אמורא שפותח שורה ({אם:X:}) - לכותרת צד, כשאין לשורה כותרת צד ואינה תיבת משנה או צלע במחלוקת
+          בשורה אחת. ומילה או אות שנסמכות לשם (ו, ד, ל, "אומר", "אמר") - בתוך סגנון האמורא.
+       ג. רווח לפני גופא / ת"ר / אמר מר (Ctrl+0), בכל המסכתות. */
+    function isDashTitle(v){return /^\s*-(\s|$|[^\s-])/.test(plainI(v))}
+    function dashKey(v){return plainI(v).replace(NIK,'').replace(/''/g,'"').replace(/\s+/g,' ').trim()}
+    function dashTitles(text){return parse(text).filter(function(k){return k.t==='title'&&isDashTitle(k.v)}).map(function(k){return dashKey(k.v)})}
+    function dashLost(orig,text){var b=dashTitles(text),out=[];
+      dashTitles(orig).forEach(function(x){var i=b.indexOf(x);if(i<0)out.push(x);else b.splice(i,1)});return out}
+    /* מילת קושיה בכותרת צד: אחריה, שורת תירוץ בלי כותרת - מקף תירוץ */
+    var KUSH_RE=/^(ו?יקשה|ו?קשה|ו?קשיא|ו?הא|והרי|מיתיבי|איתיביה|איתיבי|ורמינהי|רמינהי|ו?אם תאמר|ו?אם תימא|ו?א"ת|ו?אין לומר|ו?דילמא|ו?ממאי|ו?מנא ליה|ו?מנלן|ותיקשי|ותקשי|ולימא|ולמה)(?=[\s:?!]|$)/;
+    function isKushTitle(v){var p=plainI(v).replace(NIK,'').replace(/^\s*[א-י]\.\s*/,'').trim();return KUSH_RE.test(p)}
+    /* ---- ב1: אות ומילה נסמכות לשם - בתוך הסגנון ---- */
+    var SAY_RE=/^(\s*)(אומר|אומרים|אמר|אמרו|אמרי|א"ל|אמר לו|אומרת)(\s*:)?/;
+    function amAttach(v){
+      var s=String(v),ch=0;
+      /* ו{אם:ר"מ} -> {אם:ור"מ} : אות חיבור (ו, ד, ל, כ, ש, מ, ב, וד, ול) צמודה לפני הסגנון */
+      s=s.replace(/(^|[\s(\[])((?:ו|ד|ל|כ|ש|מ|ב|וד|ול|וכ|דל)){אם:/g,function(x,a,b){ch++;return a+'{אם:'+b});
+      /* {אם:ר"מ} אומר: -> {אם:ר"מ אומר:} */
+      s=s.replace(/\{אם:([^{}]*?)\}([ \t]*)(אומר|אומרים|אמר|אמרו|אמרי|אומרת)(\s*:)/g,function(x,n,sp,w,c){ch++;return '{אם:'+n.replace(/:\s*$/,'')+' '+w+':}'});
+      return {v:s,ch:ch}}
+    /* ---- ב2: {אם:X:} בפתח שורה -> [צד:X:] ---- */
+    function speakerOut(text){
+      var P=String(text||'').replace(/\r/g,'').split('\n'),out=[],notes=[],inM=false;
+      for(var i=0;i<P.length;i++){
+        var raw=P[i],s=raw.trim(),lk=LOCK_RE.exec(s);
+        if(lk){if(lk[1]!=='מקור'&&lk[1]!=='דף')inM=lk[1]==='משנה';out.push(raw);continue}
+        if(/^\[צד:/.test(s)||inM){out.push(raw);continue}
+        var sty=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(s);
+        if(sty&&sty[1]!=='רווח'&&sty[1]!=='תשובה'){out.push(raw);continue}
+        var body=sty?s.slice(sty[0].length):s,num=(/^[א-י]\.\s+/.exec(body)||[''])[0];body=body.slice(num.length);
+        var m=/^\{אם:([^{}]+)\}\s*/.exec(body);
+        if(!m){out.push(raw);continue}
+        var nm=m[1].trim(),rest=body.slice(m[0].length);
+        /* רק דובר שאומר (נקודתיים), עד שלוש מילים, ושאחריו יש תוכן */
+        /* (שורה קצרה מאוד - צלע של מחלוקת או תשובה בת מילים ספורות - נשארת בשורה, כדי שלא תיוותר שורה בת מילה) */
+        /* רק שם חכם (לא "ושמא תאמר", לא "א"ל" לבדו), ולא סימון שכבר נושא מקף או מספור בתוך הסגנון */
+        if(/^[-\s]|^[א-י]\./.test(nm)||!isNameW(twWords(nm)[0]||'')){out.push(raw);continue}
+        if(!/:$/.test(nm)||twWords(nm).length>3||plainI(rest).replace(NIK,'').trim().length<20){out.push(raw);continue}
+        /* צלע במחלוקת שכולה בשורה אחת ("לב"ש: ... וב"ה: ...") - נשארת בשורה (כלל 8 וכלל 17ג) */
+        if(/\{אם:[^{}]*:\}/.test(rest)){out.push(raw);continue}
+        var prev=out.length?out[out.length-1].trim():'';
+        if(/^\[צד:/.test(prev)){out.push(raw);continue}
+        /* "ר"מ אומר:" -> [צד:ר"מ:] (מה שבכותרת אינו חוזר, ו"אומר" מיותר כשהשם בכותרת) */
+        var nm2=nm.replace(/\s+(אומר|אומרים|אמר|אמרו|אמרי|אומרת)\s*:$/,':');
+        out.push('[צד:'+(num?num.trim()+' ':'')+nm2+']');
+        out.push((sty?sty[0]:'')+rest);
+        notes.push('דובר לכותרת צד: '+plainI(nm))}
+      return {text:out.join('\n'),notes:notes}}
+    /* ---- ג: רווח לפני גופא / ת"ר / אמר מר ---- */
+    var SPACE_RE=/^(ו?גופא|ת"ר|תנו רבנן|ו?אמר מר|א"מ)(?=[\s:.,]|$)/;
+    function spaceFix(text){
+      var P=String(text||'').replace(/\r/g,'').split('\n'),notes=[];
+      for(var i=0;i<P.length;i++){
+        var s=P[i].trim();if(!s||/^[\[(]/.test(s)&&!/^\[צד:/.test(s))continue;
+        var trig=false,j=i;
+        if(/^\[צד:/.test(s)){var tv=plainI(/^\[צד:(.*)\]$/.exec(s)[1]).replace(NIK,'').replace(/''/g,'"').trim();if(!SPACE_RE.test(tv))continue;
+          j=i+1;while(j<P.length&&/^\[צד:/.test(P[j].trim()))j++;if(j>=P.length)continue;trig=true}
+        else{var lv=plainI(s).replace(NIK,'').replace(/''/g,'"').trim();if(!SPACE_RE.test(lv))continue;
+          /* שורה שקודמת לה כותרת צד: הכותרת היא העוגן, ושורה זו ממשיכה */
+          if(i>0&&/^\[צד:/.test(P[i-1].trim()))continue;trig=true}
+        if(!trig)continue;
+        var L=P[j].trim();if(!L||/^\[/.test(L)||/^\(/.test(L))continue;
+        /* מיד אחרי כותרת נושא / ד"ה / משנה / דף - הכותרת כבר מבדילה */
+        var k=(j===i?i:i)-1;while(k>=0&&/^\[(צד|מקור)[:\]]/.test(P[k].trim()))k--;
+        if(k<0)continue;
+        var pk=P[k].trim();if(isHeadLine(pk)||/^\[(משנה|גמרא|דף|כותרת-|קבוע)/.test(pk))continue;
+        P[j]='(רווח) '+P[j].replace(/^\s+/,'');notes.push('רווח לפני: '+plainI(L).slice(0,30))}
+      return {text:P.join('\n'),notes:notes}}
+    /* כל התיקונים הצורניים יחד (put של המשימה, ובשרת אחרי המודל) - אינם משנים מילה בנוסח */
+    function autofixForm(text){
+      var notes=[],P=String(text||'').split('\n').map(function(l){
+        var s=l,sty=/^(\((?:תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*)/.exec(s),pre=sty?sty[1]:'';
+        var tm=/^(\[צד:)(.*)(\])$/.exec(s.trim());
+        if(tm){var a0=amAttach(tm[2]);if(a0.ch){notes.push('אות או מילה נסמכת לשם - בסגנון האמורא');return tm[1]+a0.v+tm[3]}return l}
+        if(/^\[/.test(s.trim()))return l;
+        var a=amAttach(s.slice(pre.length));if(a.ch){notes.push('אות או מילה נסמכת לשם - בסגנון האמורא');return pre+a.v}return l});
+      var t=P.join('\n'),so=speakerOut(t);t=so.text;notes=notes.concat(so.notes);
+      var sf=spaceFix(t);t=sf.text;notes=notes.concat(sf.notes);
+      var seen={};notes=notes.filter(function(x){if(seen[x])return false;seen[x]=1;return true});
+      return {text:t,notes:notes,changed:t!==String(text||'')}}
+    /* ---- בודק הציות (בלי מודל). o: {hatz:[מזהי עיטור בקטע], dropDash:[], final:true} ----
+       errs - put נעצר; warns - נרשמות לפריט; stat - לשורת הסיכום של הפרק */
+    function boldBag(text){var b=[];rows(text).forEach(function(r){spans(r.v,'ב').forEach(function(x){b.push(qnorm(plainI(x.v)))})});return b.filter(Boolean)}
+    function mishnaBlocks(text){
+      var B=[],cur=null;parse(text).forEach(function(k){
+        if(k.t==='lock'){if(k.kind==='מקור'||k.kind==='דף')return;
+          if(k.kind==='משנה'){if(cur)cur.closed=true;cur={lines:[],closed:false};B.push(cur);return}
+          if(cur){cur.closed=true;cur=null}return}
+        if(cur&&k.t==='line')cur.lines.push(k.v)});
+      return B.filter(function(b){return b.lines.length})}
+    function comply(origText,newText,o){
+      o=o||{};var E=[],W=[],st={bold:0,space:0,dash:0,side:0,hatz:(o.hatzDel||0)};
+      /* 1. כל משנה (שנסגרה בקטע) - יש בה הדגשת עיקר */
+      mishnaBlocks(newText).forEach(function(b){var has=b.lines.some(function(v){return v.indexOf('{ב:')>-1});
+        if(has)st.bold+=b.lines.reduce(function(n,v){return n+spans(v,'ב').length},0);
+        else if(b.closed)E.push('משנה בלי הדגשת עיקר: '+plainI(b.lines[0]).slice(0,40)+' - להדגיש {ב:...} 2-5 מילים מלשון המשנה, לכל דין העיקר שלו');
+        else W.push('משנה בלי הדגשת עיקר (נמשכת לקטע הבא): '+plainI(b.lines[0]).slice(0,40))});
+      /* 2. הדגשה שהייתה במקור לא נעלמה - שורה מול שורה: השורה המקורית עדיין בנוסח (רוב מילותיה), המילים המודגשות בה,
+         אבל בלי ההדגשה - אובדן צורה ודאי וחוסם. מילים שנוסחו מחדש - אזהרה בלבד (מערך הזהב, בבא בתרא ה) */
+      var ch=(o.changes||[]).join(' '),NR=rows(newText).map(function(r){return {w:qnorm(r.p).split(' '),b:spans(r.v,'ב').map(function(x){return qnorm(plainI(x.v))})}});
+      var gone=[],soft=[];
+      rows(origText).forEach(function(r){var bs=spans(r.v,'ב').map(function(x){return qnorm(plainI(x.v))}).filter(function(x){return x.length>=3});if(!bs.length)return;
+        var ow=qnorm(r.p).split(' '),best=null,bs2=0;
+        NR.forEach(function(n){var hit=ow.filter(function(w){return n.w.indexOf(w)>-1}).length/ow.length;if(hit>bs2){bs2=hit;best=n}});
+        bs.forEach(function(x){if(ch.indexOf('הדגשה')>-1&&qnorm(ch).indexOf(x)>-1)return;
+          if(best&&bs2>=0.75){if(best.b.some(function(y){return y.indexOf(x)>-1||x.indexOf(y)>-1&&y.length>=3}))return;
+            if((' '+best.w.join(' ')+' ').indexOf(' '+x+' ')>-1){gone.push(x);return}}
+          soft.push(x)})});
+      if(soft.length)W.push('הדגשה מן המקור שנוסחה מחדש בלי הדגשה: '+soft.slice(0,4).join(', '));
+      if(gone.length)E.push('הדגשה שהייתה במקור נעלמה: '+gone.slice(0,4).join(', ')+' - להחזיר {ב:...}, או לרשום ב-changes "הוסרה הדגשה: ..." אם השורה נמחקה ביודעין');
+      /* 3. עיטור צמוד לכותרת שלא הוצע למחיקה */
+      (o.hatz||[]).forEach(function(id){var T=String(newText).split('\n').map(function(l){return l.trim()==='[קבוע:'+id+']'?'[מחק-עיטור:'+id+']':l}).join('\n');
+        if(String(newText).indexOf('[קבוע:'+id+']')>-1&&hatzNearHead(T,id))W.push('עיטור '+id+' צמוד לכותרת - להציע [מחק-עיטור:'+id+']')});
+      /* 4. רווחים */
+      var R=parse(newText);st.space=R.filter(function(k){return k.t==='line'&&k.sty==='sp'}).length;
+      var sf=spaceFix(newText);sf.notes.forEach(function(x){W.push('חסר '+x)});
+      /* 5. מקף תירוץ: שורת קושיה בכותרת צד, והשורה שאחריה בלי כותרת */
+      st.dash=dashTitles(newText).length;
+      for(var i=0;i<R.length;i++){if(R[i].t!=='title'||!isKushTitle(R[i].v))continue;
+        var j=i;while(j+1<R.length&&R[j+1].t==='title')j++;
+        var a=R[j+1],b=R[j+2];if(!a||a.t!=='line'||!b||b.t!=='line'||b.sty==='nose')continue;
+        W.push('מקף תירוץ? אחרי "'+plainI(R[i].v).slice(0,20)+'" השורה "'+plainI(b.v).slice(0,30)+'" בלי כותרת - [צד:-] לפניה אם היא התירוץ')}
+      /* כותרות צד חדשות */
+      var ot={};parse(origText).forEach(function(k){if(k.t==='title'){var x=dashKey(k.v);ot[x]=(ot[x]||0)+1}});
+      parse(newText).forEach(function(k){if(k.t!=='title')return;var x=dashKey(k.v);if(ot[x])ot[x]--;else st.side++});
+      /* דובר בפתח שורה שנשאר בשורה */
+      var so=speakerOut(newText);so.notes.forEach(function(x){W.push(x.replace('דובר לכותרת צד','דובר בפתח שורה - לכותרת צד'))});
+      return {errs:E,warns:W,stat:st}}
+    return {isDashTitle:isDashTitle,dashTitles:dashTitles,dashLost:dashLost,isKushTitle:isKushTitle,amAttach:amAttach,speakerOut:speakerOut,spaceFix:spaceFix,autofixForm:autofixForm,comply:comply,mishnaBlocks:mishnaBlocks,boldBag:boldBag,hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
             quality:quality,qnorm:qnorm,aramNew:aramNew,aramWords:aramWords,squeeze:squeeze,SQ:{SEG:SQ_SEG,LINE:SQ_LINE,MIN:SQ_MIN},C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

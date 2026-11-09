@@ -1,12 +1,12 @@
   /* =================== סכם: מהדק ומתקן קטע נבחר (מנהל בלבד, 26.10.2026) ===================
-     מסמנים קטע במצב עריכה, ו"סכם" (או Ctrl+Shift+S) מבקש מנקודת הקליטה נוסח מהודק של אותו
+     מסמנים קטע במצב עריכה, ו"סכם" (או Ctrl+Shift+ד) מבקש מנקודת הקליטה נוסח מהודק של אותו
      קטע, כבר במבנה הלאוקמי. ההצעה מוצגת במקום הקטע כ"רוח": הישן מחוק באדום עדין, החדש בירוק,
      ותוספת או תיקון תוכן בקו כתום עם תווית. ארבעה כפתורים: קבל / ערוך / קצר עוד / בטל.
 
      "קבל" אינו מסלול חדש: הוא מרכיב את השינוי מאותן רשומות שהעורך כותב בעצמו (תיקון טקסט,
      סגנון פסקה, פיצול, איחוי, כותרת צד, החזרת כותרת צד לגוף, מחיקת כותרת צד ואיחוי), ושם
      אותן ב-ED. משם הן עוברות בדיוק כמו כל עריכת מנהל: הפרסום המרוכז, הבנייה והקליטה לוורד.
-     Ctrl+Z מבטל את כולן בבת אחת.
+     Ctrl+ז מבטל את כולן בבת אחת.
 
      הדפדפן שולח לנקודת הקליטה את היחידות שבקטע כפי שהן בנתונים, והשרת בודק שכל שורה בהן
      קיימת באתר או בעריכות המנהל שבשרת (לא טקסט חופשי), שולף בעצמו את פירוש הגמרא, לשון
@@ -37,7 +37,7 @@
 
   /* ---- הסימון: מתרחב לשורות שלמות ---- */
   /* show: האם הסימון מצדיק את "סכם" (פרומפט 24, 8.11.2026): שורה שלמה ומעלה, גרירה על כמה שורות
-     או Shift+לחיצה. סימון מילה לשם סגנון אינו מקפיץ את סכם, אבל Ctrl+Shift+S פועל גם עליו. */
+     או Shift+לחיצה. סימון מילה לשם סגנון אינו מקפיץ את סכם, אבל Ctrl+Shift+ד פועל גם עליו. */
   function skmMark(rows,show){
     document.querySelectorAll('#flow .row.skmsel').forEach(r=>r.classList.remove('skmsel'));
     SKM.sel=null;
@@ -113,7 +113,7 @@
     if(!SKM.sel||!SKM.sel.show){skmBtnHide();return}
     const b=skmMk('skmbtn','סכם',()=>skmGo());
     const g=skmMk('skmset','⚙',()=>skmPanel());g.title='סכם: התור';g.setAttribute('aria-label','סכם: התור');
-    const tip=SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הידוק ותיקון הקטע המסומן, מיד (Ctrl+Shift+S). להרחבה: גרירה על כמה שורות, או Shift+לחיצה על שורה אחרת';
+    const tip=SKM.sel.long?'הקטע ארוך מדי, נא לסמן עד דף אחד':'הידוק ותיקון הקטע המסומן, מיד (Ctrl+Shift+ד). להרחבה: גרירה על כמה שורות, או Shift+לחיצה על שורה אחרת';
     const n=SKM.sel.rows.length;
     b.textContent='סכם'+(n>1?' · '+n+' שורות':'');b.title=tip;b.classList.toggle('dim',!!SKM.sel.long);
     const rows=SKM.sel.rows.filter(r=>r.isConnected);if(!rows.length){skmBtnHide();return}
@@ -154,7 +154,7 @@
   /* כפתור גם בחלונית הסגנונות הצפה, כשיש בחירה */
   const skmSty0=styHtml;
   styHtml=function(el,sel){const h=skmSty0(el,sel);
-    return h&&sel&&skmOK()?h+'<button class="skmsb" onmousedown="event.preventDefault()" onclick="skmGo()" title="הידוק ותיקון הקטע המסומן"><span>סכם</span><kbd>Ctrl+Shift+S</kbd></button>':h};
+    return h&&sel&&skmOK()?h+'<button class="skmsb" onmousedown="event.preventDefault()" onclick="skmGo()" title="הידוק ותיקון הקטע המסומן"><span>סכם</span><kbd>Ctrl+Shift+ד</kbd></button>':h};
 
   /* ---- הבקשה ---- */
   async function skmStat(force){
@@ -420,7 +420,7 @@
     skmClose();
     skmDone(p,edited?'edit':'accept',text);
     skmRemember(p.id,text,r.recs||[]);
-    flash(r.n?'הוחל: '+r.n+' שינויים, ויפורסמו עם שאר העריכות (Ctrl+Z מבטל)':'אין שינוי להחיל');skmMovedNote(rp.moved)}
+    flash(r.n?'הוחל: '+r.n+' שינויים, ויפורסמו עם שאר העריכות (Ctrl+ז מבטל)':'אין שינוי להחיל');skmMovedNote(rp.moved)}
 
   /* =================== עריכה מאוחרת של שורה שנכתבה ב"סכם" (27.10.2026) ===================
      גם תיקון שהמנהל עושה בעורך אחרי שקיבל את ההצעה הוא לקח: השורות שנכתבו נזכרות במכשיר

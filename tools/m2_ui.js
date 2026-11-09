@@ -1,7 +1,7 @@
   /* =================== מנה 2 מתוך 3 (7.10.2026) ===================
      נטען אחרי suggest_ui.js ו-suggest_edit.js.
        א. פנל ניווט בעריכה: רשימת פרקים ודפים, קפיצה בלי לאבד שינויים.
-       ב. Ctrl+L (וגיבוי Ctrl+Shift+L): טאב יישור לשמאל. מזוהה לפי המקש הפיזי (בעברית L נותן ך).
+       ב. Ctrl+ך (וגיבוי Ctrl+Shift+ך): טאב יישור לשמאל. מזוהה לפי המקש הפיזי (בעברית L נותן ך).
        ג. עיטור (***): מחיקה, והחלפה בכותרת. שינוי מבנה משלו (hdel / hrep), מעוגן בטקסט שתי הפסקאות השכנות.
        ד. Ctrl+1 על שם תנא או אמורא: הסגנון חל גם על הנקודתיים, והרווח שלפניהן נמחק.
        ה. הערות המנהל לקלוד: סימון עדין בשוליים, "חדשה" / "נלמדה".
@@ -57,8 +57,8 @@
     s.getRangeAt(0).collapse(false);
     document.execCommand('insertHTML',false,'<span class="ltab">'+LTCH+'</span>');
     capture(el);ltFitSoon();
-    flash('טאב יישור לשמאל נוסף (Ctrl+Z מבטל)')}
-  /* בכרום Ctrl+L שייך לשורת הכתובת; בדפדפן שאינו מאפשר לתפוס אותו - Ctrl+Shift+L */
+    flash('טאב יישור לשמאל נוסף (Ctrl+ז מבטל)')}
+  /* בכרום Ctrl+ך שייך לשורת הכתובת; בדפדפן שאינו מאפשר לתפוס אותו - Ctrl+Shift+ך */
   document.addEventListener('keydown',e=>{
     if(!EDIT||!e.target.isContentEditable||e.altKey||e.metaKey||!e.ctrlKey)return;
     if(e.code==='KeyL'){e.preventDefault();e.stopPropagation();ltInsert()}},true);
@@ -219,7 +219,7 @@
     snp.forEach(s=>patchPage(s));
     if(kind==='hrep')setTimeout(()=>placeCaret('u'+t+'.0',0),30);
     drawEd();pubSoon();syncSoon();
-    flash(kind==='hdel'?'העיטור נמחק (Ctrl+Z מבטל)':'העיטור הוחלף בשורה ריקה: כתוב את הכותרת');
+    flash(kind==='hdel'?'העיטור נמחק (Ctrl+ז מבטל)':'העיטור הוחלף בשורה ריקה: כתוב את הכותרת');
     return t}
   /* כותרת שהחליפה עיטור: כשנכתב בה טקסט היא נרשמת, וכשהתרוקנה היא חוזרת להיות מצב עבודה */
   function hrepCapture(el){
@@ -255,7 +255,7 @@
       b.innerHTML='<button type="button" onmousedown="event.preventDefault()" onclick="decoDo(\'hdel\')" title="מוחק את העיטור (Delete)">מחק עיטור</button>'+
         '<button type="button" data-h="nose" onmousedown="event.preventDefault()" onclick="decoDo(\'hrep\',\'nose\')" title="במקום העיטור: שורה ריקה בסגנון נושא">החלף בכותרת נושא</button>'+
         '<button type="button" data-h="dh" onmousedown="event.preventDefault()" onclick="decoDo(\'hrep\',\'dh\')" title="במקום העיטור: שורה ריקה בסגנון ד&quot;ה משנה">החלף בד"ה משנה</button>'+
-        '<button type="button" class="tsb" onmousedown="event.preventDefault()" onclick="tsOpen()" title="שלוש הצעות לכותרת על הקטע שאחרי העיטור (Ctrl+Alt+K)">הצע כותרת</button>';
+        '<button type="button" class="tsb" onmousedown="event.preventDefault()" onclick="tsOpen()" title="שלוש הצעות לכותרת על הקטע שאחרי העיטור (Ctrl+Alt+ל)">הצע כותרת</button>';
       document.body.appendChild(b)}
     const inM=!!el.closest('.main.mishna');
     b.querySelectorAll('button[data-h]').forEach(x=>{x.style.display=(inM||!PSTY.some(p=>p[0]===x.dataset.h))?'none':''});

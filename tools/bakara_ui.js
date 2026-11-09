@@ -393,7 +393,7 @@
       skNextBtnHtml()+
       '<button onclick="bkNext(-1)" title="להערה הקודמת">↑</button>'+
       '<button onclick="bkPanel()">רשימה</button><button onclick="bkToggle()">סיום</button>'+
-      '<span class="kk" style="font-size:11px;opacity:.7" title="Enter קבל · Delete דחה · E ערוך בשורה · 1/2/3 נוסח · S דלג · ? למה · ←/→ הבאה/קודמת · Ctrl+Z ביטול">Enter · Del · E · 1-3 · S · ?</span>';
+      '<span class="kk" style="font-size:11px;opacity:.7" title="Enter קבל · Delete דחה · E ערוך בשורה · 1/2/3 נוסח · S דלג · ? למה · ←/→ הבאה/קודמת · Ctrl+ז ביטול">Enter · Del · E · 1-3 · S · ?</span>';
     if(window.skBarExtra)skBarExtra(m);if(window.skBarEnd)skBarEnd(m);
     {const l=bkSides().lo+12+'px';if(m.style.left!==l)m.style.left=l}}
   function bkDafNow(){return (($('#curdaf')||{}).textContent||'').trim()}
@@ -744,7 +744,7 @@
   window.bkApplyStyle=bkApplyStyle;
   /* ---- מטענים חדשים (26.10.2026): כותרת צד, כותרת נושא, פיצול ואיחוי ----
      כולם על הנתונים ובאותן רשומות שהעורך עצמו כותב (side / unside / split / merge, ועריכת טקסט
-     רגילה), ולכן נקלטים בוורד ובבנייה בדיוק כמו פעולה ידנית. ביטול (Ctrl+Z) מחזיר את המצב שלפני. */
+     רגילה), ולכן נקלטים בוורד ובבנייה בדיוק כמו פעולה ידנית. ביטול (Ctrl+ז) מחזיר את המצב שלפני. */
   function bkUnitOf(f){
     const L=BK.loc[f.id];if(!L)return null;
     const m=/^u(\d+)\.(\d+|w|mb)$/.exec(L.k||'');if(!m)return null;
@@ -855,7 +855,7 @@
     bkStructCommit(f,e,pv.pi,()=>{pv.u.l.splice(pv.i+1,0,nRow);delete pv.u.lv});
     return {k:'u'+pv.u.id+'.'+(pv.i+2)}}
   /* (8.11.2026) כמה פעולות בקבלה אחת: כותרת הנושא קודם (היא ביחידה שלפני ואינה מזיזה את מפתחות היחידה),
-     ואחריה כותרת הצד. כשל באחת מבטל את מה שכבר הוחל, וביטול (Ctrl+Z) מבטל את כולן יחד. */
+     ואחריה כותרת הצד. כשל באחת מבטל את מה שכבר הוחל, וביטול (Ctrl+ז) מבטל את כולן יחד. */
   function bkApplyMulti(f,op){
     const ord=op.ops.slice().sort((a,b)=>(a.t==='heading'?0:1)-(b.t==='heading'?0:1));
     const seq=[];let last=null;
@@ -993,7 +993,7 @@
       if(ar!==null&&typeof ar!=='string'){
         now=bkSugText(op);bkAfterEdit();
         msg={rep:'התיקון הוחל כעריכת מנהל.',ins:'ההוספה הוחלה בסגנון הסבר.',am:'סגנון אמוראים הוחל.',ps:'סגנון פסוק הוחל.',plain:'הסגנון הוסר.',
-             anchor:'כותרת הצד עודכנה.',heading:'כותרת הנושא נוספה.',split:'השורה פוצלה.',join:'השורות אוחו.',multi:'כותרת הנושא וכותרת הצד הוחלו.'}[act]+' Ctrl+Z מבטל.'}
+             anchor:'כותרת הצד עודכנה.',heading:'כותרת הנושא נוספה.',split:'השורה פוצלה.',join:'השורות אוחו.',multi:'כותרת הנושא וכותרת הצד הוחלו.'}[act]+' Ctrl+ז מבטל.'}
       else if(act==='am'||act==='plain'||act==='ps'){
         /* גיבוי: כשההחלה על הנתונים אינה אפשרית - בדף, במצב עריכה, כמו קודם */
         if(!EDIT)setEdit(true);if(!EDIT)return;
@@ -1042,7 +1042,7 @@
       if($('#flow').classList.contains('vert'))r.el.scrollIntoView({block:'center'});else toEl(r.el)};
     if(have)go();else setTimeout(()=>{if(!EDIT)setEdit(true);go()},120);return true}
   let BKSV=null;function bkSave(){clearTimeout(BKSV);BKSV=setTimeout(bkFlush,300)}
-  /* ביטול ההכרעה האחרונה שהוחלה כהחלפה (Ctrl+Z מחוץ לעריכה) */
+  /* ביטול ההכרעה האחרונה שהוחלה כהחלפה (Ctrl+ז מחוץ לעריכה) */
   function bkUndoOne(r){
     const cur=ED.find(x=>x.k===r.k&&!x.fz);
     if(cur){edKeys();tomb(cur.k);ED=ED.filter(x=>x!==cur)}

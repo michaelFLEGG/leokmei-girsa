@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>מה סכם למד · לאוקמי גירסא</title>
+<!-- דף למנהל בלבד (פרומפט 28, 9.11.2026): הכללים שסכם למד מעריכות המנהל ומהערותיו, החדש למעלה.
+     אין כפתור "אשר" - כלל נכנס לבד; יש "בטל כלל" (ו"החזר"). הרשימה מן הריפו (data/sakem/learn/rules.json)
+     דרך השרת (/sakem/learn); הביטול נשמר בשרת ויורד לריפו בסנכרון הבא. -->
+<style>
+:root { --paper:#faf7ef; --card:#fff; --ink:#232323; --ink2:#6b675c; --line:#e4e1d8; --del:#b3261e; --delbg:#fbe4e1; --add:#1d6b2f; --addbg:#dff2e2; --btn:#1f3a63; }
+@media (prefers-color-scheme: dark) {
+  :root { --paper:#14161c; --card:#1c1f27; --ink:#e8e5dc; --ink2:#9a968a; --line:#2b3140; --del:#f2a7a0; --delbg:#3a1f1f; --add:#9bd8a6; --addbg:#1b3322; --btn:#9fbbe6; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:"Segoe UI", system-ui, sans-serif; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 60px; }
+h1 { font-size: 1.4rem; margin: 10px 0 4px; }
+.sub { color: var(--ink2); font-size: .9rem; margin-bottom: 16px; line-height:1.6; }
+.r { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
+.r.off { opacity:.55; }
+.top { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; }
+.d { color:var(--ink2); font-size:.82rem; white-space:nowrap; }
+.k { font-size:.78rem; color:var(--ink2); border:1px solid var(--line); border-radius:999px; padding:0 8px; }
+.t { line-height:1.7; margin:6px 0; }
+.ex { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; }
+@media (max-width: 640px) { .ex { grid-template-columns:1fr; } }
+.ex div { white-space:pre-wrap; font-family:"David","Frank Ruehl CLM","Times New Roman",serif; line-height:1.7; padding:6px 8px; border-radius:6px; font-size:.95rem; }
+.ex .b { background:var(--delbg); } .ex .a { background:var(--addbg); }
+.ex small { display:block; font-family:"Segoe UI",system-ui,sans-serif; color:var(--ink2); font-size:.75rem; }
+button { margin-inline-start:auto; font:inherit; font-size:.85rem; padding:3px 12px; border-radius:6px; border:1px solid var(--btn); color:var(--btn); background:transparent; cursor:pointer; }
+.err { color:var(--del); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>מה סכם למד</h1>
+  <div class="sub" id="sub">טוען...</div>
+  <div id="list"></div>
+</div>
+<script>
+(function () {
+  var API = 'https://leokmei-suggest.m7654301.workers.dev';
+  function key() { try { return localStorage.getItem('lg-adm') || ''; } catch (e) { return ''; } }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var HM = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+  function day(t) { var d = new Date(t || 0); return d.getDate() + ' ב' + HM[d.getMonth()] + ' ' + d.getFullYear(); }
+  var sub = document.getElementById('sub'), list = document.getElementById('list'), DATA = null;
+  function isOff(r) { var o = (DATA.off || {})[r.id]; return o ? !!o.off : !!r.off; }
+  function draw() {
+    var R = (DATA.rules || []).slice().sort(function (a, b) { return (b.t || 0) - (a.t || 0); });
+    var on = R.filter(function (r) { return !isOff(r); }).length;
+    sub.textContent = R.length ? (on + ' כללים פעילים, ' + (R.length - on) + ' בוטלו. כלל נכנס לבד אחרי שחזר בעריכות שלך או שכתבת אותו בהערה; "בטל כלל" מוציא אותו מהוראות סכם.') : 'עדיין אין כללים.';
+    list.innerHTML = R.map(function (r, i) {
+      var off = isOff(r);
+      return '<div class="r' + (off ? ' off' : '') + '"><div class="top"><span class="d">' + day(r.t) + '</span><span class="k">' + esc(r.kind || 'כלל') + '</span>' +
+        (r.src ? '<span class="d">' + esc(r.src) + '</span>' : '') +
+        '<button data-i="' + i + '">' + (off ? 'החזר כלל' : 'בטל כלל') + '</button></div>' +
+        '<div class="t">' + esc(r.text) + '</div>' +
+        (r.was || r.now ? '<div class="ex"><div class="b"><small>לפני</small>' + esc(r.was) + '</div><div class="a"><small>אחרי</small>' + esc(r.now) + '</div></div>' : '') + '</div>';
+    }).join('');
+    Array.prototype.forEach.call(list.querySelectorAll('button'), function (b) {
+      b.onclick = function () {
+        var r = R[+b.getAttribute('data-i')], off = !isOff(r);
+        b.disabled = true;
+        fetch(API + '/sakem/learn/off', { method: 'POST', headers: { 'x-admin-key': key(), 'content-type': 'application/json' }, body: JSON.stringify({ id: r.id, off: off }) })
+          .then(function (x) { return x.json(); }).then(function (j) {
+            if (!j.ok) throw new Error(j.error || 'שגיאה');
+            DATA.off = DATA.off || {}; DATA.off[r.id] = { off: off, t: Date.now() }; draw();
+          }).catch(function (e) { b.disabled = false; alert('לא נשמר: ' + e.message); });
+      };
+    });
+  }
+  if (!key()) { sub.innerHTML = '<span class="err">הדף למנהל בלבד. היכנס קודם כמנהל באתר.</span>'; return; }
+  fetch(API + '/sakem/learn', { headers: { 'x-admin-key': key() }, cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (j) { if (!j.ok) throw new Error(j.error || 'שגיאה'); DATA = j; draw(); })
+    .catch(function (e) { sub.innerHTML = '<span class="err">לא נטען: ' + esc(e.message) + '</span>'; });
+})();
+</script>
+</body>
+</html>

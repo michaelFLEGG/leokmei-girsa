@@ -172,6 +172,10 @@ if (cmd === 'status') {
   (ex.pairs || []).forEach((p, i) => console.log('\n-- דוגמה ' + (i + 1) + ' (' + (p.kind || '') + ')\nלפני:\n' + p.before + '\nאחרי:\n' + p.after + (p.bad ? '\nפסול:\n' + p.bad : '') + '\nמה שיניתי: ' + (p.changes || []).join(' · ')));
   const L = path.join(ROOT, 'docs', 'sakem-lessons.md');
   if (fs.existsSync(L)) console.log('\n=== לקחים מהכרעות המנהל (גוברים על הכללים שלמעלה) ===\n' + fs.readFileSync(L, 'utf8'));
+  /* המקליט (פרומפט 28): כללים שנלמדו מעריכות המנהל ומהערותיו; כלל שבוטל ב"מה סכם למד" אינו מוצג */
+  const LR = path.join(D, 'learn', 'rules.json');
+  if (fs.existsSync(LR)) { const on = (rd(LR).rules || []).filter((x) => !x.off);
+    if (on.length) console.log('\n=== מה סכם למד מעריכות המנהל (' + on.length + ' כללים פעילים) ===\n' + on.map((x) => '- ' + x.text + (x.was && x.kind !== 'החלפת מילה' ? '\n  לפני: ' + x.was + '\n  אחרי: ' + x.now : '')).join('\n')); }
 } else if (cmd === 'orig') {
   const [jid, from, to] = A;
   console.log(origOf(pkOf(jid), from, to).text);
@@ -206,6 +210,9 @@ if (cmd === 'status') {
   if (s.nochange) {
     const q0 = SKC.quality(r.text, { mishna });
     if (q0.length) die('אי אפשר "ללא שינוי": הנוסח הקיים פגום - ' + q0.slice(0, 6).join(' · ') + '\nתקן בהצעה.');
+    /* פרומפט 28: גם "ללא שינוי" עובר את בודק הציות (משנה בלי הדגשת עיקר) */
+    const c0 = SKC.comply(r.text, r.text, {});
+    if (c0.errs.length) die('אי אפשר "ללא שינוי": ' + c0.errs.join(' · ') + '\nתקן בהצעה.');
     if (DRY) { console.log('השומר: עבר (ללא שינוי). לא נשמר דבר (--dry).'); process.exit(0); }
     o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, nochange: true });
   } else {
@@ -213,6 +220,9 @@ if (cmd === 'status') {
     if (!text) die('אין text');
     /* פרומפט 22: כותרת צד ארוכה וכפילות ברורה אחרי כותרת - תיקון אוטומטי לפני השומר */
     { const af = SKC.autofixTitles(text); if (af.changed) { text = af.text; s.changes = (s.changes || []).concat(af.notes.map((x) => 'אוטומטי: ' + x)); } }
+    /* פרומפט 28 (9.11.2026): כללי צורה של בעל הפרויקט, בקוד ולא רק בהנחיה - דובר בפתח שורה לכותרת צד, אות ומילה
+       נסמכות לשם בסגנון האמורא, רווח לפני גופא / ת"ר / אמר מר. אינם משנים מילה בנוסח */
+    { const ff = SKC.autofixForm(text); if (ff.changed) { text = ff.text; s.changes = (s.changes || []).concat(ff.notes.map((x) => 'אוטומטי: ' + x)); } }
     const gem = (pk.pages || []).filter((p) => r.ids.some((id) => (pk.units.find((u) => u.id === id) || {}).daf === p.daf)).map((p) => (p.g || []).map(strip).join(' ')).join(' ');
     /* הקשר המספור (6.11.2026): רשימה שהתחילה לפני הקטע או נמשכת אחריו. בקטע הראשון של הפרק - הרשימה עשויה
        להתחיל בפרק הקודם (סוכה ה, "ב. ג." אחרי "א." של פרק ד): אז ההקשר הוא המספר שהנוסח המקורי פותח בו */
@@ -229,7 +239,14 @@ if (cmd === 'status') {
       if (!SKC.hatzNearHead(text, id)) die('[מחק-עיטור:' + id + '] - מותר רק לעיטור שצמוד לכותרת נושא או ד"ה');
     }
     const rT = hd.orig, tT = hd.text;
-    const ck = SKC.check(rT, tT, { gemara: gem, mishna, before, after });
+    /* מקף תירוץ שנמחק ביודעין (השורה כולה נמחקה) - רק כשנרשם ב-changes, עם הכותרת עצמה */
+    const dropDash = SKC.dashLost(rT, tT).filter((x) => (s.changes || []).some((c) => /מקף/.test(c) && String(c).indexOf(x.replace(/^-\s*/, '')) > -1));
+    const ck = SKC.check(rT, tT, { gemara: gem, mishna, before, after, dropDash });
+    /* בודק הציות (פרומפט 28): הדגשת עיקר המשנה, הדגשה ומקף שלא נעלמו - חוסם; עיטור, רווח, מקף תירוץ חסר - אזהרה */
+    const hatzIds = r.ids.filter((id) => (pk.units.find((u) => u.id === id) || {}).k === 'hatz' && !hd.ids.includes(id));
+    const cp = SKC.comply(rT, tT, { changes: s.changes, hatz: hatzIds, hatzDel: hd.ids.length });
+    ck.errs = ck.errs.concat(cp.errs);
+    ck.warns = (ck.warns || []).concat(cp.warns.map((x) => 'ציות: ' + x));
     /* אורך: בסכם פרק השלמה מהגמרא, גזע שנכתב או מספור עשויים להאריך - אזהרה למנהל, לא חסימה */
     const LEN = /קצר מהמקור|ארוך מהמקור/;
     ck.warns = (ck.warns || []).concat(ck.errs.filter((e) => LEN.test(e)));
@@ -274,7 +291,7 @@ if (cmd === 'status') {
     if (s.skipped) layers.push('קיצור מרחבי');
     if (adds.length) layers.push('השלמה');
     o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, orig: r.text, text, point: String(s.point || ''),
-                   changes: (s.changes || []).map(String).slice(0, 6), layers, skipped: String(s.skipped || ''), adds, warn: ck.warns || [], read });
+                   changes: (s.changes || []).map(String).slice(0, 24), layers, stat: cp.stat, skipped: String(s.skipped || ''), adds, warn: ck.warns || [], read });
   }
   /* חסר גדול מן הגמרא: פריט נפרד במקומו, אחרי הקטע */
   (Array.isArray(s.missing) ? s.missing : []).forEach((m, k) => {
@@ -297,19 +314,44 @@ if (cmd === 'status') {
   const pk = pkOf(jid), o = outOf(jid);
   if (!o) die('אין הצעות.');
   if (o.done < o.total) die('נכתבו ' + o.done + ' מתוך ' + o.total + ' - אי אפשר לסיים.');
+  /* בודק הציות בסיום הפרק (פרומפט 28): פרק שלם בלי שום רווח - נעצר ומבקש סבב רווחים; ושורת סיכום לראש הסקירה */
+  const S = { bold: 0, space: 0, dash: 0, side: 0, hatz: 0 };
+  o.items.forEach((x) => { if (x.kind !== 'seg') return;
+    if (x.stat) for (const k in S) S[k] += +x.stat[k] || 0;
+    else { const t = x.nochange ? SKC.toInter(pk.units.filter((u) => x.ids.includes(u.id))).text : x.text; const c = SKC.comply(t, t, {}); S.space += c.stat.space; S.dash += c.stat.dash; S.bold += c.stat.bold; } });
+  if (!S.space && !process.argv.includes('--no-space-ok')) die('בפרק כולו אין אף (רווח). כלל קבוע של בעל הפרויקט: רווח לפני גופא / ת"ר / אמר מר ובפתיחת יחידה חדשה בלי כותרת.\nהוסף (רווח) בקטעים המתאימים (put מחדש לקטעים האלה) והרץ finish שוב. (--no-space-ok רק אם באמת אין שום מקום כזה בפרק.)');
+  o.summary = 'בפרק: ' + S.bold + ' הדגשות במשנה, ' + S.space + ' רווחים, ' + S.dash + ' מקפי תירוץ, ' + S.side + ' כותרות צד חדשות, ' + S.hatz + ' עיטורים נמחקו';
+  o.compliance = S;
+  /* מה סכם למד מאז הפרק הקודם (המקליט, פרומפט 28) */
+  try { const lr = rd(path.join(D, 'learn', 'rules.json')); const last = lr.lastFinish || 0; o.learnedNew = (lr.rules || []).filter((x) => !x.off && (x.t || 0) > last).length; lr.lastFinish = Date.now(); wr(path.join(D, 'learn', 'rules.json'), lr); } catch (e) { o.learnedNew = 0; }
+  console.log(o.summary);
   o.status = 'ready';
   o.t = Date.now();
   o.counts = { shown: o.items.filter((x) => !x.nochange).length, spatial: o.items.filter((x) => (x.layers || []).includes('קיצור מרחבי')).length,
                adds: o.items.reduce((n, x) => n + ((x.adds || []).length), 0), missing: o.items.filter((x) => x.kind === 'missing').length };
   wr(outF(jid), o);
   console.log('מוכן לסקירה:', JSON.stringify(o.counts));
-  if (PUSH) push('סכם: ' + (pk.title || jid) + ' - מוכן לסקירה', [outF(jid)]);
+  if (PUSH) push('סכם: ' + (pk.title || jid) + ' - מוכן לסקירה', [outF(jid)].concat(fs.existsSync(path.join(D, 'learn', 'rules.json')) ? [path.join(D, 'learn', 'rules.json')] : []));
 } else if (cmd === 'lessons') {
   const stF = path.join(D, 'lessons-state.json'), st = fs.existsSync(stF) ? rd(stF) : { done: [] };
   /* 6.11.2026: סבב שני על אותו פרק (אותו jid) נשא הכרעות חדשות והן דולגו. המפתח הוא עכשיו jid@זמן העבודה */
   const dkey = (j) => j + '@' + (((rd(path.join(DEC, j + '.json')) || {}).job || {}).t || '');
   const todo = ls(DEC).map((f) => f.slice(0, -5)).filter((j) => st.done.indexOf(dkey(j)) < 0);
-  if (!todo.length) die('אין הכרעות חדשות.', 0);
+  /* המקליט (פרומפט 28): דפוסים חדשים מעריכות המנהל, הערות "הערה לקלוד" ושיחות לוח הסקירה שטרם נקראו */
+  const since = st.learnT || 0, LRf = path.join(D, 'learn', 'rules.json'), PTf = path.join(D, 'learn', 'patterns.json');
+  const nr = fs.existsSync(LRf) ? (rd(LRf).rules || []).filter((x) => (x.t || 0) > since) : [];
+  if (nr.length) console.log('\n######## כללים חדשים שנקלטו מאז הפעם הקודמת (' + nr.length + ')\n' + nr.map((x) => '- ' + (x.off ? '[בוטל] ' : '') + x.text).join('\n'));
+  if (fs.existsSync(PTf)) { const P = rd(PTf); console.log('\n######## עריכות המנהל: ' + P.total + ' · ' + JSON.stringify(P.cnt) + '\nצורה: ' + Object.entries(P.sub || {}).sort((a, b) => b[1].w - a[1].w).slice(0, 8).map(([k, v]) => k + ' ' + v.n).join(' · ')); }
+  const AK = process.env.LEOKMEI_ADMIN_KEY || '';
+  if (AK) {
+    const H = { 'x-admin-key': AK }, API2 = process.env.SAKEM_API || 'https://leokmei-suggest.m7654301.workers.dev';
+    try {
+      const N = await (await fetch(API2 + '/notes', { headers: H })).json();
+      const nn = (N.items || N.notes || []).filter((x) => !x.learned && (x.t || 0) > since);
+      if (nn.length) console.log('\n######## הערות חדשות לקלוד (' + nn.length + ') - ללמוד מהן כלל כללי; בריפו הציבורי לא לצטט אותן\n' + nn.map((x) => '- [' + (x.slug || '') + ' ' + (x.daf || '') + '] ' + x.note + (x.was ? '\n  היה: ' + x.was + '\n  נעשה: ' + (x.now || '') : '')).join('\n'));
+    } catch (e) { console.log('\n(הערות לקלוד: לא נקראו - ' + e.message + ')'); }
+  } else console.log('\n(הערות לקלוד ולוח הסקירה: אין מפתח מנהל בסביבה - דלג; הן נקראות בשיחה המקומית)');
+  if (!todo.length && !nr.length) die('אין הכרעות חדשות.', 0);
   todo.forEach((jid) => {
     const d = rd(path.join(DEC, jid + '.json'));
     const c = {}; (d.log || []).forEach((x) => { if (x.act === 'undo') return; (x.layers || ['?']).forEach((L) => { c[L] = c[L] || {}; c[L][x.act] = (c[L][x.act] || 0) + 1; }); });
@@ -323,6 +365,7 @@ if (cmd === 'status') {
   const stF = path.join(D, 'lessons-state.json'), st = fs.existsSync(stF) ? rd(stF) : { done: [] };
   const dk2 = (j) => { const f = path.join(DEC, j + '.json'); return fs.existsSync(f) ? j + '@' + ((rd(f).job || {}).t || '') : j; };
   st.done = [...new Set(st.done.concat(A.map(dk2)))];
+  st.learnT = Date.now();
   wr(stF, st);
   console.log('סומן.');
   if (PUSH) push('סכם: לקחים מהכרעות המנהל', [stF, path.join(ROOT, 'docs', 'sakem-lessons.md')]);

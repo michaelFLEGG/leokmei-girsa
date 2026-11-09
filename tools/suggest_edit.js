@@ -1,7 +1,7 @@
   /* =================== עורך המציע, ואישור הצעות מן העורך (מנה 2, 7.10.2026) ===================
      נטען אחרי suggest_ui.js.
 
-     המציע: אותו עורך בדיוק, עם כל הקיצורים (Ctrl+1 עד Ctrl+7, Ctrl+נקודה, Ctrl+Z/Y, רווח לפני,
+     המציע: אותו עורך בדיוק, עם כל הקיצורים (Ctrl+1 עד Ctrl+7, Ctrl+נקודה, Ctrl+ז/Y, רווח לפני,
      ניקוי עיצוב, Enter, Backspace, Delete, פיצול ואיחוי). ההבדל היחיד: הפעולה אינה נכתבת לאתר,
      אלא נרשמת כהצעה. הצעת סגנון נשמרת כפעולה מבנית מדויקת - איזה טווח, מאיזה סגנון לאיזה סגנון -
      ולא כטקסט חופשי, כדי שתחול אוטומטית באישור. אין מגבלה על מספר ההצעות.
@@ -162,7 +162,7 @@
       if(un>-1){rec.upd=SG[un].upd;SG[un]=rec}
       else{if(SUGSENT[rec.ek])rec.upd=SUGSENT[rec.ek];SG.push(rec)}
       e.pub=1;e.sgi=1;e.sgk=e.sgk||e.k}
-    /* הצעה ששלחנו והפעולה בוטלה (Ctrl+Z, או חזרה לנוסח המקורי): נמשכת */
+    /* הצעה ששלחנו והפעולה בוטלה (Ctrl+ז, או חזרה לנוסח המקורי): נמשכת */
     for(const k of Object.keys(SUGSENT)){
       if(ED.some(x=>x.k===k||x.sgk===k))continue;
       const sid=SUGSENT[k];delete SUGSENT[k];SUGCOUNT=Math.max(0,SUGCOUNT-1);
@@ -349,7 +349,7 @@
     QQ=QQ.filter(x=>x.id!==id);QQTOT=Math.max(0,QQTOT-1);
     if(edit.op!=='struct'){applyTextNow(edit)}
     drawEd();pubSoon();syncSoon();sqBadge();sqMark();drawSq();
-    toast('ההצעה הוחלה מיד על הטקסט. Ctrl+Z בתור מבטל.');
+    toast('ההצעה הוחלה מיד על הטקסט. Ctrl+ז בתור מבטל.');
     return true}
 
   /* אישור כל ההצעות מאותו סוג של אותו מציע, עם תצוגה מקדימה */

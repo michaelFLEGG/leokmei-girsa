@@ -189,6 +189,34 @@ export async function sakemApi(req, env, url, p, h) {
     return json({ ok: true });
   }
 
+  /* ---- מה סכם למד (פרומפט 28, 9.11.2026) ----
+     GET  /sakem/learn                 רשימת הכללים שנלמדו (מן הריפו, data/sakem/learn/rules.json) וביטולי המנהל
+     POST /sakem/learn/put  {rules}    (פעולת הסנכרון) הרשימה העדכנית מן הריפו; ביטולים שנעשו בדף נשמרים
+     POST /sakem/learn/off  {id, off}  "בטל כלל" (או החזר) מן הדף; יורד לריפו בסנכרון הבא */
+  if (p === '/sakem/learn') {
+    const L = (await env.STORE.get('skm:learn', 'json')) || { rules: [], off: {} };
+    return json({ ok: true, rules: L.rules || [], off: L.off || {}, t: L.t || 0 });
+  }
+  if (p === '/sakem/learn/put') {
+    if (!Array.isArray(b.rules)) return bad('אין רשימה');
+    const L = (await env.STORE.get('skm:learn', 'json')) || { rules: [], off: {} };
+    L.rules = b.rules.slice(-400).map((r) => ({ id: String(r.id || ''), t: +r.t || 0, text: String(r.text || '').slice(0, 400),
+      kind: String(r.kind || ''), target: String(r.target || ''), was: String(r.was || '').slice(0, 300), now: String(r.now || '').slice(0, 300),
+      src: String(r.src || '').slice(0, 80), n: +r.n || 0, off: !!r.off }));
+    L.t = Date.now();
+    await env.STORE.put('skm:learn', JSON.stringify(L));
+    return json({ ok: true, n: L.rules.length, off: L.off || {} });
+  }
+  if (p === '/sakem/learn/off') {
+    const id = String(b.id || '');
+    if (!id) return bad('אין מזהה');
+    const L = (await env.STORE.get('skm:learn', 'json')) || { rules: [], off: {} };
+    L.off = L.off || {};
+    L.off[id] = { off: b.off !== false, t: Date.now() };
+    await env.STORE.put('skm:learn', JSON.stringify(L));
+    return json({ ok: true });
+  }
+
   /* ---- יומן הלמידה (כמו קודם) ---- */
   if (p === '/sakem/stat') {
     const lg = (await env.STORE.get('skm:lg', 'json')) || { pairs: [], rejects: 0 };

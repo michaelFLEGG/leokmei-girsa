@@ -3,7 +3,7 @@
  "jid": "sukkah-p1",
  "slug": "sukkah",
  "title": "סוכה פרק ראשון - סוכה שהיא גבוהה",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 1,
@@ -2085,5 +2085,11 @@
    "read": []
   }
  ],
- "t": 1794209536049
+ "t": 1794209548165,
+ "counts": {
+  "shown": 58,
+  "spatial": 0,
+  "adds": 4,
+  "missing": 0
+ }
 }

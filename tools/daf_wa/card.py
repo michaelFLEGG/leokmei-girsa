@@ -64,7 +64,7 @@ def render(jobs):
         b = p.chromium.launch()
         pg = b.new_page(viewport={'width': 1200, 'height': 480}, device_scale_factor=1)
         for name, daf, line, iso in jobs:
-            pg.set_content(tpl.replace('@@DAF@@', H.escape(daf)).replace('@@LINE@@', H.escape(line)).replace('@@DATE@@', iso), wait_until='load')
+            pg.set_content(tpl.replace('@@DAF@@', H.escape(daf)).replace('@@LINE@@', H.escape(line).replace('-', '<span class="hy">-</span>')).replace('@@DATE@@', iso), wait_until='load')
             pg.evaluate('document.fonts.ready.then(() => window.fit && window.fit())')
             pg.wait_for_timeout(150)
             out = os.path.join(OG, name + '.jpg')

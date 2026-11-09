@@ -4,7 +4,7 @@
   python tools/daf_wa/writer.py need [ימים=10]   אילו דפים בימים הקרובים חסרים תוכן בדוק; כותב את הגמרא שלהם
                                                 בלי ניקוד, ממוספרת בשורות, ל-_work/daf_src/<slug>_<עמוד>.txt
   python tools/daf_wa/writer.py gate [slug-n ...] שער מכני על קובצי התוכן: מבנה, 4-6 שורות, ans בטווח, ref תקין,
-                                                בלי מקף ארוך. יוצא בקוד 1 על כל כשל (עצירה רועשת).
+                                                בלי מקף ארוך ובלי ;. יוצא בקוד 1 על כל כשל (עצירה רועשת).
 
 הכתיבה עצמה והבדיקה מול הגמרא - בידי הכותב והבודק הנפרד (_work/daf_wa_checker.md)."""
 import datetime as dt
@@ -91,6 +91,9 @@ def gate(keys):
         blob = json.dumps(c, ensure_ascii=False)
         if '–' in blob or '—' in blob:
             e.append('מקף ארוך')
+        # 9.11.2026 (בעל הפרויקט): לעולם לא נקודה-פסיק בתוכן - רק נקודה
+        if any(';' in s for s in [x.get('t', '') for x in lines] + [c.get('card', '')] + [q.get('q', '') for q in [c.get('hook') or {}] + (c.get('alts') or [])]):
+            e.append('נקודה-פסיק (;) בתוכן - רק נקודה')
         if NIKUD.search(blob):
             e.append('ניקוד בתוכן')
         if f[:-5] != '%s-%s' % (c.get('slug'), c.get('n')):

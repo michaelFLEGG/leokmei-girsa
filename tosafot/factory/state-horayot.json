@@ -1,0 +1,31 @@
+{
+ "slug": "horayot",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-09T18:41:16Z",
+   "unc_done": true,
+   "handoff_units": [
+    "horayot-p01-u01",
+    "horayot-p01-u02"
+   ],
+   "result": {
+    "generated": 47,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 25
+   }
+  }
+ },
+ "created": "2026-11-09T18:41:16Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.154,
+   "n": 4,
+   "at": "2026-11-09T18:41:16Z"
+  }
+ ],
+ "updated": "2026-11-09T18:41:16Z"
+}

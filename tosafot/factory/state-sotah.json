@@ -18,6 +18,83 @@
     "flagged": 0,
     "questions": 63
    }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-09T18:41:17Z",
+   "unc_done": true,
+   "handoff_units": [
+    "sotah-p02-u01",
+    "sotah-p02-u02"
+   ],
+   "result": {
+    "generated": 43,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 38
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-09T18:41:17Z",
+   "unc_done": true,
+   "handoff_units": [
+    "sotah-p04-u01",
+    "sotah-p04-u02"
+   ],
+   "result": {
+    "generated": 36,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 27
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-09T18:41:17Z",
+   "unc_done": true,
+   "handoff_units": [
+    "sotah-p05-u01"
+   ],
+   "result": {
+    "generated": 16,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 17
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-09T18:41:17Z",
+   "unc_done": true,
+   "handoff_units": [
+    "sotah-p06-u01"
+   ],
+   "result": {
+    "generated": 4,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 6
+   }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-09T18:41:18Z",
+   "unc_done": true,
+   "handoff_units": [
+    "sotah-p08-u01"
+   ],
+   "result": {
+    "generated": 5,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 3
+   }
   }
  },
  "created": "2026-11-09T12:40:50Z",
@@ -27,7 +104,37 @@
    "mean": 0.222,
    "n": 7,
    "at": "2026-11-09T12:40:50Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.282,
+   "n": 3,
+   "at": "2026-11-09T18:41:16Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.661,
+   "n": 3,
+   "at": "2026-11-09T18:41:17Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.484,
+   "n": 1,
+   "at": "2026-11-09T18:41:17Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.121,
+   "n": 1,
+   "at": "2026-11-09T18:41:17Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.481,
+   "n": 1,
+   "at": "2026-11-09T18:41:17Z"
   }
  ],
- "updated": "2026-11-09T12:40:50Z"
+ "updated": "2026-11-09T18:41:18Z"
 }

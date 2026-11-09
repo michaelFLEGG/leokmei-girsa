@@ -3,7 +3,7 @@
  "jid": "sukkah-p3",
  "slug": "sukkah",
  "title": "סוכה פרק שלישי - לולב הגזול",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 1154,
@@ -1506,5 +1506,11 @@
    "read": []
   }
  ],
- "t": 1794217654762
+ "t": 1794217674592,
+ "counts": {
+  "shown": 38,
+  "spatial": 0,
+  "adds": 8,
+  "missing": 0
+ }
 }

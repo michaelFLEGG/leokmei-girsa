@@ -309,6 +309,18 @@
   function skpAnchor(it){
     for(const id of [it.anchor].concat(it.ids.slice().reverse())){const o=skmUnits([id])[0];if(o&&(o.u.k==='u'||o.u.k==='m')&&o.u.l&&o.u.l.length)return o}
     return null}
+  /* פרומפט 29 (9.11.2026): כרטיס הציון של הפרק, ולידו הדגם - בבא בתרא פרק ה כפי שאושר - באותם מדדים לכל קטע */
+  function skpScore(S){
+    if(!S)return '';
+    const M=(S.model&&S.model.perSeg)||{},P=S.perSeg||{},f=n=>(Math.round((+n||0)*100)/100).toString(),
+      pc=n=>(n>0?'+':'')+(+n||0)+'%';
+    const row=(t,k)=>'<tr><td>'+t+'</td><td>'+f(P[k])+'</td><td>'+(S.model?f(M[k]):'-')+'</td></tr>';
+    return '<details class="skpscore"><summary>כרטיס ציון: '+(S.block?'<b class="skpbad">'+S.block+' חוסמות</b>':'0 חוסמות')+
+      ' · '+S.warnLeft+' אזהרות · הדגשות '+S.bold+' · רווחים '+S.space+' · מקפי תירוץ '+S.dash+' · כותרות צד חדשות '+S.side+
+      ' · כותרות נושא חדשות '+S.nose+' · עיטורים שנמחקו '+S.hatz+' · אורך '+pc(S.lenPct)+(S.model?' (בדגם '+pc(S.model.lenPct)+')':'')+'</summary>'+
+      '<table><tr><th>לכל קטע</th><th>הפרק הזה</th><th>בבא בתרא ה (הדגם)</th></tr>'+
+      row('הדגשות במשנה','bold')+row('רווחים','space')+row('מקפי תירוץ','dash')+row('כותרות צד','side')+row('כותרות נושא','nose')+row('שורות אלמנות','widow')+
+      '</table></details>'}
   function skpBar(){
     const R=SKP.rev;let b=$('#skpbar');
     if(!b){b=document.createElement('div');b.id='skpbar';b.dir='rtl';document.body.appendChild(b);
@@ -322,6 +334,7 @@
       /* פרומפט 28: שורת הציות (הדגשות, רווחים, מקפי תירוץ...) ומה סכם למד מאז הפרק הקודם */
       (R.out.summary||R.out.learnedNew!=null?'<span class="skpsum">'+esc(R.out.summary||'')+
         (R.out.learnedNew!=null?(R.out.summary?' · ':'')+'<a href="/admin-sakem-learn.html" target="_blank">למדתי מאז הפרק הקודם: '+(+R.out.learnedNew||0)+' כללים חדשים</a>':'')+'</span>':'')+
+      skpScore(R.out.score)+
       '<button data-a="unfold" title="פרוש את כל המחיקות המקופלות בקטע (Alt+ח)">פרוש מחיקות</button>'+
       '<button data-a="allsug" title="קבל את כל הקטעים שטרם הוכרעו בסוגיה הזאת">קבל את כל הנותרים בסוגיה</button>'+
       '<button data-a="allper" title="קבל את כל הקטעים שטרם הוכרעו בפרק">קבל את כל הנותרים בפרק</button>'+
@@ -480,6 +493,8 @@
     '.skpside button[data-a="ok"],.skpside button[data-a="force"]{border-color:#2e7d3c;color:#2e7d3c}.skpside button[data-a="no"],.skpside button[data-a="keep"]{color:#a8452f}'+
     '#skpbar{position:fixed;bottom:0;left:0;right:0;z-index:65;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:4px 12px 6px;background:rgba(255,255,255,.97);border-top:1px solid #d6dde4;font-size:12.5px;color:#3d4a55}'+
     '#skpbar>i{position:absolute;top:0;right:0;height:2px;background:#2e7d3c}#skpbar .skpttl{font-weight:700;color:#2e5b8a}#skpbar .skpc{color:#5d6b77}#skpbar .skpsum{flex-basis:100%;order:-1;color:#1f5a2c;font-size:12px}#skpbar .skpsum a{color:inherit}'+
+    '#skpbar .skpscore{flex-basis:100%;order:-1;font-size:12px;color:#1f3f5a}#skpbar .skpscore summary{cursor:pointer}#skpbar .skpscore .skpbad{color:#a3261a}'+
+    '#skpbar .skpscore table{border-collapse:collapse;margin:4px 0}#skpbar .skpscore td,#skpbar .skpscore th{border:1px solid #c9d3dc;padding:1px 8px;text-align:center}'+
     '#skpbar button{padding:1px 9px;border-radius:10px;border:1px solid #c9d3dc;background:#fff;color:#2e5b8a;font-size:12px;cursor:pointer}'+
     '.skmghost.edit del.skpdel.skpdelro{opacity:.55;user-select:none;cursor:default;font-size:.92em}'+'#skpbar .skpmob{display:none}body.skprev{padding-bottom:40px}'+
     '.skptab{width:100%;border-collapse:collapse;font-size:13px}.skptab td{border-bottom:1px solid #eee;padding:4px}'+

@@ -1,0 +1,14 @@
+{
+ "from": "bava-batra-p5 + bava-batra-s3799-p27r",
+ "t": 1794247404255,
+ "segs": 28,
+ "perSeg": {
+  "bold": 1.18,
+  "space": 0.04,
+  "dash": 0.07,
+  "side": 6.96,
+  "nose": 0.36,
+  "widow": 0.68
+ },
+ "lenPct": 4.8
+}

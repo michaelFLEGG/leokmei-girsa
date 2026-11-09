@@ -8,7 +8,8 @@
    node tools/sakem/runner.mjs orig  <jid> <from> <to>   נוסח הביניים של טווח יחידות (כפי שהדף יראה אותו)
    node tools/sakem/runner.mjs plan  <jid> <plan.json>   חלוקת הפרק לקטעים טבעיים (אחרי קריאת כל הסוגיה)
    node tools/sakem/runner.mjs put   <jid> <seg.json> [--push]   הצעה לקטע אחד, נבדקת ונשמרת מיד
-   node tools/sakem/runner.mjs finish <jid> [--push]     סיום: "מוכן לסקירה"
+   node tools/sakem/runner.mjs finish <jid> [--push]     סיום: "מוכן לסקירה" (בודק שאין חוסמות, כרטיס ציון, יומן ההרצות)
+   node tools/sakem/runner.mjs pause  <jid> [--push]     סוף הרצה באמצע פרק (חצי ראשון של פרק ארוך) - שורה ביומן ההרצות
    node tools/sakem/runner.mjs lessons                   הכרעות המנהל שטרם הופקו מהן לקחים
    node tools/sakem/runner.mjs lessons-done <jid>...     סימון שהלקחים מהן נכתבו ל-docs/sakem-lessons.md */
 import fs from 'node:fs';
@@ -125,7 +126,53 @@ function origOf(pk, from, to) {
   return { text: SKC.toInter(pk.units.slice(a, b + 1)).text, ids: pk.units.slice(a, b + 1).map((u) => u.id), a, b };
 }
 
-const cmd = process.argv[2], A = process.argv.slice(3).filter((x) => x !== '--push' && x !== '--dry'), PUSH = process.argv.includes('--push'), DRY = process.argv.includes('--dry');
+/* ---- פרומפט 29 (9.11.2026): הקשר הקטע לבודק, הרצה פרק לפרק, ויומן העלות ----
+   ctxOf: מזהי העיטורים בקטע, מזהי פתיחת הפרק (עיטור שצמוד להם נמחק), כמה יחידות בקטע נפתחות בלי כותרת
+   (שם חובה (רווח)), והנוסח שלפני הקטע ואחריו (עיטור בקצה הקטע שהכותרת שלו בקטע הסמוך) */
+function ctxOf(pk, r) {
+  const U = pk.units, set = new Set(r.ids);
+  const hatz = U.filter((u) => set.has(u.id) && u.k === 'hatz').map((u) => u.id);
+  const heads = U.filter((u) => /^perek-(start|range)$/.test(u.k)).map((u) => u.id);
+  let unitOpen = 0;
+  U.forEach((u, i) => {
+    if (!set.has(u.id) || u.k !== 'u' || SKC.bare(u.a || '').trim()) return;
+    const p = U[i - 1]; if (!p || p.k !== 'u') return;
+    /* יחידה שפותחת במספור או במקף (המשך רשימה, תירוץ) אינה פתיחה חדשה */
+    const f = SKC.plainI(SKC.h2i(((u.l || [])[0] || [])[1] || '')).trim();
+    if (/^-|^(?:[יכלמ]?[א-ט]|[יכלמ])\.\s/.test(f)) return;
+    unitOpen++;
+  });
+  const before = SKC.toInter(U.slice(Math.max(0, r.a - 2), r.a)).text, after = SKC.toInter(U.slice(r.b + 1, r.b + 3)).text;
+  return { hatz, heads, unitOpen, before, after };
+}
+/* פרק ארוך (מעל 30 קטעים) - שתי הרצות: החצי הראשון עד H (לא כולל) */
+const HALF_MIN = 30;
+const halfOf = (o) => (o && o.total > HALF_MIN ? Math.ceil(o.total / 2) : 0);
+/* מצב ההרצה הנוכחית - מקומי בלבד (_work אינו במאגר): כל הרצה של המשימה היא שיחה חדשה ושכפול חדש */
+const runF = (jid) => path.join(WORK, jid, 'run.json');
+const runState = (jid) => (fs.existsSync(runF(jid)) ? rd(runF(jid)) : {});
+const saveRun = (jid, s) => wr(runF(jid), s);
+const RUNS = path.join(D, 'runs.jsonl');
+/* סימון ההרצה (מקומי): על איזו עבודה ההרצה הזאת עובדת. כל הרצה של המשימה היא שכפול חדש, ולכן אין סימון.
+   במחשב המקומי _work נשמר - סימון בן יותר משלוש שעות אינו נחשב, ו-next --new-run מאפס אותו */
+const MARK = path.join(WORK, '.run.json');
+const runMark = () => { try { const m = rd(MARK); return Date.now() - (m.t || 0) < 3 * 3600e3 ? m : null; } catch (e) { return null; } };
+/* שורה ביומן ההרצות: פרק, חלק, קטעים, יחידות, אורך המקור, התחלה וסיום - להערכת העלות לפרק */
+function logRun(jid, pk, o, how) {
+  const rs = runState(jid);
+  const units = pk.units.length, origLen = SKC.plainI(SKC.toInter(pk.units).text).replace(/\s+/g, '').length;
+  const rec = { jid, slug: pk.slug, perek: +((pk.job && pk.job.perek) || pk.perek || 0) || null, title: pk.title || '', part: rs.part ? rs.part + '/2' : 'כולו',
+    segs: o.total, segsThisRun: o.done - (rs.done0 || 0), units, origLen, start: rs.t0 ? new Date(rs.t0).toISOString() : null, end: new Date().toISOString(), how };
+  if (rs.t0) rec.minutes = Math.round((Date.now() - rs.t0) / 6000) / 10;
+  fs.mkdirSync(D, { recursive: true });
+  fs.appendFileSync(RUNS, JSON.stringify(rec) + '\n');
+  rs.logged = 1; saveRun(jid, rs);
+  /* ההרצה הסתיימה (פרק אחד, או חצי) - next הבא באותה הרצה אומר "התור ריק" */
+  const m = runMark(); if (m) { m.stopped = Date.now(); wr(MARK, m); }
+  return rec;
+}
+
+const cmd = process.argv[2], A = process.argv.slice(3).filter((x) => !/^--/.test(x)), PUSH = process.argv.includes('--push'), DRY = process.argv.includes('--dry');
 
 if (cmd === 'status') {
   const js = ls(Q);
@@ -136,6 +183,11 @@ if (cmd === 'status') {
   /* next <jid>: עבודה מסוימת (כמה עובדים במקביל, כל אחד על פרק אחר; 6.11.2026) */
   const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready'); });
   if (!jid) die('התור ריק.', 3);
+  /* פרומפט 29: פרק אחד בכל הרצה, בהקשר נקי */
+  if (process.argv.includes('--new-run')) { try { fs.unlinkSync(MARK); } catch (e) {} }
+  { const m = runMark();
+    if (m && (m.stopped || m.jid !== jid)) die('התור ריק להרצה הזאת: כבר עובד בה ' + m.jid + (m.stopped ? ' (הסתיים או נעצר בסוף חצי)' : '') + '. פרק אחד בכל הרצה - צא; ההמשך בהרצה הבאה, בשיחה חדשה.', 3);
+    if (!m) { wr(MARK, { jid, t: Date.now() }); try { fs.unlinkSync(runF(jid)); } catch (e) {} } }
   const pk = pkOf(jid), o = outOf(jid);
   const dir = path.join(WORK, jid);
   fs.mkdirSync(dir, { recursive: true });
@@ -163,6 +215,12 @@ if (cmd === 'status') {
   console.log('לקריאה:', path.relative(ROOT, dir) + '/{gemara.md, leokmei.md' + (hv ? ', chavruta.md' : '') + '}');
   if (o) console.log('המשך מהרצה קודמת: ' + o.done + ' מתוך ' + o.total + ' קטעים כבר נכתבו. הקטע הבא: ' + (o.plan.findIndex((s, i) => !o.items.some((x) => x.seg === i)) + 1));
   else console.log('טרם נכתבה חלוקה (plan).');
+  /* פרומפט 29: פרק אחד בכל הרצה; פרק מעל 30 קטעים - חצי בכל הרצה */
+  if (!fs.existsSync(runF(jid))) saveRun(jid, { t0: Date.now(), done0: o ? o.done : 0 });
+  const H = halfOf(o);
+  if (H) { const nx = o.plan.findIndex((s, i) => !o.items.some((x) => x.seg === i));
+    console.log('פרק ארוך (' + o.total + ' קטעים): בהרצה הזאת רק ' + (nx < H ? 'החצי הראשון - קטעים 1 עד ' + H : 'החצי השני - קטעים ' + (H + 1) + ' עד ' + o.total) + '. בסוף החצי: pause וצא.'); }
+  console.log('פרק אחד בהרצה: אחרי finish (או pause בסוף חצי) - צא. הפרק הבא בהרצה הבאה, בשיחה חדשה.');
 } else if (cmd === 'rules') {
   const src = fs.readFileSync(path.join(ROOT, 'worker', 'leokmei-suggest', 'src', 'sakem_prompt.js'), 'utf8');
   const sys = src.slice(src.indexOf('`') + 1, src.lastIndexOf('`')).replace(/\$\{SKC\.LINE\}/g, String(SKC.LINE)).replace(/\\\\n/g, '\\n');
@@ -207,14 +265,20 @@ if (cmd === 'status') {
   o.items = o.items.filter((x) => x.seg !== si);
   /* פרומפט עבודה גרסה 2: לשון המשניות של הפרק (data/mishna), לבדיקת תיבת המשנה; ו"ללא שינוי" אינו מותר כשהנוסח הקיים פגום */
   const mishna = mishnaOf(pk);
+  /* פרומפט 29: חצי פרק בכל הרצה (פרק מעל 30 קטעים) - קטע מן החצי האחר נדחה עד ההרצה הבאה */
+  { const m = runMark(); if (m && m.jid !== jid) die('ההרצה הזאת עובדת על ' + m.jid + ' - פרק אחד בכל הרצה. צא.'); if (m && m.stopped) die('ההרצה הזאת כבר הסתיימה (finish / pause) - צא. ההמשך בהרצה הבאה.'); }
+  const rs = runState(jid), H = halfOf(o);
+  if (H) { const part = si < H ? 1 : 2; if (!rs.part) { rs.part = part; saveRun(jid, rs); }
+    else if (rs.part !== part) die('הקטע ' + (si + 1) + ' שייך לחצי ' + (part === 1 ? 'הראשון' : 'השני') + ' של הפרק, וההרצה הזאת עובדת על החצי ' + (rs.part === 1 ? 'הראשון' : 'השני') + '.\nסיים את ההרצה (node tools/sakem/runner.mjs pause ' + jid + ' --push) וצא. החצי האחר - בהרצה הבאה, בשיחה חדשה.'); }
+  const cx = ctxOf(pk, r);
   if (s.nochange) {
     const q0 = SKC.quality(r.text, { mishna });
     if (q0.length) die('אי אפשר "ללא שינוי": הנוסח הקיים פגום - ' + q0.slice(0, 6).join(' · ') + '\nתקן בהצעה.');
-    /* פרומפט 28: גם "ללא שינוי" עובר את בודק הציות (משנה בלי הדגשת עיקר) */
-    const c0 = SKC.comply(r.text, r.text, {});
+    /* פרומפט 28: גם "ללא שינוי" עובר את בודק הציות (משנה בלי הדגשת עיקר); פרומפט 29: במצב המשימה (עיטור, רווח, מקף) */
+    const c0 = SKC.comply(r.text, r.text, Object.assign({ strict: true, keep: s.keep }, cx));
     if (c0.errs.length) die('אי אפשר "ללא שינוי": ' + c0.errs.join(' · ') + '\nתקן בהצעה.');
     if (DRY) { console.log('השומר: עבר (ללא שינוי). לא נשמר דבר (--dry).'); process.exit(0); }
-    o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, nochange: true });
+    o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, nochange: true, stat: c0.stat });
   } else {
     let text = String(s.text || '').replace(/\r/g, '').trim();
     if (!text) die('אין text');
@@ -236,15 +300,17 @@ if (cmd === 'status') {
     for (const id of hd.ids) {
       const u = pk.units.find((x) => x.id === id);
       if (!u || u.k !== 'hatz') die('[מחק-עיטור:' + id + '] - מותר רק לעיטור (לא פתיחת פרק, לא הדרן)');
-      if (!SKC.hatzNearHead(text, id)) die('[מחק-עיטור:' + id + '] - מותר רק לעיטור שצמוד לכותרת נושא או ד"ה');
+      if (!SKC.hatzNearHead([cx.before, text, cx.after].join('\n'), id, { heads: cx.heads, hatz: cx.hatz })) die('[מחק-עיטור:' + id + '] - מותר רק לעיטור שצמוד לכותרת נושא, ד"ה, משנה או פתיחת פרק');
     }
     const rT = hd.orig, tT = hd.text;
     /* מקף תירוץ שנמחק ביודעין (השורה כולה נמחקה) - רק כשנרשם ב-changes, עם הכותרת עצמה */
     const dropDash = SKC.dashLost(rT, tT).filter((x) => (s.changes || []).some((c) => /מקף/.test(c) && String(c).indexOf(x.replace(/^-\s*/, '')) > -1));
     const ck = SKC.check(rT, tT, { gemara: gem, mishna, before, after, dropDash });
-    /* בודק הציות (פרומפט 28): הדגשת עיקר המשנה, הדגשה ומקף שלא נעלמו - חוסם; עיטור, רווח, מקף תירוץ חסר - אזהרה */
-    const hatzIds = r.ids.filter((id) => (pk.units.find((u) => u.id === id) || {}).k === 'hatz' && !hd.ids.includes(id));
-    const cp = SKC.comply(rT, tT, { changes: s.changes, hatz: hatzIds, hatzDel: hd.ids.length });
+    /* בודק הציות (פרומפט 28): הדגשת עיקר המשנה, הדגשה ומקף שלא נעלמו - חוסם.
+       פרומפט 29 (strict): גם עיטור שמותר למחוק ולא נמחק, רווח חסר, מקף תירוץ חסר (אלא בנימוק ב-keep), שורה אלמנה,
+       כותרת צד חדשה של יותר משתי מילים, ופתיחת ראשי תיבות שמאריכה כותרת או גולשת לשורה נוספת - חוסמים */
+    const hatzIds = cx.hatz.filter((id) => !hd.ids.includes(id));
+    const cp = SKC.comply(rT, tT, Object.assign({}, cx, { strict: true, keep: s.keep, changes: s.changes, hatz: hatzIds, hatzDel: hd.ids.length }));
     ck.errs = ck.errs.concat(cp.errs);
     ck.warns = (ck.warns || []).concat(cp.warns.map((x) => 'ציות: ' + x));
     /* אורך: בסכם פרק השלמה מהגמרא, גזע שנכתב או מספור עשויים להאריך - אזהרה למנהל, לא חסימה */
@@ -291,7 +357,8 @@ if (cmd === 'status') {
     if (s.skipped) layers.push('קיצור מרחבי');
     if (adds.length) layers.push('השלמה');
     o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, orig: r.text, text, point: String(s.point || ''),
-                   changes: (s.changes || []).map(String).slice(0, 24), layers, stat: cp.stat, skipped: String(s.skipped || ''), adds, warn: ck.warns || [], read });
+                   changes: (s.changes || []).map(String).slice(0, 24), layers, stat: cp.stat, skipped: String(s.skipped || ''), adds, warn: ck.warns || [], read,
+                   keep: (Array.isArray(s.keep) ? s.keep : s.keep ? [s.keep] : []).map((x) => (typeof x === 'string' ? x : JSON.stringify(x)).slice(0, 300)) });
   }
   /* חסר גדול מן הגמרא: פריט נפרד במקומו, אחרי הקטע */
   (Array.isArray(s.missing) ? s.missing : []).forEach((m, k) => {
@@ -309,11 +376,31 @@ if (cmd === 'status') {
   const it = o.items.find((x) => x.seg === si && x.kind === 'seg');
   console.log('קטע ' + (si + 1) + ' נשמר' + (it.nochange ? ' (ללא שינוי)' : ' · ' + it.layers.join(', ') + (it.warn.length ? ' · אזהרות: ' + it.warn.join(' · ') : '')) + ' · ' + o.done + ' מתוך ' + o.total);
   if (PUSH) push('סכם: ' + (pk.title || jid) + ' - קטע ' + (si + 1) + ' מתוך ' + o.total, [outF(jid)]);
+  /* פרומפט 29: סוף החצי הראשון של פרק ארוך - עוצרים כאן; החצי השני בשיחה חדשה, שקוראת את הכללים מחדש */
+  if (H && rs.part === 1 && o.plan.slice(0, H).every((p, i) => o.items.some((x) => x.seg === i)))
+    console.log('\nהחצי הראשון הושלם (' + H + ' קטעים). הרץ: node tools/sakem/runner.mjs pause ' + jid + ' --push, וצא. החצי השני - בהרצה הבאה.');
+} else if (cmd === 'pause') {
+  /* סוף הרצה באמצע פרק (חצי ראשון, או זמן שנגמר): שורה ביומן ההרצות, ויציאה */
+  const [jid] = A;
+  const pk = pkOf(jid), o = outOf(jid);
+  if (!o) die('אין הצעות.');
+  const rec = logRun(jid, pk, o, 'pause');
+  console.log('נרשם ביומן ההרצות: ' + rec.segsThisRun + ' קטעים בהרצה הזאת, ' + o.done + ' מתוך ' + o.total + ' בסך הכול.');
+  if (PUSH) push('סכם: ' + (pk.title || jid) + ' - סוף הרצה (' + o.done + ' מתוך ' + o.total + ')', [outF(jid), RUNS]);
 } else if (cmd === 'finish') {
   const [jid] = A;
   const pk = pkOf(jid), o = outOf(jid);
   if (!o) die('אין הצעות.');
   if (o.done < o.total) die('נכתבו ' + o.done + ' מתוך ' + o.total + ' - אי אפשר לסיים.');
+  /* פרומפט 29: אפס חוסמות בפרק. כל קטע נבדק שוב במצב המשימה - גם קטעים שנכתבו לפני שהכללים הוחמרו */
+  const blockers = [];
+  o.items.forEach((x) => { if (x.kind !== 'seg') return;
+    const r = origOf(pk, pk.units.find((u) => u.id === x.ids[0]).id, x.ids[x.ids.length - 1]), cx = ctxOf(pk, r);
+    const t = x.nochange ? r.text : x.text, hd = SKC.hatzDel(r.text, t);
+    const c = SKC.comply(hd.orig, hd.text, Object.assign({}, cx, { strict: true, keep: x.keep, changes: x.changes, hatz: cx.hatz.filter((id) => !hd.ids.includes(id)), hatzDel: hd.ids.length }));
+    if (c.errs.length) blockers.push('קטע ' + (x.seg + 1) + ': ' + c.errs.join(' · '));
+    x.stat = c.stat; x.abs = SKC.absStat(hd.text); });
+  if (blockers.length && !process.argv.includes('--allow-old')) die('בפרק נשארו ' + blockers.length + ' קטעים עם ליקוי חוסם - put מחדש לכל אחד מהם:\n' + blockers.join('\n'));
   /* בודק הציות בסיום הפרק (פרומפט 28): פרק שלם בלי שום רווח - נעצר ומבקש סבב רווחים; ושורת סיכום לראש הסקירה */
   const S = { bold: 0, space: 0, dash: 0, side: 0, hatz: 0 };
   o.items.forEach((x) => { if (x.kind !== 'seg') return;
@@ -325,13 +412,27 @@ if (cmd === 'status') {
   /* מה סכם למד מאז הפרק הקודם (המקליט, פרומפט 28) */
   try { const lr = rd(path.join(D, 'learn', 'rules.json')); const last = lr.lastFinish || 0; o.learnedNew = (lr.rules || []).filter((x) => !x.off && (x.t || 0) > last).length; lr.lastFinish = Date.now(); wr(path.join(D, 'learn', 'rules.json'), lr); } catch (e) { o.learnedNew = 0; }
   console.log(o.summary);
+  /* פרומפט 29: כרטיס הציון בראש הסקירה, ולידו הדגם (בבא בתרא פרק ה, data/sakem/model-bb5.json) לכל קטע */
+  { const segs = o.items.filter((x) => x.kind === 'seg'), n = segs.length || 1;
+    const sum = (k) => segs.reduce((a, x) => a + (+(x.stat || {})[k] || 0), 0);
+    const lenA = sum('lenA'), lenB = sum('lenB');
+    const warnLeft = segs.reduce((a, x) => a + ((x.warn || []).length), 0);
+    let model = null; try { model = rd(path.join(D, 'model-bb5.json')); } catch (e) {}
+    o.score = { segs: segs.length, perSeg: SKC.absAvg(segs.map((x) => x.abs || {})),
+      bold: S.bold, space: S.space, dash: S.dash, side: S.side, nose: sum('nose'), hatz: S.hatz, abbr: sum('abbr'),
+      warnLeft, block: blockers.length, lenPct: lenA ? Math.round((lenB / lenA - 1) * 1000) / 10 : 0,
+      model: model ? { segs: model.segs, perSeg: model.perSeg, lenPct: model.lenPct } : null };
+    console.log('כרטיס הציון: ' + JSON.stringify(o.score)); }
   o.status = 'ready';
   o.t = Date.now();
   o.counts = { shown: o.items.filter((x) => !x.nochange).length, spatial: o.items.filter((x) => (x.layers || []).includes('קיצור מרחבי')).length,
                adds: o.items.reduce((n, x) => n + ((x.adds || []).length), 0), missing: o.items.filter((x) => x.kind === 'missing').length };
   wr(outF(jid), o);
   console.log('מוכן לסקירה:', JSON.stringify(o.counts));
-  if (PUSH) push('סכם: ' + (pk.title || jid) + ' - מוכן לסקירה', [outF(jid)].concat(fs.existsSync(path.join(D, 'learn', 'rules.json')) ? [path.join(D, 'learn', 'rules.json')] : []));
+  const rec = logRun(jid, pk, o, 'finish');
+  console.log('נרשם ביומן ההרצות (data/sakem/runs.jsonl): ' + JSON.stringify(rec));
+  console.log('פרק אחד בהרצה: צא עכשיו. הפרק הבא - בהרצה הבאה, בשיחה חדשה.');
+  if (PUSH) push('סכם: ' + (pk.title || jid) + ' - מוכן לסקירה', [outF(jid), RUNS].concat(fs.existsSync(path.join(D, 'learn', 'rules.json')) ? [path.join(D, 'learn', 'rules.json')] : []));
 } else if (cmd === 'lessons') {
   const stF = path.join(D, 'lessons-state.json'), st = fs.existsSync(stF) ? rd(stF) : { done: [] };
   /* 6.11.2026: סבב שני על אותו פרק (אותו jid) נשא הכרעות חדשות והן דולגו. המפתח הוא עכשיו jid@זמן העבודה */

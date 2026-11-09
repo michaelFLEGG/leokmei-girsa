@@ -61,6 +61,7 @@ h2.lm-t2{font-family:'Vilna',serif;font-size:24px;margin:34px 0 12px;font-weight
 .lm-btn.pri,body.lm a.lm-btn.pri{background:var(--navy-800);color:var(--gold-100);border:1.5px solid var(--gold-500)}
 .lm-btn.small{padding:4px 12px;font-size:15px;min-height:36px}
 .lm-btn[disabled]{opacity:.5;cursor:not-allowed}
+.lm-btn.lm-wa{gap:8px}.lm-btn.lm-wa svg{width:20px;height:20px;flex:none;color:var(--gold-700,#8f6a1e)}.lm-btn.lm-wa.joined{opacity:.8}
 .lm-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
 .lm-grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
 .lm-stat{display:flex;flex-direction:column;gap:2px}

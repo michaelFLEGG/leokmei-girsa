@@ -6,6 +6,6 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 SITE = os.path.join(os.path.dirname(HERE), 'site')
 import build_lamed
 build_lamed.build(SITE)
-for f in ('mobile.css', 'mobile.js'):
+for f in ('mobile.css', 'mobile.js', 'topbar.css', 'topbar.js'):
     shutil.copy(os.path.join(HERE, f), os.path.join(SITE, f))
 print('ok')

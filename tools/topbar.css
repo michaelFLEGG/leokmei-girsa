@@ -1,0 +1,180 @@
+/* topbar.css - הסרגל העליון של דף המסכת (פרומפט 28, 9.11.2026).
+   שלוש קבוצות: ימין "היכן אני" (לוגו, הצטרפות, נ"ך המפורש, בורר משולב), מרכז חיפוש, שמאל כלי הלימוד.
+   כלי המנהל באזור נפרד בקצה השמאלי ואינם נראים לגולש. צבעים, גופנים ומוטיב הזהב - מ-ui.css, בלי שינוי.
+   אינו נוגע בעיצוב דף התוכן עצמו. המבנה: bar_html ב-build_site.py; ההתנהגות: topbar.js. */
+
+/* ---------- שורה אחת, בלי גלישה ובלי חיתוך ---------- */
+@media (min-width:701px){
+  .bar{gap:6px;padding:4px 12px;flex-wrap:nowrap!important}
+  .bar .bg+.bg{padding-inline-start:8px}
+  .bar .bg.loc{gap:8px}
+  .bar .bg.sr{flex:1 1 150px;min-width:96px;max-width:330px;margin-inline:auto}
+  .bar .bg.tools{gap:2px}
+}
+
+/* ---------- ימין: לוגו, הצטרפות, נ"ך המפורש ---------- */
+.bar .tbpill{display:inline-flex;align-items:center;gap:6px;flex:none;height:32px;padding:0 11px;border-radius:999px;
+  border:1px solid var(--gold-700,#8f6a1e);color:var(--gold-100,#f5e3a8);background:rgba(233,195,90,.06);
+  font:700 15px/1 var(--ui);letter-spacing:.01em;text-decoration:none;white-space:nowrap;transition:border-color .15s,background .15s}
+.bar .tbpill:hover{border-color:var(--gold-300,#e9c35a);background:rgba(233,195,90,.13);color:#fff3c4;text-decoration:none}
+.bar .tbpill .ic{width:18px;height:18px;color:var(--gold-300,#e9c35a)}
+.bar .tbwa .sht{display:none}
+/* מי שכבר לחץ להצטרף: סמל קטן בלבד */
+html.wa-joined .bar .tbwa{padding:0;width:32px;justify-content:center}
+html.wa-joined .bar .tbwa .t{display:none}
+body.ed .bar .tbpill{display:none}
+
+/* ---------- הבורר המשולב: מסכת · פרק · דף ---------- */
+.bar .where{display:inline-flex;align-items:center;gap:2px;flex:none;height:36px;padding:0 4px 0 2px;border:1px solid var(--gold-700,#8f6a1e);border-radius:10px;background:rgba(6,15,24,.25)}
+.bar .where .wsep{color:var(--gold-500,#c9a24a);opacity:.75;font-size:15px;padding:0 1px;user-select:none}
+.bar .where #pkmas{border:0;padding:2px 6px;min-height:30px}
+.bar .where #peresel{border:0!important;background:transparent!important;max-width:11.5em;min-width:4.5em;padding:2px 4px;font-weight:600;font-size:15px;text-overflow:ellipsis}
+.bar .where .seg{border:0!important;background:transparent!important;gap:0}
+.bar .where .seg button{border:0;padding:2px 5px;min-height:30px}
+.bar .where .seg .pkd{padding:2px 6px}
+body.ed .bar .where .wsep{display:none}
+
+/* ---------- שמאל: כלי הלימוד - סמל עם כיתוב קצר מתחת ---------- */
+.bar .ib.stk{flex-direction:column;justify-content:center;gap:1px;min-width:46px;height:42px;padding:2px 6px;position:relative}
+.bar .ib.stk .ic{width:19px;height:19px}
+.bar .ib.stk .t{display:block!important;font:600 12.5px/1.05 var(--ui);letter-spacing:0;white-space:nowrap}
+.bar .tools>.dd{position:relative;display:inline-flex}
+/* תוס': החץ של תפריט האופנים - קטן, בפינה, ואינו מוסיף רוחב */
+.bar #tosbtn.stk .tsdd{position:absolute;top:1px;inset-inline-end:1px;font-size:10px;line-height:1;opacity:.75}
+.bar #tosbtn.stk .tsmi{position:absolute;top:3px;inset-inline-start:4px}
+.bar #tosbtn.tosnone{opacity:.55}
+/* בתפריט "עוד": פריטי רשימה רגילים, עם סמל */
+.bar .morep>button .ic,.bar .admp>button .ic{width:18px;height:18px;flex:none;opacity:.85}
+.bar .morep>button .t,.bar .admp>button .t{display:inline!important;font-weight:500}
+.bar .morep #altgo{display:none}
+body.adm .bar .morep #altgo{display:flex!important}
+.bar .ddp.morep,.bar .ddp.admp{inset-inline-start:auto;inset-inline-end:0;min-width:236px}
+
+/* ---------- חלון "תצוגה" ---------- */
+.bar .ddp.vwp{inset-inline-start:auto;inset-inline-end:0;min-width:250px;padding-bottom:6px}
+.bar .vwp .vseg{display:flex;gap:0;margin:2px 10px 6px;border:1px solid var(--line,#d9d1bd);border-radius:10px;overflow:hidden}
+.bar .vwp .vseg button{flex:1 1 0;justify-content:center;text-align:center;border:0;border-radius:0;min-height:38px;font-weight:600;color:var(--tx);background:transparent}
+.bar .vwp .vseg button+button{border-inline-start:1px solid var(--line,#d9d1bd)}
+.bar .vwp .vseg button.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+.bar .vwp .row3{margin:0 10px 4px}
+.bar .vwp .row3 button{flex:1 1 0;min-height:38px;font-weight:700}
+.bar .vwp #fsnow{flex:1.4 1 0;font-variant-numeric:tabular-nums}
+.bar #cbtn{display:none!important}
+.bar .vwp #shsel{margin:0 10px 6px;width:calc(100% - 20px)}
+.bar .swrow{display:flex!important;align-items:center;justify-content:space-between;gap:10px;width:100%;border-color:transparent;padding:8px 12px;min-height:38px;font-weight:500;color:var(--tx);background:transparent;text-align:start}
+.bar .swrow .sw{flex:none;width:36px;height:20px;border-radius:999px;background:var(--line,#d9d1bd);box-shadow:inset 0 0 0 1px var(--tx2,#8a7d66);position:relative;transition:background .15s}
+.bar .swrow .sw::after{content:'';position:absolute;top:2px;inset-inline-end:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.35);transition:inset-inline-end .15s}
+.bar .swrow.on .sw{background:var(--gold-300,#e9c35a);box-shadow:none}
+.bar .swrow.on .sw::after{inset-inline-end:18px}
+.bar .swrow[style*="display:none"],.bar .swrow[style*="display: none"]{display:none!important}
+.bar .vwp .acc{margin-top:6px;border-top:1px solid var(--line,#d9d1bd);padding-top:2px}
+.bar .vwp .acc .sml{margin-top:6px}
+.bar .swrow.sm{font-size:14px;min-height:32px;padding:5px 12px}
+.bar .swrow.sm .sw{width:30px;height:17px}.bar .swrow.sm .sw::after{width:13px;height:13px}.bar .swrow.sm.on .sw::after{inset-inline-end:15px}
+
+/* ---------- אזור המנהל ---------- */
+.bar .bg.admz{gap:4px;border-inline-start:1px solid var(--gold-700,#8f6a1e)!important;padding-inline-start:8px}
+.bar .admz .admlbl{font:700 11px/1 var(--ui);color:var(--gold-500,#c9a24a);letter-spacing:.06em;writing-mode:horizontal-tb;opacity:.85;padding-inline-end:2px}
+.bar .admz .admslot{display:inline-flex;align-items:center;gap:4px}
+.bar .admz .admslot:empty{display:none}
+.bar .admz .admslot .skpbtn,.bar .admz .admslot #skptag{margin:0}
+.bar .admz .admdd{position:relative;display:inline-flex}
+.bar .admz #admbtn{height:32px;padding:2px 8px}
+.bar .admz .admp hr{margin:4px 2px}
+.bar .admz .admp .admhg{display:block;padding:6px 12px}
+/* גולש רגיל: אזור המנהל אינו מוצג כלל. נשאר רק "הצע תיקון" העדין, בלי מתג */
+body:not(.adm) .bar .admz{border-inline-start:0!important;padding-inline-start:0}
+body:not(.adm) .bar .admz>:not(#edbtn){display:none!important}
+body:not(.adm) .bar #edbtn{min-height:30px;height:30px;padding:0 10px;border:1px solid rgba(201,162,74,.45);border-radius:999px;font:600 14px/1 var(--ui);color:var(--gold-100,#f5e3a8);opacity:.85}
+body:not(.adm) .bar #edbtn::after{display:none}
+body:not(.adm) .bar #edbtn:hover{opacity:1;border-color:var(--gold-300,#e9c35a)}
+/* "איחוי שורות" בעורך: למנהל בלבד */
+body:not(.adm) .bar #fbtn{display:none!important}
+/* הכפתור הצף של המנהל (עיפרון): אחד בלבד, קטן, בשוליים */
+html.tb-onefab #lk-fab #lk-mb{display:none!important}
+html.tb-onefab #lk-fab{bottom:16px!important;left:12px!important}
+html.tb-onefab #lk-fab button{width:38px!important;height:38px!important;opacity:.82}
+html.tb-onefab #lk-fab button:hover{opacity:1}
+#tostrifab.tb-moved{display:none!important}
+
+/* ---------- רוחבים: מה מתקצר כשהמקום קטן (נמדד ב-1280, 1440, 1600, 1920 וב-768) ---------- */
+@media (min-width:701px) and (max-width:1760px){.bar .tbwa .lng{display:none}.bar .tbwa .sht{display:inline}}
+@media (min-width:701px) and (max-width:1520px){.bar .brand .nm{display:none}}
+@media (min-width:701px) and (max-width:1366px){.bar .where #peresel{max-width:8em}}
+@media (min-width:701px) and (max-width:1180px){
+  .bar .tbpill{padding:0;width:32px;justify-content:center}.bar .tbpill .t{display:none}
+  .bar .where #peresel{max-width:6.2em;min-width:3.5em}
+  .bar .admz .admlbl{display:none}
+  body.adm .bar #edbtn{gap:4px;padding-inline:3px}
+}
+@media (min-width:701px) and (max-width:960px){
+  .bar{gap:4px;padding:4px 8px}
+  .bar .bg+.bg{padding-inline-start:5px}
+  .bar .ib.stk{min-width:38px;padding:2px 3px}
+  .bar .ib.stk .t{font-size:11.5px}
+  .bar .where #peresel{max-width:4.6em}
+  .bar .bg.sr{min-width:84px}
+  .bar .admz #admbtn .t{display:none}
+}
+/* טאבלט (עד 880): סמלים בלבד בכלי הלימוד (הכיתוב בריחוף), בורר צר יותר, וכפתורי המנהל מקוצרים */
+@media (min-width:701px) and (max-width:880px){
+  .bar .ib.stk .t{display:none!important}
+  .bar .ib.stk{min-width:32px;padding:2px}
+  .bar .bg.loc{gap:5px}
+  .bar .where .wsep{display:none}
+  .bar .where #peresel{max-width:3.6em;min-width:2.8em}
+  .bar .bg.sr{min-width:58px;flex-basis:90px}
+  .bar .admz{gap:3px}
+  body.adm .bar #edbtn{font-size:0;gap:0}
+  .bar .admz #skpbtn,.bar .admz #skmtop{max-width:4.6em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:5px}
+}
+@media (min-width:701px) and (max-width:800px){
+  .bar{gap:3px;padding-inline:5px}
+  .bar .bg+.bg{padding-inline-start:3px}
+  .bar .bg.sr{min-width:46px}
+}
+/* הגופן העברי של הממשק חסר את הסימן +, ולכן הסימנים בגופן רגיל */
+.bar .vwp .row3 .pm{font-family:Arial,'Segoe UI',sans-serif;font-weight:700;margin-inline-start:1px}
+/* בלי כפילויות במחשב: "בחר נוסח" יושב בתפריט "עוד", ו"סכם פרק" בכפתור שבאזור המנהל.
+   העותקים שבתפריט הכלים נשארים לטלפון, שבו הכפתורים שבסרגל מוסתרים. */
+@media (min-width:701px){.bar .admp #altmenu{display:none!important}body.adm .bar .admp #skpmenu{display:none!important}}
+@media (max-width:420px){#wastrip .wst .wsd{display:none}}
+/* השעון של מערכת הלומד: רק כשיש מקום רב */
+@media (min-width:701px) and (max-width:1860px){.bar #lm-clock{display:none!important}}
+
+/* ---------- הסתרה בגלילה למטה, חזרה בגלילה קלה למעלה (מחשב) ---------- */
+@media (min-width:701px){
+  html.dev-desk .bar{transition:margin-top .22s ease}
+  html.dev-desk body.tbhide:not(.ed) .bar{margin-top:calc(-1 * var(--barH,46px) - 2px)}
+}
+
+/* ---------- רצועת הנחיתה מן הווטסאפ ---------- */
+#wastrip{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:14px;min-height:38px;padding:4px 44px 4px 14px;position:relative;z-index:10;
+  background:linear-gradient(90deg,#0f263b,#173a58 50%,#0f263b);border-bottom:1px solid var(--gold-700,#8f6a1e);color:#f2e7c9;font:600 15px/1.25 var(--ui);direction:rtl}
+#wastrip .wst{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#wastrip .wst b{font-family:'LGVilna','Vilna',serif;font-weight:700;font-size:18px;color:var(--gold-300,#e9c35a)}
+#wastrip .wsd{color:var(--gold-500,#c9a24a);padding:0 6px}
+#wastrip a.wsj{display:inline-flex;align-items:center;gap:6px;flex:none;height:28px;padding:0 12px;border-radius:999px;border:1px solid var(--gold-500,#c9a24a);
+  color:#fff3c4;background:rgba(233,195,90,.1);text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}
+#wastrip a.wsj:hover{background:rgba(233,195,90,.2);border-color:var(--gold-300,#e9c35a)}
+#wastrip a.wsj .ic{width:17px;height:17px;color:var(--gold-300,#e9c35a)}
+#wastrip .wsx{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:#e5d9b8;font-size:20px;line-height:1;cursor:pointer;padding:0}
+#wastrip .wsx:hover{background:rgba(255,255,255,.08);color:#fff}
+html.dev-phone #wastrip,html.dev-tab #wastrip{position:fixed;top:var(--mtop);inset-inline:0;z-index:29;font-size:14px;gap:8px;padding:4px 40px 4px 8px;transition:transform .22s ease}
+html.dev-phone #wastrip .wst b{font-size:16px}
+html.dev-phone #wastrip a.wsj{font-size:13px;padding:0 9px}
+html.dev-phone body.mhide #wastrip,html.dev-tab body.mhide #wastrip{transform:translateY(calc(-100% - var(--mtop) - 6px))}
+html.dev-phone body.wastrip .flow,html.dev-tab body.wastrip .flow{padding-top:calc(var(--mtop) + 52px)}
+@media (max-width:420px){#wastrip .wst .wsl{display:none}}
+@media print{#wastrip{display:none!important}}
+
+/* ---------- טלפון: הצטרפות בסמל ווטסאפ זהוב בסרגל המצומצם ---------- */
+#mtop .mwa{flex:none;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;color:#e9c35a;text-decoration:none;border:1px solid rgba(201,162,74,.55);background:rgba(233,195,90,.08)}
+#mtop .mwa .ic{width:21px;height:21px}
+html.wa-joined #mtop .mwa{border-color:transparent;background:transparent;opacity:.8}
+
+/* ---------- עזרה ---------- */
+#tbhelp .box{max-width:460px}
+#tbhelp dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:8px 0 12px;font-size:15px}
+#tbhelp dt{font-weight:700;color:#2b2620;white-space:nowrap}
+#tbhelp dd{margin:0;color:#4a4237}

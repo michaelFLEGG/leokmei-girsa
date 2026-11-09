@@ -1035,6 +1035,101 @@ DEV_CLASS_JS = (
   "co=matchMedia('(pointer:coarse)').matches,ph=w<768||(co&&mn<500),tb=!ph&&co&&mn>=500&&mx<=1400;"
   "d.classList.add(ph?'dev-phone':tb?'dev-tab':'dev-desk');d.classList.add(w>h?'land':'port')}catch(e){}})();")
 
+# ---------------------------------------------------------------------------------------------
+# הסרגל העליון של דף המסכת (פרומפט 28, 9.11.2026): שלוש קבוצות ברורות, בלי גלישה ובלי חיתוך.
+#   ימין - "היכן אני": לוגו, הצטרפות לקיצור הדף היומי, נ"ך המפורש, ובורר אחד משולב מסכת · פרק · דף.
+#   מרכז - חיפוש.
+#   שמאל - כלי הלימוד: מקור, תוס', תצוגה, שיתוף, עוד. כלי המנהל באזור נפרד בקצה, ואינם נראים לגולש.
+# כל המזהים וכל הפונקציות של הסרגל הקודם נשמרו (רק עברו מקום); הרשימה המלאה לפני ואחרי בדוח פרומפט 28.
+# העיצוב: tools/topbar.css, וההתנהגות (הזזת כלי המנהל, הצטרפות, רצועת הווטסאפ, הסתרה בגלילה): tools/topbar.js.
+WA_JOIN = 'https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e'
+NACH_URL = 'https://nach.leokmei.com/'
+
+
+def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
+  ic = lambda n, c='ic': '<svg class="%s" aria-hidden="true"><use href="#i-%s"/></svg>' % (c, n)
+  return (
+  '<div class="bar" id="bar">'
+  # ---- ימין: היכן אני
+  '<div class="bg loc" data-pri="0">'
+  '<a href="index.html" class="brand" title="דף הבית" style="text-decoration:none"><img class="lg" src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"><span class="nm">לאוקמי גירסא</span></a>'
+  '<a id="wajoin" class="tbpill tbwa" href="' + WA_JOIN + '" target="_blank" rel="noopener" data-join="bar" title="הצטרפות לקיצור הדף היומי בווטסאפ" aria-label="הצטרפות לקיצור הדף היומי בווטסאפ">' + ic('wa') + '<span class="t"><span class="lng">הצטרפות לקיצור הדף היומי</span><span class="sht">הצטרפות</span></span></a>'
+  '<a class="tbpill tbnach rs-sis" href="' + NACH_URL + '" target="_blank" rel="noopener" data-rs="נך-סרגל" title="נ״ך המפורש" aria-label="נ״ך המפורש">' + ic('nach') + '<span class="t">נ״ך המפורש</span></a>'
+  '<div class="where" role="group" aria-label="היכן אני: מסכת, פרק ודף">'
+  '<button type="button" class="mn pkb" id="pkmas" aria-haspopup="listbox" aria-expanded="false" title="מסכת">' + masechet + '<i class="pkar"></i></button>'
+  '<span class="wsep" aria-hidden="true">·</span>'
+  '<select id="peresel" title="פרק" aria-label="פרק"></select>'
+  '<span class="wsep" aria-hidden="true">·</span>'
+  '<div class="seg nav" role="group" aria-label="ניווט בין דפים"><button onclick="goDaf(-1)" aria-label="הדף הקודם" title="דף קודם (Ctrl+חץ ימינה)">' + ic('right') + '</button>'
+  '<select id="dafsel" title="קפיצה לדף" aria-label="דף" hidden></select>'
+  '<button type="button" class="pkb pkd" id="pkdaf" aria-haspopup="listbox" aria-expanded="false" title="דף"><span id="pkdl"></span><i class="pkar"></i></button>'
+  '<button onclick="goDaf(1)" aria-label="הדף הבא" title="דף הבא (Ctrl+חץ שמאלה)">' + ic('left') + '</button></div></div>'
+  '<span class="daf" id="curdaf" hidden></span></div>'
+  # ---- מרכז: חיפוש
+  '<div class="bg sr" data-pri="0"><label class="sfield">' + ic('search', 'ic sm') + '<input id="q" type="search" placeholder="חיפוש ב' + masechet + '" aria-label="חיפוש ב' + masechet + '" oninput="search(this.value)" onfocus="search(this.value)" title="חיפוש במסכת"></label></div>'
+  # ---- שמאל: כלי הלימוד, עד חמישה גלויים
+  '<div class="bg tools" data-pri="1">'
+  '<button id="gmbtn" class="ib stk" onclick="gemaraBtn()" title="הגמרא בצד הדף (מ)">' + ic('book') + '<span class="t">מקור</span></button>'
+  + tosbtn +
+  '<span class="dd" data-label="תצוגה"><button id="vwbtn" class="ddb ib stk" onclick="ddToggle(this)" aria-haspopup="menu" title="תצוגה">' + ic('view') + '<span class="t">תצוגה</span></button>'
+  '<div class="ddp vwp">'
+  '<div class="sml">אופן התצוגה</div>'
+  '<div class="vseg" role="group" aria-label="אופן התצוגה"><button id="vbtn" class="keep" onclick="setView(\'vert\')" title="טור אחד בגלילה">טור אחד</button><button id="bkbtn" class="keep" onclick="setView(\'book\')" title="עמודי ספר זה לצד זה">ספר</button></div>'
+  '<button id="cbtn" hidden onclick="setView(\'col\')" title="טורים">טורים</button>'
+  '<select id="shsel" style="display:none" onchange="setSheets(this.value)" title="מספר גיליונות"><option value="1">גיליון אחד</option><option value="2">שני גיליונות</option><option value="3">שלושה גיליונות</option></select>'
+  '<div class="sml">גודל הגופן</div>'
+  '<div class="row3"><button onclick="fs(-2)" title="הקטנה (Ctrl+מינוס)" aria-label="הקטנת הגופן">א<span class="pm">-</span></button><button id="fsnow" data-fs="18" onclick="setFs(18)" title="חזרה לגודל הרגיל">רגיל</button><button onclick="fs(2)" title="הגדלה (Ctrl+פלוס)" aria-label="הגדלת הגופן">א<span class="pm">+</span></button></div>'
+  '<button id="nkbtn" class="swrow keep" role="switch" aria-checked="false" style="display:none" onclick="nikud()" title="ניקוד המשניות"><span>ניקוד</span><i class="sw" aria-hidden="true"></i></button>'
+  '<div class="acc"><div class="sml">נגישות</div><button id="hcbtn" class="swrow sm keep" role="switch" aria-checked="false" onclick="hcToggle()" title="ניגודיות גבוהה"><span>ניגודיות גבוהה</span><i class="sw" aria-hidden="true"></i></button></div>'
+  '</div></span>'
+  '<button id="lkshbtn" class="ib stk lk-sh-btn" type="button" onclick="if(window.LKShare)LKShare.page()" aria-label="שיתוף הדף" title="שיתוף">' + ic('share') + '<span class="t">שיתוף</span></button>'
+  '<span class="dd" data-label="עוד"><button id="morebtn" class="ddb ib stk" onclick="ddToggle(this)" aria-haspopup="menu" aria-label="עוד" title="עוד">' + ic('dots') + '<span class="t">עוד</span></button>'
+  '<div class="ddp morep">'
+  '<button onclick="panel(\'toc\')" title="נושאי הסוגיות">' + ic('list') + 'תוכן העניינים</button>'
+  '<button onclick="panel(\'am\')" title="אמוראים ותנאים">' + ic('users') + 'אמוראים</button>'
+  '<button id="prbtn" onclick="prnOpen()" title="הדפסה לקובץ PDF">' + ic('print') + 'הדפסה</button>'
+  + altbtn +
+  '<button id="quizbtn" onclick="quizDaf()" title="שאלות על הדף">' + ic('quiz') + 'שאלות על הדף</button>'
+  '<button id="zgbtn" onclick="zgOpen()" title="הזוהר על הסוגיא">' + ic('star') + 'הזוהר על הסוגיא</button>'
+  + tzbtn +
+  '<button id="dybtn" onclick="dafYomi()" title="הדף של היום">' + ic('cal') + 'הדף היומי</button>'
+  '<button id="helpbtn" onclick="helpCard()" title="עזרה">' + ic('help') + 'עזרה</button>'
+  '<hr>'
+  '<button onclick="suggest()" title="שאלה, הערה או מקור">' + ic('flag') + 'שאלה, הערה או מקור</button>'
+  '<button onclick="mineOpen()" title="ההצעות ששלחת">' + ic('inbox') + 'ההצעות שלי</button>'
+  '<button class="nonadm-b" onclick="askAdminWord()" title="כניסת מנהל">' + ic('user') + 'כניסת מנהל</button>'
+  '</div></span></div>'
+  # ---- מצב העריכה (מנהל, בזמן עריכה בלבד). "איחוי שורות" עבר לכאן: כלי מנהל בעורך בלבד
+  '<div class="bg edonly dd" id="edstat" data-pri="0"><button class="ddb ib" id="edpubbtn" onclick="ddToggle(this)" aria-haspopup="menu" title="מצב הפרסום">' + ic('upload') + '<span id="edpub" class="edpub"></span></button><span id="edn" hidden></span>'
+  '<div class="ddp"><button id="edpushbtn" class="primary" onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>'
+  '<button onclick="panel(\'ed\')" title="רשימת העריכות שלי">העריכות שלי</button>'
+  '<button onclick="keysCard()" title="קיצורי מקשים (Ctrl+/)">קיצורי מקשים</button>'
+  '<button id="fbtn" class="adm-only-b keep" onclick="squeeze()" title="דחיסה עדינה של מילה בודדת שגלשה לשורה (מנהל)">איחוי שורות</button>'
+  '<button id="ntedit" class="adm-b" onmousedown="event.preventDefault()" onclick="ntAdd()" title="הערה פרטית לקלוד (Ctrl+Alt+H)">הערה לקלוד</button>'
+  '<button id="mineedit" style="display:none" onclick="mineOpen()" title="ההצעות ששלחת">ההצעות שלי</button></div>'
+  '<span id="procnote" class="edpub"></span>'
+  '<button class="ib" onmousedown="event.preventDefault()" onclick="edUndoBtn()" aria-label="בטל" title="בטל (Ctrl+Z)">' + ic('undo') + '<span class="t">בטל</span></button></div>'
+  # ---- מנהל: אזור נפרד בקצה השמאלי. לגולש רגיל נשאר בו רק "הצע תיקון" העדין.
+  '<div class="bg admz edsw" data-pri="0" id="admz">'
+  '<span class="admlbl" aria-hidden="true">מנהל</span>'
+  '<span class="admslot" id="admslot"></span>'
+  '<span class="dd admdd"><button id="admbtn" class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" title="כלי המנהל">' + ic('gear') + '<span class="t">כלים</span></button>'
+  '<div class="ddp admp">'
+  '<button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות שממתינות להכרעתך">' + ic('inbox') + 'הצעות ממתינות</button>'
+  '<button onclick="prnOpenBook()" title="חוברת A5 להדפסה וקיפול">' + ic('print') + 'הדפס לחוברת</button>'
+  '<button onclick="toPdf()" title="כל המסכת ל-PDF">' + ic('print') + 'כל המסכת ל-PDF</button>'
+  '<button id="lnbtn" onclick="lnOpen()" title="מה נלמד מהתיקונים שלך">הלמידה היומית</button>'
+  '<button id="ntbtn" onclick="ntOpen()" title="הערות פרטיות לקלוד">הערות לקלוד</button>'
+  '<button onclick="panel(\'qa\')" title="חריגות שנמצאו בהמרת הקובץ">חריגות המרה</button>'
+  + bkbtn +
+  ('<span class="admhg">' + hgbtn + '</span>' if hgbtn else '') +
+  '<div id="admx"></div>'
+  '</div></span>'
+  '<button id="edbtn" class="tgl" role="switch" aria-checked="false" onclick="editBtn()" title="עריכה (Ctrl+Alt+E)">עריכה</button>'
+  '</div>'
+  '<div class="bg" id="edtools" hidden></div></div>')
+
+
 def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=None):
   blocks = json.load(open(json_path, encoding='utf-8'))
   spacing = spacing or {}
@@ -2612,9 +2707,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     addEventListener('scroll',dafSoon,{passive:true});addEventListener('resize',dafSoon);
     document.addEventListener('selectionchange',()=>{if(typeof EDIT!=='undefined'&&EDIT)dafSoon()});
     if(f&&window.MutationObserver)new MutationObserver(dafSoon).observe(f,{childList:true})})();
-  function toEl(e){const f=$('#flow');
+  function toEl(e,top){const f=$('#flow');
     if(LZ&&e.closest&&e.closest('.row.lz'))revealTail();   /* היעד בזנב שטרם נפרס: מכאן אי אפשר למדוד מיקום */
-    if(f.classList.contains('vert')){e.scrollIntoView({block:'center'});return}
+    /* מעבר לדף (top): ראש הדף בראש המסך, ולא באמצעו (פרומפט 28 - הנחיתה מן הווטסאפ "בראש הדף") */
+    if(f.classList.contains('vert')){e.scrollIntoView({block:top?'start':'center'});return}
     f.scrollLeft += e.getBoundingClientRect().right - f.getBoundingClientRect().right;}
   /* ---- איחוי שורה יתומה ----
      מילה בודדת שגלשה לשורה משלה נמשכת אל השורה שמעליה בדחיסה עדינה:
@@ -2632,7 +2728,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      נראות נדבקות. לכן הרווח בין המילים מצטמצם לכל היותר בארבע מאיות. */
   const STEPS=[[0,-0.006],[-0.010,-0.010],[-0.020,-0.014],[-0.030,-0.018],[-0.040,-0.022]];
   /* ג-ג: כיווץ הריווח (דחיסה עדינה) הוא שריד מהעבר, והתצוגה מציגה בגודל ובריווח מלאים. הוא כבוי כברירת מחדל, ומפתח חדש מבטל את ההעדפה הישנה. */
-  let SQ=localStorage.getItem('lg-sq2')==='1', GEN=0, GAUGE=null, GP=null, GM=null;
+  /* פרומפט 28: איחוי שורות הוא כלי מנהל בעורך בלבד. במכשיר שאינו של מנהל הוא כבוי תמיד (גם אם הודלק בעבר) */
+  let SQ=localStorage.getItem('lg-sq2')==='1'&&localStorage.getItem('lg-admin')==='1', GEN=0, GAUGE=null, GP=null, GM=null;
   function gauge(){
     if(GAUGE)return;
     GAUGE=document.createElement('div');
@@ -3308,7 +3405,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){DAFNAV=Date.now();const si=secOf(pi);if(si!==cur)render(si);
-    setTimeout(()=>{const e=$('#d'+pi);if(e){toEl(e);jumpMark(e)}$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi;hashDaf(pi)},20)}
+    setTimeout(()=>{const e=$('#d'+pi);if(e){toEl(e,1);jumpMark(e)}$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi;hashDaf(pi)},20)}
   function dafYomi(){const t=window.LGDaf&&LGDaf.today();if(!t)return;
     if(t.slug===SLUG){const pi=D.pages.findIndex(p=>p.daf===t.daf);
       if(pi<0){alert('הדף '+t.daf+' אינו במסכת '+D.masechet);return}
@@ -3322,7 +3419,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function fs(d){const r=document.documentElement;
     const v=Math.max(12,Math.min(60,parseFloat(getComputedStyle(r).getPropertyValue('--fs'))+d));setFs(v)}
   function setFs(v){document.documentElement.style.setProperty('--fs',v+'px');localStorage.setItem('lg-fs',v);sizeBtns(v);setDafW();fitAnchors()}
-  function sizeBtns(v){document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',+b.dataset.fs===+v))}
+  function sizeBtns(v){document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',+b.dataset.fs===+v));
+    const n=$('#fsnow');if(n){n.textContent=(+v===18||!v)?'רגיל':String(+v);n.title=(+v===18||!v)?'הגודל הרגיל':'חזרה לגודל הרגיל'}}
+  /* ניגודיות גבוהה: מתג תחת "נגישות", נזכר במכשיר (פרומפט 28) */
+  function hcUi(){const on=document.body.classList.contains('hc'),b=$('#hcbtn');if(b){b.classList.toggle('on',on);b.setAttribute('aria-checked',on?'true':'false')}}
+  function hcToggle(){const on=document.body.classList.toggle('hc');try{localStorage.setItem('lg-hc',on?'1':'0')}catch(e){}hcUi()}
   function vert_(){const v=$('#flow').classList.toggle('vert');EDVERT=false;
     ALL=v;localStorage.setItem('lg-vert',v?'1':'');$('#vbtn').classList.toggle('on',v);
     const keep=+$('#dafsel').value||0;render(cur);
@@ -3396,8 +3497,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      $('#qab').insertAdjacentHTML('beforeend',t);
    }).catch(()=>{})};
    const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(18);
+   /* פרומפט 28 (9.11.2026): בחלון התצוגה שתי אפשרויות - "טור אחד" ו"ספר". במחשב, מי שבחר "טורים" עובר אוטומטית ל"טור אחד".
+      בטלפון ובטאבלט אין שינוי (mobile.js קובע טור אחד). "טורים" נשאר בקוד בלבד, ואינו מוצג. */
+   const VW1=!localStorage.getItem('lg-vert')&&!BOOK&&document.documentElement.classList.contains('dev-desk')&&params.get('print')!=='1'&&new URLSearchParams(location.search).get('print')!=='1';
+   if(VW1){try{localStorage.setItem('lg-vert','1')}catch(e){}}
    if(localStorage.getItem('lg-vert')){$('#flow').classList.add('vert');$('#vbtn').classList.add('on');ALL=true}
-   if(D.nk&&D.nk.voc){$('#nkbtn').style.display='';$('#nkbtn').classList.toggle('on',NK)}
+   try{if(localStorage.getItem('lg-hc')==='1')document.body.classList.add('hc')}catch(e){}hcUi();
+   if(D.nk&&D.nk.voc){$('#nkbtn').style.display='';$('#nkbtn').classList.toggle('on',NK);$('#nkbtn').setAttribute('aria-checked',NK?'true':'false')}
    if(BOOK){$('#bkbtn').classList.add('on');$('#shsel').style.display=''}
    $('#shsel').value=SHEETS;
    addEventListener('resize',()=>{if(BOOK){$('#flow').style.setProperty('--sheets',sheetsNow())}});
@@ -4843,7 +4949,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   document.addEventListener('click',e=>{if(!e.target.closest)return;
     if(!e.target.closest('.bar .dd,.bar .more')){ddClose();return}
     /* פריט בתפריט סוגר אותו; כפתורי גודל הגופן נשארים פתוחים כדי שאפשר להגדיל כמה פעמים */
-    const it=e.target.closest('.bar .ddp>button');if(it&&!it.closest('.row3'))ddClose()});
+    const it=e.target.closest('.bar .ddp>button');if(it&&!it.closest('.row3,.keep'))ddClose()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')ddClose()});
   /* אופן תצוגה: אחד משלושה */
   function setView(m){
@@ -6580,7 +6686,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* ז - הניקוד של המשניות. ברירת המחדל: מנוקד. */
   let NK=localStorage.getItem('lg-nk')!=='0';
   function nikud(){NK=!NK;localStorage.setItem('lg-nk',NK?'1':'0');
-    const b=$('#nkbtn');if(b)b.classList.toggle('on',NK);render(cur)}
+    const b=$('#nkbtn');if(b){b.classList.toggle('on',NK);b.setAttribute('aria-checked',NK?'true':'false')}render(cur)}
   let BOOK=localStorage.getItem('lg-book')==='1'||location.hash.indexOf('book')>-1;
   let SHEETS=+localStorage.getItem('lg-sheets')||2;
   function sheetsNow(){return innerWidth<900?1:SHEETS}
@@ -6889,17 +6995,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       alts_doc['slug']=slug
       JS=JS.replace(chr(10)+"  build();",chr(10)+"  window.__ALTS="+json.dumps(alts_doc,ensure_ascii=False,separators=(',',':'))+";"+chr(10)+io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"alts_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   # פרומפט 25 (8.11.2026): הכפתור נכנס למצב ההכרעה על הטקסט עצמו (altMode); המספר מתעדכן בדף לפי הנקודות הפתוחות
-  altbtn=('<button id="altgo" class="ib" style="display:none" onclick="altMode()" title="בחר נוסח: הנוסח החלופי מוצג על הטקסט עצמו (N)"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">בחר נוסח (%d)</span></button><style>body.adm #altgo{display:inline-flex!important}</style>' % len(alts_doc['items'])) if (alts_doc and alts_doc.get('items')) else ''
+  altbtn=('<button id="altgo" class="ib" style="display:none" onclick="altMode()" title="בחר נוסח (N)"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">בחר נוסח (%d)</span></button><style>body.adm #altgo{display:inline-flex!important}</style>' % len(alts_doc['items'])) if (alts_doc and alts_doc.get('items')) else ''
   # כפתור תוס' אחד מפוצל (26.10.2026): עיקר הכפתור מדליק ומכבה, והחץ שבתוכו פותח את תפריט האופנים. כפתור "אופן" בוטל.
-  tosbtn=('<button id="tosbtn" class="ib" aria-pressed="false" aria-haspopup="menu" onclick="tosBtn(event)" title="תוס&#39;: לחיצה מדליקה ומכבה; החץ בוחר אופן תצוגה"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">תוס&#39;</span><span class="tsmi" aria-hidden="true"></span><span class="tsdd" aria-hidden="true">&#9662;</span></button>') if tos_items else \
-          ('<button id="tosbtn" class="ib tosnone" aria-disabled="true" onclick="try{toast(&quot;עדיין אין תוס&#39; במסכת זו&quot;,3500)}catch(e){}" title="עדיין אין תוס&#39; במסכת זו"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg><span class="t">תוס&#39;</span></button>')
-  tzbtn='<button id="tzbtn" class="ib" onclick="tzBtn()" title="צורת הדף: עמוד הגמרא כפי שהוא מודפס (Alt+צ)"><svg class="ic" aria-hidden="true"><use href="#i-page"/></svg><span class="t">צורת הדף</span></button>' if tz_man else ''
+  tosbtn=('<button id="tosbtn" class="ib stk" aria-pressed="false" aria-haspopup="menu" onclick="tosBtn(event)" title="תוס&#39; (החץ: אופן התצוגה)"><svg class="ic" aria-hidden="true"><use href="#i-tos"/></svg><span class="t">תוס&#39;</span><span class="tsmi" aria-hidden="true"></span><span class="tsdd" aria-hidden="true">&#9662;</span></button>') if tos_items else \
+          ('<button id="tosbtn" class="ib stk tosnone" aria-disabled="true" onclick="try{toast(&quot;עדיין אין תוס&#39; במסכת זו&quot;,3500)}catch(e){}" title="עדיין אין תוס&#39; במסכת זו"><svg class="ic" aria-hidden="true"><use href="#i-tos"/></svg><span class="t">תוס&#39;</span></button>')
+  tzbtn='<button id="tzbtn" class="ib" onclick="tzBtn()" title="צורת הדף (Alt+צ)"><svg class="ic" aria-hidden="true"><use href="#i-page"/></svg><span class="t">צורת הדף</span></button>' if tz_man else ''
   bkbtn='<button id="bkbtn2" style="display:none" onclick="bkToggle()" title="הערות הסקירה של קלוד בתוך הדף (למנהל בלבד)">סקירה</button>' if has_bakara else ''
   bkpanel=('<div class="panel" id="bkp"><button class="x" onclick="panel(&quot;bkp&quot;)">×</button><h3>סקירת קלוד</h3><div id="bkpb"></div></div>') if has_bakara else ''
 
   import shutil as _sh
   _outdir=os.path.dirname(os.path.abspath(out_path))
-  for _f in ('mobile.css','mobile.js'):
+  for _f in ('mobile.css','mobile.js','topbar.css','topbar.js'):
     _sh.copy(os.path.join(_tdir,_f),os.path.join(_outdir,_f))
   # הצעות כותרת מוכנות מראש (12.10.2026): data/titlesug/<מסכת>.json -> titlesug-<מסכת>.json. נטען רק במצב מנהל.
   _tsrc=os.path.join(os.path.dirname(_tdir),'data','titlesug',slug+'.json')
@@ -6916,6 +7022,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       _xr=os.path.join(_root,'tosafot',slug,'test-reveal'+_sfx+'.json')
       if os.path.exists(_xr):
         _sh.copy(_xr,os.path.join(_outdir,'tos-reveal-'+slug+_sfx+'.json'))
+  # הסרגל העליון (פרומפט 28): עיצוב והתנהגות בקובץ נפרד, עם גרסה מתוכן הקובץ
+  TBV=_hl.md5(io.open(os.path.join(_tdir,'topbar.css'),'rb').read()+io.open(os.path.join(_tdir,'topbar.js'),'rb').read()).hexdigest()[:8]
   MOBV=_hl.md5(io.open(os.path.join(_tdir,'mobile.css'),'rb').read()+io.open(os.path.join(_tdir,'mobile.js'),'rb').read()).hexdigest()[:8]
   DEVJS=DEV_CLASS_JS
   _ic=lambda n:'<svg class="ic" aria-hidden="true"><use href="#i-%s"/></svg>'%n
@@ -6969,6 +7077,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     TAILJS='<script>'+_tail_s+'</script>'
   PRELOAD_JS='<link rel="preload" href="%s.data.js?v=%s" as="script"><link rel="preload" href="mas.js?v=%s" as="script">'%(slug,_DV,_MV)
   SKEL=''.join('<i style="width:%d%%"></i>'%w for w in (92,100,96,64,98,100,88,72,94,100,90,58))
+  BAR=bar_html(masechet,tzbtn=tzbtn,tosbtn=tosbtn,altbtn=altbtn,bkbtn=bkbtn,hgbtn=hgbtn)
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
   {PRELOAD_JS}
@@ -6979,55 +7088,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <link rel="preload" href="fonts/frank-b.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
   <script>{DEVJS}</script>
   <script>try{{var _t=localStorage.getItem('lg-theme');document.documentElement.setAttribute('data-theme',_t==='dark'||_t==='auto'?_t:'light')}}catch(e){{document.documentElement.setAttribute('data-theme','light')}}</script>
-  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}{STATIC_M}
-  <div class="bar" id="bar">
-  <div class="bg loc" data-pri="0"><a href="index.html" class="brand" title="לדף הבית" style="text-decoration:none"><img class="lg" src="brand/shaar-v2/shaar-zohar-96.webp" alt="" width="20" height="30"><span class="nm">לאוקמי גירסא</span></a><button type="button" class="mn pkb" id="pkmas" aria-haspopup="listbox" aria-expanded="false" title="מעבר למסכת אחרת">{masechet}<i class="pkar"></i></button>
-  <select id="peresel" title="פרק" aria-label="פרק"></select>
-  <div class="seg nav" role="group" aria-label="ניווט בין דפים"><button onclick="goDaf(-1)" aria-label="הדף הקודם" title="הדף הקודם (Ctrl+חץ ימינה)"><svg class="ic" aria-hidden="true"><use href="#i-right"/></svg></button><select id="dafsel" title="קפיצה לדף" aria-label="דף" hidden></select><button type="button" class="pkb pkd" id="pkdaf" aria-haspopup="listbox" aria-expanded="false" title="רשימת כל הדפים של המסכת"><span id="pkdl"></span><i class="pkar"></i></button><button onclick="goDaf(1)" aria-label="הדף הבא" title="הדף הבא (Ctrl+חץ שמאלה)"><svg class="ic" aria-hidden="true"><use href="#i-left"/></svg></button></div><span class="daf" id="curdaf" hidden></span></div>
-  <div class="bg sr" data-pri="0"><label class="sfield"><svg class="ic sm" aria-hidden="true"><use href="#i-search"/></svg><input id="q" type="search" placeholder="חיפוש ב{masechet}" aria-label="חיפוש ב{masechet}" oninput="search(this.value)" onfocus="search(this.value)" title="חיפוש בכל המסכת"></label></div>
-  <div class="bg dd" data-pri="1" data-label="תצוגה"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" title="אופן התצוגה, גודל הגופן והניקוד"><svg class="ic" aria-hidden="true"><use href="#i-view"/></svg><span class="t">תצוגה</span></button>
-    <div class="ddp"><div class="sml">אופן התצוגה</div>
-    <button id="cbtn" onclick="setView('col')" title="טורים, כמו בעמוד הספר">טורים</button>
-    <button id="vbtn" onclick="setView('vert')" title="כל המסכת בטור אחד, בגלילה מלמעלה למטה">טור רצוף</button>
-    <button id="bkbtn" onclick="setView('book')" title="גיליונות זה לצד זה, בגיאומטריה של עמוד הספר">תצוגת ספר</button>
-    <select id="shsel" style="display:none" onchange="setSheets(this.value)" title="כמה גיליונות זה לצד זה">
-      <option value="1">גיליון אחד</option><option value="2">שני גיליונות</option><option value="3">שלושה גיליונות</option></select>
-    <div class="sml">גודל הגופן</div>
-    <div class="row3"><button onclick="fs(-2)" title="הקטנה (Ctrl+מינוס)">א-</button><button data-fs="18" onclick="setFs(18)">רגיל</button><button onclick="fs(2)" title="הגדלה (Ctrl+פלוס)">א+</button></div>
-    <div class="row3"><button data-fs="15" onclick="setFs(15)">קטן</button><button data-fs="24" onclick="setFs(24)">גדול</button></div>
-    <div class="sml">התאמות</div>
-    <button id="nkbtn" style="display:none" onclick="nikud()" title="ניקוד המשניות, מן הגמרא המנוקדת">ניקוד</button>
-    <button id="fbtn" onclick="squeeze()" title="דחיסה עדינה שמעלה מילה בודדת שגלשה לשורה נפרדת">איחוי שורות</button>
-    <button onclick="document.body.classList.toggle('hc');this.classList.toggle('on')" title="ניגודיות גבוהה">ניגודיות</button></div></div>
-  <div class="bg quick" data-pri="1"><button id="gmbtn" class="ib" onclick="gemaraBtn()" title="הגמרא המנוקדת בצד הדף (מקש מ)"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg><span class="t">גמרא</span></button>{tzbtn}{tosbtn}{altbtn}<button id="prbtn" class="ib" onclick="prnOpen()" title="הדפסה לקובץ PDF בשני טורים על A4: מסכת, פרק, דף או טווח"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg><span class="t">הדפסה</span></button><button class="ib" onclick="quizDaf()" title="שאלות על הדף שאתה קורא עכשיו"><svg class="ic" aria-hidden="true"><use href="#i-quiz"/></svg><span class="t">בחן אותי על הדף</span></button></div>
-  <div class="bg" data-pri="1" id="shbg"><button id="lkshbtn" class="ib lk-sh-btn" type="button" onclick="if(window.LKShare)LKShare.page()" aria-label="שיתוף הדף" title="שיתוף הדף והעמוד שעליהם אתה עומד: ווטסאפ, הודעה, מייל, טלגרם, קישור וקוד QR"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg><span class="t">שיתוף</span></button></div>
-  <div class="bg dd" data-pri="2" data-label="כלים"><button class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" aria-label="כלים" title="כלים: תוכן עניינים, אמוראים, הדפסה, הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-dots"/></svg><span class="t">כלים</span></button>
-    <div class="ddp">
-    <button onclick="panel('toc')" title="נושאי הסוגיות"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>תוכן העניינים</button>
-    <button onclick="panel('am')" title="אמוראים ותנאים לפי הסימון בקובץ"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>אמוראים</button>
-    <button onclick="printPerek()" title="הדפסת הפרק הנוכחי בלבד, בעמוד הספר"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>הדפס פרק</button>
-    <button class="adm-b" onclick="prnOpenBook()" title="חוברת A5 (למנהל): הפרק או הטווח שתבחר, מסודר להדפסה על A4 לרוחב דו-צדדי, לקיפול באמצע"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>הדפס לחוברת</button>
-    <button class="adm-b" onclick="toPdf()" title="כל המסכת (למנהל בלבד): בחלון שייפתח בחר ביעד 'שמירה כ-PDF'. כל פרק פותח עמוד חדש"><svg class="ic" aria-hidden="true"><use href="#i-print"/></svg>כל המסכת ל-PDF</button>
-    <button id="dybtn" onclick="dafYomi()" title="פותח את הדף של היום לפי לוח הדף היומי"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg>הדף היומי</button>
-    <button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות תיקון שממתינות להכרעתך"><svg class="ic" aria-hidden="true"><use href="#i-inbox"/></svg>הצעות ממתינות</button>
-    <button onclick="suggest()" title="שאלה, הערה או מקור: סמן טקסט בדף, או לחץ כאן ובחר קטע">שאלה, הערה או מקור</button>
-    <button onclick="mineOpen()" title="כל ההצעות ששלחת: סינון, עריכה, חידוד">ההצעות שלי</button>
-    <button class="nonadm-b" onclick="askAdminWord()" title="כניסת מנהל: מילת המנהל מוקלדת פעם אחת בכל מכשיר">כניסת מנהל</button>
-    <div class="adm-b"><hr><div class="sml">מנהל</div>
-    <button id="lnbtn" onclick="lnOpen()" title="מה למד המערכת מהתיקונים שלך">הלמידה היומית</button>
-    <button id="ntbtn" onclick="ntOpen()" title="הערות פרטיות שלך לקלוד, על הרעיון שמאחורי תיקונים">הערות לקלוד</button>
-    <button onclick="panel('qa')" title="חריגות שנמצאו בהמרת הקובץ (למנהל בלבד)">חריגות המרה</button>{bkbtn}
-    <span class="adm-b">{hgbtn}</span></div></div></div>
-  <div class="bg edsw" data-pri="0"><button id="edbtn" class="tgl" role="switch" aria-checked="false" onclick="editBtn()" title="לאדם שאינו מנהל: עורך מלא עם כל הקיצורים, וכל פעולה נשלחת כהצעה לעורך. למנהל: עריכה (Ctrl+Alt+E)">עריכה</button></div>
-  <div class="bg edonly dd" id="edstat" data-pri="0"><button class="ddb ib" id="edpubbtn" onclick="ddToggle(this)" aria-haspopup="menu" title="מצב הפרסום. התיקונים נשמרים מיד ומתפרסמים יחד, לכל היותר כל חמש דקות"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg><span id="edpub" class="edpub"></span></button><span id="edn" hidden></span>
-    <div class="ddp"><button id="edpushbtn" class="primary" onclick="pubNow(1)" title="שמירה ופרסום מיידי (Ctrl+S)">פרסם עכשיו</button>
-    <button onclick="panel('ed')" title="רשימת העריכות שלי">העריכות שלי</button>
-    <button onclick="keysCard()" title="קיצורי מקשים (Ctrl+/)">קיצורי מקשים</button>
-    <button id="ntedit" class="adm-b" onmousedown="event.preventDefault()" onclick="ntAdd()" title="הערה פרטית לקלוד, גלויה רק לך (Ctrl+Alt+H)">הערה לקלוד</button>
-    <button id="mineedit" style="display:none" onclick="mineOpen()" title="כל ההצעות ששלחת">ההצעות שלי</button></div>
-    <span id="procnote" class="edpub"></span>
-    <button class="ib" onmousedown="event.preventDefault()" onclick="edUndoBtn()" aria-label="בטל" title="בטל את הפעולה האחרונה (Ctrl+Z)"><svg class="ic" aria-hidden="true"><use href="#i-undo"/></svg><span class="t">בטל</span></button></div>
-  <div class="bg" id="edtools" hidden></div></div>
+  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><link rel="stylesheet" href="topbar.css?v={TBV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}{STATIC_M}
+  {BAR}
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
   <div class="panel" id="toc"><button class="x" onclick="panel('toc')">×</button><h3>תוכן העניינים - נושאי הסוגיות</h3><div id="tocb"></div></div>
   <div class="panel" id="am"><button class="x" onclick="panel('am')">×</button><h3>אמוראים ותנאים - לפי הסימון בקובץ</h3><div id="amb"></div></div>
@@ -7040,7 +7102,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   {bkpanel}
   <div class="flow" id="flow"><div class="skel" aria-hidden="true">{SKEL}</div></div><div id="srcl" aria-hidden="true"></div>
   <script src="{slug}.data.js?v={_DV}"></script><script src="mas.js?v={_MV}"></script>{TAILJS}
-  <script src="shas.js"></script><script src="lamed.js?v={LJV}"></script><script src="mobile.js?v={MOBV}" defer></script><script>if("serviceWorker"in navigator)addEventListener("load",function(){{navigator.serviceWorker.register("sw.js").catch(function(){{}})}})</script></body></html>'''
+  <script src="shas.js"></script><script src="lamed.js?v={LJV}"></script><script src="mobile.js?v={MOBV}" defer></script><script src="topbar.js?v={TBV}" defer></script><script>if("serviceWorker"in navigator)addEventListener("load",function(){{navigator.serviceWorker.register("sw.js").catch(function(){{}})}})</script></body></html>'''
 
   open(out_path,'w',encoding='utf-8').write(page)
   # נתוני עזר למערכת הלומד: אורך כל עמוד במילים, ופתיחת כל פרק

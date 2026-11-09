@@ -158,7 +158,7 @@ def build(site):
     if os.path.exists(ep):
         io.open(os.path.join(site, 'edited-pages.json'), 'w', encoding='utf-8').write(read(ep))
     # Service Worker: גרסת המטמון נגזרת מתוכן המעטפת, כך ששינוי כלשהו מחליף את המטמון הישן
-    swv = hashlib.md5((ui + css + js + read(os.path.join(HERE, 'mobile.js')) + read(os.path.join(HERE, 'mobile.css'))).encode('utf-8')).hexdigest()[:10]
+    swv = hashlib.md5((ui + css + js + read(os.path.join(HERE, 'mobile.js')) + read(os.path.join(HERE, 'mobile.css')) + read(os.path.join(HERE, 'topbar.js')) + read(os.path.join(HERE, 'topbar.css'))).encode('utf-8')).hexdigest()[:10]
     io.open(os.path.join(site, 'sw.js'), 'w', encoding='utf-8').write(read(os.path.join(HERE, 'sw.js')).replace('__SWV__', swv))
     gallery(site)
     ph = placeholder(site)

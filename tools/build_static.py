@@ -57,6 +57,7 @@ CSS = ('@font-face{font-family:LGVilnaXB;src:url(/fonts/vilna-xb.woff2) format("
        'nav.near{margin-top:22px;padding-top:10px;border-top:1px solid #c9bfa8;font-size:16px}nav.near h2{font-size:17px;border:0;margin:0 0 4px;color:#5a4a2a}'
        'nav.near ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:4px 14px}nav.near b{color:#1d1a16}'
        'nav.more{font-size:15px;margin-top:14px;color:#6a5f4d}'
+       '.wajn{margin:16px 0 4px;font-size:15px;color:#6a5f4d}.wajn a{display:inline-block;padding:6px 16px;border:1px solid #8f6a1e;border-radius:999px;background:#0f263b;color:#f5e3a8;font-weight:700;text-decoration:none;margin-inline-end:8px}.wajn a:hover{background:#173a58;color:#fff3c4}'
        '.today{background:#efe6cf;border-right:4px solid #b98522;padding:8px 14px;margin:10px 0;border-radius:4px}'
        'footer.sf{text-align:center;color:#c9bd98;font-size:15px;padding:16px 18px 22px;border-top:1px solid #8f6a1e}footer.sf a{color:#e9c35a}'
        '@media(max-width:560px){main{margin:14px 10px 24px;width:auto;padding:16px 14px 30px}ul.dafs{columns:2}}')
@@ -427,6 +428,7 @@ def write_daf_yomi(site, pages_by_slug, today):
         '<h1>קיצור הדף היומי</h1>%s'
         '<p class="note">הדף היומי בקיצור לאוקמי גירסא - קיצור התלמוד הבבלי, דף אחר דף. הכתובת קבועה, והדף מתחלף מדי יום.</p>'
         '<div id="hy">%s</div>'
+        '<p class="wajn"><a href="https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e" target="_blank" rel="noopener">הצטרפות לקיצור הדף היומי בווטסאפ</a> <span>הודעה אחת בכל בוקר, עם הדף של היום</span></p>'
         '<nav class="near"><h2>השבוע האחרון בדף היומי</h2><ul style="display:block">%s</ul></nav>'
         '<nav class="more"><a href="/%s/">מסכת %s בקיצור - כל הדפים</a> · <a href="/masechtot.html">כל המסכתות</a> · '
         '<a href="/shas.html">מפת הש"ס</a> · <a href="/yomi.html">לוח הדף היומי ומעקב לימוד</a></nav></main>'
@@ -511,7 +513,7 @@ def run(site, built, slug):
                     '<p><a class="cta" href="/%s.html#daf=%s">ללימוד אינטראקטיבי של הדף</a></p>'
                     '%s'
                     '<p class="note">קיצור התלמוד הבבלי, דף אחר דף. '
-                    '<a href="/quiz.html?m=%s">בחן את עצמך על %s</a> · <a href="/%s">קיצור הדף היומי</a></p>%s'
+                    '<a href="/quiz.html?m=%s">בחן את עצמך על %s</a> · <a href="/%s">קיצור הדף היומי</a></p><p class="wajn"><a href="https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e" target="_blank" rel="noopener">הצטרפות לקיצור הדף היומי בווטסאפ</a> <span>הודעה אחת בכל בוקר, עם הדף של היום</span></p>%s'
                     '<nav class="near"><h2>דפים קרובים ב%s</h2><ul>%s</ul></nav>'
                     '<nav class="more"><a href="/%s/">%s בקיצור - כל הדפים</a> · <a href="/shas.html">מפת הש"ס</a> · '
                     '<a href="/">דף הבית</a></nav></main>%s</body></html>') % (

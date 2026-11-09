@@ -171,6 +171,9 @@
     if ($('#prbtn')) items.push(['prn', 'print', 'הדפסה ל-PDF']);
     try { if ($('#prbtn') && typeof isAdmin === 'function' && isAdmin()) items.push(['book', 'print', 'הדפס לחוברת']); } catch (e) { }
     items.push(['toc', 'list', 'תוכן עניינים']);
+    /* פרומפט 28: הצטרפות לקיצור הדף היומי ונ"ך המפורש גם בתפריט הצד */
+    items.push(['join', 'wa', 'הצטרפות לקיצור היומי']);
+    items.push(['nach', 'nach', 'נ״ך המפורש']);
     items.push(['full', 'gear', 'כלים מתקדמים']);
     var h = '<h3>עוד</h3><div class="mgrid">' + items.map(function (i) { return '<button type="button" class="mi" data-m="' + i[0] + '">' + ic(i[1]) + '<span>' + i[2] + '</span></button>'; }).join('') + '</div>';
     h += '<div class="mlbl">גודל הגופן</div><div class="mrow">' + fsSizes().map(function (s) { return '<button type="button" data-fs="' + s[0] + '" class="' + (Math.abs(fsNow() - s[0]) < 1.5 ? 'on' : '') + '">' + s[1] + '</button>'; }).join('') + '</div>';
@@ -213,6 +216,8 @@
       else if (m === 'prn') prnOpen();
       else if (m === 'book') prnOpenBook();
       else if (m === 'toc') panel('toc');
+      else if (m === 'join') { lsSet('lg-wa-joined', '1'); H.classList.add('wa-joined'); window.open('https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e', '_blank', 'noopener'); }
+      else if (m === 'nach') window.open('https://nach.leokmei.com/', '_blank', 'noopener');
       else if (m === 'full') { B.classList.toggle('showbar'); H.style.setProperty('--mtop', '0px'); try { barFit(); } catch (x) { } }
     }, 120);
   });

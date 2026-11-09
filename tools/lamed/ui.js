@@ -156,14 +156,21 @@
     var l = S.last.all, rHref = l ? UI.readHref(l.s, l.d, l) : null;
     /* השער הגדול עם סימן המותג בפתחו (בלי ציטוט ובלי שורת תיאור), ושני כפתורים */
     var btns;
+    /* פרומפט 28: הצטרפות לקיצור הדף היומי בווטסאפ, ליד "הדף היומי". אחרי לחיצה מצטמצם (lg-wa-joined) */
+    var waj = false; try { waj = localStorage.getItem('lg-wa-joined') === '1'; } catch (e) { waj = false; }
+    var WAJ = '<a class="lm-btn lm-wa' + (waj ? ' joined' : '') + '" href="https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e" target="_blank" rel="noopener" data-join="home" title="הצטרפות לקיצור הדף היומי בווטסאפ" aria-label="הצטרפות לקיצור הדף היומי בווטסאפ">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 3.4a8.6 8.6 0 0 0-7.4 13l-1.2 4.2 4.3-1.1A8.6 8.6 0 1 0 12 3.4z"/><path fill="currentColor" stroke="none" d="M9.1 7.7c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .5.4l.7 1.7c.1.2.1.4 0 .6l-.5.7c-.1.2-.1.3 0 .5.6 1 1.4 1.8 2.4 2.3.2.1.3.1.5 0l.6-.7c.2-.2.3-.2.5-.1l1.7.8c.2.1.3.2.3.4 0 .5-.2 1.3-.9 1.7-.6.4-1.5.4-2.7-.1-1.7-.7-3.1-2-3.9-3.7-.6-1.2-.6-2.2-.4-2.7z"/></svg>' +
+      '<span>' + (waj ? 'הקיצור בווטסאפ' : 'הצטרפות לקיצור הדף היומי') + '</span></a>';
     if (rHref) btns = '<a class="lm-btn pri" href="' + rHref + '">המשך ללמוד · ' + E(LG.nameOf(l.s)) + ' ' + E(l.d) + '</a>' +
-      (yHas ? '<a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">הדף היומי · ' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</a>' : '<a class="lm-btn" href="yomi.html">הדף היומי</a>');
-    else btns = '<a class="lm-btn pri" href="' + (yHas ? UI.readHref(y.slug, LG.dafLabel(y.n, 0)) : 'berakhot.html') + '">התחל ללמוד</a><a class="lm-btn" href="shas.html">מפת הש"ס</a>';
+      (yHas ? '<a class="lm-btn" href="' + UI.readHref(y.slug, LG.dafLabel(y.n, 0)) + '">הדף היומי · ' + E(y.name) + ' ' + E(LG.hebq(y.n)) + '</a>' : '<a class="lm-btn" href="yomi.html">הדף היומי</a>') + WAJ;
+    else btns = '<a class="lm-btn pri" href="' + (yHas ? UI.readHref(y.slug, LG.dafLabel(y.n, 0)) : 'berakhot.html') + '">התחל ללמוד</a><a class="lm-btn" href="shas.html">מפת הש"ס</a>' + WAJ;
     var pre = root.querySelector('main.lm-pre');          /* השער הסטטי שצויר לפני הסקריפט: מאמצים אותו, בלי לצייר מחדש */
     wrap.appendChild(LG.brand.hero(pre && pre.querySelector('.gate-hero')));
     if (pre) pre.parentNode.removeChild(pre);
     var ctas = el('div', 'ctas', btns);
     wrap.appendChild(ctas);
+    var wj = ctas.querySelector('.lm-wa');
+    if (wj) wj.addEventListener('click', function () { try { localStorage.setItem('lg-wa-joined', '1'); } catch (e) { /* */ } try { if (window.LK && LK.event) LK.event('הצטרפות לווטסאפ', { from: 'home' }); } catch (e) { /* */ } });
     /* המשך מהמקום שעצרת: שורה שקטה אחת מתחת לכפתורים */
     if (l && rHref) {
       var st = LG.masechetStats(l.s), snip = l.fp ? '״…' + E(l.fp.slice(0, 40)) + '…״ · ' : '';

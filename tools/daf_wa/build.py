@@ -3,7 +3,11 @@
 
 רץ בסוף build_all, אחרי שכל המסכתות נבנו, וקורא את site/<slug>.data.js שהבנייה כבר כתבה
 (אותו מנוע תצוגה, אותם נתונים מן הוורד). כותב:
-  site/daf/<slug>-<n>.html   - הדף בתצוגת טלפון: עמודת 20.75em בפרנק, כותרות צד 3.6em, משנה מנוקדת בוילנא
+  site/daf/<slug>-<n>.html   - דף מעבר (פרומפט 28, 9.11.2026): נושא את תגיות התצוגה המקדימה (הכרטיס היומי) ומוביל
+                               מיד אל הדף עצמו בדף המסכת באתר (/<slug>.html?src=wa#daf=<דף>). כך גם הודעות ישנות
+                               שכבר נשלחו מגיעות לאתר, והקישור בהודעות אינו משתנה.
+  site/daf-preview/<slug>-<n>.html - תצוגת הטלפון הקלה הקודמת (עמודת 20.75em בפרנק, משנה מנוקדת בוילנא). נשמרה
+                               בכתובת פנימית, בלי קישור אליה ובלי אינדוקס.
   site/daf/index.html        - leokmei.com/daf: מפנה תמיד לדף של היום
   site/daf/data/*.json       - תוכן ההודעה היומית (מ-data/daf-wa), ללוח ולשולח
   site/daf/og/*.jpg          - כרטיס התצוגה המקדימה של כל דף (נוצר ב-card.py ונשמר במאגר)
@@ -181,6 +185,34 @@ def clean(t):
     return t.replace('\t', ' ')
 
 
+REDIRECT_TPL = '''<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>@@TITLE@@</title>
+<meta name="description" content="@@DESC@@">
+<meta name="robots" content="noindex,follow">
+<meta property="og:type" content="article"><meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="לאוקמי גירסא"><meta property="og:title" content="@@OGTITLE@@">
+<meta property="og:description" content="@@DESC@@"><meta property="og:url" content="@@URL@@">
+<meta property="og:image" content="@@OG@@"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="480">
+<meta property="og:image:alt" content="@@DAF@@"><meta name="twitter:card" content="summary_large_image">
+<style>html,body{margin:0;background:#fdfbf6;color:#2a2520;font-family:serif}p{text-align:center;margin-top:30vh;font-size:16px;color:#7a7060;line-height:1.8}a{color:#8f6a1e}</style>
+<script>(function(){var t=@@JS@@;try{var q=new URLSearchParams(location.search);q.delete("src");var x=q.toString();if(x)t=t.replace("?src=wa","?src=wa&"+x);}catch(e){}location.replace(t);})();</script>
+</head><body><p>פותח את @@DAF@@ באתר...<br><a href="@@HREF@@">לחצו כאן אם הדף אינו נפתח</a></p></body></html>
+'''
+
+
+def redirect_html(slug, label, title, desc, url, og):
+    """דף המעבר של הקישור בהודעה (פרומפט 28): תגיות התצוגה המקדימה כמו קודם (השרת מחזיר אותן בראש הדף,
+    וכך ווטסאפ ממשיך להציג את הכרטיס היומי), ומעבר מיידי אל הדף בדף המסכת, בראש הדף.
+    ?src=wa מסמן לדף המסכת להציג את רצועת ההצטרפות הדקה; הדף מסיר אותו מן הכתובת מיד."""
+    target = '/%s.html?src=wa#daf=%s' % (slug, label)
+    return (REDIRECT_TPL.replace('@@TITLE@@', H.escape(title + ' · ' + OG_TITLE)).replace('@@OGTITLE@@', H.escape(OG_TITLE))
+            .replace('@@DESC@@', H.escape(desc)).replace('@@URL@@', url).replace('@@OG@@', og).replace('@@DAF@@', H.escape(title))
+            .replace('@@JS@@', json.dumps(target, ensure_ascii=False))
+            .replace('@@HREF@@', H.escape(target)))
+
+
 def page_html(slug, D, n, src, heb_date_iso, has_og, content):
     name = D.get('masechet', '')
     title = '%s דף %s' % (name, gq(n))
@@ -234,7 +266,7 @@ def page_html(slug, D, n, src, heb_date_iso, has_og, content):
     desc = title + (' · ' + content['card'] if content and content.get('card') else ' · קיצור הדף בתצוגה קלה לטלפון')
     full = '/%s.html#daf=%s' % (slug, H.escape(pages[0]['daf']))
     tpl = io.open(os.path.join(HERE, 'page.html'), encoding='utf-8').read()
-    return (tpl.replace('@@TITLE@@', H.escape(title + ' · ' + OG_TITLE))
+    return (redirect_html(slug, pages[0]['daf'], title, desc, url, og), tpl.replace('@@TITLE@@', H.escape(title + ' · ' + OG_TITLE))
             .replace('@@OGTITLE@@', H.escape(OG_TITLE)).replace('@@DESC@@', H.escape(desc))
             .replace('@@URL@@', url).replace('@@OG@@', og).replace('@@DAF@@', H.escape(title))
             .replace('@@DATE@@', heb_date_iso).replace('@@FULL@@', full).replace('@@BODY@@', '\n'.join(out)))
@@ -259,6 +291,8 @@ def run(site, today=None):
     out = os.path.join(site, 'daf')
     os.makedirs(os.path.join(out, 'data'), exist_ok=True)
     os.makedirs(os.path.join(out, 'og'), exist_ok=True)
+    prev = os.path.join(site, 'daf-preview')
+    os.makedirs(prev, exist_ok=True)
     today = today or (dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(hours=2)).date()
     try:
         L = cycle()
@@ -288,7 +322,9 @@ def run(site, today=None):
                 d = date_of(slug, n, today, L)
                 h = page_html(slug, D, n, src, d.isoformat(), os.path.exists(og), content)
                 if h:
-                    io.open(os.path.join(out, '%s-%d.html' % (slug, n)), 'w', encoding='utf-8', newline='').write(h)
+                    redir, phone = h
+                    io.open(os.path.join(out, '%s-%d.html' % (slug, n)), 'w', encoding='utf-8', newline='').write(redir)
+                    io.open(os.path.join(prev, '%s-%d.html' % (slug, n)), 'w', encoding='utf-8', newline='').write(phone)
                     rep['pages'] += 1
                     index.append({'slug': slug, 'n': n, 'date': d.isoformat(), 'content': bool(content), 'og': os.path.exists(og)})
         json.dump({'dafim': index, 'masechtot': built}, io.open(os.path.join(out, 'index.json'), 'w', encoding='utf-8'), ensure_ascii=False)

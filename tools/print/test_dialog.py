@@ -35,8 +35,11 @@ def main():
         pg.on('pageerror', lambda e: errs.append('pageerror: %s' % e))
         pg.on('console', lambda m: errs.append('console.%s: %s' % (m.type, m.text)) if m.type == 'error' and 'ERR_FAILED' not in m.text else None)
         pg.goto('http://%s/%s.html' % (HOST, a.slug), wait_until='domcontentloaded', timeout=120000)
-        pg.wait_for_selector('#prbtn', timeout=60000)
+        pg.wait_for_selector('#prbtn', state='attached', timeout=60000)
         pg.wait_for_timeout(2500)
+        # פרומפט 28: "הדפסה" עבר לתפריט "עוד" בסרגל
+        if pg.locator('#morebtn').count():
+            pg.click('#morebtn')
         pg.click('#prbtn')
         pg.wait_for_selector('#prnd.open', timeout=10000)
         out = {}

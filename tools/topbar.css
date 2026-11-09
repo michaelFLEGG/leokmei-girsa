@@ -165,6 +165,8 @@ html.dev-phone #wastrip .wst b{font-size:16px}
 html.dev-phone #wastrip a.wsj{font-size:13px;padding:0 9px}
 html.dev-phone body.mhide #wastrip,html.dev-tab body.mhide #wastrip{transform:translateY(calc(-100% - var(--mtop) - 6px))}
 html.dev-phone body.wastrip .flow,html.dev-tab body.wastrip .flow{padding-top:calc(var(--mtop) + 52px)}
+/* הנחיתה על הדף נעצרת מתחת לסרגל ולרצועה, ולא מתחתיהם */
+html.dev-phone body.wastrip #flow [id],html.dev-tab body.wastrip #flow [id]{scroll-margin-top:calc(var(--mtop) + 56px)}
 @media (max-width:420px){#wastrip .wst .wsl{display:none}}
 @media print{#wastrip{display:none!important}}
 

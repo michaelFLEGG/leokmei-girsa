@@ -117,7 +117,9 @@ function mishnaOf(pk) {
     const f = path.join(ROOT, 'data', 'mishna', pk.slug + '.json');
     const m = rd(f), n = +((pk.job && pk.job.perek) || pk.perek || 0);
     const ch = (m.chapters || [])[n - 1];
-    return ch ? ch.join(' ') : '';
+    /* 10.11.2026: פרק שמתחיל במשנה האחרונה של הפרק הקודם (שבת ב: "אין צולין" מפרק א) - גם משניות הפרק הקודם */
+    const prev = n > 1 ? (m.chapters || [])[n - 2] : null;
+    return ch ? (prev ? prev.join(' ') + ' ' : '') + ch.join(' ') : '';
   } catch (e) { return ''; }
 }
 function origOf(pk, from, to) {

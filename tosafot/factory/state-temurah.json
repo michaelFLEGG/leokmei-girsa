@@ -50,6 +50,68 @@
     "flagged": 0,
     "questions": 37
    }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-10T12:40:09Z",
+   "unc_done": true,
+   "handoff_units": [
+    "temurah-p04-u01"
+   ],
+   "result": {
+    "generated": 17,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 13
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-10T12:40:10Z",
+   "unc_done": true,
+   "handoff_units": [
+    "temurah-p05-u01"
+   ],
+   "result": {
+    "generated": 26,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 26
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-10T12:40:10Z",
+   "unc_done": true,
+   "handoff_units": [
+    "temurah-p06-u01",
+    "temurah-p06-u02"
+   ],
+   "result": {
+    "generated": 30,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 25
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-10T12:40:10Z",
+   "unc_done": true,
+   "handoff_units": [
+    "temurah-p07-u01",
+    "temurah-p07-u02"
+   ],
+   "result": {
+    "generated": 34,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 24
+   }
   }
  },
  "created": "2026-11-10T06:39:13Z",
@@ -71,7 +133,32 @@
    "mean": 0.214,
    "n": 5,
    "at": "2026-11-10T06:39:13Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.688,
+   "n": 1,
+   "at": "2026-11-10T12:40:09Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.56,
+   "n": 2,
+   "at": "2026-11-10T12:40:09Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.717,
+   "n": 3,
+   "at": "2026-11-10T12:40:10Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.236,
+   "n": 3,
+   "at": "2026-11-10T12:40:10Z"
   }
  ],
- "updated": "2026-11-10T06:39:14Z"
+ "updated": "2026-11-10T12:40:10Z",
+ "done": "2026-11-10T12:40:10Z"
 }

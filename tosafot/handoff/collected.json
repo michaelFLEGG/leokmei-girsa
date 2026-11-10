@@ -4478,6 +4478,105 @@
    "flagged": 0,
    "cal": 0.255,
    "published": "2026-11-10T06:39:14Z"
+  },
+  "keritot-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T10:37:51Z",
+   "at": "2026-11-10T12:40:06Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.463,
+   "published": "2026-11-10T12:40:08Z"
+  },
+  "keritot-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T10:41:46Z",
+   "at": "2026-11-10T12:40:06Z",
+   "ntos": 30,
+   "flagged": 1,
+   "cal": 0.248,
+   "published": "2026-11-10T12:40:08Z"
+  },
+  "keritot-p01-u03": {
+   "ok": true,
+   "done_at": "2026-11-10T12:27:44Z",
+   "at": "2026-11-10T12:40:06Z",
+   "ntos": 3,
+   "flagged": 0,
+   "cal": 0.145,
+   "published": "2026-11-10T12:40:08Z"
+  },
+  "keritot-p02-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T12:34:57Z",
+   "at": "2026-11-10T12:40:06Z",
+   "ntos": 26,
+   "flagged": 1,
+   "cal": 0.389,
+   "published": "2026-11-10T12:40:09Z"
+  },
+  "keritot-p02-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T12:30:28Z",
+   "at": "2026-11-10T12:40:06Z",
+   "ntos": 9,
+   "flagged": 0,
+   "cal": 0.295,
+   "published": "2026-11-10T12:40:09Z"
+  },
+  "temurah-p04-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T08:28:41Z",
+   "at": "2026-11-10T12:40:07Z",
+   "ntos": 17,
+   "flagged": 0,
+   "cal": 0.688,
+   "published": "2026-11-10T12:40:09Z"
+  },
+  "temurah-p05-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T08:35:50Z",
+   "at": "2026-11-10T12:40:07Z",
+   "ntos": 26,
+   "flagged": 0,
+   "cal": 0.56,
+   "published": "2026-11-10T12:40:10Z"
+  },
+  "temurah-p06-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T08:39:15Z",
+   "at": "2026-11-10T12:40:07Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.948,
+   "published": "2026-11-10T12:40:10Z"
+  },
+  "temurah-p06-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T08:28:36Z",
+   "at": "2026-11-10T12:40:08Z",
+   "ntos": 5,
+   "flagged": 0,
+   "cal": 0.255,
+   "published": "2026-11-10T12:40:10Z"
+  },
+  "temurah-p07-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T10:32:47Z",
+   "at": "2026-11-10T12:40:08Z",
+   "ntos": 28,
+   "flagged": 0,
+   "cal": 0.152,
+   "published": "2026-11-10T12:40:10Z"
+  },
+  "temurah-p07-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T10:29:09Z",
+   "at": "2026-11-10T12:40:08Z",
+   "ntos": 6,
+   "flagged": 0,
+   "cal": 0.404,
+   "published": "2026-11-10T12:40:10Z"
   }
  },
  "files": {

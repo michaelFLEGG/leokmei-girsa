@@ -1,0 +1,54 @@
+{
+ "slug": "keritot",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-10T12:40:08Z",
+   "unc_done": true,
+   "handoff_units": [
+    "keritot-p01-u01",
+    "keritot-p01-u02",
+    "keritot-p01-u03"
+   ],
+   "result": {
+    "generated": 57,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 25
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-10T12:40:09Z",
+   "unc_done": true,
+   "handoff_units": [
+    "keritot-p02-u01",
+    "keritot-p02-u02"
+   ],
+   "result": {
+    "generated": 34,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 14
+   }
+  }
+ },
+ "created": "2026-11-10T12:40:08Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.314,
+   "n": 5,
+   "at": "2026-11-10T12:40:08Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.358,
+   "n": 3,
+   "at": "2026-11-10T12:40:08Z"
+  }
+ ],
+ "updated": "2026-11-10T12:40:09Z"
+}

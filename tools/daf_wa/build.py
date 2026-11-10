@@ -11,6 +11,7 @@
   site/daf/index.html        - leokmei.com/daf: מפנה תמיד לדף של היום
   site/daf/data/*.json       - תוכן ההודעה היומית (מ-data/daf-wa), ללוח ולשולח
   site/daf/og/*.jpg          - כרטיס התצוגה המקדימה של כל דף (נוצר ב-card.py ונשמר במאגר)
+  site/daf/wa/*.jpg          - פרומפט 30: הכרטיס הריבועי שנשלח כתמונה בווטסאפ (card.py, card-sq.html). בלעדיו ההודעה אינה יוצאת
   site/daf-board.html        - לוח ההכנה (למנהל בלבד; השרת בודק את המפתח)
 תצוגת המחשב של האתר אינה משתנה: זה דף חדש ונפרד.
 כישלון כאן אינו מפיל את בניית האתר, אבל נכתב בקול (עצירה רועשת) ל-site/daf/build-report.json."""
@@ -287,10 +288,11 @@ def which_slugs(site, today):
 
 
 def run(site, today=None):
-    rep = {'ok': True, 'pages': 0, 'content': 0, 'og': 0, 'errors': [], 'missing': [], 'at': dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).isoformat() + 'Z'}
+    rep = {'ok': True, 'pages': 0, 'content': 0, 'og': 0, 'wa': 0, 'wa_missing': [], 'errors': [], 'missing': [], 'at': dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).isoformat() + 'Z'}
     out = os.path.join(site, 'daf')
     os.makedirs(os.path.join(out, 'data'), exist_ok=True)
     os.makedirs(os.path.join(out, 'og'), exist_ok=True)
+    os.makedirs(os.path.join(out, 'wa'), exist_ok=True)
     prev = os.path.join(site, 'daf-preview')
     os.makedirs(prev, exist_ok=True)
     today = today or (dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + dt.timedelta(hours=2)).date()
@@ -315,6 +317,12 @@ def run(site, today=None):
                 if os.path.exists(og):
                     shutil.copy(og, os.path.join(out, 'og', os.path.basename(og)))
                     rep['og'] += 1
+                wa = os.path.join(DATA, 'wa', '%s-%d.jpg' % (slug, n))
+                if os.path.exists(wa):
+                    shutil.copy(wa, os.path.join(out, 'wa', os.path.basename(wa)))
+                    rep['wa'] += 1
+                elif content and (content.get('check') or {}).get('ok'):
+                    rep['wa_missing'].append('%s-%d' % (slug, n))   # יש תוכן בדוק ואין תמונה לשליחה - ההודעה לא תצא
                 if content:
                     content = dict(content, last=nums[-1], url='leokmei.com/daf/%s-%d' % (slug, n))
                     io.open(os.path.join(out, 'data', '%s-%d.json' % (slug, n)), 'w', encoding='utf-8').write(json.dumps(content, ensure_ascii=False))
@@ -341,8 +349,10 @@ def run(site, today=None):
         rep['trace'] = traceback.format_exc()[-1500:]
         print('!!! הדף היומי בווטסאפ: הבנייה נכשלה -', e, file=sys.stderr)
     json.dump(rep, io.open(os.path.join(out, 'build-report.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    print('הדף היומי בווטסאפ: %d דפים, %d הודעות, %d כרטיסים%s' % (rep['pages'], rep['content'], rep['og'],
+    print('הדף היומי בווטסאפ: %d דפים, %d הודעות, %d כרטיסים, %d תמונות לשליחה%s' % (rep['pages'], rep['content'], rep['og'], rep['wa'],
           '' if rep['ok'] else ' - נכשל!'))
+    if rep['wa_missing']:
+        print('!!! הדף היומי בווטסאפ: חסרה תמונה לשליחה (card.py --wa) -', ', '.join(rep['wa_missing']), file=sys.stderr)
     return rep
 
 

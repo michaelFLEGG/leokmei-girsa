@@ -41,11 +41,12 @@ textarea{width:100%;min-height:330px;font-family:inherit;font-size:15px;line-hei
 .wa{background:var(--wabg);border-radius:10px;padding:10px}
 .wa code{font-family:Consolas,'Courier New',monospace;font-size:.92em}
 .bub{background:var(--wa);border-radius:8px;padding:4px 4px 8px;box-shadow:0 1px .5px rgba(0,0,0,.13);font-family:system-ui,'Segoe UI',Arial,sans-serif;font-size:14.2px;line-height:1.42;color:#111}
-.pv{background:#d9f2c9;border-radius:6px;overflow:hidden;margin-bottom:6px}
-.pv img{display:block;width:100%;aspect-ratio:1200/480;object-fit:cover;background:#123049}
-.pv .t{font-weight:600;padding:6px 8px 0;font-size:13.5px}
-.pv .d{padding:0 8px;font-size:12.5px;color:#444}
-.pv .u{padding:0 8px 6px;font-size:12px;color:#666}
+.pv{border-radius:6px;overflow:hidden;margin-bottom:6px}
+/* פרומפט 30: ההודעה היא תמונה עם כיתוב - הכרטיס הריבועי, ומתחתיו הכיתוב, כמו בטלפון */
+.pv img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;background:#123049}
+.pv .noimg{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:#f3dede;color:var(--bad);font-size:15px;text-align:center;padding:12px}
+.cnt{font-size:13px;color:var(--soft);margin-top:6px}
+.cnt.over{color:var(--bad);font-weight:700}
 .tx{white-space:pre-wrap;padding:0 6px;overflow-wrap:anywhere}
 .tx a{color:#027eb5}
 .miss{color:var(--bad);font-size:15px}
@@ -80,14 +81,19 @@ function login(err){
       .catch(function(e){login(e.message)});
   };
 }
-var STATE={auto:'יישלח אוטומטית',approved:'אושר - יישלח',sent:'נשלח',await:'ממתין לאישורך',missing:'חסר תוכן שנבדק - לא יישלח',stopped:'נעצר - לא יישלח',holy:'אין שליחה',pilot:'פיילוט - לעיון ואישור'};
+var STATE={auto:'יישלח אוטומטית',approved:'אושר - יישלח',sent:'נשלח',await:'ממתין לאישורך',missing:'חסר תוכן שנבדק - לא יישלח',stopped:'נעצר - לא יישלח',holy:'אין שליחה',pilot:'פיילוט - לעיון ואישור',
+  noimage:'חסרה תמונת הכרטיס - לא יישלח',toolong:'הכיתוב ארוך מדי - לא יישלח'};
 function wa(t){
-  return esc(t).replace(/```([^`\n]+)```/g,'<code>$1</code>').replace(/\*([^*\n]+)\*/g,'<b>$1</b>').replace(/(^|\s)(leokmei\.com\/[^\s]*)/g,'$1<a href="https://$2" target="_blank" rel="noopener">$2</a>');
+  return esc(t).replace(/```([^`\n]+)```/g,'<code>$1</code>').replace(/\*([^*\n]+)\*/g,'<b>$1</b>').replace(/(^|\s)(leokmei\.com\/[^\s]*)/g,'$1<a href="https://$2" target="_blank" rel="noopener">$2</a>')
+    .replace(/(^|\s)(https:\/\/chat\.whatsapp\.com\/[^\s]*)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');
 }
 function bubble(v){
-  var f=v.dafim[0]||{};
-  return '<div class="wa"><div class="bub"><div class="pv"><img loading="lazy" src="'+esc(f.og)+'" alt=""><div class="t">לאוקמי גירסא - קיצור הדף היומי</div><div class="d">'+esc(f.card||'')+'</div><div class="u">leokmei.com</div></div>'+
-    '<div class="tx">'+wa(v.text)+'</div></div></div>';
+  var f=v.dafim[0]||{}, old=!!v.sentAt&&!/chat\.whatsapp\.com/.test(v.text||'');
+  // הודעה שנשלחה לפני פרומפט 30 יצאה כטקסט עם כרטיס תצוגה מקדימה; כל השאר - תמונה עם כיתוב
+  var pv=old?'<div class="pv"><img loading="lazy" src="'+esc(f.og)+'" alt="" style="aspect-ratio:1200/480"></div>'
+    :(v.hasImg===false?'<div class="pv"><div class="noimg">תמונת הכרטיס חסרה באתר. בלעדיה ההודעה לא תצא.</div></div>':'<div class="pv"><img loading="lazy" src="'+esc(v.img||'')+'" alt=""></div>');
+  var cnt=v.len&&!old?'<div class="cnt'+(v.len>v.capMax?' over':'')+'">'+v.len+' / '+v.capMax+' תווים בכיתוב'+(v.len>v.capMax?' - ארוך מדי, קצר את "הדף בקצרה"':'')+'</div>':'';
+  return '<div class="wa"><div class="bub">'+pv+'<div class="tx">'+wa(v.text)+'</div></div>'+cnt+'</div>';
 }
 function dayHtml(v,pilot){
   var s=v.state, f=v.dafim[0]||{}, i=v.d;
@@ -95,7 +101,9 @@ function dayHtml(v,pilot){
   h+='<div class="dh"><b>'+esc(v.dafim.map(function(x){return x.label}).join(' + '))+'</b><span>'+esc(v.meta.line)+'</span><span class="badge s-'+s+'">'+esc(STATE[s]||s)+(s==='holy'&&v.meta.why?' - '+esc(v.meta.why):'')+'</span>'+(v.edited?'<span class="badge s-await">נערך בידך</span>':'')+'</div>';
   if(s==='holy'){h+='<p class="note">הדף של היום הזה יוצא בהודעה של היום שלפניו.</p></div><div></div></div>';return h}
   if(v.missing&&v.missing.length)h+='<p class="miss">חסר תוכן שעבר את הבודק: '+esc(v.missing.join(', '))+'. ההודעה לא תצא, ולא תצא שום הודעת "בהכנה".</p>';
-  if(v.err)h+='<p class="miss">השליחה האחרונה נכשלה: '+esc(v.err)+'</p>';
+  if(s==='noimage')h+='<p class="miss">תמונת הכרטיס של הדף חסרה או פגומה באתר. ההודעה לא תצא עד שתהיה תמונה, ולעולם לא תצא בלעדיה.</p>';
+  if(s==='toolong')h+='<p class="miss">הכיתוב ארוך מ-'+v.capMax+' תווים, וזו המגבלה של ווטסאפ לכיתוב של תמונה. ההודעה לא תצא ולא תפוצל לשתיים. קצר את "הדף בקצרה" ושמור.</p>';
+  if(v.err)h+='<p class="miss">'+(/^לא נשלח/.test(v.err)?'':'השליחה האחרונה נכשלה: ')+esc(v.err)+'</p>';
   if(v.text){
     h+='<textarea data-k="text" hidden>'+esc(v.text)+'</textarea>';
     if(f.alts&&f.alts.length&&f.hook){
@@ -117,7 +125,7 @@ function dayHtml(v,pilot){
     } else h+='<span class="badge s-sent">נשלח ב-'+new Date(v.sentAt).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+'</span>';
     h+='</div>';
   }
-  h+='<div class="links">'+v.dafim.map(function(x){return '<a href="'+esc(x.url)+'" target="_blank" rel="noopener">תצוגת הטלפון של '+esc(x.label)+'</a> · <a href="'+esc(x.og)+'" target="_blank" rel="noopener">הכרטיס</a>'}).join('<br>')+'</div>';
+  h+='<div class="links">'+v.dafim.map(function(x){return '<a href="'+esc(x.url)+'" target="_blank" rel="noopener">תצוגת הטלפון של '+esc(x.label)+'</a> · <a href="'+esc(x.og)+'" target="_blank" rel="noopener">כרטיס הקישור</a>'}).join('<br>')+'</div>';
   h+='</div><div>'+(v.text?bubble(v):'')+'</div></div>';
   return h;
 }
@@ -134,7 +142,7 @@ function render(){
   h+='<button data-g="test"'+(o.linked?'':' disabled')+'>שלח הודעת ניסיון אליי</button>';
   if(c.invite)h+='<a class="btn" href="'+esc(c.invite)+'" target="_blank" rel="noopener">קישור ההצטרפות</a>';
   h+='</div><div id="qr"></div>';
-  h+='<h2>הימים הקרובים</h2><p class="note">הדף היומי של כל יום. בשבת וביום טוב אין שליחה, והדפים שלהם יוצאים יחד בהודעה של יום שישי או של ערב החג. כל עריכה ובחירה שלך נרשמות, והכותב לומד מהן לימים הבאים.</p>';
+  h+='<h2>הימים הקרובים</h2><p class="note">הדף היומי של כל יום. ההודעה היא תמונה (הכרטיס של הדף) עם כיתוב, כדי שגם כשמעבירים אותה הלאה התמונה תעבור איתה. הכיתוב עד 1024 תווים. בשבת וביום טוב אין שליחה, והדפים שלהם יוצאים יחד בהודעה של יום שישי או של ערב החג. כל עריכה ובחירה שלך נרשמות, והכותב לומד מהן לימים הבאים.</p>';
   D.days.forEach(function(v){h+=dayHtml(v,false)});
   if(D.pilot&&D.pilot.length){h+='<h2>הפיילוט: בכורות ל"ב עד ל"ח</h2><p class="note">שבעת דפי הניסיון, כדי לראות את הנוסח, את הכרטיס ואת תצוגת הטלפון. הם אינם נשלחים לקבוצה. "אשר" כאן פירושו שהנוסח טוב בעיניך, ונרשם ללמידה.</p>';
     D.pilot.forEach(function(v){h+=dayHtml(v,true)});}

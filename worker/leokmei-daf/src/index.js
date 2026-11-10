@@ -5,6 +5,8 @@
  * ושונו רק: מקור התוכן (הגמרא של הדף היומי, data/daf-wa באתר), מבנה ההודעה (טקסט בלי תמונה; הכרטיס
  * הוא התצוגה המקדימה של הקישור), היעד (קבוצת ההכרזות "לאוקמי גירסא - הדף היומי"), והשעה (06:00).
  * נפרד לגמרי מממלכת הזוהר: בלי קוד משותף בזמן ריצה ובלי נתונים משותפים.
+ * פרומפט 30 (10.11.2026): ההודעה היא מעכשיו תמונה עם כיתוב - הכרטיס הריבועי (leokmei.com/daf/wa/<דף>.jpg) וכל הנוסח ככיתוב שלו -
+ *   כי כרטיס של תצוגה מקדימה אינו עובר תמיד בהעברה. הרכבת הכיתוב ולוח השנה: core.js. תמונה חסרה או כיתוב מעל 1024 - לא שולחים, ומתריעים בלוח.
  *
  * כללים (סעיפים 2, 5, 8 בפרומפט):
  *  א. לעולם לא בשבת וביום טוב. בשישי ובערב חג - הדפים של הימים שאין בהם שליחה יוצאים יחד, בהודעה אחת.
@@ -14,8 +16,9 @@
  *  ה. מצב החיבור לווטסאפ (own:sess) אינו יוצא לעולם לדפדפן; רק לריצת השולח (OIDC של daf-wa.yml).
  */
 
+import { TZ, CAP_MAX, DAY, ilKey, ilHM, dn, keyOf, addDays, dow, heb, letters, gq, dayMeta, L, dafOf, dafimFor, compose, toCaption, capLen } from './core.js';
+
 const SITE = 'https://leokmei.com';
-const TZ = 'Asia/Jerusalem';
 const DAYS_AHEAD = 10;
 const SEND_HM = '06:00';
 const SEND_UNTIL_H = 12;           // אחרי 12:00 לא שולחים הודעה של הבוקר
@@ -33,55 +36,6 @@ const bad = (m, s) => json({ ok: false, error: m }, s || 400);
 async function jget(env, k, d) { try { const v = await env.DAF.get(k, 'json'); return v == null ? d : v; } catch (e) { return d; } }
 const jput = (env, k, v, o) => env.DAF.put(k, JSON.stringify(v), o);
 
-/* ---------- זמן ותאריך עברי (Intl, כמו zyomi-cal) ---------- */
-const DAY = 86400000;
-let fmtD = null, fmtT = null, fmtH = null;
-const ilKey = (ms) => (fmtD = fmtD || new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' })).format(new Date(ms));
-function ilHM(ms) { fmtT = fmtT || new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false }); return fmtT.format(new Date(ms)).replace(/^24/, '00'); }
-const dn = (k) => Math.floor(Date.UTC(+k.slice(0, 4), +k.slice(5, 7) - 1, +k.slice(8, 10)) / DAY);
-const keyOf = (n) => new Date(n * DAY).toISOString().slice(0, 10);
-const addDays = (k, i) => keyOf(dn(k) + i);
-const dow = (k) => ((dn(k) % 7) + 11) % 7;   // 0 ראשון ... 6 שבת
-function heb(k) {
-  fmtH = fmtH || new Intl.DateTimeFormat('en-u-ca-hebrew', { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' });
-  const o = { d: 0, mn: '', y: 0 };
-  fmtH.formatToParts(new Date(dn(k) * DAY + 43200000)).forEach((p) => { if (p.type === 'day') o.d = +p.value; else if (p.type === 'month') o.mn = p.value; else if (p.type === 'year') o.y = +p.value; });
-  return o;
-}
-const L1 = [[400, 'ת'], [300, 'ש'], [200, 'ר'], [100, 'ק'], [90, 'צ'], [80, 'פ'], [70, 'ע'], [60, 'ס'], [50, 'נ'], [40, 'מ'], [30, 'ל'], [20, 'כ'], [10, 'י'], [9, 'ט'], [8, 'ח'], [7, 'ז'], [6, 'ו'], [5, 'ה'], [4, 'ד'], [3, 'ג'], [2, 'ב'], [1, 'א']];
-function letters(n) { if (n === 15) return 'טו'; if (n === 16) return 'טז'; let t = ''; for (const [v, c] of L1) while (n >= v) { t += c; n -= v; } return t.replace(/יה$/, 'טו').replace(/יו$/, 'טז'); }
-const gq = (n) => { const t = letters(n); return t.length > 1 ? t.slice(0, -1) + '"' + t.slice(-1) : t + "'"; };
-const MONTH_B = { Tishri: 'בתשרי', Heshvan: 'בחשון', Kislev: 'בכסלו', Tevet: 'בטבת', Shevat: 'בשבט', Adar: 'באדר', 'Adar I': "באדר א'", 'Adar II': "באדר ב'",
-  Nisan: 'בניסן', Iyar: 'באייר', Sivan: 'בסיון', Tamuz: 'בתמוז', Av: 'באב', Elul: 'באלול' };
-const DOW = ['יום ראשון', 'יום שני', 'יום שלישי', 'יום רביעי', 'יום חמישי', 'יום שישי', 'שבת קודש'];
-// ימים טובים (לוח ארץ ישראל) - אין שליחה. מועתק מ-zyomi.js
-const YT = [['Tishri', 1, 'ראש השנה'], ['Tishri', 2, 'ראש השנה'], ['Tishri', 10, 'יום הכיפורים'], ['Tishri', 15, 'סוכות'],
-  ['Tishri', 22, 'שמיני עצרת'], ['Nisan', 15, 'פסח'], ['Nisan', 21, 'שביעי של פסח'], ['Sivan', 6, 'שבועות']];
-function dayMeta(k) {
-  const h = heb(k), w = dow(k);
-  const yt = YT.filter(([m, d]) => m === h.mn && d === h.d).map((x) => x[2]);
-  const holy = w === 6 || yt.length > 0;
-  const hebStr = gq(h.d) + ' ' + (MONTH_B[h.mn] || h.mn) + ' ה' + gq(h.y % 1000);
-  return { d: k, dow: w, heb: hebStr, line: (w === 6 ? 'שבת קודש' : DOW[w]) + ' ' + hebStr, noSend: holy, why: w === 6 ? 'שבת' : (yt[0] || '') };
-}
-
-/* ---------- הדף היומי (אותו חישוב כמו daf-yomi.js באתר) ---------- */
-const L = [['ברכות', 'berakhot', 2, 63], ['שבת', 'shabbat', 2, 156], ['עירובין', 'eruvin', 2, 104], ['פסחים', 'pesachim', 2, 120],
-  ['שקלים', 'shekalim', 2, 21], ['יומא', 'yoma', 2, 87], ['סוכה', 'sukkah', 2, 55], ['ביצה', 'beitzah', 2, 39],
-  ['ראש השנה', 'rosh-hashanah', 2, 34], ['תענית', 'taanit', 2, 30], ['מגילה', 'megillah', 2, 31], ['מועד קטן', 'moed-katan', 2, 28],
-  ['חגיגה', 'chagigah', 2, 26], ['יבמות', 'yevamot', 2, 121], ['כתובות', 'ketubot', 2, 111], ['נדרים', 'nedarim', 2, 90],
-  ['נזיר', 'nazir', 2, 65], ['סוטה', 'sotah', 2, 48], ['גיטין', 'gittin', 2, 89], ['קידושין', 'kiddushin', 2, 81],
-  ['בבא קמא', 'bava-kamma', 2, 118], ['בבא מציעא', 'bava-metzia', 2, 118], ['בבא בתרא', 'bava-batra', 2, 175],
-  ['סנהדרין', 'sanhedrin', 2, 112], ['מכות', 'makkot', 2, 23], ['שבועות', 'shevuot', 2, 48], ['עבודה זרה', 'avodah-zarah', 2, 75],
-  ['הוריות', 'horayot', 2, 13], ['זבחים', 'zevachim', 2, 119], ['מנחות', 'menachot', 2, 109], ['חולין', 'chullin', 2, 141],
-  ['בכורות', 'bekhorot', 2, 60], ['ערכין', 'arakhin', 2, 33], ['תמורה', 'temurah', 2, 33], ['כריתות', 'keritot', 2, 27],
-  ['מעילה', 'meilah', 2, 21], ['קינים', 'kinnim', 23, 3], ['תמיד', 'tamid', 26, 8], ['מדות', 'middot', 34, 5], ['נדה', 'niddah', 3, 71]];
-const CYCLE = L.reduce((a, x) => a + x[3], 0);
-function dafOf(k) {
-  let i = ((dn(k) - dn('2020-01-05')) % CYCLE + CYCLE) % CYCLE;
-  for (const [name, slug, first, cnt] of L) { if (i < cnt) return { name, slug, n: first + i, last: first + cnt - 1 }; i -= cnt; }
-}
-
 /* ---------- תוכן (נבנה באתר מ-data/daf-wa, אחרי הבודק) ---------- */
 const memo = new Map();
 async function content(slug, n) {
@@ -94,34 +48,20 @@ async function content(slug, n) {
 }
 const hasOk = (c) => !!(c && c.check && c.check.ok && c.hook && c.hook.q && Array.isArray(c.lines) && c.lines.length >= 4);
 
-/** הדפים שיוצאים בהודעה של יום k: הדף של היום, ואחריו הדפים של הימים הבאים שאין בהם שליחה (שבת, יום טוב) */
-function dafimFor(k) {
-  const out = [dafOf(k)];
-  for (let i = 1; i < 4; i++) { const m = dayMeta(addDays(k, i)); if (!m.noSend) break; out.push(dafOf(m.d)); }
-  return out;
-}
-
-/* ---------- הרכבת ההודעה (סעיף 2) ---------- */
-const lineOf = (c, i) => '◂ ' + c.lines[i].t.replace(/\*/g, '');
-/* מבנה ההודעה (הכרעת בעל הפרויקט, 8.11.2026 ערב):
-   השאלה ראשונה ומודגשת - ורק היא מודגשת (בלי הכותרת "הידעת?"), ולכן ההודעה מיושרת לימין;
-   שם הדף, היום והתאריך - בתוך הכרטיס שבתצוגה המקדימה, לא בשורות ההודעה;
-   "עוד X דפים" בגופן קוד של ווטסאפ; והקישור בסוף (התצוגה המקדימה נבנית ממנו גם שם). */
-function compose(meta, items, rec) {
-  const first = items[0], c0 = first.c;
-  const pick = rec && Number.isInteger(rec.pick) && c0.alts && c0.alts[rec.pick] ? c0.alts[rec.pick] : null;
-  const hook = pick || c0.hook;
-  const out = ['*' + String(hook.q).replace(/\*/g, '') + '*', ''];
-  items.forEach((x, j) => {
-    out.push(items.length > 1 ? x.name + ' ' + gq(x.n) + ' בקצרה' : 'הדף בקצרה');
-    x.c.lines.forEach((_, i) => out.push(lineOf(x.c, i)));
-    if (j > 0) out.push('לדף המלא: leokmei.com/daf/' + x.slug + '-' + x.n);
-    out.push('');
-  });
-  const last = items[items.length - 1], left = last.last - last.n;
-  out.push('```' + (left > 0 ? 'עוד ' + left + (left === 1 ? ' דף' : ' דפים') + ' לסיום ' + last.name : 'היום מסיימים את מסכת ' + last.name) + '```');
-  out.push('leokmei.com/daf/' + first.slug + '-' + first.n);
-  return out.join('\n');
+/* ---------- התמונה שנשלחת (פרומפט 30): הכרטיס הריבועי של הדף הראשון בהודעה ---------- */
+const imgUrl = (slug, n) => SITE + '/daf/wa/' + slug + '-' + n + '.jpg';
+const imgMemo = new Map();
+/** האם תמונת הכרטיס קיימת באתר ותקינה (תמונה, לא דף שגיאה, ולא קובץ ריק). חסרה או פגומה - ההודעה אינה יוצאת. */
+async function imgOk(url) {
+  const hit = imgMemo.get(url);
+  if (hit && Date.now() - hit.t < 300000) return hit.v;
+  let v = false;
+  try {
+    const r = await fetch(url, { method: 'HEAD', cf: { cacheTtl: 120 } });
+    v = r.ok && /^image\/jpe?g/.test(r.headers.get('content-type') || '') && +(r.headers.get('content-length') || 20000) >= 10000;
+  } catch (e) { v = false; }
+  imgMemo.set(url, { t: Date.now(), v });
+  return v;
 }
 
 /** כל מה שהלוח והשולח צריכים לדעת על יום אחד */
@@ -131,8 +71,13 @@ async function dayView(env, k, cfg) {
   const items = [];
   for (const x of dafim) items.push(Object.assign({}, x, { c: await content(x.slug, x.n) }));
   const missing = items.filter((x) => !hasOk(x.c)).map((x) => x.name + ' ' + gq(x.n));
-  const auto = missing.length ? '' : compose(meta, items, rec);
-  const text = rec.text || auto;
+  const auto = missing.length ? '' : compose(meta, items, rec, cfg.invite);
+  // פרומפט 30: נוסח שנערך או נכתב בצורה הקודמת מוצג ונשלח בצורת הכיתוב - צורה בלבד, בלי לשנות מילה (toCaption).
+  // הודעה שכבר נשלחה מוצגת כמו שנשלחה.
+  const text = rec.sentAt ? (rec.text || auto) : ((rec.text || auto) ? toCaption(rec.text || auto, cfg.invite) : '');
+  const img = imgUrl(dafim[0].slug, dafim[0].n);
+  const hasImg = meta.noSend || rec.sentAt || missing.length ? true : await imgOk(img);
+  const len = capLen(text);
   const sent = (cfg.sent || 0);
   const needApprove = sent < APPROVE_FIRST;
   let state;
@@ -140,11 +85,13 @@ async function dayView(env, k, cfg) {
   else if (rec.sentAt) state = 'sent';
   else if (rec.status === 'stopped') state = 'stopped';
   else if (missing.length) state = 'missing';
+  else if (!hasImg) state = 'noimage';          // "חסר - לא שולחים": בלי תמונת הכרטיס אין הודעה
+  else if (len > CAP_MAX) state = 'toolong';    // ווטסאפ: כיתוב של תמונה עד 1024 תווים. לא מפצלים להודעה שנייה לעולם
   else if (needApprove && rec.status !== 'approved') state = 'await';
   else state = rec.status === 'approved' ? 'approved' : 'auto';
   return {
     d: k, meta, state, text, auto, edited: !!rec.text, pick: Number.isInteger(rec.pick) ? rec.pick : null, time: rec.time || SEND_HM,
-    sentAt: rec.sentAt || 0, err: rec.err || '', needApprove, missing,
+    sentAt: rec.sentAt || 0, err: rec.err || '', needApprove, missing, img, hasImg, len, capMax: CAP_MAX,
     dafim: items.map((x) => ({ slug: x.slug, n: x.n, label: x.name + ' ' + gq(x.n), url: SITE + '/daf/' + x.slug + '-' + x.n, og: SITE + '/daf/og/' + x.slug + '-' + x.n + '.jpg',
       hook: x.c && x.c.hook, alts: (x.c && x.c.alts) || [], card: x.c && x.c.card, checked: hasOk(x.c) })),
   };
@@ -210,6 +157,16 @@ async function due(env, now) {
     return { cmd, cfg };
   }
   const k = ilKey(now), v = await dayView(env, k, cfg);
+  // פרומפט 30: הגיעה השעה, והתמונה חסרה או שהכיתוב ארוך מדי - לא שולחים, ומתריעים בלוח פעם אחת (שורה אדומה ביום, ו"הפעולה האחרונה")
+  if (['noimage', 'toolong'].includes(v.state) && ilHM(now) >= v.time && +ilHM(now).slice(0, 2) < SEND_UNTIL_H) {
+    const r0 = await jget(env, 'day:' + k, {}) || {};
+    if (!r0.blockAt) {
+      const why = v.state === 'noimage' ? 'לא נשלח: תמונת הכרטיס חסרה או פגומה באתר' : 'לא נשלח: הכיתוב ארוך מדי (' + v.len + ' תווים, המרבי ' + CAP_MAX + ')';
+      r0.blockAt = Date.now(); r0.err = why; await jput(env, 'day:' + k, r0);
+      await jput(env, 'last', { kind: 'send', ok: false, why, d: k, t: new Date().toISOString(), id: '' });
+    }
+    return { v, cfg };
+  }
   if (!['auto', 'approved'].includes(v.state)) return { v, cfg };
   const rec = await jget(env, 'day:' + k, {}) || {};
   if ((rec.tries || 0) >= 3 || (rec.tryAt && Date.now() - rec.tryAt < 20 * 60000)) return { v, cfg };
@@ -243,19 +200,29 @@ async function handle(req, env, url) {
           const v = await dayView(env, c.d, cfg);
           if (v.missing.length || v.state === 'holy') { await env.DAF.delete('cmd'); return json({ ok: true, mode: 'none', why: 'אין מה לשלוח ביום הזה' }); }
           if (!cfg.announce) { await env.DAF.delete('cmd'); return json({ ok: true, mode: 'none', why: 'קבוצת ההכרזות לא הוקמה' }); }
+          if (!v.hasImg || v.len > CAP_MAX) {
+            await env.DAF.delete('cmd');
+            const why = !v.hasImg ? 'לא נשלח: תמונת הכרטיס חסרה או פגומה באתר' : 'לא נשלח: הכיתוב ארוך מדי (' + v.len + ' תווים, המרבי ' + CAP_MAX + ')';
+            const r0 = await jget(env, 'day:' + c.d, {}) || {}; r0.err = why; await jput(env, 'day:' + c.d, r0);
+            await jput(env, 'last', { kind: 'send', ok: false, why, d: c.d, t: new Date().toISOString(), id: '' });
+            return json({ ok: true, mode: 'none', why });
+          }
           await mark(env, c.d);
-          return json({ ok: true, mode: 'send', d: c.d, group: cfg.announce, text: v.text, sess });
+          return json({ ok: true, mode: 'send', d: c.d, group: cfg.announce, text: v.text, image: v.img, capMax: CAP_MAX, sess });
         }
         if (c.op === 'test') {
           const v = await dayView(env, c.d || ilKey(Date.now()), cfg);
-          return json({ ok: true, mode: 'test', d: c.d || '', text: v.text || 'בדיקה', sess });
+          // פרומפט 30: הודעת הניסיון היא אותה תמונה עם אותו כיתוב, לטלפון של בעל הפרויקט בלבד.
+          // fwd - אחרי השליחה השולח גם מעביר (Forward) אותה אליו, כדי לראות שהתמונה נשארת בהעברה.
+          // cap - כיתוב לבדיקת מגבלת האורך (נקבע רק בפקודה ישירה ב-KV, לא מן הלוח).
+          return json({ ok: true, mode: 'test', d: c.d || '', text: c.cap ? String(c.cap) : (v.text || 'בדיקה'), image: v.img, capMax: c.cap ? 65536 : CAP_MAX, fwd: !!c.fwd, sess });
         }
         return json({ ok: true, mode: c.op, name: c.name || '', sess });
       }
       if (!x.send) return json({ ok: true, mode: 'none', why: x.v ? x.v.state : '' });
       if (!cfg.announce) return json({ ok: true, mode: 'none', why: 'קבוצת ההכרזות לא הוקמה' });
       await mark(env, x.v.d);
-      return json({ ok: true, mode: 'send', d: x.v.d, group: cfg.announce, text: x.v.text, sess });
+      return json({ ok: true, mode: 'send', d: x.v.d, group: cfg.announce, text: x.v.text, image: x.v.img, capMax: CAP_MAX, sess });
     }
     let b = {};
     try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
@@ -310,8 +277,9 @@ async function handle(req, env, url) {
         const k = 'pilot-' + n, rec = await jget(env, 'day:' + k, {}) || {};
         const meta = { d: k, line: dayMeta(pilotDate(n)).line, heb: '', noSend: false };
         const it = { name: 'בכורות', slug: 'bekhorot', n, last: 61, c };
-        pilot.push({ d: k, meta, state: hasOk(c) ? (rec.status === 'approved' ? 'approved' : 'pilot') : 'missing', text: rec.text || (hasOk(c) ? compose(meta, [it], rec) : ''),
-          auto: hasOk(c) ? compose(meta, [it], rec) : '', edited: !!rec.text, pick: Number.isInteger(rec.pick) ? rec.pick : null, time: SEND_HM, sentAt: 0, err: '', needApprove: true, missing: hasOk(c) ? [] : ['בכורות ' + gq(n)],
+        const auto = hasOk(c) ? compose(meta, [it], rec, cfg.invite) : '', text = (rec.text || auto) ? toCaption(rec.text || auto, cfg.invite) : '';
+        pilot.push({ d: k, meta, state: hasOk(c) ? (rec.status === 'approved' ? 'approved' : 'pilot') : 'missing', text, img: imgUrl('bekhorot', n), hasImg: true, len: capLen(text), capMax: CAP_MAX,
+          auto, edited: !!rec.text, pick: Number.isInteger(rec.pick) ? rec.pick : null, time: SEND_HM, sentAt: 0, err: '', needApprove: true, missing: hasOk(c) ? [] : ['בכורות ' + gq(n)],
           dafim: [{ slug: 'bekhorot', n, label: 'בכורות ' + gq(n), url: SITE + '/daf/bekhorot-' + n, og: SITE + '/daf/og/bekhorot-' + n + '.jpg', hook: c && c.hook, alts: (c && c.alts) || [], card: c && c.card, checked: hasOk(c) }] });
       }
     }
@@ -335,6 +303,10 @@ async function handle(req, env, url) {
     const t = String(b.text || '').trim();
     if (!t || t.length > 4000) return bad('נוסח ריק או ארוך מדי');
     if (/[—–]/.test(t)) return bad('בלי קווים ארוכים - רק מקף רגיל');
+    // פרומפט 30: ההודעה היא תמונה עם כיתוב, וכיתוב של תמונה בווטסאפ מוגבל ל-1024 תווים. לא מפצלים לעולם - מקצרים.
+    const cl = capLen(toCaption(t, (await jget(env, 'cfg', {})).invite));
+    if (cl > CAP_MAX) return bad('הנוסח ארוך מדי לכיתוב של תמונה: ' + cl + ' תווים, והמרבי ' + CAP_MAX + '. קצר את "הדף בקצרה" ושמור שוב.');
+    delete rec.blockAt; if (/^לא נשלח: הכיתוב ארוך/.test(rec.err || '')) delete rec.err;
     await learn(env, { kind: 'edit', d, before: String(b.before || rec.text || '').slice(0, 4000), after: t });
     rec.text = t; rec.editedAt = Date.now();
     await jput(env, rk, rec); return json({ ok: true });
@@ -363,6 +335,8 @@ async function handle(req, env, url) {
     if (v.state === 'holy') return bad('שבת או יום טוב - אין שליחה');
     if (v.sentAt) return bad('ההודעה של היום הזה כבר נשלחה');
     if (!cfg.announce) return bad('קבוצת ההכרזות עוד לא הוקמה');
+    if (!v.hasImg) return bad('תמונת הכרטיס של הדף חסרה או פגומה באתר - אין שליחה');
+    if (v.len > CAP_MAX) return bad('הכיתוב ארוך מדי (' + v.len + ' תווים, המרבי ' + CAP_MAX + ') - קצר את "הדף בקצרה"');
     rec.status = 'approved'; rec.approvedAt = Date.now(); delete rec.tries; delete rec.tryAt; await jput(env, rk, rec);
     await learn(env, { kind: 'sendnow', d });
     await jput(env, 'cmd', { op: 'send', d, at: Date.now() });

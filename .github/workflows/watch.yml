@@ -46,12 +46,13 @@ jobs:
         run: |
           python -m playwright install chromium > /dev/null 2>&1 || true
           if [ -n "$BA_B" ] && [ -n "$BA_R" ]; then mkdir -p "$RUNNER_TEMP/ba"; echo "$BA_B" | base64 -d > "$RUNNER_TEMP/ba/ba-vilna-b.otf"; echo "$BA_R" | base64 -d > "$RUNNER_TEMP/ba/ba-vilna-r.otf"; export LEOKMEI_BA_FONTS="$RUNNER_TEMP/ba"; fi
-          miss=$(for f in data/daf-wa/*.json; do n=$(basename "$f" .json); [ -f "data/daf-wa/og/$n.jpg" ] || echo "$n"; done)
+          # פרומפט 30 (10.11.2026): גם הכרטיס הריבועי שנשלח כתמונה (data/daf-wa/wa) - card.py מצייר את שני הגדלים
+          miss=$(for f in data/daf-wa/*.json; do n=$(basename "$f" .json); { [ -f "data/daf-wa/og/$n.jpg" ] && [ -f "data/daf-wa/wa/$n.jpg" ]; } || echo "$n"; done)
           [ -z "$miss" ] && { echo "אין כרטיס חסר"; exit 0; }
           python tools/daf_wa/card.py $miss
           python tools/daf_wa/build.py site
           git config user.name "leokmei-watcher"; git config user.email "watcher@users.noreply.github.com"
-          git add data/daf-wa/og
+          git add data/daf-wa/og data/daf-wa/wa
           git diff --cached --quiet && exit 0
           git commit -q -m "כרטיסי הדף היומי [skip ci]"
           for i in 1 2 3; do git pull --rebase --autostash -q origin main && git push -q && exit 0; sleep 5; done

@@ -5,6 +5,12 @@
                                                 בלי ניקוד, ממוספרת בשורות, ל-_work/daf_src/<slug>_<עמוד>.txt
   python tools/daf_wa/writer.py gate [slug-n ...] שער מכני על קובצי התוכן: מבנה, 4-6 שורות, ans בטווח, ref תקין,
                                                 בלי מקף ארוך ובלי ;. יוצא בקוד 1 על כל כשל (עצירה רועשת).
+                                                ובסופו שער האורך (פרומפט 30): הכיתוב של כל יום שליחה עד 1024 תווים.
+  python tools/daf_wa/writer.py cap [ימים=21]     שער האורך בלבד (node tools/daf_wa/caplen.mjs)
+
+פרומפט 30 (10.11.2026): ההודעה היא תמונה עם כיתוב, וכיתוב של תמונה בווטסאפ מוגבל ל-1024 תווים. יום שחורג (בעיקר שישי וערב חג,
+כשיוצאים כמה דפים יחד) - מוסיפים לקובץ התוכן short: מספרי השורות שייכנסו להודעה, מתוך השורות שכבר נבדקו (בלי ניסוח חדש),
+וכשהדף פותח את ההודעה - חובה שיכללו את שורות התשובה של השאלה ושל החלופות (שער האורך בודק). לעולם לא מפצלים להודעה שנייה.
 
 הכתיבה עצמה והבדיקה מול הגמרא - בידי הכותב והבודק הנפרד (_work/daf_wa_checker.md)."""
 import datetime as dt
@@ -88,6 +94,11 @@ def gate(keys):
                 e.append('שורה %d ריקה או בלי ref' % i)
             elif not REF.match(x['ref']):
                 e.append('שורה %d: ref לא תקין "%s"' % (i, x['ref']))
+        sh = c.get('short')
+        if sh is not None:
+            if not (isinstance(sh, list) and len(sh) >= 1 and all(isinstance(i, int) and 0 <= i < len(lines) for i in sh) and sh == sorted(set(sh))):
+                e.append('short לא תקין (רשימת מספרי שורות עולה, בלי כפילות, בטווח): %s' % sh)
+            # ששורות התשובה של השאלות בפנים - נבדק בשער האורך (caplen.mjs), שיודע איזה דף פותח את ההודעה של כל יום
         blob = json.dumps(c, ensure_ascii=False)
         if '–' in blob or '—' in blob:
             e.append('מקף ארוך')
@@ -107,7 +118,14 @@ def gate(keys):
     for f, e in bad:
         print('!!!', f, '; '.join(e))
     print('השער: %d קבצים, %d נכשלו' % (len(files), len(bad)))
-    return not bad
+    return cap() and not bad
+
+
+def cap(days=21):
+    """שער האורך: אותו קוד בדיוק כמו בשרת (worker/leokmei-daf/src/core.js), על התוכן המקומי"""
+    import subprocess
+    r = subprocess.run(['node', os.path.join(HERE, 'caplen.mjs'), str(days)], cwd=ROOT)
+    return r.returncode == 0
 
 
 if __name__ == '__main__':
@@ -116,5 +134,7 @@ if __name__ == '__main__':
         need(int(a[1]) if len(a) > 1 else 10)
     elif a[0] == 'gate':
         sys.exit(0 if gate(a[1:]) else 1)
+    elif a[0] == 'cap':
+        sys.exit(0 if cap(int(a[1]) if len(a) > 1 else 21) else 1)
     else:
         raise SystemExit(__doc__)

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head><meta charset="utf-8">
+<style>
+/* פרומפט 30 (10.11.2026): הכרטיס שנשלח כתמונה בווטסאפ, 1080x1080 - ההודעה היומית היא עכשיו תמונה עם כיתוב, כדי שבהעברה (Forward) התמונה תעבור תמיד.
+   אותה שפת עיצוב בדיוק כמו כרטיס התצוגה המקדימה (card.html, 1200x480, שנשאר ל-og:image של האתר): כחול קטיפה, מסגרת זהב כפולה,
+   BA Vilna, זהב; בלי רקע מאחורי טקסט ובלי אדום. ריבוע ולא 4:5: ווטסאפ מציג ריבוע במלואו בבועה בטלפון ובמחשב, בלי חיתוך,
+   והוא ממלא את רוחב הבועה - פי שניים וחצי בערך מן הפס הנמוך של התצוגה המקדימה. */
+@font-face{font-family:'BAV';src:url(@@BA_B@@);font-weight:700}
+@font-face{font-family:'BAV';src:url(@@BA_R@@);font-weight:400}
+@font-face{font-family:'Frank';src:url(@@FONTS@@/frank.woff2) format('woff2');font-weight:400}
+html,body{margin:0;width:1080px;height:1080px;overflow:hidden}
+body{background:radial-gradient(90% 90% at 50% 42%,#1b4467 0%,#11304a 48%,#0a1a28 100%);font-family:'Frank',serif;position:relative}
+.f1{position:absolute;inset:26px;border:5px solid transparent;border-image:linear-gradient(135deg,#8a5a12,#f7dc8a 18%,#c8902c 34%,#fff1bf 50%,#c08524 66%,#f3d27a 82%,#8a5a12) 1}
+.f2{position:absolute;inset:42px;border:1.5px solid transparent;border-image:linear-gradient(135deg,#a8741d,#f6dc90 50%,#a8741d) 1;opacity:.85}
+.gold{background:linear-gradient(180deg,#fff8d6 0%,#ffe9a0 18%,#f4c95a 38%,#d99a26 52%,#b77514 60%,#e8b545 74%,#fbe08c 88%,#c98a1e 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      filter:drop-shadow(0 1px 0 #6b4308) drop-shadow(0 4px 3px rgba(20,10,0,.65)) drop-shadow(0 0 26px rgba(255,205,100,.22))}
+.txt{position:absolute;right:72px;left:72px;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.brand{font-family:'BAV',serif;font-weight:700;font-size:60px;letter-spacing:.06em;color:#e2bf68;line-height:1.25}
+.brand small{display:block;font-size:50px;letter-spacing:.04em;color:#d6b25c}
+.top{display:flex;align-items:center;gap:16px;margin:34px 0 18px}
+.top i{display:block;width:120px;height:1.5px;background:linear-gradient(90deg,transparent,#e6c063 60%,#f7dc8a)}
+.top i:last-child{background:linear-gradient(270deg,transparent,#e6c063 60%,#f7dc8a)}
+.top b{display:block;width:10px;height:10px;transform:rotate(45deg);background:linear-gradient(135deg,#fff1bf,#d99a26)}
+.daf{font-family:'BAV',serif;font-weight:700;font-size:190px;line-height:1.02;white-space:nowrap}
+.rule{display:flex;align-items:center;gap:16px;margin:14px 0 26px}
+.rule i{display:block;width:190px;height:2px;background:linear-gradient(90deg,transparent,#e6c063 60%,#f7dc8a)}
+.rule i:last-child{background:linear-gradient(270deg,transparent,#e6c063 60%,#f7dc8a)}
+.rule b{display:block;width:12px;height:12px;transform:rotate(45deg);background:linear-gradient(135deg,#fff1bf,#d99a26)}
+/* הכותרת שמגדירה את הדף: עד שתי שורות, מאוזנות */
+.line{font-family:'BAV',serif;font-weight:700;font-size:88px;line-height:1.18;color:#f6ead0;max-width:930px;text-wrap:balance}
+.hy{font-family:'Frank',serif;font-weight:400}
+.date{font-family:'BAV',serif;font-weight:700;font-size:58px;color:#dcb862;margin-top:40px;letter-spacing:.02em}
+</style></head><body>
+<div class="f1"></div><div class="f2"></div>
+<div class="txt">
+  <div class="brand">לאוקמי גירסא<small>קיצור הדף היומי</small></div>
+  <div class="top"><i></i><b></b><i></i></div>
+  <div class="daf gold">@@DAF@@</div>
+  <div class="rule"><i></i><b></b><i></i></div>
+  <div class="line">@@LINE@@</div>
+  <div class="date" id="date" data-iso="@@DATE@@"></div>
+</div>
+<script>
+/* היום והתאריך העברי - אותו חישוב כמו בשרת ובכרטיס הרחב */
+(function(){
+  var el=document.getElementById('date'),k=el.getAttribute('data-iso');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(k)){el.remove();return}
+  var DAY=864e5,dn=Math.floor(Date.UTC(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8,10))/DAY),w=((dn%7)+11)%7;
+  var L1=[[400,'ת'],[300,'ש'],[200,'ר'],[100,'ק'],[90,'צ'],[80,'פ'],[70,'ע'],[60,'ס'],[50,'נ'],[40,'מ'],[30,'ל'],[20,'כ'],[10,'י'],[9,'ט'],[8,'ח'],[7,'ז'],[6,'ו'],[5,'ה'],[4,'ד'],[3,'ג'],[2,'ב'],[1,'א']];
+  function lt(n){if(n===15)return 'טו';if(n===16)return 'טז';var t='';L1.forEach(function(p){while(n>=p[0]){t+=p[1];n-=p[0]}});return t.replace(/יה$/,'טו').replace(/יו$/,'טז')}
+  function gq(n){var t=lt(n);return t.length>1?t.slice(0,-1)+'״'+t.slice(-1):t+'׳'}
+  var MB={Tishri:'בתשרי',Heshvan:'בחשון',Kislev:'בכסלו',Tevet:'בטבת',Shevat:'בשבט',Adar:'באדר','Adar I':'באדר א׳','Adar II':'באדר ב׳',Nisan:'בניסן',Iyar:'באייר',Sivan:'בסיון',Tamuz:'בתמוז',Av:'באב',Elul:'באלול'};
+  var DOW=['יום ראשון','יום שני','יום שלישי','יום רביעי','יום חמישי','יום שישי','שבת קודש'],o={};
+  new Intl.DateTimeFormat('en-u-ca-hebrew',{timeZone:'UTC',day:'numeric',month:'long',year:'numeric'}).formatToParts(new Date(dn*DAY+432e5)).forEach(function(p){o[p.type]=p.value});
+  el.textContent=DOW[w]+' · '+gq(+o.day)+' '+(MB[o.month]||o.month)+' ה'+gq(+o.year%1000);
+})();
+/* שם מסכת ארוך: מקטינים עד שנכנס בשורה אחת. כותרת ארוכה: עד שתי שורות */
+window.fit=function(){
+  var w=document.querySelector('.txt').clientWidth;
+  var d=document.querySelector('.daf'),f=190;d.style.fontSize=f+'px';while(d.scrollWidth>w&&f>80){f-=2;d.style.fontSize=f+'px'}
+  var l=document.querySelector('.line'),g=88;l.style.fontSize=g+'px';while(l.getBoundingClientRect().height>g*1.18*2+4&&g>54){g-=2;l.style.fontSize=g+'px'}
+};fit();
+</script>
+</body></html>

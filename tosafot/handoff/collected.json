@@ -4577,6 +4577,111 @@
    "flagged": 0,
    "cal": 0.404,
    "published": "2026-11-10T12:40:10Z"
+  },
+  "keritot-p03-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T12:40:48Z",
+   "at": "2026-11-10T18:39:36Z",
+   "ntos": 27,
+   "flagged": 1,
+   "cal": 0.15
+  },
+  "keritot-p03-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T14:35:04Z",
+   "at": "2026-11-10T18:39:36Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.206
+  },
+  "keritot-p03-u04": {
+   "ok": true,
+   "done_at": "2026-11-10T14:27:30Z",
+   "at": "2026-11-10T18:39:36Z",
+   "ntos": 2,
+   "flagged": 0,
+   "cal": 0.192
+  },
+  "keritot-p04-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T14:37:01Z",
+   "at": "2026-11-10T18:39:36Z",
+   "ntos": 22,
+   "flagged": 0,
+   "cal": 0.151,
+   "published": "2026-11-10T18:39:38Z"
+  },
+  "keritot-p05-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T16:33:03Z",
+   "at": "2026-11-10T18:39:37Z",
+   "ntos": 22,
+   "flagged": 0,
+   "cal": 0.613,
+   "published": "2026-11-10T18:39:38Z"
+  },
+  "keritot-p06-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T16:27:46Z",
+   "at": "2026-11-10T18:39:37Z",
+   "ntos": 14,
+   "flagged": 0,
+   "cal": 0.379,
+   "published": "2026-11-10T18:39:38Z"
+  },
+  "meilah-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T16:37:50Z",
+   "at": "2026-11-10T18:39:37Z",
+   "ntos": 27,
+   "flagged": 0,
+   "cal": 0.181,
+   "published": "2026-11-10T18:39:38Z"
+  },
+  "meilah-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T16:40:11Z",
+   "at": "2026-11-10T18:39:37Z",
+   "ntos": 26,
+   "flagged": 0,
+   "cal": 0.428,
+   "published": "2026-11-10T18:39:38Z"
+  },
+  "meilah-p01-u03": {
+   "ok": true,
+   "done_at": "2026-11-10T18:25:59Z",
+   "at": "2026-11-10T18:39:37Z",
+   "ntos": 12,
+   "flagged": 0,
+   "cal": 0.159,
+   "published": "2026-11-10T18:39:38Z"
+  },
+  "meilah-p02-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T18:31:29Z",
+   "at": "2026-11-10T18:39:37Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.248,
+   "published": "2026-11-10T18:39:38Z"
+  },
+  "meilah-p02-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T18:32:48Z",
+   "at": "2026-11-10T18:39:37Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.637,
+   "published": "2026-11-10T18:39:38Z"
+  },
+  "meilah-p02-u03": {
+   "ok": true,
+   "done_at": "2026-11-10T18:32:25Z",
+   "at": "2026-11-10T18:39:37Z",
+   "ntos": 6,
+   "flagged": 0,
+   "cal": 0.224,
+   "published": "2026-11-10T18:39:38Z"
   }
  },
  "files": {

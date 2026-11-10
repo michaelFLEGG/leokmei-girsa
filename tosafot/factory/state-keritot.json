@@ -33,6 +33,51 @@
     "flagged": 1,
     "questions": 14
    }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-10T18:39:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "keritot-p04-u01"
+   ],
+   "result": {
+    "generated": 22,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 22
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-10T18:39:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "keritot-p05-u01"
+   ],
+   "result": {
+    "generated": 22,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 20
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-10T18:39:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "keritot-p06-u01"
+   ],
+   "result": {
+    "generated": 14,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 11
+   }
   }
  },
  "created": "2026-11-10T12:40:08Z",
@@ -48,7 +93,25 @@
    "mean": 0.358,
    "n": 3,
    "at": "2026-11-10T12:40:08Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.151,
+   "n": 2,
+   "at": "2026-11-10T18:39:37Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.613,
+   "n": 2,
+   "at": "2026-11-10T18:39:38Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.379,
+   "n": 1,
+   "at": "2026-11-10T18:39:38Z"
   }
  ],
- "updated": "2026-11-10T12:40:09Z"
+ "updated": "2026-11-10T18:39:38Z"
 }

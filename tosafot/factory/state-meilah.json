@@ -1,0 +1,55 @@
+{
+ "slug": "meilah",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-10T18:39:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "meilah-p01-u01",
+    "meilah-p01-u02",
+    "meilah-p01-u03"
+   ],
+   "result": {
+    "generated": 65,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 57
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-10T18:39:38Z",
+   "unc_done": true,
+   "handoff_units": [
+    "meilah-p02-u01",
+    "meilah-p02-u02",
+    "meilah-p02-u03"
+   ],
+   "result": {
+    "generated": 55,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 25
+   }
+  }
+ },
+ "created": "2026-11-10T18:39:38Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.276,
+   "n": 5,
+   "at": "2026-11-10T18:39:38Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.399,
+   "n": 5,
+   "at": "2026-11-10T18:39:38Z"
+  }
+ ],
+ "updated": "2026-11-10T18:39:39Z"
+}

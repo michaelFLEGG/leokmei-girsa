@@ -444,6 +444,19 @@ if (cmd === 'status') {
   const since = st.learnT || 0, LRf = path.join(D, 'learn', 'rules.json'), PTf = path.join(D, 'learn', 'patterns.json');
   const nr = fs.existsSync(LRf) ? (rd(LRf).rules || []).filter((x) => (x.t || 0) > since) : [];
   if (nr.length) console.log('\n######## כללים חדשים שנקלטו מאז הפעם הקודמת (' + nr.length + ')\n' + nr.map((x) => '- ' + (x.off ? '[בוטל] ' : '') + x.text).join('\n'));
+  /* 10.11.2026: כל עריכה של המנהל אחרי סכם (בדף עצמו, מחוץ לחלון הסקירה) - אחת אחת, ולא רק כמניין.
+     עריכה שאינה חוזרת אינה נעשית כלל אוטומטי, ולכן היא מוצגת כאן כדי שתנותח ותיכתב ממנה לקח */
+  const ER = [];
+  if (fs.existsSync(path.join(D, 'learn'))) for (const f of fs.readdirSync(path.join(D, 'learn')).filter((x) => x.endsWith('.jsonl'))) {
+    for (const l of fs.readFileSync(path.join(D, 'learn', f), 'utf8').split('\n')) { if (!l) continue; let r; try { r = JSON.parse(l); } catch (e) { continue; }
+      if (r.post && !r.src && (r.t || 0) > since) ER.push(Object.assign({ slug: f.replace(/\.jsonl$/, '') }, r)); }
+  }
+  if (ER.length) {
+    ER.sort((a, b) => a.t - b.t);
+    console.log('\n######## עריכות המנהל אחרי סכם, מחוץ לסקירה (' + ER.length + ') - כל אחת היא הערה על סכם: מה סכם היה צריך לעשות ולא עשה. נתח, ומה שאינו תיקון מקומי - כתוב כלקח');
+    ER.slice(0, 400).forEach((r) => console.log('\n- [' + r.slug + ' ' + (r.daf || '') + '] ' + r.cls + (r.sub ? '/' + r.sub : '') + (r.op === 'struct' ? ' מבנה: ' + (r.kind || '') : '\n  היה: ' + (r.wasH || r.was || '') + '\n  נעשה: ' + (r.nowH || r.now || ''))));
+    if (ER.length > 400) console.log('\n(ועוד ' + (ER.length - 400) + ' - בהרצה הבאה)');
+  }
   if (fs.existsSync(PTf)) { const P = rd(PTf); console.log('\n######## עריכות המנהל: ' + P.total + ' · ' + JSON.stringify(P.cnt) + '\nצורה: ' + Object.entries(P.sub || {}).sort((a, b) => b[1].w - a[1].w).slice(0, 8).map(([k, v]) => k + ' ' + v.n).join(' · ')); }
   const AK = process.env.LEOKMEI_ADMIN_KEY || '';
   if (AK) {
@@ -454,7 +467,7 @@ if (cmd === 'status') {
       if (nn.length) console.log('\n######## הערות חדשות לקלוד (' + nn.length + ') - ללמוד מהן כלל כללי; בריפו הציבורי לא לצטט אותן\n' + nn.map((x) => '- [' + (x.slug || '') + ' ' + (x.daf || '') + '] ' + x.note + (x.was ? '\n  היה: ' + x.was + '\n  נעשה: ' + (x.now || '') : '')).join('\n'));
     } catch (e) { console.log('\n(הערות לקלוד: לא נקראו - ' + e.message + ')'); }
   } else console.log('\n(הערות לקלוד ולוח הסקירה: אין מפתח מנהל בסביבה - דלג; הן נקראות בשיחה המקומית)');
-  if (!todo.length && !nr.length) die('אין הכרעות חדשות.', 0);
+  if (!todo.length && !nr.length && !ER.length) die('אין הכרעות חדשות.', 0);
   todo.forEach((jid) => {
     const d = rd(path.join(DEC, jid + '.json'));
     const c = {}; (d.log || []).forEach((x) => { if (x.act === 'undo') return; (x.layers || ['?']).forEach((L) => { c[L] = c[L] || {}; c[L][x.act] = (c[L][x.act] || 0) + 1; }); });

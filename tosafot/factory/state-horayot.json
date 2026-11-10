@@ -16,6 +16,21 @@
     "flagged": 1,
     "questions": 25
    }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-10T00:41:07Z",
+   "unc_done": true,
+   "handoff_units": [
+    "horayot-p02-u01"
+   ],
+   "result": {
+    "generated": 15,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 10
+   }
   }
  },
  "created": "2026-11-09T18:41:16Z",
@@ -25,7 +40,13 @@
    "mean": 0.154,
    "n": 4,
    "at": "2026-11-09T18:41:16Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.109,
+   "n": 1,
+   "at": "2026-11-10T00:41:07Z"
   }
  ],
- "updated": "2026-11-09T18:41:16Z"
+ "updated": "2026-11-10T00:41:07Z"
 }

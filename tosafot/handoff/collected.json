@@ -4161,7 +4161,8 @@
    "at": "2026-11-09T18:41:15Z",
    "ntos": 17,
    "flagged": 1,
-   "cal": 0.452
+   "cal": 0.452,
+   "published": "2026-11-10T00:41:08Z"
   },
   "sotah-p04-u01": {
    "ok": true,
@@ -4205,7 +4206,8 @@
    "at": "2026-11-09T18:41:16Z",
    "ntos": 24,
    "flagged": 0,
-   "cal": 0.394
+   "cal": 0.394,
+   "published": "2026-11-10T00:41:08Z"
   },
   "sotah-p07-u03": {
    "ok": true,
@@ -4213,7 +4215,8 @@
    "at": "2026-11-09T18:41:16Z",
    "ntos": 24,
    "flagged": 0,
-   "cal": 0.833
+   "cal": 0.833,
+   "published": "2026-11-10T00:41:08Z"
   },
   "sotah-p08-u01": {
    "ok": true,
@@ -4223,6 +4226,150 @@
    "flagged": 0,
    "cal": 0.481,
    "published": "2026-11-09T18:41:18Z"
+  },
+  "arakhin-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-09T20:28:38Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 16,
+   "flagged": 0,
+   "cal": 0.486,
+   "published": "2026-11-10T00:41:06Z"
+  },
+  "arakhin-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-09T20:33:06Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 30,
+   "flagged": 0,
+   "cal": 0.363,
+   "published": "2026-11-10T00:41:06Z"
+  },
+  "arakhin-p01-u03": {
+   "ok": true,
+   "done_at": "2026-11-09T20:38:25Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 26,
+   "flagged": 1,
+   "cal": 0.566,
+   "published": "2026-11-10T00:41:06Z"
+  },
+  "arakhin-p01-u04": {
+   "ok": true,
+   "done_at": "2026-11-09T20:41:46Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 27,
+   "flagged": 0,
+   "cal": 0.135,
+   "published": "2026-11-10T00:41:06Z"
+  },
+  "arakhin-p02-u01": {
+   "ok": true,
+   "done_at": "2026-11-09T22:32:46Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 27,
+   "flagged": 0,
+   "cal": 0.249,
+   "published": "2026-11-10T00:41:06Z"
+  },
+  "arakhin-p02-u02": {
+   "ok": true,
+   "done_at": "2026-11-09T22:39:46Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.54,
+   "published": "2026-11-10T00:41:06Z"
+  },
+  "arakhin-p02-u03": {
+   "ok": true,
+   "done_at": "2026-11-09T22:42:39Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 13,
+   "flagged": 0,
+   "cal": 0.485,
+   "published": "2026-11-10T00:41:06Z"
+  },
+  "arakhin-p03-u01": {
+   "ok": true,
+   "done_at": "2026-11-09T22:47:40Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 26,
+   "flagged": 1,
+   "cal": 0.767,
+   "published": "2026-11-10T00:41:06Z"
+  },
+  "arakhin-p04-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T00:28:24Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 20,
+   "flagged": 0,
+   "cal": 0.584,
+   "published": "2026-11-10T00:41:07Z"
+  },
+  "arakhin-p05-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T00:33:34Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 26,
+   "flagged": 0,
+   "cal": 0.133,
+   "published": "2026-11-10T00:41:07Z"
+  },
+  "arakhin-p06-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T00:37:40Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.378,
+   "published": "2026-11-10T00:41:07Z"
+  },
+  "arakhin-p06-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T00:35:19Z",
+   "at": "2026-11-10T00:41:04Z",
+   "ntos": 1,
+   "flagged": 0,
+   "cal": 0.694,
+   "published": "2026-11-10T00:41:07Z"
+  },
+  "horayot-p02-u01": {
+   "ok": true,
+   "done_at": "2026-11-09T18:40:45Z",
+   "at": "2026-11-10T00:41:05Z",
+   "ntos": 15,
+   "flagged": 0,
+   "cal": 0.109,
+   "published": "2026-11-10T00:41:07Z"
+  },
+  "sotah-p03-u01": {
+   "ok": true,
+   "done_at": "2026-11-09T12:48:34Z",
+   "at": "2026-11-10T00:41:05Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.315,
+   "published": "2026-11-10T00:41:08Z"
+  },
+  "sotah-p07-u02": {
+   "ok": true,
+   "done_at": "2026-11-09T16:38:08Z",
+   "at": "2026-11-10T00:41:05Z",
+   "ntos": 29,
+   "flagged": 0,
+   "cal": 0.407,
+   "published": "2026-11-10T00:41:08Z"
+  },
+  "sotah-p07-u04": {
+   "ok": true,
+   "done_at": "2026-11-09T16:44:24Z",
+   "at": "2026-11-10T00:41:06Z",
+   "ntos": 1,
+   "flagged": 0,
+   "cal": 0.654,
+   "published": "2026-11-10T00:41:08Z"
   }
  },
  "files": {

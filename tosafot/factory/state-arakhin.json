@@ -1,0 +1,141 @@
+{
+ "slug": "arakhin",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-10T00:41:06Z",
+   "unc_done": true,
+   "handoff_units": [
+    "arakhin-p01-u01",
+    "arakhin-p01-u02",
+    "arakhin-p01-u03",
+    "arakhin-p01-u04"
+   ],
+   "result": {
+    "generated": 98,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 57
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-10T00:41:06Z",
+   "unc_done": true,
+   "handoff_units": [
+    "arakhin-p02-u01",
+    "arakhin-p02-u02",
+    "arakhin-p02-u03"
+   ],
+   "result": {
+    "generated": 64,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 42
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-10T00:41:06Z",
+   "unc_done": true,
+   "handoff_units": [
+    "arakhin-p03-u01"
+   ],
+   "result": {
+    "generated": 25,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 18
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-10T00:41:07Z",
+   "unc_done": true,
+   "handoff_units": [
+    "arakhin-p04-u01"
+   ],
+   "result": {
+    "generated": 20,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 18
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-10T00:41:07Z",
+   "unc_done": true,
+   "handoff_units": [
+    "arakhin-p05-u01"
+   ],
+   "result": {
+    "generated": 26,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 26
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-10T00:41:07Z",
+   "unc_done": true,
+   "handoff_units": [
+    "arakhin-p06-u01",
+    "arakhin-p06-u02"
+   ],
+   "result": {
+    "generated": 25,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 22
+   }
+  }
+ },
+ "created": "2026-11-10T00:41:06Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.373,
+   "n": 7,
+   "at": "2026-11-10T00:41:06Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.413,
+   "n": 5,
+   "at": "2026-11-10T00:41:06Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.767,
+   "n": 2,
+   "at": "2026-11-10T00:41:06Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.584,
+   "n": 2,
+   "at": "2026-11-10T00:41:06Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.133,
+   "n": 2,
+   "at": "2026-11-10T00:41:07Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.483,
+   "n": 3,
+   "at": "2026-11-10T00:41:07Z"
+  }
+ ],
+ "updated": "2026-11-10T00:41:07Z"
+}

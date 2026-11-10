@@ -13,7 +13,7 @@ import * as B from '@whiskeysockets/baileys';
 const pick = (k) => (B[k] !== undefined ? B[k] : B.default && B.default[k]);
 const makeWASocket = typeof B.default === 'function' ? B.default : B.default && typeof B.default.default === 'function' ? B.default.default : B.makeWASocket;
 const initAuthCreds = pick('initAuthCreds'), BufferJSON = pick('BufferJSON'), DisconnectReason = pick('DisconnectReason'), Browsers = pick('Browsers'),
-  fetchLatestBaileysVersion = pick('fetchLatestBaileysVersion'), jidNormalizedUser = pick('jidNormalizedUser');
+  fetchLatestBaileysVersion = pick('fetchLatestBaileysVersion'), jidNormalizedUser = pick('jidNormalizedUser'), downloadMediaMessage = pick('downloadMediaMessage');
 import QRCode from 'qrcode';
 import pino from 'pino';
 
@@ -201,12 +201,16 @@ async function doTest(job) {
     const out = await sendCard(cn.sock, me, m);
     let why = 'נשלח אליך: תמונה עם כיתוב, ' + m.n + ' תווים';
     if (job.fwd && out) {
+      // העברה (Forward) כמו שחבר בקהילה מעביר: force מסמן "הועבר" גם בהודעה של עצמי (בלעדיו ווטסאפ אינו מסמן העברה של הודעה שלך).
+      // ואחר כך הורדה חזרה של התמונה מן ההודעה המועברת, והשוואה בית-בית לתמונה שנשלחה, והשוואת הכיתוב תו-תו.
       await new Promise((r) => setTimeout(r, 2500));
-      const f = await cn.sock.sendMessage(me, { forward: out });
+      const f = await cn.sock.sendMessage(me, { forward: out, force: true });
       const im = f && f.message && f.message.imageMessage;
-      const ok = !!(im && im.caption && im.contextInfo && im.contextInfo.isForwarded);
-      why += ok ? '. והועברה (Forward) אליך שוב: ההודעה המועברת היא תמונה עם אותו כיתוב (' + [...im.caption].length + ' תווים)' : '. ההעברה נעשתה, אבל בהודעה המועברת לא נמצאו תמונה וכיתוב';
-      console.log('העברה:', ok ? 'תמונה+כיתוב, מסומנת כמועברת' : JSON.stringify(Object.keys((f && f.message) || {})));
+      let same = false, got = 0;
+      try { const buf = await downloadMediaMessage(f, 'buffer', {}, { logger, reuploadRequest: cn.sock.updateMediaMessage }); got = buf.length; same = Buffer.compare(buf, m.c.img) === 0; } catch (e) { console.error('הורדת התמונה מן ההודעה המועברת נכשלה:', String(e && e.message || e).slice(0, 120)); }
+      const capSame = !!(im && im.caption === m.caption), fwdMark = !!(im && im.contextInfo && im.contextInfo.isForwarded);
+      why += '. העברה: ' + (im ? 'תמונה' : 'בלי תמונה!') + (same ? ' זהה בית-בית (' + got + ')' : ' (התמונה שהורדה: ' + got + ' בתים, לא זהה)') + ', כיתוב ' + (capSame ? 'זהה תו-תו' : 'שונה!') + (fwdMark ? ', מסומנת "הועבר"' : ', בלי סימון "הועבר"');
+      console.log('העברה:', JSON.stringify({ image: !!im, same, got, sent: m.c.img.length, capSame, fwdMark }));
     }
     res = { kind: 'test', d: job.d || '', ok: true, id: out && out.key && out.key.id || '', why };
   } catch (e) { res = { kind: 'test', d: job.d || '', ok: false, why: 'הודעת הניסיון נכשלה: ' + String(e && e.message || e).slice(0, 160) }; }

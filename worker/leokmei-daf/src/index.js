@@ -16,7 +16,7 @@
  *  ה. מצב החיבור לווטסאפ (own:sess) אינו יוצא לעולם לדפדפן; רק לריצת השולח (OIDC של daf-wa.yml).
  */
 
-import { TZ, CAP_MAX, DAY, ilKey, ilHM, dn, keyOf, addDays, dow, heb, letters, gq, dayMeta, L, dafOf, dafimFor, compose, toCaption, capLen } from './core.js';
+import { TZ, CAP_MAX, DAY, ilKey, ilHM, dn, keyOf, addDays, dow, heb, letters, gq, dayMeta, L, dafOf, dafimFor, compose, toCaption, capLen, CYCLE } from './core.js';
 
 const SITE = 'https://leokmei.com';
 const DAYS_AHEAD = 10;

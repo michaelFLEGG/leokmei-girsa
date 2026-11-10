@@ -58,7 +58,7 @@ export const L = [['ברכות', 'berakhot', 2, 63], ['שבת', 'shabbat', 2, 15
   ['הוריות', 'horayot', 2, 13], ['זבחים', 'zevachim', 2, 119], ['מנחות', 'menachot', 2, 109], ['חולין', 'chullin', 2, 141],
   ['בכורות', 'bekhorot', 2, 60], ['ערכין', 'arakhin', 2, 33], ['תמורה', 'temurah', 2, 33], ['כריתות', 'keritot', 2, 27],
   ['מעילה', 'meilah', 2, 21], ['קינים', 'kinnim', 23, 3], ['תמיד', 'tamid', 26, 8], ['מדות', 'middot', 34, 5], ['נדה', 'niddah', 3, 71]];
-const CYCLE = L.reduce((a, x) => a + x[3], 0);
+export const CYCLE = L.reduce((a, x) => a + x[3], 0);
 export function dafOf(k) {
   let i = ((dn(k) - dn('2020-01-05')) % CYCLE + CYCLE) % CYCLE;
   for (const [name, slug, first, cnt] of L) { if (i < cnt) return { name, slug, n: first + i, last: first + cnt - 1 }; i -= cnt; }

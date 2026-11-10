@@ -116,8 +116,10 @@ function mishnaOf(pk) {
   try {
     const f = path.join(ROOT, 'data', 'mishna', pk.slug + '.json');
     const m = rd(f), n = +((pk.job && pk.job.perek) || pk.perek || 0);
-    const ch = (m.chapters || [])[n - 1];
-    return ch ? ch.join(' ') : '';
+    /* הפרק הקודם, הנוכחי והבא: טווח הדפים של פרק נפתח לפעמים במשנה האחרונה של הפרק הקודם
+       (שבת פרק ב בדף יט: - "אין צולין"), ובלי זה כל הצעה לקטע הראשון נחסמה כ"טקסט שאינו מן המשנה" */
+    const C = m.chapters || [];
+    return [C[n - 2], C[n - 1], C[n]].filter(Boolean).map((ch) => ch.join(' ')).join(' ');
   } catch (e) { return ''; }
 }
 function origOf(pk, from, to) {

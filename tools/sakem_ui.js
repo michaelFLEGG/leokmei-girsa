@@ -504,7 +504,9 @@
   function skmApply(p,newText){
     let os=skmUnits(p.ids);
     if(!skmSame(p.ids,p.orig))throw new Error('הקטע השתנה מאז ההצעה. בקש הצעה חדשה');
-    const pis=[...new Set(os.map(o=>o.pi))];
+    /* 10.11.2026: עיטור למחיקה שמחוץ לגבולות הקטע - מאותר בדף כולו, ונכנס לגיבוי לביטול */
+    const hdOut=(p.hdel||[]).filter(id=>!os.some(x=>x.u.id===id)).map(id=>skmUnits([id]).find(x=>x.u.k==='hatz')).filter(Boolean);
+    const pis=[...new Set(os.concat(hdOut).map(o=>o.pi))];
     const pre=pis.map(pi=>({pi,snap:JSON.stringify(D.pages[pi].units)})),befores=pis.map(snapOf);
     const RECS=[],OLDS=[];let T0=Date.now();
     const nt=()=>(T0=Math.max(T0+1,Date.now()));
@@ -515,7 +517,7 @@
       RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});SLOTS=null;befores.forEach(b=>patchPage(b))};
     if(p.hdel&&p.hdel.length){
       try{p.hdel.forEach(id=>{
-          const o=os.find(x=>x.u.id===id);
+          const o=os.find(x=>x.u.id===id)||hdOut.find(x=>x.u.id===id);
           if(!o||o.u.k!=='hatz')throw new Error('אפשר למחוק רק עיטור (לא פתיחת פרק ולא הדרן)');
           const items=decoItems(),i=items.findIndex(x=>x.deco&&x.j===null&&x.u.id===id);
           if(i<0)throw new Error('העיטור לא אותר בדף');

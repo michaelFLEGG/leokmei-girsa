@@ -360,8 +360,13 @@
     else p={id:SKP.rev.jid+':'+it.iid,ids:it.ids,orig:orig||it.orig};
     /* פרומפט 27: עיטור ליד כותרת שההצעה מוחקת - יוצא מן המקור ומן ההצעה, ונמחק בהחלה */
     const hd=SKC.hatzDel(p.orig,t);
-    if(hd.bad.length)throw new Error('עיטור למחיקה שאינו בקטע ('+hd.bad.join(', ')+')');
-    if(hd.ids.length){t=hd.text;p.hdel=hd.ids}
+    /* 10.11.2026: עיטור שההצעה מוחקת אך הוא יושב מחוץ לגבולות הקטע (צמוד מלמעלה או מלמטה) - לא חוסמים
+       את הקבלה. אם העיטור קיים בדף - נמחק גם הוא (skmApply מאתר אותו בדף כולו); ואם אינו קיים עוד - מדלגים
+       עליו ומחילים את שאר ההצעה */
+    let hdSkip=[];
+    if(hd.bad.length){hdSkip=hd.bad.filter(id=>!skmUnits([id]).some(o=>o.u.k==='hatz'))}
+    const hdIds=hd.ids.filter(id=>hdSkip.indexOf(id)<0);
+    if(hd.ids.length){t=hd.text;if(hdIds.length)p.hdel=hdIds}
     const o2=hd.ids.length?hd.orig:p.orig;
     const rp=skmRepair(o2,t);t=rp.text;
     const errs=SKC.guard(o2,t,{edited:true}).filter(x=>/נעולים|קטע שלם|נוספו שורות|תג לא מוכר/.test(x));

@@ -4370,6 +4370,114 @@
    "flagged": 0,
    "cal": 0.654,
    "published": "2026-11-10T00:41:08Z"
+  },
+  "arakhin-p07-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T02:34:55Z",
+   "at": "2026-11-10T06:39:10Z",
+   "ntos": 19,
+   "flagged": 0,
+   "cal": 0.261,
+   "published": "2026-11-10T06:39:12Z"
+  },
+  "arakhin-p08-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T02:29:29Z",
+   "at": "2026-11-10T06:39:10Z",
+   "ntos": 16,
+   "flagged": 0,
+   "cal": 0.138,
+   "published": "2026-11-10T06:39:12Z"
+  },
+  "arakhin-p09-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T02:39:21Z",
+   "at": "2026-11-10T06:39:10Z",
+   "ntos": 26,
+   "flagged": 1,
+   "cal": 0.345,
+   "published": "2026-11-10T06:39:13Z"
+  },
+  "arakhin-p09-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T02:24:43Z",
+   "at": "2026-11-10T06:39:10Z",
+   "ntos": 5,
+   "flagged": 0,
+   "cal": 0.5,
+   "published": "2026-11-10T06:39:13Z"
+  },
+  "temurah-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T04:29:21Z",
+   "at": "2026-11-10T06:39:12Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.341,
+   "published": "2026-11-10T06:39:13Z"
+  },
+  "temurah-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T04:34:18Z",
+   "at": "2026-11-10T06:39:12Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.284,
+   "published": "2026-11-10T06:39:13Z"
+  },
+  "temurah-p01-u03": {
+   "ok": true,
+   "done_at": "2026-11-10T04:39:22Z",
+   "at": "2026-11-10T06:39:12Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.283,
+   "published": "2026-11-10T06:39:13Z"
+  },
+  "temurah-p01-u04": {
+   "ok": true,
+   "done_at": "2026-11-10T04:40:24Z",
+   "at": "2026-11-10T06:39:12Z",
+   "ntos": 18,
+   "flagged": 0,
+   "cal": 0.512,
+   "published": "2026-11-10T06:39:13Z"
+  },
+  "temurah-p02-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T06:30:21Z",
+   "at": "2026-11-10T06:39:12Z",
+   "ntos": 18,
+   "flagged": 1,
+   "cal": 0.315,
+   "published": "2026-11-10T06:39:13Z"
+  },
+  "temurah-p03-u01": {
+   "ok": true,
+   "done_at": "2026-11-10T06:35:04Z",
+   "at": "2026-11-10T06:39:12Z",
+   "ntos": 23,
+   "flagged": 0,
+   "cal": 0.116,
+   "published": "2026-11-10T06:39:14Z"
+  },
+  "temurah-p03-u02": {
+   "ok": true,
+   "done_at": "2026-11-10T06:37:57Z",
+   "at": "2026-11-10T06:39:12Z",
+   "ntos": 26,
+   "flagged": 0,
+   "cal": 0.291,
+   "published": "2026-11-10T06:39:14Z"
+  },
+  "temurah-p03-u03": {
+   "ok": true,
+   "done_at": "2026-11-10T06:27:52Z",
+   "at": "2026-11-10T06:39:12Z",
+   "ntos": 2,
+   "flagged": 0,
+   "cal": 0.255,
+   "published": "2026-11-10T06:39:14Z"
   }
  },
  "files": {

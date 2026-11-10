@@ -1,0 +1,77 @@
+{
+ "slug": "temurah",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-10T06:39:13Z",
+   "unc_done": true,
+   "handoff_units": [
+    "temurah-p01-u01",
+    "temurah-p01-u02",
+    "temurah-p01-u03",
+    "temurah-p01-u04"
+   ],
+   "result": {
+    "generated": 93,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 74
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-10T06:39:13Z",
+   "unc_done": true,
+   "handoff_units": [
+    "temurah-p02-u01"
+   ],
+   "result": {
+    "generated": 17,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 15
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-10T06:39:14Z",
+   "unc_done": true,
+   "handoff_units": [
+    "temurah-p03-u01",
+    "temurah-p03-u02",
+    "temurah-p03-u03"
+   ],
+   "result": {
+    "generated": 51,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 37
+   }
+  }
+ },
+ "created": "2026-11-10T06:39:13Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.355,
+   "n": 8,
+   "at": "2026-11-10T06:39:13Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.315,
+   "n": 2,
+   "at": "2026-11-10T06:39:13Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.214,
+   "n": 5,
+   "at": "2026-11-10T06:39:13Z"
+  }
+ ],
+ "updated": "2026-11-10T06:39:14Z"
+}

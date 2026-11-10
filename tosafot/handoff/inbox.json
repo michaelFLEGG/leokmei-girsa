@@ -2029,6 +2029,114 @@
    "units": 1,
    "out": 1,
    "older_kept": 0
+  },
+  "1ggeBDKmv0IbgzZV-9cOHI-LHXo10Sk3E|2026-11-10T02:25:10.556Z": {
+   "name": "אצווה-2026-11-10-arakhin-p09-u02.json",
+   "id": "1ggeBDKmv0IbgzZV-9cOHI-LHXo10Sk3E",
+   "modified": "2026-11-10T02:25:10.556Z",
+   "opened": "2026-11-10T06:38:46Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1b5tJ-qpD7HlsQsa2_tf7oWvWi18_n58l|2026-11-10T02:30:00.433Z": {
+   "name": "אצווה-2026-11-10-arakhin-p08-u01.json",
+   "id": "1b5tJ-qpD7HlsQsa2_tf7oWvWi18_n58l",
+   "modified": "2026-11-10T02:30:00.433Z",
+   "opened": "2026-11-10T06:38:46Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1E-fQGjRnVw5mqyvkf_drtaa3fxAesIZ3|2026-11-10T02:35:17.209Z": {
+   "name": "אצווה-2026-11-10-arakhin-p07-u01.json",
+   "id": "1E-fQGjRnVw5mqyvkf_drtaa3fxAesIZ3",
+   "modified": "2026-11-10T02:35:17.209Z",
+   "opened": "2026-11-10T06:38:46Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1r7T4y2gmRYaX4bb6Q6Q7JOY7wlY7sEeD|2026-11-10T02:39:39.567Z": {
+   "name": "אצווה-2026-11-10-arakhin-p09-u01.json",
+   "id": "1r7T4y2gmRYaX4bb6Q6Q7JOY7wlY7sEeD",
+   "modified": "2026-11-10T02:39:39.567Z",
+   "opened": "2026-11-10T06:38:46Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1IK1gygXSvveFmNqwNupPkQMpQrwuyfH-|2026-11-10T04:29:51.300Z": {
+   "name": "אצווה-2026-11-10-temurah-p01-u01.json",
+   "id": "1IK1gygXSvveFmNqwNupPkQMpQrwuyfH-",
+   "modified": "2026-11-10T04:29:51.300Z",
+   "opened": "2026-11-10T06:38:58Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1vHZWv_lj13t6gTt-0C83KWciGYPtqEE2|2026-11-10T04:34:46.661Z": {
+   "name": "אצווה-2026-11-10-temurah-p01-u02.json",
+   "id": "1vHZWv_lj13t6gTt-0C83KWciGYPtqEE2",
+   "modified": "2026-11-10T04:34:46.661Z",
+   "opened": "2026-11-10T06:38:58Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "11pSSkei5dEORC_USWYunZfvZxqLyj01B|2026-11-10T04:39:42.936Z": {
+   "name": "אצווה-2026-11-10-temurah-p01-u03.json",
+   "id": "11pSSkei5dEORC_USWYunZfvZxqLyj01B",
+   "modified": "2026-11-10T04:39:42.936Z",
+   "opened": "2026-11-10T06:38:58Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1lhgaYkKWPNKG-6Wb7VpATJf3ue54Rnp0|2026-11-10T04:40:41.141Z": {
+   "name": "אצווה-2026-11-10-temurah-p01-u04.json",
+   "id": "1lhgaYkKWPNKG-6Wb7VpATJf3ue54Rnp0",
+   "modified": "2026-11-10T04:40:41.141Z",
+   "opened": "2026-11-10T06:38:59Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "16FkQtsAvk_NErnaLG1pc4m8KlM_w08te|2026-11-10T06:28:22.945Z": {
+   "name": "אצווה-2026-11-10-temurah-p03-u03.json",
+   "id": "16FkQtsAvk_NErnaLG1pc4m8KlM_w08te",
+   "modified": "2026-11-10T06:28:22.945Z",
+   "opened": "2026-11-10T06:39:10Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1TEvVgN0AMtT8q-eQuS3p2GJh9mw6A68a|2026-11-10T06:30:53.885Z": {
+   "name": "אצווה-2026-11-10-temurah-p02-u01.json",
+   "id": "1TEvVgN0AMtT8q-eQuS3p2GJh9mw6A68a",
+   "modified": "2026-11-10T06:30:53.885Z",
+   "opened": "2026-11-10T06:39:10Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1mFeLtZOGEwfZ5QzO2BDhme6WRYX3r91k|2026-11-10T06:35:35.515Z": {
+   "name": "אצווה-2026-11-10-temurah-p03-u01.json",
+   "id": "1mFeLtZOGEwfZ5QzO2BDhme6WRYX3r91k",
+   "modified": "2026-11-10T06:35:35.515Z",
+   "opened": "2026-11-10T06:39:10Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1XFzgjBdXQ_NiO_lqVUdDuCFn5LrWBzup|2026-11-10T06:38:17.438Z": {
+   "name": "אצווה-2026-11-10-temurah-p03-u02.json",
+   "id": "1XFzgjBdXQ_NiO_lqVUdDuCFn5LrWBzup",
+   "modified": "2026-11-10T06:38:17.438Z",
+   "opened": "2026-11-10T06:39:10Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
   }
  }
 }

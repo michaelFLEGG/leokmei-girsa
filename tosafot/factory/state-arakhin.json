@@ -96,6 +96,52 @@
     "flagged": 0,
     "questions": 22
    }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-10T06:39:12Z",
+   "unc_done": true,
+   "handoff_units": [
+    "arakhin-p07-u01"
+   ],
+   "result": {
+    "generated": 19,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 15
+   }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-10T06:39:12Z",
+   "unc_done": true,
+   "handoff_units": [
+    "arakhin-p08-u01"
+   ],
+   "result": {
+    "generated": 16,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 12
+   }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-11-10T06:39:13Z",
+   "unc_done": true,
+   "handoff_units": [
+    "arakhin-p09-u01",
+    "arakhin-p09-u02"
+   ],
+   "result": {
+    "generated": 30,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 28
+   }
   }
  },
  "created": "2026-11-10T00:41:06Z",
@@ -135,7 +181,26 @@
    "mean": 0.483,
    "n": 3,
    "at": "2026-11-10T00:41:07Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.261,
+   "n": 2,
+   "at": "2026-11-10T06:39:12Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.138,
+   "n": 1,
+   "at": "2026-11-10T06:39:12Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.396,
+   "n": 3,
+   "at": "2026-11-10T06:39:12Z"
   }
  ],
- "updated": "2026-11-10T00:41:07Z"
+ "updated": "2026-11-10T06:39:13Z",
+ "done": "2026-11-10T06:39:13Z"
 }

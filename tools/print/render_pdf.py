@@ -51,7 +51,8 @@ def patched_tail(site, slug, tos_dir):
     js = read_retry(fp).decode('utf-8') if os.path.exists(fp) else ''
     items = []
     for lf in sorted(glob.glob(os.path.join(tos_dir, slug, 'live-*.json'))):
-        items += json.load(open(lf, encoding='utf-8')).get('items', [])
+        # כמו הבנייה (build_site.py): "הדרן עלך" אינו הערת תוס'
+        items += [x for x in json.load(open(lf, encoding='utf-8')).get('items', []) if not str(x.get('dh', '')).strip().startswith('הדרן')]
     j = js.find('window.__TOS=')
     if items and j >= 0:
         _, e = json.JSONDecoder().raw_decode(js[j + len('window.__TOS='):])
@@ -67,6 +68,7 @@ def main():
     ap.add_argument('--from', dest='frm', default='')
     ap.add_argument('--to', default='')
     ap.add_argument('--all', action='store_true')
+    ap.add_argument('--pk', default='', help='מפתח הפרק כמו בחלון ההדפסה ("פרק שלישי|כירה"): הדפסת פרק שלם')
     ap.add_argument('--tos', default='1')
     ap.add_argument('--duplex', default='0')
     ap.add_argument('--profile', default='a4')
@@ -88,6 +90,8 @@ def main():
     else:
         q['from'] = a.frm
         q['to'] = a.to or a.frm
+        if a.pk:
+            q['pk'] = a.pk
     url = 'http://%s/%s.html?%s' % (HOST, a.slug, urllib.parse.urlencode(q))
     t0 = time.time()
     logs = []

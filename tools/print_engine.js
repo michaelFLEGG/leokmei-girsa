@@ -95,6 +95,123 @@
       from=k+1}}
   function lineOf(ref){var m=/\.(\d+)$/.exec(ref||'');return m?+m[1]:0}
 
+  /* ---------- שיוך לפרק (פרומפט 31, 11.11.2026) ----------
+     כלל: שיוך תוספות לפרק - לפי perek של הפריט בלבד (בית החרושת קבע אותו). לא לפי הדף ולא לפי תיוג העמוד.
+     הפרק של כל יחידת טקסט נגזר מרשימת המשניות (D.mbt: המשנה הראשונה של כל פרק) ומשורת ה"הדרן" שחותמת את הפרק
+     הקודם. תיוג העמוד (p.perek) אינו אמין בדף שמתחלף בו פרק: בשבת לו: שארית פרק ב יושבת בעמוד "לה." ושורות
+     פתיחת פרק ג בסופו, ובמז. שארית פרק ג יושבת בעמוד שמתויג "פרק רביעי". */
+  var PMAP=null;
+  function perekMap(){
+    if(PMAP)return PMAP;
+    var flat=[],pos={},keys=[];
+    D.pages.forEach(function(p,q){var kk=perekKey(p);if(keys[keys.length-1]!==kk)keys.push(kk);
+      p.units.forEach(function(u,k){pos[u.id]=flat.length;flat.push({q:q,k:k,u:u})})});
+    var HDR={'perek-range':1,'perek-start':1,'perek-num':1,'perek-name':1};
+    var m1={};(D.mbt||[]).forEach(function(m){var i=pos[m.id];if(i!==undefined&&(m1[m.p]===undefined||i<m1[m.p]))m1[m.p]=i});
+    var starts=[0],how=[];
+    /* מספר הפרקים - לפי רשימת המשניות כשהיא קיימת. תוויות הפרק בוורד אינן אמינות למניין: בעירובין פרק ז מתויג
+       "פרק שישי", בסנהדרין שני פרקים מתויגים "פרק שני" ופרק ג "פרק ראשון", ובפסחים יש קטע בלי תווית לפני פרק א */
+    var labKeys=keys.filter(function(k){return k!=='|'}),NP=0;
+    Object.keys(m1).forEach(function(p){if(+p>NP)NP=+p});
+    if(!NP)NP=labKeys.length;
+    function byLabel(n,prev){   /* גיבוי בלי משנה: העמוד הראשון שתיוגו לפרק, ומשם אחורה על שורות פתיחת הפרק */
+      for(var q=0;q<D.pages.length;q++)if(perekKey(D.pages[q])===labKeys[n-1]&&D.pages[q].units.length){
+        var s=pos[D.pages[q].units[0].id];while(s-1>prev&&HDR[flat[s-1].u.k])s--;return s}
+      return -1}
+    for(var n=2;n<=NP;n++){
+      var prev=starts[starts.length-1],s=-1,m=m1[n];
+      if(m!==undefined&&m>prev){
+        for(var i=m-1;i>prev;i--)if(flat[i].u.k==='hadran'){s=i+1;break}
+        if(s<0){s=m;while(s-1>prev&&HDR[flat[s-1].u.k])s--}
+        how.push('mbt')}
+      else{s=byLabel(n,prev);how.push('label')}
+      if(s<=prev)s=prev+1;
+      starts.push(s)}
+    var upk={},n0=1;
+    flat.forEach(function(x,i){while(n0<starts.length&&i>=starts[n0])n0++;upk[x.u.id]=n0});
+    /* תווית כל פרק (לכותרת הרצה): תווית העמוד שבו המשנה הראשונה שלו, ובלי משנה - העמוד שבו הפרק מתחיל */
+    var lab=[];for(var n1=1;n1<=NP;n1++){var at=m1[n1]!==undefined?m1[n1]:starts[n1-1],pg=D.pages[flat[at]?flat[at].q:0]||{};
+      lab.push({perek:pg.perek||'',perekName:pg.perekName||''})}
+    PMAP={flat:flat,pos:pos,keys:keys,starts:starts,upk:upk,how:how,np:NP,m1:m1,lab:lab};
+    return PMAP}
+  /* מספר הפרק (1...) של מפתח פרק מן החלון ("פרק שלישי|כירה"), או "#3". מפתח התווית: הפרק שהמשנה הראשונה שלו
+     בעמוד הראשון שנושא את התווית; ובלי משנה שם - הפרק של רוב היחידות בעמודים שנושאים אותה */
+  function perekNum(pk){
+    var M=perekMap(),mm=/^#(\d+)$/.exec(pk||'');if(mm)return +mm[1]<=M.np?+mm[1]:0;
+    var q0=-1,cnt={};
+    D.pages.forEach(function(p,q){if(perekKey(p)!==pk)return;if(q0<0)q0=q;p.units.forEach(function(u){var n=M.upk[u.id];cnt[n]=(cnt[n]||0)+1})});
+    if(q0<0)return 0;
+    var best=0;Object.keys(M.m1).forEach(function(n){if(M.flat[M.m1[n]].q===q0&&(!best||+n<best))best=+n});
+    if(best)return best;
+    Object.keys(cnt).forEach(function(n){if(!best||cnt[n]>cnt[best])best=+n});
+    return best}
+  /* טקסט היחידה כפי שבית החרושת ראה אותו (extract_context.py: בלי תגיות, ישויות מפוענחות), מנורמל כמו norm_idx */
+  var DEC=null;
+  function plainH(h){h=String(h||'').replace(/<[^>]+>/g,'');if(h.indexOf('&')<0)return h;
+    if(!DEC)DEC=document.createElement('textarea');DEC.innerHTML=h;return DEC.value}
+  function normAdd(s,t){for(var i=0;i<t.length;i++){var c=t[i];
+      if(NIKD.test(c))continue;
+      if(LET.test(c))s+=c;else if(SEP.test(c)){if(s.length&&s[s.length-1]!==' ')s+=' '}}
+    if(s.length&&s[s.length-1]!==' ')s+=' ';
+    return s}
+  var PNORM={};
+  function unitsNorm(list){   /* list: יחידות. מחזיר {s, rg:[{id,a,b}]} */
+    var s='',rg=[];
+    list.forEach(function(u){var a=s.length;(u.l||[]).forEach(function(x){s=normAdd(s,plainH(x&&x[1]))});rg.push({id:u.id,a:a,b:s.length})});
+    return {s:s,rg:rg}}
+  function pageNorm(q){return PNORM[q]||(PNORM[q]=unitsNorm(D.pages[q].units))}
+  function occsOf(s,ctx){var out=[],k=-1,from=0;
+    while(true){k=s.indexOf(ctx,from);if(k<0)return out;
+      if((k===0||s[k-1]===' ')&&(k+ctx.length>=s.length||s[k+ctx.length]===' '))out.push(k);from=k+1}}
+  /* המופע ה-occ של ctx בתוך N: לאיזו יחידה הוא שייך, ומה מספרו בתוך היחידה עצמה */
+  function hitUnit(N,ctx,occ){
+    var oc=occsOf(N.s,ctx);if(occ>oc.length)return null;
+    var st=oc[occ-1],en=st+ctx.length-1,g=null;
+    for(var i=0;i<N.rg.length;i++)if(en>=N.rg[i].a&&en<N.rg[i].b){g=N.rg[i];break}
+    if(!g)return null;
+    var k=0;oc.forEach(function(o){if(o>=g.a&&o<=st)k++});
+    return {uid:g.id,k:Math.max(1,k)}}
+  var NOTXT={'perek-range':1,'perek-start':1,'perek-num':1,'perek-name':1,'hadran':1,'hatz':1,'nose':1,'dh':1};
+  /* היחידה שבה יבוא סימן התוספות. בדיוק כמו בית החרושת והאתר: טקסט העוגן (t) ומספר המופע (occ) בעמוד הראשון
+     שתוויתו דף התוספות. אבל העוגן תקף רק אם היחידה שמצא שייכת לפרק של התוספות; אחרת (ובכל עוגן שלא נמצא)
+     מחפשים רק בעמודי הפרק שלה: מילות הדיבור המתחיל, ואם אינן - סוף שורת הגמרא הקרובה. לעולם לא בפרק אחר.
+     מחזיר {uid, ctx, k, how:'t'|'dh'|'line', why} או {uid:null, why} */
+  function tosResolve(it){
+    if(it._rs)return it._rs;
+    var M=perekMap(),pk=+it.perek||0,lab=it.page||it.daf,q0=pageIdxOf(lab),ctx=normCtx(it.t||''),why='';
+    if(q0>-1&&ctx){var h=hitUnit(pageNorm(q0),ctx,it.occ||1);
+      if(!h)why='טקסט העוגן לא נמצא בדף';
+      else if(pk&&M.upk[h.uid]!==pk)why='העוגן שנקבע ("'+(it.t||'')+'") נמצא בפרק אחר';
+      else if(M.flat[M.pos[h.uid]].u.k==='perek-range')why='העוגן בשורת טווח הדפים, שאינה מודפסת';
+      else return (it._rs={uid:h.uid,ctx:ctx,k:h.k,how:'t'})}
+    else why=q0<0?'דף התוספות אינו בנתונים':'אין טקסט עוגן';
+    /* היחידות של הפרק שלה: בעמודים שתוויתם דף התוספות; ואם אין בהם יחידה מן הפרק שלה (התוספות האחרונה של פרק
+       על דף שהעמוד שלו פותח את הפרק הבא) - העמוד הקרוב לפניו שיש בו מן הפרק שלה, ואם אין - אחריו */
+    var C=[],dir=0;
+    function own(q){return D.pages[q].units.filter(function(u){return (!pk||M.upk[u.id]===pk)&&u.k!=='perek-range'})}
+    if(q0>-1){
+      D.pages.forEach(function(p,q){if(p.daf===lab)C=C.concat(own(q))});
+      if(!C.length)for(var q=q0-1;q>=0&&!C.length;q--){C=own(q);dir=-1}
+      if(!C.length)for(var q2=q0+1;q2<D.pages.length&&!C.length;q2++){C=own(q2);dir=1}}
+    if(!C.length)return (it._rs={uid:null,why:why+'; אין בנתונים טקסט מן הפרק שלה ליד הדף'});
+    var N=unitsNorm(C);
+    /* מילות הדיבור המתחיל (הרצף הארוך ביותר, שתי מילים לפחות) */
+    var ws=normCtx(it.dh||'').split(' ').filter(Boolean);
+    for(var len=ws.length;len>=2;len--)for(var i=0;i+len<=ws.length;i++){
+      var c=ws.slice(i,i+len).join(' ');if(c.replace(/ /g,'').length<5)continue;
+      var h2=hitUnit(N,c,1);if(h2)return (it._rs={uid:h2.uid,ctx:c,k:h2.k,how:'dh',why:why})}
+    /* סוף שורת הגמרא הקרובה בפרק שלה */
+    var txt=C.filter(function(u){return !NOTXT[u.k]&&(u.l||[]).length}),tgt=null;
+    if(!txt.length)txt=C;
+    if(dir<0)tgt=txt[txt.length-1];
+    else if(dir>0)tgt=txt[0];
+    else{var best=null,fst=null;txt.forEach(function(u){var ln=lineOf(u.ref);if(!ln)return;if(!fst)fst=u;if(ln<=(it.line||0))best=u});
+      tgt=best||fst||txt[txt.length-1]}
+    return (it._rs={uid:tgt.id,ctx:'',k:0,how:'line',why:why})}
+  function tosReset(){PMAP=null;PNORM={};tosItems().forEach(function(it){delete it._rs})}
+  /* גם תצוגת האתר (tosafot_ui.js) מצמידה לפי אותו שיוך: מקור אחד לכלל */
+  window.lkTos={resolve:tosResolve,perekMap:perekMap,reset:tosReset};
+
   /* זיהוי מילה בודדת בשורה האחרונה: כמו lastLineIsLone של האתר, אך לפי מרכז האות ולא קצה עליון
      (קטע בגופן קטן באמצע שורה נתן הפרש של קצה עליון ואותה שורה זוהתה בטעות כשורה נפרדת) */
   function loneStrict(p){
@@ -143,6 +260,7 @@
   async function runPrint(){
     var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
     window.__PRN={state:'running',report:R};
+    tosReset();   /* מפת הפרקים נבנית מחדש מן הנתונים כפי שהם עכשיו (אחרי העריכות החיות) */
     function W(m){R.warn.push(m);try{console.warn('[print] '+m)}catch(e){}}
     /* 7.11.2026: לשם הפרופיל עשויה להיצמד גרסת העריכות (a4v...), ראה prnGo. הקובץ הוא שם הפרופיל בלעדיה */
     var prof=await (await fetch('print-profiles/'+((QS.get('profile')||'a4').replace(/v[0-9a-z]+$/,'')||'a4')+'.json',{cache:'no-store'})).json();PROF=prof;
@@ -221,19 +339,19 @@
         if(one){PK=kT;PKI=true}}
       if(PK){var a=-1,b=-1;for(var q=0;q<D.pages.length;q++)if(perekKey(D.pages[q])===PK){if(a<0)a=q;b=q}
         var fi0=fi,ti0=ti;
-        if(a>-1&&!PKI){fi=a;ti=b}
-        /* דף שבו מתחלף פרק מכיל את שני הפרקים, ותיוגו אינו עקבי: הגבול נקבע לפי כותרות פתיחת הפרק עצמן */
-        var keys=[],bd=[],pv=null;
-        D.pages.forEach(function(pg,q){var kk=perekKey(pg);if(keys[keys.length-1]!==kk)keys.push(kk);
-          pg.units.forEach(function(u,k){if(u.k==='perek-range'||(u.k==='perek-start'&&pv!=='perek-range'))bd.push({p:q,k:k});pv=u.k})});
-        var nP=keys.indexOf(PK);
-        if(nP>-1&&bd.length===keys.length){
-          var e1=bd[nP+1]||{p:D.pages.length,k:0};
-          PKS={n:nP+1,p0:bd[nP].p,k0:bd[nP].k,p1:e1.p,k1:e1.k};
-          if(PKI){
-            if(PKS.p0<fi0||PKS.p0>ti0){PKS.p0=-1}else fi=PKS.p0;
-            if(PKS.p1>ti0||PKS.p1<fi0){PKS.p1=-1;ti=ti0}else ti=PKS.k1===0?PKS.p1-1:PKS.p1}
-          else{fi=PKS.p0;ti=PKS.k1===0?PKS.p1-1:PKS.p1}}}
+        /* פרומפט 31: הגבול נקבע במפת הפרקים (perekMap: המשנה הראשונה ושורת ההדרן), ולא בהתאמה שבירה בין כותרות
+           פתיחת פרק לתיוג העמודים. PKS.n = מספר הפרק המודפס; כל יחידה שאינה ממנו אינה מודפסת. */
+        var M0=perekMap(),nP=perekNum(PK);
+        if(nP){
+          var s0=M0.flat[M0.starts[nP-1]],s1=M0.starts[nP]!==undefined?M0.flat[M0.starts[nP]]:null;
+          PKS={n:nP,p0:s0.q,k0:s0.k,p1:s1?s1.q:D.pages.length,k1:s1?s1.k:0};
+          var e0=PKS.k1===0?PKS.p1-1:PKS.p1;
+          /* פרק שלם: בקשה מן החלון (pk), או טווח שמכסה את כל עמודי הפרק לפי תיוגם (שירות ה-PDF הישן, בלי pk) */
+          /* (pageIdxOf מחזיר את העמוד הראשון בתווית; לפרק יכולים להיות כמה עמודים אחרונים באותה תווית) */
+          PKS.whole=!PKI||(a>-1&&fi0<=a&&(ti0>=b||D.pages[ti0].daf===D.pages[b].daf));
+          if(PKS.whole){fi=PKS.p0;ti=e0}
+          else{fi=Math.max(fi0,PKS.p0);ti=Math.min(ti0,e0)}}
+        else if(a>-1&&!PKI){fi=a;ti=b}}
       if(ti<fi)throw new Error('סוף הטווח לפני תחילתו')}
     /* ---- נוסחי התוספות שנבחרו (נקודת הקליטה) ---- */
     var PUBN={};
@@ -249,12 +367,14 @@
     var firstUnit=null;
     for(var pi=fi;pi<=ti;pi++){var p=D.pages[pi];if(!p.units.length)continue;var first=true;var g0=recs.length;
       for(var k=0;k<p.units.length;k++){var u=p.units[k];
-        if(PKS&&((pi===PKS.p0&&k<PKS.k0)||(pi===PKS.p1&&k>=PKS.k1)))continue;
+        if(PKS&&perekMap().upk[u.id]!==PKS.n)continue;
         /* ב (6.11.2026): "(לה. - מה.)" הוא סגנון מוסתר בוורד ("דפים בפרק"), עזר לעורך בלבד: אינו מודפס, והפרק נפתח ישר בכותרתו
            ובמשנה. ציון הדף שהיה עליו עובר ליחידה הבאה (first נשאר) */
         if(u.k==='perek-range')continue;
-        if(!firstUnit)firstUnit={u:u,p:p};
-        recs.push({u:u,pi:pi,daf:p.daf,perek:p.perek||'',perekName:p.perekName||'',kind:u.k,
+        /* תווית הפרק של השורה - לפי הפרק של היחידה עצמה (שארית פרק בעמוד שמתויג לפרק הבא) */
+        var LB=perekMap().lab[perekMap().upk[u.id]-1]||{perek:p.perek||'',perekName:p.perekName||''};
+        if(!firstUnit)firstUnit={u:u,p:LB};
+        recs.push({u:u,pi:pi,daf:p.daf,perek:LB.perek,perekName:LB.perekName,kind:u.k,
           html:prnFix(u.k,unitHTML(u,first?p.daf:null,first?pi:null))});
         first=false}
       groups.push([g0,recs.length])}
@@ -277,12 +397,34 @@
     await Promise.all(FAM.map(function(x){return document.fonts.load(x[1]+' 20px '+x[0],'אבגדה')}));
     TM('fontsload');
     var items=[],L=[],odd={},fixedLone=0,fixedGlue=0,Ybase=0,sqMs=0;
-    var inRange={};for(var q=fi;q<=ti;q++)inRange[D.pages[q].daf]=q;
-    if(withTos)tosItems().forEach(function(it){if(inRange[it.daf]!==undefined&&!(PKS&&it.perek&&+it.perek!==PKS.n))items.push(it)});
+    /* פרומפט 31: תוספות נכנסת להדפסה אם היחידה שבה יבוא הסימן (tosResolve, רק מן הפרק שלה) מודפסת.
+       לא לפי הדף: דף שמתחלף בו פרק מחזיק תוספות של שני הפרקים */
+    var PM=perekMap(),PRINTED={};recs.forEach(function(x){if(x.u)PRINTED[x.u.id]=1});
+    function itPk(it){return +it.perek||PM.upk[(tosResolve(it)||{}).uid]||0}
+    R.tosWarn=[];
+    if(withTos){
+      var PRP={};recs.forEach(function(x){if(x.u)PRP[PM.upk[x.u.id]]=1});
+      tosItems().forEach(function(it){
+        var pk=itPk(it);if(!PRP[pk])return;
+        var rs=tosResolve(it);
+        if(!rs.uid){if(PKS&&PKS.whole)W('תוספות '+tosHeb(it)+' (פרק '+pk+', '+it.daf+') לא הודפסה: '+rs.why);return}
+        if(!PRINTED[rs.uid])return;          /* שייכת לטקסט שמחוץ לטווח */
+        if(rs.how!=='t')R.tosWarn.push(tosHeb(it)+' (פרק '+pk+', '+it.daf+'): '+rs.why+' - הוצמדה '+(rs.how==='dh'?'למילות הדיבור המתחיל':'לסוף השורה הקרובה')+' בפרק שלה');
+        items.push(it)});
+      /* שמירה (ג4): בהדפסת פרק אין שום תוספות מפרק אחר - ואם בכל זאת נכנסה, היא מושמטת באזהרה ולא מודפסת בשקט */
+      if(PKS){var bad=items.filter(function(it){return itPk(it)!==PKS.n});
+        if(bad.length){items=items.filter(function(it){return itPk(it)===PKS.n});
+          bad.forEach(function(it){W('תוספות '+tosHeb(it)+' שייכת לפרק '+itPk(it)+' ולא לפרק המודפס ('+PKS.n+'): הושמטה')})}}
+      /* עוגן שנקבע בפרק אחר - אזהרה לכל אחת; עוגן שאינו נמצא כלל (הטקסט נערך אחרי העיגון) - שורה אחת מסכמת */
+      var drift=R.tosWarn.filter(function(x){return x.indexOf('בפרק אחר')<0});
+      R.tosWarn.forEach(function(x){if(x.indexOf('בפרק אחר')>-1)W('עוגן תוספות: '+x)});
+      if(drift.length)W(drift.length+' תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: '+
+        drift.map(function(x){return x.split(' (')[0]}).join(', '))}
     R.notes=items.length;
-    /* ח1 (14.10.2026): מספור ההערות מתחיל ב-1 בכל פרק (מספר התצוגה it.dn); המזהה it.n נשאר לקישורים */
-    (function(){var order=items.slice().sort(function(a,b){return (inRange[a.daf]-inRange[b.daf])||((a.line||0)-(b.line||0))||(a.n-b.n)}),cnt={};
-      order.forEach(function(it){var q=inRange[it.daf],pk=q===undefined?'':(D.pages[q].perek||'');cnt[pk]=(cnt[pk]||0)+1;it.dn=cnt[pk]})})();
+    /* ח1 (14.10.2026): מספור ההערות מתחיל ב-1 בכל פרק (מספר התצוגה it.dn); המזהה it.n נשאר לקישורים.
+       פרומפט 31: הפרק הוא perek של הפריט, לא תווית העמוד */
+    (function(){var order=items.slice().sort(function(a,b){return (itPk(a)-itPk(b))||(PM.pos[a._rs.uid]-PM.pos[b._rs.uid])||(a.n-b.n)}),cnt={};
+      order.forEach(function(it){var pk=itPk(it);cnt[pk]=(cnt[pk]||0)+1;it.dn=cnt[pk]})})();
     /* סרגל קטן למדידת איחוי שורה יתומה (פריסה של פסקה אחת בלבד) */
     var sq=document.createElement('div');sq.className='flow';sq.id='prnsq';
     sq.style.cssText='position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;height:auto;overflow:hidden;columns:auto;column-count:1;padding:0;z-index:-1';
@@ -296,7 +438,7 @@
     function renumberMarks(root){
       [].slice.call(root.querySelectorAll('sup.tm')).forEach(function(mk){
         var it=ITN[mk.getAttribute('data-n')];if(!it)return;
-        var q=inRange[it.daf],pk=q===undefined?'':(D.pages[q].perek||'');
+        var pk=itPk(it);
         DNC[pk]=(DNC[pk]||0)+1;it.dn=DNC[pk];
         mk.textContent=prof.notes.numbering==='digits'?String(it.dn):tosHeb(it)});
       /* צירוף: הפניות סמוכות (רק מפריד-מילה ביניהן) נעטפות בקבוצה אחת בכיוון קבוע מן הפרופיל */
@@ -333,14 +475,13 @@
       /* סימוני התוספות של דפי הנתח */
       if(withTos){
         var byUnitEls={};crecs.forEach(function(x){if(x.u)byUnitEls[x.u.id]=x.el});
-        var inChunk={};crecs.forEach(function(x){inChunk[x.daf]=x.pi});
-        var byDaf={};items.forEach(function(it){if(inChunk[it.daf]!==undefined)(byDaf[it.daf]=byDaf[it.daf]||[]).push(it)});
-        Object.keys(byDaf).forEach(function(daf){
-          var rows=[];D.pages[inChunk[daf]].units.forEach(function(u){var e=byUnitEls[u.id];if(e)rows.push([u,e])});
-          if(!rows.length)return;
-          byDaf[daf].slice().sort(function(a,b){return b.n-a.n}).forEach(function(it){
-            var idx=buildIndex(rows),ctx=normCtx(it.t||''),hit=null;
-            if(ctx)hit=findAt(idx,ctx,it.occ||1);
+        /* פרומפט 31: כל תוספות מסומנת ביחידה שנקבעה לה (tosResolve), פעם אחת, בנתח שבו היחידה נמצאת */
+        var byU={};items.forEach(function(it){var uid=it._rs.uid;if(byUnitEls[uid])(byU[uid]=byU[uid]||[]).push(it)});
+        Object.keys(byU).forEach(function(uid){
+          var rows=[[PM.flat[PM.pos[uid]].u,byUnitEls[uid]]];
+          byU[uid].slice().sort(function(a,b){return b.n-a.n}).forEach(function(it){
+            var rs=it._rs,idx=buildIndex(rows),hit=null;
+            if(rs.ctx)hit=findAt(idx,rs.ctx,rs.k||1);
             var mk=document.createElement('sup');mk.className='tm';mk.setAttribute('data-n',it.n);
             mk.textContent=prof.notes.numbering==='digits'?String(it.dn||it.n):tosHeb(it);
             mk.id='tm-'+it.n;
@@ -352,11 +493,8 @@
               var rg=document.createRange();rg.setStart(hit[0],ho);rg.collapse(true);rg.insertNode(mk);
               mk.parentNode.insertBefore(document.createTextNode('\u2060'),mk);   /* צמד-מילה: הסימן לא יישבר מן המילה שלו */
               R.placed++;return}
-            /* עוגן שלא נמצא: סוף שורת הגמרא הקרובה, ומדווח (לעולם לא נעלם בשקט) */
-            var best=null,fst=null;
-            rows.forEach(function(x){var ln=lineOf(x[0].ref);if(!ln)return;if(!fst)fst=x;if(ln<=it.line)best=x});
-            var tgt=best||fst||rows[rows.length-1];
-            var m=tgt[1].querySelector(':scope > .main');
+            /* עוגן שלא נמצא (או כלל 3): סוף היחידה שנקבעה - תמיד בפרק של התוספות - ומדווח (לעולם לא נעלם בשקט) */
+            var m=rows[0][1].querySelector(':scope > .main');
             if(!m){W('עוגן תוספות '+tosHeb(it)+' לא נמצא ואין שורה להצמדה');return}
             var ps=m.querySelectorAll(':scope > p'),host=ps.length?ps[ps.length-1]:m;
             host.appendChild(document.createTextNode('\u2060'));host.appendChild(mk);R.placed++;R.moved.push(tosHeb(it))})})}
@@ -1139,7 +1277,9 @@
         if(multi){cnt.textContent='';go.disabled=true;err.textContent=ONE_MSG;err.hidden=false;return}}
       go.disabled=false;
       var inR={};for(var i=a;i<=b;i++)inR[D.pages[i].daf]=1;
-      var n=tosItems().filter(function(it){return inR[it.daf]}).length;
+      /* פרומפט 31: בהדפסת פרק - כל התוספות שה-perek שלהן הוא הפרק הזה (ולא לפי הדף) */
+      var rpn=r.pk?perekNum(r.pk):0;
+      var n=tosItems().filter(function(it){return rpn?+it.perek===rpn:inR[it.daf]}).length;
       var tosY=document.getElementById('prn-tos-y'),tosN=document.getElementById('prn-tos-n'),tl=document.getElementById('prn-tl'),tn=document.getElementById('prn-tn');
       tosY.disabled=!n;tl.style.opacity=n?'':'.55';
       if(!n){tosN.checked=true;tn.textContent="תוס' עדיין לא נכתבו לדפים אלה"}

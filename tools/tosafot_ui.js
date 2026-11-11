@@ -303,9 +303,9 @@
   setInterval(function(){if(!document.body.classList.contains('bk-on')&&document.querySelector('#flow .tsa'))tsLayer()},700);
 
   function lineOf(ref){var m=/\.(\d+)$/.exec(ref||'');return m?+m[1]:0}
-  function placeMark(it,rows){
-    var idx=buildIndex(rows),ctx=normCtx(it.t||''),hit=null,rule=String(it.rule||'1');
-    if(ctx)hit=findAt(idx,ctx,it.occ||1);
+  function placeMark(it,rows,ctx0,occ0){
+    var idx=buildIndex(rows),ctx=ctx0!==undefined?ctx0:normCtx(it.t||''),hit=null,rule=String(it.rule||'1');
+    if(ctx)hit=findAt(idx,ctx,occ0||it.occ||1);
     if(hit){
       var r=document.createRange();r.setStart(hit[0],hit[1]);r.collapse(true);
       /* טווח המילים המעוגנות, להדגשה בריחוף (נוצר לפני הוספת העוגן) */
@@ -524,9 +524,35 @@
     var f=document.getElementById('flow');if(!f)return;
     strip();
     if(off()){drawList();tpRender(true);return}
+    var bad=[];
+    /* פרומפט 31 (11.11.2026): שיוך תוספות לפרק - לפי perek של הפריט בלבד. כל תוספות מוצמדת ביחידה שנקבעה לה
+       (window.lkTos.resolve, מנוע ההדפסה, אותו כלל בדיוק): עוגן שנמצא בטקסט של פרק אחר אינו תקף, והחיפוש נעשה
+       רק בטקסט של הפרק שלה. כך הערת סוף הפרק הקודם (שבת לו:, קמ"ו של פרק ב) מוצגת בסוף פרק ב ולא במשנת "כירה". */
+    var LK=window.lkTos;
+    if(LK){
+      LK.reset();
+      var M=LK.perekMap(),groups={},order=[];
+      TS.items.forEach(function(it){
+        var rs=LK.resolve(it);
+        if(!rs.uid){var q0=pageIdx(it.daf);if(q0>-1&&pageRows(q0).length)bad.push(it.daf+': '+it.hn+' ללא מקום בפרק '+it.perek);return}
+        if(!document.getElementById('u'+rs.uid))return;     /* היחידה אינה מוצגת עכשיו */
+        var x=M.flat[M.pos[rs.uid]],key=x.q+'|'+M.upk[rs.uid];
+        if(!groups[key]){groups[key]={q:x.q,pk:M.upk[rs.uid],items:[]};order.push(key)}
+        groups[key].items.push(it)});
+      order.forEach(function(key){var g=groups[key];
+        g.items.slice().sort(function(a,b){return b.n-a.n}).forEach(function(it){var rs=it._rs;
+          var u=M.flat[M.pos[rs.uid]].u,el=document.getElementById('u'+rs.uid);
+          placeMark(it,[[u,el]],rs.ctx,rs.k)});
+        if(mode==='foot'){
+          var rows=pageRows(g.q).filter(function(r){return M.upk[r[0].id]===g.pk});if(!rows.length)return;
+          var last=rows[rows.length-1][1];
+          var fo=document.createElement('div');fo.className='tsfoot';fo.setAttribute('contenteditable','false');
+          fo.innerHTML='<div class="tsh">תוספות על העמוד</div>'+g.items.slice().sort(function(a,b){return a.n-b.n}).map(noteHTML).join('');
+          last.insertAdjacentElement('afterend',fo);
+          if(CFG.face)fo.querySelectorAll('.tsn').forEach(function(x){faceOpen(x,true)})}});
+    }else{
     var byDaf={};
     TS.items.forEach(function(it){(byDaf[it.daf]=byDaf[it.daf]||[]).push(it)});
-    var bad=[];
     Object.keys(byDaf).forEach(function(daf){
       var pi=pageIdx(daf);if(pi<0)return;
       var rows=pageRows(pi);if(!rows.length)return;
@@ -540,6 +566,7 @@
         fo.innerHTML='<div class="tsh">תוספות על העמוד</div>'+byDaf[daf].slice().sort(function(a,b){return a.n-b.n}).map(noteHTML).join('');
         last.insertAdjacentElement('afterend',fo);
         if(CFG.face)fo.querySelectorAll('.tsn').forEach(function(x){faceOpen(x,true)})}});
+    }
     if(bad.length&&typeof isAdmin==='function'&&isAdmin()&&!warned){warned=true;
       if(typeof toast==='function')toast('אזהרת שלמות בתוספות: '+bad.join('; '),6000)}
     drawList();tpRender(true);tsLayerSoon();

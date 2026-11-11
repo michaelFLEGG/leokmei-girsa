@@ -1271,7 +1271,9 @@
       var a=pageIdxOf(r.from),b=pageIdxOf(r.to);
       if(a<0||b<0||b<a){cnt.textContent='';go.disabled=true;
         err.textContent=(a>-1&&b>-1&&b<a)?'סוף הטווח צריך להיות אחרי תחילתו':'הדף שנבחר אינו במסכת';err.hidden=false;return}
-      if(!isAdm()){          /* לעולם לא יותר מפרק אחד, גם אם נבחר טווח שחוצה גבול */
+      /* פרומפט 31: הדפסת פרק (r.pk) היא תמיד פרק אחד בדיוק - המנוע מדפיס רק את יחידות הפרק. בלי החריג, פרק שנפתח
+         בדף שמשותף לפרק הקודם (שבת פרק ב, יט:) נחסם למבקר, כי הדף הראשון בתווית שייך לפרק הקודם */
+      if(!isAdm()&&!r.pk){          /* לעולם לא יותר מפרק אחד, גם אם נבחר טווח שחוצה גבול */
         var k0=perekKey(D.pages[a]),multi=false;
         for(var j=a;j<=b;j++)if(perekKey(D.pages[j])!==k0){multi=true;break}
         if(multi){cnt.textContent='';go.disabled=true;err.textContent=ONE_MSG;err.hidden=false;return}}
@@ -1342,7 +1344,7 @@
           if(Date.now()-t0>90000){clearInterval(iv);f.remove();DRYFR=null;no()}},300)})}
     function prnGo(){
       var r=prnRange(),go=document.getElementById('prn-go'),bar=document.getElementById('prn-bar'),err=document.getElementById('prn-err');
-      if(!isAdm()){
+      if(!isAdm()&&!r.pk){
         var a0=pageIdxOf(r.from),b0=pageIdxOf(r.to),bad=r.t==='all'||a0<0||b0<a0;
         for(var j0=a0+1;!bad&&j0<=b0;j0++)if(perekKey(D.pages[j0])!==perekKey(D.pages[a0]))bad=true;
         if(bad){err.textContent=ONE_MSG;err.hidden=false;return}}

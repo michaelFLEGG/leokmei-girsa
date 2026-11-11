@@ -48,7 +48,7 @@ async function logPrint(env, key) {
 
 /* גבולות הפרקים: <מסכת>.prn.json שהבנייה כותבת ({pages:[[דף, מפתח-פרק],...]}).
    true = כל הדפים שבטווח באותו פרק; false = חוצה גבול או דף לא מוכר; null = הקובץ אינו זמין. */
-async function oneChapter(m, from, to) {
+async function oneChapter(m, from, to, pk) {
   let d;
   try {
     const r = await fetch(`${SITE}/${m}.prn.json`, { cf: { cacheTtl: 300 } });
@@ -57,6 +57,15 @@ async function oneChapter(m, from, to) {
   } catch (e) { return null; }
   const pg = d && d.pages;
   if (!Array.isArray(pg) || !pg.length) return null;
+  /* פרומפט 31: הדפסת פרק (pk). דף שמשותף לשני פרקים מופיע פעמיים, והחיפוש לפי הדף בלבד מצא את העמוד של הפרק הקודם
+     (שבת פרק ב נפתח ב-יט:, שבו גם סוף פרק א) - והפרק נחסם למבקר. כאן העמודים נבחרים לפי הדף והפרק יחד */
+  if (pk) {
+    const a1 = pg.findIndex((x) => x[0] === from && x[1] === pk);
+    let b1 = -1; pg.forEach((x, i) => { if (x[0] === to && x[1] === pk) b1 = i; });
+    if (a1 < 0 || b1 < a1) return false;
+    for (let i = a1; i <= b1; i++) if (pg[i][1] !== pk) return false;
+    return true;
+  }
   const a = pg.findIndex((x) => x[0] === from);
   const b = pg.findIndex((x) => x[0] === to);
   if (a < 0 || b < 0 || b < a) return false;
@@ -86,7 +95,7 @@ async function pdf(req, env, ctx, url) {
      רחב שהפיק מנהל לא יוגש למבקר. אם גבולות הפרקים אינם זמינים - נכשלים סגור. */
   if (!(await isAdmin(req, env))) {
     if (all) return json({ error: ONE_MSG }, 403);
-    const one = await oneChapter(m, from, to);
+    const one = await oneChapter(m, from, to, pk);
     if (one === null) return json({ error: 'ההדפסה אינה זמינה כרגע, נסה שוב בעוד רגע' }, 503);
     if (!one) return json({ error: ONE_MSG }, 403);
   }

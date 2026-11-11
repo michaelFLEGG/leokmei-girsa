@@ -78,6 +78,24 @@
     "flagged": 0,
     "questions": 11
    }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-11T12:40:29Z",
+   "unc_done": true,
+   "handoff_units": [
+    "keritot-p03-u01",
+    "keritot-p03-u02",
+    "keritot-p03-u03",
+    "keritot-p03-u04"
+   ],
+   "result": {
+    "generated": 76,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 52
+   }
   }
  },
  "created": "2026-11-10T12:40:08Z",
@@ -111,7 +129,14 @@
    "mean": 0.379,
    "n": 1,
    "at": "2026-11-10T18:39:38Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.264,
+   "n": 7,
+   "at": "2026-11-11T12:40:28Z"
   }
  ],
- "updated": "2026-11-10T18:39:38Z"
+ "updated": "2026-11-11T12:40:29Z",
+ "done": "2026-11-11T12:40:29Z"
 }

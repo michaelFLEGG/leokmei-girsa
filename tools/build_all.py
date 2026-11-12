@@ -149,7 +149,9 @@ def merge_masechet(m, files, ddir):
             else:
                 keep = (lo is None or k >= lo) and (hi is None or k <= hi)
             if not keep:
-                if b['style'] == 'פרק': pending = [b]
+                # 12.11.2026: גם "פתיחת פרק" (מספר ושם בפסקה אחת). בלעדיו נפלה כותרת
+                # "פרק שמיני - בן סורר" שבראש חלקה השני של סנהדרין, והפרק כולו הוצג תחת "נגמר הדין"
+                if b['style'] in ('פרק', 'פתיחת פרק'): pending = [b]
                 elif b['style'] == 'פרק שם': pending.append(b)
                 continue
             if not started:             # החזרת כותרת הפרק שנחתכה יחד עם הפתיח

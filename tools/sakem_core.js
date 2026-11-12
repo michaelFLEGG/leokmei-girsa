@@ -737,7 +737,7 @@
       var hz={};(o.hatz||[]).forEach(function(h){hz[+h]=1});
       var skip=function(s){if(!String(s).trim()||/^\s*\[(מקור|דף|צד)[:\]]/.test(s)||HDEL_RE.test(s))return true;var q=/^\s*\[קבוע:(\d+)\]\s*$/.exec(s);return !!(q&&hz[+q[1]])};
       /* כותרת נושא שבדף שמורה לעתים ככותרת צד ארוכה ([צד:המוכר שטר לחבירו]) - גם היא כותרת לעניין זה */
-      var topic=function(s){var m=/^\s*\[צד:(.+)\]\s*$/.exec(s);if(!m)return false;var v=m[1].trim();return !/:$/.test(v)&&!/^[א-ת]{1,2}\.$/.test(v)&&v.split(/\s+/).length>=2};
+      var topic=function(s){var m=/^\s*\[צד:(.+)\]\s*$/.exec(s);if(!m)return false;var v=m[1].trim();return !/:$/.test(v)&&!/-$/.test(v)&&!/^[א-ת]{1,2}\.$/.test(v)&&v.split(/\s+/).length>=3};/* פרומפט 33: כותרת צד היא עד שתי מילים (8.11.2026), ולכן רק שלוש ומעלה היא כותרת נושא ששמורה בצד. קודם נחשבו "ואין להוכיח", "רבי לר"ש" לכותרות, והבודק דרש למחוק עיטור לידן (שבת מה.) */
       var head=function(s,j){s=String(s||'').trim();
         if(isHeadLine(s)||topic(s))return true;
         if(/^\[משנה[:\]]/.test(s)||/^\(משנה\)/.test(s))return true;
@@ -914,7 +914,92 @@
       st.lenA=bl(origText);st.lenB=bl(newText);
       /* דובר בפתח שורה שנשאר בשורה */
       var so=speakerOut(newText);so.notes.forEach(function(x){W.push(x.replace('דובר לכותרת צד','דובר בפתח שורה - לכותרת צד'))});
+      /* 10-13. פרומפט 33 (12.11.2026): כללים שהמנהל תיקן ביד יותר מפעם אחת - במשימה (strict) חוסמים */
+      obey(newText,o).forEach(function(x){if(x[0]==='~')W.push(x.slice(1));else (o.strict?E:W).push(x)});
       return {errs:E,warns:W,stat:st}}
+    /* =========== פרומפט 33 (12.11.2026): "סכם חייב לציית" ===========
+       הכרעת בעל הפרויקט: "הרבה דברים הוא לא ביצע. לא מחיקת עיטורים. לא סוגרים הסבר וכו'". כל כלל שהמנהל תיקן ביד
+       יותר מפעם אחת ושאפשר לבדוק בקוד - בדיקה שעוצרת את put (לא אזהרה). פטור: נימוק בשורה אחת ב-keep שפותח
+       בשלוש המילים הראשונות של השורה (כמו מקף התירוץ). נבדק על כל שורות הקטע, גם שלא נגעו בהן: זה מה שהמנהל מתקן.
+       לא בתיבת המשנה (לשון המשנה), לא ב-{כב:} (לשון הגמרא) ולא ב-{פס:}. */
+    /* מילים ארמיות שהמנהל החליף ביד שוב ושוב (docs/sakem-lessons.md, 10.11-12.11.2026). המפתח - בלי גרשיים */
+    var OBEY_ARAM={'אפי':"אף",'ואפי':"ואף",'ואל"ה':'אבל בלא זה','דאל"ה':'שאל"כ','דא"כ':'שא"כ','ל"ל':'למה לי','שרי':'מותר',
+      'דשרי':'שמותר','דשרו':'שמתירים','ה"מ':'ודווקא','פליג':'חלק','פליגי':'חלקו','פלוגתא':'מחלוקת','שאני':'שונה','תנן':'שנינו',
+      'דתנן':'ששנינו','הך':'זו / "הך שאמר..."','והך':'"ומה ששנינו" / ת"ש','ונפק"מ':'{הס:והיינו}','דיקא':'מדויק','ואזדא':'ו-<שם> לשיטתו',
+      'ס"ל':'סבר','דקפיד':'שמקפיד','קפיד':'מקפיד','לאיתויי':'לרבות','איפכא':'להיפך',
+      'כוותיה':'כמותו','תלינן':'תולים','חדא':'אחת','ת"כ':'וכפלוני שנינו',
+      'וסכינא':'וסכין','דמותר':'שמותר','דאסור':'שאסור','ואע"ג':'ואף ש','דאע"ג':'שאף ש','אע"פ':'אף ש','ואע"פ':'ואף ש'};
+    var OBEY_DIN=/^(?:מותר|מותרת|מותרים|מותרות|אסור|אסורה|אסורים|אסורות|חייב|חייבת|חייבים|פטור|פטורה|פטורים|כשר|כשרה|כשרים|פסול|פסולה|פסולים|טמא|טמאה|טמאים|טהור|טהורה|טהורים)$/;
+    var OBEY_NODASH=/^(?:לא|אינו|אינה|אינם|אין|הרי|היה|היתה|יהא|יהיה|יהיו|זה|זו|הוא|היא|הם|כן|גם|נמי|אף|ואף|נעשה|נעשית|ונעשה|יהו|להיות|יש|ויש|שיהא|שיהיה|עדיין|עוד|כבר|עצמו|ודאי|בודאי|מדאורייתא|מדרבנן|דאורייתא|מה|ומה|הכל|דבר|לכו"ע|לכתחלה|לכתחילה|בדיעבד|רק|אלא|שוב|כולו|כולן|כולם|נמצא|ונמצא)$/;
+    function obeyBody(v){var x=cutSp(v,spans(v,'כב'));x=cutSp(x,spans(x,'פס'));return x}
+    function obey(text,o){
+      o=o||{};var out=[],inM=false;
+      var ok=function(v){return keepOk(o.keep,v)},key=function(v){return keyW(v)};
+      var TK=parse(text);
+      TK.forEach(function(k,ix){
+        var prevTitle=false;for(var q=ix-1;q>=0;q--){if(TK[q].t==='lock'&&(TK[q].kind==='מקור'||TK[q].kind==='דף'))continue;prevTitle=TK[q].t==='title';break}
+        if(k.t==='lock'){if(k.kind!=='מקור'&&k.kind!=='דף')inM=k.kind==='משנה';
+          /* כותרת נושא שבמקומה הנעול - גם בה אין תבליט */
+          if(/^כותרת-/.test(k.kind)&&/[•·▪●]/.test(k.val||''))out.push('תבליט בכותרת "'+plainI(k.val).slice(0,30)+'" - למחוק');return}
+        if(k.t!=='line'&&k.t!=='title')return;
+        if(HDEL_RE.test(k.v))return;
+        var v=k.v,p=plainI(v).replace(/\s+/g,' ').trim(),pk=p.slice(0,40);
+        /* 11. תבליט (•, ·) ו-{ב:} יתום - בכל שורה, גם בכותרת צד ובמשנה (נמחקו ביד שלוש פעמים ומעלה) */
+        if(/[•·▪●]/.test(p))out.push('תבליט ("•" / "·") בשורה "'+pk+'" - למחוק (סימן עבודה, אינו חלק מהנוסח)');
+        spans(v,'ב').forEach(function(s){if(!plainI(s.v).replace(NIK,'').replace(/[\s.,:;!?'"\-]/g,''))out.push('הדגשה יתומה {ב:'+s.v+'} בשורה "'+pk+'" - למחוק')});
+        if(inM)return;
+        var b=obeyBody(v);
+        /* 10. סוגריים מרובעים של ביאור בגוף השורה - בסגנון הסבר (כלל 6א; המנהל העבירם ביד בכל פרק) */
+        if(k.t==='line'){var bb=cutSp(b,spans(b,'הס')).replace(/\[(?:תוס'|מס|מקור|דף|צד):[^\]]*\]/g,' ');
+          var m=/\[[^\]\n]{1,80}\]/.exec(plainI(bb).replace(/\[(?:תוס'|מס|מקור|דף):[^\]]*\]/g,' '));
+          if(m&&!ok(v))out.push('סוגריים מרובעים בסגנון רגיל: "'+m[0].slice(0,40)+'" בשורה "'+pk+'" - {הס:'+m[0].slice(0,30)+'} (כלל 6א). אם זה ציון מקור או לשון הגמרא: נימוק בשורה אחת ב-keep שפותח במילים "'+key(v)+'"')}
+        /* 12. ארמית שהמנהל כבר החליף ביד (רשימת ההחלפות שנלמדו) - לשון הקודש */
+        var words=plainI(b).replace(NIK,'').replace(/'[^'\n]{2,}'/g,' ').replace(/״/g,'"').replace(/''/g,'"').split(/[\s,.:!?;()\[\]{}]+/);
+        var hit=[];words.forEach(function(w){w=w.replace(/^[-–]+|[-–]+$/g,'').replace(/'$/,'');if(!w)return;var q=w.replace(/'+$/,'');
+          if(OBEY_ARAM[q]&&hit.indexOf(q)<0)hit.push(q)});
+        if(hit.length&&!ok(v))out.push('ארמית שהמנהל כבר החליף: '+hit.map(function(w){return w+' - '+OBEY_ARAM[w]}).join(', ')+' בשורה "'+pk+'". אם זו לשון הגמרא המובאת - {כב:...}, או נימוק ב-keep שפותח במילים "'+key(v)+'"');
+        /* 14. מילת מהלך שפותחת שורה בלי כותרת צד מעליה (שבת ד: 9 תיקונים של המנהל אחרי סכם, 12.11.2026) */
+        if(k.t==='line'&&!prevTitle&&k.sty!=='nose'&&k.sty!=='dh'){var fw=plainI(v).replace(NIK,'').trim().replace(/^\(?(?:רווח|תשובה)\)\s*/,'');
+          var mv=/^(וכתנאי|כמו ששנינו|ועוד שנינו|ומשמע|ויקשה|ונסתפקו|ומאידך|ותנ"ה|ות"ש|ת"ש|מיתיבי|איתיביה)(?=[\s:,]|$)/.exec(fw);
+          if(mv&&!ok(v))out.push('מילת מהלך "'+mv[1]+'" פותחת שורה בלי כותרת צד - [צד:'+mv[1]+':] מעל השורה והשורה מתחילה בתוכן (המנהל העביר ביד 9 פעמים בשבת ד). אם המילה חלק מן המשפט: נימוק ב-keep שפותח במילים "'+key(v)+'"');
+          /* 15. שם ארוך עם בן / ברבי / בר בפתח שורה או בכותרת - ראשי תיבות (ר' יונתן בן אלעזר - ריב"א; שבת ד, חמש עריכות) */
+          var am=/^\{אם:([^}]*)\}/.exec(String(v).replace(/^\s+/,''));
+          if(am){var nm=plainI(am[1]).replace(/[:,]/g,' ').trim().split(/\s+/);if(nm.length>=3&&nm.some(function(w){return /^(בן|ברבי|בר)$/.test(w)})&&!ok(v))out.push('שם ארוך בפתח שורה: "'+plainI(am[1]).trim()+'" - בראשי תיבות (ר\' יונתן בן אלעזר - ריב"א) ולכותרת צד')}}
+        /* 16. דובר או שיטה בפתח שורה בלי כותרת צד מעליה - לכותרת צד, גם בלי נקודתיים ("ר"נ הורה לעבדו" - [צד:ר"נ] לעבדו; שבת ד, 7 תיקונים).
+           לא כשהשורה היא צלע במחלוקת בשורה אחת ("לב"ש: ..., וב"ה: ...") */
+        if(k.t==='line'&&!prevTitle&&k.sty!=='nose'&&k.sty!=='dh'){var am2=/^\{אם:([^}]*)\}/.exec(String(v).replace(/^\s+/,'').replace(/^\((?:רווח|תשובה)\)\s*/,''));
+          if(am2){var nm2=plainI(am2[1]).replace(/[:,]/g,' ').trim().split(/\s+/).filter(Boolean);
+            var two=(String(v).match(/\{אם:/g)||[]).length>=2&&/[,]\s*\{אם:ו/.test(String(v));
+            if(nm2.length&&nm2.length<=2&&!/^(?:[א-י]\.|ש?שנינו|ק"ו|יש|והאומר|ששנינו|וכתנאי|ת"ש)$/.test(nm2[0])&&!two&&!ok(v))out.push('~דובר בפתח שורה בלי כותרת צד: "'+plainI(am2[1]).trim()+'" - [צד:'+plainI(am2[1]).replace(/[:,]\s*$/,'').trim()+':] והשורה מתחילה בתוכן (גם בלי נקודתיים; המנהל העביר ביד 7 פעמים בשבת ד). צלע במחלוקת בשורה אחת, או מימרא קצרה מאוד - נימוק ב-keep שפותח במילים "'+key(v)+'"')}}
+        /* 17. מספור א. ב. בהדגשה - בסגנון אמורא ({ב:א.} - {אם:א. }; שבת ד, פעמיים) */
+        spans(v,'ב').forEach(function(s2){if(/^\s*[א-י]\.\s*$/.test(plainI(s2.v)))out.push('מספור בהדגשה {ב:'+plainI(s2.v).trim()+'} בשורה "'+pk+'" - בסגנון אמורא {אם:'+plainI(s2.v).trim()+' }')});
+        if(k.t==='title'){var tw=plainI(v).replace(/[:,]/g,' ').trim().split(/\s+/);if(tw.length>=3&&tw.some(function(w){return /^(בן|ברבי|בר)$/.test(w)})&&!ok(v))out.push('שם ארוך בכותרת צד: "'+plainI(v).trim()+'" - בראשי תיבות (ר\' ישמעאל ברבי יוסי - ריב"י)')}
+        /* 13. "מקרה - דין": תנאי מפורש (אם / ואם / הא / כש...) ואחריו הדין בלי מקף ("הא קרמו פניה מותר" - "הא קרמו פניה - מותר",
+           "ואם פתח חייב" - "ואם פתח - חייב"). רק המבנה המפורש: "ושל אומן אסור, שמקפיד" כלשון המנהל אינו נתפס */
+        if(k.t==='line'){var miss=null;
+          plainI(b).replace(NIK,'').split(/[,.;:!?]/).forEach(function(c){if(miss)return;var t=c.replace(/[{}]/g,' ').replace(/\s+/g,' ').trim();
+            var w=t.split(' '),i;
+            for(i=0;i<w.length-2;i++){if(!/^(?:ו?אם|ואם|ו?הא|ו?כש[א-ת]{2,}|ו?אבל\s?אם)$/.test(w[i]))continue;
+              for(var j=i+2;j<=Math.min(w.length-1,i+7);j++){if(w[j]==='-')break;
+                if(OBEY_DIN.test(w[j].replace(/['"]/g,''))){var pv=w[j-1].replace(/['"]/g,'');
+                  if(!OBEY_NODASH.test(pv)&&!/^[ושדכל]?(?:אינו|אין|לא)$/.test(pv)){miss=w.slice(i,j+1).join(' ');}break}}
+              if(miss)break}});
+          if(miss&&!ok(v))out.push('מקף בין המקרה לדין חסר: "'+miss.slice(0,40)+'" - "<המקרה> - <הדין>" (המנהל הוסיף ביד 10 פעמים ומעלה: "הא קרמו פניה - מותר", "ואם פתח - חייב"). אם אין כאן מבנה מקרה-דין: נימוק ב-keep שפותח במילים "'+key(v)+'"')}
+      });
+      return out}
+    /* רשימת הבדיקה העצמית (פרומפט 33): מה שאי אפשר לבדוק בקוד. הכותב עובר עליה בכל קטע לפני put, ומאשר כל סעיף
+       בשדה check של seg.json: {"<מפתח>": true}. put נעצר כשחסר סעיף. הנוסח - מן הלקחים (docs/sakem-lessons.md) */
+    var SELF_CHECK=[
+      ['nose','כל כותרת נושא: הנושא בלבד, בסמיכות טבעית - בלי שם אמורא, בלי הדין שבמסקנה ובלי התשובה; שאלה - "X - האם/כנגד מה"; ובכל סוגיה חדשה בלי כותרת - נוספה'],
+      ['side','כל מילת מהלך (וכן, ומאידך, ומשמע, ויקשה, ונסתפקו, וכתנאי, כמו ששנינו, ועוד שנינו, ת"ש) וכל דובר או שיטה (כר"מ, ר"נ, לת"ק) שפותחים שורה - בכותרת צד, גם באמצע יחידה; הכותרת - השם לבדו, ומה שבה נמחק מפתח השורה'],
+      ['case','כל שורת דין: המקרה, מקף, הדין ("הצריכים להם - אסורה"), והנימוק אחרי פסיק ו"ש" ("ושל אומן אסור, שמקפיד"); התנאי המבחין בראש השורה ומודגש'],
+      ['whole','אין שורה שנקטעה באמצע או שנשארה בלי עיקרה, אין שורה שמסתיימת במילת קישור, משל ק"ו וסיפור - עד סופם; ומשפט אינו נשבר בין שתי שורות'],
+      ['kushya','כל קושיה - מילות הקושיה עצמן נאמרות (לא רק הפסוק והדובר), וסייג "דווקא... אבל..." של אמורא נכתב כלשונו ולא כהסקה שלנו'],
+      ['quote','ציטוט משנה או ברייתא בתוך ההסבר - {אם:ששנינו:} והלשון בגרשיים; פסוק - בסגנון פסוק {פס:} גם בגוף ההסבר; שם פלוני אומר: - כולו בסגנון אמורא'],
+      ['names','כל שם אמורא ותנא נבדק מול לשון הגמרא בקטע (ר"א / ר"ש / ר"ח וכו\' שמתחלפים - כלשון הגמרא); שם בן שלוש מילים ומעלה - בראשי תיבות'],
+      ['hebrew','מילות הקישור וההסבר שלנו - בלשון הקודש (ש\' ולא ד\', "אף" ולא "אפי\'", "סבר" ולא "ס"ל"); צריכותא - "אם השמיענו X - הייתי אומר..., אבל כאן לא"'],
+      ['reread','קראתי כל שורה ששונתה עוד פעם עד סופה: אין מילים דבוקות, אין כתיב שגוי, אין תו זר']];
+    function selfCheckMissing(check){var c=check&&typeof check==='object'?check:{};return SELF_CHECK.filter(function(x){return c[x[0]]!==true})}
     /* ---- פרומפט 29: עזרים לבודק ---- */
     /* מדדי צורה מוחלטים של נוסח (לכרטיס הציון ולהשוואה לדגם): הדגשות בתיבות המשנה, רווחים, מקפי תירוץ,
        כותרות צד, כותרות נושא, אזהרות אלמנה ודאיות */
@@ -938,7 +1023,9 @@
     /* שורות אלמנות בגוף: שורה של יותר משורה מודפסת אחת, שהשורה המודפסת האחרונה שלה מילה או שתיים.
        לא בתיבת משנה, לא בכותרות ולא בשורת (נושא)/(דה) - גודל אחר */
     function widows(text,sure){var out=[],inM=false;
-      parse(text).forEach(function(k){
+      var TK=parse(text);
+      TK.forEach(function(k,ix){
+        var prevTitle=false;for(var q=ix-1;q>=0;q--){if(TK[q].t==='lock'&&(TK[q].kind==='מקור'||TK[q].kind==='דף'))continue;prevTitle=TK[q].t==='title';break}
         if(k.t==='lock'){if(k.kind!=='מקור'&&k.kind!=='דף')inM=k.kind==='משנה';return}
         if(k.t!=='line'||inM||k.sty==='nose'||k.sty==='dh'||k.sty==='mi')return;
         var p=plainI(k.v),wd=function(W){var r=wrapW(p,W);return r.n>1&&r.last.length<=2?r:null},r=wd(LINE);
@@ -979,7 +1066,7 @@
         for(var i=0;i+4<=w.length;i++){var g=w.slice(i,i+4).join(' ');if(seen[g]&&seen[g]!==k)rep[g]=1;seen[g]=seen[g]||k}});
       var rk=Object.keys(rep);if(rk.length)out.push('צירוף שחוזר בקטע: "'+rk.slice(0,2).join('", "')+'"');
       return out}
-    return {absStat:absStat,absAvg:absAvg,widows:widows,abbrOpen:abbrOpen,wordy:wordy,keepOk:keepOk,wrapW:wrapW,isDashTitle:isDashTitle,dashTitles:dashTitles,dashLost:dashLost,isKushTitle:isKushTitle,amAttach:amAttach,speakerOut:speakerOut,spaceFix:spaceFix,autofixForm:autofixForm,comply:comply,mishnaBlocks:mishnaBlocks,boldBag:boldBag,hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
+    return {obey:obey,SELF_CHECK:SELF_CHECK,selfCheckMissing:selfCheckMissing,OBEY_ARAM:OBEY_ARAM,absStat:absStat,absAvg:absAvg,widows:widows,abbrOpen:abbrOpen,wordy:wordy,keepOk:keepOk,wrapW:wrapW,isDashTitle:isDashTitle,dashTitles:dashTitles,dashLost:dashLost,isKushTitle:isKushTitle,amAttach:amAttach,speakerOut:speakerOut,spaceFix:spaceFix,autofixForm:autofixForm,comply:comply,mishnaBlocks:mishnaBlocks,boldBag:boldBag,hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
             quality:quality,qnorm:qnorm,aramNew:aramNew,aramWords:aramWords,squeeze:squeeze,SQ:{SEG:SQ_SEG,LINE:SQ_LINE,MIN:SQ_MIN},C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

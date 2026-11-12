@@ -172,8 +172,37 @@ def _deco_find(pages, e):
     return None
 
 
+def _deco_find_loose(pages, e):
+    """פרומפט 33 (12.11.2026): עוגן רופף למחיקת עיטור. בשבת פרק ד שלוש מחיקות עיטור של המנהל נשארו תלושות
+    (העיטור נשאר באתר, ובדפדפן שלו לא): הסדר שבין הכותרת החדשה, העיטור והשורה שאחריו נקבע בדפדפן אחרת מן הבנייה,
+    ולכן אחד משני השכנים לא נמצא. כאן די בשכן אחד זהה (שורה של 8 תווים ומעלה), בטווח דף אחד לכל צד, ובהתאמה
+    יחידה. רק כשהעיטור לא נמחק כבר (_deco_done) - ראו _deco_apply."""
+    texts = e.get('texts') or []
+    if len(texts) != 2:
+        return None
+    w0, w1 = _wn(texts[0]), _wn(texts[1])
+    k0 = _daf_key(e.get('daf'))
+    if k0 is None:
+        return None
+    items = _deco_items(pages)
+    hits = []
+    for i, it in enumerate(items):
+        if not it['deco']:
+            continue
+        k = _daf_key(it['p']['daf'])
+        if k is None or abs(k - k0) > 1:
+            continue
+        a, b = _deco_nb(items, i)
+        # כותרת צד שנלקחה מפתח השורה שאחרי העיטור (ריב"י ישב לפני רבי, ואף... - ואף...): השכן שבבנייה הוא סופו של השכן שנרשם
+        if (len(w0) >= 8 and a == w0) or (len(w1) >= 8 and b == w1) or (len(b) >= 20 and w1.endswith(b)):
+            hits.append(it)
+    return hits[0] if len(hits) == 1 else None
+
+
 def _deco_apply(pages, e):
     it = _deco_find(pages, e)
+    if it is None and e.get('kind') == 'hdel' and not _deco_done(pages, e):
+        it = _deco_find_loose(pages, e)
     if it is None:
         return False
     u, p = it['u'], it['p']
@@ -4034,7 +4063,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         if(e.ps!==undefined)dataCls(k,e.ps);
         e._ap=1;e._cur=e.now;any=true;continue}
       if(e.kind==='hdel'||e.kind==='hrep'){
-        const hit=decoFind(e.texts||[],e.daf);
+        let hit=decoFind(e.texts||[],e.daf);
+        if(!hit&&e.kind==='hdel'&&typeof decoFindLoose==='function'&&!decoDone(e))hit=decoFindLoose(e.texts||[],e.daf);
         if(hit){decoApplyData(hit,e);e.lost=0;e._ap=1;any=true;SLOTS=null}
         else if(decoDone(e)){e.lost=0;e.done=1;EDTAKEN++,e.ing&&EDWORD++}
         else e.lost=1;

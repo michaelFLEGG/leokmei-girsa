@@ -232,6 +232,8 @@ if (cmd === 'status') {
   const ex = rd(path.join(D, 'sakem-examples.json'));
   console.log('\n=== דוגמאות מתיקוני המחבר ===');
   (ex.pairs || []).forEach((p, i) => console.log('\n-- דוגמה ' + (i + 1) + ' (' + (p.kind || '') + ')\nלפני:\n' + p.before + '\nאחרי:\n' + p.after + (p.bad ? '\nפסול:\n' + p.bad : '') + '\nמה שיניתי: ' + (p.changes || []).join(' · ')));
+  console.log('\n=== רשימת הבדיקה העצמית (פרומפט 33) - לכל קטע, לפני put, ולאשר בשדה check ===\n' + SKC.SELF_CHECK.map((x) => '- ' + x[0] + ': ' + x[1]).join('\n'));
+  console.log('\n=== נבדק בקוד ועוצר את put (פרומפט 33) ===\n- סוגריים מרובעים בגוף השורה בלי {הס:} (פטור לציון מקור / לשון הגמרא - נימוק ב-keep)\n- תבליט "•" / "·" והדגשה יתומה {ב:.}\n- ארמית מרשימת ההחלפות שהמנהל כבר עשה: ' + Object.keys(SKC.OBEY_ARAM).map((k) => k + ' - ' + SKC.OBEY_ARAM[k]).join(', ') + '\n- "אם / הא / כש... <מקרה> <דין>" בלי מקף לפני הדין\n- עיטור צמוד לכותרת שלא נמחק (מפרומפט 29)');
   const L = path.join(ROOT, 'docs', 'sakem-lessons.md');
   if (fs.existsSync(L)) console.log('\n=== לקחים מהכרעות המנהל (גוברים על הכללים שלמעלה) ===\n' + fs.readFileSync(L, 'utf8'));
   /* המקליט (פרומפט 28): כללים שנלמדו מעריכות המנהל ומהערותיו; כלל שבוטל ב"מה סכם למד" אינו מוצג */
@@ -275,6 +277,10 @@ if (cmd === 'status') {
   if (H) { const part = si < H ? 1 : 2; if (!rs.part) { rs.part = part; saveRun(jid, rs); }
     else if (rs.part !== part) die('הקטע ' + (si + 1) + ' שייך לחצי ' + (part === 1 ? 'הראשון' : 'השני') + ' של הפרק, וההרצה הזאת עובדת על החצי ' + (rs.part === 1 ? 'הראשון' : 'השני') + '.\nסיים את ההרצה (node tools/sakem/runner.mjs pause ' + jid + ' --push) וצא. החצי האחר - בהרצה הבאה, בשיחה חדשה.'); }
   const cx = ctxOf(pk, r);
+  /* פרומפט 33 (12.11.2026): רשימת הבדיקה העצמית - מה שאי אפשר לבדוק בקוד. הכותב עובר עליה בכל קטע (גם "ללא שינוי")
+     ומאשר כל סעיף בשדה check של seg.json. סעיף שחסר - put נעצר */
+  { const miss = SKC.selfCheckMissing(s.check);
+    if (miss.length) die('רשימת הבדיקה העצמית לא אושרה (פרומפט 33). עבור על כל סעיף בקטע הזה, תקן מה שצריך, והוסף ל-seg.json:\n"check": {' + SKC.SELF_CHECK.map((x) => '"' + x[0] + '": true').join(', ') + '}\nהסעיפים שחסרים:\n' + miss.map((x) => '- ' + x[0] + ': ' + x[1]).join('\n')); }
   if (s.nochange) {
     const q0 = SKC.quality(r.text, { mishna });
     if (q0.length) die('אי אפשר "ללא שינוי": הנוסח הקיים פגום - ' + q0.slice(0, 6).join(' · ') + '\nתקן בהצעה.');

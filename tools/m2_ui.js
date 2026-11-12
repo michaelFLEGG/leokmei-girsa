@@ -170,6 +170,13 @@
       const near=hits.filter(h=>{const k=dafKey(h.daf);return k0!==null&&k!==null&&Math.abs(k-k0)<=1});
       if(near.length===1)return near[0]}
     return null}
+  /* פרומפט 33: עוגן רופף למחיקת עיטור - שכן אחד זהה (8 תווים ומעלה), בטווח דף אחד, בהתאמה יחידה. זהה ל-_deco_find_loose בבנייה */
+  function decoFindLoose(texts,daf){
+    if((texts||[]).length!==2||!daf)return null;
+    const w0=_dn(texts[0]),w1=_dn(texts[1]),k0=dafKey(daf),items=decoItems(),hits=[];if(k0===null)return null;
+    items.forEach((it,i)=>{if(!it.deco)return;const k=dafKey(it.daf);if(k===null||Math.abs(k-k0)>1)return;
+      const [a,b]=decoNb(items,i);const B=_dn(b);if((w0.length>=8&&_dn(a)===w0)||(w1.length>=8&&B===w1)||(B.length>=20&&w1.endsWith(B)))hits.push(it)});
+    return hits.length===1?hits[0]:null}
   function decoDone(e){
     const t=e.texts||[];if(t.length!==2)return false;
     const mid=e.kind==='hrep'?[_dn((e.resT||[''])[0])]:[];

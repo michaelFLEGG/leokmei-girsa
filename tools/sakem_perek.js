@@ -156,8 +156,18 @@
         let s='';for(let k=0;k<n&&s.length<=T.length;k++)s+=sig[i+k];
         if(s!==T)continue;
         const d=Math.abs(fu[i].u.id-(it.ids[0]+delta));if(d<bd){bd=d;best=i}}
-      if(best>=0){const nids=fu.slice(best,best+n).map(o=>o.u.id);delta=nids[0]-it.ids[0];it.ids=nids;it.orig=skmInter(skmUnits(nids));return}
-      if(delta){const s=shift(it.ids);if(s)it.ids=s}})}
+      if(best>=0){const nids=fu.slice(best,best+n).map(o=>o.u.id);delta=nids[0]-it.ids[0];skpRemap(it,nids);it.ids=nids;it.orig=skmInter(skmUnits(nids));return}
+      if(delta){const s=shift(it.ids);if(s){skpRemap(it,s);it.ids=s}}})}
+  /* פרומפט 33 (12.11.2026) - התקלה "מחיקת עיטור שסכם הציע לא נשמרת אחרי קבל" (שבת פרקים א-ד):
+     כשהמזהים זזו מאז ההצעה (פסקה שנוספה בוורד לפני הפרק), skpRelocate עדכן את it.ids ואת it.orig, אבל לא את
+     המזהים שבתוך נוסח ההצעה. [מחק-עיטור:<מזהה ישן>] לא נמצא אז בקטע, דולג בשקט, ו-skpFixLocks החזיר את העיטור
+     ([קבוע:<מזהה חדש>]) מן הדף: הקבלה הצליחה, העיטור נשאר, ושום רשומה לא נוצרה. בשבת פרק ד כל המזהים זזו ב-1
+     (2788 בהצעה, 2789 בדף). כאן המזהים שבנוסח עוברים יחד עם הקטע, לפי מקומם: המזהה ה-k הישן - המזהה ה-k החדש. */
+  function skpRemap(it,nids){
+    const old=it.ids||[];if(!it.text||old.length!==nids.length)return;
+    const M=new Map();old.forEach((id,k)=>{if(id!==nids[k])M.set(+id,nids[k])});if(!M.size)return;
+    it.text=String(it.text).replace(/\[(מחק-עיטור|קבוע):(\d+)\]/g,(m,t,id)=>M.has(+id)?'['+t+':'+M.get(+id)+']':m);
+    if(Array.isArray(it.hdel))it.hdel=it.hdel.map(id=>M.has(+id)?M.get(+id):id)}
   /* הצעה שהנעולים שבה ([דף], [מקור], [משנה] וכו') אינם כבנוסח שבדף - הנעולים נלקחים מן הדף:
      מה שחסר נשתל במקומו, מה שאינו בדף יוצא, ושורות ההצעה נשארות כמות שהן. */
   const SKP_LK=/^\[(דף|משנה|גמרא|קבוע|מקור|כותרת-נושא|כותרת-דה)(?::(.*))?\]$/;
@@ -364,7 +374,13 @@
        את הקבלה. אם העיטור קיים בדף - נמחק גם הוא (skmApply מאתר אותו בדף כולו); ואם אינו קיים עוד - מדלגים
        עליו ומחילים את שאר ההצעה */
     let hdSkip=[];
-    if(hd.bad.length){hdSkip=hd.bad.filter(id=>!skmUnits([id]).some(o=>o.u.k==='hatz'))}
+    /* פרומפט 33: עיטור מחוץ לקטע נמחק רק כשהוא צמוד לגבולות הקטע (מעליו או מתחתיו, בדילוג על עיטורים סמוכים).
+       עיטור במקום אחר בדף - מזהה שזז - לעולם לא נמחק, ונאמר בקול (קודם דולג בשקט, או שנמחק עיטור אחר) */
+    if(hd.bad.length){const fu=flatU(),ix=p.ids.map(id=>fu.findIndex(o=>o.u.id===id)).filter(i=>i>-1);
+      const lo=Math.min(...ix),hi=Math.max(...ix),near=id=>{const i=fu.findIndex(o=>o.u.id===id);if(i<0||fu[i].u.k!=='hatz')return false;
+        let a=i<lo?i:hi,b=i<lo?lo:i;for(let q=a+1;q<b;q++)if(fu[q].u.k!=='hatz')return false;return true};
+      hdSkip=hd.bad.filter(id=>!near(id));
+      if(hdSkip.length)toast('עיטור שסכם הציע למחוק לא אותר במקומו ('+hdSkip.join(', ')+') - לא נמחק. אם הוא עדיין צמוד לכותרת, מחק אותו בעורך',8000)}
     const hdIds=hd.ids.filter(id=>hdSkip.indexOf(id)<0);
     if(hd.ids.length){t=hd.text;if(hdIds.length)p.hdel=hdIds}
     const o2=hd.ids.length?hd.orig:p.orig;

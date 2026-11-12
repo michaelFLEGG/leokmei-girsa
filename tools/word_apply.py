@@ -10,17 +10,20 @@
    ואם לא התפנה - מדלג ורושם. לעולם לא כותב על קובץ פתוח.
 ב. גיבוי מלא לפני כל נגיעה, ב-_שומר\\גיבויים (ולא בשורש תיקיית הדרייב,
    שם הוא היה נבנה כמסכת נוספת באתר).
-ג. הקובץ מקבל w:trackRevisions, כדי שגם עריכה של בעל הפרויקט עצמו
-   תסומן מעתה.
-ד. החלפה מינימלית בלבד: רק המילים שהשתנו נמחקות ונוספות, במעקב, בשם
-   המחבר שנמסר. שאר הפסקה אינה נוגעת.
+ג. (בוטל 12.11.2026) w:trackRevisions אינו מופעל עוד, והוא מוסר מכל קובץ שנכתב.
+ד. החלפה מינימלית בלבד: רק המילים שהשתנו נמחקות ונוספות. שאר הפסקה אינה נוגעת.
+ד2. הכרעת בעל הפרויקט 12.11.2026: "מרגע שאישרתי יש רק קובץ אחד של וורד מתוקן".
+   לכן כל כתיבה מסתיימת בקבלת השינויים (finalize, בתוך swap): מה שאושר נכנס
+   כטקסט סופי, בלי ערמות של הצעות. הצעות של אחרים שלא אושרו (UNAPPROVED)
+   נשארות במעקב. השער: ההמרה אחרי הקבלה זהה בדיוק להמרה שלפניה, ואם לא -
+   נכתב הנוסח שבמעקב, והכישלון נאמר בקול.
 ה. אחרי הכתיבה הקובץ מומר שוב ומושווה למה שהיה. אם השתנה משהו שלא
    אושר, או שמספר השינויים אינו כמספר התיקונים - הקובץ מוחזר מן
    הגיבוי, והכישלון נאמר בקול.
 ו. אם הקובץ השתנה על הדיסק מאז שנקרא, הוא נקרא מחדש והתיקונים נבנים
    מחדש עליו.
 
-אין כאן שום מחיקה ממשית, ואין קבלה או דחייה של שינוי קיים.
+אין כאן דחייה של שינוי קיים.
 """
 import os, sys, json, shutil, time, zipfile, datetime, argparse, io, re, contextlib
 
@@ -176,10 +179,160 @@ def writer_lock(minutes=20, log=print):
         f.close()
 
 
+# ------------------------------------------- קבלת שינויים (12.11.2026)
+
+def unapproved(author):
+    """הצעה של אדם אחר שבעל הפרויקט טרם אישר. נשארת במעקב, כדי שיראה ויכריע.
+    כל השאר (המנועים, קלוד, עריכה מהאתר בידי המנהל, בעל הפרויקט עצמו) - אושר."""
+    a = author or ''
+    return 'דבורה שירה' in a or a.startswith('הצעה מהאתר') or a == 'הגהת סוכה'
+
+
+_RUNWRAP_DEL = ('del', 'moveFrom')
+_RUNWRAP_INS = ('ins', 'moveTo')
+_PROPCHG = ('pPrChange', 'rPrChange', 'sectPrChange', 'tblPrChange', 'tcPrChange', 'trPrChange',
+            'tblGridChange', 'numberingChange', 'tblPrExChange')
+
+
+def _accept_tree(root, keep=unapproved):
+    """מקבל במקום את כל השינויים שבעץ XML אחד, חוץ מאלה ש-keep מחזיר עליהם אמת.
+    מחזיר (התקבלו, נשארו). סימן פסקה שנמחק: הפסקה מתאחדת עם הבאה אחריה, וסגנון
+    הבאה גובר - בדיוק כמו בהמרה (docx2json) וכמו בוורד."""
+    n_ok = n_keep = 0
+    # א. סימני פסקה (pPr/rPr/ins|del). מהסוף להתחלה, כדי ששרשרת איחויים תתגלגל נכון
+    for p in reversed(list(root.iter(W + 'p'))):
+        rpr = p.find('w:pPr/w:rPr', ns)
+        if rpr is None:
+            continue
+        for m in rpr.findall('w:ins', ns) + rpr.findall('w:moveTo', ns):
+            if keep(m.get(W + 'author')):
+                n_keep += 1
+            else:
+                rpr.remove(m); n_ok += 1
+        for m in rpr.findall('w:del', ns) + rpr.findall('w:moveFrom', ns):
+            if keep(m.get(W + 'author')):
+                n_keep += 1
+                continue
+            nxt = p.getnext()
+            while nxt is not None and nxt.tag != W + 'p' and nxt.tag != W + 'sectPr':
+                nxt = None if nxt.tag == W + 'tbl' else nxt.getnext()
+            if nxt is None or nxt.tag != W + 'p' or p.find('w:pPr/w:sectPr', ns) is not None:
+                n_keep += 1          # אין עם מי להתאחד, או שבסימן יושב מעבר מקטע: נשאר כמות שהוא
+                continue
+            body = [c for c in p if c.tag != W + 'pPr']
+            npr = nxt.find('w:pPr', ns)
+            at = (list(nxt).index(npr) + 1) if npr is not None else 0
+            for c in body:
+                nxt.insert(at, c); at += 1
+            p.getparent().remove(p)
+            n_ok += 1
+            break
+    # ב. עטיפות של מחיקה והוספה ברמת הריצה
+    for el in list(root.iter(*[W + t for t in _RUNWRAP_DEL])):
+        par = el.getparent()
+        if par is None or par.tag == W + 'rPr':
+            continue
+        if keep(el.get(W + 'author')):
+            n_keep += 1
+        else:
+            par.remove(el); n_ok += 1
+    for el in list(root.iter(*[W + t for t in _RUNWRAP_INS])):
+        par = el.getparent()
+        if par is None or par.tag == W + 'rPr':
+            continue
+        if keep(el.get(W + 'author')):
+            n_keep += 1
+            continue
+        i = list(par).index(el)
+        for c in list(el):
+            par.insert(i, c); i += 1
+        par.remove(el); n_ok += 1
+    # ג. סימני הוספה/מחיקה בתוך מאפייני ריצה (לא של סימן הפסקה)
+    for rpr in list(root.iter(W + 'rPr')):
+        if rpr.getparent() is not None and rpr.getparent().tag == W + 'pPr':
+            continue
+        for m in rpr.findall('w:ins', ns):
+            if not keep(m.get(W + 'author')):
+                rpr.remove(m); n_ok += 1
+    # ד. שינויי עיצוב (המצב הנוכחי נשאר, ההיסטוריה יורדת)
+    for el in list(root.iter(*[W + t for t in _PROPCHG])):
+        if keep(el.get(W + 'author')):
+            n_keep += 1
+        else:
+            el.getparent().remove(el); n_ok += 1
+    return n_ok, n_keep
+
+
+def _untrack(settings_xml):
+    root = etree.fromstring(settings_xml)
+    for el in root.findall('w:trackRevisions', ns):
+        root.remove(el)
+    return etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True)
+
+
+def _stamp_core(core_xml):
+    """תאריך העדכון של הקובץ (קובץ > מידע בוורד) = רגע הכתיבה."""
+    try:
+        root = etree.fromstring(core_xml)
+    except Exception:
+        return core_xml
+    DC = '{http://purl.org/dc/terms/}'
+    XSI = '{http://www.w3.org/2001/XMLSchema-instance}'
+    el = root.find(DC + 'modified')
+    if el is None:
+        el = etree.SubElement(root, DC + 'modified')
+        el.set(XSI + 'type', 'dcterms:W3CDTF')
+    el.text = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    return etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True)
+
+
+PARTS_RX = re.compile(r'^word/(document|footnotes|endnotes|comments|header\d*|footer\d*)\.xml$')
+
+
+def finalize(path, keep=unapproved, log=print):
+    """מקבל את השינויים המאושרים בקובץ (במקום), מסיר את trackRevisions ומעדכן את תאריך
+    העדכון. השער: convert לפני ואחרי זהים לגמרי. אחרת הקובץ אינו נוגע, ומוחזר False."""
+    before = convert(path)
+    z = zipfile.ZipFile(path)
+    rep, tot_ok, tot_keep = {}, 0, 0
+    for name in z.namelist():
+        if PARTS_RX.match(name):
+            root = etree.fromstring(z.read(name))
+            ok, kp = _accept_tree(root, keep)
+            tot_ok += ok; tot_keep += kp
+            if ok:
+                rep[name] = etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True)
+    if 'word/settings.xml' in z.namelist():
+        s = z.read('word/settings.xml')
+        if b'trackRevisions' in s:
+            rep['word/settings.xml'] = _untrack(s)
+    if 'docProps/core.xml' in z.namelist():
+        rep['docProps/core.xml'] = _stamp_core(z.read('docProps/core.xml'))
+    z.close()
+    out = path + '.fin'
+    _rezip(path, out, rep)
+    after = convert(out)
+    if after != before:
+        os.remove(out)
+        diff = next((i for i, (a, b) in enumerate(zip(before, after)) if a != b), min(len(before), len(after)))
+        log('קבלת השינויים לא נכתבה: ההמרה אחריה שונה (פסקה %d, %d מול %d פסקאות). הקובץ נשאר במעקב.'
+            % (diff, len(before), len(after)))
+        return False, tot_ok, tot_keep
+    os.replace(out, path)
+    return True, tot_ok, tot_keep
+
+
 def swap(tmp, path, tries=6, wait=2):
     """מחליף את הקובץ החי בגרסה החדשה. הסנכרון של הדרייב מחזיק לפעמים
     את הקובץ לרגע (נמדד 28.10: PermissionError, ושריד .new נשאר ליד החי).
-    ממתין ומנסה שוב; ואם לא הצליח - מסיר את השריד ונכשל בקול."""
+    ממתין ומנסה שוב; ואם לא הצליח - מסיר את השריד ונכשל בקול.
+    לפני ההחלפה: קבלת השינויים המאושרים (ד2 שבראש הקובץ)."""
+    try:
+        ok, n_ok, n_keep = finalize(tmp)
+        if n_keep:
+            print('   נשארו במעקב %d הצעות של אחרים שטרם אושרו' % n_keep)
+    except Exception as e:
+        print('   קבלת השינויים נכשלה (%s). נכתב הנוסח שבמעקב' % e)
     for i in range(tries):
         try:
             os.replace(tmp, path)
@@ -318,7 +471,8 @@ def _replace_in_paragraph(p, find, repl, author, when, nextid, at=None):
 
 
 def _ensure_track(settings_xml):
-    """מוסיף w:trackRevisions להגדרות הקובץ, אם אינו שם."""
+    """בוטל 12.11.2026 (ד2 שבראש הקובץ): אין מעקב שינויים. מחזיר את ההגדרות בלי trackRevisions."""
+    return _untrack(settings_xml), False
     root = etree.fromstring(settings_xml)
     if root.find('w:trackRevisions', ns) is not None:
         return settings_xml, False

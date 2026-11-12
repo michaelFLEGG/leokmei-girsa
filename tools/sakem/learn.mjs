@@ -4,6 +4,7 @@
    node tools/sakem/learn.mjs record [--backfill]   קליטה: data/edits הנוכחי (ועם --backfill - כל היסטוריית גיט מ-28.10.2026)
                                                     אל data/sakem/learn/<מסכת>.jsonl; רשומה שכבר נקלטה אינה נכפלת.
    node tools/sakem/learn.mjs patterns [--json]     הדפוסים החוזרים (צורה / החלפת מילה / תוכן מקומי) וקבלה אוטומטית לרשימת הכללים.
+   node tools/sakem/learn.mjs reclass [--dry]       (פרומפט 32) תיקון "אחרי סכם" / "של סכם" ברשומות שכבר נקלטו - ראה sakemRel.
 
    מיון כל עריכה:
      צורה    - הטקסט הנקי זהה ורק הסימון השתנה (הדגשה, אמורא, כותרת, סגנון), או שינוי מבנה (פיצול, איחוד, כותרת צד),
@@ -24,6 +25,7 @@ const SKC = require('../sakem_core.js');
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')), '..', '..');
 const ED = path.join(ROOT, 'data', 'edits'), LD = path.join(ROOT, 'data', 'sakem', 'learn'), OUT = path.join(ROOT, 'data', 'sakem', 'out');
+const DEC = path.join(ROOT, 'data', 'sakem', 'decisions');
 const RULES = path.join(LD, 'rules.json');
 const SINCE = '2026-10-28';
 const [cmd, ...args] = process.argv.slice(2);
@@ -38,11 +40,18 @@ function sakemUnits() {
     if (!f.endsWith('.json') || f.endsWith('.old.json')) continue;
     let o; try { o = JSON.parse(fs.readFileSync(path.join(OUT, f), 'utf8')); } catch (e) { continue; }
     const slug = o.slug || f.replace(/-(p\d+|s\d+.*)\.json$/, '');
+    /* פרומפט 32: זמני הקבלה של כל קטע (מן ההכרעות) - עריכה שנרשמה ברגע הקבלה היא ההחלה של סכם עצמו, לא תיקון */
+    const acc = {};
+    try { const d = JSON.parse(fs.readFileSync(path.join(DEC, f), 'utf8')); (d.log || []).forEach((x) => { if (x.act === 'accept' || x.act === 'edit') (acc[x.iid] = acc[x.iid] || []).push(+x.t || 0); }); } catch (e) { /* לא נסקר */ }
+    let daf = '';
     for (const it of o.items || []) {
       const ids = (it.ids || []).map(Number).filter(Boolean);
+      /* הדפים של הקטע - לשינויי מבנה, שאין להם מזהה יחידה */
+      const dafs = new Set(daf ? [daf] : []);
+      for (const m of String(it.orig || '').matchAll(/\[דף:([^\]]+)\]/g)) { daf = m[1].trim(); dafs.add(daf); }
       if (!ids.length) continue;
       const lines = new Set(String(it.text || '').split('\n').map((l) => plain(l)).filter((l) => l.length > 3));
-      (M[slug] = M[slug] || []).push({ lo: Math.min(...ids), hi: Math.max(...ids), t: +o.t || 0, lines });
+      (M[slug] = M[slug] || []).push({ lo: Math.min(...ids), hi: Math.max(...ids), t: +o.t || 0, lines, dafs, acc: acc[it.iid] || [] });
     }
   }
   return M;
@@ -81,6 +90,21 @@ function classify(e) {
   return { cls: 'תוכן', sub: '' };
 }
 
+/* האם העריכה אחרי סכם, והאם היא ההחלה של סכם עצמו (פרומפט 32, 12.11.2026):
+   א. שינוי מבנה (פיצול, כותרת צד, מחיקת עיטור) אין לו מזהה יחידה - משויך לקטע לפי הדף. בלי זה אף כותרת צד
+      שהמנהל הוסיף אחרי סכם לא נספרה כ"אחרי סכם", ולא הוצגה בשלב הלקחים.
+   ב. עריכה שנרשמה עד 3 שניות מקבלת קטע (באותה מסכת) - זו החלת ההצעה בלחיצת "קבל", ולא תיקון של המנהל.
+      בשבת פרק ד נספרו כך כמאה עריכות של קבלה כאילו הן תיקוני המנהל. */
+function sakemRel(SU, slug, e) {
+  const u = unitOf(e.k), struct = e.op === 'struct';
+  const segs = (SU[slug] || []).filter((s) => (u && u >= s.lo && u <= s.hi) || (!u && struct && e.daf && s.dafs.has(e.daf)));
+  const post = segs.some((s) => +e.t > s.t);
+  /* בכל קטעי המסכת: קבלה מחילה גם על יחידות סמוכות שאינן ברשימת המזהים של הפריט (שבת מז., u2752 בקבלת s1) */
+  const accept = (SU[slug] || []).some((s) => s.acc.some((a) => +e.t >= a - 3000 && +e.t <= a + 3000));
+  const fromSakem = accept || (!struct && segs.some((s) => s.lines.has(plain(e.now))));
+  return { post, fromSakem };
+}
+
 /* ---- קליטה ---- */
 function loadSeen(slug) {
   const f = path.join(LD, slug + '.jsonl'), S = new Set();
@@ -97,14 +121,12 @@ function record() {
       const key = e.k + '@' + e.t;
       if (seen[slug].has(key)) continue;
       seen[slug].add(key);
-      const u = unitOf(e.k), segs = (SU[slug] || []).filter((s) => u && u >= s.lo && u <= s.hi);
-      const post = segs.some((s) => +e.t > s.t);
-      const fromSakem = e.op !== 'struct' && segs.some((s) => s.lines.has(plain(e.now)));
+      const { post, fromSakem } = sakemRel(SU, slug, e);
       const c = classify(e);
       const r = { k: e.k, t: +e.t, daf: e.daf || '', cls: c.cls, sub: c.sub, w: post && !fromSakem ? 2 : 1, post: post ? 1 : 0, from };
       if (fromSakem) r.src = 'סכם';
       if (e.by) r.by = e.by;
-      if (e.op === 'struct') { r.op = 'struct'; r.kind = e.kind || ''; }
+      if (e.op === 'struct') { r.op = 'struct'; r.kind = e.kind || ''; r.texts = clip(e.texts); r.resT = clip(e.resT); if (e.psw) r.psw = e.psw; }
       else { r.was = String(e.was || '').slice(0, 400); r.now = String(e.now || '').slice(0, 400); if ((e.wasH || '') !== (e.nowH || '')) { r.wasH = String(e.wasH || '').slice(0, 600); r.nowH = String(e.nowH || '').slice(0, 600); } }
       if (c.pairs) r.pairs = c.pairs;
       (add[slug] = add[slug] || []).push(r);
@@ -207,8 +229,36 @@ function patterns() {
   console.log('כללים חדשים שנקלטו אוטומטית:', added.length);
 }
 
+/* ---- תיקון סיווג ברשומות קיימות (פרומפט 32): post / src / w לפי sakemRel, ופרטי מבנה מן data/edits אם יש ---- */
+function clip(a) { return (a || []).map((x) => String(x || '').slice(0, 200)); }
+function reclass() {
+  const SU = sakemUnits();
+  let ch = 0;
+  for (const f of fs.readdirSync(LD).filter((x) => x.endsWith('.jsonl'))) {
+    const slug = f.replace(/\.jsonl$/, ''), F = path.join(LD, f), src = {};
+    try { for (const e of (JSON.parse(fs.readFileSync(path.join(ED, slug + '.json'), 'utf8')).edits || [])) if (e.op === 'struct') src[e.k + '@' + e.t] = e; } catch (e) { /* אין קובץ */ }
+    const out = fs.readFileSync(F, 'utf8').split('\n').map((l) => {
+      if (!l) return l;
+      let r; try { r = JSON.parse(l); } catch (e) { return l; }
+      const { post, fromSakem } = sakemRel(SU, slug, r);
+      const was = JSON.stringify([r.post, r.src, r.w, r.texts]);
+      /* רק מוסיפים מידע: קובצי ההצעות נכתבים מחדש בסבבים מאוחרים, ולכן סיווג קודם של "אחרי סכם" / "של סכם" אינו מבוטל */
+      if (post) r.post = 1;
+      if (fromSakem) r.src = 'סכם';
+      r.w = r.post && r.src !== 'סכם' ? 2 : 1;
+      const s = r.op === 'struct' && !r.texts && src[r.k + '@' + r.t];
+      if (s) { r.texts = clip(s.texts); r.resT = clip(s.resT); }
+      if (JSON.stringify([r.post, r.src, r.w, r.texts]) !== was) ch++;
+      return JSON.stringify(r);
+    });
+    if (!has('--dry')) fs.writeFileSync(F, out.join('\n'));
+  }
+  console.log('רשומות שסיווגן תוקן:', ch);
+}
+
 const MAIN = /learn\.mjs$/.test(process.argv[1] || '');
 if (!MAIN) { /* יובא כספרייה */ }
 else if (cmd === 'record') record();
 else if (cmd === 'patterns') patterns();
+else if (cmd === 'reclass') reclass();
 else if (cmd) { console.error('פקודה לא מוכרת:', cmd); process.exit(1); }

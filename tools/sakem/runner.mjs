@@ -11,7 +11,9 @@
    node tools/sakem/runner.mjs finish <jid> [--push]     סיום: "מוכן לסקירה" (בודק שאין חוסמות, כרטיס ציון, יומן ההרצות)
    node tools/sakem/runner.mjs pause  <jid> [--push]     סוף הרצה באמצע פרק (חצי ראשון של פרק ארוך) - שורה ביומן ההרצות
    node tools/sakem/runner.mjs lessons                   הכרעות המנהל שטרם הופקו מהן לקחים
-   node tools/sakem/runner.mjs lessons-done <jid>...     סימון שהלקחים מהן נכתבו ל-docs/sakem-lessons.md */
+   node tools/sakem/runner.mjs lessons-done <jid>... [--post=<מסכת>:<מספר>,...] [--rules=<קובץ>]
+                                                         סימון שהלקחים מהן נכתבו ל-docs/sakem-lessons.md; --post - עד איפה
+                                                         נותחו עריכות המנהל אחרי סכם; --rules - כללים לרשימה ולדף "מה סכם למד" */
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -445,16 +447,38 @@ if (cmd === 'status') {
   const nr = fs.existsSync(LRf) ? (rd(LRf).rules || []).filter((x) => (x.t || 0) > since) : [];
   if (nr.length) console.log('\n######## כללים חדשים שנקלטו מאז הפעם הקודמת (' + nr.length + ')\n' + nr.map((x) => '- ' + (x.off ? '[בוטל] ' : '') + x.text).join('\n'));
   /* 10.11.2026: כל עריכה של המנהל אחרי סכם (בדף עצמו, מחוץ לחלון הסקירה) - אחת אחת, ולא רק כמניין.
-     עריכה שאינה חוזרת אינה נעשית כלל אוטומטי, ולכן היא מוצגת כאן כדי שתנותח ותיכתב ממנה לקח */
-  const ER = [];
-  if (fs.existsSync(path.join(D, 'learn'))) for (const f of fs.readdirSync(path.join(D, 'learn')).filter((x) => x.endsWith('.jsonl'))) {
-    for (const l of fs.readFileSync(path.join(D, 'learn', f), 'utf8').split('\n')) { if (!l) continue; let r; try { r = JSON.parse(l); } catch (e) { continue; }
-      if (r.post && !r.src && (r.t || 0) > since) ER.push(Object.assign({ slug: f.replace(/\.jsonl$/, '') }, r)); }
+     עריכה שאינה חוזרת אינה נעשית כלל אוטומטי, ולכן היא מוצגת כאן כדי שתנותח ותיכתב ממנה לקח.
+     פרומפט 32 (12.11.2026): "נותח עד" לכל מסכת לפי מספר הרשומות בקובץ המקליט (st.post), ולא לפי זמן העריכה -
+     עריכה שנקלטה אחרי lessons-done אבל נעשתה לפניו דולגה. ושינויי מבנה (כותרת צד, פיצול, מחיקת עיטור) מוצגים
+     עם הנוסח, לא רק כסוג. "היה" הוא מה שסכם השאיר בדף (אחרי הקבלה), "נעשה" - התיקון של המנהל. */
+  const ER = [], NOW = {}, LDIR = path.join(D, 'learn'), PST = st.post || {};
+  if (fs.existsSync(LDIR)) for (const f of fs.readdirSync(LDIR).filter((x) => x.endsWith('.jsonl'))) {
+    const slug = f.replace(/\.jsonl$/, ''), L = fs.readFileSync(path.join(LDIR, f), 'utf8').split('\n');
+    NOW[slug] = L.filter(Boolean).length;
+    const from = PST[slug], seen = new Set();
+    let n = 0;
+    for (const l of L) { if (!l) continue; n++; let r; try { r = JSON.parse(l); } catch (e) { continue; }
+      if (from !== undefined ? n <= from : (r.t || 0) <= since) continue;
+      if (!r.post || r.src) continue;
+      const key = [r.k, r.t, r.was, r.now, r.kind].join('|');
+      if (seen.has(key)) continue; seen.add(key);
+      ER.push(Object.assign({ slug }, r)); }
   }
+  const q = (x) => '"' + String(x || '').trim().slice(0, 90) + '"';
+  const structTxt = (r) => { const t = r.texts || [], R = r.resT || [];
+    if (!t.length && !R.length) return ' מבנה: ' + (r.kind || '') + ' (בלי נוסח - רשומה ישנה)';
+    if (r.kind === 'side') return ' כותרת צד חדשה ' + q(R[1]) + ' בראש ' + q(R[0]);
+    if (r.kind === 'unside') return ' כותרת צד הוחזרה לגוף: ' + q(R[0]);
+    if (r.kind === 'hdel') return ' עיטור נמחק, בין ' + q(t[0]) + ' ובין ' + q(t[1]);
+    if (r.kind === 'hrep') return ' עיטור הוחלף בכותרת ' + q(R[0]);
+    if (r.kind === 'split' || r.kind === 'hsplit') return ' ' + (r.ins ? 'שורה חדשה' : 'פיצול שורה') + ': ' + q(R[0]) + ' | ' + q(R[1]);
+    if (r.kind === 'merge' || r.kind === 'hmerge' || r.kind === 'unside-merge') return ' איחוי שורות: ' + t.map(q).join(' + ');
+    return ' מבנה: ' + (r.kind || '') + ' ' + t.map(q).join(' | '); };
   if (ER.length) {
     ER.sort((a, b) => a.t - b.t);
-    console.log('\n######## עריכות המנהל אחרי סכם, מחוץ לסקירה (' + ER.length + ') - כל אחת היא הערה על סכם: מה סכם היה צריך לעשות ולא עשה. נתח, ומה שאינו תיקון מקומי - כתוב כלקח');
-    ER.slice(0, 400).forEach((r) => console.log('\n- [' + r.slug + ' ' + (r.daf || '') + '] ' + r.cls + (r.sub ? '/' + r.sub : '') + (r.op === 'struct' ? ' מבנה: ' + (r.kind || '') : '\n  היה: ' + (r.wasH || r.was || '') + '\n  נעשה: ' + (r.nowH || r.now || ''))));
+    const by = {}; ER.forEach((r) => { by[r.slug] = (by[r.slug] || 0) + 1; });
+    console.log('\n######## עריכות המנהל אחרי סכם, מחוץ לסקירה (' + ER.length + ': ' + Object.entries(by).map(([k, v]) => k + ' ' + v).join(', ') + ') - חובה לנתח (פרומפט 32).\nכל אחת היא הערה על סכם: מה סכם היה צריך לעשות ולא עשה. השווה "היה" (מה שסכם השאיר) ל"נעשה" (המנהל), וכתוב ל-docs/sakem-lessons.md כלל מותנה קצר לכל מה שאינו תיקון מקומי - עם סיבה ותאריך, בלי כפילות. כותרות נושא וכותרות צד, מקף תירוץ, הדגשה, רווח, ארמית מול לשון הקודש, הידוק שהוחזר.');
+    ER.slice(0, 400).forEach((r) => console.log('\n- [' + r.slug + ' ' + (r.daf || '') + '] ' + (r.op === 'struct' ? structTxt(r) : r.cls + (r.sub ? '/' + r.sub : '') + '\n  היה: ' + (r.wasH || r.was || '') + '\n  נעשה: ' + (r.nowH || r.now || ''))));
     if (ER.length > 400) console.log('\n(ועוד ' + (ER.length - 400) + ' - בהרצה הבאה)');
   }
   if (fs.existsSync(PTf)) { const P = rd(PTf); console.log('\n######## עריכות המנהל: ' + P.total + ' · ' + JSON.stringify(P.cnt) + '\nצורה: ' + Object.entries(P.sub || {}).sort((a, b) => b[1].w - a[1].w).slice(0, 8).map(([k, v]) => k + ' ' + v.n).join(' · ')); }
@@ -476,15 +500,40 @@ if (cmd === 'status') {
       console.log('\n--- ' + x.iid + ' · ' + (x.act === 'edit' ? 'נערך' : 'נדחה') + ' · ' + (x.layers || []).join(', ') + '\nמקור:\n' + x.orig + '\nהצעה:\n' + x.prop + (x.final ? '\nמה שהמנהל כתב:\n' + x.final : '') + (x.gem ? '\nלשון הגמרא: ' + x.gem : ''));
     });
   });
-  console.log('\nאחרי שכתבת את הלקחים: node tools/sakem/runner.mjs lessons-done ' + todo.join(' '));
+  /* --post: עד איפה נותחו עריכות המנהל בכל מסכת (מספר הרשומות כפי שהוצגו עכשיו) */
+  const postArg = ER.length > 400 ? '' : ' --post=' + Object.entries(NOW).map(([k, v]) => k + ':' + v).join(',');
+  console.log('\nאחרי שכתבת את הלקחים: node tools/sakem/runner.mjs lessons-done ' + todo.join(' ') + postArg + ' --push' +
+    '\nכלל שנלמד מעריכות המנהל מגיע גם לדף "מה סכם למד": כתוב אותו גם בקובץ JSON [{"text":"...","was":"...","now":"..."}] והוסף --rules=<הקובץ>.');
 } else if (cmd === 'lessons-done') {
   const stF = path.join(D, 'lessons-state.json'), st = fs.existsSync(stF) ? rd(stF) : { done: [] };
   const dk2 = (j) => { const f = path.join(DEC, j + '.json'); return fs.existsSync(f) ? j + '@' + ((rd(f).job || {}).t || '') : j; };
   st.done = [...new Set(st.done.concat(A.map(dk2)))];
   st.learnT = Date.now();
+  /* פרומפט 32: "נותח עד" לעריכות המנהל אחרי סכם, לכל מסכת. בלי --post - עד סוף הקבצים עכשיו */
+  const pa = (process.argv.find((x) => x.startsWith('--post=')) || '').slice(7);
+  const LDIR = path.join(D, 'learn');
+  st.post = st.post || {};
+  if (pa) pa.split(',').filter(Boolean).forEach((x) => { const [k, v] = x.split(':'); if (k && +v >= 0) st.post[k] = +v; });
+  else if (fs.existsSync(LDIR)) fs.readdirSync(LDIR).filter((x) => x.endsWith('.jsonl')).forEach((f) => { st.post[f.replace(/\.jsonl$/, '')] = fs.readFileSync(path.join(LDIR, f), 'utf8').split('\n').filter(Boolean).length; });
+  /* כללים שנלמדו מעריכות המנהל - אל רשימת הכללים (data/sakem/learn/rules.json): כך הם מוצגים לסכם ב-rules,
+     ועולים בסנכרון לדף המנהל "מה סכם למד" (עם "בטל כלל") */
+  const ra = (process.argv.find((x) => x.startsWith('--rules=')) || '').slice(8), LRf = path.join(LDIR, 'rules.json'), extra = [];
+  if (ra) {
+    const NR = rd(path.resolve(ra)), RL = fs.existsSync(LRf) ? rd(LRf) : { rules: [] }, have = new Set(RL.rules.map((x) => x.id));
+    let k = 0;
+    for (const x of Array.isArray(NR) ? NR : []) {
+      if (!x || !String(x.text || '').trim()) continue;
+      const id = 'post:' + String(x.text).replace(/\s+/g, ' ').trim().slice(0, 60);
+      if (have.has(id)) continue;
+      RL.rules.push({ id, t: Date.now(), kind: 'לקח מעריכות המנהל', target: 'לקחים', n: 1, src: 'עריכות המנהל אחרי סכם', text: String(x.text).trim(), was: String(x.was || ''), now: String(x.now || '') });
+      have.add(id); k++;
+    }
+    wr(LRf, RL); extra.push(LRf);
+    console.log('נוספו לרשימת הכללים (ולדף "מה סכם למד"):', k);
+  }
   wr(stF, st);
   console.log('סומן.');
-  if (PUSH) push('סכם: לקחים מהכרעות המנהל', [stF, path.join(ROOT, 'docs', 'sakem-lessons.md')]);
+  if (PUSH) push('סכם: לקחים מהכרעות המנהל', [stF, path.join(ROOT, 'docs', 'sakem-lessons.md')].concat(extra));
 } else {
   die('פקודה לא מוכרת. ראה docs/sakem-runner.md');
 }

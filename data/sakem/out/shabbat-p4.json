@@ -3,7 +3,7 @@
  "jid": "shabbat-p4",
  "slug": "shabbat",
  "title": "שבת פרק רביעי - במה טומנין",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 2743,
@@ -177,7 +177,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -218,7 +226,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -253,7 +269,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -277,6 +301,14 @@
     "nose": 0,
     "lenA": 153,
     "lenB": 153
+   },
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -312,7 +344,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 0,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s6",
@@ -335,6 +375,14 @@
     "nose": 0,
     "lenA": 147,
     "lenB": 147
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 1
    }
   },
   {
@@ -355,6 +403,14 @@
     "nose": 0,
     "lenA": 120,
     "lenB": 120
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -377,6 +433,14 @@
     "nose": 0,
     "lenA": 185,
     "lenB": 185
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -399,6 +463,14 @@
     "nose": 0,
     "lenA": 314,
     "lenB": 314
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -436,7 +508,15 @@
     "שורה אלמנה (הבהמה.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s11",
@@ -457,6 +537,14 @@
     "nose": 0,
     "lenA": 113,
     "lenB": 113
+   },
+   "abs": {
+    "bold": 2,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -493,7 +581,15 @@
     "שורה אלמנה (בהן.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s13",
@@ -513,6 +609,14 @@
     "nose": 0,
     "lenA": 166,
     "lenB": 166
+   },
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -536,6 +640,14 @@
     "nose": 0,
     "lenA": 111,
     "lenB": 111
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -576,7 +688,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s16",
@@ -616,7 +736,15 @@
     "שורה אלמנה ([להוכיח ייחוד]) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 1
+   }
   },
   {
    "iid": "s17",
@@ -654,7 +782,15 @@
     "שורה אלמנה (במחשבה.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s18",
@@ -688,7 +824,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s19",
@@ -728,7 +872,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: סיפא דברייתא דאפשר לרחוץ"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s20",
@@ -765,7 +917,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: פלוגתת"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s21",
@@ -812,7 +972,15 @@
     "כותרת צד של שלוש מילים - עד שתיים בלבד; לקצר (ראשי תיבות לשם, בלי \"אמר\", או המילה השלישית לשורה): ריב\"י לפני רבי"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 4,
+    "widow": 1
+   }
   },
   {
    "iid": "s22",
@@ -834,8 +1002,64 @@
     "nose": 0,
     "lenA": 373,
     "lenB": 373
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 0,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1794493944643
+ "t": 1794493951613,
+ "summary": "בפרק: 10 הדגשות במשנה, 5 רווחים, 1 מקפי תירוץ, 7 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 10,
+  "space": 5,
+  "dash": 1,
+  "side": 7,
+  "hatz": 0
+ },
+ "learnedNew": 2,
+ "score": {
+  "segs": 22,
+  "perSeg": {
+   "bold": 0.45,
+   "space": 0.23,
+   "dash": 0.05,
+   "side": 2.14,
+   "nose": 0.91,
+   "widow": 0.14
+  },
+  "bold": 10,
+  "space": 5,
+  "dash": 1,
+  "side": 7,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 12,
+  "block": 0,
+  "lenPct": 0.2,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  }
+ },
+ "counts": {
+  "shown": 13,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

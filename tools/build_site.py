@@ -4806,7 +4806,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!isTxt(el)){flash('העמד את הסמן בתוך פסקה');return}
     if(el.tagName==='DIV'&&!isHeadEl(el)){flash('הסגנון הזה חל על פסקת גוף או על כותרת');return}
     if(!PSTY.some(p=>p[0]===k)){flash('אין סגנון כזה בקובץ הזה');return}
-    setPs(el.classList.contains(k)?'':k)}
+    /* כותרת אחרת (ד"ה משנה) - יוצאת לגוף ומקבלת את הסגנון (setPs -> headToBody); שורה במשנה - הסגנון
+       מחליף את סגנון המשנה בוורד (pstyle), והיא יוצאת מן התיבה בבנייה הבאה */
+    const on=el.classList.contains(k);
+    setPs(on?'':k);
+    flash(on?'השורה חזרה לגוף':(k==='nose'?'השורה היא עכשיו כותרת נושא':'השורה היא עכשיו כותרת ד"ה משנה'))}
   function keysCard(){
     const old=$('#keyscard');if(old){old.remove();return}
     const m=document.createElement('div');m.className='modal';m.id='keyscard';
@@ -5093,9 +5097,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       h+='<div class="stgrp"><span class="ttl">סגנון תו</span>'+CSTY.filter(c=>ST_C.indexOf(c[0])>-1).map(cb).join('')+
         btn(false,'sideCmd()','כותרת צד','Ctrl+.')+btn(false,"noStyle()",'ללא סגנון','Ctrl+רווח','טקסט רגיל: מסיר את סגנון התו מהמילים שנבחרו, ואם אין כזה - את סגנון הפסקה')+'</div>';
       rare+=CSTY.filter(c=>ST_C.indexOf(c[0])<0).map(cb).join('')}
-    if(isHeadEl(el))h+='<div class="stgrp"><span class="ttl">'+(el.classList.contains('nose')?'נושא משנה':'ד"ה משנה')+'</span>'+
-      btn(false,'headBody()','הפוך לגוף','Ctrl+/','הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים')+'</div>';
-    if(isTxt(el)&&isAdmin()&&typeof tsOpen==='function')h+='<div class="stgrp"><span class="ttl">כותרת</span>'+btn(false,'tsOpen()','הצע כותרת','Ctrl+Alt+ל','שלוש הצעות לכותרת על הקטע שאחרי המקום')+'</div>';
+    /* שם הקבוצה לפי שם הסגנון בקובץ: div.nose הוא "כותרת נושא" (סגנון "נושא" בוורד), לא "נושא משנה" -
+       התווית השגויה הסתירה מבעל הפרויקט שהשורה כבר כותרת (פרומפט 32, שבת מז.) */
+    if(isHeadEl(el)){const hk=el.classList.contains('nose')?'nose':'dh',hp=PSTY.find(p=>p[0]===hk);
+      h+='<div class="stgrp"><span class="ttl">'+esc(hp?hp[1]:(hk==='nose'?'כותרת נושא':'כותרת ד"ה משנה'))+'</span>'+
+      btn(false,'headBody()','הפוך לגוף','Ctrl+/','הופך את הפסקה לגוף רגיל, ואז אפשר להחיל סגנונות תו על מילים')+'</div>'}
+    /* קבוצת "כותרת" (פרומפט 32, 12.11.2026): "כותרת נושא" קבוע בכל שורת טקסט - פסקת גוף, שורה במשנה,
+       ד"ה משנה או כותרת קיימת. שוב על הכפתור (כשהשורה כבר כותרת נושא) - חוזרת לגוף. */
+    if(isTxt(el)&&PSTY.some(p=>p[0]==='nose'))h+='<div class="stgrp"><span class="ttl">כותרת</span>'+
+      btn(el.classList.contains('nose'),"headKey('nose')",'כותרת נושא','Ctrl+3',el.classList.contains('nose')?'השורה היא כותרת נושא; לחיצה מחזירה אותה לגוף':'השורה הופכת לכותרת נושא (מכל מבנה); שוב - חוזרת לגוף')+
+      (isAdmin()&&typeof tsOpen==='function'?btn(false,'tsOpen()','הצע כותרת','Ctrl+Alt+ל','שלוש הצעות לכותרת על הקטע שאחרי המקום'):'')+'</div>';
+    else if(isTxt(el)&&isAdmin()&&typeof tsOpen==='function')h+='<div class="stgrp"><span class="ttl">כותרת</span>'+btn(false,'tsOpen()','הצע כותרת','Ctrl+Alt+ל','שלוש הצעות לכותרת על הקטע שאחרי המקום')+'</div>';
     if(el.tagName==='P'){
       const now=pcls(el);
       const pb=p=>btn(p[0]==='sp'?el.classList.contains('sp'):now===p[0],
@@ -6406,7 +6418,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      ה. בקצה הפרק - הפרק הבא או הקודם, כמו קודם. */
   let VCOL=null,VEXT=null;
   document.addEventListener('mousedown',()=>{VCOL=null;VEXT=null},true);
-  function hostOf(n){const e=n&&(n.nodeType===3?n.parentElement:n);return e&&e.closest?e.closest('[contenteditable="true"]'):null}
+  /* מארח הבחירה (אלמנט). בשם נפרד מ-hostOf (פרומפט 32): הצהרה בשם hostOf כאן דרסה מ-8.11.2026 את hostOf של
+     מבנה הנתונים, וכל פעולת כותרת (הפוך לגוף, Ctrl+3 על כותרת, Enter/Delete/Backspace ליד כותרת) נכשלה בשקט */
+  function selHost(n){const e=n&&(n.nodeType===3?n.parentElement:n);return e&&e.closest?e.closest('[contenteditable="true"]'):null}
   /* מלבן נקודה בטקסט; בגבול שורה או בגבול אלמנט - לפי התו שאחריה או שלפניה (עברית: תחילת תו = קצהו הימני) */
   function ptRect(node,off){
     const r=document.createRange();
@@ -6459,7 +6473,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      מסמן את השורות השלמות, שורה אחר שורה */
   function extendTo(s,node,off,tgtHost,dir){
     try{s.extend(node,off)}catch(e){}
-    if(hostOf(s.focusNode)===tgtHost){VEXT=null;return}
+    if(selHost(s.focusNode)===tgtHost){VEXT=null;return}
     if(typeof skmMark!=='function'||typeof skmRowOf!=='function')return;
     const rows=skmAllRows();
     if(!VEXT){const a=skmRowOf(s.anchorNode);if(!a)return;VEXT={a,f:a}}
@@ -6469,7 +6483,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     SKM.anchor=VEXT.a;SKM.dragged=true;skmMark(skmSpan(VEXT.a,VEXT.f),true)}
   function vMove(dir,ext){
     const s=getSelection();if(!s||!s.rangeCount)return false;
-    const host=hostOf(s.focusNode);if(!host)return false;
+    const host=selHost(s.focusNode);if(!host)return false;
     const b=ptRect(s.focusNode,s.focusOffset);if(!b)return false;
     const x=VCOL!=null?VCOL:b.left,mid=(b.top+b.bottom)/2;
     const L=hostLines(host);
@@ -6503,7 +6517,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     let r=null;for(const w of W){if(w<p)r=w;else break}return r}
   function wordMove(fw,ext){
     const s=getSelection();if(!s||!s.rangeCount)return;
-    let host=hostOf(s.focusNode);if(!host)return;
+    let host=selHost(s.focusNode);if(!host)return;
     let p=wordStep(txtOf(host),cutOff(host,s.focusNode,s.focusOffset),fw);
     if(p===null){
       /* קצה המארח: למארח הסמוך - Ctrl+שמאל לתחילת המילה הראשונה בשורה הבאה, Ctrl+ימין לתחילת המילה האחרונה בשורה הקודמת */
@@ -6512,7 +6526,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(!nh){if(ext)return;p=fw>0?txtOf(host).length:0}
       else{const W=wStarts(txtOf(nh));host=nh;p=fw>0?(W.length?W[0]:0):(W.length?W[W.length-1]:0)}}
     const q=posAt(host,p);
-    if(ext){if(hostOf(s.focusNode)===host)s.extend(q[0],q[1]);else extendTo(s,q[0],q[1],host,fw)}
+    if(ext){if(selHost(s.focusNode)===host)s.extend(q[0],q[1]);else extendTo(s,q[0],q[1],host,fw)}
     else{if(document.activeElement!==host)host.focus({preventScroll:true});s.collapse(q[0],q[1])}
     followCaret()}
   document.addEventListener('keydown',e=>{

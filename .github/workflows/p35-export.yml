@@ -1,0 +1,26 @@
+name: פרומפט 35 - ייצוא וסגירת הצעות (ענף זמני)
+on:
+  push:
+    branches: [p35-export]
+    paths: ['tools/p35/**', '_work/p35/decide.json', '.github/workflows/p35-export.yml']
+permissions:
+  contents: write
+concurrency:
+  group: p35
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ייצוא
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: python tools/p35/run.py
+      - name: שמירה
+        run: |
+          git config user.name "leokmei-p35"
+          git config user.email "sakem@leokmei.com"
+          git add _work/p35
+          git diff --cached --quiet && exit 0
+          git commit -m "p35: ייצוא [skip ci]"
+          git push -q

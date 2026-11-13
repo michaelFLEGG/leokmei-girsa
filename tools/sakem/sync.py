@@ -50,6 +50,37 @@ def main():
     imported = st.setdefault('imported', {})
     changed = 0
 
+    # 0. עבודות סכם שהוכנו בריפו (פרומפט 34, 13.11.2026): data/sakem/jobs-put/<שם>.json =
+    #    {slug, kind, perek, title, packet} - בדיוק הגוף שהכפתור "סכם פרק" שולח ל-/sakem/job.
+    #    כך סשן בלי מפתח המנהל (הענן) מזמין סכם בדרך של המערכת. kind "seg" מקבל מזהה חדש
+    #    (<מסכת>-s<יחידה>-<זמן>), ולכן פרק שכבר נסקר נכנס שוב בלי למחוק את ההכרעות הקודמות שלו.
+    #    הקובץ עובר ל-done/, והמזהה נרשם ב-sync-state כדי שהרצה חוזרת לא תזמין פעמיים.
+    jp = os.path.join(D, 'jobs-put')
+    jput = st.setdefault('jobsPut', {})
+    for fn in sorted(os.listdir(jp)) if os.path.isdir(jp) else []:
+        if not fn.endswith('.json'):
+            continue
+        fp = os.path.join(jp, fn)
+        if fn in jput:
+            print('עבודה מן הריפו: כבר הוזמנה, מדולג:', fn, jput[fn])
+        else:
+            req = json.load(io.open(fp, encoding='utf-8'))
+            pk = req.get('packet') or {}
+            if not req.get('slug') or not pk.get('units'):
+                raise SystemExit('עצירה: עבודה מן הריפו פגומה (חסרים slug או יחידות): ' + fn)
+            print('עבודה מן הריפו:', fn, req.get('title', ''), len(pk['units']), 'יחידות')
+            if DRY:
+                continue
+            r = call('/sakem/job', {'slug': req['slug'], 'kind': req.get('kind') or 'perek',
+                                    'perek': req.get('perek') or 0, 'title': req.get('title') or '', 'packet': pk})
+            jput[fn] = r.get('jid')
+            print('  נכנס לתור:', r.get('jid'), '(כבר היה בתור)' if r.get('again') else '')
+            wjson(STATE, st)
+        if not DRY:
+            os.makedirs(os.path.join(jp, 'done'), exist_ok=True)
+            os.replace(fp, os.path.join(jp, 'done', fn))
+        changed += 1
+
     # א. חבילות חדשות (וגם "נשלח" שאינו בריפו: סבב קודם סימן אותו ונכשל בדחיפה)
     srv0 = call('/sakem/jobs').get('items', [])
     lost = [x['jid'] for x in srv0 if x.get('st') == 'sent'

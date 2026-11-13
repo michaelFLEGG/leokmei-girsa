@@ -58,6 +58,10 @@
       if(!m||!m[0].length)break;o+=m[0].length}
     return o}
   function tosHeb(it){return it.hnHeb||it.hn}
+  /* כותרת שאין בה שום אות (רק תגיות, רווחים או ניקוד) */
+  function emptyHead(u){
+    var t=String(u.a||'')+(u.l||[]).map(function(l){return l&&l[1]||''}).join('');
+    return !t.replace(/<[^>]*>/g,'').replace(/&nbsp;|&#160;|[\s֑-ׇ]/g,'')}
   function pageIdxOf(daf){for(var i=0;i<D.pages.length;i++)if(D.pages[i].daf===daf)return i;return -1}
 
   /* ---------- עוגן הסימן בטקסט (אותו אלגוריתם כמו באתר: טקסט הקשר ומספר מופע) ---------- */
@@ -371,6 +375,10 @@
         /* ב (6.11.2026): "(לה. - מה.)" הוא סגנון מוסתר בוורד ("דפים בפרק"), עזר לעורך בלבד: אינו מודפס, והפרק נפתח ישר בכותרתו
            ובמשנה. ציון הדף שהיה עליו עובר ליחידה הבאה (first נשאר) */
         if(u.k==='perek-range')continue;
+        /* 13.11.2026 (בעל הפרויקט, כתובות ב.): כותרת נושא או ד"ה ריקה (בוורד, או שהתרוקנה בעריכה) אינה מודפסת.
+           עד כאן היא הודפסה כשורה עם "כתוב כאן את הכותרת" (סגנון העורך), נחשבה ליחידה הראשונה של הטווח,
+           ולכן נוסף "המשך פרק" לפני כותרת הפרק ונשבר טור. ציון הדף שעליה עובר ליחידה הבאה (first נשאר) */
+        if((u.k==='nose'||u.k==='dh')&&emptyHead(u))continue;
         /* תווית הפרק של השורה - לפי הפרק של היחידה עצמה (שארית פרק בעמוד שמתויג לפרק הבא) */
         var LB=perekMap().lab[perekMap().upk[u.id]-1]||{perek:p.perek||'',perekName:p.perekName||''};
         if(!firstUnit)firstUnit={u:u,p:LB};
@@ -381,7 +389,8 @@
     if(!recs.length)throw new Error('אין בטווח טקסט');
     TM('units');
     /* פתיחת הטווח באמצע פרק: שורה קטנה "המשך פרק", כדי שהדף לא ייפתח יתום */
-    if(firstUnit&&firstUnit.u.k!=='perek-range'&&firstUnit.u.k!=='perek-start'&&firstUnit.p.perek){
+    /* 13.11.2026: הדפסת פרק שלם נפתחת תמיד בראש הפרק - לעולם לא "המשך פרק" */
+    if(firstUnit&&firstUnit.u.k!=='perek-range'&&firstUnit.u.k!=='perek-start'&&firstUnit.p.perek&&!(PKS&&PKS.whole)){
       var contLine='<div class="row pcont"><div class="rail"></div><div class="main">המשך '+ge(firstUnit.p.perek)+'</div></div>';
       recs.unshift({u:null,pi:recs[0].pi,daf:recs[0].daf,perek:firstUnit.p.perek,perekName:firstUnit.p.perekName||'',kind:'cont',html:contLine});
       groups.forEach(function(g){g[0]++;g[1]++});groups[0][0]=0}

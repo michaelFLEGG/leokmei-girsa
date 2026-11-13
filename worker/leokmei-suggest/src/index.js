@@ -821,11 +821,29 @@ async function editsStamp(env, url) {
   return json({ ok: true, t });
 }
 
+/* 13.11.2026: אותה עריכה נשמרה לפעמים פעמיים באותו רגע תחת שני מזהי מקום (מספר היחידה זז בין
+   בניות), ו-/live הגיש את שתיהן: הדף החיל אותה פעמיים ("ב: כפול" בכתובות). כאן: בין רשומות זהות
+   באותו רגע (אותו t ואותו תוכן) נשארת האחרונה. רשומות שונות באותו רגע נשמרות (איחוי ומחיקה
+   באותה פעולה). האחסון אינו משתנה; הניקוי שלו במצבות (tools/cloud_word.py --tombstones). */
+const ED_SIG = ['op', 'kind', 'was', 'now', 'wasH', 'nowH', 'texts', 'resT', 'res', 'ps', 'psw', 'ins', 'where'];
+function dedupEdits(list) {
+  const out = [], at = new Map();
+  for (const e of list || []) {
+    if (e.del) { out.push(e); continue; }
+    const s = (e.t || 0) + '|' + JSON.stringify(ED_SIG.map((f) => (e[f] === undefined ? null : e[f])));
+    if (at.has(s)) { out[at.get(s)] = e; continue; }
+    at.set(s, out.length);
+    out.push(e);
+  }
+  return out;
+}
+
 async function getEdits(req, env, url, pub) {
   if (!pub && !(await isAdmin(req, env))) return bad('אין הרשאה', 401);
   const slug = url.searchParams.get('slug') || '';
   if (!slugOk(slug)) return bad('מסכת לא תקינה');
   const doc = (await env.STORE.get('ed:' + slug, 'json')) || { slug, edits: [], sty: null };
+  doc.edits = dedupEdits(doc.edits);
   if (pub) {
     /* ללומד: רק מה שמוחל, בלי שמות ובלי מחיקות */
     doc.edits = doc.edits.filter((e) => !e.del).map((e) => {
@@ -842,7 +860,7 @@ async function putEdits(req, env) {
   const slug = str(b.slug, 30);
   if (!slugOk(slug)) return bad('מסכת לא תקינה');
   const doc = await mergeEdits(env, slug, Array.isArray(b.edits) ? b.edits : [], b.sty);
-  return json({ ok: true, doc });
+  return json({ ok: true, doc: Object.assign({}, doc, { edits: dedupEdits(doc.edits) }) });
 }
 
 async function ingested(req, env) {

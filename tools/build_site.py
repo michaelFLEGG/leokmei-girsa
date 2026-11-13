@@ -3622,7 +3622,22 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   const CSTY=(D.sty&&D.sty.c)||[], PSTY=(D.sty&&D.sty.p)||[];
   const OKCLS=CSTY.map(x=>x[0]).concat(['mk']);     /* mk: מספר קטע, בא מן הוורד ואינו סגנון להחלה */
   const PCLS=PSTY.map(x=>x[0]).filter(Boolean);
-  let ED=[]; try{ED=JSON.parse(localStorage.getItem(EKEY)||'[]')}catch(e){ED=[]}
+  /* 13.11.2026: אותה עריכה נשמרה לפעמים פעמיים באותו רגע תחת שני מזהי מקום (מספר היחידה זז בין
+     בניות), והדף החיל את שתיהן: "ב: כפול" בכתובות, אצל גולשים ובהדפסה. רשומה אחת לכל מפתח, ובין
+     רשומות זהות באותו רגע (אותו t ואותו תוכן) נשארת האחרונה - או זו שכבר הוחלה. רשומות שונות באותו
+     רגע נשמרות (איחוי ומחיקה באותה פעולה). זהה ל-dedupEdits בשרת ול-dedup ב-tools/cloud_word.py. */
+  const EDSF=['op','kind','was','now','wasH','nowH','texts','resT','res','ps','psw','ins','where'];
+  function edCSig(e){return (e.t||0)+'|'+JSON.stringify(EDSF.map(f=>e[f]===undefined?null:e[f]))}
+  function edDedup(list){const byk=new Map(),nok=[];
+    for(const e of list||[]){if(!e)continue;if(e.k==null){nok.push(e);continue}
+      const o=byk.get(e.k);if(!o||(o.t||0)<=(e.t||0))byk.set(e.k,e)}
+    const out=[],at=new Map();
+    for(const e of [...byk.values(),...nok]){if(e.del){out.push(e);continue}
+      const s=edCSig(e);
+      if(at.has(s)){const j=at.get(s);if(!(out[j]._ap&&!e._ap))out[j]=e;continue}
+      at.set(s,out.length);out.push(e)}
+    return out}
+  let ED=[]; try{ED=edDedup(JSON.parse(localStorage.getItem(EKEY)||'[]'))}catch(e){ED=[]}
   /* _ap = "הוחל על הנתונים בטעינה הזאת"; הסימון זמני ואינו נשמר בין טעינות */
   ED.forEach(e=>{delete e._ap;delete e._cur});
   /* עריכות שכבר נמצאו בבסיס (נקלטו בוורד, או נאפו לנתונים בבנייה) נרשמות במכשיר לפי המפתח
@@ -6079,8 +6094,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
          ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t,by:e.by,sg:e.sg}).concat(TOMB)}
   function mergeIn(list){edKeys();let changed=false;const by={};ED.forEach(e=>by[e.k]=e);const dd=edDone().s;
-    for(const e of list||[]){const o=by[e.k];
+    const have=new Set(ED.filter(e=>!e.del).map(edCSig));
+    for(const e of edDedup(list)){const o=by[e.k];
       if(!o&&!e.del&&dd.has(edSig(e)))continue;      /* כבר בבסיס */
+      if(!o&&!e.del&&have.has(edCSig(e)))continue;   /* אותה עריכה, תחת מפתח אחר (13.11.2026) */
       if(e.del){if(o&&(o.t||0)<=(e.t||0)){ED=ED.filter(x=>x!==o);delete by[e.k];changed=true}continue}
       if(!o||(o.t||0)<(e.t||0)){const n=Object.assign({pub:o?o.pub:1},e);n._sig=String(e.k)+'|'+(e.t||0);
         if(o&&o._ap&&o.op!=='struct')n._cur=o.now;    /* הנתונים כבר נושאים את הנוסח הישן שלה */
@@ -6133,7 +6150,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const want=PRNQ?+(new URLSearchParams(location.search).get('et')||0):0;
       for(let k=0;want&&k<15&&((j.doc&&j.doc.t)||0)<want;k++){await new Promise(r=>setTimeout(r,2000));j=await api('/live?slug='+SLUG+'&_='+Date.now())}
       if(PRNQ)window.__LIVET=(j.doc&&j.doc.t)||0;
-      const L=(j.doc&&j.doc.edits)||[];
+      const L=edDedup((j.doc&&j.doc.edits)||[]).filter(e=>!e.del);
       if(L.length){EDRO=true;ED=L.map(e=>Object.assign({pub:1},e));
         /* תיקונים מהשרת מוחלים על השורות שהשתנו בלבד: בעבר נבנה כל הפרק
            מחדש (2.5 שניות בטלפון איטי) והלומד נזרק לתחילתו (11.10.2026) */

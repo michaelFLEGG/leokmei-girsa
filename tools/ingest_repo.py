@@ -373,7 +373,13 @@ def ingest_replay(masechet, doc, path, dry, log=print):
                     r = {'applied': 0, 'missed': [(e, 'כפילות')]}
                 else:
                     dups = now_d
-                done_keys.add(edit_key(item[1]))
+                # 13.11.2026: רק כתיבה שהצליחה נרשמת כ"נקלטה". עד היום גם כתיבה שנכשלה (או בוטלה
+                # כדי לא ליצור כפילות) נרשמה כנקלטה, ולא נוסתה שוב לעולם - והעריכה נשארה רק בשכבה.
+                # כישלון נרשם כתלוש: ינוסה שוב כשהקובץ החי ישתנה בידי אחר (ראו load_ledger).
+                if r.get('failed') or (r['applied'] == 0 and r['missed']):
+                    lost_keys.add(edit_key(item[1]))
+                else:
+                    done_keys.add(edit_key(item[1]))
                 save_ledger(path, done_keys, lost_keys, _sha(path))
             if r.get('failed') or (r['applied'] == 0 and r['missed']):
                 bad += 1

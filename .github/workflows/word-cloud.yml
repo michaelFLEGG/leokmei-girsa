@@ -1,0 +1,66 @@
+name: הוורד בענן - עריכות האתר נכתבות לוורד
+# הכרעת בעל הפרויקט 13.11.2026: כל תיקון שהמנהל עורך או מקבל באתר, וכל סכם פרק שאישר,
+# נכנס לקובץ הוורד מיד. במסכתות שב-data/word-cloud.json הוורד שבמאגר (input/docx) הוא
+# המקור, והכתיבה אליו נעשית כאן, בלי המחשב. התכנון: docs/וורד-אחד-בענן.md.
+# רץ בכל דחיפה של עריכות למאגר, וכל עשר דקות (עריכה שנשמרה רק בשרת).
+# העבודה שבתור אחת בלבד: דחיפות רצופות מתאחדות לריצה אחת.
+on:
+  push:
+    branches: [main]
+    paths: ['data/edits/**', 'data/word-cloud.json']
+  schedule:
+    - cron: '4,14,24,34,44,54 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: word-cloud
+  cancel-in-progress: false
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install lxml fonttools
+      # השער רץ בתוך הכלי: הוורד החדש עם מה שנשאר בשכבה זהה למה שהמנהל ראה, ואין כפילויות.
+      # מסכת שנכשלה אינה נשמרת; האחרות כן. קוד הכישלון נשמר לסוף, אחרי השמירה.
+      - name: קליטה
+        id: ingest
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          set +e
+          python tools/cloud_word.py
+          echo "code=$?" >> $GITHUB_OUTPUT
+      # [skip ci]: האתר נבנה מן הוורד החדש בסבב הקבוע של השומר; עד אז הנתונים שבאתר כבר
+      # נושאים את אותו נוסח (השער מוכיח זאת). התנגשות - הסבב הבא קולט מחדש מן ההתחלה.
+      - name: שמירה במאגר
+        id: save
+        run: |
+          git config user.name "leokmei-watcher"
+          git config user.email "watcher@users.noreply.github.com"
+          git add input/docx data/edits data/word-cloud
+          if git diff --cached --quiet; then echo "אין שינוי"; echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; fi
+          git commit -q -m "הוורד בענן: עריכות האתר נכתבו לוורד [skip ci]"
+          for i in 1 2 3 4; do
+            if git push -q; then echo "pushed=1" >> $GITHUB_OUTPUT; exit 0; fi
+            git pull -q --rebase --autostash origin main || { git rebase --abort 2>/dev/null || true; break; }
+            sleep $((i*3))
+          done
+          echo "::error::הוורד והשכבה לא נדחפו. הסבב הבא יקלוט מחדש; שום עריכה לא נמחקה מן השרת."
+          exit 1
+      # רק אחרי שהוורד שנושא את העריכות נשמר במאגר: מצבה בשרת לכל עריכה שיצאה מן השכבה,
+      # כך ש-/live מפסיק להגיש אותה. כישלון כאן מתוקן בסבב הבא (הכלי בודק מה עוד חי בשרת).
+      - name: מצבות בשרת
+        if: steps.save.outputs.pushed == '1' || steps.save.outputs.pushed == '0'
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: python tools/cloud_word.py --tombstones
+      - name: תוצאת הקליטה
+        if: steps.ingest.outputs.code != '0'
+        run: |
+          echo "::error::לפחות מסכת אחת לא נקלטה (השער נכשל או שגיאה). פרטים בשלב הקליטה וב-data/word-cloud/log.jsonl"
+          exit 1

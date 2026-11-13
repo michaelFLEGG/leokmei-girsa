@@ -777,19 +777,51 @@ def _side_tidy(pages, qa):
         print('כותרות צד: %d כפולות הוסרו, %d שורות גוף כפולות הוסרו, %d ארוכות הוחזרו לגוף' % tuple(stats))
 
 
+_BLOCKS_SHA = {'v': None}
+
+
+def blocks_sha(blocks):
+    """טביעת הנוסח של קובץ וורד מומר: סגנון וטקסט של כל פסקה (לא בתים, שמשתנים בכל שמירה)."""
+    import hashlib
+    return hashlib.sha1('\n'.join('%s\t%s' % (b.get('style'), b.get('text')) for b in blocks)
+                        .encode('utf-8')).hexdigest()
+
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
     del PLAN[:]
     _dedupe_windows(pages)
     path = os.path.join(EDITS_DIR, slug + '.json')
+    # 13.11.2026 - עריכות שנקלטו לוורד בענן (data/word-pin/absorbed-<מסכת>.json). הוורד החדש כבר נושא אותן,
+    # ולכן הן אינן מוחלות שוב - לא כאן ולא בדפדפן (הן נכנסות לרשימת b). החלה חוזרת של היסטוריית עריכות
+    # על וורד שכבר נושא אותן היא שכפלה את דף ב: (כותרות צד, איחויים ופיצולים שנראו "לא נעשו").
+    # פעיל רק כשהוורד הנבנה הוא אותו נוסח (טביעת הטקסט של הפסקאות), כדי שוורד אחר לא יאבד עריכות.
+    _abs = set()
+    try:
+        _ap = os.path.join(os.path.dirname(EDITS_DIR), 'word-pin', 'absorbed-' + slug + '.json')
+        if os.path.exists(_ap):
+            _ad = json.load(io.open(_ap, encoding='utf-8'))
+            if _ad.get('text_sha') and _ad.get('text_sha') == _BLOCKS_SHA.get('v'):
+                _abs = set(_ad.get('t') or [])
+                print('עריכות שנקלטו לוורד בענן ואינן מוחלות שוב ב-%s: %d' % (slug, len(_abs)))
+            else:
+                qa.append(('עריכות שנקלטו', 'רשימת העריכות שנקלטו לוורד אינה תואמת את הוורד הנבנה, ואינה פעילה'))
+    except Exception as _e:
+        qa.append(('עריכות שנקלטו', 'לא נקראו: %s' % _e))
     if not os.path.exists(path):
-        return None
+        return {'n': 0, 'taken': 0, 'lost': 0, 'done': 0, 'b': sorted(_abs)} if _abs else None
     try:
         doc = json.load(io.open(path, encoding='utf-8'))
     except Exception as e:
         qa.append(('קובץ התיקונים', 'לא ניתן לקרוא את קובץ התיקונים של האתר: %s' % e))
         return None
+    if _abs:
+        _n0 = len(doc.get('edits') or [])
+        doc['edits'] = [x for x in (doc.get('edits') or []) if x.get('t') not in _abs]
+        if len(doc['edits']) != _n0:
+            io.open(path, 'w', encoding='utf-8', newline='\n').write(json.dumps(doc, ensure_ascii=False, indent=1))
+            print('קובץ התיקונים של %s: הוסרו %d עריכות שכבר בוורד' % (slug, _n0 - len(doc['edits'])))
     # 7.11.2026: מסכת שנבנית מצילום וורד מוצמד - גם התיקונים שנעשו אחרי הצילום, נקלטו לוורד החי המשובש
     # והוסרו מקובץ התיקונים (data/word-pin/recovered-<מסכת>.json). בלעדיהם הם נעלמו מן האתר ומן ההדפסה.
     # מוחלים רק כל עוד ההצמדה לאותו צילום קיימת, ואינם נכתבים חזרה לקובץ התיקונים.
@@ -807,9 +839,10 @@ def _apply_site_edits(pages, slug, qa):
     except Exception as _e:
         qa.append(('תיקונים משוחזרים', 'לא נקראו: %s' % _e))
     # סדר הזמן: שינוי מבנה נשען על הנוסח שאחרי התיקון שקדם לו (כמו בדפדפן)
+    _rec = [x for x in _rec if x.get('t') not in _abs]
     edits = sorted((doc.get('edits') or []) + _rec, key=lambda e: e.get('t') or 0)
     if not edits:
-        return {'n': 0, 'taken': 0, 'lost': 0, 'done': 0}
+        return {'n': 0, 'taken': 0, 'lost': 0, 'done': 0, 'b': sorted(_abs)}
     slots = _slots(pages)
     by_key = {}
     for s in slots:
@@ -1053,7 +1086,7 @@ def _apply_site_edits(pages, slug, qa):
     # b (6.11.2026): התיקונים שכבר בנתונים (הוחלו בבנייה או נמצאו בוורד). הדפדפן אינו מחיל אותם שוב
     # מעל הנתונים שכבר נושאים אותם: החלה חוזרת של כותרת צד / איחוי / פיצול כפלה שורות בדף ובהדפסה.
     _lost_t = {x.get('t') for x in lost}
-    baked = sorted({x.get('t') for x in edits if x.get('t') is not None} - _lost_t)
+    baked = sorted(({x.get('t') for x in edits if x.get('t') is not None} - _lost_t) | _abs)
     return {'n': len(edits), 'taken': taken, 'lost': len(lost), 'done': done, 'b': baked}
 
 
@@ -1161,6 +1194,7 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
 
 def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=None):
   blocks = json.load(open(json_path, encoding='utf-8'))
+  _BLOCKS_SHA['v'] = blocks_sha(blocks)
   spacing = spacing or {}
 
   # ---------- ג1: סולם הכותרות נמדד לעין, לא בנקודות נקובות ----------

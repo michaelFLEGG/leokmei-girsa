@@ -2330,6 +2330,403 @@ def turn_on_tracking(path, masechet, log=print):
     return True
 
 
+
+# ------------------------------------------------------ סנכרון פסקאות אל נוסח יעד (13.11.2026)
+# הקליטה הרגילה מחילה עריכה אחר עריכה. כשהנוסח הקובע ידוע כולו (מה שבעל הפרויקט רואה
+# במצב מנהל, ובו "קבלת סכם" של פרק שלם), כותבים אותו ישירות: משווים את פסקאות הוורד
+# בטווח אל רשימת היעד, ומחליפים רק את הפסקאות שאינן תואמות. בלי מעקב (הכרעת 12.11),
+# עם גיבוי, ובשער: ההמרה אחרי הכתיבה נותנת בדיוק את רשימת היעד, וכל מה שמחוץ לטווח זהה.
+#
+# פריט ביעד: {'t': סוג, 'm': שורה בפורמט הביניים של סכם (tools/sakem_core.js), 'ps': סגנון פסקה}
+#   S כותרת צד ("דף בצד תוכן"), H כותרת נושא ("נושא"), D ד"ה משנה, P ציון דף ("דף בצד"),
+#   L שורת גוף (Normal / רקע והסבר / רווח לפני / משניות ...).
+
+SYNC_TYPE = {'דף בצד תוכן': 'S', 'נושא': 'H', "ד''ה משנה": 'D', 'משניות כותרת': 'M', 'משניות': 'M',
+             'דף בצד': 'P'}
+SYNC_SKIP = ('חציצה', 'משנה בצד', 'דפים בפרק ב', 'פתיחת פרק', 'הדרן', 'מסכת', 'פרק')
+SYNC_NEW_STYLE = {'S': 'דף בצד תוכן', 'H': 'נושא', 'D': "ד''ה משנה", 'P': 'דף בצד'}
+_SYNC_T2C = {'אם': 'am', 'הס': 'hs', 'פס': 'ps', 'דה': 'dm', 'נש': 'ns', 'מפ': 'mf', 'ב': 'b',
+             'מש': 'tn', 'כב': 'kt', 'אות': 'ot'}
+_SYNC_CS = {'am': 'אמוראים תו', 'hs': 'רקע והסבר תו', 'ps': 'פסוק תו', 'dm': "ד''ה משנה תו",
+            'ns': 'נושא תו', 'tn': 'משניות כותרת תו'}
+_SYNC_CS_MISHNA = {'am': 'תנאי המשנה', 'hs': 'הסבר במשנה'}
+_SYNC_CLS = {v: k for k, v in _SYNC_CS.items()}
+_SYNC_CLS.update({v: k for k, v in _SYNC_CS_MISHNA.items()})
+
+
+def sync_runs(m):
+    """שורת ביניים -> [(טקסט, מחלקה או None)]. עוגני תוס' ומספרי קטע אינם טקסט."""
+    m = re.sub(r"\[תוס':\d+\]", '', m or '').replace('{ריק}', '').replace('{טאב}', '\t')
+    m = re.sub(r'\[מס:[^\]]*\]', '', m)
+    out, stack, buf = [], [], ''
+    for t in re.finditer(r'\{([^{}:]{1,4}):|\}|[^{}]+|[{}]', m):
+        s = t.group(0)
+        if t.group(1) is not None:
+            if buf:
+                out.append((buf, stack[-1] if stack else None)); buf = ''
+            tg = t.group(1)
+            stack.append(_SYNC_T2C.get(tg) if tg not in ('+', '!') else (stack[-1] if stack else None))
+            continue
+        if s == '}':
+            if buf:
+                out.append((buf, stack[-1] if stack else None)); buf = ''
+            if stack:
+                stack.pop()
+            continue
+        buf += s
+    if buf:
+        out.append((buf, stack[-1] if stack else None))
+    res = []
+    for t, c in out:
+        if res and res[-1][1] == c:
+            res[-1] = (res[-1][0] + t, c)
+        else:
+            res.append((t, c))
+    return res
+
+
+def _sync_nw(s):
+    return re.sub(r'\s+', ' ', (s or '').replace('\xa0', ' ')).strip()
+
+
+SYNC_PS = ('רקע והסבר', 'רווח לפני', 'פיסקת תשובה')
+
+
+def sync_type(x):
+    """סוג פריט ביעד. ד"ה משנה, כותרת המשנה ושורות המשנה הם סוג אחד (M): הבנייה מציגה את כותרת
+    המשנה פעם כד"ה ופעם כשורה ראשונה, ושכבת הניקוד מחליפה את פיסוקה."""
+    if x.get('mk') or (x['t'] == 'L' and x.get('ps') == 'משניות'):
+        return 'M'
+    return x['t']
+
+
+def sync_key(t, text, ps=None):
+    p = _sync_nw(re.sub('[\u0591-\u05c7]', '', text or ''))
+    if t == 'M':
+        p = re.sub(r'^[א-ת]{1,2}\. ', '', p)
+        return t + ' ' + re.sub(r'[\s,.;:!?\'"\-\u2013\u2014()\[\]]+', '', p)
+    if t == 'L' and ps in SYNC_PS:
+        t = 'L/' + ps
+    if t in ('D', 'H'):
+        p = re.sub(r'^[א-ת]{1,2}\. ', '', p)
+    return t + ' ' + p
+
+
+def _sync_block_type(b):
+    if b['style'] in SYNC_SKIP:
+        return None
+    return SYNC_TYPE.get(b['style'], 'L')
+
+
+def _sync_block_text(b):
+    return ''.join(r['t'] for r in b['runs'] if r.get('cs') != NUMBER_STYLE)
+
+
+def sync_plan(blocks, lo, hi, target):
+    """מחזיר את הפסקאות שבטווח [lo, hi) שאפשר להשוות, ואת פעולות ההשוואה (difflib)."""
+    import difflib
+    have = [(b['i'], _sync_block_type(b)) for b in blocks[lo:hi]]
+    have = [(i, t) for i, t in have if t]
+    hk = [sync_key(t, _sync_block_text(blocks[i]), blocks[i]['style']) for i, t in have]
+    tk = [sync_key(sync_type(x), ''.join(s for s, _ in sync_runs(x['m'])), x.get('ps')) for x in target]
+    sm = difflib.SequenceMatcher(None, hk, tk, autojunk=False)
+    return have, hk, tk, sm.get_opcodes()
+
+
+def sync_to_target(path, masechet, ranges, log=print, dry=False):
+    """ranges: [(lo, hi, target)] - טווחי פסקאות בהמרה (lo כולל, hi לא כולל) ונוסח היעד של כל טווח.
+    מחזיר דוח. כישלון בשער: הקובץ אינו נוגע (Refused)."""
+    from copy import deepcopy
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    blocks = convert(path)
+    pmapd = dict(convert.last.get('pmap') or {})
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    styles_xml = z.read('word/styles.xml')
+    z.close()
+    sids = _style_ids(styles_xml)
+    ps_all = doc.find('w:body', ns).findall('w:p', ns)
+    pof = lambda i: ps_all[pmapd[i]]
+
+    # תבנית לכל סגנון פסקה: pPr ו-rPr של הריצה הפשוטה הראשונה
+    tmpl = {}
+    for b in blocks:
+        if b['style'] in tmpl:
+            continue
+        p = pof(b['i'])
+        ppr = p.find('w:pPr', ns)
+        rpr = None
+        for r in p.iter(W + 'r'):
+            rp = r.find('w:rPr', ns)
+            if rp is None or rp.find('w:rStyle', ns) is None:
+                rpr = rp
+                break
+        tmpl[b['style']] = (ppr, rpr)
+
+    def base_rpr(rp):
+        if rp is None:
+            return etree.Element(W + 'rPr')
+        rp = deepcopy(rp)
+        for tag in ('rStyle', 'b', 'bCs', 'color'):
+            for el in rp.findall('w:' + tag, ns):
+                rp.remove(el)
+        return rp
+
+    def make_runs(m, rpr0, mishna):
+        out = []
+        for text, cls in sync_runs(m):
+            if not text:
+                continue
+            rp = base_rpr(rpr0)
+            if cls and cls != 'b':
+                nm = (_SYNC_CS_MISHNA.get(cls) if mishna else None) or _SYNC_CS.get(cls)
+                if nm and nm in sids:
+                    st = etree.Element(W + 'rStyle'); st.set(W + 'val', sids[nm][0])
+                    rp.insert(0, st)
+            if cls == 'b':
+                rp.append(etree.Element(W + 'b')); rp.append(etree.Element(W + 'bCs'))
+            out.append(_mkrun(text, rp if len(rp) else None))
+        return out
+
+    id2name = {}
+    for st_ in etree.fromstring(styles_xml).findall('w:style', ns):
+        nm_ = st_.find('w:name', ns)
+        if nm_ is not None:
+            id2name[st_.get(W + 'styleId')] = nm_.get(W + 'val')
+
+    def rewrite(p, item, mishna):
+        """מחליף את תוכן הפסקה (שומר pPr, סימניות, ומספר קטע שבראשה)"""
+        keep_num = []
+        rpr0 = None
+        for r in p.iter(W + 'r'):
+            rp = r.find('w:rPr', ns)
+            st = rp.find('w:rStyle', ns) if rp is not None else None
+            nm = id2name.get(st.get(W + 'val')) if st is not None else None
+            if nm == NUMBER_STYLE and item['t'] in ('D', 'H') and not keep_num and _run_text(r).strip():
+                keep_num.append(deepcopy(r))
+            elif rpr0 is None and st is None and _run_text(r):
+                rpr0 = rp
+        rpr0 = deepcopy(rpr0) if rpr0 is not None else None
+        old_txt = ''.join(_run_text(r) for r in p.iter(W + 'r'))
+        if sync_type(item) == 'M' and not re.search('[\u05b0-\u05bc\u05c1\u05c2]', old_txt):
+            item = dict(item, m=re.sub('[\u0591-\u05c7]', '', item['m']))
+        for ch in list(p):
+            if ch.tag in (W + 'pPr', W + 'bookmarkStart', W + 'bookmarkEnd'):
+                continue
+            p.remove(ch)
+        for r in keep_num:
+            p.append(r)
+        for r in make_runs(item['m'], rpr0, mishna):
+            p.append(r)
+        if item['t'] == 'L':
+            want = item.get('ps') if item.get('ps') in SYNC_PS else None
+            ppr = p.find('w:pPr', ns)
+            cur = ppr.find('w:pStyle', ns) if ppr is not None else None
+            curname = id2name.get(cur.get(W + 'val')) if cur is not None else 'Normal'
+            if want and curname != want and want in sids:
+                if ppr is None:
+                    ppr = etree.Element(W + 'pPr'); p.insert(0, ppr)
+                if cur is None:
+                    cur = etree.Element(W + 'pStyle'); ppr.insert(0, cur)
+                cur.set(W + 'val', sids[want][0])
+            elif not want and curname in SYNC_PS and cur is not None:
+                cur.set(W + 'val', sids['Normal'][0] if 'Normal' in sids else 'Normal')
+
+    def new_para(item):
+        st = SYNC_NEW_STYLE.get(item['t']) or item.get('ps') or 'Normal'
+        if item['t'] == 'D':
+            st = 'משניות כותרת' if item.get('mk') else "ד''ה משנה"
+        if st not in tmpl:
+            st = 'Normal'
+        ppr, rpr = tmpl[st]
+        p = etree.Element(W + 'p')
+        if ppr is not None:
+            p.append(deepcopy(ppr))
+        for r in make_runs(item['m'], rpr, st.startswith('משני')):
+            p.append(r)
+        return p
+
+    rep = {'replaced': 0, 'deleted': 0, 'inserted': 0, 'ranges': []}
+    expect_keys = []
+    # מן הסוף להתחלה, כדי שמספרי הפסקאות שלפני לא יזוזו
+    for lo, hi, target in sorted(ranges, key=lambda x: -x[0]):
+        have, hk, tk, ops = sync_plan(blocks, lo, hi, target)
+        for op, a1, a2, b1, b2 in reversed(ops):
+            if op == 'equal':
+                continue
+            olds = [pof(have[k][0]) for k in range(a1, a2)]
+            news = target[b1:b2]
+            same_types = op == 'replace' and [have[k][1] for k in range(a1, a2)] == [sync_type(x) for x in news]
+            if same_types:
+                for k, item in zip(range(a1, a2), news):
+                    rewrite(pof(have[k][0]), item, blocks[have[k][0]]['style'].startswith('משני'))
+                    rep['replaced'] += 1
+                continue
+            # מקום ההוספה: לפני הפסקה הראשונה שנמחקת, או אחרי הפסקה האחרונה התואמת שלפני
+            if olds:
+                anchor, before = olds[0], True
+            elif a1 < len(have):
+                anchor, before = pof(have[a1][0]), True
+            else:
+                anchor, before = pof(have[a1 - 1][0]), False
+            newps = [new_para(x) for x in news]
+            if before:
+                for np_ in newps:
+                    anchor.addprevious(np_)
+            else:
+                for np_ in reversed(newps):
+                    anchor.addnext(np_)
+            for p in olds:
+                p.getparent().remove(p)
+            rep['deleted'] += len(olds); rep['inserted'] += len(newps)
+        rep['ranges'].append((lo, hi, len(target)))
+    if dry:
+        return rep
+    bk = backup(path, masechet)
+    tmp = tmp_path(path)
+    _rezip(path, tmp, {'word/document.xml': etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True)})
+    # השער: כל טווח נותן בדיוק את היעד, ושאר הקובץ לא זז
+    import difflib
+    after = convert(tmp)
+    bk_ = [(x['style'], x['text']) for x in blocks]
+    ak_ = [(x['style'], x['text']) for x in after]
+    sm = difflib.SequenceMatcher(None, bk_, ak_, autojunk=False)
+    mp = {}
+    bad = []
+    inr = lambda i: any(lo <= i < hi for lo, hi, _ in ranges)
+    for op, a1, a2, b1, b2 in sm.get_opcodes():
+        if op == 'equal':
+            for k in range(a2 - a1):
+                mp[a1 + k] = b1 + k
+        elif any(not inr(i) for i in range(a1, a2)) or (a1 == a2 and not (inr(a1) or inr(a1 - 1))):
+            bad.append('שינוי מחוץ לטווחים ליד פסקה %d' % a1)
+    for lo, hi, target in ranges:
+        if (lo > 0 and lo - 1 not in mp) or (hi < len(blocks) and hi not in mp):
+            bad.append('גבולות הטווח %d-%d זזו' % (lo, hi)); continue
+        a_lo = mp[lo - 1] + 1 if lo > 0 else 0
+        a_hi = mp[hi] if hi < len(blocks) else len(after)
+        have2, hk2, tk2, ops2 = sync_plan(after, a_lo, a_hi, target)
+        if hk2 != tk2:
+            diffs = [o for o in ops2 if o[0] != 'equal'][:3]
+            bad.append('הטווח %d-%d אינו זהה ליעד אחרי הכתיבה: %s' % (lo, hi, [
+                (o[0], hk2[o[1]:o[2]][:2], tk2[o[3]:o[4]][:2]) for o in diffs]))
+    if bad:
+        os.remove(tmp)
+        raise Refused('הסנכרון לא נכתב (הקובץ לא נגע): ' + ' | '.join(bad))
+    swap(tmp, path)
+    rep['backup'] = bk
+    log('סנכרון אל היעד: %d פסקאות נכתבו מחדש, %d נמחקו, %d נוספו. גיבוי: %s'
+        % (rep['replaced'], rep['deleted'], rep['inserted'], bk))
+    return rep
+
+
+
+
+def delete_paragraphs(path, masechet, picks, log=print):
+    """מחיקת שרידים (13.11.2026): picks = [(מספר פסקה בהמרה, הנוסח שבה)]. הנוסח נבדק לפני המחיקה,
+    והשער: ההמרה אחרי זהה לזו שלפני בלי הפסקאות האלה בלבד. בלי מעקב (הכרעת 12.11)."""
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    blocks = convert(path)
+    pmapd = dict(convert.last.get('pmap') or {})
+    for i, txt in picks:
+        if blocks[i]['text'] != txt:
+            raise Refused('פסקה %d אינה "%s" אלא "%s". לא נמחק דבר' % (i, txt, blocks[i]['text'][:40]))
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    z.close()
+    ps_all = doc.find('w:body', ns).findall('w:p', ns)
+    for i, _ in picks:
+        p = ps_all[pmapd[i]]
+        p.getparent().remove(p)
+    bk = backup(path, masechet)
+    tmp = tmp_path(path)
+    _rezip(path, tmp, {'word/document.xml': etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True)})
+    gone = {i for i, _ in picks}
+    want = [(b['style'], b['text']) for b in blocks if b['i'] not in gone]
+    got = [(b['style'], b['text']) for b in convert(tmp)]
+    if want != got:
+        os.remove(tmp)
+        raise Refused('מחיקת השרידים שינתה גם דבר אחר. הקובץ לא נגע')
+    swap(tmp, path)
+    log('נמחקו %d פסקאות שריד. גיבוי: %s' % (len(picks), bk))
+    return bk
+
+
+def set_paragraph_style(path, masechet, i, text, style, log=print):
+    """שינוי סגנון פסקה אחת, בלי מעקב (13.11.2026). הנוסח נבדק לפני, והשער: רק הסגנון של פסקה i השתנה."""
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    blocks = convert(path)
+    pmapd = dict(convert.last.get('pmap') or {})
+    if blocks[i]['text'] != text:
+        raise Refused('פסקה %d אינה "%s". לא שונה דבר' % (i, text))
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    sids = _style_ids(z.read('word/styles.xml'))
+    z.close()
+    if style not in sids:
+        raise Refused('אין בקובץ סגנון בשם %s' % style)
+    p = doc.find('w:body', ns).findall('w:p', ns)[pmapd[i]]
+    ppr = p.find('w:pPr', ns)
+    if ppr is None:
+        ppr = etree.Element(W + 'pPr'); p.insert(0, ppr)
+    st = ppr.find('w:pStyle', ns)
+    if st is None:
+        st = etree.Element(W + 'pStyle'); ppr.insert(0, st)
+    st.set(W + 'val', sids[style][0])
+    bk = backup(path, masechet)
+    tmp = tmp_path(path)
+    _rezip(path, tmp, {'word/document.xml': etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True)})
+    after = convert(tmp)
+    want = [(b['style'] if b['i'] != i else style, b['text']) for b in blocks]
+    if [(b['style'], b['text']) for b in after] != want:
+        os.remove(tmp)
+        raise Refused('שינוי הסגנון שינה גם דבר אחר. הקובץ לא נגע')
+    swap(tmp, path)
+    log('פסקה %d קיבלה את הסגנון %s. גיבוי: %s' % (i, style, bk))
+    return bk
+
+
+def move_paragraph(path, masechet, i, text, after_i, after_text, style=None, log=print):
+    """מעביר פסקה אחת אל אחרי פסקה אחרת (ואפשר גם לקבוע את סגנונה), בלי מעקב (13.11.2026).
+    השער: אותן פסקאות בדיוק, ורק הפסקה הזאת זזה (ושינתה סגנון אם ביקשו)."""
+    if is_open_in_word(path) and not wait_free(path, log=log):
+        raise Refused('הקובץ פתוח בוורד ולא התפנה')
+    blocks = convert(path)
+    pmapd = dict(convert.last.get('pmap') or {})
+    if blocks[i]['text'] != text or blocks[after_i]['text'] != after_text:
+        raise Refused('הפסקאות אינן כמצופה. לא הועבר דבר')
+    z = zipfile.ZipFile(path)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    sids = _style_ids(z.read('word/styles.xml'))
+    z.close()
+    ps_all = doc.find('w:body', ns).findall('w:p', ns)
+    p, q = ps_all[pmapd[i]], ps_all[pmapd[after_i]]
+    if style:
+        ppr = p.find('w:pPr', ns)
+        if ppr is None:
+            ppr = etree.Element(W + 'pPr'); p.insert(0, ppr)
+        st = ppr.find('w:pStyle', ns)
+        if st is None:
+            st = etree.Element(W + 'pStyle'); ppr.insert(0, st)
+        st.set(W + 'val', sids[style][0])
+    p.getparent().remove(p)
+    q.addnext(p)
+    bk = backup(path, masechet)
+    tmp = tmp_path(path)
+    _rezip(path, tmp, {'word/document.xml': etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True)})
+    order = [b for b in blocks if b['i'] != i]
+    k = next(n for n, b in enumerate(order) if b['i'] == after_i)
+    order.insert(k + 1, dict(blocks[i], style=style or blocks[i]['style']))
+    if [(b['style'], b['text']) for b in convert(tmp)] != [(b['style'], b['text']) for b in order]:
+        os.remove(tmp)
+        raise Refused('ההעברה שינתה גם דבר אחר. הקובץ לא נגע')
+    swap(tmp, path)
+    log('פסקה %d הועברה אל אחרי פסקה %d. גיבוי: %s' % (i, after_i, bk))
+    return bk
+
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('--file', required=True)

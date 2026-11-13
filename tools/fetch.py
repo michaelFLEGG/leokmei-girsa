@@ -37,7 +37,7 @@ def download(file_id):
             data = get(url + '&confirm=' + m.group(1).decode())
     return data
 
-def sync(folder_id, fallback, dest, exts, roster=None):
+def sync(folder_id, fallback, dest, exts, roster=None, gate=None):
     os.makedirs(dest, exist_ok=True)
     listed = list_folder(folder_id)
     files = listed or fallback
@@ -58,13 +58,34 @@ def sync(folder_id, fallback, dest, exts, roster=None):
             print('download failed', name, e); continue
         old = open(path, 'rb').read() if os.path.exists(path) else b''
         if hashlib.md5(old).digest() != hashlib.md5(data).digest():
+            # 13.11.2026: במסכת שעברה לענן הוורד שבמאגר הוא המקור. הקובץ מהדרייב נלקח רק
+            # כשהוא כבר נושא כל מה שהענן כתב (docs/וורד-אחד-בענן.md); אחרת הוא מפגר ונשאר בחוץ.
+            if gate is not None and old and not gate(name, data):
+                continue
             open(path, 'wb').write(data); changed = True
             print('updated', name, len(data))
     return changed
 
+def cloud_gate(name, data):
+    """מסכת שבענן (data/word-cloud.json): האם הקובץ מהדרייב השיג את הוורד שבמאגר.
+    שגיאה בבדיקה = לא נלקח (הוורד שבמאגר נשמר), ונאמר בקול."""
+    try:
+        cfg = json.load(open(os.path.join(ROOT, 'data', 'word-cloud.json'), encoding='utf-8'))
+    except Exception:
+        return True
+    if not cfg.get('slugs'):
+        return True
+    try:
+        import cloud_word
+        return cloud_word.drive_caught_up(name, data)
+    except BaseException as e:
+        print('אזהרה: בדיקת הוורד מהדרייב מול המאגר נכשלה (%s). הוורד שבמאגר נשמר.' % e)
+        return False
+
+
 if __name__ == '__main__':
     c1 = sync(SRC['docx_folder'], SRC['fallback_files'], os.path.join(ROOT, 'input', 'docx'), ('.docx',),
-              roster=os.path.join(ROOT, 'input', 'current-docx.json'))
+              roster=os.path.join(ROOT, 'input', 'current-docx.json'), gate=cloud_gate)
     c2 = sync(SRC['fonts_folder'], SRC['fallback_fonts'], os.path.join(ROOT, 'input', 'fonts'), ('.otf', '.ttf'))
     # עריכות המנהל מנקודת הקליטה: נאפות לנתוני האתר בכל בנייה של השומר
     try:

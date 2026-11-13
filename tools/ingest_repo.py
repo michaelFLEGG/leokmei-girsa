@@ -54,6 +54,32 @@ def remote_edits(repo):
             docs.append((f, json.loads(out)))
         except Exception as e:
             print('אזהרה: קובץ תיקונים פגום -', f, e)
+    # 13.11.2026: במסכת שעברה לענן הוורד שבמאגר הוא המקור, ועריכה שנכתבה אליו יוצאת מן
+    # data/edits מיד. כדי שגם הקובץ החי שבמחשב יקבל אותה, היא נקראת מארכיון הקליטה של
+    # הענן; יומן הקליטה מונע כתיבה כפולה. (docs/וורד-אחד-בענן.md)
+    code, out, _ = git(repo, 'ls-tree', '--name-only', REMOTE, 'data/word-cloud/ingested/')
+    for f in ([l.strip() for l in out.splitlines() if l.strip().endswith('.json')] if not code else []):
+        code, txt, _ = git(repo, 'show', REMOTE + ':' + f)
+        try:
+            a = json.loads(txt) if not code else None
+        except Exception as e:
+            print('אזהרה: ארכיון קליטה פגום -', f, e)
+            a = None
+        if not a:
+            continue
+        eds = [e for e in a.get('edits') or [] if not e.get('dup') and not e.get('noop')]
+        if not eds:
+            continue
+        hit = next((d for _f, d in docs if d.get('slug') == a.get('slug')
+                    or (a.get('masechet') and d.get('masechet') == a.get('masechet'))), None)
+        if hit is None:
+            docs.append((f, {'v': 1, 'slug': a.get('slug'), 'masechet': a.get('masechet'),
+                             'sty': a.get('sty'), 'edits': sorted(eds, key=lambda e: e.get('t') or 0)}))
+            continue
+        have = {(e.get('k'), e.get('t')) for e in hit.get('edits') or []}
+        hit['edits'] = sorted((hit.get('edits') or []) + [e for e in eds if (e.get('k'), e.get('t')) not in have],
+                              key=lambda e: e.get('t') or 0)
+        hit['sty'] = hit.get('sty') or a.get('sty')
     return docs
 
 

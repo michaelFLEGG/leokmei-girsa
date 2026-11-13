@@ -23,6 +23,7 @@ def strip(v):
     return v
 
 def main():
+    os.makedirs(OUT, exist_ok=True)
     log = []
     dp = os.path.join(OUT, 'decide.json')
     if os.path.exists(dp):

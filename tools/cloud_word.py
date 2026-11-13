@@ -245,7 +245,8 @@ def layer(slug, masechet, srv):
     edits, gone = dedup(edits)
     sty = rep.get('sty') or (srv or {}).get('sty')
     doc = {'v': 1, 'slug': slug, 'masechet': masechet, 'sty': sty, 'edits': edits}
-    return rep, doc, gone
+    raw = dict(doc, edits=sorted(edits + gone, key=lambda e: e.get('t') or 0))
+    return rep, doc, gone, raw
 
 
 def ingest_one(slug, dry, log=print):
@@ -253,7 +254,7 @@ def ingest_one(slug, dry, log=print):
     masechet = masechet_of_slug(slug)
     path = docx_of(masechet)
     srv = server_doc(slug)
-    rep, doc, gone = layer(slug, masechet, srv)
+    rep, doc, gone, raw = layer(slug, masechet, srv)
     rec = {'when': now_iso(), 'slug': slug, 'file': os.path.basename(path), 'layer': len(doc['edits']),
            'dups': len(gone), 'server': srv is not None}
     if not doc['edits'] and not gone:
@@ -262,7 +263,10 @@ def ingest_one(slug, dry, log=print):
     log('--- %s: %d עריכות בשכבה (%d כפולות הוסרו), %s' % (
         masechet, len(doc['edits']), len(gone), 'עם השרת' if srv is not None else 'בלי השרת (אין מפתח)'))
     old_sha = sha(path)
-    pa, sa, _ = view(path, slug, masechet, doc)
+    # מה שהמנהל רואה - עם הכפילויות, כפי שהן באמת (13.11.2026: בברכות, סוכה ושבת הסרתן
+    # משנה את הדף, ולכן השער משווה תמיד אל השכבה כפי שהיא, ולא אל השכבה המנוקה)
+    pa, sa_raw, _ = view(path, slug, masechet, raw)
+    sa = view(path, slug, masechet, doc)[1] if gone else sa_raw
     log('   מה שהמנהל רואה: %s' % json.dumps({k: sa.get(k) for k in ('n', 'done', 'taken', 'lost')}, ensure_ascii=False))
     work = os.path.join(WORK, os.path.basename(path))
     shutil.copyfile(path, work)

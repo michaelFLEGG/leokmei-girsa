@@ -1,0 +1,4 @@
+עמדה: ענן
+משימה: וורד אחד בענן - קליטת עריכות האתר לוורד שבמאגר, ותיקון ההחלה הכפולה
+תחום: tools/cloud_word.py, tools/ingest_repo.py, tools/fetch.py, tools/build_site.py (liveLoad, mergeIn), worker/leokmei-suggest (getEdits), .github/workflows/word-cloud.yml, data/word-cloud*, data/edits (הסרת כפילויות)
+שעה: 13.11.2026 17:03

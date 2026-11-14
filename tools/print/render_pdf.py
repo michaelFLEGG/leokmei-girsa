@@ -131,7 +131,11 @@ def main():
 
     with sync_playwright() as p:
         # PRINT_CHROMIUM: נתיב לדפדפן מותקן (כשגרסת playwright אינה תואמת לדפדפן שבמחשב)
-        b = p.chromium.launch(executable_path=os.environ.get('PRINT_CHROMIUM') or None)
+        # 14.11.2026: בלי הדגל הזה Chromium מעגל את רוחב כל אות לפיקסל שלם (hinting) ומציב כך את האותיות
+        # בקובץ. באותיות קטנות (הסבר, תוספות) זה יצר רווחים לא אחידים בתוך המילים: חלק מן האותיות
+        # צמודות וחלקן מרוחקות. עם hinting=none הרוחבים הם הרוחבים האמיתיים של הגופן.
+        b = p.chromium.launch(executable_path=os.environ.get('PRINT_CHROMIUM') or None,
+                              args=['--font-render-hinting=none'])
         ctx = b.new_context(viewport={'width': 794, 'height': 1123})
         ctx.route('**/*', handler)
         page = ctx.new_page()

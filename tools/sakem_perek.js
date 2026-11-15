@@ -696,8 +696,10 @@
     if(!(typeof isAdmin==='function'&&isAdmin()))return;
     const ps=$('#peresel');let d=$('#skpdup'),n=$('#skpnext');
     const after=$('#skptag')||$('#skpbtn')||ps;
-    if(!d&&after){d=document.createElement('button');d.id='skpdup';d.type='button';d.className='skpbtn skptop';d.onclick=e=>{e.stopPropagation();sktDupGo()};after.after(d)}
-    if(!n&&d&&skpOK()){n=document.createElement('button');n.id='skpnext';n.type='button';n.className='skpbtn skptop';n.onclick=e=>{e.stopPropagation();sktNext()};d.after(n)}
+    /* פרומפט 42 (15.11.2026, הכרעת בעל הפרויקט): הכפתור "שורות כפולות" יצא מן הסרגל. כפולה היא טעות שהמנגנון מנקה לבד
+       (tools/dedup_lines.py בקליטה לוורד), והבדיקה נשארת שער פנימי (window.skpTop.state().dups) */
+    if(d){d.remove();d=null}
+    if(!n&&after&&skpOK()){n=document.createElement('button');n.id='skpnext';n.type='button';n.className='skpbtn skptop';n.onclick=e=>{e.stopPropagation();sktNext()};after.after(n)}
     /* פרומפט 40: בסרגל סמליל קטן עם מונה; הכיתוב המלא בריחוף ובקורא המסך */
     if(d){const {L,ds}=sktDups();d.textContent='≡ '+ds.length;d.setAttribute('aria-label','שורות כפולות '+ds.length);d.classList.toggle('off',!ds.length);
       d.title='שורות כפולות · '+(L.inGhost?'בשדה ההצעה הפתוח':'בפרק הנוכחי')+': '+(ds.length?ds.length+' שורות כפולות או כמעט כפולות. לחיצה קופצת לבאה':'אין שורות כפולות');

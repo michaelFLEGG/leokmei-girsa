@@ -308,6 +308,18 @@ def ingest_one(slug, dry, log=print):
     log('   אחרי הכתיבה: %s; %d בלי ביטוי בוורד; זהה למה שהמנהל רואה: %s; הוורד לבדו זהה: %s; כפילויות צמודות %d -> %d' % (
         json.dumps(rec['after'], ensure_ascii=False), len(noop), 'כן' if pb == pa else 'לא',
         'כן' if pc == pa else 'לא', dups0, dups1))
+    # פרומפט 43 (15.11.2026): הקליטה לעולם אינה משאירה כותרת צד ישנה כשורה רגילה ("והך:" יתום). אותה בדיקה של סכם בדף
+    try:
+        import sakem_audit
+        orph0, orph1 = sakem_audit.orphan_count(pa), sakem_audit.orphan_count(pb)
+    except Exception as e:
+        orph0 = orph1 = 0
+        log('   אזהרה: בדיקת השורות היתומות לא רצה: %s' % e)
+    rec.update({'orphans_before': orph0, 'orphans_after': orph1})
+    if orph1 > orph0:
+        log('   השער נכשל: הקליטה הוסיפה %d שורות דובר יתומות. הוורד לא נשמר.' % (orph1 - orph0))
+        rec['gate'] = 'נכשל'
+        return rec
     if pb != pa or dups1 > dups0:
         rec['gate'] = 'נכשל'
         log('   השער נכשל: הוורד לא נשמר והשכבה לא נגעה.')

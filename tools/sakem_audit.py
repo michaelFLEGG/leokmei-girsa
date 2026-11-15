@@ -65,17 +65,17 @@ def live_tokens(units):
     """רצף הדף: לכל יחידת גמרא/משנה - כותרות הצד שלה ואחריהן השורות"""
     out = []
     for u in units:
-        if u['k'] not in ('u', 'm'):
-            if u['k'] in ('nose', 'dh'):
-                out.append(('H', norm(u.get('a')), u['daf'], u['id'], -1))
+        if u.get('k') not in ('u', 'm'):
+            if u.get('k') in ('nose', 'dh'):
+                out.append(('H', norm(u.get('a')), u.get('daf'), u.get('id'), -1))
             continue
         w = u.get('a') if u['k'] == 'u' else u.get('w')
         for t in re.split(r'<br\s*/?>', w or '', flags=re.I):
             t = norm(t)
             if t:
-                out.append(('S', t, u['daf'], u['id'], 0))
+                out.append(('S', t, u.get('daf'), u.get('id'), 0))
         for j, l in enumerate(u.get('l') or []):
-            out.append(('L', norm(l[1]), u['daf'], u['id'], j + 1))
+            out.append(('L', norm(l[1]), u.get('daf'), u.get('id'), j + 1))
     return out
 
 
@@ -155,6 +155,27 @@ def audit(slug, units, decisions):
             gen.append({'slug': slug, 'daf': daf, 'type': 'כללי: שורה שכולה דובר ונקודתיים, בסוף יחידה', 'text': t, 'unit': uid, 'li': li,
                         'next': (nxt[1] if nxt else '')})
     return found, gen, stats
+
+
+def orphan_count(pages_json):
+    """שער (cloud_word, פרומפט 43): כמה שורות רגילות שכולן מילת דובר ונקודתיים עומדות בסוף יחידה (כמו "והך:" יתום)
+    בנתונים המנורמלים של view(). הקליטה לוורד לעולם אינה מוסיפה כאלה"""
+    pages = json.loads(pages_json) if isinstance(pages_json, str) else pages_json
+    if isinstance(pages, dict):
+        pages = pages.get('pages') or []
+    units = []
+    for p in pages or []:
+        for u in (p.get('units') or []):
+            u = dict(u)
+            u.setdefault('daf', p.get('daf'))
+            units.append(u)
+    T = live_tokens(units)
+    n = 0
+    for i, (k, t, daf, uid, li) in enumerate(T):
+        nxt = T[i + 1] if i + 1 < len(T) else None
+        if k == 'L' and SPEAKER.match(t) and len(t) <= 26 and (not nxt or nxt[0] == 'S' or nxt[3] != uid or nxt[4] == 0):
+            n += 1
+    return n
 
 
 def main():

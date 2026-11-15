@@ -34,6 +34,71 @@
     "flagged": 0,
     "questions": 25
    }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-15T06:39:57Z",
+   "unc_done": true,
+   "handoff_units": [
+    "meilah-p03-u01",
+    "meilah-p03-u02",
+    "meilah-p03-u03"
+   ],
+   "result": {
+    "generated": 68,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 42
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-15T06:39:58Z",
+   "unc_done": true,
+   "handoff_units": [
+    "meilah-p04-u01",
+    "meilah-p04-u02"
+   ],
+   "result": {
+    "generated": 50,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 28
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-15T06:39:58Z",
+   "unc_done": true,
+   "handoff_units": [
+    "meilah-p05-u01",
+    "meilah-p05-u02"
+   ],
+   "result": {
+    "generated": 33,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 21
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-15T06:39:58Z",
+   "unc_done": true,
+   "handoff_units": [
+    "meilah-p06-u01",
+    "meilah-p06-u02"
+   ],
+   "result": {
+    "generated": 27,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 12
+   }
   }
  },
  "created": "2026-11-10T18:39:38Z",
@@ -49,7 +114,32 @@
    "mean": 0.399,
    "n": 5,
    "at": "2026-11-10T18:39:38Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.308,
+   "n": 6,
+   "at": "2026-11-15T06:39:57Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.33,
+   "n": 4,
+   "at": "2026-11-15T06:39:57Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.321,
+   "n": 3,
+   "at": "2026-11-15T06:39:58Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.302,
+   "n": 3,
+   "at": "2026-11-15T06:39:58Z"
   }
  ],
- "updated": "2026-11-10T18:39:39Z"
+ "updated": "2026-11-15T06:39:58Z",
+ "done": "2026-11-15T06:39:58Z"
 }

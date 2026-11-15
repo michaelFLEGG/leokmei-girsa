@@ -1,0 +1,59 @@
+{
+ "slug": "shevuot",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-15T06:39:58Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shevuot-p01-u01",
+    "shevuot-p01-u02",
+    "shevuot-p01-u03",
+    "shevuot-p01-u04",
+    "shevuot-p01-u05",
+    "shevuot-p01-u06",
+    "shevuot-p01-u07"
+   ],
+   "result": {
+    "generated": 164,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 133
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-15T06:39:59Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shevuot-p02-u01",
+    "shevuot-p02-u02",
+    "shevuot-p02-u03"
+   ],
+   "result": {
+    "generated": 58,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 45
+   }
+  }
+ },
+ "created": "2026-11-15T06:39:58Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.431,
+   "n": 13,
+   "at": "2026-11-15T06:39:58Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.292,
+   "n": 5,
+   "at": "2026-11-15T06:39:58Z"
+  }
+ ],
+ "updated": "2026-11-15T06:39:59Z"
+}

@@ -4692,7 +4692,8 @@
    "at": "2026-11-11T00:39:17Z",
    "ntos": 24,
    "flagged": 0,
-   "cal": 0.441
+   "cal": 0.441,
+   "published": "2026-11-15T06:39:57Z"
   },
   "meilah-p03-u02": {
    "ok": true,
@@ -4700,7 +4701,8 @@
    "at": "2026-11-11T00:39:17Z",
    "ntos": 25,
    "flagged": 0,
-   "cal": 0.295
+   "cal": 0.295,
+   "published": "2026-11-15T06:39:57Z"
   },
   "keritot-p03-u03": {
    "ok": true,
@@ -4710,6 +4712,183 @@
    "flagged": 0,
    "cal": 0.472,
    "published": "2026-11-11T12:40:29Z"
+  },
+  "meilah-p03-u03": {
+   "ok": true,
+   "done_at": "2026-11-14T22:28:55Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 19,
+   "flagged": 0,
+   "cal": 0.188,
+   "published": "2026-11-15T06:39:57Z"
+  },
+  "meilah-p04-u01": {
+   "ok": true,
+   "done_at": "2026-11-14T22:32:53Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.419,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "meilah-p04-u02": {
+   "ok": true,
+   "done_at": "2026-11-14T22:34:34Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.24,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "meilah-p05-u01": {
+   "ok": true,
+   "done_at": "2026-11-14T22:35:09Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.415,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "meilah-p05-u02": {
+   "ok": true,
+   "done_at": "2026-11-15T00:25:42Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 9,
+   "flagged": 0,
+   "cal": 0.135,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "meilah-p06-u01": {
+   "ok": true,
+   "done_at": "2026-11-15T00:30:20Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.325,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "meilah-p06-u02": {
+   "ok": true,
+   "done_at": "2026-11-15T00:28:51Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 2,
+   "flagged": 0,
+   "cal": 0.256,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "shevuot-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-15T00:32:04Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 28,
+   "flagged": 0,
+   "cal": 0.75,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "shevuot-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-15T02:33:14Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 25,
+   "flagged": 1,
+   "cal": 0.571,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "shevuot-p01-u03": {
+   "ok": true,
+   "done_at": "2026-11-15T02:36:45Z",
+   "at": "2026-11-15T06:39:56Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.173,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "shevuot-p01-u04": {
+   "ok": true,
+   "done_at": "2026-11-15T02:39:07Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 29,
+   "flagged": 0,
+   "cal": 0.464,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "shevuot-p01-u05": {
+   "ok": true,
+   "done_at": "2026-11-15T02:40:51Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.27,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "shevuot-p01-u06": {
+   "ok": true,
+   "done_at": "2026-11-15T04:35:29Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.476,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "shevuot-p01-u07": {
+   "ok": true,
+   "done_at": "2026-11-15T04:32:10Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 11,
+   "flagged": 0,
+   "cal": 0.2,
+   "published": "2026-11-15T06:39:58Z"
+  },
+  "shevuot-p02-u01": {
+   "ok": true,
+   "done_at": "2026-11-15T04:35:29Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 27,
+   "flagged": 0,
+   "cal": 0.435,
+   "published": "2026-11-15T06:39:59Z"
+  },
+  "shevuot-p02-u02": {
+   "ok": true,
+   "done_at": "2026-11-15T04:36:46Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 28,
+   "flagged": 0,
+   "cal": 0.185,
+   "published": "2026-11-15T06:39:59Z"
+  },
+  "shevuot-p02-u03": {
+   "ok": true,
+   "done_at": "2026-11-15T06:31:17Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 3,
+   "flagged": 0,
+   "cal": 0.217,
+   "published": "2026-11-15T06:39:59Z"
+  },
+  "shevuot-p03-u01": {
+   "ok": true,
+   "done_at": "2026-11-15T06:31:17Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 28,
+   "flagged": 0,
+   "cal": 0.181
+  },
+  "shevuot-p03-u02": {
+   "ok": true,
+   "done_at": "2026-11-15T06:34:31Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 29,
+   "flagged": 1,
+   "cal": 0.604
+  },
+  "shevuot-p03-u03": {
+   "ok": true,
+   "done_at": "2026-11-15T06:37:00Z",
+   "at": "2026-11-15T06:39:57Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.197
   }
  },
  "files": {

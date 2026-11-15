@@ -6131,7 +6131,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      שהתקבל ---- */
   async function netInit(force){
     if(isAdmin()&&admKey()){
-      await syncNow();queueLoad();
+      await syncNow();window.__LGSYNC=Date.now();queueLoad();   /* פרומפט 36: בדיקת ההתיישנות של סכם ממתינה לזה */
       clearInterval(QQTIMER);QQTIMER=setInterval(queueLoad,60000);
       return}
     if(isAdmin())return;

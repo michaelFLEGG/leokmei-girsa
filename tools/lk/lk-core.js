@@ -22,7 +22,7 @@
   var SLUGS = /^(avodah-zarah|bava-batra|bava-kamma|bava-metzia|beitzah|bekhorot|berakhot|chagigah|chullin|eruvin|gittin|horayot|ketubot|kiddushin|makkot|megillah|moed-katan|nazir|nedarim|niddah|pesachim|rosh-hashanah|sanhedrin|shabbat|shevuot|sotah|sukkah|taanit|temurah|yevamot|yoma|zevachim|meilah|keritot|arakhin|tamid|kinnim|midot|menachot|temura)$/;
   var TYPES = { '': 'home', 'index': 'home', 'shas': 'shas', 'masechtot': 'masechtot', 'yomi': 'yomi', 'hadaf-hayomi': 'yomi-static', 'lamed': 'lamed',
     'quiz': 'quiz', 'shiurim': 'shiurim', 'about': 'about', 'settings': 'settings', 'done': 'done', 'admin-lamdim': 'admin', 'admin-quiz': 'admin', 'mekorot': 'mekorot',
-    'masechet': 'masechet-shell', 'admin-texts': 'admin-texts', 'admin-stats': 'admin-stats', 'privacy': 'privacy' };
+    'masechet': 'masechet-shell', 'admin-texts': 'admin-texts', 'admin-stats': 'admin-stats', 'admin-sakem': 'admin', 'privacy': 'privacy' };
   var TYPE_HE = { home: 'בית', shas: 'מפת הש"ס', masechtot: 'רשימת מסכתות', yomi: 'הדף היומי', 'yomi-static': 'הדף היומי (סטטי)', lamed: 'המקום שלי', quiz: 'בחן את עצמך',
     shiurim: 'שיעורים', about: 'אודות', settings: 'הגדרות', done: 'סיום מסכת', admin: 'מנהל', 'admin-stats': 'נתוני גלישה', mekorot: 'מקורות', 'masechet-shell': 'מסכת', gemara: 'דף גמרא', 'daf-static': 'דף גמרא (סטטי)',
     privacy: 'פרטיות', other: 'אחר' };
@@ -38,6 +38,18 @@
   };
   LK.typeHe = function (t) { return TYPE_HE[t] || t; };
   var PT = LK.pageType();
+  /* פרומפט 36 (15.11.2026): בדף הבית, במכשיר מנהל בלבד - קישור ללוח "מה מוכן לי" של סכם */
+  if (LK.isAdminDevice() && PT.type === 'home') {
+    var homeLink = function () {
+      if (D.getElementById('lk-sakem-home')) return;
+      var a = D.createElement('a');
+      a.id = 'lk-sakem-home'; a.href = '/admin-sakem.html'; a.textContent = 'מה מוכן לי';
+      a.title = 'למנהל: הפרקים שסכם הכין, לפי מסכת';
+      a.style.cssText = 'position:fixed;bottom:14px;left:14px;z-index:60;padding:7px 16px;border-radius:999px;border:1px solid #8f6a1e;background:#0f263b;color:#f5e3a8;font:700 15px/1.3 "Frank Ruhl Libre",serif;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.35)';
+      D.body.appendChild(a);
+    };
+    if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', homeLink); else homeLink();
+  }
   LK.scopeOf = function (el) {
     return (el && el.closest && el.closest('.lm-top,footer,.lm-foot,#lk-priv')) ? 'site' : PT.type;
   };

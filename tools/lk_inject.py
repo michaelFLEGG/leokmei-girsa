@@ -53,6 +53,7 @@ def build_assets(site):
     _write(os.path.join(site, 'admin-stats.html'), _read(os.path.join(LK, 'admin-stats.html')))
     _write(os.path.join(site, 'admin-sakem-cmp.html'), _read(os.path.join(LK, 'admin-sakem-cmp.html')))
     _write(os.path.join(site, 'admin-sakem-learn.html'), _read(os.path.join(LK, 'admin-sakem-learn.html')))
+    _write(os.path.join(site, 'admin-sakem.html'), _read(os.path.join(LK, 'admin-sakem.html')))   # פרומפט 36: "מה מוכן לי"
     reg = os.path.join(LK, 'texts-registry.json')
     if os.path.exists(reg):
         shutil.copy(reg, os.path.join(site, 'lk-texts.json'))

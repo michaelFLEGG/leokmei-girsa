@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>מה מוכן לי · לאוקמי גירסא</title>
+<!-- דף למנהל בלבד (פרומפט 36, 15.11.2026): כל עבודות סכם לפי מסכת ופרק, ומה מוכן לסקירה - למעלה ובולט.
+     הנתונים מן השרת (/sakem/jobs, במפתח המנהל שבמכשיר). "סקור" פותח את דף המסכת ישר בסקירה,
+     במקום הראשון שלא הוכרע. בלי סקריפטים וגופנים מבחוץ: הכול מן האתר עצמו (נטפרי). -->
+<style>
+@font-face { font-family: LGVilnaXB; src: url(/fonts/vilna-xb.woff2) format("woff2"); font-display: swap; }
+:root { --velvet:#0f263b; --velvet2:#173a58; --gold:#e9c35a; --gold2:#8f6a1e; --paper:#f7f3ea; --ink:#1d1a16; --ink2:#6a5f4d; --line:#d8cdb4; --ok:#1f5a2c; }
+* { box-sizing: border-box; }
+html { background:#060f18; }
+body { margin:0; min-height:100vh; color:var(--ink); font:17px/1.6 "Frank Ruhl Libre", Frank, "David", serif;
+  background: radial-gradient(ellipse 80% 60% at 50% 20%, #102a42, #091827 55%, #060f18); background-color:#060f18; }
+header { background:#0b1c2a; border-bottom:1px solid var(--gold2); color:var(--gold); padding:8px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+header a { color:var(--gold); text-decoration:none; font-weight:700; }
+header .lg { font:400 24px/1.1 LGVilnaXB, serif; }
+main { max-width:900px; margin:20px auto 40px; padding:18px 22px 30px; background:var(--paper); border-radius:6px;
+  box-shadow:0 0 0 1px var(--gold2), 0 0 0 5px var(--velvet), 0 0 0 6px rgba(209,162,58,.55), 0 10px 26px rgba(0,0,0,.5); }
+h1 { font:400 32px/1.2 LGVilnaXB, serif; margin:.1em 0 .2em; color:var(--velvet); }
+h2 { font-size:21px; margin:1.2em 0 .3em; border-bottom:1px solid var(--line); color:#5a4a2a; }
+.sub { color:var(--ink2); font-size:15px; margin:0 0 10px; }
+.bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:8px 0 4px; font-size:15px; }
+select { font:inherit; font-size:15px; padding:2px 8px; border:1px solid var(--gold2); border-radius:6px; background:#fff; color:var(--ink); }
+table { width:100%; border-collapse:collapse; font-size:16px; }
+th { text-align:right; font-size:14px; color:var(--ink2); font-weight:600; border-bottom:1px solid var(--line); padding:4px 6px; }
+td { border-bottom:1px solid #e7dfcc; padding:6px; vertical-align:middle; }
+tr.ready td { font-weight:700; }
+tr.ready td.st { color:var(--ok); }
+@media (min-width:760px) { td.st { white-space:nowrap; } }
+tr.done td { color:var(--ink2); }
+td.dt { white-space:nowrap; color:var(--ink2); font-size:14px; font-weight:400; }
+a.go { display:inline-block; padding:4px 16px; border-radius:999px; border:1px solid var(--gold2); background:var(--velvet); color:#f5e3a8; font-weight:700; text-decoration:none; white-space:nowrap; }
+a.go:hover { background:var(--velvet2); color:#fff3c4; }
+a.go.soft { background:transparent; color:var(--velvet); border-color:var(--line); font-weight:400; }
+.readybox { border:1px solid var(--gold2); border-radius:8px; padding:6px 12px 10px; margin:10px 0 6px; background:#fff; }
+.readybox h2 { margin-top:.3em; color:var(--ok); border-bottom-color:#cfe0d0; }
+.empty { color:var(--ink2); font-size:15px; }
+.err { color:#a3261a; }
+.mas { font-weight:700; }
+@media (max-width:640px) { main { margin:10px 6px 30px; padding:12px 12px 24px; } td.dt, th.dt { display:none; } table { font-size:15px; } }
+</style>
+</head>
+<body>
+<header><a class="lg" href="/">לאוקמי גירסא</a><a href="/admin-sakem-learn.html">מה סכם למד</a></header>
+<main>
+  <h1>מה מוכן לי</h1>
+  <p class="sub" id="sub">טוען...</p>
+  <div class="bar" id="bar" hidden><label>מסכת: <select id="mas"><option value="">כל המסכתות</option></select></label></div>
+  <div id="list"></div>
+</main>
+<script src="/hdate.js"></script>
+<script>
+(function () {
+  var API = 'https://leokmei-suggest.m7654301.workers.dev';
+  function key() { try { return localStorage.getItem('lg-adm') || ''; } catch (e) { return ''; } }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var NAMES = { 'shabbat': 'שבת', 'berakhot': 'ברכות', 'sukkah': 'סוכה', 'ketubot': 'כתובות', 'kiddushin': 'קידושין', 'bava-batra': 'בבא בתרא',
+    'bekhorot': 'בכורות', 'eruvin': 'עירובין', 'pesachim': 'פסחים', 'beitzah': 'ביצה', 'megillah': 'מגילה', 'gittin': 'גיטין', 'bava-kamma': 'בבא קמא', 'bava-metzia': 'בבא מציעא' };
+  var ORDER = ['berakhot', 'shabbat', 'eruvin', 'pesachim', 'sukkah', 'beitzah', 'megillah', 'ketubot', 'gittin', 'kiddushin', 'bava-kamma', 'bava-metzia', 'bava-batra', 'bekhorot'];
+  function mname(x) {
+    if (NAMES[x.slug]) return NAMES[x.slug];
+    var m = /^(.+?) (פרק|דף)/.exec(x.title || '');
+    return m ? m[1] : x.slug;
+  }
+  function day(t) { try { return window.HD ? HD.date(t) : ''; } catch (e) { return ''; } }
+  var RANK = { ready: 0, work: 1, sent: 2, wait: 2, done: 3 };
+  function stText(x) {
+    if (x.st === 'ready') return 'מוכן לסקירה - הוכרעו ' + (x.dec || 0) + ' מתוך ' + (x.shown || 0);
+    if (x.st === 'work') return 'בעבודה ' + (x.n || 0) + ' מתוך ' + (x.total || '?');
+    if (x.st === 'wait' || x.st === 'sent') return 'ממתין לסכם';
+    if (x.st === 'done') return 'נסקר';
+    return x.st || '';
+  }
+  function name(x) {
+    var t = String(x.title || x.jid);
+    var n = mname(x);
+    if (t.indexOf(n + ' ') === 0) t = t.slice(n.length + 1);
+    return t;
+  }
+  function href(x) { return '/' + x.slug + '.html#p=' + Math.max(0, (+x.perek || 1) - 1) + '&skp=' + encodeURIComponent(x.jid); }
+  var sub = document.getElementById('sub'), list = document.getElementById('list'), sel = document.getElementById('mas'), ALL = [];
+  function row(x, withMas) {
+    return '<tr class="' + esc(x.st === 'sent' ? 'wait' : x.st) + '">' + (withMas ? '<td class="mas">' + esc(mname(x)) + '</td>' : '') +
+      '<td>' + esc(name(x)) + '</td><td class="st">' + esc(stText(x)) + '</td><td class="dt">' + esc(day(x.t)) + '</td><td>' +
+      (x.st === 'ready' ? '<a class="go" href="' + esc(href(x)) + '">סקור</a>' : x.st === 'done' ? '<a class="go soft" href="' + esc(href(x)) + '">פתח</a>' : '') + '</td></tr>';
+  }
+  function sortP(a, b) { return (+a.perek || 0) - (+b.perek || 0) || (a.t || 0) - (b.t || 0); }
+  function draw() {
+    var f = sel.value, X = ALL.filter(function (x) { return !f || x.slug === f; });
+    var rd = X.filter(function (x) { return x.st === 'ready'; }).sort(function (a, b) {
+      return (ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug)) || sortP(a, b); });
+    var h = '';
+    h += '<div class="readybox"><h2>מוכן לסקירה (' + rd.length + ')</h2>' + (rd.length
+      ? '<table><tr><th>מסכת</th><th>פרק</th><th>מצב</th><th class="dt">נכנס לתור</th><th></th></tr>' + rd.map(function (x) { return row(x, true); }).join('') + '</table>'
+      : '<p class="empty">אין כרגע פרק שמוכן לסקירה.</p>') + '</div>';
+    var by = {};
+    X.forEach(function (x) { (by[x.slug] = by[x.slug] || []).push(x); });
+    Object.keys(by).sort(function (a, b) { return ORDER.indexOf(a) - ORDER.indexOf(b) || a.localeCompare(b); }).forEach(function (s) {
+      var R = by[s].sort(function (a, b) { return sortP(a, b) || (RANK[a.st] - RANK[b.st]); });
+      h += '<h2>' + esc(mname(R[0])) + '</h2><table><tr><th>פרק</th><th>מצב</th><th class="dt">נכנס לתור</th><th></th></tr>' + R.map(function (x) { return row(x, false); }).join('') + '</table>';
+    });
+    list.innerHTML = h;
+    var c = { ready: 0, work: 0, wait: 0, done: 0 };
+    X.forEach(function (x) { c[x.st === 'sent' ? 'wait' : x.st] = (c[x.st === 'sent' ? 'wait' : x.st] || 0) + 1; });
+    sub.textContent = 'מוכנים לסקירה ' + c.ready + ' · בעבודה ' + c.work + ' · ממתינים לסכם ' + c.wait + ' · נסקרו ' + c.done + '. הלחיצה על "סקור" פותחת את הפרק ישר בקטע הראשון שלא הוכרע.';
+  }
+  if (!key()) { sub.innerHTML = '<span class="err">הדף למנהל בלבד. היכנס קודם כמנהל באתר.</span>'; return; }
+  fetch(API + '/sakem/jobs', { headers: { 'x-admin-key': key() }, cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      if (!j.ok) throw new Error(j.error || 'שגיאה');
+      ALL = j.items || [];
+      var sl = {}; ALL.forEach(function (x) { sl[x.slug] = mname(x); });
+      Object.keys(sl).sort(function (a, b) { return ORDER.indexOf(a) - ORDER.indexOf(b); }).forEach(function (s) {
+        var o = document.createElement('option'); o.value = s; o.textContent = sl[s]; sel.appendChild(o); });
+      try { var m = /m=([a-z-]+)/.exec(location.hash); if (m) sel.value = m[1]; } catch (e) { }
+      document.getElementById('bar').hidden = false;
+      sel.onchange = function () { try { history.replaceState(null, '', sel.value ? '#m=' + sel.value : location.pathname); } catch (e) { } draw(); };
+      draw();
+    })
+    .catch(function (e) { sub.innerHTML = '<span class="err">לא נטען: ' + esc(e.message) + '</span>'; });
+})();
+</script>
+</body>
+</html>

@@ -50,6 +50,7 @@
     if(!skpOK())return;
     try{const j=await api('/sakem/jobs');SKP.all=j.items||[];SKP.jobs=SKP.all.filter(x=>x.slug===SLUG)}catch(e){return}
     skpDraw();
+    skpBgCheck();
     clearTimeout(SKP.tm);
     if(SKP.jobs.some(x=>/wait|sent|work/.test(x.st)))SKP.tm=setTimeout(skpLoad,60000)}
   function skpDraw(){
@@ -62,11 +63,23 @@
     if(b){b.textContent=j?(j.st==='ready'?'סקור סכם':'סכם · '+skpStText(j)):'סכם פרק';
       b.title=j?skpTitle(si)+': '+skpStText(j):'הכנסת כל הפרק לתור סכם: ליטוש, קיצור בראייה מרחבית ובדיקת חסרים מהגמרא';
       b.classList.toggle('on',!!j);b.classList.toggle('ready',!!(j&&j.st==='ready'))}
+    /* פרומפט 36: ליד בורר הפרק - אילו פרקים במסכת הזו מוכנים לסקירה, בקישורים */
+    let rl=$('#skpready');
+    const rdy=SKP.jobs.filter(x=>x.st==='ready'),byP=new Map();
+    rdy.forEach(x=>{const k=+x.perek||0;if(!byP.has(k))byP.set(k,x)});
+    if(!byP.size){if(rl)rl.remove()}
+    else if(b){if(!rl){rl=document.createElement('span');rl.id='skpready';b.after(rl)}
+      const nm=k=>k?(window.HD?HD.letters(k):String(k)):'קטע';
+      rl.innerHTML='בפרקי המסכת הזו מוכנים לסקירה: '+[...byP.keys()].sort((a,c)=>a-c).map(k=>'<a href="#" data-j="'+skpA(byP.get(k).jid)+'" title="'+skpA(byP.get(k).title||'')+'">'+nm(k)+'</a>').join(', ');
+      rl.onclick=ev=>{const a=ev.target.closest('a');if(!a)return;ev.preventDefault();skpOpen(a.dataset.j)}}
     /* בתפריט המנהל */
     const lb=$('#lnbtn');
     if(lb&&!$('#skpmenu')){const m=document.createElement('button');m.id='skpmenu';m.textContent='סכם פרק';m.title='הכנסת הפרק הנוכחי לתור סכם';
       m.onclick=()=>skpEnqueue('perek');lb.before(m);
-      const q=document.createElement('button');q.id='skpqueue';q.textContent='סכם: התור';q.onclick=()=>skpPanel();lb.before(q)}
+      const q=document.createElement('button');q.id='skpqueue';q.textContent='סכם: התור';q.onclick=()=>skpPanel();lb.before(q);
+      /* פרומפט 36: הלוח המרוכז */
+      const w=document.createElement('button');w.id='skpwhat';w.textContent='מה מוכן לי';w.title='כל הפרקים לפי מסכת: מה מוכן לסקירה, מה בעבודה ומה ממתין';
+      w.onclick=()=>{location.href='/admin-sakem.html'};lb.before(w)}
     /* בראש הפרק */
     document.querySelectorAll('.skphead').forEach(x=>x.remove());
     const S=SEC[si];const fr=S&&D.pages[S.from]&&D.pages[S.from].units[0];
@@ -84,10 +97,12 @@
     if(!bar)t.classList.add('float');
     const f=rd.find(x=>x.slug===SLUG)||rd[0];
     const go=x=>{if(x.slug===SLUG)skpOpen(x.jid);else location.href=x.slug+'.html#p='+Math.max(0,x.perek-1)+'&skp='+x.jid};
-    t.textContent='סכם'+(rd.length>1?' ('+rd.length+')':'');
+    /* פרומפט 36: "מה מוכן לי (N)". פרק אחד - ישר לסקירה; יותר - הלוח המרוכז */
+    t.textContent='מה מוכן לי ('+rd.length+')';
     t.title='מוכן לסקירה: '+rd.map(x=>x.title||x.jid).join(' · ');
     t.onclick=ev=>{ev.stopPropagation();const old=$('#skptagm');if(old){old.remove();return}
       if(rd.length===1){go(f);return}
+      if(rd.length>1){location.href='/admin-sakem.html';return}
       const m=document.createElement('div');m.id='skptagm';m.dir='rtl';
       rd.forEach(x=>{const b=document.createElement('button');b.type='button';b.textContent=x.title||x.jid;b.onclick=()=>{m.remove();go(x)};m.appendChild(b)});
       document.body.appendChild(m);const r=t.getBoundingClientRect();
@@ -127,13 +142,84 @@
     if(job.kind==='perek'&&job.perek&&cur!==job.perek-1)render(job.perek-1);
     if(!EDIT)setEdit(true);
     const items=(j.out.items||[]).filter(x=>!x.nochange);
-    const R=SKP.rev={jid,job,out:j.out,items,dec:j.dec||{},i:0,hist:[],cnt:{accept:0,reject:0,edit:0}};
+    const R=SKP.rev={jid,job,out:j.out,items,dec:j.dec||{},i:0,hist:[],cnt:{accept:0,reject:0,edit:0},bad:new Set(),stale:0};
     try{skpRelocate(R)}catch(e){}
-    Object.values(R.dec).forEach(d=>{if(R.cnt[d.act]!==undefined)R.cnt[d.act]++});
+    /* פרומפט 36 (15.11.2026): "השאר את שלי" (keep) הוא דחייה, ונספר כך גם בטעינה (קודם "נדחו 0" אף שהיו) */
+    Object.values(R.dec).forEach(d=>{const a=d.act==='keep'?'reject':d.act;if(R.cnt[a]!==undefined)R.cnt[a]++});
+    /* פרומפט 36: בדיקת התיישנות בכל פתיחה. קטע שאינו מאותר בדף באופן אמין (המזהים אינם רצף קיים גם אחרי
+       האיתור לפי תוכן ולפי דמיון) אינו מוצג שבור: הוא מסומן "מתיישן", וסכם מוזמן מחדש על הנוסח החי
+       לאזור שלו בלבד. ההכרעות שכבר נעשו אינן נוגעות. */
+    try{R.stale=await skpRedo(R)}catch(e){try{console.warn('skpRedo',e)}catch(_){}}
     R.i=skpNextOpen(-1,1);
-    if(R.i<0){flash('כל הקטעים בפרק הזה כבר הוכרעו');SKP.rev=null;return}
-    document.body.classList.add('skprev');
+    if(R.i<0){flash(R.stale?'כל הקטעים שנותרו התיישנו ונשלחו לסבב על הנוסח החי ('+R.stale+')':'כל הקטעים בפרק הזה כבר הוכרעו');SKP.rev=null;skpLoad();return}
+    document.body.classList.add('skprev');document.documentElement.classList.add('skprev');   /* כפתור העיפרון יושב תחת html */
+    if(R.stale)toast(R.stale+' קטעים התיישנו (הנוסח בדף השתנה מאז שנכתבו) ונשלחו לסבב חדש של סכם על הנוסח החי. השאר מוכנים לסקירה',7000);
     skpShow()}
+  /* ---- התיישנות (פרומפט 36, 15.11.2026) ---- */
+  /* קטע מאותר באמת: כל המזהים קיימים בדף, ברצף. חסר - לפי העוגן */
+  function skpLocated(it,pos){
+    if(it.kind==='missing')return !!skpAnchor(it);
+    if(!it.ids||!it.ids.length)return false;
+    const ix=it.ids.map(id=>pos.get(id));
+    return ix.every((x,k)=>x!==undefined&&(!k||x===ix[k-1]+1))}
+  function skpStaleList(R){
+    const fu=flatU(),pos=new Map(fu.map((o,i)=>[o.u.id,i]));
+    return {fu,pos,list:R.items.filter(it=>!R.dec[it.iid]&&!skpLocated(it,pos))}}
+  const SKP_CLAIM=new Set();
+  /* האזור החי של רצף קטעים מתיישנים: בין הקטע המאותר שלפניו לקטע המאותר שאחריו (בתוך הפרק) */
+  async function skpRedo(R){
+    const {fu,pos,list:all}=skpStaleList(R);
+    /* אותו קטע לעולם אינו מוזמן פעמיים (הבדיקה ברקע והפתיחה רצות לעתים יחד): נתפס מיד, לפני כל המתנה */
+    const key=it=>R.jid+':'+it.iid;
+    all.filter(it=>SKP_CLAIM.has(key(it))).forEach(it=>{R.dec[it.iid]={act:'stale'}});
+    const list=all.filter(it=>!SKP_CLAIM.has(key(it)));
+    list.forEach(it=>SKP_CLAIM.add(key(it)));
+    if(!list.length)return all.length;
+    const sid=new Set(list.map(x=>x.iid));
+    const si=R.job.perek?R.job.perek-1:cur;
+    const S=SEC[si]||{from:0,to:D.pages.length-1};
+    const inSec=i=>fu[i]&&fu[i].pi>=S.from&&fu[i].pi<=S.to;
+    let a0=fu.findIndex((o,i)=>inSec(i)),a1=-1;for(let i=fu.length-1;i>=0;i--)if(inSec(i)){a1=i;break}
+    const span=it=>{if(it.kind==='missing'||!skpLocated(it,pos))return null;const ix=it.ids.map(id=>pos.get(id));return [Math.min(...ix),Math.max(...ix)]};
+    const runs=[];let cur=null;
+    R.items.forEach((it,k)=>{if(sid.has(it.iid)){if(!cur){cur={k0:k,k1:k,its:[]};runs.push(cur)}cur.k1=k;cur.its.push(it)}
+      else if(span(it))cur=null});
+    let sent=0,jobs=[];
+    for(const r of runs){
+      let lo=a0,hi=a1;
+      for(let k=r.k0-1;k>=0;k--){const sp=span(R.items[k]);if(sp){lo=sp[1]+1;break}}
+      for(let k=r.k1+1;k<R.items.length;k++){const sp=span(R.items[k]);if(sp){hi=sp[0]-1;break}}
+      const os=[];for(let i=Math.max(lo,a0);i<=Math.min(hi,a1);i++)os.push(fu[i]);
+      try{
+        if(os.some(o=>o.u.k==='u'||o.u.k==='m')){
+          const title=skpTitle(si)+' · סבב על הנוסח החי ('+r.its.map(x=>x.iid).join(', ')+')';
+          const packet=await skpPacket('seg',os);
+          packet.parent=R.jid;packet.stale=r.its.map(x=>x.iid);
+          const j=await api('/sakem/job',{method:'POST',body:JSON.stringify({slug:SLUG,kind:'seg',perek:si+1,title,packet})});
+          jobs.push(j.jid)}
+        /* רק אחרי שההזמנה נרשמה: ההצעה הישנה יוצאת מן הסקירה (ואינה מוזמנת שוב) */
+        r.its.forEach(it=>{skpDec(it,'stale',null,R);sent++})}
+      catch(e){
+        /* ההזמנה נכשלה: הקטעים אינם מוצגים שבורים בפתיחה הזו, וייבדקו שוב בפתיחה הבאה. נאמר בקול */
+        r.its.forEach(it=>{SKP_CLAIM.delete(key(it));if(R.bad)R.bad.add(it.iid)});
+        flash('סבב על הנוסח החי לא הוזמן ('+r.its.map(x=>x.iid).join(', ')+'): '+(e.message||e))}}
+    return sent+(all.length-list.length)}
+  /* בדיקה ברקע, לפני שעבודה מוצגת "מוכן לסקירה": אחרי שהדף משך את כל העריכות (__LGSYNC), פעם אחת לכל עבודה בטעינה */
+  const SKP_BG=new Set();
+  async function skpBgCheck(){
+    if(!skpOK()||SKP.rev)return;
+    for(let k=0;k<30&&!window.__LGSYNC;k++)await new Promise(r=>setTimeout(r,2000));
+    if(!window.__LGSYNC||SKP.rev)return;
+    let any=0;
+    for(const x of SKP.jobs.filter(y=>y.st==='ready'&&!SKP_BG.has(y.jid))){
+      SKP_BG.add(x.jid);
+      try{const j=await api('/sakem/out?jid='+encodeURIComponent(x.jid));
+        const R={jid:x.jid,job:j.job||x,out:j.out,items:(j.out.items||[]).filter(y=>!y.nochange),dec:j.dec||{},cnt:{accept:0,reject:0,edit:0},bad:new Set()};
+        try{skpRelocate(R)}catch(e){}
+        const n=await skpRedo(R);
+        if(n){any+=n;toast(esc(x.title||x.jid)+': '+n+' קטעים התיישנו ונשלחו לסבב חדש של סכם על הנוסח החי',6000)}}
+      catch(e){}}
+    if(any)setTimeout(skpLoad,1500)}
   /* 1.11.2026: מזהה יחידה הוא מספר הפסקה בוורד, וכל עריכה בוורד שלפני הפרק מזיזה אותו. הצעה שנכתבה
      לפני העריכה הצביעה על יחידות אחרות, ולכן הופיעה במקום הלא נכון וסורבה ("האלמנטים הנעולים אינם
      במקומם"). כאן כל הצעה מאותרת מחדש לפי תוכנה: אותיות הנוסח שההצעה נכתבה עליו מול אותיות היחידות שבדף.
@@ -224,9 +310,9 @@
     while(i<n)out.push(line(i++));
     return out.join('\n')}
   window.skpFixLocks=skpFixLocks;
-  function skpNextOpen(from,dir){const R=SKP.rev;for(let i=from+dir;i>=0&&i<R.items.length;i+=dir)if(!R.dec[R.items[i].iid])return i;return -1}
+  function skpNextOpen(from,dir){const R=SKP.rev;for(let i=from+dir;i>=0&&i<R.items.length;i+=dir)if(!R.dec[R.items[i].iid]&&!(R.bad&&R.bad.has(R.items[i].iid)))return i;return -1}
   function skpClose(){skmClose(true);document.querySelectorAll('.skpold').forEach(r=>r.classList.remove('skpold','skpshow'));
-    const b=$('#skpbar');if(b)b.remove();SKP.rev=null;document.body.classList.remove('skprev');setTimeout(skpLoad,1500)}
+    const b=$('#skpbar');if(b)b.remove();SKP.rev=null;document.body.classList.remove('skprev');document.documentElement.classList.remove('skprev');setTimeout(skpLoad,1500)}
   function skpRows(ids){return ids.map(id=>document.getElementById('u'+id)).filter(Boolean)}
 
   /* השוואת מילים: מה נוסף ומה נמחק, על הטקסט שבתצוגה עצמה (כדי שהמילים יתאימו לצמתים) */
@@ -296,7 +382,8 @@
       conflict=!skmSame(it.ids,it.orig);
       p={id:R.jid+':'+it.iid,ids:it.ids,orig:it.orig,text:it.text,point:it.point||'',changes:it.changes||[],warn:[],notes:[],round:1};
       skmShow(p);
-      const g=SKM.ghost;if(!g)return;
+      /* פרומפט 36: הרוח לא נבנתה - לא נתקעים: הקטע נדלג בפתיחה הזו, ונאמר בקול */
+      const g=SKM.ghost;if(!g){R.bad.add(it.iid);flash('קטע '+it.iid+' לא הוצג בדף - דילוג');return skpMove(1)}
       g.classList.add('skp');
       const bar=g.querySelector('.skmbar');if(bar)bar.remove();
       rows.forEach(r=>{r.classList.remove('skmold');if(!conflict)r.classList.add('skpold')});
@@ -331,10 +418,15 @@
       '<button data-a="prev" title="הקודם (חץ למעלה)">↑</button><button data-a="next" title="הבא (חץ למטה)">↓</button>';
     g.appendChild(side);
     side.addEventListener('click',ev=>{const b=ev.target.closest('button');if(b)skpAct(b.dataset.a)});
+    /* פרומפט 36: בהתנגשות אמיתית (ערכת את הקטע אחרי ההצעה) - שלוש פעולות בכתב, לא רק סמלילים */
+    if(conflict){const cb=document.createElement('div');cb.className='skpconfb';cb.contentEditable='false';
+      cb.innerHTML='<button data-a="force">קבל את ההצעה</button><button data-a="keep">השאר את שלי</button>'+(it.kind==='seg'?'<button data-a="edit">ערוך</button>':'');
+      cb.addEventListener('click',ev=>{const b=ev.target.closest('button');if(b){ev.stopPropagation();skpAct(b.dataset.a)}});
+      const ch=g.querySelector('.skpchips');if(ch)ch.after(cb);else g.prepend(cb)}
     R.conflict=conflict;R.p=p;
     skpBar();skpTzFollow();
-    const top=(it.kind==='seg'?skpRows(it.ids)[0]:null)||g;
-    (conflict||it.kind==='missing'?top:g).scrollIntoView({block:'center',behavior:'smooth'});
+    /* פרומפט 36: בכל מעבר הרוח עצמה במרכז המסך, תמיד */
+    g.scrollIntoView({block:'center',behavior:'smooth'});
     /* המסך המפוצל (פירוש, חברותא, צורת הדף) נגלל יחד עם הקטע, אם הוא פתוח */
     try{const o=skmUnits(it.ids).find(x=>x.u.ref);if(o&&$('#srcx')&&$('#srcx').offsetParent)openSrc(o.u.ref)}catch(e){}
     try{g.focus({preventScroll:true})}catch(e){}}
@@ -361,7 +453,7 @@
       ad=R.items.reduce((n,x)=>n+(x.adds||[]).length,0)+R.items.filter(x=>x.kind==='missing').length;
     b.innerHTML='<span class="skpttl">'+esc(R.job.title||R.out.title||'סכם')+'</span>'+
       '<span>קטע '+(R.i+1)+' מתוך '+R.items.length+'</span>'+
-      '<span class="skpc">התקבלו '+R.cnt.accept+' · נדחו '+R.cnt.reject+' · נערכו '+R.cnt.edit+'</span>'+
+      '<span class="skpc">התקבלו '+R.cnt.accept+' · נדחו '+R.cnt.reject+' · נערכו '+R.cnt.edit+(R.stale?' · התיישנו ונשלחו לסבב על הנוסח החי '+R.stale:'')+'</span>'+
       '<span class="skpc">קיצורים מרחביים: '+sp+' · השלמות מהגמרא: '+ad+'</span>'+
       /* פרומפט 28: שורת הציות (הדגשות, רווחים, מקפי תירוץ...) ומה סכם למד מאז הפרק הקודם */
       (R.out.summary||R.out.learnedNew!=null?'<span class="skpsum">'+esc(R.out.summary||'')+
@@ -373,11 +465,18 @@
       (window.tzOpen?'<button data-a="tz" title="צורת הדף של הקטע הנסקר (Alt+צ); נעה עם הקטע">צורת הדף</button>':'')+
       '<button data-a="pause" title="עצירה - אפשר לחזור ולהמשיך מן הקטע הבא שלא הוכרע (Esc)">עצור</button>'+
       '<i style="width:'+Math.round(100*Object.keys(R.dec).length/Math.max(1,R.items.length))+'%"></i>'+
-      '<div class="skpmob"><button data-a="'+(R.conflict?'force':'ok')+'">קבל</button><button data-a="'+(R.conflict?'keep':'no')+'">דחה</button>'+(it&&it.kind==='seg'?'<button data-a="edit">ערוך</button>':'')+'</div>'}
+      /* פרומפט 36: הפעולות גלויות תמיד (גם במחשב), ופועלות בלי תלות במיקוד */
+      '<div class="skpnav"><button data-a="prev" title="הקטע הקודם (חץ למעלה)">הקודם</button>'+
+      '<button data-a="'+(R.conflict?'force':'ok')+'" class="ok" title="'+(R.conflict?'קבל את ההצעה במקום העריכה שלך':'קבל ועבור לבא')+' (Enter)">'+(R.conflict?'קבל את ההצעה':'קבל')+'</button>'+
+      '<button data-a="'+(R.conflict?'keep':'no')+'" class="no" title="'+(R.conflict?'השאר את העריכה שלך':'דחה - השאר את המקור')+' (Delete)">'+(R.conflict?'השאר את שלי':'דחה')+'</button>'+
+      (it&&it.kind==='seg'?'<button data-a="edit" title="ערוך במקום (E)">ערוך</button>':'')+
+      '<button data-a="next" title="דלג לקטע הבא בלי להכריע (חץ למטה)">דלג לבא</button></div>';
+    /* פרומפט 36: גובה הסרגל משתנה (שורת סיכום, כרטיס ציון). כפתור העיפרון הצף ותחתית הדף זזים מעליו, כדי שלא יסתירו כפתור */
+    try{document.documentElement.style.setProperty('--skpbarh',b.offsetHeight+'px')}catch(e){}}
 
   /* ---- ההכרעות ---- */
-  function skpDec(it,act,extra){
-    const R=SKP.rev;if(!R)return;
+  function skpDec(it,act,extra,R0){
+    const R=R0||SKP.rev;if(!R)return;
     if(act==='undo')delete R.dec[it.iid];else R.dec[it.iid]={act};
     api('/sakem/dec',{method:'POST',body:JSON.stringify(Object.assign({slug:SLUG,jid:R.jid,iid:it.iid,act,layers:it.kind==='missing'?['השלמה']:(it.layers||[]),
       orig:it.orig||'',prop:it.text||'',gem:it.gem||(it.adds||[]).map(a=>a.gem).join(' | ')},extra||{}))}).catch(e=>flash('ההכרעה לא נרשמה בשרת: '+e.message))}
@@ -491,10 +590,12 @@
     const r=skpRef(SKP.rev.items[SKP.rev.i]);if(r)try{tzOpen(r)}catch(e){}}
   /* המקלדת: לפני העורך (שלב הלכידה), רק כשהסקירה פתוחה */
   document.addEventListener('keydown',e=>{
-    const R=SKP.rev;if(!R||!SKM.ghost)return;
-    const ed=SKM.ghost.classList.contains('edit'),inG=SKM.ghost.contains(e.target);
-    const typing=!inG&&e.target.closest&&e.target.closest('input,textarea,select,[contenteditable="true"],[contenteditable=""]');
+    const R=SKP.rev;if(!R)return;
+    /* פרומפט 36: המקשים פועלים כל עוד הסקירה פתוחה, בלי תלות במיקוד - חוץ משדה טופס או חלון, ומבתוך עריכה */
+    const G=SKM.ghost,ed=!!(G&&G.classList.contains('edit')),inG=!!(G&&G.contains(e.target));
+    const typing=!inG&&e.target.closest&&e.target.closest('input,textarea,select,.modal,#skptagm');
     if(typing)return;
+    if(!G&&!/^Arrow(Up|Down)$|^Escape$/.test(e.key))return;
     const k=e.key,stop=()=>{e.preventDefault();e.stopPropagation()};
     if(ed){if(k==='Enter'&&!e.shiftKey&&!e.altKey){stop();skpAccept(R.conflict)}else if(k==='Escape'){stop();skpShow()}return}
     if(e.altKey&&!e.ctrlKey&&(k==='ח'||e.code==='KeyJ')){stop();skpUnfold();return}
@@ -510,6 +611,7 @@
   /* ---- מראה ---- */
   (function(){const s=document.createElement('style');s.textContent=
     '.skpbtn{margin-inline-start:6px;padding:2px 10px;border-radius:12px;border:1px solid #2e5b8a;background:#fff;color:#2e5b8a;font:600 13px inherit;cursor:pointer;display:inline-block}.skpbtn.on{background:#eef3f9}.skpbtn.ready{background:#2e7d3c;border-color:#2e7d3c;color:#fff}'+
+    '#skpready{margin-inline-start:8px;font-size:12.5px;color:#1f5a2c;white-space:nowrap}#skpready a{color:#1f5a2c;font-weight:700;text-decoration:none;padding:0 2px}#skpready a:hover{text-decoration:underline}'+
     '.skphead{margin:4px auto 6px;max-width:30em;text-align:center;font-size:12.5px;color:#4f6274;background:rgba(70,120,190,.07);border-radius:10px;padding:2px 10px}'+
     '.skphead.ready{color:#1f5a2c;background:rgba(46,125,60,.10);cursor:pointer}'+
     '#skptag{position:static;flex:0 0 auto;align-self:center;white-space:nowrap;margin:0 4px;padding:2px 10px;border-radius:12px;border:1px solid #2e7d3c;background:#2e7d3c;color:#fff;font:600 12.5px inherit;cursor:pointer;line-height:1.5}'+'#skptag.float{position:fixed;top:6px;left:8px;z-index:70}'+'@media (max-width:700px){#skptag{margin:0 2px;padding:1px 7px;font-size:11.5px}}'+'#skptagm{position:fixed;z-index:80;display:flex;flex-direction:column;gap:2px;padding:4px;background:#fff;border:1px solid #2e7d3c;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.18);max-width:calc(100vw - 16px)}'+'#skptagm button{border:none;background:none;text-align:right;padding:5px 10px;font:inherit;cursor:pointer;border-radius:5px}#skptagm button:hover{background:#eef6ef}'+
@@ -539,10 +641,12 @@
     '#skpbar .skpscore{flex-basis:100%;order:-1;font-size:12px;color:#1f3f5a}#skpbar .skpscore summary{cursor:pointer}#skpbar .skpscore .skpbad{color:#a3261a}'+
     '#skpbar .skpscore table{border-collapse:collapse;margin:4px 0}#skpbar .skpscore td,#skpbar .skpscore th{border:1px solid #c9d3dc;padding:1px 8px;text-align:center}'+
     '#skpbar button{padding:1px 9px;border-radius:10px;border:1px solid #c9d3dc;background:#fff;color:#2e5b8a;font-size:12px;cursor:pointer}'+
-    '.skmghost.edit del.skpdel.skpdelro{opacity:.55;user-select:none;cursor:default;font-size:.92em}'+'#skpbar .skpmob{display:none}body.skprev{padding-bottom:40px}'+
+    '.skmghost.edit del.skpdel.skpdelro{opacity:.55;user-select:none;cursor:default;font-size:.92em}'+'body.skprev{padding-bottom:calc(var(--skpbarh,40px) + 8px)!important}html.skprev.skprev #lk-fab{bottom:calc(var(--skpbarh,40px) + 12px)!important}'+
+    '#skpbar .skpnav{display:flex;gap:6px;margin-inline-start:auto}#skpbar .skpnav button{font-size:13px;padding:2px 12px}#skpbar .skpnav button.ok{background:#2e7d3c;border-color:#2e7d3c;color:#fff}#skpbar .skpnav button.no{color:#a8452f;border-color:#a8452f}'+
+    '.skpconfb{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 6px}.skpconfb button{padding:3px 12px;border-radius:10px;border:1px solid #2e5b8a;background:#fff;color:#2e5b8a;font:600 13px inherit;cursor:pointer}.skpconfb button[data-a="force"]{background:#2e7d3c;border-color:#2e7d3c;color:#fff}.skpconfb button[data-a="keep"]{color:#a8452f;border-color:#a8452f}'+
     '.skptab{width:100%;border-collapse:collapse;font-size:13px}.skptab td{border-bottom:1px solid #eee;padding:4px}'+
-    '@media (max-width:820px),(pointer:coarse){#skpbar .skpmob{display:flex;flex-basis:100%;gap:8px}#skpbar .skpmob button{flex:1;font-size:16px;padding:10px 0;border-radius:10px}'+
-      '#skpbar .skpmob button:first-child{background:#2e7d3c;color:#fff;border-color:#2e7d3c}body.skprev{padding-bottom:110px}.skpside{display:none}.skmghost.skp,.skmghost.skpmiss{padding-left:8px}}'+
+    '@media (max-width:820px),(pointer:coarse){#skpbar .skpnav{flex-basis:100%;gap:6px;margin:0}#skpbar .skpnav button{flex:1;font-size:15px;padding:10px 0;border-radius:10px}'+
+      '.skpside{display:none}.skmghost.skp,.skmghost.skpmiss{padding-left:8px}}'+
     '@media print{#skpbar,#skptag,#skptagm,.skphead,.skpbtn{display:none!important}}';
     document.head.appendChild(s)})();
   if(skpOK())setTimeout(()=>{skpLoad().then(()=>{const m=/skp=([a-z0-9-]+)/.exec(SKP_H0);if(m)skpOpen(m[1])})},2500);

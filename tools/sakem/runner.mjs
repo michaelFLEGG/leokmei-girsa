@@ -55,7 +55,17 @@ function chavShow(ref, p) {
   try { return execFileSync('git', ['-C', CHAV, 'show', ref + ':' + p], { encoding: 'utf8', maxBuffer: 1 << 29, stdio: ['ignore', 'pipe', 'ignore'] }); }
   catch (e) { return null; }
 }
+/* הכרעת בעל הפרויקט 15.11.2026: פירוש הגמרא וחברותא חייבים להיות לפני הכותב, תמיד.
+   לכן הכלי מושך בעצמו את שני הענפים של הריפו הפרטי (גם בשכפול שנעשה בענף אחד),
+   ודף שאין לו חברותא בחבילה (packs) נלקח מן העיבוד המלא (json/<מסכת>/). */
+function chavFetch() {
+  for (const b of ['main', 'perush-store']) {
+    try { execFileSync('git', ['-C', CHAV, 'fetch', '-q', 'origin', '+refs/heads/' + b + ':refs/remotes/origin/' + b], { stdio: ['ignore', 'ignore', 'ignore'], timeout: 180000 }); }
+    catch (e) { /* בלי רשת - נשתמש במה שכבר נמשך; אם חסר, הבדיקה למטה עוצרת */ }
+  }
+}
 function chavCtx(pk) {
+  chavFetch();
   const out = { per: {}, hv: {}, warn: '' };
   const txt = chavShow('origin/perush-store', 'perush/' + pk.slug + '.json');
   if (txt) out.per = JSON.parse(txt);
@@ -63,11 +73,34 @@ function chavCtx(pk) {
   for (const pg of pk.pages || []) {
     const name = String(pg.daf).replace(/[^א-ת]/g, '') + (/:\s*$/.test(pg.daf) ? 'ב' : 'א');
     const t = chavShow('origin/main', 'packs/' + pk.slug + '/' + name + '.json');
-    if (!t) continue;
-    const segs = JSON.parse(t).segs || [];
-    out.hv[pg.daf] = segs.map((s) => ({ p: s.para, g: s.gemara || '', e: String(s.explain || '').replace(/\[\[הערה:\d+\]\]/g, '') }));
+    if (t) {
+      const segs = JSON.parse(t).segs || [];
+      out.hv[pg.daf] = segs.map((s) => ({ p: s.para, g: s.gemara || '', e: String(s.explain || '').replace(/\[\[הערה:\d+\]\]/g, '') }));
+      continue;
+    }
+    const j = pk.masechet && chavShow('origin/main', 'json/' + pk.masechet + '/' + name + '.json');
+    if (j) out.hv[pg.daf] = (JSON.parse(j).segments || []).map((s) => ({ g: s.gemara || '', e: String(s.explain || '').replace(/\[\[הערה:\d+\]\]/g, '') }));
   }
   return out;
+}
+/* דפים שבאמצע הפרק ואינם בחבילה (למשל ברכות כח. בפרק ד, 15.11.2026) - לשון הגמרא מ-data/sources */
+function fillPages(pk) {
+  const pages = pk.pages || [];
+  const keys = pages.map((p) => dafKey(p.daf)).filter((n) => n !== null);
+  if (!keys.length) return [];
+  let src = null;
+  try { src = rd(path.join(ROOT, 'data', 'sources', pk.slug + '.json')).pages || null; } catch (e) {}
+  const have = new Set(keys), added = [];
+  const all = [];
+  for (let n = Math.min(...keys); n <= Math.max(...keys); n++) {
+    const p = pages.find((x) => dafKey(x.daf) === n);
+    if (p) { all.push(p); continue; }
+    if (have.has(n)) continue;
+    const daf = Object.keys(src || {}).find((d) => dafKey(d) === n);
+    if (daf && src[daf] && (src[daf].gemara || []).length) { all.push({ daf, g: src[daf].gemara, refs: src[daf].refs || [], filled: true }); added.push(daf); }
+  }
+  pk.pages = all;
+  return added;
 }
 async function privateCtx(pk) {
   if (CHAV) return chavCtx(pk);
@@ -196,8 +229,18 @@ if (cmd === 'status') {
   const dir = path.join(WORK, jid);
   fs.mkdirSync(dir, { recursive: true });
   /* א. לשון הגמרא ופירוש הגמרא, לפי דפים */
+  const filled = fillPages(pk);
+  if (filled.length) console.log('דפים שלא היו בחבילה ונוספו מלשון הגמרא שבמאגר: ' + filled.join(' '));
   const prv = await privateCtx(pk);
   if (prv.warn) console.log('אזהרה: ' + prv.warn);
+  /* חובה (הכרעת בעל הפרויקט 15.11.2026): פירוש וחברותא לכל דף. חסר - עצירה רועשת, לא המשך שקט. */
+  { const noPer = (pk.pages || []).filter((pg) => !(prv.per[pg.daf] || []).length).map((pg) => pg.daf);
+    const noHv = (pk.pages || []).filter((pg) => !(prv.hv[pg.daf] || []).length).map((pg) => pg.daf);
+    if (noPer.length || noHv.length) {
+      const msg = 'חסר חומר מן הריפו הפרטי. פירוש הגמרא חסר בדפים: ' + (noPer.join(' ') || '-') + ' · חברותא חסרה בדפים: ' + (noHv.join(' ') || '-') + '.';
+      if (!process.argv.includes('--allow-missing')) die(msg + '\nאין לכתוב בלי פירוש וחברותא. שכפל את leokmei-chavruta ליד הריפו הזה (git clone --filter=blob:none --no-checkout, בלי --depth ובלי --single-branch) והרץ שוב. רק כשהדף באמת אינו קיים במאגר הפרטי - הוסף --allow-missing וכתוב זאת בסיכום.', 4);
+      console.log('אזהרה חמורה: ' + msg + ' (--allow-missing) - לכתוב זאת בסיכום ההרצה.');
+    } }
   let g = '# ' + (pk.title || jid) + ' - לשון הגמרא ופירוש הגמרא\n\n' + (prv.warn ? '(' + prv.warn + ')\n\n' : '');
   (pk.pages || []).forEach((pg) => {
     g += '## דף ' + pg.daf + '\n\n';

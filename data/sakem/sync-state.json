@@ -25,7 +25,6 @@
   "ketubot-p3": "2f1da0f362e99ac8",
   "ketubot-p1": "483eb800eb751ab5",
   "shabbat-s1-mwev8jkj": "cfd3bf2b7f83294f",
-  "berakhot-p1": "226831d5e7979283",
   "berakhot-p2": "f558ba0d7995e9fd",
   "berakhot-p3": "3cb22404b50fc95b",
   "berakhot-p4": "529d1f8381ff8c49",
@@ -36,6 +35,7 @@
   "shabbat-s2222-mwhl72w1": "619db9108a2c7613"
  },
  "jobsPut": {
-  "shabbat-p1-round2.json": "shabbat-s1-mwev8jkj"
+  "shabbat-p1-round2.json": "shabbat-s1-mwev8jkj",
+  "berakhot-p2-round2.json": "berakhot-s900-mwi84ti2"
  }
 }

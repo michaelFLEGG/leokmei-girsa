@@ -19,7 +19,9 @@ concurrency:
 jobs:
   ingest:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    # פרומפט 43 (16.11.2026): מ-15.11 18:00 כל ריצה נקטעה ב-40 דקות (כאלף עריכות ממתינות נכתבות אחת אחת), ושום עריכה לא הגיעה לוורד.
+    # זמן ארוך יותר מאפשר לתור להתרוקן; ריצה שנקטעה אינה שומרת דבר.
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

@@ -38,6 +38,90 @@
     "flagged": 0,
     "questions": 45
    }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-15T12:39:04Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shevuot-p03-u01",
+    "shevuot-p03-u02",
+    "shevuot-p03-u03",
+    "shevuot-p03-u04",
+    "shevuot-p03-u05"
+   ],
+   "result": {
+    "generated": 110,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 90
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-15T12:39:04Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shevuot-p04-u01",
+    "shevuot-p04-u02",
+    "shevuot-p04-u03"
+   ],
+   "result": {
+    "generated": 63,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 47
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-15T12:39:04Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shevuot-p05-u01"
+   ],
+   "result": {
+    "generated": 15,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 12
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-15T12:39:05Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shevuot-p06-u01",
+    "shevuot-p06-u02",
+    "shevuot-p06-u03"
+   ],
+   "result": {
+    "generated": 63,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 50
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-15T12:39:05Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shevuot-p07-u01",
+    "shevuot-p07-u02"
+   ],
+   "result": {
+    "generated": 37,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 36
+   }
   }
  },
  "created": "2026-11-15T06:39:58Z",
@@ -53,7 +137,37 @@
    "mean": 0.292,
    "n": 5,
    "at": "2026-11-15T06:39:58Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.43,
+   "n": 9,
+   "at": "2026-11-15T12:39:04Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.549,
+   "n": 5,
+   "at": "2026-11-15T12:39:04Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.649,
+   "n": 1,
+   "at": "2026-11-15T12:39:04Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.306,
+   "n": 5,
+   "at": "2026-11-15T12:39:04Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.172,
+   "n": 3,
+   "at": "2026-11-15T12:39:05Z"
   }
  ],
- "updated": "2026-11-15T06:39:59Z"
+ "updated": "2026-11-15T12:39:05Z"
 }

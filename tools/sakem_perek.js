@@ -156,7 +156,14 @@
        לאזור שלו בלבד. ההכרעות שכבר נעשו אינן נוגעות. */
     try{R.stale=await skpRedo(R)}catch(e){try{console.warn('skpRedo',e)}catch(_){}}
     R.i=skpNextOpen(-1,1);
-    if(R.i<0){flash(R.stale?'כל הקטעים שנותרו התיישנו ונשלחו לסבב על הנוסח החי ('+R.stale+')':'כל הקטעים בפרק הזה כבר הוכרעו');SKP.rev=null;skpLoad();return}
+    /* 15.11.2026 (ברכות פרק שני): קטע שלא אותר בדף והזמנת הסבב החדש עליו נכשלה (R.bad) אינו "הוכרע".
+       קודם ההודעה אמרה "כל הקטעים כבר הוכרעו" אף שרובם רק דולגו, והפרק נשאר ב"מה מוכן לי" בלי שאפשר לסקור. */
+    const nBad=R.items.filter(it=>!R.dec[it.iid]&&R.bad.has(it.iid)).length;
+    if(R.i<0){
+      if(nBad)flash(nBad+' קטעים בפרק לא נמצאו בדף, כי הנוסח השתנה מאז שנכתבו, וסבב חדש עליהם לא הוזמן. הם לא הוכרעו, וייבדקו שוב בפתיחה הבאה'+(R.stale?' ('+R.stale+' אחרים נשלחו לסבב על הנוסח החי)':''));
+      else if(R.sup)flash('ההצעות בפרק הזה נכתבו על נוסח ישן. יש לו כבר סבב מחודש על הנוסח החי ('+R.sup+'), ולכן הפרק הישן יצא מן התור');
+      else flash(R.stale?'כל הקטעים שנותרו התיישנו ונשלחו לסבב על הנוסח החי ('+R.stale+')':'כל הקטעים בפרק הזה כבר הוכרעו');
+      SKP.rev=null;skpLoad();return}
     document.body.classList.add('skprev');document.documentElement.classList.add('skprev');   /* כפתור העיפרון יושב תחת html */
     if(R.stale)toast(R.stale+' קטעים התיישנו (הנוסח בדף השתנה מאז שנכתבו) ונשלחו לסבב חדש של סכם על הנוסח החי. השאר מוכנים לסקירה',7000);
     skpShow()}
@@ -179,6 +186,13 @@
     all.filter(it=>SKP_CLAIM.has(key(it))).forEach(it=>{R.dec[it.iid]={act:'stale'}});
     const list=all.filter(it=>!SKP_CLAIM.has(key(it)));
     list.forEach(it=>SKP_CLAIM.add(key(it)));
+    /* 15.11.2026: לפרק כבר יש סבב מחודש מלא על הנוסח החי (עבודה חדשה יותר על אותו פרק, בשם "סבב מחודש" או
+       "סבב שני") - הקטעים המתיישנים מכוסים בו. אין מזמינים סבב נוסף: הם נרשמים "התיישן" בשרת, והעבודה הישנה
+       נגמרת ויוצאת מ"מה מוכן לי". כך גם הקטעים שעוד אותרו: הסבב החדש מציע אותם שוב על הנוסח החי, ואין סוקרים פעמיים.
+       ההכרעות שכבר נעשו בעבודה הישנה אינן נוגעות. */
+    const pk=R.job.perek||0,t0=+R.job.t||0;
+    const sup=pk&&(SKP.all||[]).find(x=>x.jid!==R.jid&&x.slug===SLUG&&x.perek===pk&&x.kind==='seg'&&(+x.t||0)>t0&&/סבב (מחודש|שני)/.test(x.title||''));
+    if(sup){const rest=R.items.filter(it=>!R.dec[it.iid]);R.sup=sup.title||sup.jid;rest.forEach(it=>skpDec(it,'stale',null,R));return all.length-list.length+rest.length}
     if(!list.length)return all.length;
     const sid=new Set(list.map(x=>x.iid));
     const si=R.job.perek?R.job.perek-1:cur;

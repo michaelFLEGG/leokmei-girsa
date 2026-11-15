@@ -126,7 +126,7 @@ html.tb-onefab #lk-fab button:hover{opacity:1}
   .bar .bg.sr{min-width:58px;flex-basis:90px}
   .bar .admz{gap:3px}
   body.adm .bar #edbtn{font-size:0;gap:0}
-  .bar .admz #skpbtn,.bar .admz #skmtop{max-width:4.6em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:5px}
+  .bar .admz #skpbtn,.bar .admz #skmtop,.bar .admz #skpdup,.bar .admz #skpnext{max-width:4.6em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-inline:5px}
 }
 @media (min-width:701px) and (max-width:800px){
   .bar{gap:3px;padding-inline:5px}

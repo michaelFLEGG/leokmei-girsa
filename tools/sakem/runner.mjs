@@ -359,6 +359,8 @@ if (cmd === 'status') {
     /* מקף תירוץ שנמחק ביודעין (השורה כולה נמחקה) - רק כשנרשם ב-changes, עם הכותרת עצמה */
     const dropDash = SKC.dashLost(rT, tT).filter((x) => (s.changes || []).some((c) => /מקף/.test(c) && String(c).indexOf(x.replace(/^-\s*/, '')) > -1));
     const ck = SKC.check(rT, tT, { gemara: gem, mishna, before, after, dropDash });
+    /* פרומפט 38 (15.11.2026): אותה בדיקה שהדף מריץ ב"קבל" (SKC.acceptPrep + SKC.acceptErrs) - הצעה שהדף ידחה אינה נמסרת */
+    { const ac = SKC.acceptErrs(rT, SKC.acceptPrep(rT, tT).text).filter((x) => ck.errs.indexOf(x) < 0); if (ac.length) ck.errs = ck.errs.concat(ac.map((x) => 'הדף ידחה בקבלה: ' + x)); }
     /* בודק הציות (פרומפט 28): הדגשת עיקר המשנה, הדגשה ומקף שלא נעלמו - חוסם.
        פרומפט 29 (strict): גם עיטור שמותר למחוק ולא נמחק, רווח חסר, מקף תירוץ חסר (אלא בנימוק ב-keep), שורה אלמנה,
        כותרת צד חדשה של יותר משתי מילים, ופתיחת ראשי תיבות שמאריכה כותרת או גולשת לשורה נוספת - חוסמים */

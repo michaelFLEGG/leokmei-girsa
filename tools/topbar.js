@@ -42,7 +42,7 @@
   var slot = Dc.getElementById('admslot'), bar = Dc.getElementById('bar');
   function gather() {
     if (!slot) return;
-    ['#skpbtn', '#skmtop', '#skptag'].forEach(function (s) {
+    ['#skpbtn', '#skmtop', '#skptag', '#skpdup', '#skpnext'].forEach(function (s) {
       var el = $(s, bar); if (el && el.parentNode !== slot) slot.appendChild(el);
     });
     var stray = bar.querySelectorAll('.skpbtn'); for (var i = 0; i < stray.length; i++) if (!slot.contains(stray[i])) slot.appendChild(stray[i]);

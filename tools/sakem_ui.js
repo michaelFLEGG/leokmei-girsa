@@ -395,9 +395,8 @@
      ותגים שבורים (סוגר או פותח יתום). עריכת המנהל אינה נפסלת על דבר שאפשר לתקן לבד. */
   function skmRepair(orig,text){
     let t=String(text||'');
-    try{if(window.skpFixLocks)t=window.skpFixLocks(orig,t)}catch(e){}
     let moved=[];
-    try{const r=SKC.fixInline(orig,t);t=r.text;moved=r.moved}catch(e){}
+    try{const r=SKC.acceptPrep(orig,t);t=r.text;moved=r.moved}catch(e){}
     /* תג לא מוכר: פותח {x: שאינו ידוע - מוסר (התוכן נשאר); סוגר } יתום - מוסר */
     t=t.split('\n').map(ln=>{const bad=[];SKC.i2h(ln,true,bad);if(!bad.length)return ln;
       let out='',d=[];for(let i=0;i<ln.length;i++){const c=ln[i];
@@ -408,13 +407,41 @@
       return out}).join('\n');
     return {text:t,moved}}
   window.skmRepair=skmRepair;
+  /* פרומפט 38 (15.11.2026): הצעה שהשומר אינו מחיל - לעולם לא תקועה. חלון קצר במילים פשוטות, ושתי דרכי המשך
+     בלחיצה: "החל בכל זאת בלי השינוי הבעייתי" (SKC.acceptSafe - הקטע הבעייתי נשאר כבדף, השאר מוחל) ו"פתח לעריכה
+     במקום הבעייתי" (מצב עריכה, גלילה לכותרת שליד הבעיה ומסגרת דקה סביבה). o: {orig,text,errs,onSafe,onEdit} */
+  function skmStuck(o){
+    const old=$('#skmstuck');if(old)old.remove();
+    const safe=(()=>{try{return SKC.acceptSafe(o.orig,o.text)}catch(e){return null}})();
+    const m=document.createElement('div');m.className='modal';m.id='skmstuck';m.dir='rtl';
+    m.innerHTML='<div class="box skmbox"><h3>ההצעה לא הוחלה כמו שהיא</h3><p>'+esc(SKC.acceptWhy(o.errs[0]))+'</p>'+
+      (safe?'<p class="skmsmall">"החל בכל זאת" מחיל את כל ההצעה, ומשאיר כפי שהוא בדף רק את '+esc(safe.kept.join(', ')||'החלק הבעייתי')+'.</p>':'')+
+      '<div class="btns">'+(safe?'<button class="primary" data-a="safe">החל בכל זאת בלי השינוי הבעייתי</button> ':'')+
+      '<button data-a="edit">פתח לעריכה במקום הבעייתי</button> <button data-a="x">סגירה</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',e=>{if(e.target===m){m.remove();return}const b=e.target.closest('button');if(!b)return;m.remove();
+      if(b.dataset.a==='safe'&&safe)o.onSafe(safe.text);
+      if(b.dataset.a==='edit'){o.onEdit();skmFocusBad(o.errs[0])}});
+    const f=m.querySelector('button');if(f)f.focus()}
+  function skmFocusBad(err){
+    const g=SKM.ghost;if(!g)return;
+    const mm=/\[[^:\]]*:?([^\]]*)\]/.exec(String(err||'')),want=mm?nonik(SKC.plainI(mm[1])).replace(/\s+/g,' ').trim():'';
+    const hs=[...g.querySelectorAll('.skmhead,.skmlock')];
+    let el=want&&hs.find(h=>nonik(h.textContent).replace(/\s+/g,' ').trim()===want)||want&&hs.find(h=>want.indexOf(nonik(h.textContent).replace(/\s+/g,' ').trim().slice(0,8))>-1);
+    /* הכותרת שליד הבעיה אינה בהצעה (היא בדף בלבד) - המסגרת על כל הקטע */
+    el=el||g.querySelector('.skmbody')||g;
+    el.classList.add('skmbad');setTimeout(()=>el.classList.remove('skmbad'),8000);
+    try{el.scrollIntoView({block:'center',behavior:'smooth'})}catch(e){}}
+  window.skmStuck=skmStuck;
   function skmMovedNote(m){if(m&&m.length)toast('הוחזר למקום משוער - כדאי להציץ: '+m.join(', '),6000)}
   function skmAccept(){
     const p=SKM.cur,g=SKM.ghost;if(!p||!g)return;
     const edited=g.classList.contains('edit');
     const rp=skmRepair(p.orig,edited?skmReadBack(g):p.text),text=rp.text;
-    const errs=SKC.guard(p.orig,text,{edited:true}).filter(x=>/נעולים|קטע שלם|נוספו שורות|תג לא מוכר/.test(x));
-    if(errs.length){flash('לא הוחל: '+errs[0]+'. העריכה שלך נשמרה פתוחה - אפשר לתקן ולנסות שוב');return}
+    const errs=SKC.acceptErrs(p.orig,text);
+    if(errs.length){skmStuck({orig:p.orig,text,errs,onEdit:()=>{if(!g.classList.contains('edit'))skmEdit()},
+      onSafe:t2=>{let r;try{r=skmApply(p,t2)}catch(err){flash('לא הוחל: '+(err.message||err));return}
+        skmClose();skmDone(p,'edit',t2);skmRemember(p.id,t2,r.recs||[]);flash('הוחל בלי החלק הבעייתי: '+r.n+' שינויים (Ctrl+ז מבטל)')}});return}
     let r;
     try{r=skmApply(p,text)}catch(err){flash('לא הוחל: '+(err.message||err));return}
     skmClose();
@@ -773,6 +800,7 @@
     '.skmghost.skmbusy{opacity:.6}.skmghost.edit{background:#fff;border-color:#2e7d3c;box-shadow:0 0 0 2px rgba(46,125,60,.15)}'+
     '.skmrow{display:flex;gap:10px;margin:2px 0}.skmrail{flex:0 0 auto;min-width:3.4em;max-width:8em;text-align:left;font-size:.82em;color:#2e5d3a;font-weight:700;display:flex;flex-direction:column}'+
     '.skmmain{flex:1}.skmmain p{margin:0 0 2px;color:#1f4d2a}.skmmain p.in{padding-right:1.2em}.skmmain p.sp{margin-top:.6em}.skmmain p.nose,.skmhead{text-align:center;font-weight:700}'+
+    '.skmbad{outline:1.5px solid #b0574c;outline-offset:3px;border-radius:3px}'+
     '.skmhead{margin:4px 0;color:#1f4d2a}.skmlock{font-size:12px;color:#7a6a45;background:#f4ecd8;border-radius:4px;display:inline-block;padding:0 6px;margin:2px 0}.skmlock.skmhid,.skmsrc{display:none}'+
     '.skmghost i.am{font-weight:700}.skmghost i.hs{color:#5a6b78;font-size:.92em}.skmghost i.ps{font-style:italic}.skmghost i.b{font-weight:700}'+
     '.skmghost ins.skmadd,.skmghost ins.skmfix{text-decoration:underline;text-decoration-color:#e08a2c;text-decoration-thickness:2px;text-underline-offset:3px;background:rgba(224,138,44,.08)}'+

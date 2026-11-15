@@ -171,6 +171,10 @@
     if ($('#prbtn')) items.push(['prn', 'print', 'הדפסה ל-PDF']);
     try { if ($('#prbtn') && typeof isAdmin === 'function' && isAdmin()) items.push(['book', 'print', 'הדפס לחוברת']); } catch (e) { }
     items.push(['toc', 'list', 'תוכן עניינים']);
+    /* פרומפט 38: שני כפתורי המנהל של הסרגל (שורות כפולות, סכם הבא) - בטלפון כאן */
+    try { if (window.skpTop && typeof isAdmin === 'function' && isAdmin()) { var st = skpTop.state();
+      items.push(['dup', 'list', 'שורות כפולות ' + st.dups]);
+      items.push(['sknext', 'check', st.any ? 'סכם הבא ' + st.left : 'סכם: הכל הוכרע']); } } catch (e) { }
     /* פרומפט 28: הצטרפות לקיצור הדף היומי ונ"ך המפורש גם בתפריט הצד */
     items.push(['join', 'wa', 'הצטרפות לקיצור היומי']);
     items.push(['nach', 'nach', 'נ״ך המפורש']);
@@ -216,6 +220,8 @@
       else if (m === 'prn') prnOpen();
       else if (m === 'book') prnOpenBook();
       else if (m === 'toc') panel('toc');
+      else if (m === 'dup') { if (window.skpTop) skpTop.dup(); }
+      else if (m === 'sknext') { if (window.skpTop) skpTop.next(); }
       else if (m === 'join') { lsSet('lg-wa-joined', '1'); H.classList.add('wa-joined'); window.open('https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e', '_blank', 'noopener'); }
       else if (m === 'nach') window.open('https://nach.leokmei.com/', '_blank', 'noopener');
       else if (m === 'full') { B.classList.toggle('showbar'); H.style.setProperty('--mtop', '0px'); try { barFit(); } catch (x) { } }

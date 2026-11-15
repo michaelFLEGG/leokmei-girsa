@@ -128,6 +128,17 @@
         if(k.t==='lock')a.push(k.kind==='כותרת-נושא'||k.kind==='כותרת-דה'?k.kind:k.kind+':'+k.val);
         else if(k.t==='line'||k.t==='title'){var r=/\[(מס|תוס'):([^\]]*)\]/g,m;while((m=r.exec(k.v)))a.push(m[1]+':'+m[2])}});
       return a}
+    /* פרומפט 38: locks בצורה קנונית - [מקור] שצמוד לכותרת נושא או ד"ה (בלי שורה ביניהם) נכתב תמיד אחריה.
+       רק החלפה כזו מותרת: [מקור] שעבר מעל [דף], [משנה] או שורות תוכן - עדיין "הסדר השתנה" */
+    function locksC(toks){
+      var a=[],run=[];var flush=function(){var ch=true;while(ch){ch=false;
+          for(var i=0;i+1<run.length;i++)if(/^מקור:/.test(run[i])&&/^כותרת/.test(run[i+1])){var t=run[i];run[i]=run[i+1];run[i+1]=t;ch=true}}
+        a=a.concat(run);run=[]};
+      toks.forEach(function(k){
+        if(k.t==='lock'){run.push(k.kind==='כותרת-נושא'||k.kind==='כותרת-דה'?k.kind:k.kind+':'+k.val);return}
+        flush();
+        if(k.t==='line'||k.t==='title'){var r=/\[(מס|תוס'):([^\]]*)\]/g,m;while((m=r.exec(k.v)))a.push(m[1]+':'+m[2])}});
+      flush();return a}
     /* הקטעים שבין האלמנטים הנעולים (מקור אינו מפריד): לכל קטע - יחידות ושורות */
     function segments(toks){
       var segs=[],cur=null;
@@ -503,7 +514,14 @@
     function check(origText,newText,o){
       o=o||{};var errs=[],warns=[];
       var A=parse(origText),B=parse(newText);
-      var la=locks(A),lb=locks(B);
+      /* פרומפט 38 (15.11.2026): [מקור] אינו מפריד ואינו נכתב בהחלה (segments ו-skmApply מדלגים עליו). לכן רק
+         קיומו נבדק, לא מקומו: הצעה שנכתבה כש-[מקור] היה לפני כותרת הנושא, והדף מציג אותו עכשיו אחריה, אינה
+         נדחית ("הסדר השתנה"), ואין בגללה שיבוץ מחדש שמעביר כותרת לקטע אחר ("קטע שלם נעלם"). ההיתר רק בתוך רצף
+         של נעולים צמודים (locksC): [מקור] שעבר מעל שורות תוכן עדיין נתפס */
+      var la=locksC(A),lb=locksC(B);
+      /* בשער הקבלה (o.srcFree) [מקור] נבדק רק לקיומו: ההחלה אינה כותבת אותו כלל */
+      if(o.srcFree){var nos=function(x){return !/^מקור:/.test(x)},so=function(L){return L.filter(function(x){return !nos(x)}).sort()};
+        var s1=so(la),s2=so(lb);la=la.filter(nos);lb=lb.filter(nos);if(s1.join('|')!==s2.join('|')){la=la.concat(s1);lb=lb.concat(s2)}}
       if(la.join('|')!==lb.join('|')){
         var miss=la.filter(function(x){return lb.indexOf(x)<0}),extra=lb.filter(function(x){return la.indexOf(x)<0});
         errs.push('האלמנטים הנעולים אינם במקומם'+(miss.length?' (חסר: '+miss.slice(0,4).join(', ')+')':'')+
@@ -579,6 +597,13 @@
        o.mishna: לשון המשניות של הקטע (מ-data/mishna), לבדיקת תיבת המשנה */
     var NIKQ=/[\u0591-\u05C7]/g;
     function qnorm(t){return String(t).replace(NIKQ,'').replace(/["'״׳]/g,'').replace(/[^א-ת\s]/g,' ').replace(/\s+/g,' ').trim()}
+    /* א1 (פרומפט 38: פונקציה אחת לשומר ולכפתור "שורות כפולות" בסרגל): ps - הטקסט הנקי של השורות.
+       מחזיר [{i, j, kind}]: same - שורה שזהה לשורה j שלפניה; in - שורה שכולה בתוך שורה j ארוכה ממנה (כמעט כפולה) */
+    function dupFlags(ps){var out=[],seen={},N=ps.map(function(p){return qnorm(p)});
+      N.forEach(function(n,i){if(n.length<8)return;if(seen[n]!==undefined){out.push({i:i,j:seen[n],kind:'same'});return}seen[n]=i});
+      N.forEach(function(n,i){if(n.length<14)return;
+        N.forEach(function(m,j){if(i===j)return;if(m.length>n.length&&m.indexOf(n)>-1&&m.length-n.length<n.length)out.push({i:i,j:j,kind:'in'})})});
+      return out}
     function quality(text,o){
       o=o||{};var E=[],seen={};
       /* שורות תיבת המשנה אינן נבדקות לכפילות: הגמרא מצטטת את המשנה, וזו חזרה מכוונת */
@@ -586,11 +611,8 @@
         if(k.t==='lock'){if(k.kind!=='מקור')inM0=k.kind==='משנה';return}
         if((k.t==='line'||k.t==='title')&&!inM0)RD.push({k:k.t,v:k.v,p:plainI(k.v).replace(/\s+/g,' ').trim()})});
       /* א1: שורות כפולות או כמעט כפולות (שורה שכולה בתוך שורה אחרת) */
-      RD.forEach(function(r,i){var n=qnorm(r.p);if(n.length<8)return;
-        if(seen[n]!==undefined){E.push('שורה כפולה: '+r.p.slice(0,40));return}
-        seen[n]=i});
-      RD.forEach(function(r,i){var n=qnorm(r.p);if(n.length<14)return;
-        RD.forEach(function(q,j){if(i===j)return;var m=qnorm(q.p);if(m.length>n.length&&m.indexOf(n)>-1&&m.length-n.length<n.length)E.push('שורה שחוזרת בתוך שורה אחרת: '+r.p.slice(0,40))})});
+      dupFlags(RD.map(function(r){return r.p})).forEach(function(d){var r=RD[d.i];
+        E.push(d.kind==='same'?'שורה כפולה: '+r.p.slice(0,40):'שורה שחוזרת בתוך שורה אחרת: '+r.p.slice(0,40))});
       /* א5: סמלילים מיותרים */
       R.forEach(function(r){var p=r.p;
         if(/(^|\s)•(\s|$)/.test(p)||/:\s*•/.test(p))E.push('סמליל מיותר (•): '+p.slice(0,40));
@@ -658,6 +680,125 @@
           P.push(' ');I.push(off+ln.length)}
         off+=ln.length+1});
       return {p:P.join(''),i:I,a:A}}
+    /* ---- פרומפט 38 (15.11.2026): בדיקת הקבלה המשותפת - הדף ("קבל") והכותב (put) ----
+       fixLocks: מחזיר את האלמנטים הנעולים של המקור (הנוסח שבדף) אל ההצעה, כשהם זזו בינתיים (עבר מ-sakem_perek.js,
+       שם נקרא skpFixLocks). לפני היישור [מקור] שצמוד לכותרת נכתב אחריה בשני הצדדים: הוא אינו מפריד ואינו נכתב
+       בהחלה. קודם לכן [מקור] שהתחלף במקומו עם כותרת נושא (בשבת ז: - "רה"י עולה עד לרקיע") גרם ליישור לזווג את
+       כותרת הנושא הראשונה של ההצעה עם השנייה שבדף: הכותרת החדשה עלתה למעלה, השנייה נשמטה, והשומר מצא "קטע שלם נעלם". */
+    var LK_RE=/^\[(דף|משנה|גמרא|קבוע|מקור|כותרת-נושא|כותרת-דה)(?::(.*))?\]$/;
+    function fixLocksA(orig,text){
+      if(locksC(parse(orig)).join('|')===locksC(parse(text)).join('|'))return text;
+      var key=function(s){var m=LK_RE.exec(String(s).trim());return m?(/^כותרת/.test(m[1])?m[1]:m[1]+':'+(m[2]||'').trim()):null};
+      var kind=function(k){return k.split(':')[0]};
+      /* [מקור] שצמוד מלמעלה לכותרת נושא או ד"ה - נכתב אחריה, בשני הצדדים, לפני היישור (כמו locksC) */
+      var canon=function(L){L=L.slice();var ch=true;while(ch){ch=false;
+        for(var i=0;i+1<L.length;i++){var k1=key(L[i]),k2=key(L[i+1]);
+          if(k1&&k2&&kind(k1)==='מקור'&&/^כותרת/.test(k2)){var t=L[i];L[i]=L[i+1];L[i+1]=t;ch=true}}}
+        return L};
+      /* כל שורה מקבלת את מספר הפסקה שהיא לפניה; כותרות צד נצמדות לשורה שאחריהן */
+      var scan=function(L){var lk=[],body=[],c=0,grp=[];
+        L.forEach(function(s){var k=key(s);if(k){lk.push({k:k,s:s,c:c});return}
+          if(!String(s).trim())return;grp.push(s);if(!/^\[צד:.*\]$/.test(String(s).trim())){body.push(grp);grp=[];c++}});
+        if(grp.length)body.push(grp);return {lk:lk,body:body,n:c}};
+      var O=scan(canon(String(orig||'').split('\n'))),T=scan(canon(String(text||'').split('\n')));
+      var a=O.lk,b=T.lk,n=a.length,m=b.length,L=[],i,j;
+      for(i=0;i<=n;i++){L.push([]);for(j=0;j<=m;j++)L[i].push(0)}
+      for(i=n-1;i>=0;i--)for(j=m-1;j>=0;j--)L[i][j]=a[i].k===b[j].k?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+      var P=[];for(i=0,j=0;i<n&&j<m;){if(a[i].k===b[j].k){P.push([i,j]);i++;j++}else if(L[i+1][j]>=L[i][j+1])i++;else j++}
+      /* בין הזוגות: נעול מאותו סוג שערכו השתנה (מקור אחר, דף אחר) - מוחלף במקומו */
+      var Q=[],pi=-1,pj=-1;
+      P.concat([[n,m]]).forEach(function(pr){var I=pr[0],J=pr[1],jj=pj+1;
+        for(var ii=pi+1;ii<I;ii++)for(var t=jj;t<J;t++)if(kind(a[ii].k)===kind(b[t].k)){Q.push([ii,t]);jj=t+1;break}
+        if(I<n)Q.push([I,J]);pi=I;pj=J});
+      Q.sort(function(x,y){return x[0]-y[0]});
+      var at=new Array(n);Q.forEach(function(q){at[q[0]]=b[q[1]].c});
+      /* נעול שאין לו זוג - במקום היחסי שלו בין שני הזוגות הסמוכים */
+      for(i=0;i<n;i++)if(at[i]===undefined){
+        var p=i-1;while(p>=0&&at[p]===undefined)p--;var q=i+1;while(q<n&&at[q]===undefined)q++;
+        var oa=p>=0?a[p].c:0,ob=q<n?a[q].c:O.n,ta=p>=0?at[p]:0,tb=q<n?at[q]:T.n;
+        at[i]=Math.min(tb,Math.max(ta,ta+Math.round((a[i].c-oa)*(tb-ta)/Math.max(1,ob-oa))))}
+      for(i=1;i<n;i++)if(at[i]<at[i-1])at[i]=at[i-1];
+      var line=function(i){var pr=null;Q.forEach(function(x){if(x[0]===i)pr=x});return pr&&/^כותרת/.test(a[i].k)?b[pr[1]].s:a[i].s};
+      var out=[];i=0;
+      T.body.forEach(function(g,k){while(i<n&&at[i]<=k)out.push(line(i++));out.push.apply(out,g)});
+      while(i<n)out.push(line(i++));
+      return out.join('\n')}
+    /* היישור השני: [מקור] אינו משתתף בו כלל, וכל [מקור] של הדף נשתל במקומו היחסי. משמש כשהראשון אינו עובר
+       (כותב שהעביר [מקור] מעל שורות - שבת ב, ג) */
+    function fixLocksB(orig,text){
+      var key=function(s){var m=LK_RE.exec(String(s).trim());return m?(/^כותרת/.test(m[1])?m[1]:m[1]+':'+(m[2]||'').trim()):null};
+      var kind=function(k){return k.split(':')[0]};
+      var isSrc=function(k){return kind(k)==='מקור'};
+      var scan=function(L){var lk=[],body=[],c=0,grp=[];
+        L.forEach(function(s){var k=key(s);if(k){lk.push({k:k,s:s,c:c});return}
+          if(!String(s).trim())return;grp.push(s);if(!/^\[צד:.*\]$/.test(String(s).trim())){body.push(grp);grp=[];c++}});
+        if(grp.length)body.push(grp);return {lk:lk,body:body,n:c}};
+      var O=scan(String(orig||'').split('\n')),T=scan(String(text||'').split('\n'));
+      var n=O.lk.length;
+      var ai=[],bi=[];O.lk.forEach(function(x,i){if(!isSrc(x.k))ai.push(i)});T.lk.forEach(function(x,j){if(!isSrc(x.k))bi.push(j)});
+      var a=ai.map(function(i){return O.lk[i]}),b=bi.map(function(j){return T.lk[j]}),na=a.length,nb=b.length,L=[],i,j;
+      for(i=0;i<=na;i++){L.push([]);for(j=0;j<=nb;j++)L[i].push(0)}
+      for(i=na-1;i>=0;i--)for(j=nb-1;j>=0;j--)L[i][j]=a[i].k===b[j].k?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+      var P=[];for(i=0,j=0;i<na&&j<nb;){if(a[i].k===b[j].k){P.push([i,j]);i++;j++}else if(L[i+1][j]>=L[i][j+1])i++;else j++}
+      var Q=[],pi=-1,pj=-1;
+      P.concat([[na,nb]]).forEach(function(pr){var I=pr[0],J=pr[1],jj=pj+1;
+        for(var ii=pi+1;ii<I;ii++)for(var t=jj;t<J;t++)if(kind(a[ii].k)===kind(b[t].k)){Q.push([ii,t]);jj=t+1;break}
+        if(I<na)Q.push([I,J]);pi=I;pj=J});
+      Q=Q.map(function(q){return [ai[q[0]],bi[q[1]]]}).sort(function(x,y){return x[0]-y[0]});
+      var at=new Array(n);Q.forEach(function(q){at[q[0]]=T.lk[q[1]].c});
+      for(i=0;i<n;i++)if(at[i]===undefined){
+        var p=i-1;while(p>=0&&(at[p]===undefined||isSrc(O.lk[p].k)))p--;var q=i+1;while(q<n&&(at[q]===undefined||isSrc(O.lk[q].k)))q++;
+        var oa=p>=0?O.lk[p].c:0,ob=q<n?O.lk[q].c:O.n,ta=p>=0?at[p]:0,tb=q<n?at[q]:T.n;
+        at[i]=Math.min(tb,Math.max(ta,ta+Math.round((O.lk[i].c-oa)*(tb-ta)/Math.max(1,ob-oa))))}
+      for(i=1;i<n;i++)if(at[i]<at[i-1])at[i]=at[i-1];
+      var line=function(i){var pr=null;Q.forEach(function(x){if(x[0]===i)pr=x});return pr&&/^כותרת/.test(O.lk[i].k)?T.lk[pr[1]].s:O.lk[i].s};
+      var out=[];i=0;
+      T.body.forEach(function(g,k){while(i<n&&at[i]<=k)out.push(line(i++));out.push.apply(out,g)});
+      while(i<n)out.push(line(i++));
+      return out.join('\n')}
+    function fixLocks(orig,text){
+      var A=fixLocksA(orig,text);if(A===text)return text;
+      var ok=function(t){try{return !acceptErrs(orig,fixInline(orig,t).text).length}catch(e){return !acceptErrs(orig,t).length}};
+      if(ok(A))return A;
+      var B=fixLocksB(orig,text);return ok(B)?B:A}
+    /* הכשלים שחוסמים "קבל" בדף: מבנה בלבד (נעולים, קטע שנעלם, שורות במקום ריק, תג לא מוכר). נקרא גם ב-put,
+       על ההצעה כפי שהיא, כדי שהכותב לא ימסור הצעה שהדף ידחה */
+    var ACCEPT_RE=/נעולים|קטע שלם|נוספו שורות|תג לא מוכר/;
+    function acceptPrep(orig,text){var t=fixLocks(orig,text),mv=[];try{var r=fixInline(orig,t);t=r.text;mv=r.moved}catch(e){}return {text:t,moved:mv}}
+    function acceptErrs(orig,text){return guard(orig,text,{edited:true,srcFree:true}).filter(function(x){return ACCEPT_RE.test(x)})}
+    /* acceptSafe: "החל בכל זאת בלי השינוי הבעייתי". הנוסח נחתך לקטעים לפי הנעולים של הדף; קטע שבהצעה נעלם (או
+       שנוספו בו שורות במקום ריק) - נשאר כפי שהוא בדף, ושאר הקטעים מוחלים מן ההצעה. מחזיר {text, kept:[...]} או null
+       כשאין דרך בטוחה (מספר הקטעים שונה). התוצאה עוברת שוב את acceptErrs */
+    function acceptSafe(orig,text){
+      var key=function(s){var m=LK_RE.exec(String(s).trim());return m?m[1]:null};
+      var chunks=function(t){var C=[{sep:null,src:[],body:[]}];
+        String(t||'').replace(/\r/g,'').split('\n').forEach(function(s){if(!s.trim())return;var k=key(s);
+          if(k==='מקור'){C[C.length-1].src.push(s);return}
+          if(k){C.push({sep:s,k:k,src:[],body:[]});return}
+          C[C.length-1].body.push(s)});
+        return C};
+      var hasLine=function(c){return c.body.some(function(s){return !/^\[צד:.*\]$/.test(s.trim())})};
+      var A=chunks(orig),B=chunks(acceptPrep(orig,text).text);
+      if(A.length!==B.length)return null;
+      var out=[],kept=[];
+      A.forEach(function(a,i){var b=B[i];
+        if(a.sep)out.push(b.sep&&b.k===a.k?b.sep:a.sep);
+        out.push.apply(out,a.src);
+        if(hasLine(a)!==hasLine(b)){out.push.apply(out,a.body);
+          var mm=a.sep?/^\[([^:\]]*):?([^\]]*)\]/.exec(a.sep.trim()):null;
+          kept.push(mm?'הקטע שאחרי '+lockName(mm[1],mm[2]):'הקטע שבראש ההצעה')}
+        else out.push.apply(out,b.body)});
+      var t=out.join('\n');
+      return acceptErrs(orig,t).length?null:{text:t,kept:kept}}
+    /* הכשל במילים פשוטות, למנהל */
+    function lockName(kind,val){val=plainI(val||'');return kind==='משנה'?'המשנה'+(val?' '+val:''):kind==='דף'?'דף '+val:kind==='גמרא'?'"גמרא"':kind==='קבוע'?'העיטור':'הכותרת "'+val+'"'}
+    function acceptWhy(e){e=String(e||'');var m=/קטע שלם נעלם \(לפני \[([^:\]]*):?([^\]]*)\]\)/.exec(e);
+      if(m)return 'בהצעה חסר כל התוכן שלפני '+lockName(m[1],m[2])+'. כדי שלא יימחק תוכן מן הדף, היא לא הוחלה.';
+      if(/קטע שלם נעלם/.test(e))return 'בהצעה חסר כל התוכן שבסוף הקטע. כדי שלא יימחק תוכן מן הדף, היא לא הוחלה.';
+      if(/נעולים/.test(e))return 'הכותרות, הדפים או המשניות שבהצעה אינם תואמים את מה שבדף עכשיו.';
+      if(/נוספו שורות/.test(e))return 'בהצעה נוספו שורות במקום שאין בו תוכן בדף (למשל בין שתי כותרות).';
+      if(/תג לא מוכר/.test(e))return 'יש בהצעה סימון שהאתר אינו מכיר.';
+      return e}
     function fixInline(orig,text){
       var O=inlScan(orig),T=inlScan(text),moved=[];
       var ok=O.a.map(function(x){return x.k}),tk=T.a.map(function(x){return x.k});
@@ -1066,7 +1207,7 @@
         for(var i=0;i+4<=w.length;i++){var g=w.slice(i,i+4).join(' ');if(seen[g]&&seen[g]!==k)rep[g]=1;seen[g]=seen[g]||k}});
       var rk=Object.keys(rep);if(rk.length)out.push('צירוף שחוזר בקטע: "'+rk.slice(0,2).join('", "')+'"');
       return out}
-    return {obey:obey,SELF_CHECK:SELF_CHECK,selfCheckMissing:selfCheckMissing,OBEY_ARAM:OBEY_ARAM,absStat:absStat,absAvg:absAvg,widows:widows,abbrOpen:abbrOpen,wordy:wordy,keepOk:keepOk,wrapW:wrapW,isDashTitle:isDashTitle,dashTitles:dashTitles,dashLost:dashLost,isKushTitle:isKushTitle,amAttach:amAttach,speakerOut:speakerOut,spaceFix:spaceFix,autofixForm:autofixForm,comply:comply,mishnaBlocks:mishnaBlocks,boldBag:boldBag,hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
+    return {dupFlags:dupFlags,acceptSafe:acceptSafe,acceptWhy:acceptWhy,fixLocks:fixLocks,acceptPrep:acceptPrep,acceptErrs:acceptErrs,obey:obey,SELF_CHECK:SELF_CHECK,selfCheckMissing:selfCheckMissing,OBEY_ARAM:OBEY_ARAM,absStat:absStat,absAvg:absAvg,widows:widows,abbrOpen:abbrOpen,wordy:wordy,keepOk:keepOk,wrapW:wrapW,isDashTitle:isDashTitle,dashTitles:dashTitles,dashLost:dashLost,isKushTitle:isKushTitle,amAttach:amAttach,speakerOut:speakerOut,spaceFix:spaceFix,autofixForm:autofixForm,comply:comply,mishnaBlocks:mishnaBlocks,boldBag:boldBag,hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
             quality:quality,qnorm:qnorm,aramNew:aramNew,aramWords:aramWords,squeeze:squeeze,SQ:{SEG:SQ_SEG,LINE:SQ_LINE,MIN:SQ_MIN},C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

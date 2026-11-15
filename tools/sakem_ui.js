@@ -588,7 +588,10 @@
         old.now=now;old.nowH=nowH;old.t=nt();old.pub=0;old._ap=1;old._cur=now;
         if(old.wasP===undefined)old.wasP=curP;
         if(psCh||old.ps!==undefined){const w=psCh?wantP:old.ps;if(w!==old.wasP){old.ps=w;old.psw=wsty(w)}else{delete old.ps;delete old.psw}}}
-      else{const e={k,was:plain(cur),now,wasH:cur,nowH,wasP:curP,daf,ctx:'',_cur:now};
+      else{/* פרומפט 43: ההקשר (השורה שלפני ושאחרי) נרשם, כמו בעורך: תיקון של שורה קצרה שחוזרת בדף מאותר לפיו */
+        const SL=SLOTS||(SLOTS=slots()),ix=SL.findIndex(s=>s.k===k);
+        const ctx=ix<0?'':{b:(ix>0?SL[ix-1].t:'').slice(-40),a:(ix+1<SL.length?SL[ix+1].t:'').slice(0,40)};
+        const e={k,was:plain(cur),now,wasH:cur,nowH,wasP:curP,daf,ctx,_cur:now};
         if(psCh){e.ps=wantP;e.psw=wsty(wantP)}
         add(e)}
       dataSet(k,nowH);if(psCh)dataCls(k,wantP);SLOTS=null;return 1}

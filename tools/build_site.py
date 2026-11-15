@@ -950,6 +950,9 @@ def _apply_site_edits(pages, slug, qa):
             taken += 1                  # הד של מצב שלפני שינוי מבנה
             return
         s = by_key.get(e.get('k'))
+        # פרומפט 43: מפתח קפוא (u12.3~<זמן>) נבדק קודם במקומו המקורי, כמו בדפדפן (locate)
+        if s is None and '~' in str(e.get('k') or ''):
+            s = by_key.get(str(e.get('k')).split('~')[0])
         if s is None or not (_teq(s['t'], was) or _teq(s['t'], now)):
             k0 = _daf_key(e.get('daf'))
             win = [x for x in slots
@@ -960,6 +963,16 @@ def _apply_site_edits(pages, slug, qa):
                 hits = [x for x in win if x['t'] == want]
                 if not hits and want:
                     hits = [x for x in win if _teq(x['t'], want)]
+                cx = e.get('ctx') if isinstance(e.get('ctx'), dict) else None
+                if len(hits) > 1 and cx and (cx.get('b') or cx.get('a')):
+                    ix = {id(x): i for i, x in enumerate(slots)}
+                    def _ok(x):
+                        i = ix[id(x)]
+                        p = slots[i - 1] if i > 0 else None
+                        n = slots[i + 1] if i + 1 < len(slots) else None
+                        return ((not cx.get('b') or (p is not None and p['t'][-40:] == _wn(cx['b'])))
+                                and (not cx.get('a') or (n is not None and n['t'][:40] == _wn(cx['a']))))
+                    hits = [x for x in hits if _ok(x)]
                 if len(hits) == 1:
                     s = hits[0]; break
         rebased = False
@@ -3779,12 +3792,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function locate(e){
     if(!SLOTS)SLOTS=slots();
     const wants=[e.was,e.now].concat(e._cur!==undefined?[e._cur]:[]);
-    const byKey=slotIdx().get(e.k);
+    /* פרומפט 43 (15.11.2026): מפתח קפוא (u12.3~<זמן>) - בשחזור לפי סדר הזמן המקום המקורי שלו הוא עדיין המקום הנכון,
+       ושם הוא נבדק קודם (בתנאי שהנוסח תואם). בלי זה תיקון של שורה קצרה שחוזרת בדף ("והך:", "ר"א:") נשאר "תלוש",
+       ואחרי שינוי מבנה נשארה כותרת ישנה כשורה ונעלמה השורה שאושרה */
+    const bk=String(e.k||'').split('~')[0];
+    const byKey=slotIdx().get(e.k)||(bk!==e.k?slotIdx().get(bk):null);
     if(byKey&&wants.indexOf(byKey.t)>-1)return byKey.k;
     const k0=dafKey(e.daf);
     const win=SLOTS.filter(s=>{const k=dafKey(s.daf);return k0===null||k===null?true:Math.abs(k-k0)<=1});
     for(const want of wants){
-      const hits=win.filter(s=>s.t===want);
+      let hits=win.filter(s=>s.t===want);
+      /* כמה מקומות באותו נוסח: ההקשר (השורה שלפני ושאחרי) מכריע, אם נרשם */
+      if(hits.length>1&&e.ctx&&(e.ctx.b||e.ctx.a)){const ix=new Map(SLOTS.map((s,i)=>[s,i]));
+        hits=hits.filter(s=>{const i=ix.get(s),p=SLOTS[i-1],n=SLOTS[i+1];
+          return (!e.ctx.b||(p&&p.t.slice(-40)===e.ctx.b))&&(!e.ctx.a||(n&&n.t.slice(0,40)===e.ctx.a))})}
       if(hits.length===1)return hits[0].k;
     }
     return null}

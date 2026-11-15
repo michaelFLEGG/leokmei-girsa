@@ -68,8 +68,13 @@
     const rdy=SKP.jobs.filter(x=>x.st==='ready'),byP=new Map();
     rdy.forEach(x=>{const k=+x.perek||0;if(!byP.has(k))byP.set(k,x)});
     if(!byP.size){if(rl)rl.remove()}
-    else if(b){if(!rl){rl=document.createElement('span');rl.id='skpready';b.after(rl)}
+    else if(b){
+      /* פרומפט 40: הרשימה אינה יושבת עוד בסרגל (דחקה את "עריכה" אל מחוץ למסך). היא בתפריט "כלים" של המנהל, וגם בריחוף על "סקור סכם" */
+      const host=$('#admbtn~.admp')||null;
+      if(!rl){rl=document.createElement('span');rl.id='skpready'}
+      if(host){if(rl.parentNode!==host)host.insertBefore(rl,host.firstChild)}else if(rl.parentNode!==b.parentNode)b.after(rl);
       const nm=k=>k?(window.HD?HD.letters(k):String(k)):'קטע';
+      b.title+=' · בפרקי המסכת הזו מוכנים לסקירה: '+[...byP.keys()].sort((a,c)=>a-c).map(nm).join(', ');
       rl.innerHTML='בפרקי המסכת הזו מוכנים לסקירה: '+[...byP.keys()].sort((a,c)=>a-c).map(k=>'<a href="#" data-j="'+skpA(byP.get(k).jid)+'" title="'+skpA(byP.get(k).title||'')+'">'+nm(k)+'</a>').join(', ');
       rl.onclick=ev=>{const a=ev.target.closest('a');if(!a)return;ev.preventDefault();skpOpen(a.dataset.j)}}
     /* בתפריט המנהל */
@@ -679,13 +684,14 @@
     const after=$('#skptag')||$('#skpbtn')||ps;
     if(!d&&after){d=document.createElement('button');d.id='skpdup';d.type='button';d.className='skpbtn skptop';d.onclick=e=>{e.stopPropagation();sktDupGo()};after.after(d)}
     if(!n&&d&&skpOK()){n=document.createElement('button');n.id='skpnext';n.type='button';n.className='skpbtn skptop';n.onclick=e=>{e.stopPropagation();sktNext()};d.after(n)}
-    if(d){const {L,ds}=sktDups();d.textContent='שורות כפולות '+ds.length;d.classList.toggle('off',!ds.length);
-      d.title=(L.inGhost?'בשדה ההצעה הפתוח':'בפרק הנוכחי')+': '+(ds.length?ds.length+' שורות כפולות או כמעט כפולות. לחיצה קופצת לבאה':'אין שורות כפולות');
+    /* פרומפט 40: בסרגל סמליל קטן עם מונה; הכיתוב המלא בריחוף ובקורא המסך */
+    if(d){const {L,ds}=sktDups();d.textContent='≡ '+ds.length;d.setAttribute('aria-label','שורות כפולות '+ds.length);d.classList.toggle('off',!ds.length);
+      d.title='שורות כפולות · '+(L.inGhost?'בשדה ההצעה הפתוח':'בפרק הנוכחי')+': '+(ds.length?ds.length+' שורות כפולות או כמעט כפולות. לחיצה קופצת לבאה':'אין שורות כפולות');
       if(SKTOP.dupI>=ds.length)SKTOP.dupI=-1}
     if(n){const J=sktJobs(),here=J.filter(j=>j.perek===cur+1),R=SKP.rev;
       const cnt=(here.length?here:J).reduce((a,j)=>a+sktLeft(j),0);
-      n.textContent=J.length?'סכם הבא '+cnt:'סכם: הכל הוכרע';n.classList.toggle('off',!J.length);
-      n.title=J.length?(here.length?'הצעות שטרם הוכרעו בפרק: ':'בפרק אין. הצעות שטרם הוכרעו במסכת: ')+cnt+'. לחיצה פותחת את הבאה'+(R?' (מן האחרונה בפרק - לפרק הבא)':''):'כל הצעות סכם במסכת הוכרעו'}
+      n.textContent=J.length?'◂ '+cnt:'◂ ✓';n.setAttribute('aria-label',J.length?'סכם הבא '+cnt:'סכם: הכל הוכרע');n.classList.toggle('off',!J.length);
+      n.title=J.length?'סכם הבא · '+(here.length?'הצעות שטרם הוכרעו בפרק: ':'בפרק אין. הצעות שטרם הוכרעו במסכת: ')+cnt+'. לחיצה פותחת את הבאה'+(R?' (מן האחרונה בפרק - לפרק הבא)':''):'כל הצעות סכם במסכת הוכרעו'}
     try{if(typeof barH==='function')barH()}catch(e){}}
   window.skpTop={draw:sktDraw,dup:sktDupGo,next:sktNext,state:()=>{const J=sktJobs(),h=J.filter(j=>j.perek===cur+1);return {dups:sktDups().ds.length,left:(h.length?h:J).reduce((a,j)=>a+sktLeft(j),0),any:J.length>0}}};
   {const dr=skpDraw;skpDraw=function(){dr.apply(this,arguments);try{sktDraw()}catch(e){}}}

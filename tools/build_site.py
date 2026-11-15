@@ -1173,6 +1173,8 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
   '<button class="ib" onmousedown="event.preventDefault()" onclick="edUndoBtn()" aria-label="בטל" title="בטל (Ctrl+ז)">' + ic('undo') + '<span class="t">בטל</span></button></div>'
   # ---- מנהל: אזור נפרד בקצה השמאלי. לגולש רגיל נשאר בו רק "הצע תיקון" העדין.
   '<div class="bg admz edsw" data-pri="0" id="admz">'
+  # פרומפט 40: "עריכה" ראשון באזור (הקרוב למרכז), כדי שלעולם לא יידחק אל מחוץ למסך
+  '<button id="edbtn" class="tgl" role="switch" aria-checked="false" onclick="editBtn()" title="עריכה (F2 או Ctrl+Alt+ק)">עריכה</button>'
   '<span class="admlbl" aria-hidden="true">מנהל</span>'
   '<span class="admslot" id="admslot"></span>'
   '<span class="dd admdd"><button id="admbtn" class="ddb ib" onclick="ddToggle(this)" aria-haspopup="menu" title="כלי המנהל">' + ic('gear') + '<span class="t">כלים</span></button>'
@@ -1187,7 +1189,6 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
   ('<span class="admhg">' + hgbtn + '</span>' if hgbtn else '') +
   '<div id="admx"></div>'
   '</div></span>'
-  '<button id="edbtn" class="tgl" role="switch" aria-checked="false" onclick="editBtn()" title="עריכה (Ctrl+Alt+ק)">עריכה</button>'
   '</div>'
   '<div class="bg" id="edtools" hidden></div></div>')
 
@@ -4893,7 +4894,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function keysCard(){
     const old=$('#keyscard');if(old){old.remove();return}
     const m=document.createElement('div');m.className='modal';m.id='keyscard';
-    const rows=[['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
+    const rows=[['F2 או Ctrl+Alt+ק','כניסה למצב עריכה ויציאה ממנו (כמו לחיצה על "עריכה"; פועל בכל שפת מקלדת)'],['Ctrl+נקודה','המילה שהסמן בה (או הבחירה) הופכת לכותרת בצד ימין; שוב על כותרת - חוזרת לגוף'],
       ['Ctrl+1','סגנון תו: אמוראים בגמרא, ו"תנאי המשנה" בתוך משנה (שוב - מסיר)'],['Ctrl+2','סגנון תו: פסוק'],['Ctrl+3','סגנון פסקה: כותרת נושא (שוב - חוזרת לגוף)'],
       ['Ctrl+4','סגנון תו: רקע והסבר (בתוך משנה: הסבר במשנה)'],['Ctrl+5','סגנון פסקה: כותרת ד"ה משנה (שוב - חוזרת לגוף)'],['Ctrl+6','סגנון תו: ד"ה משנה בתוך שורה'],['Ctrl+7','סגנון תו: נושא משנה, בכל מקום'],['Ctrl+Alt+י','הערה פרטית לקלוד על הרעיון שמאחורי התיקון'],['Alt+PageDown / Alt+PageUp','המשנה הבאה / הקודמת (מסגרת "משנה" בשוליים: תפריט)'],['Ctrl+0','רווח לפני הפסקה (חצי שורה); שוב - מסיר'],['Ctrl+נ','מודגש (בתוך משנה: נושא משנה)'],['Ctrl+רווח','הסרת סגנון תו מהבחירה (בלי בחירה: מהמילה שהסמן בה)'],['Ctrl+/','הסרת סגנון הפסקה: חוזרת לרגיל, גם בכותרת'],['Ctrl+Shift+רווח','ניקוי כל העיצוב בפסקה כולה והחזרתה לגוף'],
       ['Ctrl+ך (או Ctrl+Shift+ך)','טאב יישור לשמאל: מה שאחרי הסמן נדחף לקצה השמאלי של השורה, כמו טאב שמאלי בוורד'],
@@ -5695,7 +5696,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
 
   /* הקלדה: Enter חסום כדי שלא תיווצר פסקה חדשה, והדבקה נכנסת כטקסט נקי */
   document.addEventListener('keydown',e=>{
-    if(e.ctrlKey&&e.altKey&&(e.key==='e'||e.key==='E'||e.key==='ק')){askAdmin();e.preventDefault();return}
+    /* פרומפט 40: ב-Windows Ctrl+Alt הוא AltGr, ובמקלדת עברית e.key יוצא תו אחר (€). לכן נבדק המקש הפיזי (KeyE),
+       ובגיבוי F2 בלי שום מקש לוואי - זהה ללחיצה על "עריכה" */
+    if(e.key==='F2'&&!e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey){e.preventDefault();if(typeof editBtn==='function')editBtn();else askAdmin();return}
+    if(((e.ctrlKey&&e.altKey)||(e.getModifierState&&e.getModifierState('AltGraph')))&&!e.metaKey&&(e.code==='KeyE'||e.key==='e'||e.key==='E'||e.key==='ק')){askAdmin();e.preventDefault();return}
     /* Ctrl+0 (כמו בוורד): "רווח לפני". חוסם את איפוס הזום של הדפדפן */
     if(EDIT&&e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey&&(e.code==='Digit0'||e.code==='Numpad0')){
       e.preventDefault();spToggle();return}

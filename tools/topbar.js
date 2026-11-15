@@ -40,18 +40,52 @@
 
   /* ------------------------------------------------ א. אזור המנהל */
   var slot = Dc.getElementById('admslot'), bar = Dc.getElementById('bar');
+  /* פרומפט 40: אם הסרגל עדיין גולש, כפתורי סכם (לא "עריכה") עוברים לתפריט "עוד" שבאזור המנהל,
+     ולעולם אין כפתור מחוץ למסך */
+  var tight = false, moreP = null, gMo = null;
+  function moreBox() {
+    if (moreP) return moreP;
+    var z = Dc.getElementById('admz'); if (!z || !slot) return null;
+    var s = Dc.createElement('span'); s.className = 'dd admdd'; s.id = 'admmore'; s.hidden = true;
+    s.innerHTML = '<button type="button" class="ddb ib" id="admmoreb" aria-haspopup="menu" title="כלי סכם">סכם ▾</button><div class="ddp admp" id="admmorep"></div>';
+    s.firstChild.onclick = function () { try { ddToggle(this); } catch (e) { /* */ } };
+    slot.after(s); moreP = s.lastChild; return moreP;
+  }
+  function host() { return tight ? (moreBox() || slot) : slot; }
   function gather() {
     if (!slot) return;
+    var h = host();
     ['#skpbtn', '#skmtop', '#skptag', '#skpdup', '#skpnext'].forEach(function (s) {
-      var el = $(s, bar); if (el && el.parentNode !== slot) slot.appendChild(el);
+      var el = $(s, bar); if (el && el.parentNode !== h) h.appendChild(el);
     });
-    var stray = bar.querySelectorAll('.skpbtn'); for (var i = 0; i < stray.length; i++) if (!slot.contains(stray[i])) slot.appendChild(stray[i]);
+    var stray = bar.querySelectorAll('.skpbtn'); for (var i = 0; i < stray.length; i++) if (!h.contains(stray[i])) h.appendChild(stray[i]);
+    if (moreP) moreP.parentNode.hidden = !(tight && moreP.children.length);
+  }
+  function over() {
+    var br = bar.getBoundingClientRect(), l = Infinity, r = -Infinity;
+    for (var i = 0; i < bar.children.length; i++) {
+      var c = bar.children[i], q = c.getBoundingClientRect();
+      /* "#edtools" ריק ומוסתר נשאר ברוחב של ריפוד בלבד, ואינו נחשב */
+      if (!q.width || c.hidden || getComputedStyle(c).display === 'none' || (c.id === 'edtools' && !c.children.length)) continue;
+      l = Math.min(l, q.left); r = Math.max(r, q.right);
+    }
+    var ed = Dc.getElementById('edbtn'), e = ed && ed.getBoundingClientRect();
+    return l < Math.max(br.left, 0) - 0.5 || r > Math.min(br.right, W.innerWidth) + 0.5 || !!(e && e.width && e.left < 0);
+  }
+  function fit() {
+    if (!slot || !bar) return;
+    if (H.classList.contains('dev-desk') === false && W.innerWidth <= 700) { if (tight) { tight = false; gather(); } return; }
+    tight = false; gather();
+    if (adm() && over()) { tight = true; gather(); }
+    if (gMo) gMo.takeRecords();
   }
   var gT = 0;
-  if (W.MutationObserver && bar) new MutationObserver(function () { clearTimeout(gT); gT = setTimeout(gather, 30); }).observe(bar, { childList: true, subtree: true });
-  gather();
+  if (W.MutationObserver && bar) { gMo = new MutationObserver(function () { clearTimeout(gT); gT = setTimeout(fit, 40); }); gMo.observe(bar, { childList: true, subtree: true }); }
+  fit(); setTimeout(fit, 2500);
+  W.__tbFit = function () { fit(); return { tight: tight, over: over() }; };  /* לבדיקות */
+  var fT = 0; W.addEventListener('resize', function () { clearTimeout(fT); fT = setTimeout(fit, 260); });
   /* כיתוב הריחוף של "עריכה" לפי התפקיד: לגולש זו הצעת תיקון */
-  function edTitle() { var b = Dc.getElementById('edbtn'); if (b) b.title = adm() ? 'עריכה (Ctrl+Alt+ק)' : 'הצעת תיקון'; }
+  function edTitle() { var b = Dc.getElementById('edbtn'); if (b) b.title = adm() ? 'עריכה (F2 או Ctrl+Alt+ק)' : 'הצעת תיקון'; }
   edTitle(); setTimeout(edTitle, 1500);
 
   /* ------------------------------------------------ ב. כפתור צף אחד למנהל */

@@ -180,3 +180,17 @@ html.wa-joined #mtop .mwa{border-color:transparent;background:transparent;opacit
 #tbhelp dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:8px 0 12px;font-size:15px}
 #tbhelp dt{font-weight:700;color:#2b2620;white-space:nowrap}
 #tbhelp dd{margin:0;color:#4a4237}
+/* ---------- פרומפט 40 (15.11.2026): "עריכה" תמיד גלוי ----------
+   הכפתור יושב ראשון באזור המנהל (הקרוב למרכז) ואינו מתכווץ. כפתורי סכם מקוצרים לסמליל ומונה,
+   ואם עדיין אין מקום - עוברים לתפריט "סכם" (topbar.js). רשימת הפרקים המוכנים - בתפריט "כלים". */
+.bar #edbtn{flex-shrink:0}
+.bar .bg.admz{flex-shrink:0}
+.bar .admz .admslot .skpbtn{white-space:nowrap}
+.bar .admz #admmore[hidden]{display:none!important}
+.bar .admz #admmoreb{height:32px;padding:2px 8px;white-space:nowrap}
+.bar .admz #admmorep .skpbtn{display:block;width:100%;margin:2px 0!important;text-align:start;white-space:nowrap}
+.bar .admz .admp #skpready{display:block;padding:6px 12px;font-size:13px;line-height:1.5;white-space:normal;max-width:22em;color:var(--tx2,#8a7d66)}
+.bar .admz .admp #skpready a{color:inherit;text-decoration:underline}
+/* בתפריט "סכם" הכיתוב המלא (מתוך aria-label), במקום הסמליל */
+.bar .admz #admmorep .skptop[aria-label]{font-size:0}
+.bar .admz #admmorep .skptop[aria-label]::after{content:attr(aria-label);font-size:14px}

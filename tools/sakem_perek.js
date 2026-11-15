@@ -143,12 +143,12 @@
   function skpRelocate(R){
     const fu=flatU(),pos=new Map(fu.map((o,i)=>[o.u.id,i]));
     const sig=fu.map(o=>{try{return skpNorm(skmInter([o]))}catch(e){return '\u0000'}});
-    let delta=0;
+    let delta=0,exp=-1;
     const shift=ids=>{const ix=ids.map(id=>pos.get(id+delta));return ix.every((x,k)=>x!==undefined&&(!k||x===ix[k-1]+1))?ids.map(id=>id+delta):null};
     R.items.forEach(it=>{
       if(!it.ids||!it.ids.length)return;
       if(it.kind!=='seg'){if(delta){const s=shift(it.ids);if(s){it.ids=s;if(it.anchor&&pos.has(it.anchor+delta))it.anchor+=delta}}return}
-      if(skmSame(it.ids,it.orig))return;
+      if(skmSame(it.ids,it.orig)){const q=pos.get(it.ids[it.ids.length-1]);if(q!==undefined)exp=q+1;return}
       const T=skpNorm(it.orig),n=it.ids.length;
       let best=-1,bd=Infinity;
       if(T)for(let i=0;i+n<=fu.length;i++){
@@ -156,8 +156,30 @@
         let s='';for(let k=0;k<n&&s.length<=T.length;k++)s+=sig[i+k];
         if(s!==T)continue;
         const d=Math.abs(fu[i].u.id-(it.ids[0]+delta));if(d<bd){bd=d;best=i}}
-      if(best>=0){const nids=fu.slice(best,best+n).map(o=>o.u.id);delta=nids[0]-it.ids[0];skpRemap(it,nids);it.ids=nids;it.orig=skmInter(skmUnits(nids));return}
-      if(delta){const s=shift(it.ids);if(s){skpRemap(it,s);it.ids=s}}})}
+      if(best>=0){const nids=fu.slice(best,best+n).map(o=>o.u.id);delta=nids[0]-it.ids[0];skpRemap(it,nids);it.ids=nids;it.orig=skmInter(skmUnits(nids));exp=best+n;return}
+      if(delta){const s=shift(it.ids);if(s){skpRemap(it,s);it.ids=s;const q=pos.get(s[s.length-1]);if(q!==undefined)exp=q+1;return}}
+      /* 15.11.2026 (שבת פרק כירה): אחרי בניית הוורד מחדש כל המזהים זזו, וגם הנוסח נערך בינתיים - שום קטע
+         לא נמצא כלשונו, וההיסט לא עזר (מזהי עריכות האתר אינם זזים יחד עם מזהי הוורד). כל ההצעות הצביעו
+         על יחידות אחרות או על כלום: "קבל" נחסם ("נוספו שורות במקום שלא היו בו שורות"), והחץ לקטע הבא
+         הוביל לשום מקום. כאן איתור לפי דמיון: היחידות שבדף שרוב אותיות הנוסח שלהן נמצא בנוסח שההצעה נכתבה
+         עליו, ברצף (עד שתי יחידות שנערכו ביניהן), קרוב למקום הצפוי. הקטע נמצא ומוצג כעריכה שלך (התנגשות). */
+      const f=skpFuzzy(it,T,exp);
+      if(f){const nids=fu.slice(f.i,f.last+1).map(o=>o.u.id);skpRemap(it,nids);it.ids=nids;exp=f.last+1}});
+    function skpFuzzy(it,T,exp0){
+      if(!T)return null;
+      const hit=(s)=>{if(!s||s==='\u0000')return -1;if(s.length<6)return T.indexOf(s)>-1?1:0;
+        let n=0,f=0;for(let i=0;i+6<=s.length;i+=6){n++;if(T.indexOf(s.substr(i,6))>-1)f++}return f/n};
+      const lo=exp0<0?0:Math.max(0,exp0-800),hi=exp0<0?fu.length:Math.min(fu.length,exp0+800);
+      const h=new Map();const H=i=>{if(!h.has(i))h.set(i,hit(sig[i]));return h.get(i)};
+      let best=null;
+      for(let i=lo;i<hi;i++){if(H(i)<0.6)continue;
+        let last=i,gap=0,len=0,m=0;
+        for(let j=i;j<fu.length;j++){const r=H(j);if(r<0)continue;
+          if(r>=0.6){last=j;gap=0;m+=sig[j].length*r;len+=sig[j].length}else{gap++;if(gap>2)break;len+=sig[j].length}
+          if(len>T.length*1.5)break}
+        const sc=Math.min(m,T.length)/T.length,d=exp0<0?0:Math.abs(i-exp0);
+        if(!best||sc>best.sc+0.05||(Math.abs(sc-best.sc)<=0.05&&d<best.d))best={i,last,sc,d}}
+      return best&&best.sc>=0.5?best:null}}
   /* פרומפט 33 (12.11.2026) - התקלה "מחיקת עיטור שסכם הציע לא נשמרת אחרי קבל" (שבת פרקים א-ד):
      כשהמזהים זזו מאז ההצעה (פסקה שנוספה בוורד לפני הפרק), skpRelocate עדכן את it.ids ואת it.orig, אבל לא את
      המזהים שבתוך נוסח ההצעה. [מחק-עיטור:<מזהה ישן>] לא נמצא אז בקטע, דולג בשקט, ו-skpFixLocks החזיר את העיטור

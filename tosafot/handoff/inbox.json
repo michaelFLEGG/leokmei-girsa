@@ -2371,6 +2371,78 @@
    "units": 1,
    "out": 1,
    "older_kept": 0
+  },
+  "1hPUWreDuJpjLs7j92X3W0kw6c82jeSkL|2026-11-14T22:29:27.514Z": {
+   "name": "אצווה-2026-11-14-meilah-p03-u03.json",
+   "id": "1hPUWreDuJpjLs7j92X3W0kw6c82jeSkL",
+   "modified": "2026-11-14T22:29:27.514Z",
+   "opened": "2026-11-15T00:39:25Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1oqm2OCJzs28pLVIzUfMGB8g4Cww22UCs|2026-11-14T22:33:22.365Z": {
+   "name": "אצווה-2026-11-14-meilah-p04-u01.json",
+   "id": "1oqm2OCJzs28pLVIzUfMGB8g4Cww22UCs",
+   "modified": "2026-11-14T22:33:22.365Z",
+   "opened": "2026-11-15T00:39:25Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1KRouXn1q1hfyD1F6Mx64YDPJPIFGKx3-|2026-11-14T22:35:19.169Z": {
+   "name": "אצווה-2026-11-14-meilah-p05-u01.json",
+   "id": "1KRouXn1q1hfyD1F6Mx64YDPJPIFGKx3-",
+   "modified": "2026-11-14T22:35:19.169Z",
+   "opened": "2026-11-15T00:39:25Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1_Bipg8QsdDhc1YuCyYb2vLE5qaA6IAVv|2026-11-14T22:34:48.554Z": {
+   "name": "אצווה-2026-11-14-meilah-p04-u02.json",
+   "id": "1_Bipg8QsdDhc1YuCyYb2vLE5qaA6IAVv",
+   "modified": "2026-11-14T22:34:48.554Z",
+   "opened": "2026-11-15T00:39:32Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1ST9r9yfhtoHQTJvJpUpTxAdnOweUqNR2|2026-11-15T00:26:14.220Z": {
+   "name": "אצווה-2026-11-15-meilah-p05-u02.json",
+   "id": "1ST9r9yfhtoHQTJvJpUpTxAdnOweUqNR2",
+   "modified": "2026-11-15T00:26:14.220Z",
+   "opened": "2026-11-15T00:39:32Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1hL2HdhQQmK2XUoBMHyWcPWNB9yswDLVK|2026-11-15T00:30:40.165Z": {
+   "name": "אצווה-2026-11-15-meilah-p06-u01.json",
+   "id": "1hL2HdhQQmK2XUoBMHyWcPWNB9yswDLVK",
+   "modified": "2026-11-15T00:30:40.165Z",
+   "opened": "2026-11-15T00:39:32Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1IU7o8NrOg7Wq2_NdmVAxu7W_1CMR15LW|2026-11-15T00:29:22.245Z": {
+   "name": "אצווה-2026-11-15-meilah-p06-u02.json",
+   "id": "1IU7o8NrOg7Wq2_NdmVAxu7W_1CMR15LW",
+   "modified": "2026-11-15T00:29:22.245Z",
+   "opened": "2026-11-15T00:39:32Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1rw-FR9hdkVxC2m8-W_--Appnhny5oOFs|2026-11-15T00:32:15.787Z": {
+   "name": "אצווה-2026-11-15-shevuot-p01-u01.json",
+   "id": "1rw-FR9hdkVxC2m8-W_--Appnhny5oOFs",
+   "modified": "2026-11-15T00:32:15.787Z",
+   "opened": "2026-11-15T00:39:32Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
   }
  }
 }

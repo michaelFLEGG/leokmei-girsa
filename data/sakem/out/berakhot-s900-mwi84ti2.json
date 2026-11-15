@@ -3,7 +3,7 @@
  "jid": "berakhot-s900-mwi84ti2",
  "slug": "berakhot",
  "title": "ברכות פרק שני - היה קורא (סבב מחודש על הנוסח החי 15.11.2026)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 900,
@@ -261,7 +261,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -284,6 +292,14 @@
     "nose": 0,
     "lenA": 416,
     "lenB": 416
+   },
+   "abs": {
+    "bold": 10,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -306,6 +322,14 @@
     "nose": 0,
     "lenA": 73,
     "lenB": 73
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 1,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -347,7 +371,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -375,6 +407,14 @@
     "nose": 0,
     "lenA": 375,
     "lenB": 375
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -404,6 +444,14 @@
     "nose": 0,
     "lenA": 287,
     "lenB": 287
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -443,7 +491,15 @@
     "ציות: דובר בפתח שורה בלי כותרת צד: \"ולרש\"ב:\" - [צד:ולרש\"ב:] והשורה מתחילה בתוכן (גם בלי נקודתיים; המנהל העביר ביד 7 פעמים בשבת ד). צלע במחלוקת בשורה אחת, או מימרא קצרה מאוד - נימוק ב-keep שפותח במילים \"ולרשב להזכיר יצמ\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s8",
@@ -467,6 +523,14 @@
     "nose": 0,
     "lenA": 269,
     "lenB": 269
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -507,7 +571,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s10",
@@ -549,7 +621,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s11",
@@ -571,6 +651,14 @@
     "nose": 0,
     "lenA": 148,
     "lenB": 148
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -611,7 +699,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s13",
@@ -636,6 +732,14 @@
     "nose": 0,
     "lenA": 220,
     "lenB": 220
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -677,7 +781,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s15",
@@ -725,7 +837,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 9,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s16",
@@ -765,7 +885,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s17",
@@ -811,7 +939,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s18",
@@ -864,7 +1000,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s19",
@@ -905,7 +1049,15 @@
     "הסבר ארוך: ויצא בלא השמעה ובלא דקדוק"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s20",
@@ -952,7 +1104,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s21",
@@ -990,7 +1150,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s22",
@@ -1035,7 +1203,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s23",
@@ -1055,6 +1231,14 @@
     "nose": 0,
     "lenA": 165,
     "lenB": 165
+   },
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -1096,7 +1280,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s25",
@@ -1135,7 +1327,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s26",
@@ -1178,7 +1378,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s27",
@@ -1200,6 +1408,14 @@
     "nose": 0,
     "lenA": 202,
     "lenB": 202
+   },
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1242,7 +1458,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s29",
@@ -1282,7 +1506,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s30",
@@ -1310,6 +1542,14 @@
     "nose": 0,
     "lenA": 903,
     "lenB": 903
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 7,
+    "nose": 2,
+    "widow": 1
    }
   },
   {
@@ -1336,6 +1576,14 @@
     "nose": 0,
     "lenA": 1224,
     "lenB": 1224
+   },
+   "abs": {
+    "bold": 0,
+    "space": 6,
+    "dash": 0,
+    "side": 7,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -1362,6 +1610,14 @@
     "nose": 0,
     "lenA": 895,
     "lenB": 895
+   },
+   "abs": {
+    "bold": 0,
+    "space": 6,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1410,7 +1666,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"כסיעתו של שיצא ממנו\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 4,
+    "nose": 2,
+    "widow": 1
+   }
   },
   {
    "iid": "s34",
@@ -1454,7 +1718,15 @@
     "שורה אלמנה (לע\"ש'.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s35",
@@ -1504,8 +1776,64 @@
     "הסבר ארוך: ומי שאינו ת\"ח - לא, משום יוהרא"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1794774994273
+ "t": 1794775002968,
+ "summary": "בפרק: 22 הדגשות במשנה, 25 רווחים, 22 מקפי תירוץ, 19 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 22,
+  "space": 25,
+  "dash": 22,
+  "side": 19,
+  "hatz": 0
+ },
+ "learnedNew": 17,
+ "score": {
+  "segs": 35,
+  "perSeg": {
+   "bold": 0.63,
+   "space": 0.71,
+   "dash": 0.63,
+   "side": 4.91,
+   "nose": 1.11,
+   "widow": 0.06
+  },
+  "bold": 22,
+  "space": 25,
+  "dash": 22,
+  "side": 19,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 1,
+  "warnLeft": 8,
+  "block": 0,
+  "lenPct": 4.3,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  }
+ },
+ "counts": {
+  "shown": 23,
+  "spatial": 0,
+  "adds": 10,
+  "missing": 0
+ }
 }

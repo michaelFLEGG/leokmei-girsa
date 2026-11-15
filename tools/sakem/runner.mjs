@@ -237,7 +237,10 @@ if (cmd === 'status') {
   { const noPer = (pk.pages || []).filter((pg) => !(prv.per[pg.daf] || []).length).map((pg) => pg.daf);
     const noHv = (pk.pages || []).filter((pg) => !(prv.hv[pg.daf] || []).length).map((pg) => pg.daf);
     if (noPer.length || noHv.length) {
-      const msg = 'חסר חומר מן הריפו הפרטי. פירוש הגמרא חסר בדפים: ' + (noPer.join(' ') || '-') + ' · חברותא חסרה בדפים: ' + (noHv.join(' ') || '-') + '.';
+      let msg = 'חסר חומר מן הריפו הפרטי. פירוש הגמרא חסר בדפים: ' + (noPer.join(' ') || '-') + ' · חברותא חסרה בדפים: ' + (noHv.join(' ') || '-') + '.';
+      /* 15.11.2026: כשהריפו הפרטי נגיש ורק דפים בודדים חסרים בו - לומר זאת במפורש, כדי שהעובד לא יחשוב שאין גישה */
+      const allP = (pk.pages || []).length;
+      if (CHAV && !prv.warn && noPer.length < allP && noHv.length < allP) msg += '\nהריפו הפרטי נגיש (' + CHAV + ') ושני הענפים נמשכו. הדפים שלמעלה פשוט אינם קיימים בו - זה המקרה של --allow-missing.';
       if (!process.argv.includes('--allow-missing')) die(msg + '\nאין לכתוב בלי פירוש וחברותא. שכפל את leokmei-chavruta ליד הריפו הזה (git clone --filter=blob:none --no-checkout, בלי --depth ובלי --single-branch) והרץ שוב. רק כשהדף באמת אינו קיים במאגר הפרטי - הוסף --allow-missing וכתוב זאת בסיכום.', 4);
       console.log('אזהרה חמורה: ' + msg + ' (--allow-missing) - לכתוב זאת בסיכום ההרצה.');
     } }
@@ -513,7 +516,7 @@ if (cmd === 'status') {
       if (!r.post || r.src) continue;
       const key = [r.k, r.t, r.was, r.now, r.kind].join('|');
       if (seen.has(key)) continue; seen.add(key);
-      ER.push(Object.assign({ slug }, r)); }
+      ER.push(Object.assign({ slug, _n: n }, r)); }
   }
   const q = (x) => '"' + String(x || '').trim().slice(0, 90) + '"';
   const structTxt = (r) => { const t = r.texts || [], R = r.resT || [];
@@ -551,8 +554,13 @@ if (cmd === 'status') {
       console.log('\n--- ' + x.iid + ' · ' + (x.act === 'edit' ? 'נערך' : 'נדחה') + ' · ' + (x.layers || []).join(', ') + '\nמקור:\n' + x.orig + '\nהצעה:\n' + x.prop + (x.final ? '\nמה שהמנהל כתב:\n' + x.final : '') + (x.gem ? '\nלשון הגמרא: ' + x.gem : ''));
     });
   });
-  /* --post: עד איפה נותחו עריכות המנהל בכל מסכת (מספר הרשומות כפי שהוצגו עכשיו) */
-  const postArg = ER.length > 400 ? '' : ' --post=' + Object.entries(NOW).map(([k, v]) => k + ':' + v).join(',');
+  /* --post: עד איפה נותחו עריכות המנהל בכל מסכת (מספר הרשומות כפי שהוצגו עכשיו).
+     15.11.2026: כשיש יותר מ-400, רק הראשונות הוצגו. בלי --post היה lessons-done מסמן הכל עד סוף הקובץ,
+     והעריכות שלא הוצגו נחשבו כאילו נותחו. לכן תמיד --post: במסכת שיש בה עריכה שלא הוצגה - עד השורה
+     שלפני הראשונה שלא הוצגה (כך אף אחת אינה מדולגת), ובשאר המסכתות - עד סוף הקובץ. */
+  const POST = Object.assign({}, NOW);
+  ER.slice(400).forEach((r) => { POST[r.slug] = Math.min(POST[r.slug], r._n - 1); });
+  const postArg = ' --post=' + Object.entries(POST).map(([k, v]) => k + ':' + v).join(',');
   console.log('\nאחרי שכתבת את הלקחים: node tools/sakem/runner.mjs lessons-done ' + todo.join(' ') + postArg + ' --push' +
     '\nכלל שנלמד מעריכות המנהל מגיע גם לדף "מה סכם למד": כתוב אותו גם בקובץ JSON [{"text":"...","was":"...","now":"..."}] והוסף --rules=<הקובץ>.');
 } else if (cmd === 'lessons-done') {

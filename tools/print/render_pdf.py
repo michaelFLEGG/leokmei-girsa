@@ -74,6 +74,9 @@ def main():
     ap.add_argument('--profile', default='a4')
     ap.add_argument('--holefix', default='1', help='0: בלי פיצול הערות ומתיחה (מדידת "לפני" בבקרת החורים)')
     ap.add_argument('--out', required=True)
+    ap.add_argument('--lines', action='store_true', help='פרומפט 41: רישום השורות של כל פסקה בדוח (plines), למחולל "שורה שהתארכה"')
+    ap.add_argument('--ovapply', default='', help='פרומפט 41, בדיקה בלבד: קובץ data/overflow/<מסכת>.json - מחיל בזיכרון את ההצעה הראשונה של כל שורה')
+    ap.add_argument('--sq25', default='1', help='0: בלי כלי 1 (הצרה עד 2.5%%), למדידת לפני/אחרי')
     ap.add_argument('--dev', action='store_true')
     ap.add_argument('--tos-dir', default=os.path.join(ROOT, 'tosafot'), help='תיקיית נתוני התוספות (live-*.json) לבדיקה')
     ap.add_argument('--no-pdf', action='store_true')
@@ -85,6 +88,10 @@ def main():
     q = {'print': '1', 'tos': a.tos, 'duplex': a.duplex, 'profile': a.profile}
     if a.holefix == '0':
         q['holefix'] = '0'
+    if a.lines:
+        q['lines'] = '1'
+    if a.sq25 == '0':
+        q['sq25'] = '0'
     if a.all:
         q['all'] = '1'
     else:
@@ -110,7 +117,15 @@ def main():
             if a.dev and path == 'mas.js':
                 return route.fulfill(status=200, headers={'content-type': MIME['.js']}, body=patched_mas(site))
             if a.dev and path == a.slug + '.x.js':
-                return route.fulfill(status=200, headers={'content-type': MIME['.js']}, body=patched_tail(site, a.slug, a.tos_dir))
+                body = patched_tail(site, a.slug, a.tos_dir)
+                if a.ovapply:
+                    ov, m = json.load(open(a.ovapply, encoding='utf-8')), {}
+                    for it in ov['items']:
+                        if it['sug']:
+                            s0 = it['sug'][0]
+                            m.setdefault(str(it['u']), {})[str(it['li'])] = s0['parts'] if s0['kind'] == 'split' else [s0['html']]
+                    body += ('\nwindow.__OVAPPLY=' + json.dumps(m, ensure_ascii=False) + ';\n').encode('utf-8')
+                return route.fulfill(status=200, headers={'content-type': MIME['.js']}, body=body)
             if a.dev and path.startswith('print-profiles/'):
                 body = read_retry(os.path.join(PROFILES, path.split('/', 1)[1]))
                 return route.fulfill(status=200, headers={'content-type': MIME['.json']}, body=body)
@@ -168,7 +183,7 @@ def main():
     rep['seconds'] = round(time.time() - t0, 1)
     rep['console'] = [l for l in logs if not l.startswith('log:')][-15:]
     print(json.dumps({k: rep[k] for k in ('cols', 'lines', 'notes', 'placed', 'moved', 'warn', 'issues', 'loneFixed',
-                                          'msSqueeze', 'glued', 'semicolons', 'msMeasure', 'splits', 'stretched', 't', 'seconds') if k in rep}, ensure_ascii=False))
+                                          'msSqueeze', 'glued', 'semicolons', 'sq25', 'keepAbs', 'ovApplied', 'msMeasure', 'splits', 'stretched', 't', 'seconds') if k in rep}, ensure_ascii=False))
     json.dump(rep, open(a.report or (a.out + '.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('pages=%d  out=%s' % (len(rep['pages']), a.out))
     # בודק החפיפות (14.10.2026): חפיפה או חריגה מהשוליים = כשל, אין קובץ "תקין"

@@ -261,13 +261,81 @@
     return h}
 
   /* ---------- מנוע ההדפסה ---------- */
+  /* פרומפט 41: מידע השורות של פסקה - מספר השורות, רוחב השורה האחרונה, והיכן היא מתחילה (היסט בטקסט הנקי).
+     השורות מזוהות לפי מרכז האותיות (כמו loneStrict), כדי שקטע בגופן קטן לא ייחשב שורה נפרדת */
+  function lineInfo(p){
+    var w=document.createTreeWalker(p,NodeFilter.SHOW_TEXT),nodes=[],nd;
+    while((nd=w.nextNode()))nodes.push(nd);
+    var full=nodes.map(function(x){return x.nodeValue}).join('');
+    if(!full.trim())return null;
+    var r=document.createRange();
+    function at(off){for(var k=0;k<nodes.length;k++){var L=nodes[k].nodeValue.length;if(off<L)return [nodes[k],off];off-=L}return null}
+    function cy(off){var a=at(off);if(!a)return null;var pe=a[0].parentElement;if(pe&&pe.closest&&pe.closest('sup.tm,.tmg'))return null;r.setStart(a[0],a[1]);r.setEnd(a[0],Math.min(a[1]+1,a[0].nodeValue.length));
+      var b=r.getBoundingClientRect();return b.height?(b.top+b.bottom)/2:null}
+    /* הבחירה בכל הפסקה: פסי השורות */
+    /* רק צומתי טקסט, ובלי ההפניות לתוספות (sup.tm מורם אל מעל השורה ונספר בטעות כשורה נוספת) */
+    var rs=[];nodes.forEach(function(t){if(!t.nodeValue.trim())return;var e=t.parentElement;if(e&&e.closest&&e.closest('sup.tm,.tmg'))return;
+      r.selectNodeContents(t);[].slice.call(r.getClientRects()).forEach(function(x){if(x.width>0.5&&x.height>0.5)rs.push(x)})});
+    if(!rs.length)return null;
+    var lh=parseFloat(getComputedStyle(p).lineHeight)||rs[0].height,bands=[];
+    rs.forEach(function(x){var c=(x.top+x.bottom)/2,hit=null;for(var i=0;i<bands.length;i++)if(Math.abs(bands[i].c-c)<lh*0.45){hit=bands[i];break}
+      if(hit){hit.l=Math.min(hit.l,x.left);hit.r=Math.max(hit.r,x.right)}else bands.push({c:c,l:x.left,r:x.right})});
+    bands.sort(function(a,b){return a.c-b.c});
+    var last=bands[bands.length-1],n=bands.length;
+    /* תחילת השורה האחרונה: חיפוש בינארי על היסט התו, לפי מרכז האות (תווים בלי גובה מדולגים) */
+    var lo=0,hi=full.length-1;
+    while(lo<hi){var mid=(lo+hi)>>1,m2=mid,y=null;while(m2<=hi&&(y=cy(m2))===null)m2++;
+      if(y===null){hi=mid;break}
+      if(Math.abs(y-last.c)<lh*0.45)hi=mid;else lo=m2+1}
+    while(lo>0&&/\S/.test(full[lo-1]))lo--;   /* תחילת המילה */
+    return {n:n,lastW:last.r-last.l,start:lo,text:full,lh:lh,bw:bands.map(function(b){return +(b.r-b.l).toFixed(1)})}}
+  /* כלי 1 (פרומפט 41): הצרה עד 2.5% מרוחב השורה - word-spacing שלילי קודם, ואחריו letter-spacing. אינו נוגע בטקסט.
+     אם 2.5% אינם מחזירים את השורה האחרונה - לא מצרים כלל */
+  var SQ25=0.025;
+  function squeeze25(p,GM,GP,W){
+    var inf=lineInfo(p);if(!inf||inf.n<2)return false;
+    /* הסינון המהיר רחב בכוונה: השורה הקודמת אינה מלאה עד הקצה, ולכן מה שחסר קטן מרוחב השורה האחרונה. הבדיקה האמיתית בסרגל */
+    var cap=SQ25*W;if(inf.lastW/(inf.n-1)>8*cap)return false;
+    GM.className=p.parentElement.className;GP.className=p.className;GP.style.wordSpacing='';GP.style.letterSpacing='';GP.innerHTML=p.innerHTML;
+    var h0=GP.offsetHeight,fs=parseFloat(getComputedStyle(GP).fontSize)||16;
+    var t=inf.text,sp=(t.match(/ /g)||[]).length/inf.n,ch=t.replace(/[\s֑-ׇ⁠]/g,'').length/inf.n;
+    if(sp<1)sp=1;if(ch<1)ch=1;
+    var WSMAX=0.14*fs;   /* רוב ההצרה ברווחים, עד גבול שהמילים לא ייצמדו */
+    for(var f=0.25;f<=1.0001;f+=0.25){
+      var R=cap*f,ws=Math.min(R/sp,WSMAX),ls=Math.max(0,(R-ws*sp)/ch);
+      GP.style.wordSpacing=(-ws).toFixed(3)+'px';GP.style.letterSpacing=ls?(-ls).toFixed(3)+'px':'';
+      if(GP.offsetHeight<h0-1){p.style.wordSpacing=GP.style.wordSpacing;p.style.letterSpacing=GP.style.letterSpacing;p.dataset.sq25=String(Math.round(f*25)/10);return true}}
+    return false}
+  /* לבודק ההצעות של "שורה שהתארכה" (tools/overflow/overflow_gen.py): אותה מדידה ואותה הצרה כמו בהדפסה */
+  /* אותו טיפול במילה בודדת בשורה אחרונה כמו בלולאת העימוד (דחיסה עדינה, ואם אינה מספיקה - רווח קשיח), לבודק ההצעות */
+  function loneFix(p,GM,GP){
+    if(p.dataset.sq25||p.textContent.trim().length<12||!loneStrict(p))return false;
+    GM.className=p.parentElement.className;GP.className=p.className;GP.style.wordSpacing='';GP.style.letterSpacing='';GP.innerHTML=p.innerHTML;
+    if(!loneStrict(GP))return false;
+    var h0=GP.offsetHeight;
+    for(var s2=0;s2<STEPS.length;s2++){
+      GP.style.wordSpacing=STEPS[s2][0]?STEPS[s2][0]+'em':'';GP.style.letterSpacing=STEPS[s2][1]?STEPS[s2][1]+'em':'';
+      if(GP.offsetHeight<h0){p.style.wordSpacing=GP.style.wordSpacing;p.style.letterSpacing=GP.style.letterSpacing;return true}}
+    GP.style.wordSpacing='';GP.style.letterSpacing='';GP.innerHTML=p.innerHTML;
+    var gn=0,gok=false;
+    while(gn<3&&glueLastWords(GP)){gn++;if(!loneStrict(GP)&&GP.offsetHeight<=h0){gok=true;break}}
+    if(gok){for(var g2=0;g2<gn;g2++)glueLastWords(p);return true}
+    return false}
+  window.__PRNX={lineInfo:lineInfo,squeeze25:squeeze25,loneFix:loneFix};
   async function runPrint(){
     var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
     window.__PRN={state:'running',report:R};
+    /* פרומפט 41, בדיקה בלבד: render_pdf.py --ovapply מחיל על עותק הנתונים בזיכרון את ההצעה הראשונה של כל שורה גולשת,
+       כדי למדוד כמה עמודים יוצאים. הוורד והאתר אינם משתנים */
+    if(window.__OVAPPLY){var OA=window.__OVAPPLY,nOA=0;D.pages.forEach(function(pg){pg.units.forEach(function(u){var m=OA[u.id];if(!m||!u.l)return;
+      Object.keys(m).map(Number).sort(function(a,b){return b-a}).forEach(function(li){var l=u.l[li-1];if(!l)return;
+        var rep=m[li].map(function(h,i){return [i?'b0 a0':l[0],h]});u.l.splice.apply(u.l,[li-1,1].concat(rep));nOA++})})});R.ovApplied=nOA}
     tosReset();   /* מפת הפרקים נבנית מחדש מן הנתונים כפי שהם עכשיו (אחרי העריכות החיות) */
     function W(m){R.warn.push(m);try{console.warn('[print] '+m)}catch(e){}}
     /* 7.11.2026: לשם הפרופיל עשויה להיצמד גרסת העריכות (a4v...), ראה prnGo. הקובץ הוא שם הפרופיל בלעדיה */
-    var prof=await (await fetch('print-profiles/'+((QS.get('profile')||'a4').replace(/v[0-9a-z]+$/,'')||'a4')+'.json',{cache:'no-store'})).json();PROF=prof;
+    /* פרומפט 41: שירות ההפקה מקבל שם פרופיל של עד 8 תווים, אותיות קטנות וספרות. "A4 מוגדל" עובר בשם הקצר a4lg */
+    var PNAME=((QS.get('profile')||'a4').replace(/v[0-9a-z]+$/,'')||'a4');if(PNAME==='a4lg')PNAME='a4-large';
+    var prof=await (await fetch('print-profiles/'+PNAME+'.json',{cache:'no-store'})).json();PROF=prof;
     (function(){var P=prof,n=P.notes,h=P.header,ft=P.footer;
       var c=document.createElement('style');
       c.textContent=
@@ -321,10 +389,22 @@
         '.psite{bottom:6mm;font-family:Vilna,serif;font-size:'+ft.sitePt+'pt}'+
         '.psite .qr{width:'+ft.qrMm+'mm;height:'+ft.qrMm+'mm}';
       document.head.appendChild(c)})();
+    /* פרומפט 41 (15.11.2026): keepAbsoluteFrom - פרופיל שהגוף בו מוגדל (A4 מוגדל) משאיר את משנה, ד"ה משנה, נושא, חציצה,
+       הסבר ואמוראים בגודלם המוחלט של a4. הגודל היחסי שלהם (--k-*, .hs, .am, .hatz) מוכפל ב-keepAbsoluteFrom חלקי גוף הפרופיל */
+    (function(){var P=prof;if(!P.keepAbsoluteFrom)return;
+      var bodyPt=P.measure/P.body.fsFromMeasure*72/25.4,K=P.keepAbsoluteFrom/bodyPt;if(Math.abs(K-1)<1e-4)return;
+      var cs=getComputedStyle(document.documentElement),v=function(n,d){var x=parseFloat(cs.getPropertyValue(n));return isFinite(x)?x:d};
+      var c=document.createElement('style');
+      c.textContent='html.prn{--k-nose:'+(v('--k-nose',1.2222)*K).toFixed(5)+';--k-dh:'+(v('--k-dh',1.1211)*K).toFixed(5)+';--k-mishna:'+(v('--k-mishna',1.1211)*K).toFixed(5)+'}'+
+        'html.prn .main.hatz{font-size:'+(1.1*K).toFixed(5)+'em}'+
+        'html.prn .main:not(.mishna) .hs{font-size:'+(0.82*K).toFixed(5)+'em}'+
+        'html.prn .main:not(.mishna) .am{font-size:'+(0.77*K).toFixed(5)+'em}';
+      document.head.appendChild(c);R.keepAbs=+K.toFixed(4)})();
     TM('profile');
     var withTos=QS.get('tos')==='1'&&tosItems().length>0;
     var duplex=QS.get('duplex')==='1';
     var N=prof.notes, PG=prof.page, MG=prof.margins;
+    function P_MEAS_PX(){return prof.measure*MM}
     var A_mm=PG.h-MG.top-MG.bottom;                       /* גובה הנטו של טור */
     var A=A_mm*MM;
     /* ---- טווח ---- */
@@ -524,7 +604,10 @@
       labelWrap(f);railNoGap(f);
       /* איחוי שורה יתומה (כלל עימוד 4): בדיקה במקום, וניסיונות בסרגל; רק התוצאה נכתבת לפסקה */
       var tSq=performance.now();
-      var ps0=[].slice.call(f.querySelectorAll('.main p')).filter(function(p){return p.textContent.trim().length>=12&&loneStrict(p)});
+      /* כלי 1 (פרומפט 41): הצרה עד 2.5% לפסקה שהשורה האחרונה שלה קצרה מספיק. לפני איחוי היתומה, ובמקומו */
+      if(QS.get('sq25')!=='0'){var W25=P_MEAS_PX();[].slice.call(f.querySelectorAll('.main p')).forEach(function(p){
+        if(p.textContent.trim().length>=12&&squeeze25(p,GM,GP,W25))R.sq25=(R.sq25||0)+1})}
+      var ps0=[].slice.call(f.querySelectorAll('.main p')).filter(function(p){return !p.dataset.sq25&&p.textContent.trim().length>=12&&loneStrict(p)});
       var todo=[];
       ps0.forEach(function(p){
         GM.className=p.parentElement.className;GP.className=p.className;GP.style.wordSpacing='';GP.style.letterSpacing='';
@@ -550,6 +633,16 @@
         if(p.textContent.trim().length>=12&&loneStrict(p)){
           var rw=p.closest('.row'),rc2=null;for(var q2=0;q2<crecs.length;q2++)if(crecs[q2].el===rw){rc2=crecs[q2];break}
           R.issues.push({type:'מילה בודדת בשורה אחרונה',daf:rc2?rc2.daf:'',unit:rc2&&rc2.u&&rc2.u.id,detail:p.textContent.trim().slice(-30)})}});
+      /* פרומפט 41: רישום השורות של כל פסקה (lines=1, למחולל הרשימה של "שורה שהתארכה") */
+      if(QS.get('lines')==='1'){R.plines=R.plines||[];
+        crecs.forEach(function(x){if(!x.u||!x.el)return;var m=x.el.querySelector(':scope > .main');if(!m)return;
+          [].slice.call(m.querySelectorAll(':scope > p')).forEach(function(p,li){var inf=lineInfo(p);if(!inf)return;
+            /* הרוחב הטבעי של הפסקה בשורה אחת (בלי שבירה, בלי יישור), כולל ההצרה שהוחלה: ממנו "כמה חסר" */
+            var ws0=p.style.whiteSpace,ta0=p.style.textAlign,tl0=p.style.textAlignLast;p.style.whiteSpace='nowrap';p.style.textAlign='right';p.style.textAlignLast='right';
+            var rg=document.createRange();rg.selectNodeContents(p);var nw=rg.getBoundingClientRect().width;
+            p.style.whiteSpace=ws0;p.style.textAlign=ta0;p.style.textAlignLast=tl0;inf.nw=nw;
+            R.plines.push({u:x.u.id,li:li+1,k:x.kind,cls:p.className,mc:m.className,daf:x.daf,n:inf.n,lastW:+inf.lastW.toFixed(1),start:inf.start,
+              text:inf.text,h:p.innerHTML,dh:(x.u.l&&x.u.l[li]?x.u.l[li][1]:null),dc:(x.u.l&&x.u.l[li]?x.u.l[li][0]:null),st:p.getAttribute('style')||'',bw:inf.bw,nw:+inf.nw.toFixed(1),W:+m.getBoundingClientRect().width.toFixed(1),sq:p.dataset.sq25||'',fs:+parseFloat(getComputedStyle(p).fontSize).toFixed(3)})})})}
       R.semicolons=(R.semicolons||0)+(f.textContent.split(';').length-1);
       /* כותרת צד ששום הקטנה לא מכניסה לצד ציון הדף: ציון הדף מועלה (dup) רק אם אינו נוחת על פריט מסילה של שורה שמעליו;
          אחרת כותרת הצד מוקטנת עוד. (כלל 14.10.2026: מסילה אינה חופפת, ובדיקת החפיפות אחרי ההדפסה תופסת כל שארית) */
@@ -608,7 +701,7 @@
           if(h<1&&!b.isConnected)throw new Error('אלמנט הסרגל נותק באמצע המדידה');
           var n=Math.max(1,Math.round(h/lh));
           if(Math.abs(h/lh-n)>0.2){var key=x.kind+':'+cs.fontSize;
-            if(!odd[key]){odd[key]=1;W('גובה פסקה אינו כפולה של גובה השורה ('+x.kind+'): '+(h/lh).toFixed(2))}}
+            if(!odd[key]){odd[key]=1;W('גובה פסקה אינו כפולה של גובה השורה ('+x.kind+'): '+(h/lh).toFixed(2)+' ('+x.daf+(x.u?', יחידה '+x.u.id:'')+')')}}
           var top=Ybase+br.top-fr.top+pt+bt;
           var wc=n===1?(b.textContent.trim().split(/\s+/).filter(Boolean).length):99;   /* ב5: מילים בפסקה של שורה אחת */
           var lbl=!!(rail&&rail.textContent.trim()&&bi===0);
@@ -887,6 +980,9 @@
         var endCol=c.bal||c.e>=L.length||isForce(c.e);
         var gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0),nb=le.ri-ln.ri,per=0;
         if(HFIX&&!endCol&&!sqz&&gapPx>0.5&&gapPx<=STRMAX&&nb>0){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;R.stretched=(R.stretched||0)+1}
+        /* שמירה (פרומפט 41): הטור לעולם אינו גבוה מגובה הנטו. מתיחה שהייתה מוציאה אותו מן השוליים מוקטנת, וחריגה שנשארת נרשמת */
+        if(per&&(yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)>A+0.25){per=Math.max(0,(A-(yE-yS-sqz)-(fb?fb.h+GAP:0))/nb);R.stretchCut=(R.stretchCut||0)+1}
+        if((yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)>A+0.5)W('טור גבוה מגובה הנטו: עמוד '+(pgi+1)+', '+ln.daf+': '+((yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)-A).toFixed(2)+'px (טקסט '+(yE-yS).toFixed(1)+', דחיסה '+sqz.toFixed(1)+', מתיחה '+(per*nb).toFixed(1)+')');
         if(!endCol&&gapPx>HOLE){
           var hl={page:pgi+1,col:ci===0?'ימני':'שמאלי',daf:ln.daf,lines:+(gapPx/LH).toFixed(1),why:c.why||''};
           R.holes.push(hl);
@@ -1162,6 +1258,8 @@
             '<label><input type="radio" name="prtos" id="prn-tos-y" value="1">עם תוס\' (הערות שוליים)</label></div>'+
           '<div class="pr"><label><input type="checkbox" id="prn-dup">דו-צדדי (שוליים פנימיים רחבים יותר לכריכה)</label></div>'+
           /* 6.11.2026: פריסה למנהל בלבד. כל עמוד A4 מוקטן באותו יחס (0.707) לחצי גיליון A4 לרוחב, כלומר A5; היחסים בדף נשמרים */
+          (ADM?'<div class="pr" id="prn-size"><span>גודל אות:</span><label><input type="radio" name="prsize" value="a4" checked>רגיל</label>'+
+            '<label><input type="radio" name="prsize" value="a4lg">מוגדל</label></div>':'')+
           (ADM?'<div class="pr" id="prn-lay"><span>פריסה:</span><label><input type="radio" name="prlay" value="a4" checked>A4 רגיל</label>'+
             '<label><input type="radio" name="prlay" value="2up">שניים בעמוד</label>'+
             '<label><input type="radio" name="prlay" value="book">הדפס לחוברת (A5, כריכה מימין)</label></div>'+
@@ -1380,7 +1478,9 @@
         try{var et=JSON.parse(t).doc.t;if(et)q.set('et',String(et))}catch(e){}
         if(!t)t=String(Date.now());
         var h=2166136261;for(var i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}
-        q.set('profile','a4v'+('0000'+((h>>>0)%60466176).toString(36)).slice(-5));
+        var big=isAdm()&&PRD&&PRD.querySelector('input[name=prsize][value=a4lg]:checked');
+        q.set('profile',big?'a4lgv'+('00'+((h>>>0)%46656).toString(36)).slice(-3):'a4v'+('0000'+((h>>>0)%60466176).toString(36)).slice(-5));
+        if(big)fname=fname.replace(/\.pdf$/,' - מוגדל.pdf');
         return fetch(PRINT_API+'/pdf?'+q.toString(),{signal:ctrl.signal,headers:admHdr(),cache:'no-store'})}).then(function(res){
         if(!res.ok){return res.text().then(function(t){var m='';try{m=JSON.parse(t).error||''}catch(e){}throw new Error(m||('קוד '+res.status))})}
         return res.blob()}).then(function(blob){

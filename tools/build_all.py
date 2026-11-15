@@ -371,6 +371,13 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     for _f in os.listdir(os.path.join(ROOT, 'tools', 'print', 'profiles')):
         shutil.copy(os.path.join(ROOT, 'tools', 'print', 'profiles', _f), os.path.join(_pp, _f))
     shutil.copy(os.path.join(ROOT, 'tools', 'print', 'qrcode.js'), os.path.join(SITE, 'print-qr.js'))
+    # פרומפט 41: רשימת "שורה שהתארכה" (נקראת בדף במצב מנהל; המקור הראשי הוא הקובץ שבמאגר)
+    _ov = os.path.join(ROOT, 'data', 'overflow')
+    if os.path.isdir(_ov):
+        os.makedirs(os.path.join(SITE, 'overflow'), exist_ok=True)
+        for _f in os.listdir(_ov):
+            if _f.endswith('.json') and _f not in ('abbr.json', 'approved-abbr.json'):
+                shutil.copy(os.path.join(_ov, _f), os.path.join(SITE, 'overflow', _f))
     shutil.copy(os.path.join(ROOT, 'tools', 'print', 'page2.html'), os.path.join(SITE, 'print-page2.html'))
     shutil.copy(os.path.join(ROOT, 'tools', 'print', 'print-board.html'), os.path.join(SITE, 'print-board.html'))
     # צורת הדף: קואורדינטות בלבד (התמונות אינן באתר הציבורי ואינן במאגר)

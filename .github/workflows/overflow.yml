@@ -1,0 +1,52 @@
+name: שורה שהתארכה - מחולל הרשימה וההצעות
+# פרומפט 41 (15.11.2026): אחרי כל פרסום של האתר (השומר) - מריצים את מנוע ההדפסה על המסכתות שב-data/overflow/config.json
+# בשני הפרופילים (a4, a4-large), כותבים את רשימת השורות הגולשות ואת ההצעות שנבדקו במנוע, ולומדים מן ההכרעות.
+# הרשימה נקראת בדף במצב מנהל. אינו בונה ואינו מפרסם את האתר.
+on:
+  workflow_run:
+    workflows: ['השומר - בנייה ופרסום מקובצי הוורד']
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: overflow
+  cancel-in-progress: true
+jobs:
+  gen:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: למידה מן ההכרעות
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          for s in $(python -c "import json;print(' '.join(json.load(open('data/overflow/config.json'))['slugs']))"); do
+            python tools/overflow/learn.py --slug $s || echo "::warning::הלמידה נכשלה ב-$s"
+          done
+          python tools/overflow/abbr.py || echo "::warning::רשימת הקיצורים לא נבנתה מחדש (אין קובצי וורד בענן), נשארת הקודמת"
+      - name: מחולל
+        run: |
+          for s in $(python -c "import json;print(' '.join(json.load(open('data/overflow/config.json'))['slugs']))"); do
+            python tools/overflow/mirror_site.py --slug $s --out _work/mirror-$s
+            python tools/overflow/overflow_gen.py --slug $s --site _work/mirror-$s --tmp _work/overflow-$s
+          done
+      - name: שמירה בריפו
+        run: |
+          git config user.name "leokmei-overflow"
+          git config user.email "overflow@leokmei.com"
+          git add data/overflow
+          if git diff --cached --quiet; then echo "אין שינוי"; exit 0; fi
+          git commit -m "שורה שהתארכה: רשימה והצעות מעודכנות [skip ci]"
+          ok=0
+          for i in 1 2 3; do
+            if git pull --rebase -q -X theirs && git push -q; then ok=1; break; fi
+            git rebase --abort 2>/dev/null || true
+            sleep 5
+          done
+          if [ "$ok" != 1 ]; then echo "::error::הדחיפה לריפו נכשלה שלוש פעמים"; exit 1; fi

@@ -27,16 +27,17 @@
   "ketubot-p1@1794563174963",
   "ketubot-p3@1794563500006",
   "sukkah-p3@1794208531025",
-  "berakhot-p7@1794501302101"
+  "berakhot-p7@1794501302101",
+  "berakhot-p1@1794732229908"
  ],
- "learnT": 1794743307363,
+ "learnT": 1794747103278,
  "post": {
   "bava-batra": 1616,
   "bekhorot": 7236,
-  "berakhot": 5220,
+  "berakhot": 7124,
   "ketubot": 4831,
   "kiddushin": 9,
-  "shabbat": 8600,
+  "shabbat": 8815,
   "sukkah": 5606
  }
 }

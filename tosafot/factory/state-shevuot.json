@@ -122,6 +122,21 @@
     "flagged": 0,
     "questions": 36
    }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-15T18:39:48Z",
+   "unc_done": true,
+   "handoff_units": [
+    "shevuot-p08-u01"
+   ],
+   "result": {
+    "generated": 6,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 3
+   }
   }
  },
  "created": "2026-11-15T06:39:58Z",
@@ -167,7 +182,14 @@
    "mean": 0.172,
    "n": 3,
    "at": "2026-11-15T12:39:05Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.433,
+   "n": 1,
+   "at": "2026-11-15T18:39:47Z"
   }
  ],
- "updated": "2026-11-15T12:39:05Z"
+ "updated": "2026-11-15T18:39:48Z",
+ "done": "2026-11-15T18:39:48Z"
 }

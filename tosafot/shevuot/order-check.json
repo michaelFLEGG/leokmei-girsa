@@ -1,22 +1,28 @@
 {
  "slug": "shevuot",
- "shown": 514,
+ "shown": 520,
  "moved": [
   {
-   "perek": 7,
-   "n": 35,
+   "perek": 8,
+   "n": 1,
    "to": "מח.",
    "was": ""
   },
   {
-   "perek": 7,
-   "n": 36,
+   "perek": 8,
+   "n": 2,
    "to": "מח.",
    "was": ""
   },
   {
-   "perek": 7,
-   "n": 37,
+   "perek": 8,
+   "n": 3,
+   "to": "מח.",
+   "was": ""
+  },
+  {
+   "perek": 8,
+   "n": 4,
    "to": "מח.",
    "was": ""
   }

@@ -3,7 +3,7 @@
  "jid": "berakhot-p8",
  "slug": "berakhot",
  "title": "ברכות פרק שמיני - אלו דברים",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 4130,
@@ -202,7 +202,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -250,7 +258,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -287,7 +303,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 18,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -328,7 +352,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -371,7 +403,15 @@
     "שורה אלמנה (לאחריו.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s6",
@@ -413,7 +453,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s7",
@@ -473,7 +521,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s8",
@@ -517,7 +573,15 @@
     "שורה אלמנה (אדם.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s9",
@@ -559,7 +623,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s10",
@@ -601,7 +673,15 @@
     "שורה אלמנה (מאור.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s11",
@@ -642,7 +722,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s12",
@@ -684,7 +772,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s13",
@@ -723,7 +819,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s14",
@@ -760,7 +864,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s15",
@@ -799,7 +911,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s16",
@@ -842,7 +962,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s17",
@@ -882,7 +1010,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"מפני ביטול בית המדרש\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s18",
@@ -932,7 +1068,15 @@
     "ארוך מהמקור, גם עם התוספת"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s19",
@@ -975,7 +1119,15 @@
     "שורה אלמנה (כלים.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 2,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s20",
@@ -1024,7 +1176,15 @@
     "ארוך מהמקור, גם עם התוספת"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 2,
+    "side": 6,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s21",
@@ -1068,7 +1228,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 8,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s22",
@@ -1109,7 +1277,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s23",
@@ -1149,7 +1325,15 @@
    "read": [],
    "keep": [
     "מה יונה אינה - המשך המשל של התשובה, ולא תירוץ חדש"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s24",
@@ -1189,7 +1373,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s25",
@@ -1231,7 +1423,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s26",
@@ -1275,8 +1475,64 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1794752769233
+ "t": 1794752774898,
+ "summary": "בפרק: 18 הדגשות במשנה, 10 רווחים, 11 מקפי תירוץ, 79 כותרות צד חדשות, 3 עיטורים נמחקו",
+ "compliance": {
+  "bold": 18,
+  "space": 10,
+  "dash": 11,
+  "side": 79,
+  "hatz": 3
+ },
+ "learnedNew": 9,
+ "score": {
+  "segs": 26,
+  "perSeg": {
+   "bold": 0.69,
+   "space": 0.38,
+   "dash": 0.42,
+   "side": 3.96,
+   "nose": 0.73,
+   "widow": 0
+  },
+  "bold": 18,
+  "space": 10,
+  "dash": 11,
+  "side": 79,
+  "nose": 6,
+  "hatz": 3,
+  "abbr": 9,
+  "warnLeft": 20,
+  "block": 0,
+  "lenPct": 17.5,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  }
+ },
+ "counts": {
+  "shown": 26,
+  "spatial": 6,
+  "adds": 4,
+  "missing": 0
+ }
 }

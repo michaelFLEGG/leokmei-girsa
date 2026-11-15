@@ -531,6 +531,11 @@
   function skmApply(p,newText){
     let os=skmUnits(p.ids);
     if(!skmSame(p.ids,p.orig))throw new Error('הקטע השתנה מאז ההצעה. בקש הצעה חדשה');
+    /* פרומפט 43 (15.11.2026): גבולות הקטע בדף - היחידה שלפניו והיחידה שאחריו - לבדיקה שאחרי ההחלה */
+    const FU0=flatU(),i0=FU0.findIndex(o=>o.u===os[0].u),i1=FU0.findIndex(o=>o.u===os[os.length-1].u);
+    /* היחידות הסמוכות נכללות בהשוואה: כותרת צד שנמחקה מצרפת את שורתה ליחידה שלפניה (כמו בעורך) */
+    const prevO=i0>0?FU0[i0-1]:null,nextO=i1>-1&&i1+1<FU0.length?FU0[i1+1]:null;
+    const VB={prev:prevO?{id:prevO.u.id,L:skmVerifyLines(skmInter([prevO]))}:null,next:nextO?{id:nextO.u.id,L:skmVerifyLines(skmInter([nextO]))}:null};
     /* 10.11.2026: עיטור למחיקה שמחוץ לגבולות הקטע - מאותר בדף כולו, ונכנס לגיבוי לביטול */
     const hdOut=(p.hdel||[]).filter(id=>!os.some(x=>x.u.id===id)).map(id=>skmUnits([id]).find(x=>x.u.k==='hatz')).filter(Boolean);
     const pis=[...new Set(os.concat(hdOut).map(o=>o.pi))];
@@ -751,6 +756,16 @@
       OLDS.reverse().forEach(([o,j])=>{Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,JSON.parse(j))});
       SLOTS=null;befores.forEach(b=>patchPage(b));
       throw err}
+    /* פרומפט 43 (15.11.2026): הבדיקה שאחרי "קבל". מה שבדף בין היחידה שלפני הקטע ובין היחידה שאחריו חייב להיות
+       בדיוק ההצעה שאושרה: כל שורה וכל כותרת צד, בלי שארית (כותרת צד ישנה שנשארה לבד, "והך:" יתום) ובלי חוסר.
+       אם לא - ההחלה מתבטלת כולה, כאילו לא נלחץ דבר, וההודעה אומרת מה לא תאם. לעולם לא חצי החלה. */
+    try{const bad=skmVerify(newText,VB);if(bad)throw new Error('ההחלה לא תאמה להצעה ובוטלה כולה ('+bad+'). שום דבר לא השתנה')}
+    catch(err){
+      pre.forEach(z=>{D.pages[z.pi].units=JSON.parse(z.snap)});
+      RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});
+      OLDS.reverse().forEach(([o,j])=>{Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,JSON.parse(j))});
+      SLOTS=null;befores.forEach(b=>patchPage(b));
+      throw err}
     const n=RECS.length+OLDS.length;
     if(!n)return {n:0};
     UNDO.length=0;
@@ -764,6 +779,27 @@
     drawEd();pubSoon();syncSoon();
     if($('#edn'))$('#edn').textContent=ED.length;
     return {n,recs:RECS}}
+
+  /* פרומפט 43: השוואת הקטע שבדף להצעה, בטקסט נקי שורה אחר שורה (כותרות צד כשורות "צד:"). [מקור] ו[דף] אינם נכתבים
+     בהחלה ולכן אינם חלק מן ההשוואה. מחזיר תיאור קצר של אי ההתאמה הראשונה, או '' כשהכול תואם */
+  function skmVerifyLines(text){
+    return String(text||'').split('\n').map(x=>x.trim()).filter(x=>x&&!/^\[(מקור|דף|גמרא|משנה)(:[^\]]*)?\]$/.test(x)&&!/^\[קבוע:/.test(x)).map(x=>{
+      const m=/^\[צד:(.*)\]$/.exec(x);
+      const body=(m?m[1]:x).replace(/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/,'').replace(/\[(מס|תוס'):[^\]]*\]/g,'');
+      const t=SKC.bare(SKC.i2h(body)).replace(/[\u0591-\u05C7\u00a0\u2060]/g,'').replace(/\s+/g,' ').trim();
+      return (m?'צד: ':'')+t}).filter(x=>x&&x!=='צד: ')}
+  function skmVerify(text,VB){
+    const fu=flatU();
+    const a=VB.prev?fu.findIndex(o=>o.u.id===VB.prev.id):0,b=VB.next?fu.findIndex(o=>o.u.id===VB.next.id):fu.length-1;
+    if(a<0||b<0||b<a)return 'גבולות הקטע לא נמצאו';
+    const got=skmVerifyLines(skmInter(fu.slice(a,b+1)));
+    const want=(VB.prev?VB.prev.L:[]).concat(skmVerifyLines(text),VB.next?VB.next.L:[]);
+    const n=Math.max(got.length,want.length);
+    for(let i=0;i<n;i++)if(got[i]!==want[i]){
+      const g=got[i]===undefined?'(חסר)':got[i],w=want[i]===undefined?'(אין)':want[i];
+      return 'בדף: "'+g.slice(0,40)+'", בהצעה: "'+w.slice(0,40)+'"'}
+    return ''}
+  window.skmVerifyLines=skmVerifyLines;
 
   /* =================== חלונית הניהול: התור של סכם (פרומפט 15: בלי מפתח ובלי עלות) =================== */
   function skmPanelBtn(){const box=$('#edb');if(!box||SUGM||!isAdmin())return;

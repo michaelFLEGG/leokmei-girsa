@@ -67,7 +67,9 @@ def remote_edits(repo):
             a = None
         if not a:
             continue
-        eds = [e for e in a.get('edits') or [] if not e.get('dup') and not e.get('noop')]
+        # base: עריכה שכבר בתוך הוורד של ההמרה החד פעמית (ברכות, פרומפט 38, 15.11.2026) - הקובץ החי
+        # שבמחשב מקבל אותה בהחלפת הקובץ כולו (--restore-from), ולעולם אינה נכתבת אליו שוב עריכה אחר עריכה
+        eds = [e for e in a.get('edits') or [] if not e.get('dup') and not e.get('noop') and not e.get('base')]
         if not eds:
             continue
         hit = next((d for _f, d in docs if d.get('slug') == a.get('slug')

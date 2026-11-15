@@ -341,7 +341,8 @@ def ingest_one(slug, dry, log=print):
             if (ekey(e), e.get('t')) not in have:
                 arch['edits'].append({'k': ekey(e), 't': e.get('t'), 'dup': 1, 'cw': rec['when']})
         old = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=KEEP_DAYS)).strftime('%Y-%m-%dT%H:%M:%SZ')
-        arch['edits'] = [e for e in arch['edits'] if (e.get('cw') or rec['when']) >= old]
+        # base (פרומפט 38): נשארות עד שהקובץ החי שבמחשב יוחלף בוורד שבמאגר - הן ששומרות שהשומר לא ייקח קובץ דרייב ישן
+        arch['edits'] = [e for e in arch['edits'] if e.get('base') or (e.get('cw') or rec['when']) >= old]
         arch['edits'].sort(key=lambda e: e.get('t') or 0)
         arch['when'] = rec['when']
         wjson(ap, arch)

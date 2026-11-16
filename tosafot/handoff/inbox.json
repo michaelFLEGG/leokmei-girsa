@@ -3298,6 +3298,132 @@
    "units": 1,
    "out": 1,
    "older_kept": 0
+  },
+  "1_EdF1eGChWF7vRSMLKgeE2O0bZQATZ-X|2026-11-16T07:27:27.047Z": {
+   "name": "אצווה-2026-11-16-nazir-p09-u01.json",
+   "id": "1_EdF1eGChWF7vRSMLKgeE2O0bZQATZ-X",
+   "modified": "2026-11-16T07:27:27.047Z",
+   "opened": "2026-11-16T12:39:59Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1cqonacdn2kJhFxEcAZUwKIpZEjDtVA3v|2026-11-16T07:31:06.870Z": {
+   "name": "אצווה-2026-11-16-nazir-p09-u02.json",
+   "id": "1cqonacdn2kJhFxEcAZUwKIpZEjDtVA3v",
+   "modified": "2026-11-16T07:31:06.870Z",
+   "opened": "2026-11-16T12:40:18Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1s8__9fw4WKFTl2EnZkyL00siHqEU45hE|2026-11-16T08:24:48.953Z": {
+   "name": "אצווה-2026-11-16-nazir-p09-u03.json",
+   "id": "1s8__9fw4WKFTl2EnZkyL00siHqEU45hE",
+   "modified": "2026-11-16T08:24:48.953Z",
+   "opened": "2026-11-16T12:40:18Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1V2SjRJY2yutAK2-K4KUhscbvXwWEn0h1|2026-11-16T08:28:47.044Z": {
+   "name": "אצווה-2026-11-16-nazir-p09-u04.json",
+   "id": "1V2SjRJY2yutAK2-K4KUhscbvXwWEn0h1",
+   "modified": "2026-11-16T08:28:47.044Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1c9txXXNe_DNQy63bUsjJK7ppnOqhBmTr|2026-11-16T08:33:11.320Z": {
+   "name": "אצווה-2026-11-16-nazir-p09-u05.json",
+   "id": "1c9txXXNe_DNQy63bUsjJK7ppnOqhBmTr",
+   "modified": "2026-11-16T08:33:11.320Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1ogWILVqARW9mTi8K4WhyxQ_RtSioy6OQ|2026-11-16T08:39:07.514Z": {
+   "name": "אצווה-2026-11-16-zevachim-p01-u01.json",
+   "id": "1ogWILVqARW9mTi8K4WhyxQ_RtSioy6OQ",
+   "modified": "2026-11-16T08:39:07.514Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1QQMj64nlhzO2rnPCQbLKIT8Mtvvgni4i|2026-11-16T09:28:01.309Z": {
+   "name": "אצווה-2026-11-16-zevachim-p01-u02.json",
+   "id": "1QQMj64nlhzO2rnPCQbLKIT8Mtvvgni4i",
+   "modified": "2026-11-16T09:28:01.309Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1d5e1aCeYuZi4A24XpM5OANH07DTig1z1|2026-11-16T11:28:50.348Z": {
+   "name": "אצווה-2026-11-16-zevachim-p01-u03.json",
+   "id": "1d5e1aCeYuZi4A24XpM5OANH07DTig1z1",
+   "modified": "2026-11-16T11:28:50.348Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1kzeIWHA_duEOsXqTG8DF9WX2d4JKtIQw|2026-11-16T11:33:56.361Z": {
+   "name": "אצווה-2026-11-16-zevachim-p01-u04.json",
+   "id": "1kzeIWHA_duEOsXqTG8DF9WX2d4JKtIQw",
+   "modified": "2026-11-16T11:33:56.361Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1n1ZR8uqQZN-aBYVOLMNDgU_wXn-xUhvq|2026-11-16T11:38:40.743Z": {
+   "name": "אצווה-2026-11-16-zevachim-p01-u05.json",
+   "id": "1n1ZR8uqQZN-aBYVOLMNDgU_wXn-xUhvq",
+   "modified": "2026-11-16T11:38:40.743Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1FSmmtmgZVTDcK5e9-QQYr1DIi0GxK140|2026-11-16T11:43:24.436Z": {
+   "name": "אצווה-2026-11-16-zevachim-p01-u06.json",
+   "id": "1FSmmtmgZVTDcK5e9-QQYr1DIi0GxK140",
+   "modified": "2026-11-16T11:43:24.436Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1NTA80fHmH6jZ1mg-G2tdFxfaEd_ziLc0|2026-11-16T12:28:04.039Z": {
+   "name": "אצווה-2026-11-16-zevachim-p02-u01.json",
+   "id": "1NTA80fHmH6jZ1mg-G2tdFxfaEd_ziLc0",
+   "modified": "2026-11-16T12:28:04.039Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1gciOU_kRDGxTOf1-E2y29lvbyCwns2kH|2026-11-16T12:34:06.877Z": {
+   "name": "אצווה-2026-11-16-zevachim-p02-u02.json",
+   "id": "1gciOU_kRDGxTOf1-E2y29lvbyCwns2kH",
+   "modified": "2026-11-16T12:34:06.877Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
+  },
+  "1nwQ_cwYpEP4KlJab3ZcSnNCTQwgTdOjr|2026-11-16T12:39:11.298Z": {
+   "name": "אצווה-2026-11-16-zevachim-p02-u03.json",
+   "id": "1nwQ_cwYpEP4KlJab3ZcSnNCTQwgTdOjr",
+   "modified": "2026-11-16T12:39:11.298Z",
+   "opened": "2026-11-16T12:40:19Z",
+   "units": 1,
+   "out": 1,
+   "older_kept": 0
   }
  }
 }

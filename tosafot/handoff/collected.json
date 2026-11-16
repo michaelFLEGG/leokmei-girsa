@@ -5642,6 +5642,129 @@
    "flagged": 0,
    "cal": 0.283,
    "published": "2026-11-16T06:40:13Z"
+  },
+  "nazir-p09-u01": {
+   "ok": true,
+   "done_at": "2026-11-16T07:27:13Z",
+   "at": "2026-11-16T12:40:20Z",
+   "ntos": 28,
+   "flagged": 0,
+   "cal": 0.368,
+   "published": "2026-11-16T12:40:22Z"
+  },
+  "nazir-p09-u02": {
+   "ok": true,
+   "done_at": "2026-11-16T07:30:55Z",
+   "at": "2026-11-16T12:40:20Z",
+   "ntos": 23,
+   "flagged": 0,
+   "cal": 0.587,
+   "published": "2026-11-16T12:40:22Z"
+  },
+  "nazir-p09-u03": {
+   "ok": true,
+   "done_at": "2026-11-16T08:24:35Z",
+   "at": "2026-11-16T12:40:20Z",
+   "ntos": 24,
+   "flagged": 1,
+   "cal": 0.178,
+   "published": "2026-11-16T12:40:22Z"
+  },
+  "nazir-p09-u04": {
+   "ok": true,
+   "done_at": "2026-11-16T08:28:32Z",
+   "at": "2026-11-16T12:40:20Z",
+   "ntos": 27,
+   "flagged": 0,
+   "cal": 0.4,
+   "published": "2026-11-16T12:40:22Z"
+  },
+  "nazir-p09-u05": {
+   "ok": true,
+   "done_at": "2026-11-16T08:32:55Z",
+   "at": "2026-11-16T12:40:20Z",
+   "ntos": 13,
+   "flagged": 0,
+   "cal": 0.121,
+   "published": "2026-11-16T12:40:22Z"
+  },
+  "zevachim-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-16T08:38:52Z",
+   "at": "2026-11-16T12:40:21Z",
+   "ntos": 28,
+   "flagged": 0,
+   "cal": 0.347,
+   "published": "2026-11-16T12:40:23Z"
+  },
+  "zevachim-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-16T09:27:47Z",
+   "at": "2026-11-16T12:40:21Z",
+   "ntos": 27,
+   "flagged": 0,
+   "cal": 0.314,
+   "published": "2026-11-16T12:40:23Z"
+  },
+  "zevachim-p01-u03": {
+   "ok": true,
+   "done_at": "2026-11-16T11:28:36Z",
+   "at": "2026-11-16T12:40:21Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.344,
+   "published": "2026-11-16T12:40:23Z"
+  },
+  "zevachim-p01-u04": {
+   "ok": true,
+   "done_at": "2026-11-16T11:33:40Z",
+   "at": "2026-11-16T12:40:21Z",
+   "ntos": 24,
+   "flagged": 2,
+   "cal": 0.217,
+   "published": "2026-11-16T12:40:23Z"
+  },
+  "zevachim-p01-u05": {
+   "ok": true,
+   "done_at": "2026-11-16T11:38:25Z",
+   "at": "2026-11-16T12:40:21Z",
+   "ntos": 26,
+   "flagged": 0,
+   "cal": 0.242,
+   "published": "2026-11-16T12:40:23Z"
+  },
+  "zevachim-p01-u06": {
+   "ok": true,
+   "done_at": "2026-11-16T11:43:08Z",
+   "at": "2026-11-16T12:40:21Z",
+   "ntos": 20,
+   "flagged": 0,
+   "cal": 0.455,
+   "published": "2026-11-16T12:40:23Z"
+  },
+  "zevachim-p02-u01": {
+   "ok": true,
+   "done_at": "2026-11-16T12:27:50Z",
+   "at": "2026-11-16T12:40:21Z",
+   "ntos": 26,
+   "flagged": 0,
+   "cal": 0.451
+  },
+  "zevachim-p02-u02": {
+   "ok": true,
+   "done_at": "2026-11-16T12:33:52Z",
+   "at": "2026-11-16T12:40:21Z",
+   "ntos": 25,
+   "flagged": 1,
+   "cal": 0.488
+  },
+  "zevachim-p02-u03": {
+   "ok": true,
+   "done_at": "2026-11-16T12:38:54Z",
+   "at": "2026-11-16T12:40:21Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.39
   }
  },
  "files": {

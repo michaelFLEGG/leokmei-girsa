@@ -164,6 +164,25 @@
     "flagged": 0,
     "questions": 35
    }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-11-16T12:40:22Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nazir-p09-u01",
+    "nazir-p09-u02",
+    "nazir-p09-u03",
+    "nazir-p09-u04",
+    "nazir-p09-u05"
+   ],
+   "result": {
+    "generated": 114,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 52
+   }
   }
  },
  "created": "2026-11-08T12:39:45Z",
@@ -215,7 +234,14 @@
    "mean": 0.241,
    "n": 5,
    "at": "2026-11-16T06:40:13Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.354,
+   "n": 9,
+   "at": "2026-11-16T12:40:21Z"
   }
  ],
- "updated": "2026-11-16T06:40:13Z"
+ "updated": "2026-11-16T12:40:22Z",
+ "done": "2026-11-16T12:40:22Z"
 }

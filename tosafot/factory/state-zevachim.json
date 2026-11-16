@@ -1,0 +1,35 @@
+{
+ "slug": "zevachim",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-16T12:40:23Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p01-u01",
+    "zevachim-p01-u02",
+    "zevachim-p01-u03",
+    "zevachim-p01-u04",
+    "zevachim-p01-u05",
+    "zevachim-p01-u06"
+   ],
+   "result": {
+    "generated": 148,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 108
+   }
+  }
+ },
+ "created": "2026-11-16T12:40:22Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.32,
+   "n": 12,
+   "at": "2026-11-16T12:40:22Z"
+  }
+ ],
+ "updated": "2026-11-16T12:40:23Z"
+}

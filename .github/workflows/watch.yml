@@ -1,9 +1,6 @@
 name: השומר - בנייה ופרסום מקובצי הוורד
 on:
-  schedule:
-    # דקות שאינן עגולות: לוח הזמנים החינמי של גיטהאב מדלג על הרצות
-    # שנקבעו לראש השעה ולחצייה, מפני שכל העולם מבקש אותן באותו רגע.
-    - cron: '13,43 * * * *'
+  # פרומפט 51 (16.11.2026): בלי סבב כל חצי שעה. האתר נבנה בדחיפת קוד, ופעם בלילה אחרי הקיפול (fold.yml).
   workflow_dispatch:
   push:
     branches: [main]
@@ -25,9 +22,11 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
       - run: pip install lxml fonttools playwright brotli pillow
-      - name: הורדה מהדרייב
+      # פרומפט 51 (16.11.2026): הספר (input/docx) נכתב רק בקיפול הלילי. הוורד שבדרייב הוא העתק בכיוון אחד,
+      # ואינו מורד עוד. העריכות של היום מוגשות לכל גולש ב-/live, ולכן גם לא נמשכות לכאן.
+      - name: הורדה מהדרייב (מושבת)
         id: fetch
-        run: python tools/fetch.py | tee fetch.log; grep -q CHANGED fetch.log && echo changed=1 >> $GITHUB_OUTPUT || echo changed=0 >> $GITHUB_OUTPUT
+        run: echo "changed=0" >> $GITHUB_OUTPUT
       - name: בנייה
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}

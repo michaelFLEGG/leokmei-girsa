@@ -1322,6 +1322,8 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
   '<button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות שממתינות להכרעתך">' + ic('inbox') + 'הצעות ממתינות</button>'
   '<button onclick="prnOpenBook()" title="חוברת A5 להדפסה וקיפול">' + ic('print') + 'הדפס לחוברת</button>'
   '<button onclick="toPdf()" title="כל המסכת ל-PDF">' + ic('print') + 'כל המסכת ל-PDF</button>'
+  # פרומפט 51: הוורד הוא תוצר, מופק בדפדפן מן הדף כפי שהוא עכשיו (כולל עריכות היום), בסגנונות הספר
+  '<button onclick="wordExport(this)" title="הוורד של המסכת כפי שהיא עכשיו, כולל עריכות היום">הורד וורד</button>'
   '<button id="lnbtn" onclick="lnOpen()" title="מה נלמד מהתיקונים שלך">הלמידה היומית</button>'
   '<button id="ntbtn" onclick="ntOpen()" title="הערות פרטיות לקלוד">הערות לקלוד</button>'
   '<button onclick="panel(\'qa\')" title="חריגות שנמצאו בהמרת הקובץ">חריגות המרה</button>'
@@ -2254,9 +2256,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       mnseg={}
       for _p in pages:
           for _u in _p['units']:
-              if isinstance(_u.get('a'),str) and 'class="mk"' in _u['a']: _u['a']=_mkre.sub('',_u['a'])
-              for _ln in _u.get('l') or []:
-                  if len(_ln)>1 and isinstance(_ln[1],str) and 'class="mk"' in _ln[1]: _ln[1]=_mkre.sub('',_ln[1])
+              # פרומפט 51: המספר נשמר בצד (mka / mkl), כדי ש"הורד וורד" יחזיר אותו לוורד כמו שהיה
+              if isinstance(_u.get('a'),str) and 'class="mk"' in _u['a']:
+                  _mm=_mkre.search(_u['a'])
+                  if _mm and _u['a'].startswith(_mm.group(0)): _u['mka']=_mm.group(0).strip()
+                  _u['a']=_mkre.sub('',_u['a'])
+              for _li,_ln in enumerate(_u.get('l') or []):
+                  if len(_ln)>1 and isinstance(_ln[1],str) and 'class="mk"' in _ln[1]:
+                      _mm=_mkre.search(_ln[1])
+                      if _mm and _ln[1].startswith(_mm.group(0)): _u.setdefault('mkl',{})[str(_li)]=_mm.group(0).strip()
+                      _ln[1]=_mkre.sub('',_ln[1])
   # 7.11.2026 (בקשת בעל הפרויקט): אין עיטור לפני משנה. חציצה שמיד אחריה משנה אינה מוצגת, ובמקומה רווח
   # לפני תיבת המשנה (באתר ב-CSS, בהדפסה gapm). חציצה שיש בה חלון צד נשארת, כדי שלא ייעלם תוכן. הוורד לא נגע.
   _fl2=[(pg,u) for pg in pages for u in pg['units']]
@@ -7200,7 +7209,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _td=os.path.dirname(os.path.abspath(__file__))
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+
          # מנוע ההדפסה ל-PDF (11.10.2026): קוד משותף לכל המסכתות. במצב ?print=1 הוא מחליף את התצוגה בעמודי A4; אחרת - רק חלון ההדפסה.
-         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"hv_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_perek.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"overflow_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"word_export.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"hv_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_perek.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"overflow_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   _SHARED_BODY=JS[:JS.rindex(chr(10)+"  build();")]   # הקוד המשותף לכל המסכתות; מה שאחריו (בקרה, צורת הדף, תוספות) פרטי למסכת
   # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
   # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.

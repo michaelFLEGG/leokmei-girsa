@@ -365,6 +365,9 @@ def main():
     # והמשימה מדווחת הצלחה. נמדד שלוש פעמים.
     if a.once and alive():
         return
+    # פרומפט 51: מתג הכיבוי במאגר - הגשר אינו עולה עוד
+    if os.path.exists(os.path.join(a.repo, 'data', 'pc-off.json')):
+        return
     if not token():
         log('אזהרה: אין מפתח בתיקיית הגשר. הרץ --install')
     log('הגשר עלה על 127.0.0.1:%d, מאגר %s' % (PORT, REPO))

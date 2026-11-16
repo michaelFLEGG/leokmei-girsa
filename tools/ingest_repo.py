@@ -662,7 +662,65 @@ def install_task(repo):
         raise SystemExit('הקמת המשימה נכשלה')
 
 
+def _pc_off(repo):
+    """פרומפט 51: מתג הכיבוי במאגר (data/pc-off.json בענף המרוחק). כשהוא קיים הקולט אינו כותב עוד לוורד החי.
+    במצב mirror הוא רק מעתיק את הספר (הוורד הקנוני שבמאגר) אל תיקיית הדרייב, בכיוון אחד, תחת השם <מסכת>.docx."""
+    git(repo, 'fetch', '--quiet', 'origin', 'main')
+    code, out, _ = git(repo, 'show', REMOTE + ':data/pc-off.json')
+    if code:
+        return None
+    try:
+        return json.loads(out) or {}
+    except Exception:
+        return {}
+
+
+def mirror(repo, cfg):
+    """העתקה בכיוון אחד: input/docx של כל מסכת שבספר (data/book.json) -> <הדרייב>/<מסכת>.docx.
+    הקובץ הישן של המסכת (בשם אחר) עובר פעם אחת לתת-התיקייה "ארכיון וורד - לפני 17.11". דבר אינו נמחק."""
+    import build_all
+    code, out, _ = git(repo, 'show', REMOTE + ':data/book.json')
+    slugs = (json.loads(out).get('slugs') if not code else None) or []
+    names = {v: k for k, v in build_all.SLUG.items()}
+    arch = os.path.join(DRIVE, 'ארכיון וורד - לפני 17.11')
+    code, out, _ = git(repo, 'ls-tree', '--name-only', REMOTE, 'input/docx/')
+    files = [l.strip() for l in out.splitlines() if l.strip().endswith('.docx')]
+    for slug in slugs:
+        m = names.get(slug)
+        src = [f for f in files if build_all.masechet_of(os.path.basename(f)) == m]
+        if not m or len(src) != 1:
+            continue
+        r = subprocess.run(['git', '-C', repo, 'show', REMOTE + ':' + src[0]], capture_output=True)
+        if r.returncode or not r.stdout:
+            continue
+        dst = os.path.join(DRIVE, m + '.docx')
+        try:
+            if os.path.exists(dst) and open(dst, 'rb').read() == r.stdout:
+                continue
+            os.makedirs(arch, exist_ok=True)
+            for f in os.listdir(DRIVE):
+                if f.endswith('.docx') and f != m + '.docx' and build_all.masechet_of(f) == m:
+                    shutil.move(os.path.join(DRIVE, f), os.path.join(arch, f))
+            tmp = dst + '.tmp'
+            open(tmp, 'wb').write(r.stdout)
+            os.replace(tmp, dst)
+            print('הספר הועתק לדרייב:', m)
+        except OSError as e:
+            print('לא הועתק (הקובץ פתוח?):', m, e)
+
+
 if __name__ == '__main__':
+    try:
+        _off = _pc_off(HERE)
+    except Exception:
+        _off = None
+    if _off is not None:
+        if _off.get('mirror'):
+            try:
+                mirror(HERE, _off)
+            except Exception as _e:
+                print('העתקת הספר לדרייב נכשלה:', _e)
+        sys.exit(0)
     # כותב אחד לוורד בכל רגע: קליטת ההצעות רצה גם היא כל עשר דקות
     try:
         with word_apply.writer_lock():

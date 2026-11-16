@@ -61,7 +61,15 @@ def load_all(key, known):
     return out
 
 
+def pc_off():
+    """פרומפט 51 (16.11.2026): מתג הכיבוי של כלי המחשב. כשהקובץ data/pc-off.json קיים במאגר, כלי המחשב
+    (האפייה, הקולט, הגשר) יוצאים בשקט: העריכות נשמרות בשרת ומוגשות ב-/live, והקיפול הלילי בענן מכניס אותן לספר."""
+    return os.path.exists(os.path.join(HERE, 'data', 'pc-off.json'))
+
+
 def main(emit=True):
+    if os.name == 'nt' and pc_off():
+        return []
     key = find_key()
     import build_all
     known = set(build_all.SLUG.values())

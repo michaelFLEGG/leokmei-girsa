@@ -265,6 +265,13 @@ def main():
                 blocks, f = merge_masechet(m, files, ddir)
             jp = os.path.join(SITE, SLUG[m] + '.json')
             json.dump(blocks, open(jp, 'w', encoding='utf-8'), ensure_ascii=False)
+            # פרומפט 51: הספר עצמו (הוורד הקנוני) לאתר, כתבנית לכפתור "הורד וורד" (סגנונות, הגדרות, גופנים)
+            try:
+                if m not in preconv and len(files) == 1:
+                    os.makedirs(os.path.join(SITE, 'word'), exist_ok=True)
+                    shutil.copyfile(_pinned(files[0]) or os.path.join(ddir, files[0]), os.path.join(SITE, 'word', SLUG[m] + '.docx'))
+            except Exception as _e:
+                print('   אזהרה: הספר לא הועתק לאתר -', _e)
             # מסך הגהה נבנה רק למסכת שיש לה קובץ ממצאים ידני. בלעדיו אין
             # למגיה מה לעשות שם, והגלאים לבדם רק היו מציפים אותו.
             cur = os.path.join(ROOT, 'data', 'hagaha-' + SLUG[m] + '.json')

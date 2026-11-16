@@ -1,0 +1,69 @@
+name: הקיפול הלילי - העריכות נכנסות לספר
+# פרומפט 51 (16.11.2026): עורכים רק באתר. העריכות מוגשות לכל גולש מיד (/live). פעם בלילה,
+# ובכפתור "קפל עכשיו", השכבה נכנסת לספר (input/docx של כל מסכת שב-data/book.json), השכבה
+# מתרוקנת, והאתר נבנה פעם אחת. שער: הספר החדש עם מה שנשאר בשכבה זהה למה שהמנהל ראה.
+# נכשל: לא מקפלים, השכבה נשארת, והריצה נכשלת בקול (מייל מגיטהאב). הכלי: tools/fold.py.
+on:
+  # הלילי יופעל (cron '17 0 * * *', 02:17 שעון ישראל) רק אחרי שהקיפול של ברכות עבר כאן ידנית. עד אז: ידני בלבד.
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'מסכת אחת (slug). ריק = כל המסכתות שבספר'
+        required: false
+        default: ''
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: fold
+  cancel-in-progress: false
+jobs:
+  fold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install lxml fonttools brotli pillow
+      - name: קיפול
+        id: fold
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          set +e
+          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/fold.py --only "${{ github.event.inputs.only }}"; else python tools/fold.py; fi
+          echo "code=$?" >> $GITHUB_OUTPUT
+          exit 0
+      - name: שמירה ודחיפה
+        id: save
+        run: |
+          git config user.name "leokmei-fold"; git config user.email "fold@users.noreply.github.com"
+          git add -A input/docx data/edits data/word-cloud/ingested data/fold
+          git diff --cached --quiet && { echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; }
+          git commit -q -m "הקיפול הלילי: העריכות נכנסו לספר [skip ci]"
+          # התנגשות (בעיקר data/edits שהאפייה במחשב דוחפת): גרסת הקיפול גוברת. עריכה חדשה שנדחפה בינתיים חיה בשרת
+          # (לא נכתבה לה מצבה) וממשיכה להיות מוגשת ב-/live, והקיפול הבא קולט אותה.
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase -X theirs origin main || { git rebase --abort 2>/dev/null; false; } && git push -q && { echo "pushed=1" >> $GITHUB_OUTPUT; exit 0; }
+            sleep $((i*5))
+          done
+          echo "::error::הקיפול לא נדחף"; exit 1
+      # רק אחרי שהספר שנושא את העריכות נשמר במאגר: מצבה בשרת לכל עריכה שיצאה מן השכבה.
+      - name: מצבות בשרת
+        if: steps.save.outputs.pushed == '1'
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: python tools/fold.py --tombstones
+      # בנייה אחת של האתר מן הספר החדש (דחיפה בטוקן של הפעולה אינה מפעילה את השומר מעצמה)
+      - name: בניית האתר
+        if: steps.save.outputs.pushed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run watch.yml --ref main
+      - name: תוצאה
+        if: steps.fold.outputs.code != '0'
+        run: |
+          echo "::error::לפחות מסכת אחת לא קופלה (השער נכשל). השכבה שלה נשארה כמות שהיא. פרטים ב-data/fold/log.jsonl"
+          exit 1

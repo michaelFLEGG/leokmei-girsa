@@ -714,6 +714,39 @@ def _echo(e, history):
     return False
 
 
+def _ctx_exact(e, slots):
+    """פרומפט 46 (16.11.2026): תיקון שנראה כ"הד" (_echo) אבל עומד בדיוק במקומו: פסקה אחת ויחידה
+    בנוסח was (בדף ובסמוך), שהשורה שלפניה ושאחריה הן ההקשר שנרשם עמו, ושנוסח now אינו עומד
+    לידה (שלוש שורות לכל צד). כזה הוא שחזור מכוון של שורה שאבדה (פרומפט 43, מד: "ששה דברים
+    מרפאין" במקום "דתניא:"), ולא רישום חוזר של הדפדפן: הד אמיתי היה משכפל שורה שעומדת לידו.
+    בלי הבדיקה הזאת השחזור נספר "כבר בוורד", נכנס לרשימת b, וגם הדפדפן דילג עליו - והשורה נעלמה."""
+    cx = e.get('ctx') if isinstance(e.get('ctx'), dict) else None
+    if not cx or not (cx.get('b') or cx.get('a')):
+        return False
+    was, now = _wn(e.get('was', '')), _wn(e.get('now', ''))
+    if not was or not now or was == now:
+        return False
+    k0 = _daf_key(e.get('daf'))
+    hits = []
+    for i, x in enumerate(slots):
+        if not _teq(x['t'], was):
+            continue
+        if k0 is not None and _daf_key(x['daf']) is not None and abs(_daf_key(x['daf']) - k0) > 1:
+            continue
+        p = slots[i - 1] if i > 0 else None
+        n = slots[i + 1] if i + 1 < len(slots) else None
+        if cx.get('b') and (p is None or p['t'][-40:] != _wn(cx['b'])):
+            continue
+        if cx.get('a') and (n is None or n['t'][:40] != _wn(cx['a'])):
+            continue
+        hits.append(i)
+    if len(hits) != 1:
+        return False
+    i = hits[0]
+    near = slots[max(0, i - 3):i] + slots[i + 1:i + 4]
+    return not any(_teq(x['t'], now) for x in near)
+
+
 def _absorbed(e, history):
     """תיקון שנרשם אחרי שינוי מבנה ומתאר בדיוק את תוצאתו (נוסח ו-HTML): השינוי כבר
     נעשה בנתונים, ואין מה להחיל. כלל צר; אחרת התיקון נשאר תלוש."""
@@ -991,7 +1024,7 @@ def _apply_site_edits(pages, slug, qa):
                 keep.append(e)
             return
         was, now = _wn(e.get('was', '')), _wn(e.get('now', ''))
-        if e.get('ps') is None and _echo(e, history):
+        if e.get('ps') is None and _echo(e, history) and not _ctx_exact(e, slots):
             taken += 1                  # הד של מצב שלפני שינוי מבנה
             return
         s = by_key.get(e.get('k'))

@@ -27,14 +27,14 @@
    "long": "אף על גב",
    "short": "אע\"ג",
    "nLong": 14,
-   "nShort": 58,
+   "nShort": 57,
    "kind": "abbr"
   },
   {
    "long": "ואחר כך",
    "short": "ואח\"כ",
    "nLong": 81,
-   "nShort": 650,
+   "nShort": 649,
    "kind": "abbr"
   },
   {
@@ -48,14 +48,14 @@
    "long": "אמר לו",
    "short": "א\"ל",
    "nLong": 443,
-   "nShort": 3865,
+   "nShort": 3860,
    "kind": "abbr"
   },
   {
    "long": "שמע מינה",
    "short": "ש\"מ",
    "nLong": 23,
-   "nShort": 687,
+   "nShort": 686,
    "kind": "abbr"
   },
   {
@@ -82,7 +82,7 @@
   {
    "long": "בית הכנסת",
    "short": "ביהכנ\"ס",
-   "nLong": 19,
+   "nLong": 18,
    "nShort": 26,
    "kind": "abbr"
   },
@@ -167,14 +167,14 @@
    "long": "ראש השנה",
    "short": "ר\"ה",
    "nLong": 31,
-   "nShort": 496,
+   "nShort": 495,
    "kind": "abbr"
   },
   {
    "long": "יום טוב",
    "short": "יו\"ט",
    "nLong": 43,
-   "nShort": 163,
+   "nShort": 164,
    "kind": "abbr"
   },
   {
@@ -209,7 +209,7 @@
    "long": "מכל מקום",
    "short": "מ\"מ",
    "nLong": 72,
-   "nShort": 119,
+   "nShort": 118,
    "kind": "abbr"
   },
   {
@@ -355,7 +355,7 @@
   {
    "long": "שלשה",
    "short": "ג'",
-   "nLong": 649,
+   "nLong": 651,
    "nShort": 961,
    "kind": "num"
   },
@@ -411,8 +411,8 @@
   {
    "long": "שמונה",
    "short": "ח'",
-   "nLong": 140,
-   "nShort": 98,
+   "nLong": 139,
+   "nShort": 99,
    "kind": "num"
   },
   {

@@ -12,8 +12,17 @@ import pymupdf as fitz
 MM = 72 / 25.4
 
 
+_INVIS = dict.fromkeys(map(ord, '\u2060\u200b\u200c\u200d\u200e\u200f\ufeff\u00ad'), None)
+
+
 def words(page):
-    return [w for w in page.get_text('words') if w[4].strip()]
+    # פרומפט 48 סבב ב: תווים בלתי נראים (מחבר מילים U+2060 ודומיו) אינם חלק מהשוואת המיקום - חילוץ הטקסט מצמיד אותם לפעמים למילה אחרת
+    out = []
+    for w in page.get_text('words'):
+        t = w[4].translate(_INVIS)
+        if t.strip():
+            out.append(w[:4] + (t,) + tuple(w[5:]))
+    return out
 
 
 def to_a4(w, tf):

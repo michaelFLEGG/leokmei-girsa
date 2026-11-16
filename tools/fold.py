@@ -420,6 +420,8 @@ def fold_one(slug, dry=False, log=print, srv=None):
                 for x, y in zip(ua, ub):
                     if x.get('id') is not None and y.get('id') is not None:
                         idmap[str(x['id'])] = str(y['id'])
+            else:
+                log('%s: בעמוד %s שחזר היחידות אינן מתאימות (%d מול %d) - העריכות שבו נשארות במפתח הישן' % (m, A[n]['daf'], len(ua), len(ub)))
         remain, rekeyed = [], []
         for e in remain0:
             mm = re.match(r'^u(\d+)(\..*)$', e.get('k') or '')

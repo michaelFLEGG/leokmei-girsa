@@ -732,6 +732,14 @@ def main():
         # חציה (פרומפט 44): lo = כמה עריכות ראשונות של הקבוצה ידועות כטובות, hi = כמה ידועות ככושלות.
         # הספירה היא של עריכות שנוסו בפועל (בלי מוחזקות ובלי כאלה שנשארות בשכבה מעצמן).
         limit = a.limit or None
+        # פרומפט 47: גודל הקבוצה נזכר בין ריצות. קבוצה שעברה את השער ונשמרה - הבאה כפולה ממנה (עד 320);
+        # שער שנכשל - החציה (למטה) מטפלת, והגודל חוזר לנקודת ההתחלה. השער עצמו אינו משתנה.
+        lim_p = os.path.join(HERE, 'data', 'word-cloud', 'idle', slug + '-limit.json')
+        if limit and not a.dry:
+            _ls = rjson(lim_p, {}) or {}
+            if _ls.get('ok') and _ls.get('limit'):
+                limit = min(320, max(limit, int(_ls['limit']) * 2))
+                print('   הקבוצה הקודמת עברה (%s עריכות): מנסה %d' % (_ls['limit'], limit))
         lo, hi = 0, None
         sus_tried = False
         # פרומפט 47 (16.11.2026): חציה שלא הסתיימה בתוך הריצה נשמרת, והריצה הבאה ממשיכה ממנה. נמדד בברכות:
@@ -774,6 +782,8 @@ def main():
                     print('   %d עריכות חשודות מוחזקות בשכבה. הקבוצה רצה שוב בלעדיהן' % len(sus))
                     continue
                 hi = n
+                if not a.dry:
+                    wjson(lim_p, {'limit': a.limit or 40, 'ok': 0, 'when': now_iso()})
                 if hi - lo > 1:
                     limit = (lo + hi) // 2
                     print('   חציה: %d הראשונות ידועות כטובות, %d נכשלו. מנסה %d' % (lo, hi, limit))
@@ -794,6 +804,8 @@ def main():
                 except OSError:
                     pass
                 continue
+            if rec.get('gate') == 'עבר' and rec.get('changed') and limit and not a.dry and hi is None:
+                wjson(lim_p, {'limit': limit, 'ok': 1, 'when': now_iso()})
             if rec.get('gate') == 'עבר' and rec.get('changed') and rec.get('more') and a.one_save:
                 # --one-save: הקבוצה נשמרה. יוצאים כדי שתידחף מיד (cloud_word_rounds.sh), והבאה ממשיכה
                 print('   הקבוצה נשמרה. נדחפת עכשיו, והקבוצה הבאה תמשיך')

@@ -13,7 +13,7 @@
    "long": "ואף על פי",
    "short": "ואע\"פ",
    "nLong": 5,
-   "nShort": 43,
+   "nShort": 42,
    "kind": "abbr"
   },
   {
@@ -230,7 +230,7 @@
    "long": "הלכה למשה מסיני",
    "short": "הלמ\"מ",
    "nLong": 34,
-   "nShort": 11,
+   "nShort": 13,
    "kind": "abbr"
   },
   {
@@ -341,8 +341,8 @@
   {
    "long": "שתי",
    "short": "ב'",
-   "nLong": 953,
-   "nShort": 806,
+   "nLong": 954,
+   "nShort": 805,
    "kind": "num"
   },
   {

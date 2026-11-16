@@ -43,6 +43,8 @@ jobs:
           git add -A input/docx data/edits data/word-cloud/ingested data/fold
           git diff --cached --quiet && { echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; }
           git commit -q -m "הקיפול הלילי: העריכות נכנסו לספר [skip ci]"
+          # קבצים נגזרים שהבנייה כתבה בדרך (data/mbox ועוד) אינם חלק מן הקיפול
+          git stash -u -q || true
           # התנגשות (בעיקר data/edits שהאפייה במחשב דוחפת): גרסת הקיפול גוברת. עריכה חדשה שנדחפה בינתיים חיה בשרת
           # (לא נכתבה לה מצבה) וממשיכה להיות מוגשת ב-/live, והקיפול הבא קולט אותה.
           for i in 1 2 3 4 5; do

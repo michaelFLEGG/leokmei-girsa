@@ -355,7 +355,7 @@
   {
    "long": "שלשה",
    "short": "ג'",
-   "nLong": 650,
+   "nLong": 649,
    "nShort": 961,
    "kind": "num"
   },
@@ -369,29 +369,29 @@
   {
    "long": "ארבע",
    "short": "ד'",
-   "nLong": 445,
-   "nShort": 598,
+   "nLong": 446,
+   "nShort": 597,
    "kind": "num"
   },
   {
    "long": "ארבעה",
    "short": "ד'",
-   "nLong": 360,
-   "nShort": 598,
+   "nLong": 359,
+   "nShort": 597,
    "kind": "num"
   },
   {
    "long": "חמש",
    "short": "ה'",
    "nLong": 288,
-   "nShort": 1649,
+   "nShort": 1648,
    "kind": "num"
   },
   {
    "long": "חמשה",
    "short": "ה'",
    "nLong": 281,
-   "nShort": 1649,
+   "nShort": 1648,
    "kind": "num"
   },
   {
@@ -425,7 +425,7 @@
   {
    "long": "עשרה",
    "short": "י'",
-   "nLong": 589,
+   "nLong": 588,
    "nShort": 175,
    "kind": "num"
   }

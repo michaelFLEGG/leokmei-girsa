@@ -207,8 +207,13 @@ def main():
     print('סופי_פרק_מאוזנים=%s  סוף_פרק_לא_מאוזן=%d' % (rep.get('perekBalanced', 0), len(ce)))
     for o in ce[:20]:
         print('  סוף פרק לא מאוזן: עמוד %s (%s): %s' % (o.get('page'), o.get('daf'), o.get('detail')))
+    # פרומפט 48 סבב ג: העמוד הראשון פותח במשהו מחוץ לטווח (שורת "המשך", דף אחר, תוספות מדף אחר) - עוצר
+    oo = [x for x in rep.get('issues') or [] if x.get('type') == 'פתיחה מחוץ לטווח']
+    print('פתיחה_מחוץ_לטווח=%d' % len(oo))
+    for o in oo[:20]:
+        print('  פתיחה מחוץ לטווח: %s' % o.get('detail'))
     # פרומפט 48: סוף פרק לא מאוזן עוצר את המסירה, כמו חפיפה
-    if ov or bd or ce:
+    if ov or bd or ce or oo:
         sys.exit(3)
 
 

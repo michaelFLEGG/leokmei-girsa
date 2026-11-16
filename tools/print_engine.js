@@ -487,7 +487,9 @@
     TM('units');
     /* פתיחת הטווח באמצע פרק: שורה קטנה "המשך פרק", כדי שהדף לא ייפתח יתום */
     /* 13.11.2026: הדפסת פרק שלם נפתחת תמיד בראש הפרק - לעולם לא "המשך פרק" */
-    if(firstUnit&&firstUnit.u.k!=='perek-range'&&firstUnit.u.k!=='perek-start'&&firstUnit.p.perek&&!(PKS&&PKS.whole)){
+    /* פרומפט 48 סבב ג (16.11.2026, תיקון 3, הכרעת בעל הפרויקט): העמוד הראשון פותח בדיוק במה שנבחר - בדף: סימן הדף בשורה הראשונה.
+       שורת "המשך פרק ..." בראש הטווח בוטלה (הכותרת הרצה כבר נושאת את שם הפרק). QS cont=1 מחזיר אותה לבדיקה בלבד */
+    if(QS.get('cont')==='1'&&firstUnit&&firstUnit.u.k!=='perek-range'&&firstUnit.u.k!=='perek-start'&&firstUnit.p.perek&&!(PKS&&PKS.whole)){
       var contLine='<div class="row pcont"><div class="rail"></div><div class="main">המשך '+ge(firstUnit.p.perek)+'</div></div>';
       recs.unshift({u:null,pi:recs[0].pi,daf:recs[0].daf,perek:firstUnit.p.perek,perekName:firstUnit.p.perekName||'',kind:'cont',html:contLine});
       groups.forEach(function(g){g[0]++;g[1]++});groups[0][0]=0}
@@ -506,6 +508,7 @@
     /* פרומפט 31: תוספות נכנסת להדפסה אם היחידה שבה יבוא הסימן (tosResolve, רק מן הפרק שלה) מודפסת.
        לא לפי הדף: דף שמתחלף בו פרק מחזיק תוספות של שני הפרקים */
     var PM=perekMap(),PRINTED={};recs.forEach(function(x){if(x.u)PRINTED[x.u.id]=1});
+    var INDAF={};recs.forEach(function(x){if(x.daf)INDAF[x.daf]=1});
     function itPk(it){return +it.perek||PM.upk[(tosResolve(it)||{}).uid]||0}
     R.tosWarn=[];
     if(withTos){
@@ -515,6 +518,8 @@
         var rs=tosResolve(it);
         if(!rs.uid){if(PKS&&PKS.whole)W('תוספות '+tosHeb(it)+' (פרק '+pk+', '+it.daf+') לא הודפסה: '+rs.why);return}
         if(!PRINTED[rs.uid])return;          /* שייכת לטקסט שמחוץ לטווח */
+        /* פרומפט 48 סבב ג: בטווח שאינו פרק שלם - תוספות של דף שמחוץ לטווח אינה נכנסת, גם כשעוגנה (אחרי עריכה) נפל על יחידה שבטווח */
+        if(!(PKS&&PKS.whole)&&QS.get('all')!=='1'&&it.daf&&!INDAF[it.daf]){R.tosOutside=(R.tosOutside||0)+1;return}
         if(rs.how!=='t')R.tosWarn.push(tosHeb(it)+' (פרק '+pk+', '+it.daf+'): '+rs.why+' - הוצמדה '+(rs.how==='dh'?'למילות הדיבור המתחיל':'לסוף השורה הקרובה')+' בפרק שלה');
         items.push(it)});
       /* שמירה (ג4): בהדפסת פרק אין שום תוספות מפרק אחר - ואם בכל זאת נכנסה, היא מושמטת באזהרה ולא מודפסת בשקט */
@@ -1021,6 +1026,15 @@
       R.balanced=1})();
 
     /* ---- בדיקות אחרי העימוד (לוח התקלות): כותרת מנותקת, שורה יתומה או אלמנה, הערה שנפרדה מסימנה ---- */
+    /* פרומפט 48 סבב ג (תיקון 3): בודק קבוע - העמוד הראשון פותח במשהו מחוץ לטווח = תקלה שעוצרת את המסירה.
+       פרק שלם: השורה הראשונה היא פתיחת הפרק. דף או טווח: השורה הראשונה מן הדף הראשון שנבחר, בלי שורת "המשך". ותוספות מדף שמחוץ לטווח */
+    (function(){if(!L.length||QS.get('all')==='1')return;var r0=recs[L[0].ri]||{};
+      function bad(d){R.issues.push({type:'פתיחה מחוץ לטווח',page:1,daf:r0.daf||'',unit:r0.u&&r0.u.id,detail:d})}
+      if(r0.kind==='cont')bad('העמוד הראשון נפתח בשורת "המשך"');
+      if(PKS&&PKS.whole){if(r0.kind!=='perek-start'&&r0.kind!=='perek-range')bad('פרק שלם שאינו נפתח בכותרת הפרק ('+r0.kind+')')}
+      else if(r0.daf!==D.pages[fi].daf)bad('השורה הראשונה מדף '+r0.daf+' ולא מן הדף שנבחר ('+D.pages[fi].daf+')');
+      if(!(PKS&&PKS.whole)){var INR={};recs.forEach(function(x){if(x.daf)INR[x.daf]=1});
+        items.forEach(function(it){if(it.daf&&!INR[it.daf])bad('תוספות '+tosHeb(it)+' מדף '+it.daf+' שמחוץ לטווח')})}})();
     cols.forEach(function(c,ci){
       var a=L[c.s],b=L[c.e-1],pg=Math.floor(ci/prof.cols)+1;
       function iss(t,l,d){R.issues.push({type:t,page:pg,daf:l.daf,unit:recs[l.ri]&&recs[l.ri].u&&recs[l.ri].u.id,detail:d||''})}

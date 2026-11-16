@@ -734,11 +734,21 @@ def main():
         limit = a.limit or None
         lo, hi = 0, None
         sus_tried = False
+        # פרומפט 47 (16.11.2026): חציה שלא הסתיימה בתוך הריצה נשמרת, והריצה הבאה ממשיכה ממנה. נמדד בברכות:
+        # כל ריצה התחילה שוב מ-40, נחצתה ל-20 ול-10, ונגמר הזמן - והתור לא זז (עריכה אחת מכשילה, 2 נכתבות בריצה).
+        bis_p = os.path.join(HERE, 'data', 'word-cloud', 'idle', slug + '-bisect.json')
+        bis = rjson(bis_p, {}) or {}
+        if bis.get('hi') and not a.dry and not a.no_bisect:
+            lo, hi = int(bis.get('lo') or 0), int(bis['hi'])
+            limit = max(1, (lo + hi) // 2) if hi - lo > 1 else hi
+            print('   ממשיך חציה מריצה קודמת: %d טובות, %d נכשלו. מנסה %d' % (lo, hi, limit))
         end = _time.time() + a.budget * 60 if a.budget else None
         first = True
         while True:
             if not first and end and _time.time() > end - 120:
                 print('   תקציב הזמן של הריצה נגמר. הריצה הבאה ממשיכה מכאן')
+                if hi is not None and not a.dry:
+                    wjson(bis_p, {'lo': lo, 'hi': hi, 'when': now_iso()})
                 break
             first = False
             t_start = _time.time()
@@ -779,16 +789,28 @@ def main():
                 print('   העריכה %s מוחזקת בשכבה (הכשילה את השער). ממשיך בלעדיה' % tried[hi - 1])
                 hi = None
                 limit = max(1, lo * 2)
+                try:
+                    os.remove(bis_p)
+                except OSError:
+                    pass
                 continue
             if rec.get('gate') == 'עבר' and rec.get('changed') and rec.get('more') and a.one_save:
                 # --one-save: הקבוצה נשמרה. יוצאים כדי שתידחף מיד (cloud_word_rounds.sh), והבאה ממשיכה
                 print('   הקבוצה נשמרה. נדחפת עכשיו, והקבוצה הבאה תמשיך')
+                try:
+                    os.remove(bis_p)
+                except OSError:
+                    pass
                 break
             if rec.get('gate') == 'עבר' and not a.dry and (rec.get('more') or hi is not None):
                 sus_tried = False
                 if rec.get('changed'):
                     # הוורד השתנה: מה שנכתב יצא מן התוכנית והמקומות זזו. החציה מתחילה מחדש
                     lo, hi = 0, None
+                    try:
+                        os.remove(bis_p)
+                    except OSError:
+                        pass
                     limit = max(2, n * 2) if limit else None
                 else:
                     lo = n

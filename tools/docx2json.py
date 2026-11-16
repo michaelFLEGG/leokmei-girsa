@@ -48,10 +48,37 @@ def _run_text(r):
     return ''.join(out)
 
 
+# פרומפט 44 (16.11.2026): המרה זהה נשמרת לפי תוכן document.xml ו-styles.xml (רק בהם
+# היא תלויה). נמדד: בקליטת עריכה אחת הקובץ הומר חמש פעמים, ורובן על אותו תוכן בדיוק
+# (אחרי ההחלה, בקבלת השינויים לפני ואחרי, בבדיקת הכפילויות, ובעריכה הבאה). התוצאה מוחזרת
+# כעותק חדש בכל פעם, כך שקורא שמשנה אותה אינו משנה את השמור.
+import hashlib as _hashlib, pickle as _pickle
+_CACHE = collections.OrderedDict()
+_CACHE_MAX = 6
+
+
 def convert(path):
     z = zipfile.ZipFile(path)
-    doc = etree.fromstring(z.read('word/document.xml'))
-    sty = etree.fromstring(z.read('word/styles.xml'))
+    dx, sx = z.read('word/document.xml'), z.read('word/styles.xml')
+    key = _hashlib.sha1(dx + b'\0' + sx).hexdigest()
+    hit = _CACHE.get(key)
+    if hit is not None:
+        z.close()
+        _CACHE.move_to_end(key)
+        blocks, last = _pickle.loads(hit)
+        convert.last = last
+        return blocks
+    z.close()
+    blocks = _convert(z, dx, sx)
+    _CACHE[key] = _pickle.dumps((blocks, convert.last), protocol=_pickle.HIGHEST_PROTOCOL)
+    while len(_CACHE) > _CACHE_MAX:
+        _CACHE.popitem(last=False)
+    return blocks
+
+
+def _convert(z, dx, sx):
+    doc = etree.fromstring(dx)
+    sty = etree.fromstring(sx)
     names = {}
     for s in sty.findall('.//w:style', ns):
         n = s.find('w:name', ns)

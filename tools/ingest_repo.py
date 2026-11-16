@@ -245,6 +245,7 @@ def replay_plan(masechet, doc, docx_path):
 
 
 LAST = {'found': set()}
+_PLAN = {}
 
 
 def _apply_one(path, e, doc, masechet, bk, log, dry):
@@ -315,10 +316,61 @@ def save_ledger(path, done, lost=(), sha=None):
 
 
 def adjacent_dups(path):
-    """מספר הפסקאות הצמודות בעלות נוסח זהה (כל סגנון: כותרת-כותרת, כותרת-גוף, גוף-גוף)."""
+    """מספר הפסקאות הצמודות בעלות נוסח זהה (כל סגנון: כותרת-כותרת, כותרת-גוף, גוף-גוף),
+    ועוד הכפולות הכמעט-זהות (פרומפט 44, near_dups)."""
     from docx2json import convert
-    v = [word_apply._nw(b['text']) for b in convert(path)]
-    return sum(1 for a, b in zip(v, v[1:]) if a and a == b)
+    blocks = convert(path)
+    v = [word_apply._nw(b['text']) for b in blocks]
+    exact = sum(1 for a, b in zip(v, v[1:]) if a and a == b)
+    return exact + sum(1 for _ in near_dups(blocks, exact=False))
+
+
+# ---------------------------------------------------------------- כפולות כמעט-זהות (פרומפט 44)
+# נמדד 16.11.2026 בברכות (משנה פרק א): "לקצר - אינו רשאי להאריך," ומיד אחריה
+# " לקצר- אינו רשאי להאריך,  לחתום א"י ...". השנייה היא הראשונה ועוד המשך, ברווח ומקף
+# שונים. הבדיקה הישנה מצאה רק זהות מדויקת. כאן: אחרי נרמול (רווחים, מקף, ניקוד וטעמים,
+# גרשיים, פיסוק בקצה) הראשונה זהה לשנייה, או שהיא התחלה מלאה שלה (3 מילים לפחות).
+# רק בין שתי פסקאות באותו סגנון: כותרת שאחריה גוף שפותח באותן מילים היא דרך הדף.
+
+_NIKUD = re.compile('[\u0591-\u05c7]')
+_DASH = re.compile('\\s*[-\u05be\u2013\u2014]\\s*')
+_QUOTE = re.compile('[\'"\u05f3\u05f4\u2018\u2019\u201c\u201d]')
+_EDGE = re.compile('^[\\s.,:;!?\u05c3()\\[\\]]+|[\\s.,:;!?\u05c3()\\[\\]]+$')
+
+
+def near_norm(t):
+    t = _NIKUD.sub('', t or '').replace('\xa0', ' ').replace('\u2063', ' ').replace('\t', ' ')
+    t = _QUOTE.sub('', _DASH.sub(' - ', t))
+    t = ' '.join(t.split())
+    return _EDGE.sub('', t)
+
+
+def near_dup_kind(a, b):
+    """'same' - זהות אחרי נרמול, 'prefix' - a היא התחלה מלאה של b, ואחרת None."""
+    na, nb = near_norm(a), near_norm(b)
+    # 3 מילים לפחות: ציון דף ("מ." מול "מ:"), מספור ("ב.") ו"ה"ק:" חוזרים אינם כפולה
+    if len(na.split()) < 3:
+        return None
+    if na == nb:
+        return 'same'
+    if nb.startswith(na) and nb[len(na)] in ' ,.:;-':
+        return 'prefix'
+    return None
+
+
+def near_dups(blocks, exact=True):
+    """זוגות (i, j, סוג) של פסקאות צמודות באותו סגנון שהן כפולה כמעט-זהה.
+    exact=False: בלי הזהות המדויקת (שנספרת לבדה ב-adjacent_dups)."""
+    for x, y in zip(blocks, blocks[1:]):
+        if x.get('style') != y.get('style') or (x.get('style') or '').startswith('דף') \
+                or (x.get('style') or '').startswith('דפים'):
+            continue
+        k = near_dup_kind(x.get('text'), y.get('text'))
+        if not k:
+            continue
+        if not exact and word_apply._nw(x['text']) == word_apply._nw(y['text']):
+            continue
+        yield x['i'], y['i'], k
 
 
 def restore_from(src, masechet, log=print):
@@ -339,16 +391,93 @@ def restore_from(src, masechet, log=print):
     log('הקובץ החי הוחלף בתוכן של %s, ויומן הקליטה אופס.' % src)
 
 
-def ingest_replay(masechet, doc, path, dry, log=print):
+def _ambiguous(path, item):
+    """האם הנוסח שהעריכה נשענת עליו מופיע בוורד ביותר ממקום אחד (פרומפט 44)."""
+    from docx2json import convert
+    nw = word_apply._nw
+    v = [nw(b['text']) for b in convert(path)]
+    if item[0] == 'struct':
+        t = [nw(x) for x in (item[1].get('texts') or [])]
+        if not t or not t[0]:
+            return False
+        n = sum(1 for i in range(len(v) - len(t) + 1) if v[i:i + len(t)] == t)
+    else:
+        w = nw(item[2].get('was') or '')
+        if not w:
+            return False
+        n = sum(1 for x in v if x == w)
+    return n > 1
+
+
+def _runs(v, t):
+    return sum(1 for i in range(len(v) - len(t) + 1) if v[i:i + len(t)] == t)
+
+
+def _landed(before_path, after_path, item, e):
+    """האם העריכה נחתה בוורד במקום שבו האתר מחיל אותה (פרומפט 44): הפסקה שנוסחה היה
+    'was' נעשתה 'now' (מספר הפסקאות בנוסח הישן ירד באחת, ובחדש עלה באחת). פיצול ואיחוי:
+    רצף התוצאה נוסף פעם אחת. עריכה שאין דרך לבדוק כך (קטע מתוך פסקה, כותרת צד) - עוברת."""
+    from docx2json import convert
+    nw = word_apply._nw
+    vb = [nw(b['text']) for b in convert(before_path)]
+    va = [nw(b['text']) for b in convert(after_path)]
+    if item[0] == 'struct':
+        if e.get('kind') not in ('split', 'merge') or e.get('ins'):
+            return True
+        res = [nw(x) for x in (e.get('resT') or [])]
+        src = [nw(x) for x in (e.get('texts') or [])]
+        if not res or not src or _runs(vb, src) == 0:
+            return True
+        return _runs(va, res) == _runs(vb, res) + 1
+    if len(vb) != len(va):
+        return True                     # שינוי מבנה בתוך עריכת נוסח: אין דרך לבדוק כך
+    import build_site
+    sw = build_site._wn
+    was = sw(item[2].get('was') or '')
+    changed = [i for i in range(len(vb)) if vb[i] != va[i]]
+    if not changed:
+        return True                     # סגנון בלבד
+    if len(changed) > 1:
+        return False
+    # הפסקה שהשתנתה בוורד היא בדיוק זו שהאתר שינה (כל נוסחה הוא 'was'). חלון שבנוי מכמה
+    # שורות (u..w, u..mb) אינו פסקה אחת, ואינו נבדק כך. נמדד: "כוסס האורז - בפה"א" (כותרת)
+    # נכתב לפסקת הגוף שפותחת באותן מילים, והגוף הוכפל.
+    k = str(item[1].get('k') or '').split('~')[0]
+    if k.endswith('.w') or k.endswith('.mb'):
+        return True
+    return sw(convert(before_path)[changed[0]]['text']) == was
+
+
+def ingest_replay(masechet, doc, path, dry, log=print, deadline=None, limit=None, hold=(), ambiguous=False):
     """קליטה לפי ההרצה: תיקון אחר תיקון, לפי הסדר. גיבוי אחד לפני הכתיבה הראשונה.
     תיקון שכבר רשום ביומן הקליטה של הקובץ אינו נכתב שוב; וכתיבה שהיתה יוצרת פסקאות
-    צמודות זהות מבוטלת ונאמרת."""
-    plan = replay_plan(masechet, doc, path)
+    צמודות זהות מבוטלת ונאמרת.
+    deadline (שעון time.time) ו-limit (מספר תיקונים): קבוצה. הקליטה עוצרת בגבול, לפי סדר
+    הזמן, ומה שנשאר נקלט בקבוצה הבאה (פרומפט 44). LAST['more'] = כמה נשארו בתוכנית."""
+    import time as _time
+    LAST['more'] = 0
+    LAST['tried'] = []
+    LAST['tried_e'] = []
+    LAST['ambig'] = []
+    # אותה תוכנית לאותו וורד ולאותה שכבה (ניסיון חוזר של קבוצה בתוך ריצה אחת): נבנית פעם אחת
+    pk = (_sha(path), len(doc.get('edits') or []), max([e.get('t') or 0 for e in doc.get('edits') or []] or [0]))
+    if _PLAN.get('k') == pk:
+        plan, LAST['found'] = list(_PLAN['plan']), set(_PLAN['found'])
+    else:
+        plan = replay_plan(masechet, doc, path)
+        _PLAN.clear()
+        _PLAN.update(k=pk, plan=list(plan), found=set(LAST.get('found') or ()))
     done_keys, lost_keys, sha = load_ledger(path)
     touched_outside = sha is not None and sha != _sha(path)
     skip = done_keys | (set() if touched_outside else lost_keys)
     full = len(plan)
-    plan = [x for x in plan if edit_key(x[1]) not in skip]
+    # hold: עריכות שנמצא שהן מכשילות את השער (פרומפט 44). אינן נכתבות לוורד ונשארות בשכבה.
+    hold = set(hold or ())
+    held = [x for x in plan if edit_key(x[1]) in hold]
+    if held:
+        log('   %d עריכות מוחזקות בשכבה (הכשילו את השער בעבר)' % len(held))
+    plan = [x for x in plan if edit_key(x[1]) not in skip and edit_key(x[1]) not in hold]
+    in_hold = {edit_key(x[1]) for x in held}
     log('   תוכנית: %d תיקונים שהאתר מחיל בפועל; %d מהם כבר נקלטו בעבר ומדולגים'
         % (full, full - len(plan)))
     # מה שהבנייה מצאה כבר בוורד ואינו בתוכנית - נרשם כנקלט עכשיו, לפני הכתיבה: אחרי
@@ -357,7 +486,7 @@ def ingest_replay(masechet, doc, path, dry, log=print):
     found = LAST.get('found') or set()
     for e in doc.get('edits') or []:
         k = edit_key(e)
-        if k in in_plan:
+        if k in in_plan or k in in_hold:
             continue
         if e.get('t') in found:
             done_keys.add(k)
@@ -378,7 +507,19 @@ def ingest_replay(masechet, doc, path, dry, log=print):
     dups = None if dry else adjacent_dups(path)
     keep = word_apply.tmp_path(path) + '.before'
     try:
-        for item in plan:
+        for n_item, item in enumerate(plan):
+            if (limit is not None and n_item >= limit) or (deadline is not None and _time.time() > deadline):
+                LAST['more'] = len(plan) - n_item
+                log('   גבול הקבוצה: נקלטו %d, נשארו %d לקבוצה הבאה' % (n_item, LAST['more']))
+                break
+            if ambiguous and _ambiguous(path, item):
+                # פרומפט 44: הנוסח שהעריכה נשענת עליו מופיע בוורד ביותר מפסקה אחת. האתר יודע
+                # באיזו מהן (לפי המקום), והוורד מאתר לפי הנוסח וההקשר - ונמדד שהוא בוחר לפעמים
+                # במופע האחר. עריכה כזו אינה נכתבת לוורד ונשארת בשכבה (המנהל רואה אותה כרגיל).
+                LAST.setdefault('ambig', []).append(edit_key(item[1]))
+                continue
+            LAST['tried'].append(edit_key(item[1]))
+            LAST.setdefault('tried_e', []).append(item[1])
             if item[0] == 'struct':
                 e = item[1]
             else:
@@ -393,7 +534,15 @@ def ingest_replay(masechet, doc, path, dry, log=print):
             if not dry:
                 # בדיקת ביטחון: כתיבה שהוסיפה פסקאות צמודות זהות - מוחזרת, ונאמרת
                 now_d = adjacent_dups(path)
-                if now_d > dups:
+                bad_local = ambiguous and r.get('applied') and not _landed(keep, path, item, e)
+                if bad_local:
+                    # פרומפט 44: העריכה נכתבה, אבל לא למקום שבו האתר מחיל אותה (מופע אחר של
+                    # המחרוזת בפסקה, או פסקה אחרת). מוחזרת, ונשארת בשכבה
+                    word_apply.swap(keep, path)
+                    LAST.setdefault('ambig', []).append(edit_key(item[1]))
+                    r = {'applied': 0, 'missed': [(e, 'נכתבה למקום אחר מזה שבאתר')]}
+                    log('    לא נכתב (נחת במקום אחר מזה שבאתר): %s' % ((e.get('now') or ' | '.join(e.get('resT') or []))[:60]))
+                elif now_d > dups:
                     word_apply.swap(keep, path)
                     dup += 1
                     log('    לא נכתב (היה יוצר פסקה כפולה): %s'

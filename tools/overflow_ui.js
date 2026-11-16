@@ -84,12 +84,13 @@
       else{out.push('<s class="ovdel">'+ge(A[i])+'</s>');i++}}
     return out.join(' ')}
   function ge(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-  const OV_TOOL={2:'מחיקת תווים',3:'ניסוח קצר',4:'חיתוך לשתי שורות',5:'העברה לשורה הסמוכה'};
+  const OV_TOOL={2:'מחיקת תווים',3:'ניסוח קצר',4:'חיתוך לשתי שורות',5:'איחוי עם השורה הסמוכה'};
   function ovSugHtml(it,s){
     if(!s)return '<div class="ovnone">אין הצעה שעוברת את הבדיקה. אפשר לערוך ביד, או להשאיר.</div>';
     let h='<div class="ovtool">'+(OV_TOOL[s.tool]||'')+(s.why?' · '+ge(s.why):'')+'</div>';
     if(s.kind==='split')h+='<div class="ovsplit"><div class="ovl">'+ge(ovPlain(s.parts[0]))+'</div>'+
       (s.side?'<div class="ovl ovl2"><span class="ovside">'+ge(s.side)+'</span>'+ge(ovPlain(s.parts[1]))+'</div>':'<div class="ovl">'+ge(ovPlain(s.parts[1]))+'</div>')+'</div>';
+    else if(s.kind==='join')h+='<div class="ovl">'+ge(ovPlain(s.html))+'</div>';
     else if(s.kind==='move')h+='<div class="ovl">'+ovDiff(it.html,s.html)+'</div><div class="ovl ovnb">'+ovDiff(s.targetOrig||'',s.targetHtml)+'</div>';
     else h+='<div class="ovl">'+ovDiff(it.html,s.html)+'</div>';
     return h}
@@ -178,7 +179,18 @@
       /* עוגן תוספות - לחלק שבו טקסט העוגן נמצא */
       const ab=putTos(a+'\u0001'+b).split('\u0001');
       rep=[pre+ab[0]].concat(s.side?['[צד:'+s.side+']']:[]).concat([ab[1]])}
-    else rep=[pre+putTos(one(s.html))];
+    else if(s.kind!=='join')rep=[pre+putTos(one(s.html))];
+    /* פרומפט 44, כלי 5: איחוי עם השורה הסמוכה. השורה יוצאת, והסמוכה מקבלת את שתיהן (עוגני התוספות של שתיהן נשמרים) */
+    if(s.kind==='join'){
+      const ti=content[it.li-1+(s.target==='prev'?-1:1)];if(ti===undefined)throw new Error('השורה הסמוכה לא נמצאה');
+      const tOld=L[ti],tm=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(tOld),tp=tm?tm[0]:'',tBody=tOld.slice(tp.length);
+      if(ovNorm(SKC.bare(SKC.i2h(tBody)).replace(/\[תוס':[^\]]*\]/g,''))!==ovNorm(ovPlain(s.targetOrig||'')))throw new Error('השורה הסמוכה השתנתה מאז ההצעה');
+      [...tBody.matchAll(/\[תוס':([^\]]*)\]/g)].forEach(m=>{if(tos.indexOf(m[1])<0)tos.push(m[1])});
+      const L3=L.slice();L3[ti]=(s.target==='prev'?tp:pre)+putTos(one(s.html));L3.splice(at,1);
+      const text3=L3.join('\n');const errs3=SKC.acceptErrs(orig,text3);
+      if(errs3&&errs3.length)throw new Error(errs3.map(e=>e.msg||e).join('; '));
+      const r3=skmApply({ids:[it.u],orig,text:text3,hdel:[]},text3);
+      return r3&&r3.n!==undefined?r3.n:1}
     const L2=L.slice(0,at).concat(rep,L.slice(at+1));
     let extra=null;
     if(s.kind==='move'){

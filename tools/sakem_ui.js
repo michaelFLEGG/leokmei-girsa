@@ -801,7 +801,22 @@
     for(let i=0;i<n;i++)if(got[i]!==want[i]){
       const g=got[i]===undefined?'(חסר)':got[i],w=want[i]===undefined?'(אין)':want[i];
       return 'בדף: "'+g.slice(0,40)+'", בהצעה: "'+w.slice(0,40)+'"'}
+    // פרומפט 44: שתי שורות צמודות שהראשונה זהה לשנייה, או התחלה מלאה שלה (3 מילים לפחות),
+    // אחרי נרמול רווחים, מקף, גרשיים ופיסוק בקצה. אותו כלל כמו בשער הוורד (ingest_repo.near_dups)
+    for(let i=0;i+1<got.length;i++){const k=skmNearDup(got[i],got[i+1]);
+      if(k)return 'שורה כפולה בדף: "'+got[i].slice(0,40)+'"'}
     return ''}
+  function skmNearNorm(t){
+    return String(t||'').replace(/^צד: /,'').replace(/[֑-ׇ]/g,'').replace(/[ ⁣\t]/g,' ')
+      .replace(/\s*[-־–—]\s*/g,' - ').replace(/['"׳״‘’“”]/g,'')
+      .replace(/\s+/g,' ').replace(/^[\s.,:;!?׃()\[\]]+|[\s.,:;!?׃()\[\]]+$/g,'')}
+  function skmNearDup(a,b){
+    if(/^צד: /.test(a)!==/^צד: /.test(b))return '';
+    const x=skmNearNorm(a),y=skmNearNorm(b);if(x.split(' ').length<3)return '';
+    if(x===y)return 'same';
+    if(y.startsWith(x)&&' ,.:;-'.indexOf(y.charAt(x.length))>=0)return 'prefix';
+    return ''}
+  window.skmNearDup=skmNearDup;
   window.skmVerifyLines=skmVerifyLines;
 
   /* =================== חלונית הניהול: התור של סכם (פרומפט 15: בלי מפתח ובלי עלות) =================== */

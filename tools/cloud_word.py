@@ -215,6 +215,62 @@ def view(docx, slug, masechet, doc):
     return cap.get('pages'), cap.get('stat') or {}, keep or []
 
 
+def _page_lines(pages_json):
+    out = []
+    for p in json.loads(pages_json or '[]'):
+        for u in p.get('units') or []:
+            for k in ('a', 'w'):
+                if isinstance(u.get(k), str) and u.get(k):
+                    out.append((p.get('daf'), u[k]))
+            for l in u.get('l') or []:
+                out.append((p.get('daf'), json.dumps(l, ensure_ascii=False)))
+    return out
+
+
+_TAG = re.compile(r'<[^>]+>')
+
+
+def _plain(t):
+    return re.sub(r'\s+', ' ', html.unescape(_TAG.sub('', t or ''))).strip()
+
+
+def suspects(pa, pb, edits):
+    """שער שנכשל (פרומפט 44): אילו מן העריכות שנכתבו בקבוצה נוגעות במקומות שבהם הדף מן
+    הוורד החדש שונה ממה שהמנהל רואה. לפי הדף ולפי הנוסח (כל אחד מן הנוסחים של העריכה מופיע
+    בשורה השונה, או השורה השונה בתוכו). מחזיר (מפתחות העריכות, מספר המקומות השונים)."""
+    import difflib, ingest_repo
+    A, B = _page_lines(pa), _page_lines(pb)
+    bad = []
+    for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, A, B, autojunk=False).get_opcodes():
+        if op != 'equal':
+            bad.extend(A[i1:i2] + B[j1:j2])
+    places = len(bad)
+    bad = [(d, _plain(json.loads(t)[1] if t.startswith('[') else t)) for d, t in bad]
+    out = []
+    for e in edits:
+        ss = [e.get('now'), e.get('was')] + list(e.get('resT') or []) + list(e.get('texts') or [])
+        ss = [_plain(x) for x in ss if isinstance(x, str)]
+        ss = [x for x in ss if len(x) >= 6]
+        k0 = _daf_num(e.get('daf'))
+        for d, t in bad:
+            kd = _daf_num(d)
+            if k0 is not None and kd is not None and abs(k0 - kd) > 1:
+                continue
+            # שוויון לשורה, או הכלה כשהקצר שבהם ארוך דיו (20 תווים) כדי שלא יהיה מקרי
+            if any(x == t or (min(len(x), len(t)) >= 20 and (x in t or t in x)) for x in ss):
+                out.append(ingest_repo.edit_key(e))
+                break
+    return out, places
+
+
+def _daf_num(d):
+    try:
+        import build_site
+        return build_site._daf_key(d)
+    except Exception:
+        return None
+
+
 def adjacent_dups(path):
     import ingest_repo
     return ingest_repo.adjacent_dups(path)
@@ -249,8 +305,30 @@ def layer(slug, masechet, srv):
     return rep, doc, gone, raw
 
 
-def ingest_one(slug, dry, log=print):
-    import ingest_repo
+HOLD = os.path.join(HERE, 'data', 'word-cloud', 'hold')
+
+
+_BASE = {}
+HOLD_HOURS = 24     # עריכה מוחזקת מנוסה שוב אחרי יממה (ייתכן שהוחזקה רק בגלל שכנתה)
+
+
+def hold_keys(slug):
+    old = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=HOLD_HOURS)).strftime('%Y-%m-%dT%H:%M:%SZ')
+    return {h['key'] for h in (rjson(os.path.join(HOLD, slug + '.json'), {}) or {}).get('edits') or []
+            if (h.get('when') or '') >= old}
+
+
+def hold_add(slug, key, why):
+    p = os.path.join(HOLD, slug + '.json')
+    d = rjson(p) or {'v': 1, 'slug': slug, 'edits': []}
+    d['edits'] = [h for h in d['edits'] if h['key'] != key]
+    d['edits'].append({'key': key, 't': key.split(':')[0], 'why': why, 'when': now_iso()})
+    wjson(p, d)
+
+
+def ingest_one(slug, dry, log=print, deadline=None, limit=None):
+    import ingest_repo, time as _time
+    t0 = _time.time()
     masechet = masechet_of_slug(slug)
     path = docx_of(masechet)
     srv = server_doc(slug)
@@ -260,20 +338,54 @@ def ingest_one(slug, dry, log=print):
     if not doc['edits'] and not gone:
         log('%s: אין עריכות ממתינות' % masechet)
         return rec
+    # פרומפט 44: שכבה שלא השתנתה מאז סבב שלא היה לו מה לכתוב (רק עריכות תלושות שממתינות)
+    # אינה נבנית שוב. ריצה שאין לה מה לעשות מסתיימת בתוך דקות ספורות.
+    idle_p = os.path.join(HERE, 'data', 'word-cloud', 'idle', slug + '.json')
+    idle_sig = hashlib.sha1(json.dumps([sha(path), sorted(hold_keys(slug)),
+                                        [esig(e) for e in doc['edits']], len(gone)],
+                                       ensure_ascii=False).encode('utf-8')).hexdigest()
+    if not dry and (rjson(idle_p, {}) or {}).get('sig') == idle_sig:
+        log('%s: %d עריכות בשכבה, כולן כבר נבדקו בסבב קודם ואין מה לכתוב' % (masechet, len(doc['edits'])))
+        rec['idle'] = True
+        return rec
+    rec['idle_sig'] = idle_sig
     log('--- %s: %d עריכות בשכבה (%d כפולות הוסרו), %s' % (
         masechet, len(doc['edits']), len(gone), 'עם השרת' if srv is not None else 'בלי השרת (אין מפתח)'))
     old_sha = sha(path)
     # מה שהמנהל רואה - עם הכפילויות, כפי שהן באמת (13.11.2026: בברכות, סוכה ושבת הסרתן
     # משנה את הדף, ולכן השער משווה תמיד אל השכבה כפי שהיא, ולא אל השכבה המנוקה)
-    pa, sa_raw, _ = view(path, slug, masechet, raw)
-    sa = view(path, slug, masechet, doc)[1] if gone else sa_raw
+    # בתוך אותה ריצה הבסיס אינו משתנה בין ניסיונות של קבוצה (חציה, החזקה): נבנה פעם אחת
+    mk = (slug, old_sha, len(raw['edits']), len(doc['edits']), max([e.get('t') or 0 for e in raw['edits']] or [0]))
+    if _BASE.get('k') != mk:
+        pa, sa_raw, _ = view(path, slug, masechet, raw)
+        sa = view(path, slug, masechet, doc)[1] if gone else sa_raw
+        _BASE.clear()
+        _BASE.update(k=mk, pa=pa, sa=sa)
+    pa, sa = _BASE['pa'], copy.deepcopy(_BASE['sa'])
     log('   מה שהמנהל רואה: %s' % json.dumps({k: sa.get(k) for k in ('n', 'done', 'taken', 'lost')}, ensure_ascii=False))
     work = os.path.join(WORK, os.path.basename(path))
     shutil.copyfile(path, work)
+    # יומן הקליטה של word_apply יושב בתיקייה הזמנית. בענן אין לו תפקיד בין ניסיונות: ניסיון שני
+    # של אותה קבוצה (אחרי שער שנכשל) חייב להתחיל נקי, אחרת כל העריכות נראות "כבר נקלטו" (פרומפט 44)
+    try:
+        os.remove(ingest_repo.ledger_path(work))
+    except OSError:
+        pass
     dups0 = adjacent_dups(work)
     ok, bad = (0, 0)
+    rec['t_view'] = round(_time.time() - t0)
+    more = 0
     if sa.get('done'):
-        ok, bad = ingest_repo.ingest_replay(masechet, doc, work, False, log=log)
+        ok, bad = ingest_repo.ingest_replay(masechet, doc, work, False, log=log, deadline=deadline, limit=limit,
+                                            hold=hold_keys(slug), ambiguous=True)
+        more = ingest_repo.LAST.get('more') or 0
+        rec['ambiguous'] = len(ingest_repo.LAST.get('ambig') or [])
+        if rec['ambiguous']:
+            log('   %d עריכות נשענות על נוסח שמופיע בוורד ביותר ממקום אחד: נשארות בשכבה' % rec['ambiguous'])
+    rec['more'] = more
+    rec['tried'] = list(ingest_repo.LAST.get('tried') or []) if sa.get('done') else []
+    tried_e = list(ingest_repo.LAST.get('tried_e') or []) if sa.get('done') else []
+    rec['t_apply'] = round(_time.time() - t0) - rec['t_view']
     changed = sha(work) != old_sha
     _, sb, keep = view(work, slug, masechet, doc)
     # עריכה שאין לה שום ביטוי בוורד (למשל רווח שעבר לתוך קטע מעוצב, ראו _norm_html): אינה
@@ -291,7 +403,9 @@ def ingest_one(slug, dry, log=print):
     keep = [e for e in keep if (ekey(e), e.get('t')) not in noop_k]
     final = dict(doc, edits=keep)
     pb, sf, _ = view(work, slug, masechet, final)
-    pc, sc, _ = view(work, slug, masechet, None)
+    # הוורד לבדו: מידע בלבד (אינו חלק מן השער). בקבוצה שלא סיימה את התור הוא לעולם אינו
+    # זהה, ולכן אינו נבנה בה (חוסך בנייה שלמה של המסכת בכל קבוצה)
+    pc = view(work, slug, masechet, None)[0] if not more else None
     dups1 = adjacent_dups(work)
     if os.environ.get('CW_DUMP'):
         D = os.environ['CW_DUMP']
@@ -322,6 +436,14 @@ def ingest_one(slug, dry, log=print):
         return rec
     if pb != pa or dups1 > dups0:
         rec['gate'] = 'נכשל'
+        if pb != pa and tried_e:
+            try:
+                rec['suspects'] = suspects(pa, pb, tried_e)
+                log('   הפרשים מול מה שהמנהל רואה: %d מקומות; עריכות חשודות בקבוצה: %d'
+                    % (rec['suspects'][1], len(rec['suspects'][0])))
+                rec['suspects'] = rec['suspects'][0]
+            except Exception as e:
+                log('   איתור העריכות החשודות נכשל: %s' % e)
         log('   השער נכשל: הוורד לא נשמר והשכבה לא נגעה.')
         return rec
     rec['gate'] = 'עבר'
@@ -358,8 +480,75 @@ def ingest_one(slug, dry, log=print):
         arch['edits'].sort(key=lambda e: e.get('t') or 0)
         arch['when'] = rec['when']
         wjson(ap, arch)
+    if not changed and not taken and not gone and not more:
+        wjson(idle_p, {'sig': rec.pop('idle_sig', None), 'when': rec['when'], 'layer': len(keep)})
     log('   נשמר: הוורד %s, %d עריכות יצאו מן השכבה, %d נשארו בה' % (
         'עודכן' if changed else 'לא השתנה', len(taken), len(keep)))
+    return rec
+
+
+# ---------------------------------------------------------------- כפולות כמעט-זהות בוורד (פרומפט 44)
+
+def _drop_paragraphs(src, dst, idxs):
+    """מוחק מן הוורד את הפסקאות שבמספרי ההמרה idxs (אחרי קבלת שינויים אין בו מעקב).
+    השער: ההמרה אחרי זהה לזו שלפני, בלי הפסקאות האלה בדיוק. אחרת - חריגה, ושום דבר לא נכתב."""
+    import zipfile
+    from lxml import etree
+    import word_apply as WA
+    from docx2json import convert
+    before = convert(src)
+    z = zipfile.ZipFile(src)
+    doc = etree.fromstring(z.read('word/document.xml'))
+    z.close()
+    xml_ps = WA._paragraph_map(doc, before)
+    for i in sorted(idxs, reverse=True):
+        p = xml_ps[i]
+        p.getparent().remove(p)
+    WA._rezip(src, dst, {'word/document.xml': etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True)})
+    after = convert(dst)
+    want = [(b['style'], b['text']) for b in before if b['i'] not in set(idxs)]
+    got = [(b['style'], b['text']) for b in after]
+    if got != want:
+        os.remove(dst)
+        raise RuntimeError('מחיקת הכפולות לא אומתה: ההמרה אחריה אינה הוורד בלי הפסקאות האלה')
+
+
+def clean_near_dups(slug, dry, log=print):
+    """במסכת שבענן: פסקה שמוכלת כולה בשכנתה הצמודה (אותו סגנון) נמחקת, והמלאה נשארת.
+    רץ אחרי שהתור התרוקן, על הוורד עצמו. השער: הוורד בלי הפסקאות זהה לוורד הישן בלעדיהן,
+    והשכבה שנשארה מוחלת עליו בדיוק כמו קודם (אותו מספר עריכות שהוחלו, נקלטו ותלושות)."""
+    import ingest_repo
+    from docx2json import convert
+    masechet = masechet_of_slug(slug)
+    path = docx_of(masechet)
+    blocks = convert(path)
+    pairs = list(ingest_repo.near_dups(blocks))
+    rec = {'slug': slug, 'near': [{'i': i, 'kind': k, 'daf': blocks[i]['daf'], 'drop': blocks[i]['text'][:80],
+                                   'keep': blocks[j]['text'][:120]} for i, j, k in pairs]}
+    if not pairs:
+        log('%s: אין כפולות כמעט-זהות בוורד' % masechet)
+        return rec
+    drop = sorted({i for i, _, _ in pairs})
+    for x in rec['near']:
+        log('   כפולה (%s, %s): נמחקת "%s" | נשארת "%s"' % (x['kind'], x['daf'], x['drop'][:50], x['keep'][:60]))
+    rep, doc, gone, raw = layer(slug, masechet, server_doc(slug))
+    work = os.path.join(WORK, 'nd-' + os.path.basename(path))
+    _drop_paragraphs(path, work, drop)
+    s0 = view(path, slug, masechet, doc)[1]
+    s1 = view(work, slug, masechet, doc)[1]
+    k = ('n', 'done', 'taken', 'lost')
+    same = all(s0.get(x) == s1.get(x) for x in k)
+    rec.update(gate='עבר' if same else 'נכשל', before={x: s0.get(x) for x in k}, after={x: s1.get(x) for x in k})
+    if not same:
+        log('   השער נכשל: השכבה מוחלת אחרת על הוורד בלי הכפולות (%s מול %s). לא נמחק דבר.'
+            % (json.dumps(rec['before'], ensure_ascii=False), json.dumps(rec['after'], ensure_ascii=False)))
+        return rec
+    if dry:
+        log('   (בדיקה בלבד) היו נמחקות %d פסקאות' % len(drop))
+        return rec
+    shutil.copyfile(work, path)
+    rec['dropped'] = len(drop)
+    log('   נמחקו %d פסקאות כפולות מן הוורד' % len(drop))
     return rec
 
 
@@ -487,6 +676,10 @@ def main():
     ap.add_argument('--dry', action='store_true')
     ap.add_argument('--tombstones', action='store_true')
     ap.add_argument('--dedup', nargs='*')
+    ap.add_argument('--budget', type=float, default=0, help='דקות לקבוצה (0 = בלי גבול)')
+    ap.add_argument('--limit', type=int, default=0, help='מספר עריכות לקבוצה (0 = בלי גבול)')
+    ap.add_argument('--no-bisect', action='store_true')
+    ap.add_argument('--no-near', action='store_true', help='בלי ניקוי כפולות כמעט-זהות')
     a = ap.parse_args()
     cfg = rjson(CFG, {}) or {}
     slugs = [s for s in (a.only.split(',') if a.only else cfg.get('slugs') or []) if s]
@@ -508,21 +701,78 @@ def main():
         perush_store.attach = lambda src, slug, strict=True: _att(src, slug, strict=False)
     if admin_key():
         tombstones(archived())     # שאריות מסבב קודם שהדחיפה שלו הצליחה והמצבות לא
-    fail = 0
+    import time as _time
+    fail = more = 0
     for slug in slugs:
-        try:
-            rec = ingest_one(slug, a.dry)
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            rec = {'when': now_iso(), 'slug': slug, 'gate': 'שגיאה', 'error': str(e)[:300]}
-            print('%s: נעצר - %s' % (slug, e))
+        # פרומפט 44: קבוצה בתקציב זמן. ריצה שנקטעת מאבדת לכל היותר קבוצה אחת, והבאה ממשיכה.
+        # שער שנכשל: הקבוצה נחצית עד שנמצאת העריכה שמכשילה אותו. היא מוחזקת בשכבה (hold)
+        # עם הסיבה, וכל השאר ממשיך להיכתב.
+        limit = a.limit or None
+        sus_tried = False
+        while True:
+            t_start = _time.time()
+            deadline = t_start + a.budget * 60 if a.budget else None
+            try:
+                rec = ingest_one(slug, a.dry, deadline=deadline, limit=limit)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                rec = {'when': now_iso(), 'slug': slug, 'gate': 'שגיאה', 'error': str(e)[:300]}
+                print('%s: נעצר - %s' % (slug, e))
+            tried = rec.pop('tried', None) or []
+            rec.pop('idle_sig', None)
+            rec['secs'] = round(_time.time() - t_start)
+            sus = rec.pop('suspects', None) or []
+            if rec.get('gate') == 'נכשל' and tried and not a.dry and not a.no_bisect:
+                # קודם: העריכות שנוגעות במקומות השונים מוחזקות, והקבוצה רצה שוב. רק אם גם זה
+                # נכשל - חציה עד שנמצאת העריכה
+                if sus and not sus_tried and len(sus) < len(tried):
+                    sus_tried = True
+                    for k in sus:
+                        hold_add(slug, k, 'נוגעת במקום שבו הוורד אחרי הכתיבה שונה ממה שהמנהל רואה')
+                    print('   %d עריכות חשודות מוחזקות בשכבה. הקבוצה רצה שוב בלעדיהן' % len(sus))
+                    continue
+                if len(tried) > 1:
+                    limit = len(tried) // 2
+                    print('   חציה: מנסה שוב עם %d העריכות הראשונות של הקבוצה' % limit)
+                    continue
+                why = []
+                if not rec.get('same_as_admin'):
+                    why.append('הדף אחרי הכתיבה אינו זהה למה שהמנהל רואה')
+                if (rec.get('dups_after') or 0) > (rec.get('dups_before') or 0):
+                    why.append('היתה יוצרת פסקה כפולה')
+                if (rec.get('orphans_after') or 0) > (rec.get('orphans_before') or 0):
+                    why.append('היתה יוצרת שורת דובר יתומה')
+                hold_add(slug, tried[0], 'הכשילה את שער הוורד: ' + (', '.join(why) or 'לא ידוע'))
+                print('   העריכה %s מוחזקת בשכבה (הכשילה את השער). ממשיך בלעדיה' % tried[0])
+                limit = a.limit or None
+                continue
+            break
         if rec.get('gate') in ('נכשל', 'שגיאה'):
             fail += 1
+        if rec.get('more'):
+            more += 1
+        elif rec.get('gate') not in ('נכשל', 'שגיאה') and not a.no_near:
+            # התור התרוקן: ניקוי כפולות כמעט-זהות בוורד עצמו (פרומפט 44). כישלון אינו עוצר את הקליטה
+            try:
+                nd_p = os.path.join(HERE, 'data', 'word-cloud', 'idle', slug + '-near.json')
+                m_ = masechet_of_slug(slug)
+                sig = sha(docx_of(m_))
+                if (rjson(nd_p, {}) or {}).get('sig') != sig:
+                    nd = clean_near_dups(slug, a.dry)
+                    rec['near'] = {k: nd.get(k) for k in ('gate', 'dropped') if nd.get(k) is not None}
+                    rec['near']['found'] = len(nd.get('near') or [])
+                    # בלי מחיקה (אין כפולות, או שהשער נכשל): לא נבדק שוב עד שהוורד ישתנה
+                    if not a.dry and not nd.get('dropped'):
+                        wjson(nd_p, {'sig': sig, 'when': now_iso(), 'near': nd.get('near'), 'gate': nd.get('gate')})
+            except Exception as e:
+                print('   ניקוי הכפולות לא רץ: %s' % e)
+        print('   זמן הקבוצה: %d שניות (בנייה %s, החלה %s)' % (rec.get('secs', 0), rec.get('t_view'), rec.get('t_apply')))
         if not a.dry:
             log_rec(rec)
     shutil.rmtree(WORK, ignore_errors=True)
-    sys.exit(1 if fail else 0)
+    # 3 = הקבוצה נשמרה ויש עוד בתור: פעולת גיטהאב שומרת, דוחפת ומריצה קבוצה נוספת
+    sys.exit(1 if fail else (3 if more else 0))
 
 
 if __name__ == '__main__':

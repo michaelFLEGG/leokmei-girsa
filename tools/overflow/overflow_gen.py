@@ -403,6 +403,31 @@ def main():
             parts = s['parts'] if s['kind'] == 'split' else [s['html']]
             cands.append({'id': cid, 'mc': it['mc'], 'pc': it['cls'], 'parts': [lg_look(x) for x in parts]})
             meta[cid] = (it, s)
+    # ---- כלי 5: איחוי עם השורה הסמוכה (פרומפט 44) ----
+    # בעל הפרויקט, 16.11.2026: איחוי אוטומטי של שורות מסתדר פעמים רבות, גם בשורות ארוכות.
+    # עד היום הכלי לא הוצע כלל (העובד לא כתב הצעות כאלה, והמחולל לא הכיר אותן). כאן הוא מכני:
+    # השורה מתאחדת עם הקודמת או הבאה באותה יחידה ובאותו סגנון (אותה יחידת מחשבה), בלי לשנות
+    # אות. ההצעה עוברת רק אם במנוע, בשני הגדלים, הפסקה המאוחדת אינה תופסת יותר שורות משתי
+    # הפסקאות יחד בהדפסה הרגילה - כלומר אינה גולשת ואינה דוחקת שורה אחרת.
+    joins = 0
+    for it in items:
+        if it['mc'] != 'main':
+            continue
+        for tgt, dl in (('prev', -1), ('next', 1)):
+            nk = (it['u'], it['li'] + dl)
+            nl = data.get(nk)
+            na = A.get(nk)
+            if not nl or not na or nl[0] != it['cls'] or (na.get('mc') or 'main') != 'main':
+                continue
+            nt = re.sub(r'\s+', ' ', plain(nl[1])).strip()
+            if len(nt.split()) < 2 or nt.endswith(':'):
+                continue                # כותרת או שורת דובר: אינה אותה יחידת מחשבה
+            merged = (nl[1].rstrip() + ' ' + it['html'].strip()) if tgt == 'prev' else (it['html'].rstrip() + ' ' + nl[1].strip())
+            cid = '%s|5|%s' % (it['key'], tgt)
+            cands.append({'id': cid, 'mc': it['mc'], 'pc': it['cls'], 'parts': [lg_look(merged)]})
+            meta[cid] = (it, {'tool': 5, 'kind': 'join', 'target': tgt, 'html': merged, 'targetOrig': nl[1],
+                              'targetLines': na['n'], 'why': 'איחוי עם השורה ה%s' % ('קודמת' if tgt == 'prev' else 'באה')})
+            joins += 1
     frm = items[0]['daf'] if items else None
     res = verify(a.site, a.slug, 'ב.', cands, a.tmp) if cands else {}
     bad = 0
@@ -421,6 +446,8 @@ def main():
             need = [1] * len(r['a4-large'])
         elif s.get('kind') == 'move':
             need = [it['nA4'], s.get('targetLines', 1)]
+        elif s.get('kind') == 'join':
+            need = [it['nA4'] + s.get('targetLines', 1)]
         else:
             need = [it['nA4']]
         ok = all(n <= m for n, m in zip(r['a4-large'], need)) and all(n <= m for n, m in zip(r['a4'], need))
@@ -432,7 +459,8 @@ def main():
     # לכל שורה: לכל היותר הצעה אחת מכל כלי, בסדר הכלים; עד שלוש
     for it in items:
         seen, keep = set(), []
-        for s in sorted(it['sug'], key=lambda s: (s['tool'], len(plain(s.get('html', '')) or ''))):
+        # איחוי (כלי 5) ראשון: אינו משנה אות, ובעל הפרויקט מצא שהוא מסתדר יפה (16.11.2026)
+        for s in sorted(it['sug'], key=lambda s: (0 if s['tool'] == 5 else s['tool'], len(plain(s.get('html', '')) or ''))):
             if s['tool'] in seen:
                 continue
             seen.add(s['tool'])
@@ -448,7 +476,7 @@ def main():
     doc = {'slug': a.slug, 'made': time.strftime('%Y-%m-%d %H:%M'), 'profile': 'a4-large',
            'pages': {'a4': len(rep['a4']['pages']), 'a4-large': len(rep['a4-large']['pages'])},
            'sq25': {'a4': rep['a4'].get('sq25', 0), 'a4-large': rep['a4-large'].get('sq25', 0)},
-           'count': len(items), 'firstTool': by_tool, 'ctlMismatch': ctl_bad, 'rejected': bad, 'stale': neighbor.get('stale', []), 'unplaced': neighbor.get('unplaced', []), 'items': items}
+           'count': len(items), 'firstTool': by_tool, 'joinCands': joins, 'ctlMismatch': ctl_bad, 'rejected': bad, 'stale': neighbor.get('stale', []), 'unplaced': neighbor.get('unplaced', []), 'items': items}
     out = a.out or os.path.join(ODIR, a.slug + '.json')
     io.open(out, 'w', encoding='utf-8').write(json.dumps(doc, ensure_ascii=False, indent=1))
     print('שורות גולשות: %d | הצעות: %s | נפסלו בבדיקה: %d | %.0f שניות' % (len(items), by_tool, bad, time.time() - t0))

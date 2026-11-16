@@ -370,6 +370,8 @@
     else{
       const rows=skpRows(it.ids);
       if(!rows.length){skpDec(it,'stale');return skpMove(1)}
+      /* פרומפט 44: הצעה שכל תוכנה מחיקת שורה כפולה - הכפולות מטופלות בוורד בלי סקירה (הכרעת בעל הפרויקט 16.11.2026) */
+      if(skpDupOnly(it)){skpDec(it,'stale',{reason:'כפולה בלבד: נוקתה בוורד'});return skpMove(1)}
       conflict=!skmSame(it.ids,it.orig);
       p={id:R.jid+':'+it.iid,ids:it.ids,orig:it.orig,text:it.text,point:it.point||'',changes:it.changes||[],warn:[],notes:[],round:1};
       skmShow(p);
@@ -466,6 +468,11 @@
     try{document.documentElement.style.setProperty('--skpbarh',b.offsetHeight+'px')}catch(e){}}
 
   /* ---- ההכרעות ---- */
+  function skpDupOnly(it){
+    try{if(!window.skmVerifyLines||!window.skmNearDup||!it.orig||!it.text)return false;
+      const a=skmVerifyLines(it.orig),b=skmVerifyLines(it.text);
+      const keep=a.filter((x,i)=>!(i+1<a.length&&skmNearDup(x,a[i+1])));
+      return keep.length<a.length&&keep.length===b.length&&keep.every((x,i)=>x===b[i])}catch(e){return false}}
   function skpDec(it,act,extra,R0){
     const R=R0||SKP.rev;if(!R)return;
     if(act==='undo')delete R.dec[it.iid];else R.dec[it.iid]={act};

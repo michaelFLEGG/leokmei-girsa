@@ -71,11 +71,33 @@ def _mishna_line(pages, s, h):
 import punct_norm as _punct
 
 
+import functools as _ft
+
+
 def _bare(h):
+    # פרומפט 44: שמור לפי הטקסט (פונקציה טהורה). קלט שאינו מחרוזת - כמו קודם, בלי שמירה
+    return _bare_c(h) if isinstance(h, str) else _bare0(h)
+
+
+@_ft.lru_cache(maxsize=400000)
+def _bare_c(h):
+    return _bare0(h)
+
+
+def _bare0(h):
     return html.unescape(re.sub('<[^>]+>', '', h or ''))
 
 
 def _wn(t):
+    return _wn_c(t) if isinstance(t, str) else _wn0(t)
+
+
+@_ft.lru_cache(maxsize=400000)
+def _wn_c(t):
+    return _wn0(t)
+
+
+def _wn0(t):
     """השוואת טקסט של תיקון מול הוורד: רווח קשיח (nbsp) ורצפי רווחים נחשבים רווח אחד,
     והשוליים נחתכים. הדפדפן רושם nbsp בסוף פסקה, והוורד רווח רגיל; בלי הנרמול הזה
     התיקון נחשב תלוש ולא הוחל - בשקט, בכל בנייה."""
@@ -91,6 +113,16 @@ def _norm_h(h):
 
 
 def _daf_key(d):
+    # פרומפט 44: נקרא עשרות מיליוני פעמים בהחלת שכבה גדולה. שמור לפי המחרוזת
+    return _daf_key_c(d) if isinstance(d, str) else _daf_key0(d)
+
+
+@_ft.lru_cache(maxsize=20000)
+def _daf_key_c(d):
+    return _daf_key0(d)
+
+
+def _daf_key0(d):
     V = {'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,
          'ל':30,'מ':40,'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400}
     if not d: return None
@@ -99,18 +131,31 @@ def _daf_key(d):
     return n * 2 + am if n else None
 
 
+@_ft.lru_cache(maxsize=400000)
+def _wnb(h):
+    """_wn(_bare(h)) שמור לפי ה-HTML (פרומפט 44). נמדד: בהחלת שכבה של אלפי עריכות כל שינוי
+    מבנה סרק את כל שורות המסכת וניקה כל אחת מחדש, וזה לבדו לקח את רוב זמן הבנייה."""
+    return _wn(_bare(h))
+
+
+@_ft.lru_cache(maxsize=400000)
+def _wnc(t):
+    return _wn(t)
+
+
 def _find_run(pages, texts, daf):
     """רצף פסקאות סמוכות ביחידה אחת שנוסחן הוא texts. דורש ייחוד, ובריבוי
     מופעים מצומצם לדף אחד לכל צד. לא נמצא יחיד - מוחזר None, ולעולם לא
     ניחוש: פיצול או איחוי שנופל על פסקה זרה הורס שתי פסקאות בבת אחת."""
     hits = []
+    want = [_wnc(t) for t in texts]
     for p in pages:
         for u in p['units']:
             if u['k'] not in ('u', 'm'):
                 continue
             L = u['l']
             for i in range(len(L) - len(texts) + 1):
-                if all(_wn(_bare(L[i + j][1])) == _wn(texts[j]) for j in range(len(texts))):
+                if all(_wnb(L[i + j][1]) == want[j] for j in range(len(texts))):
                     hits.append((u, i, p['daf']))
     if len(hits) == 1:
         return hits[0]

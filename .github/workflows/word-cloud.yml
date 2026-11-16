@@ -19,9 +19,9 @@ concurrency:
 jobs:
   ingest:
     runs-on: ubuntu-latest
-    # פרומפט 43 (16.11.2026): מ-15.11 18:00 כל ריצה נקטעה ב-40 דקות (כאלף עריכות ממתינות נכתבות אחת אחת), ושום עריכה לא הגיעה לוורד.
-    # זמן ארוך יותר מאפשר לתור להתרוקן; ריצה שנקטעה אינה שומרת דבר.
-    timeout-minutes: 180
+    # פרומפט 44 (16.11.2026): הקליטה בקבוצות של עד 25 דקות, וכל קבוצה נשמרת ונדחפת מיד.
+    # ריצה שנקטעת מאבדת לכל היותר קבוצה אחת, והריצה הבאה (כל 10 דקות) ממשיכה מאותו מקום.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -29,38 +29,17 @@ jobs:
       - run: pip install lxml fonttools
       # השער רץ בתוך הכלי: הוורד החדש עם מה שנשאר בשכבה זהה למה שהמנהל ראה, ואין כפילויות.
       # מסכת שנכשלה אינה נשמרת; האחרות כן. קוד הכישלון נשמר לסוף, אחרי השמירה.
-      - name: קליטה
+      # כל קבוצה: קליטה בתקציב זמן, ואחריה שמירה ודחיפה ומצבות. קוד 3 = יש עוד בתור, והזמן
+      # שנשאר בריצה מספיק לקבוצה נוספת. [skip ci]: האתר נבנה מן הוורד החדש בסבב הקבוע של
+      # השומר; עד אז הנתונים שבאתר כבר נושאים את אותו נוסח (השער מוכיח זאת).
+      - name: קליטה ושמירה בקבוצות
         id: ingest
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
-        run: |
-          set +e
-          python tools/cloud_word.py
-          echo "code=$?" >> $GITHUB_OUTPUT
-      # [skip ci]: האתר נבנה מן הוורד החדש בסבב הקבוע של השומר; עד אז הנתונים שבאתר כבר
-      # נושאים את אותו נוסח (השער מוכיח זאת). התנגשות - הסבב הבא קולט מחדש מן ההתחלה.
-      - name: שמירה במאגר
-        id: save
-        run: |
-          git config user.name "leokmei-watcher"
-          git config user.email "watcher@users.noreply.github.com"
-          git add input/docx data/edits data/word-cloud
-          if git diff --cached --quiet; then echo "אין שינוי"; echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; fi
-          git commit -q -m "הוורד בענן: עריכות האתר נכתבו לוורד [skip ci]"
-          for i in 1 2 3 4; do
-            if git push -q; then echo "pushed=1" >> $GITHUB_OUTPUT; exit 0; fi
-            git pull -q --rebase --autostash origin main || { git rebase --abort 2>/dev/null || true; break; }
-            sleep $((i*3))
-          done
-          echo "::error::הוורד והשכבה לא נדחפו. הסבב הבא יקלוט מחדש; שום עריכה לא נמחקה מן השרת."
-          exit 1
+          PYTHONUNBUFFERED: '1'
+        run: bash tools/cloud_word_rounds.sh
       # רק אחרי שהוורד שנושא את העריכות נשמר במאגר: מצבה בשרת לכל עריכה שיצאה מן השכבה,
       # כך ש-/live מפסיק להגיש אותה. כישלון כאן מתוקן בסבב הבא (הכלי בודק מה עוד חי בשרת).
-      - name: מצבות בשרת
-        if: steps.save.outputs.pushed == '1' || steps.save.outputs.pushed == '0'
-        env:
-          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
-        run: python tools/cloud_word.py --tombstones
       - name: תוצאת הקליטה
         if: steps.ingest.outputs.code != '0'
         run: |

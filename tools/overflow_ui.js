@@ -26,6 +26,8 @@
   function ovPara(it){
     const row=document.getElementById('u'+it.u);if(!row)return null;
     const m=row.querySelector(':scope > .main');if(!m)return null;
+    /* פרומפט 48 (תיקון 4): כותרת (נושא, ד"ה) שתופסת יותר משורה בהדפסה - הסימון על הכותרת עצמה */
+    if(it.head)return ovNorm(ovPText(m))===ovNorm(it.text)?m:null;
     const p=m.querySelectorAll(':scope > p')[it.li-1];if(!p)return null;
     return ovNorm(ovPText(p))===ovNorm(it.text)?p:null}
   /* הטקסט של הפסקה בלי סימני התוספות ובלי רכיבי תצוגה שאינם טקסט */
@@ -107,7 +109,7 @@
     const s=it.sug[OVS.alt]||null,more=it.sug.length>1;
     const type=s&&s.tool===2&&/^abbr:/.test(s.type||'')?s.type:'';
     const nType=type?OVS.items.filter(x=>!ovDone(x)&&x.sug.some(z=>z.type===type)).length:0;
-    d.innerHTML='<div class="ovhd">חסרות '+it.miss+' אותיות'+(it.long?' · פסקה ארוכה':'')+'<span class="ovdaf">'+ge(it.daf||'')+'</span></div>'+
+    d.innerHTML='<div class="ovhd">'+(it.head?'כותרת בשתי שורות · ':'')+'חסרות '+it.miss+' אותיות'+(it.long?' · פסקה ארוכה':'')+'<span class="ovdaf">'+ge(it.daf||'')+'</span></div>'+
       '<div class="ovbody">'+ovSugHtml(it,s)+'</div>'+
       '<div class="ovbtns">'+
       (s?'<button data-a="ok" class="ovp">קבל</button>':'')+'<button data-a="edit">ערוך</button>'+
@@ -148,6 +150,7 @@
     d.querySelector('.ovbtns').innerHTML='<button data-a="okedit" class="ovp">קבל</button><button data-a="x">בטל</button>';
     const go=()=>{const lines=ta.value.split('\n').map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);
       if(!lines.length){flash('אין טקסט');return}
+      if(it.head&&lines.length>1){flash('כותרת נשארת בשורה אחת. קצר את הנוסח');return}
       const z=lines.length>1?{tool:s?s.tool:0,kind:'split',parts:lines.map(ge),side:''}:{tool:s?s.tool:0,kind:'replace',html:ovKeepTags(it.html,lines[0])};
       try{const n=ovApply(it,z);ovSend(it,'edit',{now:ovNow(z)});ovClose();ovAfter();flash('הוחל: '+n+' שינויים (Ctrl+ז מבטל)')}
       catch(e){flash('לא הוחל: '+(e.message||e))}};
@@ -161,6 +164,17 @@
     if(typeof EDIT!=='undefined'&&!EDIT&&typeof setEdit==='function')setEdit(true);
     const os=skmUnits([it.u]);if(!os.length)throw new Error('היחידה לא נמצאה');
     const orig=skmInter(os),L=orig.split('\n');
+    /* כותרת: השורה [כותרת-נושא:...] / [כותרת-דה:...] - מקומה נעול ונוסחה פתוח (sakem_core). רק החלפת נוסח */
+    if(it.head){
+      if(s.kind!=='replace')throw new Error('בכותרת רק קיצור נוסח');
+      const hi=L.findIndex(x=>/^\[כותרת-(נושא|דה):/.test(x));if(hi<0)throw new Error('הכותרת לא נמצאה בקטע');
+      const hm=/^\[(כותרת-(?:נושא|דה)):(.*)\]$/.exec(L[hi]);
+      if(!hm||ovNorm(SKC.bare(SKC.i2h(hm[2])))!==ovNorm(ovPlain(it.html)))throw new Error('הכותרת השתנתה מאז ההצעה. המחולל ירוץ שוב');
+      const LH=L.slice();LH[hi]='['+hm[1]+':'+SKC.h2i(s.html).replace(/\s+/g,' ').trim()+']';
+      const textH=LH.join('\n'),errsH=SKC.acceptErrs(orig,textH);
+      if(errsH&&errsH.length)throw new Error(errsH.map(e=>e.msg||e).join('; '));
+      const rH=skmApply({ids:[it.u],orig,text:textH,hdel:[]},textH);
+      return rH&&rH.n!==undefined?rH.n:1}
     /* שורות התוכן של היחידה: כל מה שאינו נעול ואינו כותרת צד */
     const content=[];L.forEach((x,i)=>{if(!/^\[(דף|מקור|משנה|גמרא|קבוע|כותרת-|צד:)/.test(x))content.push(i)});
     const at=content[it.li-1];if(at===undefined)throw new Error('השורה לא נמצאה בקטע');
@@ -206,7 +220,7 @@
   document.addEventListener('click',e=>{
     if(!ovOK()||!OVS.items.length)return;
     if(OVS.pop&&OVS.pop.contains(e.target))return;
-    const p=e.target.closest&&e.target.closest('#flow .main > p');
+    const p=e.target.closest&&(e.target.closest('#flow .main > p')||e.target.closest('#flow .row.nose > .main,#flow .row.dh > .main'));
     const it=p&&OVS.byP.get(p);
     if(!it){if(OVS.pop)ovClose();return}
     const sel=getSelection();if(sel&&!sel.isCollapsed)return;
@@ -218,7 +232,7 @@
   (function(){const s=document.createElement('style');s.textContent=
     '::highlight(ovline){text-decoration:underline wavy #c62828;text-decoration-thickness:1px;text-underline-offset:3px}'+
     '::highlight(ovword){color:#c62828}'+
-    '#flow .main p.ovfb{text-decoration:underline wavy #c62828 1px;text-underline-offset:3px}'+
+    '#flow .main p.ovfb,#flow .main.ovfb{text-decoration:underline wavy #c62828 1px;text-underline-offset:3px}'+
     '.ovpop{position:fixed;z-index:60;max-width:min(560px,94vw);background:#fff;border:1px solid #c9bfa8;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.22);padding:10px 12px;font:15px/1.6 inherit;color:#2b2620}'+
     '.ovhd{font-weight:700;color:#c62828;margin-bottom:6px}.ovdaf{float:left;color:#8a7d66;font-weight:400}'+
     '.ovtool{font-size:12px;color:#8a7d66;margin-bottom:3px}.ovl{font-family:Frank,serif;font-size:17px;line-height:1.7}.ovnb{color:#5a5044}'+

@@ -334,7 +334,17 @@
     while(gn<3&&glueLastWords(GP)){gn++;if(!loneStrict(GP)&&GP.offsetHeight<=h0){gok=true;break}}
     if(gok){for(var g2=0;g2<gn;g2++)glueLastWords(p);return true}
     return false}
-  window.__PRNX={lineInfo:lineInfo,squeeze25:squeeze25,loneFix:loneFix};
+  /* פרומפט 48 (תיקון 4): מספר השורות של כותרת (נושא, ד"ה), והצרה עד 2.5% לכותרת של שתי שורות.
+     משותף ללולאת ההדפסה ולבודק ההצעות של "שורה שהתארכה" לכותרות - אותה מדידה בדיוק */
+  function headNL(e){var rg=document.createRange();rg.selectNodeContents(e);var ts=[];
+    [].forEach.call(rg.getClientRects(),function(r){if(r.width<1||r.height<2)return;var c=r.top+r.height/2;if(!ts.some(function(t){return Math.abs(t-c)<r.height*0.45}))ts.push(c)});return ts.length}
+  function headSqueeze(h){var n0=headNL(h);if(n0!==2)return false;
+    var fs=parseFloat(getComputedStyle(h).fontSize)||16,W=h.getBoundingClientRect().width,t=h.textContent,sp=Math.max(1,(t.match(/ /g)||[]).length),ch=Math.max(1,t.replace(/[\s\u0591-\u05C7\u2060]/g,'').length);
+    for(var q=0.25;q<=1.0001;q+=0.25){var Rr=SQ25*W*q,ws=Math.min(Rr/sp,0.14*fs),ls=Math.max(0,(Rr-ws*sp)/ch);
+      h.style.wordSpacing=(-ws).toFixed(3)+'px';h.style.letterSpacing=ls?(-ls).toFixed(3)+'px':'';
+      if(headNL(h)<2){h.dataset.sq25=String(Math.round(q*25)/10);return true}}
+    h.style.wordSpacing='';h.style.letterSpacing='';return false}
+  window.__PRNX={lineInfo:lineInfo,squeeze25:squeeze25,loneFix:loneFix,headNL:headNL,headSqueeze:headSqueeze};
   async function runPrint(){
     var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
     var HEAD0=[].slice.call(document.querySelectorAll('style'));   /* פרומפט 49: מה שהעימוד הזה מוסיף לדף מסומן, כדי שעימוד חוזר יסיר אותו */
@@ -652,23 +662,19 @@
          ואם אינה מספיקה - שבירה במקום הנכון: אחרי מקף או נקודתיים, כשכל חלק נכנס בשורה אחת; ואחרת שורות מאוזנות (לא מילה בודדת בשנייה).
          מה שנשאר ביותר משורה נרשם בלוח התקלות, להצעת ניסוח קצר יותר בידי המנהל */
       (function(){
-        function nl(e){var rg=document.createRange();rg.selectNodeContents(e);var ts=[];
-          [].forEach.call(rg.getClientRects(),function(r){if(r.width<1||r.height<2)return;var c=r.top+r.height/2;if(!ts.some(function(t){return Math.abs(t-c)<r.height*0.45}))ts.push(c)});return ts.length}
+        var nl=headNL,hU=function(h){var rw=h.parentElement;return rw&&rw.dataset.u?+rw.dataset.u:null};
         var hd=[].slice.call(f.querySelectorAll('.row.nose > .main,.row.dh > .main'));R.headMulti=R.headMulti||{before:0,after:0,squeezed:0,broken:0,list:[]};
         hd.forEach(function(h){var n0=nl(h);if(n0<2)return;R.headMulti.before++;
-          var fs=parseFloat(getComputedStyle(h).fontSize)||16,W=h.getBoundingClientRect().width,t=h.textContent,sp=Math.max(1,(t.match(/ /g)||[]).length),ch=Math.max(1,t.replace(/[\s֑-ׇ⁠]/g,'').length);
-          if(n0===2)for(var q=0.25;q<=1.0001;q+=0.25){var Rr=SQ25*W*q,ws=Math.min(Rr/sp,0.14*fs),ls=Math.max(0,(Rr-ws*sp)/ch);
-            h.style.wordSpacing=(-ws).toFixed(3)+'px';h.style.letterSpacing=ls?(-ls).toFixed(3)+'px':'';
-            if(nl(h)<2){h.dataset.sq25=String(Math.round(q*25)/10);R.headMulti.squeezed++;return}}
-          h.style.wordSpacing='';h.style.letterSpacing='';
+          var t=h.textContent;
+          if(headSqueeze(h)){R.headMulti.squeezed++;return}
           /* שבירה אחרי " - " או ": " הקרוב ביותר לאמצע, אם כך יוצאות בדיוק שתי שורות */
           var tw=document.createTreeWalker(h,NodeFilter.SHOW_TEXT),nd,cand=[],pos=0,tot=t.length;
           while((nd=tw.nextNode())){var re=/( - |: )/g,mm;while((mm=re.exec(nd.data)))cand.push({n:nd,i:mm.index+mm[0].length,at:pos+mm.index});pos+=nd.data.length}
           cand.sort(function(a,b){return Math.abs(a.at-tot/2)-Math.abs(b.at-tot/2)});
           for(var k=0;k<cand.length;k++){var c=cand[k],rest=c.n.splitText(c.i),br=document.createElement('br');br.className='hbr';c.n.parentNode.insertBefore(br,rest);
-            if(nl(h)===n0&&n0===2){R.headMulti.broken++;R.headMulti.after++;R.headMulti.list.push({t:t.trim().slice(0,60),how:'שבירה אחרי מקף/נקודתיים'});return}
+            if(nl(h)===n0&&n0===2){R.headMulti.broken++;R.headMulti.after++;R.headMulti.list.push({t:t.trim().slice(0,60),u:hU(h),how:'שבירה אחרי מקף/נקודתיים'});return}
             br.remove();c.n.data+=rest.data;rest.remove()}
-          h.style.textWrap='balance';R.headMulti.after++;R.headMulti.list.push({t:t.trim().slice(0,60),how:'שורות מאוזנות'})})})();
+          h.style.textWrap='balance';R.headMulti.after++;R.headMulti.list.push({t:t.trim().slice(0,60),u:hU(h),how:'שורות מאוזנות'})})})();
       var ps0=[].slice.call(f.querySelectorAll('.main p')).filter(function(p){return !p.dataset.sq25&&p.textContent.trim().length>=12&&loneStrict(p)});
       var todo=[];
       ps0.forEach(function(p){
@@ -705,6 +711,13 @@
             p.style.whiteSpace=ws0;p.style.textAlign=ta0;p.style.textAlignLast=tl0;inf.nw=nw;
             R.plines.push({u:x.u.id,li:li+1,k:x.kind,cls:p.className,mc:m.className,daf:x.daf,n:inf.n,lastW:+inf.lastW.toFixed(1),start:inf.start,
               text:inf.text,h:p.innerHTML,dh:(x.u.l&&x.u.l[li]?x.u.l[li][1]:null),dc:(x.u.l&&x.u.l[li]?x.u.l[li][0]:null),st:p.getAttribute('style')||'',bw:inf.bw,nw:+inf.nw.toFixed(1),W:+m.getBoundingClientRect().width.toFixed(1),sq:p.dataset.sq25||'',fs:+parseFloat(getComputedStyle(p).fontSize).toFixed(3)})})})}
+      /* פרומפט 48 (תיקון 4): רישום הכותרות (lines=1), למחולל "שורה שהתארכה" - הצעות קיצור לכותרת שתופסת יותר משורה */
+      if(QS.get('lines')==='1'){R.hlines=R.hlines||[];
+        crecs.forEach(function(x){if(!x.u||!x.el||(x.kind!=='nose'&&x.kind!=='dh'))return;var m=x.el.querySelector(':scope > .main');if(!m)return;
+          var hb=[].slice.call(m.querySelectorAll('br.hbr')),ta=m.style.textWrap;hb.forEach(function(b){b.style.display='none'});m.style.textWrap='';
+          var n=headNL(m),ws0=m.style.whiteSpace;m.style.whiteSpace='nowrap';var rg=document.createRange();rg.selectNodeContents(m);var nw=rg.getBoundingClientRect().width;m.style.whiteSpace=ws0;
+          hb.forEach(function(b){b.style.display=''});m.style.textWrap=ta;
+          R.hlines.push({u:x.u.id,k:x.kind,daf:x.daf,n:n,nShown:headNL(m),text:m.textContent.replace(/\s+/g,' ').trim(),a:x.u.a||'',mc:m.className,W:+m.getBoundingClientRect().width.toFixed(1),nw:+nw.toFixed(1),sq:m.dataset.sq25||'',fs:+parseFloat(getComputedStyle(m).fontSize).toFixed(3)})})}
       R.semicolons=(R.semicolons||0)+(f.textContent.split(';').length-1);
       /* כותרת צד ששום הקטנה לא מכניסה לצד ציון הדף: ציון הדף מועלה (dup) רק אם אינו נוחת על פריט מסילה של שורה שמעליו;
          אחרת כותרת הצד מוקטנת עוד. (כלל 14.10.2026: מסילה אינה חופפת, ובדיקת החפיפות אחרי ההדפסה תופסת כל שארית) */

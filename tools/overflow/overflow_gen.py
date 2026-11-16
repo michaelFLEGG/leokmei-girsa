@@ -321,6 +321,121 @@ def verify(site, slug, frm, cands, tmp):
     return res
 
 
+# ---------- כותרות (פרומפט 48, תיקון 4, 16.11.2026) ----------
+# כותרת (נושא, ד"ה משנה) שתופסת יותר משורה בהדפסה: המנוע מצר אותה עד 2.5% ושובר במקום הנכון, ומה שנשאר ביותר משורה
+# מקבל כאן הצעת קיצור (כלי 2: ראשי תיבות מקובלים ורווחים; כלי 3: ניסוח קצר של העובד) שמגיעה למנהל לאישור כמו השורות.
+# הצעה עוברת רק אם במנוע, בשני הגדלים, הכותרת נכנסת בשורה אחת (אחרי אותה הצרה שהמנוע עושה)
+HPROBE = r"""
+(function(){var LIST=__LIST__;var X=window.__PRNX;if(!X||!X.headNL)return {err:'אין __PRNX.headNL (מנוע ישן)'};
+ var sq=document.getElementById('prnsq');
+ if(!sq){sq=document.createElement('div');sq.className='flow';sq.id='prnsq';
+   sq.style.cssText='position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;height:auto;overflow:hidden;columns:auto;column-count:1;padding:0;z-index:-1';
+   document.body.appendChild(sq)}
+ var row=document.getElementById('ovhrow');
+ if(!row){row=document.createElement('div');row.id='ovhrow';row.innerHTML='<div class="rail"></div><div class="main"></div>';sq.appendChild(row)}
+ var HM=row.querySelector('.main'),out=[];
+ LIST.forEach(function(c){row.className='row '+c.k;HM.className=c.mc||('main '+c.k);HM.style.wordSpacing='';HM.style.letterSpacing='';HM.removeAttribute('data-sq25');
+   HM.innerHTML=String(c.h).replace(/(\s|&nbsp;)\[([א-ת]{1,3})\](\s*)$/,'$1<span class="cnt">[$2]</span>$3');
+   X.headSqueeze(HM);out.push({id:c.id,n:X.headNL(HM)})});
+ return out})()
+"""
+
+
+def hverify(site, slug, cands, tmp):
+    """cands: [{id, k, mc, h}] -> {id: {'a4-large': n, 'a4': n}}"""
+    res = {}
+    for prof in ('a4-large', 'a4'):
+        for i in range(0, len(cands), 150):
+            chunk = cands[i:i + 150]
+            pf = os.path.join(tmp, 'ovhprobe.js')
+            io.open(pf, 'w', encoding='utf-8').write(HPROBE.replace('__LIST__', json.dumps(chunk, ensure_ascii=False)))
+            out = run_engine(site, slug, prof, os.path.join(tmp, 'ovh.pdf'), probe=pf, frm='ב.')
+            m = re.search(r'^PROBE (.*)$', out, flags=re.M)
+            if not m:
+                raise SystemExit('עצירה: בדיקת הצעות הכותרות לא החזירה תוצאה:\n' + out[-1200:])
+            got = json.loads(m.group(1))
+            if isinstance(got, dict) and got.get('err'):
+                raise SystemExit('עצירה: ' + got['err'])
+            for g in got:
+                res.setdefault(g['id'], {})[prof] = g['n']
+    return res
+
+
+def head_items(rep, site, slug, tmp, abbr, wsug):
+    """הכותרות שתופסות יותר משורה (בגודל כלשהו) והצעות הקיצור שנבדקו. מחזיר (items, stats)"""
+    HA = {x['u']: x for x in rep['a4'].get('hlines') or []}
+    HB = {x['u']: x for x in rep['a4-large'].get('hlines') or []}
+    if not HA or not HB:
+        raise SystemExit('עצירה: המנוע לא רשם כותרות (hlines). מנוע ישן?')
+    miss = [u for u in HB if u not in HA]
+    if miss:
+        raise SystemExit('עצירה: %d כותרות קיימות רק בפרופיל המוגדל' % len(miss))
+    items, cands, meta, st = [], [], {}, {'stale': [], 'unplaced': []}
+    for u, x in HB.items():
+        ax = HA[u]
+        if max(x['n'], ax['n']) < 2:
+            continue
+        key = 'h%d' % u
+        W = x['W'] or 1
+        vis = len(NIK.sub('', x['text']).replace(' ', '')) or 1
+        avg = x['nw'] / (vis + x['text'].count(' ') * 0.45)
+        miss_px = max(1.0, x['nw'] - W) if x['n'] > 1 else max(1.0, ax['nw'] - ax['W'])
+        it = {'key': key, 'id': key_id(key), 'u': u, 'li': 0, 'head': x['k'], 'daf': x['daf'], 'cls': '', 'mc': x['mc'],
+              'html': x['a'], 'ph': x['a'], 'text': re.sub(r'\s+', ' ', plain(x['a'])).strip(), 'over': '',
+              'nA4': ax['n'], 'nLarge': x['n'], 'missPx': round(miss_px, 1), 'miss': int(math.ceil(miss_px / avg)),
+              'long': False, 'sug': []}
+        items.append(it)
+        cands.append({'id': key + '|ctl', 'k': x['k'], 'mc': x['mc'], 'h': x['a']})
+        for j, (hp, hd, why, kind) in enumerate(mech_variants(x['a'], x['a'], abbr)[:8]):
+            cid = '%s|2|%d' % (key, j)
+            cands.append({'id': cid, 'k': x['k'], 'mc': x['mc'], 'h': hd})
+            meta[cid] = (it, {'tool': 2, 'kind': 'replace', 'html': hd, 'why': why, 'type': kind})
+        ws = wsug.get(key) or {}
+        if ws.get('orig') and NIK.sub('', _norm_needle(ws['orig'])).split() != NIK.sub('', it['text'].replace(' ', ' ')).split():
+            st['stale'].append(key)
+            continue
+        for j, s0 in enumerate(ws.get('sug', [])):
+            if s0.get('tool') != 3:
+                st['unplaced'].append('%s: בכותרת רק ניסוח קצר (כלי 3)' % key)
+                continue
+            s, err = worker_to_html(x['a'], s0)
+            if err:
+                st['unplaced'].append('%s: %s' % (key, err))
+                continue
+            cid = '%s|w|%d' % (key, j)
+            cands.append({'id': cid, 'k': x['k'], 'mc': x['mc'], 'h': s['html']})
+            meta[cid] = (it, s)
+    if not items:
+        return [], dict(st, count=0, ctlMismatch=[], rejected=0)
+    res = hverify(site, slug, cands, tmp)
+    ctl_bad = [it['key'] for it in items if res.get(it['key'] + '|ctl', {}).get('a4-large') != it['nLarge']
+               or res.get(it['key'] + '|ctl', {}).get('a4') != it['nA4']]
+    if len(ctl_bad) > max(1, len(items) // 10):
+        raise SystemExit('עצירה: בדיקת הכותרות אינה משחזרת את ההדפסה ב-%d מתוך %d: %s' % (len(ctl_bad), len(items), ', '.join(ctl_bad[:12])))
+    bad = 0
+    for cid, (it, s) in meta.items():
+        r = res.get(cid) or {}
+        if 'a4' not in r or 'a4-large' not in r:
+            raise SystemExit('עצירה: אין תוצאת בדיקה להצעת כותרת ' + cid)
+        if r['a4-large'] > 1 or r['a4'] > 1:
+            bad += 1
+            continue
+        s['ok'] = {'large': [r['a4-large']], 'a4': [r['a4']]}
+        it['sug'].append(s)
+    for it in items:
+        if it['key'] in ctl_bad:
+            it['ctlMismatch'] = res.get(it['key'] + '|ctl')
+        seen, keep = set(), []
+        for s in sorted(it['sug'], key=lambda s: (s['tool'], len(plain(s.get('html', ''))))):
+            if s['tool'] in seen:
+                continue
+            seen.add(s['tool'])
+            keep.append(s)
+        it['sug'] = keep[:3]
+        it['tool6'] = not it['sug']
+    return items, dict(st, count=len(items), ctlMismatch=ctl_bad, rejected=bad)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--slug', default='berakhot')
@@ -473,13 +588,18 @@ def main():
     for it in items:
         if it['sug']:
             by_tool[it['sug'][0]['tool']] = by_tool.get(it['sug'][0]['tool'], 0) + 1
+    hitems, hst = head_items(rep, a.site, a.slug, a.tmp, abbr, wsug)
+    hmulti = {p: rep[p].get('headMulti') or {} for p in ('a4', 'a4-large')}
     doc = {'slug': a.slug, 'made': time.strftime('%Y-%m-%d %H:%M'), 'profile': 'a4-large',
            'pages': {'a4': len(rep['a4']['pages']), 'a4-large': len(rep['a4-large']['pages'])},
            'sq25': {'a4': rep['a4'].get('sq25', 0), 'a4-large': rep['a4-large'].get('sq25', 0)},
-           'count': len(items), 'firstTool': by_tool, 'joinCands': joins, 'ctlMismatch': ctl_bad, 'rejected': bad, 'stale': neighbor.get('stale', []), 'unplaced': neighbor.get('unplaced', []), 'items': items}
+           'count': len(items), 'firstTool': by_tool, 'joinCands': joins, 'ctlMismatch': ctl_bad, 'rejected': bad, 'stale': neighbor.get('stale', []), 'unplaced': neighbor.get('unplaced', []),
+           'heads': {'count': hst['count'], 'withSug': sum(1 for x in hitems if x['sug']), 'rejected': hst['rejected'], 'ctlMismatch': hst['ctlMismatch'],
+                     'stale': hst['stale'], 'unplaced': hst['unplaced'], 'engine': {p: {k: v for k, v in hmulti[p].items() if k != 'list'} for p in hmulti}},
+           'items': items + hitems}
     out = a.out or os.path.join(ODIR, a.slug + '.json')
     io.open(out, 'w', encoding='utf-8').write(json.dumps(doc, ensure_ascii=False, indent=1))
-    print('שורות גולשות: %d | הצעות: %s | נפסלו בבדיקה: %d | %.0f שניות' % (len(items), by_tool, bad, time.time() - t0))
+    print('שורות גולשות: %d | הצעות: %s | נפסלו בבדיקה: %d | כותרות ביותר משורה: %d (עם הצעה: %d) | %.0f שניות' % (len(items), by_tool, bad, len(hitems), sum(1 for x in hitems if x['sug']), time.time() - t0))
 
 
 if __name__ == '__main__':

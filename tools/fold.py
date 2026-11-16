@@ -159,7 +159,10 @@ def items_of_page(pg):
         if k == 'u':
             side(u.get('a'))
             for cls, h in u.get('l') or []:
-                if cls == 'hatz': continue
+                if cls == 'hatz':
+                    # חציצה (***) שהבנייה שמה בתוך היחידה - בוורד היא פסקת חציצה, כמו יחידת חציצה
+                    if plain(h): out.append({'t': 'X:חציצה', 'm': to_inter(h), 'ps': 'חציצה'})
+                    continue
                 cl = (cls or '').split()
                 # שורה שהמנהל עשה לה "כותרת נושא" / "כותרת ד"ה משנה" בעורך: בוורד היא פסקת כותרת
                 if 'nose' in cl or 'dh' in cl:
@@ -176,7 +179,9 @@ def items_of_page(pg):
                 out.append({'t': 'X:משנה בצד', 'm': u['mbw'], 'ps': 'משנה בצד'})
             side(u.get('w'))
             for cls, h in u.get('l') or []:
-                if cls == 'hatz': continue
+                if cls == 'hatz':
+                    if plain(h): out.append({'t': 'X:חציצה', 'm': to_inter(h), 'ps': 'חציצה'})
+                    continue
                 out.append({'t': 'L', 'm': to_inter(h), 'ps': 'משניות'})
         elif k in ('hatz', 'perek-range', 'perek-start', 'hadran'):
             st = {'hatz': 'חציצה', 'perek-range': 'דפים בפרק ב', 'perek-start': 'פתיחת פרק', 'hadran': 'הדרן'}[k]
@@ -404,7 +409,25 @@ def fold_one(slug, dry=False, log=print, srv=None):
     diff, remain = [], []
     for _round in range(9):
         rdaf = {A[n]['daf'] for n in reverted}
-        remain = [e for e in raw['edits'] if e.get('daf') in rdaf and e.get('t') not in lost_t]
+        remain0 = [e for e in raw['edits'] if e.get('daf') in rdaf and e.get('t') not in lost_t]
+        # מספרי היחידות זזים בספר החדש. בעמודים שחזרו הנוסח זהה, ולכן היחידות מתאימות לפי מקומן בעמוד:
+        # מפתח העריכה עובר למספר החדש, כדי שתמצא את מקומה בדיוק כמו קודם (ולא בחיפוש לפי טקסט).
+        W1, _ = view(work, slug, m, None)
+        idmap = {}
+        for n in reverted:
+            ua, ub = W0[n]['units'], W1[n]['units']
+            if len(ua) == len(ub) and all(x.get('k') == y.get('k') for x, y in zip(ua, ub)):
+                for x, y in zip(ua, ub):
+                    if x.get('id') is not None and y.get('id') is not None:
+                        idmap[str(x['id'])] = str(y['id'])
+        remain, rekeyed = [], []
+        for e in remain0:
+            mm = re.match(r'^u(\d+)(\..*)$', e.get('k') or '')
+            if mm and idmap.get(mm.group(1)) and idmap[mm.group(1)] != mm.group(1):
+                ne = dict(e, k='u' + idmap[mm.group(1)] + mm.group(2))
+                remain.append(ne); rekeyed.append((e, ne))
+            else:
+                remain.append(e)
         V, _ = view(work, slug, m, dict(raw, edits=remain))
         if len(V) != len(A):
             diff = ['מספר העמודים']; break
@@ -423,6 +446,13 @@ def fold_one(slug, dry=False, log=print, srv=None):
         revert_pages(docx, work, newb)
         reverted |= set(newb)
     rdaf = {A[n]['daf'] for n in reverted}
+    if diff and len(V) == len(A):
+        for n in [n for n in range(len(A)) if not same_page(V[n], A[n])][:6]:
+            a_, b_ = json.loads(page_sig(A[n])), json.loads(page_sig(V[n]))
+            for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, [json.dumps(x, ensure_ascii=False) for x in a_], [json.dumps(x, ensure_ascii=False) for x in b_], autojunk=False).get_opcodes():
+                if op != 'equal':
+                    log('   %s %s | המנהל רואה: %s | הספר נותן: %s' % (A[n]['daf'], op, json.dumps(a_[i1:i2][:2], ensure_ascii=False)[:300], json.dumps(b_[j1:j2][:2], ensure_ascii=False)[:300]))
+                    break
     if diff:
         rec.update(result='נכשל', why='השער: %d עמודים שונים ממה שהמנהל רואה (%s)' % (len(diff), ', '.join(diff[:12])))
         log('%s: %s' % (m, rec['why']))
@@ -433,7 +463,9 @@ def fold_one(slug, dry=False, log=print, srv=None):
         log('%s: %s' % (m, rec['why']))
         return rec
     keep_k = {(C.ekey(e), e.get('t')) for e in remain}
+    # עריכה שמפתחה הוחלף יוצאת במפתח הישן (מצבה), ונכתבת לשרת במפתח החדש (--tombstones)
     retired = [e for e in raw['edits'] if (C.ekey(e), e.get('t')) not in keep_k]
+    rec['rekeyed'] = len(rekeyed)
     rec.update(result='עבר', reverted=sorted(rdaf), remain=len(remain), retired=len(retired), tlushot=len(lost),
                dups=[d0, d1], secs=int(time.time() - t0))
     log('%s: השער עבר. %d עמודים נכנסו לספר, %d חזרו, %d עריכות יצאו מן השכבה, %d נשארו, %d תלושות לעיון'
@@ -454,6 +486,9 @@ def fold_one(slug, dry=False, log=print, srv=None):
             arch['edits'].append(dict(e, cw=now_iso(), fold=1))
     arch['edits'].sort(key=lambda e: e.get('t') or 0)
     C.wjson(ap, arch)
+    if rekeyed:
+        C.wjson(os.path.join(FOLD, 'rekey', slug + '.json'),
+                {'v': 1, 'slug': slug, 'when': now_iso(), 'edits': [ne for _, ne in rekeyed], 'sty': raw.get('sty')})
     if lost:
         tp = os.path.join(FOLD, 'tlushot', slug + '.json')
         old = C.rjson(tp) or {'v': 1, 'slug': slug, 'masechet': m, 'edits': []}
@@ -474,7 +509,19 @@ def main():
     cfg = C.rjson(CFG, {}) or {}
     slugs = [s for s in (a.only.split(',') if a.only else cfg.get('slugs') or []) if s]
     if a.tombstones:
-        return C.tombstones(slugs)
+        bad = 0
+        for s_ in slugs:
+            rp = os.path.join(FOLD, 'rekey', s_ + '.json')
+            rk = C.rjson(rp) or {}
+            if rk.get('edits') and not rk.get('pushed'):
+                try:
+                    C.call('PUT', '/edits', {'slug': s_, 'edits': rk['edits'], 'sty': rk.get('sty')})
+                    rk['pushed'] = now_iso(); C.wjson(rp, rk)
+                    print('%s: %d עריכות נכתבו לשרת במפתח החדש' % (s_, len(rk['edits'])))
+                except Exception as e:
+                    print('%s: העריכות במפתח החדש לא נכתבו (%s). המצבות לא נכתבות' % (s_, e)); bad = 1
+                    slugs = [x for x in slugs if x != s_]
+        return C.tombstones(slugs) or bad
     bad = 0
     for s in slugs:
         try:

@@ -1,0 +1,68 @@
+name: הדפסת מסכת שלמה ל-PDF (B5 ועוד)
+# 16.11.2026, לבקשת בעל הפרויקט: מסכת שלמה ברציפות, עם התוס', בפרופילים שנבחרו (ברירת מחדל: b5 ו-b5-large).
+# המקור הוא האתר החי (מראה של הדף כפי שהגולש מקבל אותו), כולל העריכות החיות והנוסחים שנבחרו בנקודת הקליטה.
+# מנוע ההדפסה עצמו מבצע את איחוי השורות (שורה יתומה, והצרה עד 2.5%), כמו בחלון ההדפסה שבאתר.
+# הקבצים נשמרים כתוצר של הריצה, ובענף prints (לא ב-main), כדי שאפשר יהיה למשוך אותם.
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'מסכת (למשל berakhot)'
+        required: true
+        default: berakhot
+      profiles:
+        description: 'פרופילים, מופרדים ברווח'
+        required: true
+        default: 'b5 b5-large'
+      tos:
+        description: 'עם תוספות (1/0)'
+        required: true
+        default: '1'
+permissions:
+  contents: write
+concurrency:
+  group: print-pdf-${{ github.event.inputs.slug }}
+  cancel-in-progress: false
+jobs:
+  pdf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install playwright pymupdf && python -m playwright install --with-deps chromium
+      - name: מראה של האתר החי
+        run: python tools/overflow/mirror_site.py --slug "${{ github.event.inputs.slug }}" --out _work/mirror
+      - name: הפקה
+        run: |
+          set -e
+          mkdir -p _work/out
+          S="${{ github.event.inputs.slug }}"
+          D=$(TZ=Asia/Jerusalem date +%Y-%m-%d_%H%M)
+          echo "D=$D" >> $GITHUB_ENV
+          for P in ${{ github.event.inputs.profiles }}; do
+            python tools/print/render_pdf.py --site _work/mirror --slug "$S" --all --dev \
+              --tos "${{ github.event.inputs.tos }}" --profile "$P" \
+              --out "_work/out/$S-$P-$D.pdf" --report "_work/out/$S-$P-$D.json" || [ $? = 3 ]
+            python tools/print/check_pdf.py "_work/out/$S-$P-$D.pdf" || true
+          done
+          ls -la _work/out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pdf-${{ github.event.inputs.slug }}
+          path: _work/out
+      - name: שמירה בענף prints
+        run: |
+          set -e
+          git config user.name "leokmei-print"
+          git config user.email "print@leokmei.com"
+          S="${{ github.event.inputs.slug }}"
+          git fetch -q origin prints && git checkout -q -B prints origin/prints || git checkout -q --orphan prints
+          git rm -rq --cached . 2>/dev/null || true
+          mkdir -p "pdf/$S"
+          cp _work/out/*.pdf _work/out/*.json "pdf/$S/"
+          git add "pdf/$S"
+          git commit -q -m "הדפסה: $S ($D)"
+          for i in 1 2 3; do git push -q origin prints && exit 0; git pull -q --rebase origin prints; done
+          exit 1

@@ -1,0 +1,95 @@
+{
+  "id": "b5-large",
+  "name": "B5 מוגדל, שני טורים",
+  "page": {
+    "w": 176,
+    "h": 250
+  },
+  "margins": {
+    "top": 12.5,
+    "bottom": 12.5,
+    "right": 4,
+    "left": 12
+  },
+  "duplexInnerExtra": 0,
+  "cols": 2,
+  "rail": 15,
+  "dafPullMm": 5,
+  "mishnaGapPt": 7.1,
+  "measure": 63,
+  "body": {
+    "fsFromMeasure": 15.529,
+    "linePt": 14.21
+  },
+  "header": {
+    "pt": 10,
+    "topMm": 6,
+    "family": "Vilna",
+    "weight": 900
+  },
+  "footer": {
+    "pt": 8,
+    "numberFromBottomMm": 8.5,
+    "siteText": "לאוקמי גירסא",
+    "siteUrlText": "leokmei.com",
+    "sitePt": 7,
+    "qrMm": 10,
+    "pageQr": false,
+    "bookQr": true,
+    "siteUrl": "https://leokmei.com/"
+  },
+  "notes": {
+    "family": "Frank",
+    "weight": 400,
+    "dhFamily": "Vilna",
+    "dhWeight": 700,
+    "dhPt": 7.85,
+    "dhLetterSpacingPt": 0.2,
+    "markFamily": "Vilna",
+    "pt": 7.85,
+    "linePt": 9.33,
+    "letterSpacingPt": 0,
+    "cols": 2,
+    "colGapMm": 3,
+    "gapAboveMm": 2.6,
+    "betweenMm": 0.35,
+    "numberScale": 0.62,
+    "numberRise": 0.45,
+    "numberWeight": 400,
+    "markScale": 0.58,
+    "markWeight": 400,
+    "markRise": 1.15,
+    "nameScale": 0.86,
+    "parenLessPt": 2,
+    "nameColor": "#6b6b6b",
+    "numbering": "digits",
+    "clusterDir": "ltr",
+    "markRoomPt": 1.5,
+    "squeeze": [
+      [
+        -0.03,
+        0
+      ],
+      [
+        -0.06,
+        -0.01
+      ],
+      [
+        -0.09,
+        -0.02
+      ]
+    ]
+  },
+  "continuationPt": 8.4,
+  "stretch": {
+    "maxLines": 3,
+    "maxPtPerGap": 3
+  },
+  "widowOrphan": 2,
+  "keepAfterHeading": 2,
+  "vilnaLetterSpacingPt": 0.2,
+  "labelMinScale": 0.74,
+  "shortLineWords": 2,
+  "keepAbsoluteFrom": 10.5872,
+  "_הערה": "16.11.2026: B5 (176x250 מ\"מ) לבקשת בעל הפרויקט. אותו גודל אות כמו a4-large, טור צר יותר (מידה 63 מ\"מ, מסילה 15)."
+}

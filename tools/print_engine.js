@@ -336,6 +336,8 @@
     /* פרומפט 41: שירות ההפקה מקבל שם פרופיל של עד 8 תווים, אותיות קטנות וספרות. "A4 מוגדל" עובר בשם הקצר a4lg */
     var PNAME=((QS.get('profile')||'a4').replace(/v[0-9a-z]+$/,'')||'a4');if(PNAME==='a4lg')PNAME='a4-large';
     var prof=await (await fetch('print-profiles/'+PNAME+'.json',{cache:'no-store'})).json();PROF=prof;
+    /* 16.11.2026: גודל העמוד מן הפרופיל (B5 ועוד). עד כאן היה קבוע A4 בעיצוב, וכותרת רצה וחיתוך העמוד נשענו עליו */
+    if(prof.page&&(prof.page.w!==210||prof.page.h!==297)){var stPg=document.createElement('style');stPg.textContent='@page{size:'+prof.page.w+'mm '+prof.page.h+'mm;margin:0}.pg{width:'+prof.page.w+'mm!important;height:'+prof.page.h+'mm!important}';document.head.appendChild(stPg)}
     (function(){var P=prof,n=P.notes,h=P.header,ft=P.footer;
       var c=document.createElement('style');
       c.textContent=
@@ -996,6 +998,10 @@
           var rc=recs[ri];
           tpl.innerHTML=rc.html2;
           var cl=tpl.content.firstElementChild;
+          /* 16.11.2026: שורה שפותחת טור, ושבסרגל באה אחרי כותרת (dh/nose/hatz), אינה מקבלת את חצי השורה של "רווח לפני":
+             בסרגל הכלל .row.nose+.row ביטל אותו, ובטור החדש אין לה שכנה קודמת - והיא ירדה חצי שורה על השורה שאחריה (B5, ברכות נז:) */
+          if(ri===ln.ri&&ri>0&&recs[ri-1]&&recs[ri-1].html2){var pvc=(String(recs[ri-1].html2).match(/^\s*<div[^>]*class="([^"]*)"/)||[])[1]||'';
+            if(/\b(dh|nose|hatz)\b/.test(pvc)){var fp0=cl.querySelector(':scope > .main > p.sp:first-child');if(fp0)fp0.style.marginTop='0'}}
           /* ב4 (5.11.2026): הפניה מודפסת רק בטור שבו יושבת השורה שלה. שורה שגולשת לטור הבא נמצאת בשני הטורים,
              וההפניה המורמת של השורה הראשונה בטור הבא נראתה גם בתחתית הטור הקודם */
           [].slice.call(cl.querySelectorAll('sup.tm')).forEach(function(mk){var li=LNOF[mk.getAttribute('data-n')];

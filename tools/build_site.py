@@ -963,6 +963,7 @@ def _apply_site_edits(pages, slug, qa):
     for _x in edits:
         if _x.get('del') and _x.get('k'):
             _tomb[_x['k']] = max(_tomb.get(_x['k'], 0), _x.get('t') or 0)
+    _tombs = [_x for _x in edits if _x.get('del')]
     if _tomb:
         edits = [_x for _x in edits if not _x.get('del')
                  and not (_x.get('k') in _tomb and (_x.get('t') or 0) <= _tomb[_x.get('k')])]
@@ -1215,7 +1216,8 @@ def _apply_site_edits(pages, slug, qa):
     _nrec = len(_rec)
     keep[:] = [x for x in keep if not x.get('_rec')]
     if len(keep) != len(edits) - _nrec:
-        doc['edits'] = keep
+        # המצבות נשארות בקובץ עד שהאפייה רואה שהשרת מחק (tools/pull_edits.py)
+        doc['edits'] = sorted(keep + _tombs, key=lambda z: z.get('t') or 0)
         io.open(path, 'w', encoding='utf-8', newline='\n').write(
             json.dumps(doc, ensure_ascii=False, indent=1))
         print('קובץ התיקונים של %s: %d נשארו, %d נקלטו בוורד' % (slug, len(keep), taken))

@@ -91,6 +91,10 @@ def main(emit=True):
         by = {}
         for e in doc.get('edits') or []:
             by[_key(e)] = e
+        # פרומפט 47 (16.11.2026): מצבה שבמאגר נשארת בקובץ כל עוד השרת עוד מגיש רשומה חיה באותו מפתח
+        # (העלאת המאגר לשרת טרם רצה, או בוטלה כשהוחלפה בריצה חדשה). קודם היא הוסרה כאן מיד, והרשומה הישנה
+        # חזרה מן השרת באפייה הבאה: 109 מצבות של פרומפט 47 בברכות אבדו כך.
+        _srv = {_key(e) for e in doc.get('edits') or [] if not e.get('del')}
         for e in (old or {}).get('edits') or []:
             o = by.get(_key(e))
             if o is None or (e.get('t') or 0) > (o.get('t') or 0):
@@ -103,7 +107,7 @@ def main(emit=True):
                 _abs = set(json.load(io.open(_absp, encoding='utf-8')).get('t') or [])
             except Exception as _e:
                 print('אזהרה: רשימת העריכות שנקלטו של', slug, 'לא נקראה:', _e)
-        edits = [e for e in by.values() if not e.get('del') and (_pinned or not e.get('ing'))
+        edits = [e for e in by.values() if (not e.get('del') or _key(e) in _srv) and (_pinned or not e.get('ing'))
                  and e.get('t') not in _abs]
         edits.sort(key=lambda e: e.get('t') or 0)
         if not edits and not os.path.exists(path):

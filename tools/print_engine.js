@@ -336,6 +336,10 @@
     /* פרומפט 41: שירות ההפקה מקבל שם פרופיל של עד 8 תווים, אותיות קטנות וספרות. "A4 מוגדל" עובר בשם הקצר a4lg */
     var PNAME=((QS.get('profile')||'a4').replace(/v[0-9a-z]+$/,'')||'a4');if(PNAME==='a4lg')PNAME='a4-large';if(PNAME==='b5lg')PNAME='b5-large';
     var prof=await (await fetch('print-profiles/'+PNAME+'.json',{cache:'no-store'})).json();PROF=prof;
+    /* פרומפט 48 (16.11.2026 20:45, הכרעת בעל הפרויקט): B5 לעולם אינו מעומד מחדש. פרופיל B5 הוא רק "הקטנה" של פרופיל A4
+       (שדה from): העימוד כולו נעשה בפרופיל ה-A4, ושבירת השורות זהה לו בדיוק. בסוף כל עמוד מוקטן כגוש אחד לדף B5 (ראה applyShrink) */
+    var SHRINK=null;
+    if(prof.from){SHRINK=prof.shrink;SHRINK.name=PNAME;SHRINK.from=prof.from;prof=await (await fetch('print-profiles/'+prof.from+'.json',{cache:'no-store'})).json();PROF=prof;R.shrink={name:PNAME,from:SHRINK.from,scale:SHRINK.scale}}
     /* 16.11.2026: גודל העמוד מן הפרופיל (B5 ועוד). עד כאן היה קבוע A4 בעיצוב, וכותרת רצה וחיתוך העמוד נשענו עליו */
     if(prof.page&&(prof.page.w!==210||prof.page.h!==297)){var stPg=document.createElement('style');stPg.textContent='@page{size:'+prof.page.w+'mm '+prof.page.h+'mm;margin:0}.pg{width:'+prof.page.w+'mm!important;height:'+prof.page.h+'mm!important}';document.head.appendChild(stPg)}
     (function(){var P=prof,n=P.notes,h=P.header,ft=P.footer;
@@ -1041,7 +1045,7 @@
       out.insertBefore(cov,first);
       var p2=document.createElement('section');p2.className='pg p2';
       var left='<div style="font-size:15px;line-height:1.5">©</div><div>כל הזכויות שמורות</div><div style="margin-top:6px">כתיבה ועריכה:</div>'+
-        '<div style="font-family:\'Vilna Bold\',serif">מ.ח. מיכאל פלעג שליט״א</div><div style="margin-top:6px;font-family:\'Vilna Bold\',serif">מכון לאוקמי גירסא</div>'+
+        '<div style="font-family:\'Vilna Bold\',serif">מ. ח. מיכאל פלעג</div><div style="margin-top:6px;font-family:\'Vilna Bold\',serif">מכון לאוקמי גירסא</div>'+
         '<div dir="ltr" style="margin-top:2px">leokmei.com</div><div id="p2qr" style="width:62px;height:62px;margin-top:10px"></div>';
       var p2html=await (await fetch('print-page2.html',{cache:'no-store'})).text();
       p2html=p2html.replace('<!--LEFT-->',left);
@@ -1136,6 +1140,31 @@
     window.__prnSetQr=function(list){
       var pgs=out.querySelectorAll('.pg');
       list.forEach(function(svg,k){var q=pgs[k]&&pgs[k].querySelector('.qr');if(q&&svg)q.innerHTML=svg})};
+    /* ---- פרומפט 48: הקטנה ל-B5 (או לכל דף אחר) - כל עמוד A4 מוקטן כגוש אחד, בלי עימוד מחדש ----
+       עמוד גוף: מלבן המקור (src: x0..x1, y0..y1 מ"מ בעמוד ה-A4) מוקטן ביחס scale, וצמוד לימין במרחק right ולמעלה במרחק top.
+       שער, עמוד 2 ותוכן עניינים: כל העמוד ביחס frontScale, במרכז. ההקטנה בעיצוב (transform) ולכן וקטורית, והקישורים זזים יחד עם העמוד.
+       הבודקים (חפיפות, חריגות, חורים) רצו קודם, על עמוד ה-A4 עצמו. */
+    if(SHRINK){
+      (function applyShrink(){
+        var S=SHRINK,W=S.page.w,H=S.page.h,s=S.scale,fs=S.frontScale||Math.min(W/PG.w,H/PG.h);
+        var tx=W-S.right-S.src.x1*s,ty=S.top-S.src.y0*s;
+        var c=document.createElement('style');
+        c.textContent='@page{size:'+W+'mm '+H+'mm;margin:0}'+
+          '.shp{position:relative;width:'+W+'mm;height:'+H+'mm;overflow:hidden;contain:strict;break-after:page;page-break-after:always;break-inside:avoid;background:#fff}'+
+          '.shp:last-child{break-after:auto;page-break-after:auto}'+
+          '.shp > .pg{position:absolute;left:0;top:0;transform-origin:0 0;contain:strict;break-after:auto;page-break-after:auto}';
+        document.head.appendChild(c);
+        var n=0;
+        [].slice.call(out.querySelectorAll(':scope > .pg')).forEach(function(pe){
+          var w=document.createElement('div');w.className='shp';pe.parentNode.insertBefore(w,pe);w.appendChild(pe);
+          var front=pe.classList.contains('cover')||pe.classList.contains('p2')||pe.classList.contains('tocp');
+          /* transform ולא zoom: zoom מעמד מחדש את טורי ההערות (נמדד: מילים זזות). contain:strict מונע מ-Chrome לפצל לעמודים
+             לפי גובה הפריסה שלפני ההקטנה (בלעדיו עמוד A4 של 297 מ"מ נחתך בדף של 250). b5_compare.py מוודא שאף מילה לא זזה */
+          pe.style.transform=front?('translate('+((W-PG.w*fs)/2)+'mm,'+((H-PG.h*fs)/2)+'mm) scale('+fs+')'):('translate('+tx+'mm,'+ty+'mm) scale('+s+')');
+          n++});
+        R.shrink.pages=n;R.shrink.page=[W,H];
+        R.shrink.margins={right:S.right,left:+(W-S.right-(S.src.x1-S.src.x0)*s).toFixed(2),top:S.top,bottom:+(H-S.top-(S.src.y1-S.src.y0)*s).toFixed(2)};
+        R.shrink.bodyPt=+(prof.measure/prof.body.fsFromMeasure*72/25.4*s).toFixed(2);R.shrink.tosPt=+(prof.notes.pt*s).toFixed(2)})()}
     await document.fonts.ready;
     /* מדפיסים רק אחרי שהעמודים צוירו: הדפסה מיידית הניבה קובץ ריק (בלי טקסט) */
     await new Promise(function(r){requestAnimationFrame(function(){requestAnimationFrame(r)})});

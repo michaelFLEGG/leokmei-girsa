@@ -1,4 +1,5 @@
 name: הדפסת מסכת שלמה ל-PDF (B5 ועוד)
+# פרומפט 48 (16.11.2026 20:45): b5/b5-large אינם עימוד מחדש אלא הקטנה של a4/a4-large (שדה from בפרופיל), ובודק b5_compare.py עוצר אם מילה זזה.
 # 16.11.2026, לבקשת בעל הפרויקט: מסכת שלמה ברציפות, עם התוס', בפרופילים שנבחרו (ברירת מחדל: b5 ו-b5-large).
 # המקור הוא האתר החי (מראה של הדף כפי שהגולש מקבל אותו), כולל העריכות החיות והנוסחים שנבחרו בנקודת הקליטה.
 # מנוע ההדפסה עצמו מבצע את איחוי השורות (שורה יתומה, והצרה עד 2.5%), כמו בחלון ההדפסה שבאתר.
@@ -13,7 +14,7 @@ on:
       profiles:
         description: 'פרופילים, מופרדים ברווח'
         required: true
-        default: 'b5 b5-large'
+        default: 'a4 a4-large b5 b5-large'
       tos:
         description: 'עם תוספות (1/0)'
         required: true
@@ -47,6 +48,13 @@ jobs:
               --out "_work/out/$S-$P-$D.pdf" --report "_work/out/$S-$P-$D.json" || [ $? = 3 ]
             python tools/print/check_pdf.py "_work/out/$S-$P-$D.pdf" || true
           done
+          # פרומפט 48: B5 הוא הקטנה של A4 בלבד (לא עימוד מחדש). כשהופקו שניהם - כל מילה חייבת להיות באותו מקום
+          for PR in "a4 b5" "a4-large b5-large"; do set -- $PR
+            if [ -f "_work/out/$S-$1-$D.pdf" ] && [ -f "_work/out/$S-$2-$D.pdf" ]; then
+              python tools/print/b5_compare.py "_work/out/$S-$1-$D.pdf" "_work/out/$S-$2-$D.pdf" "tools/print/profiles/$2.json" \
+                --front 3 --json "_work/out/$S-$2-$D.compare.json"
+            fi
+          done
           ls -la _work/out
       - uses: actions/upload-artifact@v4
         with:
@@ -61,7 +69,7 @@ jobs:
           git fetch -q origin prints && git checkout -q -B prints origin/prints || git checkout -q --orphan prints
           git rm -rq --cached . 2>/dev/null || true
           mkdir -p "pdf/$S"
-          cp _work/out/*.pdf _work/out/*.json "pdf/$S/"
+          cp _work/out/*.pdf _work/out/*.json "pdf/$S/" 2>/dev/null || cp _work/out/*.pdf "pdf/$S/"
           git add "pdf/$S"
           git commit -q -m "הדפסה: $S ($D)"
           for i in 1 2 3; do git push -q origin prints && exit 0; git pull -q --rebase origin prints; done

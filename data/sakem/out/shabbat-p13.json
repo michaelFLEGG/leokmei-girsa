@@ -3,7 +3,7 @@
  "jid": "shabbat-p13",
  "slug": "shabbat",
  "title": "שבת פרק שלשה עשר - האורג",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 5873,
@@ -145,7 +145,15 @@
     "שורה אלמנה (באומות,) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 1,
+    "widow": 1
+   }
   },
   {
    "iid": "s2",
@@ -185,7 +193,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: הלכתא"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -235,7 +251,15 @@
     "שורה אלמנה (חייב.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -276,7 +300,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"והקורע על מנת לתפור\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -317,7 +349,15 @@
     "שורה אלמנה (קריעה\"!) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 6,
+    "space": 0,
+    "dash": 2,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s6",
@@ -363,7 +403,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: חייב, פטור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s7",
@@ -404,7 +452,15 @@
     "שורה אלמנה (גנזיו,) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s8",
@@ -444,7 +500,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s9",
@@ -485,7 +549,15 @@
     "שורה אלמנה (בצריך לאפרו.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s10",
@@ -521,7 +593,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s11",
@@ -571,7 +651,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s12",
@@ -616,7 +704,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s13",
@@ -656,7 +752,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s14",
@@ -694,7 +798,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 3,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s15",
@@ -738,7 +850,15 @@
     "שורה אלמנה (בתוכו.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s16",
@@ -777,8 +897,64 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1794869004279
+ "t": 1794869006946,
+ "summary": "בפרק: 24 הדגשות במשנה, 1 רווחים, 10 מקפי תירוץ, 63 כותרות צד חדשות, 1 עיטורים נמחקו",
+ "compliance": {
+  "bold": 24,
+  "space": 1,
+  "dash": 10,
+  "side": 63,
+  "hatz": 1
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 16,
+  "perSeg": {
+   "bold": 1.5,
+   "space": 0.06,
+   "dash": 0.63,
+   "side": 4.44,
+   "nose": 0.94,
+   "widow": 0.06
+  },
+  "bold": 24,
+  "space": 1,
+  "dash": 10,
+  "side": 63,
+  "nose": 3,
+  "hatz": 1,
+  "abbr": 3,
+  "warnLeft": 15,
+  "block": 0,
+  "lenPct": 9.8,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  }
+ },
+ "counts": {
+  "shown": 16,
+  "spatial": 3,
+  "adds": 4,
+  "missing": 0
+ }
 }

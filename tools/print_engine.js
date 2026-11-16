@@ -334,7 +334,7 @@
     function W(m){R.warn.push(m);try{console.warn('[print] '+m)}catch(e){}}
     /* 7.11.2026: לשם הפרופיל עשויה להיצמד גרסת העריכות (a4v...), ראה prnGo. הקובץ הוא שם הפרופיל בלעדיה */
     /* פרומפט 41: שירות ההפקה מקבל שם פרופיל של עד 8 תווים, אותיות קטנות וספרות. "A4 מוגדל" עובר בשם הקצר a4lg */
-    var PNAME=((QS.get('profile')||'a4').replace(/v[0-9a-z]+$/,'')||'a4');if(PNAME==='a4lg')PNAME='a4-large';
+    var PNAME=((QS.get('profile')||'a4').replace(/v[0-9a-z]+$/,'')||'a4');if(PNAME==='a4lg')PNAME='a4-large';if(PNAME==='b5lg')PNAME='b5-large';
     var prof=await (await fetch('print-profiles/'+PNAME+'.json',{cache:'no-store'})).json();PROF=prof;
     /* 16.11.2026: גודל העמוד מן הפרופיל (B5 ועוד). עד כאן היה קבוע A4 בעיצוב, וכותרת רצה וחיתוך העמוד נשענו עליו */
     if(prof.page&&(prof.page.w!==210||prof.page.h!==297)){var stPg=document.createElement('style');stPg.textContent='@page{size:'+prof.page.w+'mm '+prof.page.h+'mm;margin:0}.pg{width:'+prof.page.w+'mm!important;height:'+prof.page.h+'mm!important}';document.head.appendChild(stPg)}
@@ -1264,6 +1264,9 @@
             '<label><input type="radio" name="prtos" id="prn-tos-y" value="1">עם תוס\' (הערות שוליים)</label></div>'+
           '<div class="pr"><label><input type="checkbox" id="prn-dup">דו-צדדי (שוליים פנימיים רחבים יותר לכריכה)</label></div>'+
           /* 6.11.2026: פריסה למנהל בלבד. כל עמוד A4 מוקטן באותו יחס (0.707) לחצי גיליון A4 לרוחב, כלומר A5; היחסים בדף נשמרים */
+          /* 16.11.2026 (פרומפט 51 בצ'אט): גודל דף B5 בחלון ההדפסה עצמו, לצד A4. הפרופילים b5 ו-b5-large כבר קיימים */
+          (ADM?'<div class="pr" id="prn-paper"><span>גודל דף:</span><label><input type="radio" name="prpaper" value="a4" checked>A4</label>'+
+            '<label><input type="radio" name="prpaper" value="b5">B5 (לבית דפוס)</label></div>':'')+
           (ADM?'<div class="pr" id="prn-size"><span>גודל אות:</span><label><input type="radio" name="prsize" value="a4" checked>רגיל</label>'+
             '<label><input type="radio" name="prsize" value="a4lg">מוגדל</label></div>':'')+
           (ADM?'<div class="pr" id="prn-lay"><span>פריסה:</span><label><input type="radio" name="prlay" value="a4" checked>A4 רגיל</label>'+
@@ -1406,7 +1409,7 @@
         else cnt.textContent='';
       }).catch(function(){cnt.textContent=''})},350)}
     function tosOn(){var y=document.getElementById('prn-tos-y');return !!(y&&y.checked&&!y.disabled)}
-    function prnLay(){if(!isAdm())return 'a4';var x=PRD&&PRD.querySelector('input[name=prlay]:checked');return x?x.value:'a4'}
+    function prnLay(){if(!isAdm())return 'a4';if(PRD&&PRD.querySelector('input[name=prpaper][value=b5]:checked'))return 'a4';var x=PRD&&PRD.querySelector('input[name=prlay]:checked');return x?x.value:'a4'}
     /* ---- פריסה לחוברת / שניים בעמוד (6.11.2026, למנהל) ----
        נעשית בדפדפן על הקובץ שהופק, ב-pdf-lib: אין שינוי בעימוד עצמו, ולכן העמודים זהים לגמרי לקובץ ה-A4, רק מוקטנים.
        גיליון: A4 לרוחב; כל חצי = A5; העמוד מוקטן ביחס אחיד ומונח במרכז החצי. */
@@ -1485,7 +1488,11 @@
         if(!t)t=String(Date.now());
         var h=2166136261;for(var i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}
         var big=isAdm()&&PRD&&PRD.querySelector('input[name=prsize][value=a4lg]:checked');
-        q.set('profile',big?'a4lgv'+('00'+((h>>>0)%46656).toString(36)).slice(-3):'a4v'+('0000'+((h>>>0)%60466176).toString(36)).slice(-5));
+        var b5=isAdm()&&PRD&&PRD.querySelector('input[name=prpaper][value=b5]:checked');
+        /* שם הפרופיל לשירות: עד 8 תווים. a4 / a4lg / b5 / b5lg ואחריהם טביעת גרסת העריכות */
+        var base=(b5?'b5':'a4')+(big?'lg':''),room=8-base.length-1,hh=(h>>>0).toString(36);
+        q.set('profile',base+'v'+('000000'+hh).slice(-room));
+        if(b5)fname=fname.replace(/\.pdf$/,' - B5.pdf');
         if(big)fname=fname.replace(/\.pdf$/,' - מוגדל.pdf');
         return fetch(PRINT_API+'/pdf?'+q.toString(),{signal:ctrl.signal,headers:admHdr(),cache:'no-store'})}).then(function(res){
         if(!res.ok){return res.text().then(function(t){var m='';try{m=JSON.parse(t).error||''}catch(e){}throw new Error(m||('קוד '+res.status))})}

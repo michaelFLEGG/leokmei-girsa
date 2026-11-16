@@ -20,6 +20,130 @@
     "flagged": 2,
     "questions": 108
    }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-16T18:39:46Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p02-u01",
+    "zevachim-p02-u02",
+    "zevachim-p02-u03",
+    "zevachim-p02-u04",
+    "zevachim-p02-u05",
+    "zevachim-p02-u06"
+   ],
+   "result": {
+    "generated": 139,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 117
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-16T18:39:46Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p03-u01",
+    "zevachim-p03-u02"
+   ],
+   "result": {
+    "generated": 44,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 36
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-16T18:39:47Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p04-u01",
+    "zevachim-p04-u02",
+    "zevachim-p04-u03",
+    "zevachim-p04-u04"
+   ],
+   "result": {
+    "generated": 89,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 82
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-16T18:39:47Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p05-u01",
+    "zevachim-p05-u02",
+    "zevachim-p05-u03",
+    "zevachim-p05-u04"
+   ],
+   "result": {
+    "generated": 83,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 78
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-16T18:39:48Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p06-u01",
+    "zevachim-p06-u02",
+    "zevachim-p06-u03"
+   ],
+   "result": {
+    "generated": 67,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 48
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-16T18:39:48Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p07-u01",
+    "zevachim-p07-u02"
+   ],
+   "result": {
+    "generated": 47,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 36
+   }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-16T18:39:48Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p08-u01",
+    "zevachim-p08-u02",
+    "zevachim-p08-u03",
+    "zevachim-p08-u04",
+    "zevachim-p08-u05"
+   ],
+   "result": {
+    "generated": 106,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 95
+   }
   }
  },
  "created": "2026-11-16T12:40:22Z",
@@ -29,7 +153,49 @@
    "mean": 0.32,
    "n": 12,
    "at": "2026-11-16T12:40:22Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.402,
+   "n": 11,
+   "at": "2026-11-16T18:39:46Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.536,
+   "n": 4,
+   "at": "2026-11-16T18:39:46Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.562,
+   "n": 7,
+   "at": "2026-11-16T18:39:46Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.509,
+   "n": 7,
+   "at": "2026-11-16T18:39:47Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.535,
+   "n": 6,
+   "at": "2026-11-16T18:39:47Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.319,
+   "n": 4,
+   "at": "2026-11-16T18:39:48Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.697,
+   "n": 9,
+   "at": "2026-11-16T18:39:48Z"
   }
  ],
- "updated": "2026-11-16T12:40:23Z"
+ "updated": "2026-11-16T18:39:48Z"
 }

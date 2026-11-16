@@ -1,0 +1,1 @@
+ - 16.11.2026 UTC - הושלמה zevachim-p04-u04. finalize: 16 תוספות, 0 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku"}.

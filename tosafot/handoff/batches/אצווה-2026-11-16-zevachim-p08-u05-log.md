@@ -1,0 +1,1 @@
+ - 16.11.2026 UTC - הושלמה zevachim-p08-u05. finalize: 1 תוספות, 0 לעיון המנהל. מנועים: {"write": ["sonnet"], "rv": "haiku"}.

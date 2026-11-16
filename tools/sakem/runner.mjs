@@ -218,7 +218,9 @@ if (cmd === 'status') {
     console.log(jid, '·', pk.title || '', '·', o ? (o.status === 'ready' ? 'מוכן לסקירה' : 'בעבודה ' + o.done + '/' + o.total) : 'ממתין'); });
 } else if (cmd === 'next') {
   /* next <jid>: עבודה מסוימת (כמה עובדים במקביל, כל אחד על פרק אחר; 6.11.2026) */
-  const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready'); });
+  /* פרומפט 51 (16.11.2026): מסכת בהגירה נעולה ב-.locks/p51-<slug>.lock - העובד מדלג עליה */
+  const p51Locked = (j) => { try { const s = pkOf(j).slug; return !!s && fs.existsSync(path.join(ROOT, '.locks', 'p51-' + s + '.lock')); } catch (e) { return false; } };
+  const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j); });
   if (!jid) die('התור ריק.', 3);
   /* פרומפט 29: פרק אחד בכל הרצה, בהקשר נקי */
   if (process.argv.includes('--new-run')) { try { fs.unlinkSync(MARK); } catch (e) {} }

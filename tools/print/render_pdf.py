@@ -9,7 +9,7 @@
 (בלי שרת): כל בקשה לכתובת print.local נענית מן הדיסק, עם ניסיונות חוזרים (האנטי-וירוס נועל קבצים לרגע).
 --dev: מזריק את print_engine.js ואת הפרופילים מן העץ הנוכחי אל דף שנבנה קודם (בדיקה בלי בנייה מלאה).
 """
-import argparse, glob, json, mimetypes, os, sys, time, urllib.parse
+import argparse, collections, glob, json, mimetypes, os, sys, time, urllib.parse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -188,7 +188,10 @@ def main():
     print('pages=%d  out=%s' % (len(rep['pages']), a.out))
     # בודק החפיפות (14.10.2026): חפיפה או חריגה מהשוליים = כשל, אין קובץ "תקין"
     ov, bd = rep.get('overlaps') or [], rep.get('bounds') or []
-    print('חפיפות=%d  חריגות_שוליים=%d' % (len(ov), len(bd)))
+    ist = collections.Counter(x.get('type') for x in rep.get('issues') or [])
+    print('חפיפות=%d  חריגות_שוליים=%d  ציון_דף_צמוד=%d  כותרת_בלי_רווח=%d' % (len(ov), len(bd), ist['סימן דף קרוב משלוש אותיות לטקסט'], ist['כותרת בלי רווח לפניה']))
+    if rep.get('shrink'):
+        print('הקטנה:', json.dumps(rep['shrink'], ensure_ascii=False))
     # בקרת החורים (פרומפט 16): טור עם ריק של יותר משורה וחצי (חוץ מסוף פרק). אזהרה, לא כשל
     holes = rep.get('holes') or []
     print('חורים_בטור=%d  הערות_מפוצלות=%d  טורים_שנמתחו=%d' % (len(holes), rep.get('splits', 0), rep.get('stretched', 0)))
@@ -198,7 +201,14 @@ def main():
         print('  חפיפה: עמוד %s (%s): %s <> %s (%s מ"מ)' % (o['page'], o['daf'], o['a'], o['b'], o['mm']))
     for o in bd[:20]:
         print('  חריגה: עמוד %s (%s): %s - %s' % (o['page'], o['daf'], o['el'], o['why']))
-    if ov or bd:
+    hm = rep.get('headMulti') or {}
+    print('כותרות_ביותר_משורה: לפני=%s  אחרי=%s  (הוצרו=%s, נשברו_במקום_הנכון=%s)' % (hm.get('before', 0), hm.get('after', 0), hm.get('squeezed', 0), hm.get('broken', 0)))
+    ce = [x for x in rep.get('issues') or [] if x.get('type') == 'סוף פרק לא מאוזן']
+    print('סופי_פרק_מאוזנים=%s  סוף_פרק_לא_מאוזן=%d' % (rep.get('perekBalanced', 0), len(ce)))
+    for o in ce[:20]:
+        print('  סוף פרק לא מאוזן: עמוד %s (%s): %s' % (o.get('page'), o.get('daf'), o.get('detail')))
+    # פרומפט 48: סוף פרק לא מאוזן עוצר את המסירה, כמו חפיפה
+    if ov or bd or ce:
         sys.exit(3)
 
 

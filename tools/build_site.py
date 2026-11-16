@@ -1514,7 +1514,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # לפיכך חלון שכולו חץ אינו פותח יחידה (בלעדי זה נפתחו עשרות שורות
   # ריקות בדף) ואף אינו מדליק סימון תצוגה. הנתונים נשארים כמות שהם,
   # והמונה מוצג בבקרה כדי שההשמטה לא תהיה שקטה.
-  n_hal=0
+  n_hal=0; n_head_sp=0   # פרומפט 48: כותרות שקיבלו "רווח לפני" אוטומטית
   pend=None      # חלון הממתין למה שיבוא אחריו: (html, id, כמה חלונות נערמו)
   n_stack=0      # חלון שאין תחתיו טקסט ונערם מעל החלון הבא (ב2)
   n_stack_drop=0 # חלון שנערם מעבר לתקרה ואינו מוצג
@@ -1688,6 +1688,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           n_hatz_dup+=1
       elif r in ('dh','nose','hatz','perek-num','perek-name','perek-range','perek-start','hadran'):
           u={'k':r,'a':h,'l':[],'id':b['i'],'s':sp_cls(b['style'])}
+          # פרומפט 48 (תיקון 5, הכרעת בעל הפרויקט 16.11.2026 20:26): כל כותרת רגילה (נושא, ד"ה משנה) מקבלת תמיד לפחות
+          # "רווח לפני" (חצי שורה, כמו Ctrl+0), גם כשלא סומן בוורד. רק לפני, לא אחרי. לא מכפילים: כותרת שבאה אחרי
+          # כותרת, חציצה או תיבת משנה, או אחרי פסקה שיש לה רווח אחרי - נשארת כמו שהיא. בראש טור המנוע מבטל את הרווח.
+          if r in ('dh','nose') and re.search(r'\bb0\b',u['s']) and cur['units'] and cur['units'][-1]['k']=='u':
+              _pl=(cur['units'][-1]['l'] or [['','']])[-1][0]
+              if not re.search(r'\ba[1-4]\b',_pl):
+                  u['s']=re.sub(r'\bb0\b','b1',u['s']); n_head_sp+=1
           if b.get('prop'): u['s']=(u['s']+' prop').strip()   # כותרת מוצעת (חום) - נראית למנהל בלבד
           if b['style']=='פתיחת פרק': u['op']=1      # פתיחת פרק בשורה אחת (7.10.2026)
           if pend is not None: u['w']=take_pend()[0]
@@ -1754,6 +1761,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   if n_hatz_head:
       qa.append(('טופל בתצוגה: חציצה צמודה לכותרת',
                  f'{n_hatz_head} פסקאות חציצה צמודות לכותרת אינן מוצגות (הכותרת עצמה היא ההפרדה). הוורד לא נגע'))
+  if n_head_sp:
+      qa.append(('טופל בתצוגה: רווח לפני כותרת',
+                 f'{n_head_sp} כותרות (נושא, ד"ה משנה) בלי "רווח לפני" בוורד קיבלו חצי שורה לפניהן (פרומפט 48). הוורד לא נגע'))
   if n_hatz_dup:
       qa.append(('טופל בתצוגה: חציצה כפולה',
                  f'{n_hatz_dup} פסקאות חציצה באות מיד אחרי חציצה אחרת (עיטור וכוכביות זה אחר זה) ומוצגות פעם אחת'))
@@ -7394,7 +7404,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   return {'meta':meta,'pages':len(pages),'toc':n_nose,'qa':qa,'empty':n_empty,'heavy':heavy,
           'hatz':hz_stat,
           'joined':{'dafRange':n_range,'dafTail':n_tail_daf,'dafIndex':n_index_daf,'dafDup':n_dup_daf,
-                    'winStack':n_stack,'winDrop':n_stack_drop,'winTail':n_tail_win,'hatzDup':n_hatz_dup}}
+                    'winStack':n_stack,'winDrop':n_stack_drop,'winTail':n_tail_win,'hatzDup':n_hatz_dup,'headSp':n_head_sp}}
 
 if __name__=='__main__':
   r=build(sys.argv[1],sys.argv[2],sys.argv[3]); print(r['pages'],'pages',len(r['qa']),'qa')

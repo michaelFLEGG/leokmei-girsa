@@ -5,7 +5,7 @@ import argparse, json, os, re, sys
 
 # פרומפט 48 סבב ב (16.11.2026): אות לטינית בגוף הטקסט היא תקלה (למשל קוד עיטור "F...E" סביב הדרן).
 # מותרים רק כתובת האתר וקיצורים טכניים ידועים שבשער, בעמוד 2 ובתחתית.
-LATIN_OK = re.compile(r'(?:https?://)?(?:www\.)?leokmei\.com\S*|\b(?:PDF|QR|B5|A4)\b', re.I)
+LATIN_OK = re.compile(r'[\w.+-]+@[\w-]+\.[\w.]+|(?:https?://)?(?:www\.)?leokmei\.com\S*|\b(?:PDF|QR|B5|A4)\b', re.I)
 
 
 def main():

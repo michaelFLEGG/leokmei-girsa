@@ -958,7 +958,10 @@
       if(prof.cols===2&&i<L.length&&isForce(i)&&!split)balanceTo(i)}
     function balanceTo(end){
       var k=cols.length-1,k0=k%2===0?k:k-1,c0=cols[k0];
-      if(!c0||c0.sq||c0.split||(k0<k&&(cols[k].split||cols[k].sq)))return;
+      /* פרומפט 48 סבב ב (16.11.2026): טור שנדחס (sq) או שפיצל הערה לטור שאחריו באותו עמוד אינו פוסל איזון -
+         החלוקה מחושבת מחדש לשני הטורים יחד, בהערות שלמות. רק פיצול שממשיך לעמוד הבא (בטור השמאלי) פוסל */
+      R.balDbg=R.balDbg||[];
+      if(!c0||(k0<k&&cols[k].split)||(k0===k&&c0.split)){R.balDbg.push({daf:L[end-1].daf,why:'split-out',sq:c0&&c0.sq});return}
       var s0=c0.s,cr0=c0.carry,got=null,bestH=1e9,bestGap=1e9;
       /* קודם בכללי השבירה המלאים; אם נשאר הפרש של יותר משתי שורות - גם בכללים הרכים (כללי ב5 מוותרים, כמו כשנשאר חור) */
       for(var pass=0;pass<2;pass++){if(pass===1){if(got!==null&&bestH<1e9&&bestGap<=2*LH)break;SOFT=true}
@@ -967,11 +970,14 @@
         if(a1<=s0||a1>=end)continue;
         carry=null;var a2=fillCol(a1,A,true);
         if(a2.best!==end)continue;
-        carry=cr0;var u1=colUsed(s0,a1,null);carry=null;var u2=colUsed(a1,end,null),h=Math.max(u1,u2)+Math.abs(u1-u2)*0.01;
-        if(h<bestH-0.5){bestH=h;got=a1;bestGap=Math.abs(u1-u2)}}
+        carry=cr0;var u1=colUsed(s0,a1,null);carry=null;var u2=colUsed(a1,end,null),h=Math.max(u1,u2)+Math.abs(u1-u2)*0.01,gp=Math.abs(u1-u2);
+        /* פרומפט 48 סבב ב: חלוקה שהפרשה עד שתי שורות גוברת על חלוקה נמוכה יותר שהפרשה גדול (סוף פרק לא מאוזן עוצר את המסירה) */
+        var okN=gp<=2*LH,okB=bestGap<=2*LH;
+        if((okN&&!okB)||(okN===okB&&h<bestH-0.5)){bestH=h;got=a1;bestGap=gp}}
       SOFT=false}
       carry=null;
-      if(got===null){if(k0===k)R.issues.push({type:'סוף פרק לא מאוזן',daf:L[end-1].daf,detail:'לא נמצאה חלוקה לשני טורים; הפרק הבא אינו בעמוד חדש'});return}
+      if(got!==null&&bestGap>2*LH){R.balDbg.push({daf:L[end-1].daf,why:'gap',gap:+(bestGap/LH).toFixed(1),h:+(bestH/LH).toFixed(1),A:+(A/LH).toFixed(1),s0:s0,end:end,got:got,sq:c0.sq,k0:k0,k:k})}
+      if(got===null){R.balDbg.push({daf:L[end-1].daf,why:'nofit',k0:k0,k:k,sq:c0.sq,split:!!c0.split});if(k0===k)R.issues.push({type:'סוף פרק לא מאוזן',daf:L[end-1].daf,detail:'לא נמצאה חלוקה לשני טורים; הפרק הבא אינו בעמוד חדש'});return}
       cols.length=k0;
       cols.push({s:s0,e:got,notes:noteIds(s0,got),sq:0,carry:cr0,split:null,why:'',bal:1});
       cols.push({s:got,e:end,notes:noteIds(got,end),sq:0,carry:null,split:null,why:'',bal:1});
@@ -1021,6 +1027,12 @@
       /* 16.11.2026 (פרומפט 48): בודקים קבועים - עמוד סוף פרק שהפרש הגובה בין טוריו מעל שתי שורות (כשהעמוד אינו מלא; טקסט והערות יחד); כותרת בלי רווח לפניה */
       if(prof.cols===2&&ci%2===1&&(ci+1>=cols.length||isForce(cols[ci+1].s))){
         var kc=carry;carry=cols[ci-1].carry;var hu1=colUsed(cols[ci-1].s,cols[ci-1].e,cols[ci-1].split);carry=c.carry;var hu2=colUsed(c.s,c.e,c.split);carry=kc;
+        /* פרומפט 48 סבב ב (16.11.2026): כשאין נקודת שבירה שמאזנת עד שתי שורות, הטור הקצר של סוף הפרק נמתח בגבולות הפסקאות
+           (עד stretch.maxPtPerGap לכל גבול, כמו מתיחת חור), כך שתחתית שני הטורים מתקרבת. הבודק מודד אחרי המתיחה */
+        if(HFIX&&c.bal&&cols[ci-1].bal&&Math.abs(hu1-hu2)>2*LH+0.5){
+          var sc=hu1<hu2?cols[ci-1]:c,nbS=L[sc.e-1].ri-L[sc.s].ri;
+          if(nbS>0){sc.balPer=Math.min(STRETCH,Math.abs(hu1-hu2)/nbS);R.perekStretched=(R.perekStretched||0)+1;
+            if(hu1<hu2)hu1+=sc.balPer*nbS;else hu2+=sc.balPer*nbS}}
         if(Math.abs(hu1-hu2)>2*LH+0.5&&Math.min(hu1,hu2)<A-2*LH)iss('סוף פרק לא מאוזן',b,'הפרש '+(Math.abs(hu1-hu2)/LH).toFixed(1)+' שורות')}
       for(var hq=c.s+1;hq<c.e;hq++){var hl=L[hq],hp=L[hq-1];
         if(hl.first&&(hl.kind==='dh'||hl.kind==='nose')&&!HEADS[hp.kind]&&hp.kind!=='hatz'&&hl.y0-hp.y1<0.4*LH)iss('כותרת בלי רווח לפניה',hl)}
@@ -1070,6 +1082,7 @@
         var endCol=c.bal||c.e>=L.length||isForce(c.e);
         var gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0),nb=le.ri-ln.ri,per=0;
         if(HFIX&&!endCol&&!sqz&&gapPx>0.5&&gapPx<=STRMAX&&nb>0){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;R.stretched=(R.stretched||0)+1}
+        else if(c.balPer&&nb>0&&!sqz){per=Math.min(c.balPer,Math.max(0,gapPx)/nb);gapPx-=per*nb}
         /* שמירה (פרומפט 41): הטור לעולם אינו גבוה מגובה הנטו. מתיחה שהייתה מוציאה אותו מן השוליים מוקטנת, וחריגה שנשארת נרשמת */
         if(per&&(yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)>A+0.25){per=Math.max(0,(A-(yE-yS-sqz)-(fb?fb.h+GAP:0))/nb);R.stretchCut=(R.stretchCut||0)+1}
         if((yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)>A+0.5)W('טור גבוה מגובה הנטו: עמוד '+(pgi+1)+', '+ln.daf+': '+((yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)-A).toFixed(2)+'px (טקסט '+(yE-yS).toFixed(1)+', דחיסה '+sqz.toFixed(1)+', מתיחה '+(per*nb).toFixed(1)+')');

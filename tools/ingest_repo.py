@@ -508,9 +508,9 @@ def ingest_replay(masechet, doc, path, dry, log=print, deadline=None, limit=None
     keep = word_apply.tmp_path(path) + '.before'
     try:
         for n_item, item in enumerate(plan):
-            if (limit is not None and n_item >= limit) or (deadline is not None and _time.time() > deadline):
+            if (limit is not None and len(LAST['tried']) >= limit) or (deadline is not None and _time.time() > deadline):
                 LAST['more'] = len(plan) - n_item
-                log('   גבול הקבוצה: נקלטו %d, נשארו %d לקבוצה הבאה' % (n_item, LAST['more']))
+                log('   גבול הקבוצה: נוסו %d, נשארו %d לקבוצה הבאה' % (len(LAST['tried']), LAST['more']))
                 break
             if ambiguous and _ambiguous(path, item):
                 # פרומפט 44: הנוסח שהעריכה נשענת עליו מופיע בוורד ביותר מפסקה אחת. האתר יודע

@@ -728,7 +728,10 @@ def main():
         # פרומפט 44: קבוצה בתקציב זמן. ריצה שנקטעת מאבדת לכל היותר קבוצה אחת, והבאה ממשיכה.
         # שער שנכשל: הקבוצה נחצית עד שנמצאת העריכה שמכשילה אותו. היא מוחזקת בשכבה (hold)
         # עם הסיבה, וכל השאר ממשיך להיכתב.
+        # חציה (פרומפט 44): lo = כמה עריכות ראשונות של הקבוצה ידועות כטובות, hi = כמה ידועות ככושלות.
+        # הספירה היא של עריכות שנוסו בפועל (בלי מוחזקות ובלי כאלה שנשארות בשכבה מעצמן).
         limit = a.limit or None
+        lo, hi = 0, None
         sus_tried = False
         end = _time.time() + a.budget * 60 if a.budget else None
         first = True
@@ -738,9 +741,8 @@ def main():
                 break
             first = False
             t_start = _time.time()
-            deadline = end
             try:
-                rec = ingest_one(slug, a.dry, deadline=deadline, limit=limit)
+                rec = ingest_one(slug, a.dry, deadline=end, limit=limit)
             except Exception as e:
                 import traceback
                 traceback.print_exc()
@@ -750,18 +752,20 @@ def main():
             rec.pop('idle_sig', None)
             rec['secs'] = round(_time.time() - t_start)
             sus = rec.pop('suspects', None) or []
+            n = len(tried)
             if rec.get('gate') == 'נכשל' and tried and not a.dry and not a.no_bisect:
                 # קודם: העריכות שנוגעות במקומות השונים מוחזקות, והקבוצה רצה שוב. רק אם גם זה
                 # נכשל - חציה עד שנמצאת העריכה
-                if sus and not sus_tried and len(sus) < len(tried):
+                if sus and not sus_tried and len(sus) < n:
                     sus_tried = True
                     for k in sus:
                         hold_add(slug, k, 'נוגעת במקום שבו הוורד אחרי הכתיבה שונה ממה שהמנהל רואה')
                     print('   %d עריכות חשודות מוחזקות בשכבה. הקבוצה רצה שוב בלעדיהן' % len(sus))
                     continue
-                if len(tried) > 1:
-                    limit = len(tried) // 2
-                    print('   חציה: מנסה שוב עם %d העריכות הראשונות של הקבוצה' % limit)
+                hi = n
+                if hi - lo > 1:
+                    limit = (lo + hi) // 2
+                    print('   חציה: %d הראשונות ידועות כטובות, %d נכשלו. מנסה %d' % (lo, hi, limit))
                     continue
                 why = []
                 if not rec.get('same_as_admin'):
@@ -770,14 +774,25 @@ def main():
                     why.append('היתה יוצרת פסקה כפולה')
                 if (rec.get('orphans_after') or 0) > (rec.get('orphans_before') or 0):
                     why.append('היתה יוצרת שורת דובר יתומה')
-                hold_add(slug, tried[0], 'הכשילה את שער הוורד: ' + (', '.join(why) or 'לא ידוע'))
-                print('   העריכה %s מוחזקת בשכבה (הכשילה את השער). ממשיך בלעדיה' % tried[0])
-                limit = 1
+                hold_add(slug, tried[hi - 1], 'הכשילה את שער הוורד: ' + (', '.join(why) or 'לא ידוע'))
+                print('   העריכה %s מוחזקת בשכבה (הכשילה את השער). ממשיך בלעדיה' % tried[hi - 1])
+                hi = None
+                limit = max(1, lo * 2)
                 continue
-            if rec.get('gate') == 'עבר' and rec.get('more') and not a.dry:
-                # הקבוצה נשמרה ויש עוד: ממשיכים באותה ריצה, והקבוצה גדלה כל עוד השער עובר
+            if rec.get('gate') == 'עבר' and not a.dry and (rec.get('more') or hi is not None):
                 sus_tried = False
-                limit = (limit * 2) if limit else None
+                if rec.get('changed'):
+                    # הוורד השתנה: מה שנכתב יצא מן התוכנית והמקומות זזו. החציה מתחילה מחדש
+                    lo, hi = 0, None
+                    limit = max(2, n * 2) if limit else None
+                else:
+                    lo = n
+                if hi is not None and hi - lo <= 1:
+                    limit = lo + 1
+                elif hi is not None:
+                    limit = (lo + hi) // 2
+                elif not rec.get('changed'):
+                    limit = max(limit * 2, lo + 1) if limit else None
                 print('   ממשיך לקבוצה הבאה%s' % (' (עד %d עריכות)' % limit if limit else ''))
                 continue
             break

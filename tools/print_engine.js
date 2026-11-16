@@ -473,6 +473,17 @@
         first=false}
       groups.push([g0,recs.length])}
     if(!recs.length)throw new Error('אין בטווח טקסט');
+    /* 16.11.2026 (פרומפט 48, תיקון 5): כל כותרת (נושא, ד"ה משנה) מקבלת תמיד לפחות "רווח לפני" (חצי שורה), גם כשלא סומן בוורד.
+       לא מכפילים: כותרת שכבר יש לפניה רווח (b1 ומעלה) או שבאה מיד אחרי כותרת, חציצה או פתיחת פרק - בלי תוספת.
+       נקבע ביחידה עצמה (style), כדי שהמדידה בסרגל וההצבה בטור יהיו זהות; בראש טור הרווח נחתך ממילא */
+    (function(){var PRE={dh:1,nose:1,hatz:1,'perek-start':1,'perek-range':1,cont:1},tp=document.createElement('template');
+      R.headSpace=0;
+      for(var r=1;r<recs.length;r++){var x=recs[r];if(x.kind!=='dh'&&x.kind!=='nose')continue;if(PRE[recs[r-1].kind])continue;
+        tp.innerHTML=x.html;var row=tp.content.firstElementChild;if(!row)continue;
+        var mn=row.querySelector(':scope > .main');if(!mn)continue;
+        var t=mn.querySelector(':scope > p:first-child')||mn;
+        if(/\bb[1-4]\b/.test(t.className)||/\bb[1-4]\b/.test(mn.className))continue;
+        t.style.marginTop='calc('+prof.body.linePt+'pt * .5)';x.html=row.outerHTML;R.headSpace++}})();
     TM('units');
     /* פתיחת הטווח באמצע פרק: שורה קטנה "המשך פרק", כדי שהדף לא ייפתח יתום */
     /* 13.11.2026: הדפסת פרק שלם נפתחת תמיד בראש הפרק - לעולם לא "המשך פרק" */
@@ -684,8 +695,15 @@
           var rd=dm.getBoundingClientRect(),rr=rl.getBoundingClientRect();
           var lim=rd.left-rr.left-2;
           if(w&&w.textContent.trim()){var wr=w.getBoundingClientRect();lim=Math.min(lim,rd.left-wr.right-2)}
-          var pull=Math.max(0,Math.min(mx,lim));
-          if(pull>0.5)row.style.setProperty('--dafpull',pull.toFixed(1)+'px')})})();
+          /* 16.11.2026 (פרומפט 48, תיקון 6): בין קצה הסימון לתחילת הטקסט לפחות שלוש אותיות (כגובה אות אחת של הגוף, כ-3.7 מ"מ ב-A4).
+             הסימון נמשך אל הטקסט רק עד הגבול הזה, ואם כבר קרוב ממנו - נדחף ימינה, לא מעבר לקצה המסילה */
+          var mn=row.querySelector(':scope > .main'),minGap=prof.measure/prof.body.fsFromMeasure*MM*(prof.dafMinGapEm||1);
+          var gap=mn?rd.left-mn.getBoundingClientRect().right:1e9;
+          var pull=Math.min(mx,lim,gap-minGap);
+          if(pull<0)pull=Math.max(pull,-(rr.right-rd.right-1));
+          else pull=Math.max(0,pull);
+          if(Math.abs(pull)>0.5)row.style.setProperty('--dafpull',pull.toFixed(1)+'px');
+          if(mn&&gap-pull<minGap-0.5)R.issues.push({type:'סימן דף קרוב משלוש אותיות לטקסט',daf:dm.textContent.trim(),detail:((gap-pull)/MM).toFixed(1)+' מ"מ'})})})();
       /* ---- מדידת שורות הנתח ---- */
       var fr=f.getBoundingClientRect(),Lc0=L.length;
       crecs.forEach(function(x,i){
@@ -913,7 +931,46 @@
       var cn=noteIds(i,best);
       cols.push({s:i,e:best,notes:cn,sq:sq,carry:carry,split:split,why:why});
       carry=split?{n:split.n,k:split.k}:null;
-      i=best}
+      i=best;
+      /* 16.11.2026 (פרומפט 48, תיקון 2): סוף כל פרק מאוזן, כמו סוף הטווח: שני הטורים של העמוד האחרון של הפרק בגובה
+         קרוב ככל האפשר, והפרק הבא נפתח בעמוד חדש בטור הימני */
+      if(prof.cols===2&&i<L.length&&isForce(i)&&!split)balanceTo(i)}
+    function balanceTo(end){
+      var k=cols.length-1,k0=k%2===0?k:k-1,c0=cols[k0];
+      if(!c0||c0.sq||c0.split||(k0<k&&(cols[k].split||cols[k].sq)))return;
+      var s0=c0.s,cr0=c0.carry,got=null,bestH=1e9,bestGap=1e9;
+      /* קודם בכללי השבירה המלאים; אם נשאר הפרש של יותר משתי שורות - גם בכללים הרכים (כללי ב5 מוותרים, כמו כשנשאר חור) */
+      for(var pass=0;pass<2;pass++){if(pass===1){if(got!==null&&bestH<1e9&&bestGap<=2*LH)break;SOFT=true}
+      for(var cap=NLH*2;cap<=A+0.5;cap+=NLH/3){
+        carry=cr0;var a1=fillCol(s0,cap,true).best;
+        if(a1<=s0||a1>=end)continue;
+        carry=null;var a2=fillCol(a1,A,true);
+        if(a2.best!==end)continue;
+        carry=cr0;var u1=colUsed(s0,a1,null);carry=null;var u2=colUsed(a1,end,null),h=Math.max(u1,u2)+Math.abs(u1-u2)*0.01;
+        if(h<bestH-0.5){bestH=h;got=a1;bestGap=Math.abs(u1-u2)}}
+      SOFT=false}
+      carry=null;
+      if(got===null){if(k0===k)R.issues.push({type:'סוף פרק לא מאוזן',daf:L[end-1].daf,detail:'לא נמצאה חלוקה לשני טורים; הפרק הבא אינו בעמוד חדש'});return}
+      cols.length=k0;
+      cols.push({s:s0,e:got,notes:noteIds(s0,got),sq:0,carry:cr0,split:null,why:'',bal:1});
+      cols.push({s:got,e:end,notes:noteIds(got,end),sq:0,carry:null,split:null,why:'',bal:1});
+      R.perekBalanced=(R.perekBalanced||0)+1}
+    /* 16.11.2026 (פרומפט 48): עמוד אחרון שיש בו רק שורות בודדות (למשל שורה אחת וההדרן, B5 מוגדל של ברכות) - מורידים אליו
+       שורות מן הטור הקודם, כדי שיהיו בו לפחות שש שורות לאיזון לשני טורים. הטור הקודם מתקצר בכמה שורות בלבד */
+    (function(){
+      if(prof.cols!==2||cols.length<3||cols.length%2!==1)return;
+      var K=cols.length-1,cp=cols[K-1];
+      if(cp.sq||cp.split||cols[K].split||L.length-cols[K].s>4||isForce(cols[K].s))return;
+      var keep=carry,got=null;
+      for(var cap=A-LH/2;cap>=A*0.6;cap-=LH/2){
+        carry=cp.carry;var b=fillCol(cp.s,cap,true).best;
+        if(b>cp.s&&b<cols[K].s&&L.length-b>=6){got=b;break}}
+      carry=keep;
+      if(got===null)return;
+      cols.length=K-1;
+      cols.push({s:cp.s,e:got,notes:noteIds(cp.s,got),sq:0,carry:cp.carry,split:null,why:'',bal:1});
+      cols.push({s:got,e:L.length,notes:noteIds(got,L.length),sq:0,carry:null,split:null,why:'',bal:1});
+      R.lastPagePulled=1})();
     /* 5.11.2026: סוף הטווח - שני הטורים של העמוד האחרון מאוזנים ככל האפשר (ולא טור מלא ושארית קטנה בשני).
        מחפשים את הגובה הקטן ביותר לטור הימני שבו כל היתרה נכנסת בטור השמאלי */
     (function(){
@@ -940,6 +997,12 @@
     cols.forEach(function(c,ci){
       var a=L[c.s],b=L[c.e-1],pg=Math.floor(ci/prof.cols)+1;
       function iss(t,l,d){R.issues.push({type:t,page:pg,daf:l.daf,unit:recs[l.ri]&&recs[l.ri].u&&recs[l.ri].u.id,detail:d||''})}
+      /* 16.11.2026 (פרומפט 48): בודקים קבועים - עמוד סוף פרק שהפרש הגובה בין טוריו מעל שתי שורות (כשהעמוד אינו מלא; טקסט והערות יחד); כותרת בלי רווח לפניה */
+      if(prof.cols===2&&ci%2===1&&(ci+1>=cols.length||isForce(cols[ci+1].s))){
+        var kc=carry;carry=cols[ci-1].carry;var hu1=colUsed(cols[ci-1].s,cols[ci-1].e,cols[ci-1].split);carry=c.carry;var hu2=colUsed(c.s,c.e,c.split);carry=kc;
+        if(Math.abs(hu1-hu2)>2*LH+0.5&&Math.min(hu1,hu2)<A-2*LH)iss('סוף פרק לא מאוזן',b,'הפרש '+(Math.abs(hu1-hu2)/LH).toFixed(1)+' שורות')}
+      for(var hq=c.s+1;hq<c.e;hq++){var hl=L[hq],hp=L[hq-1];
+        if(hl.first&&(hl.kind==='dh'||hl.kind==='nose')&&!HEADS[hp.kind]&&hp.kind!=='hatz'&&hl.y0-hp.y1<0.4*LH)iss('כותרת בלי רווח לפניה',hl)}
       if(HEADS[b.kind]&&b.kind!=='hatz'&&c.e<L.length)iss('כותרת בתחתית טור',b);
       if(c.s>0&&a.ri===L[c.s-1].ri&&a.block===L[c.s-1].block&&a.k<prof.widowOrphan)iss('שורה אלמנה בראש טור',a);
       if(c.e<L.length&&L[c.e].ri===b.ri&&L[c.e].block===b.block&&(b.n-b.k-1)<prof.widowOrphan)iss('שורה יתומה בסוף טור',b);

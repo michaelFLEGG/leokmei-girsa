@@ -2563,6 +2563,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* "רווח לפני": חצי שורה (b1). כותרת,
      ד"ה משנה או חציצה שלפניה הן עצמן ההפרדה, ולכן הרווח אינו נוסף. */
   .row.dh+.row .main>p.sp:first-child,.row.nose+.row .main>p.sp:first-child,.row.hatz+.row .main>p.sp:first-child{margin-top:0}
+  /* 16.11.2026 (פרומפט 48, תיקון 5): כל כותרת (נושא, ד"ה משנה) מקבלת תמיד לפחות "רווח לפני", גם כשלא סומן בוורד.
+     לא מכפילים: כותרת שכבר יש לה רווח (b1 ומעלה) או שבאה מיד אחרי כותרת, חציצה או פתיחת פרק - בלי תוספת. בהדפסה המנוע קובע זאת ביחידה */
+  .row:is(.dh,.nose)>.main>p:first-child:not(.b1,.b2,.b3,.b4),.row:is(.dh,.nose)>.main:not(:has(>p)):not(.b1,.b2,.b3,.b4){margin-top:calc(var(--lhpx) * .5)}
+  .row:is(.dh,.nose,.hatz,.perek-start,.perek-range)+.row:is(.dh,.nose)>.main>p:first-child:not(.b1,.b2,.b3,.b4),.row:is(.dh,.nose,.hatz,.perek-start,.perek-range)+.row:is(.dh,.nose)>.main:not(:has(>p)):not(.b1,.b2,.b3,.b4){margin-top:0}
   .row .b2{margin-top:var(--lhpx)}.row .b3{margin-top:calc(var(--lhpx) * 1.5)}
   .row .b4{margin-top:calc(var(--lhpx) * 2)}
   .row .a0{margin-bottom:0}.row .a1{margin-bottom:calc(var(--lhpx) * .5)}

@@ -701,6 +701,7 @@ def main():
     ap.add_argument('--limit', type=int, default=0, help='מספר עריכות לקבוצה (0 = בלי גבול)')
     ap.add_argument('--no-bisect', action='store_true')
     ap.add_argument('--no-near', action='store_true', help='בלי ניקוי כפולות כמעט-זהות')
+    ap.add_argument('--one-save', action='store_true', help='יציאה אחרי הקבוצה הראשונה שנשמרה (כדי שתידחף מיד)')
     a = ap.parse_args()
     cfg = rjson(CFG, {}) or {}
     slugs = [s for s in (a.only.split(',') if a.only else cfg.get('slugs') or []) if s]
@@ -779,6 +780,10 @@ def main():
                 hi = None
                 limit = max(1, lo * 2)
                 continue
+            if rec.get('gate') == 'עבר' and rec.get('changed') and rec.get('more') and a.one_save:
+                # --one-save: הקבוצה נשמרה. יוצאים כדי שתידחף מיד (cloud_word_rounds.sh), והבאה ממשיכה
+                print('   הקבוצה נשמרה. נדחפת עכשיו, והקבוצה הבאה תמשיך')
+                break
             if rec.get('gate') == 'עבר' and not a.dry and (rec.get('more') or hi is not None):
                 sus_tried = False
                 if rec.get('changed'):

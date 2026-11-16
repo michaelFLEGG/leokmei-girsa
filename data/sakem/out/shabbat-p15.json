@@ -3,7 +3,7 @@
  "jid": "shabbat-p15",
  "slug": "shabbat",
  "title": "שבת פרק חמשה עשר - ואלו קשרים",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 6301,
@@ -184,7 +184,15 @@
     "שורה אלמנה (חייבין עליו.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 4,
+    "space": 1,
+    "dash": 0,
+    "side": 0,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -230,7 +238,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 3,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -292,7 +308,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 9,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -343,7 +367,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 4,
+    "side": 15,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -389,7 +421,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 2,
+    "widow": 1
+   }
   },
   {
    "iid": "s6",
@@ -430,7 +470,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: קדירה של בשר, קושרין לפני הבהמה"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s7",
@@ -474,7 +522,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 3,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s8",
@@ -517,7 +573,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"כובד העליון וכובד התחתון\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s9",
@@ -563,7 +627,15 @@
     "שורה אלמנה (שבת].) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 8,
+    "space": 1,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s10",
@@ -604,7 +676,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: הילוך חול הד"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s11",
@@ -645,7 +725,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s12",
@@ -698,7 +786,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s13",
@@ -742,7 +838,15 @@
     "שורה אלמנה (לבא.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s14",
@@ -781,7 +885,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s15",
@@ -821,7 +933,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s16",
@@ -860,7 +980,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: רבב על המרדע"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s17",
@@ -899,7 +1027,15 @@
     "שורה אלמנה (ימיהן.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s18",
@@ -945,7 +1081,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s19",
@@ -986,7 +1130,15 @@
    "read": [],
    "keep": [
     "ולר\"ע נדרים ונדבות - צלע מקבילה ל\"לרי\"ש\" שבשורה שלפניה, שתי השיטות באותה צורה"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s20",
@@ -1035,7 +1187,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s21",
@@ -1075,7 +1235,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s22",
@@ -1120,8 +1288,64 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1794871718151
+ "t": 1794871721021,
+ "summary": "בפרק: 19 הדגשות במשנה, 5 רווחים, 18 מקפי תירוץ, 101 כותרות צד חדשות, 1 עיטורים נמחקו",
+ "compliance": {
+  "bold": 19,
+  "space": 5,
+  "dash": 18,
+  "side": 101,
+  "hatz": 1
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 22,
+  "perSeg": {
+   "bold": 0.86,
+   "space": 0.23,
+   "dash": 0.82,
+   "side": 5.09,
+   "nose": 1.05,
+   "widow": 0.05
+  },
+  "bold": 19,
+  "space": 5,
+  "dash": 18,
+  "side": 101,
+  "nose": 2,
+  "hatz": 1,
+  "abbr": 5,
+  "warnLeft": 45,
+  "block": 0,
+  "lenPct": 11,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  }
+ },
+ "counts": {
+  "shown": 22,
+  "spatial": 0,
+  "adds": 1,
+  "missing": 0
+ }
 }

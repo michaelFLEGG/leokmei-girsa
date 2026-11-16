@@ -24,6 +24,10 @@ def main():
     anchors = json.load(io.open(os.path.join(d, 'anchors-%d.json' % perek), encoding='utf-8'))
     styles = json.load(io.open(os.path.join(d, 'styles-%d.json' % perek), encoding='utf-8'))
     items, missing = [], []
+    # פרומפט 47 (16.11.2026): המספר המוצג הוא מקומו של הדיבור בספירה. דיבור שהוסר מן הספירה אחרי שנקבעו
+    # המפתחות (n, ובו בחירות המנהל) אינו משאיר חור במספור שבדף. כשהספירה רציפה זה זהה ל-n.
+    from build_count import heb_num
+    pos = {r['n']: i for i, r in enumerate(count['items'], 1)}
     for r in count['items']:
         k = str(r['n'])
         if k not in styles:
@@ -36,7 +40,7 @@ def main():
             raise SystemExit('עצירה: עוגן %s על עמוד %s אך התוספות בעמוד %s' % (k, a['daf'], r['dafKey']))
         s = styles[k]
         # page: העמוד באתר שבו יושב הטקסט (כשהוא שונה מעמוד התוספות; ראה anchors-N.json)
-        it = {'n': ukey(slug, perek, r['n']), 'disp': r['n'], 'perek': perek, 'hn': r['hn'], 'daf': a.get('page', r['dafKey']), 'dh': r['dh'], 'dhs': r.get('dhs') or r['dh'], 'line': r['line'],
+        it = {'n': ukey(slug, perek, r['n']), 'disp': pos[r['n']], 'perek': perek, 'hn': heb_num(pos[r['n']]), 'daf': a.get('page', r['dafKey']), 'dh': r['dh'], 'dhs': r.get('dhs') or r['dh'], 'line': r['line'],
               'ref': r['ref'], 'url': r['url'], 'text': r['text'],
               'sum': s.get('a') or s['b'], 't': a['t'], 'occ': a.get('occ', 1), 'rule': a.get('rule', 1)}
         if s.get('gen'):

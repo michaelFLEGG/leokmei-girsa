@@ -10,8 +10,18 @@
  "countedThrough": "13a",
  "verifiedThrough": "",
  "source": "Sefaria, Tosafot on Berakhot, Vilna Edition",
- "total": 75,
- "removed": [],
+ "total": 74,
+ "removed": [
+  {
+   "daf": "3b",
+   "line": 17,
+   "seg": 1,
+   "ref": "Tosafot on Berakhot 3b:17:1",
+   "n": 19,
+   "reason": "העתק של Tosafot on Berakhot 3b:2:1 (אותו דף, נבדל רק בכתיב דווקא/דוקא), קושר בספריא לשורת גמרא שנייה. בוויקיטקסט פעם אחת. הוסר בפרומפט 47 (16.11.2026); המספר 19 נשמר כמפתח ואינו מוצג",
+   "dh": "אין אומרין בפני המת אלא דבריו של מת - ופסק רב אלפס משום רב ה"
+  }
+ ],
  "note": "הספירה קבועה: אין לחשב מחדש בכל טעינה. שינוי בה נעשה רק בכלי הזה, עם רישום ב-removed.",
  "items": [
   {
@@ -283,21 +293,6 @@
    "dafKey": "ג:",
    "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.9.1",
    "dhs": "במקומן חיישינן"
-  },
-  {
-   "daf": "3b",
-   "line": 17,
-   "seg": 1,
-   "ref": "Tosafot on Berakhot 3b:17:1",
-   "text": "אין אומרין בפני המת אלא דבריו של מת - ופסק רב אלפס משום רב האי דוקא דברי תורה אבל דברים דעלמא לית לן בה. ודוקא בארבע אמות שלו:",
-   "dh": "אין אומרין בפני המת אלא דבריו של מת",
-   "dhRule": "מקף",
-   "verified": false,
-   "n": 19,
-   "hn": "י\"ט",
-   "dafKey": "ג:",
-   "url": "https://www.sefaria.org/Tosafot_on_Berakhot_3b.17.1",
-   "dhs": "אין אומרין בפני המת אלא דבריו של מת"
   },
   {
    "daf": "3b",

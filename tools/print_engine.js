@@ -1143,6 +1143,12 @@
     try{R.fonts=Array.from(document.fonts).map(function(f){return f.family+" "+f.weight+" "+f.status})}catch(e){}
     window.__PRN.state='done';
     document.title='לאוקמי גירסא - '+mname+' - '+QS.get('from')+' - '+(QS.get('to')||QS.get('from'));
+    /* פרומפט 51 (16.11.2026): הדפסה בדפדפן עצמו, בלי שרת. הדף נפתח בחלון חדש עם autoprint=1, מעמד במנוע הזה,
+       ופותח את חלון ההדפסה של הדפדפן (שם בוחרים מדפסת או "שמירה כ-PDF"). */
+    if(QS.get('autoprint')==='1'){
+      if(QS.get('all')==='1')document.title='לאוקמי גירסא - '+mname;
+      var bar=document.getElementById('prnwait');if(bar)bar.remove();
+      setTimeout(function(){try{window.print()}catch(e){}},250)}
   }
 
   /* ---------- עיצוב מצב ההדפסה ---------- */
@@ -1250,9 +1256,9 @@
         PRD=document.createElement('div');PRD.id='prnd';PRD.setAttribute('data-adm',ADM?'1':'0');
         PRD.innerHTML=
           '<div class="pbox" role="dialog" aria-modal="true" aria-label="הדפסה ל-PDF">'+
-          '<h2>הדפסה לקובץ PDF (A4, שני טורים)</h2>'+
+          '<h2>הדפסה (שני טורים)</h2>'+
           '<div class="pr" id="prn-type">'+
-            (ADM?'<label><input type="radio" name="prt" value="all">מסכת שלמה</label>':'')+
+            '<label><input type="radio" name="prt" value="all">מסכת שלמה</label>'+
             '<label><input type="radio" name="prt" value="perek">'+(ADM?'פרק':'פרק שלם')+'</label>'+
             '<label><input type="radio" name="prt" value="daf">דף אחד (שני עמודיו)</label>'+
             '<label><input type="radio" name="prt" value="amud">עמוד אחד</label>'+
@@ -1265,10 +1271,10 @@
           '<div class="pr"><label><input type="checkbox" id="prn-dup">דו-צדדי (שוליים פנימיים רחבים יותר לכריכה)</label></div>'+
           /* 6.11.2026: פריסה למנהל בלבד. כל עמוד A4 מוקטן באותו יחס (0.707) לחצי גיליון A4 לרוחב, כלומר A5; היחסים בדף נשמרים */
           /* 16.11.2026 (פרומפט 51 בצ'אט): גודל דף B5 בחלון ההדפסה עצמו, לצד A4. הפרופילים b5 ו-b5-large כבר קיימים */
-          (ADM?'<div class="pr" id="prn-paper"><span>גודל דף:</span><label><input type="radio" name="prpaper" value="a4" checked>A4</label>'+
-            '<label><input type="radio" name="prpaper" value="b5">B5 (לבית דפוס)</label></div>':'')+
-          (ADM?'<div class="pr" id="prn-size"><span>גודל אות:</span><label><input type="radio" name="prsize" value="a4" checked>רגיל</label>'+
-            '<label><input type="radio" name="prsize" value="a4lg">מוגדל</label></div>':'')+
+          '<div class="pr" id="prn-paper"><span>גודל דף:</span><label><input type="radio" name="prpaper" value="a4" checked>A4</label>'+
+            '<label><input type="radio" name="prpaper" value="b5">B5</label></div>'+
+          '<div class="pr" id="prn-size"><span>גודל אות:</span><label><input type="radio" name="prsize" value="a4" checked>רגיל</label>'+
+            '<label><input type="radio" name="prsize" value="a4lg">מוגדל</label></div>'+
           (ADM?'<div class="pr" id="prn-lay"><span>פריסה:</span><label><input type="radio" name="prlay" value="a4" checked>A4 רגיל</label>'+
             '<label><input type="radio" name="prlay" value="2up">שניים בעמוד</label>'+
             '<label><input type="radio" name="prlay" value="book">הדפס לחוברת (A5, כריכה מימין)</label></div>'+
@@ -1277,12 +1283,14 @@
           '<div class="pcnt" id="prn-cnt"></div>'+
           '<div class="pbar" id="prn-bar"><i></i></div>'+
           '<div class="perr" id="prn-err" hidden></div>'+
-          '<div class="pbtn"><button class="go" id="prn-go" type="button">הפק קובץ PDF</button><button id="prn-x" type="button">סגור</button></div>'+
+          '<div class="pnote">"הדפס" פותח את העמודים בחלון חדש ואת חלון ההדפסה של הדפדפן. שם בוחרים מדפסת, או "שמירה כ-PDF".</div>'+
+          '<div class="pbtn"><button class="go" id="prn-pr" type="button">הדפס</button>'+(ADM?'<button id="prn-go" type="button">הפק קובץ PDF בשרת</button>':'')+'<button id="prn-x" type="button">סגור</button></div>'+
           '</div>';
         document.body.appendChild(PRD);
         PRD.addEventListener('click',function(e){if(e.target===PRD)prnClose()});
         document.getElementById('prn-x').onclick=prnClose;
-        document.getElementById('prn-go').onclick=prnGo;
+        document.getElementById('prn-pr').onclick=prnPrint;
+        if(document.getElementById('prn-go'))document.getElementById('prn-go').onclick=prnGo;
         document.addEventListener('keydown',function(e){if(e.key==='Escape'&&PRD.classList.contains('open'))prnClose()});
         prnFill();
         [].forEach.call(PRD.querySelectorAll('input,select'),function(x){x.addEventListener('change',prnSync)})}
@@ -1382,14 +1390,14 @@
       document.getElementById('prn-fa').parentElement.style.display=(t==='daf')?'none':'';
       document.getElementById('prn-to').style.display=t==='range'?'':'none';
       var lnEl=document.getElementById('prn-ln');if(lnEl)lnEl.hidden=prnLay()!=='book';
-      var r=prnRange(),err=document.getElementById('prn-err'),go=document.getElementById('prn-go'),cnt=document.getElementById('prn-cnt');
+      var r=prnRange(),err=document.getElementById('prn-err'),go=document.getElementById('prn-pr'),cnt=document.getElementById('prn-cnt');
       err.hidden=true;
       var a=pageIdxOf(r.from),b=pageIdxOf(r.to);
       if(a<0||b<0||b<a){cnt.textContent='';go.disabled=true;
         err.textContent=(a>-1&&b>-1&&b<a)?'סוף הטווח צריך להיות אחרי תחילתו':'הדף שנבחר אינו במסכת';err.hidden=false;return}
       /* פרומפט 31: הדפסת פרק (r.pk) היא תמיד פרק אחד בדיוק - המנוע מדפיס רק את יחידות הפרק. בלי החריג, פרק שנפתח
          בדף שמשותף לפרק הקודם (שבת פרק ב, יט:) נחסם למבקר, כי הדף הראשון בתווית שייך לפרק הקודם */
-      if(!isAdm()&&!r.pk){          /* לעולם לא יותר מפרק אחד, גם אם נבחר טווח שחוצה גבול */
+      if(false&&!isAdm()&&!r.pk){   /* פרומפט 51: ההדפסה בדפדפן, בלי שרת - אין עוד סיבה להגביל לפרק אחד */
         var k0=perekKey(D.pages[a]),multi=false;
         for(var j=a;j<=b;j++)if(perekKey(D.pages[j])!==k0){multi=true;break}
         if(multi){cnt.textContent='';go.disabled=true;err.textContent=ONE_MSG;err.hidden=false;return}}
@@ -1458,6 +1466,20 @@
             if(P&&P.state==='done'){clearInterval(iv);var rep=P.report;f.remove();DRYFR=null;ok(rep)}
             else if(P&&P.state==='error'){clearInterval(iv);f.remove();DRYFR=null;no()}}catch(e){}
           if(Date.now()-t0>90000){clearInterval(iv);f.remove();DRYFR=null;no()}},300)})}
+    /* פרומפט 51: הדפסה בדפדפן. אותו מנוע ואותם כללי עימוד, בלי שירות ההפקה ובלי משימת ענן */
+    function prnPrint(){
+      var r=prnRange(),err=document.getElementById('prn-err');
+      var a=pageIdxOf(r.from),b=pageIdxOf(r.to);
+      if(r.t!=='all'&&(a<0||b<a)){err.textContent='הדף שנבחר אינו במסכת';err.hidden=false;return}
+      var q=prnQuery(r);
+      var big=PRD&&PRD.querySelector('input[name=prsize][value=a4lg]:checked');
+      var b5=PRD&&PRD.querySelector('input[name=prpaper][value=b5]:checked');
+      q.set('profile',(b5?'b5':'a4')+(big?'lg':''));
+      q.set('autoprint','1');
+      var u=location.pathname+'?'+q.toString();
+      var w=null;try{w=window.open(u,'_blank')}catch(e){}
+      if(!w)location.href=u;
+      prnClose()}
     function prnGo(){
       var r=prnRange(),go=document.getElementById('prn-go'),bar=document.getElementById('prn-bar'),err=document.getElementById('prn-err');
       if(!isAdm()&&!r.pk){

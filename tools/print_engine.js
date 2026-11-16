@@ -35,7 +35,20 @@
     var rows=[].slice.call(f.children).filter(function(r){return r.classList&&r.classList.contains('row')});
     var H=[];
     rows.forEach(function(r){var rl=r.querySelector(':scope > .rail');if(rl){rl.style.height='';rl.style.overflow=''}});
+    /* פרומפט 49 (16.11.2026, מהירות בלי שינוי בתוצאה): המדידה של כל שורה תלויה רק בשורה עצמה (גובה הטקסט שלה, ותחתית
+       הכותרות שבמסילה שלה ביחס לראש השורה). לכן קודם מודדים את כולן במעבר אחד (כתיבה אחת, קריאה אחת) - ורק השורות
+       שהכותרת שלהן אינה נכנסת עוברות את הטיפול המלא, אחת אחרי השנייה כמו קודם. עד כאן כל שורה כפתה עימוד מחדש של כל
+       הסרגל (כ-4.5 שניות לפרק). בדיקת הזהות: tools/print/pm_identity.py */
+    var C=[];
+    rows.forEach(function(r,i){var rl=r.querySelector(':scope > .rail');if(!rl)return;
+      var ws=[].slice.call(rl.querySelectorAll('.win')).filter(function(w){return w.textContent.trim()});
+      if(ws.length)C.push({r:r,i:i,rl:rl,ws:ws})});
+    C.forEach(function(c){c.rl.style.height='0px';c.rl.style.overflow='visible'});
+    C.forEach(function(c){var rt=c.r.getBoundingClientRect();c.fit=Math.max.apply(null,c.ws.map(function(w){return w.getBoundingClientRect().bottom}))-rt.top<=rt.height+1});
+    C.forEach(function(c){c.rl.style.height='';c.rl.style.overflow=''});
+    var BAD=new Set();C.forEach(function(c){if(!c.fit)BAD.add(c.r)});
     rows.forEach(function(r,i){
+      if(!BAD.has(r))return;
       var rl=r.querySelector(':scope > .rail');if(!rl)return;
       var ws=[].slice.call(rl.querySelectorAll('.win')).filter(function(w){return w.textContent.trim()});
       if(!ws.length)return;
@@ -324,12 +337,18 @@
   window.__PRNX={lineInfo:lineInfo,squeeze25:squeeze25,loneFix:loneFix};
   async function runPrint(){
     var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
+    var HEAD0=[].slice.call(document.querySelectorAll('style'));   /* פרומפט 49: מה שהעימוד הזה מוסיף לדף מסומן, כדי שעימוד חוזר יסיר אותו */
     window.__PRN={state:'running',report:R};
     /* פרומפט 41, בדיקה בלבד: render_pdf.py --ovapply מחיל על עותק הנתונים בזיכרון את ההצעה הראשונה של כל שורה גולשת,
        כדי למדוד כמה עמודים יוצאים. הוורד והאתר אינם משתנים */
     if(window.__OVAPPLY){var OA=window.__OVAPPLY,nOA=0;D.pages.forEach(function(pg){pg.units.forEach(function(u){var m=OA[u.id];if(!m||!u.l)return;
       Object.keys(m).map(Number).sort(function(a,b){return b-a}).forEach(function(li){var l=u.l[li-1];if(!l)return;
         var rep=m[li].map(function(h,i){return [i?'b0 a0':l[0],h]});u.l.splice.apply(u.l,[li-1,1].concat(rep));nOA++})})});R.ovApplied=nOA}
+    /* פרומפט 49 (16.11.2026): מצב דפוס. הדף רץ במסגרת פנימית בתוך דף המנהל (pm=1), והנתונים הם הנתונים שבדף המנהל
+       כפי שהם עכשיו - כולל עריכה שטרם פורסמה. המנוע, הפרופיל והמדידה זהים להדפסה, ולכן מה שרואים הוא מה שיודפס */
+    if(QS.get('pm')==='1'){try{var PMS=window.parent!==window&&window.parent.__pmSnapshot&&window.parent.__pmSnapshot();
+      if(PMS&&PMS.length===D.pages.length){for(var pmi=0;pmi<PMS.length;pmi++)D.pages[pmi].units=PMS[pmi];R.pmData=1}
+      else if(PMS)W('מצב דפוס: מבנה הנתונים בדף המנהל שונה ממבנה הדף. מוצג הנוסח שפורסם')}catch(e){W('מצב דפוס: '+e)}}
     tosReset();   /* מפת הפרקים נבנית מחדש מן הנתונים כפי שהם עכשיו (אחרי העריכות החיות) */
     function W(m){R.warn.push(m);try{console.warn('[print] '+m)}catch(e){}}
     /* 7.11.2026: לשם הפרופיל עשויה להיצמד גרסת העריכות (a4v...), ראה prnGo. הקובץ הוא שם הפרופיל בלעדיה */
@@ -575,7 +594,7 @@
       f.innerHTML=crecs.map(function(x){return x.html}).join('');
       var els=[].slice.call(f.children);
       if(els.length!==crecs.length)throw new Error('מספר השורות אינו תואם: '+els.length+' מול '+crecs.length);
-      crecs.forEach(function(x,i){x.el=els[i];x.el.removeAttribute('id')});
+      crecs.forEach(function(x,i){x.el=els[i];x.el.removeAttribute('id');if(x.u)x.el.setAttribute('data-u',x.u.id)});   /* data-u: מצב דפוס מזהה את היחידה (פרומפט 49) */
       /* ב: אוויר סביב תיבת המשנה (ראה gapm ב-CSS) */
       crecs.forEach(function(x,i){
         var pv=i>0?crecs[i-1]:(c0[0]>0?recs[c0[0]-1]:null);
@@ -1281,6 +1300,7 @@
     await new Promise(function(r){requestAnimationFrame(function(){requestAnimationFrame(r)})});
     await new Promise(function(r){setTimeout(r,300)});
     try{R.fonts=Array.from(document.fonts).map(function(f){return f.family+" "+f.weight+" "+f.status})}catch(e){}
+    [].forEach.call(document.querySelectorAll('style'),function(x){if(HEAD0.indexOf(x)<0)x.setAttribute('data-prnrun','1')});
     window.__PRN.state='done';
     document.title='לאוקמי גירסא - '+mname+' - '+QS.get('from')+' - '+(QS.get('to')||QS.get('from'));
     /* פרומפט 51 (16.11.2026): הדפסה בדפדפן עצמו, בלי שרת. הדף נפתח בחלון חדש עם autoprint=1, מעמד במנוע הזה,
@@ -1347,6 +1367,11 @@
         if(window.__LIVE&&w==='late'){window.__PRN={state:'error',error:'התיקונים שפורסמו לא נטענו בזמן. נסה שוב בעוד דקה'};return}
         if(window.__LIVE&&et&&(window.__LIVET||0)<et){window.__PRN={state:'error',error:'התיקונים האחרונים עוד לא הגיעו לשירות ההדפסה. נסה שוב בעוד דקה'};return}
         go2()})};
+    /* פרומפט 49: במצב דפוס - עימוד חוזר בלי טעינה מחדש של הדף (אחרי עריכה). מה שהעימוד הקודם הוסיף לדף מוסר קודם */
+    if(QS.get('pm')==='1')window.__prnRerun=function(){
+      [].forEach.call(document.querySelectorAll('style[data-prnrun]'),function(x){x.remove()});
+      ['prnout','prnmeas','prnsq'].forEach(function(id){var e=document.getElementById(id);if(e)e.remove()});
+      return runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};throw e})};
     var go2=function(){setTimeout(function(){runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};
       try{console.error('[print] '+e)}catch(x){}})},100)};
     if(document.readyState==='complete')go();else window.addEventListener('load',go);

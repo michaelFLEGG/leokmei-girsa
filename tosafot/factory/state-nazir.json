@@ -98,6 +98,72 @@
     "flagged": 0,
     "questions": 41
    }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-16T06:40:12Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nazir-p06-u01",
+    "nazir-p06-u02",
+    "nazir-p06-u03",
+    "nazir-p06-u04",
+    "nazir-p06-u05",
+    "nazir-p06-u06",
+    "nazir-p06-u07",
+    "nazir-p06-u08",
+    "nazir-p06-u09",
+    "nazir-p06-u10",
+    "nazir-p06-u11",
+    "nazir-p06-u12"
+   ],
+   "result": {
+    "generated": 287,
+    "decided": 0,
+    "unchecked": 5,
+    "flagged": 5,
+    "questions": 127
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-16T06:40:13Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nazir-p07-u01",
+    "nazir-p07-u02",
+    "nazir-p07-u03",
+    "nazir-p07-u04",
+    "nazir-p07-u05",
+    "nazir-p07-u06",
+    "nazir-p07-u07",
+    "nazir-p07-u08",
+    "nazir-p07-u09"
+   ],
+   "result": {
+    "generated": 210,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 113
+   }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-16T06:40:13Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nazir-p08-u01",
+    "nazir-p08-u02",
+    "nazir-p08-u03"
+   ],
+   "result": {
+    "generated": 66,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 35
+   }
   }
  },
  "created": "2026-11-08T12:39:45Z",
@@ -131,7 +197,25 @@
    "mean": 0.229,
    "n": 5,
    "at": "2026-11-16T00:40:23Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.397,
+   "n": 24,
+   "at": "2026-11-16T06:40:12Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.408,
+   "n": 17,
+   "at": "2026-11-16T06:40:12Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.241,
+   "n": 5,
+   "at": "2026-11-16T06:40:13Z"
   }
  ],
- "updated": "2026-11-16T00:40:23Z"
+ "updated": "2026-11-16T06:40:13Z"
 }

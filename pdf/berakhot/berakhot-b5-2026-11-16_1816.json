@@ -1,0 +1,3870 @@
+{
+ "warn": [
+  "עוגן תוספות: א' (פרק 5, ל.): העוגן שנקבע (\"כשרצו לצאת לדרך הקדימו להתפלל\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "עוגן תוספות: ב' (פרק 5, ל.): העוגן שנקבע (\"כשרצו לצאת לדרך הקדימו להתפלל\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "עוגן תוספות: א' (פרק 6, לד:): העוגן שנקבע (\"והמפרש חטאיו דכסוי חטאה\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "270 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: א', ד', ה', ו', ז', ח', י', י\"א, י\"ב, י\"ג, ט\"ז, י\"ז, י\"ח, כ', כ\"ד, כ\"ה, כ\"ו, כ\"ז, כ\"ח, כ\"ט, ל', ל\"א, ל\"ב, ל\"ג, ל\"ד, ל\"ה, ל\"ז, ל\"ח, מ', מ\"א, מ\"ב, מ\"ג, מ\"ד, מ\"ה, מ\"ו, מ\"ז, נ', נ\"ג, נ\"ח, נ\"ט, ס\"ה, ס\"ח, ס\"ט, ע\"ג, ד', ה', ו', ז', ח', י', ט\"ו, ט\"ז, י\"ז, י\"ח, כ', כ\"א, כ\"ב, כ\"ד, כ\"ה, ל\"א, ל\"ב, ל\"ג, ל\"ו, מ\"ב, מ\"ג, מ\"ד, מ\"ה, מ\"ו, א', ב', ג', ד', ה', ז', י\"א, י\"ג, י\"ד, ט\"ז, י\"ז, כ', כ\"א, כ\"ב, כ\"ג, כ\"ה, כ\"ו, כ\"ז, כ\"ח, כ\"ט, ל\"א, ל\"ב, ל\"ג, ל\"ד, ל\"ה, ל\"ו, ל\"ז, מ', מ\"ב, מ\"ג, מ\"ד, מ\"ט, נ\"ב, נ\"ד, נ\"ו, נ\"ז, נ\"ט, ס\"ב, ס\"ג, ב', ג', ה', ו', ז', ח', י\"א, י\"ג, י\"ד, ט\"ז, י\"ז, י\"ח, י\"ט, כ', כ\"א, כ\"ב, כ\"ג, כ\"ד, כ\"ז, כ\"ח, ל\"א, ל\"ב, ל\"ג, ל\"ד, ג', ה', ו', י\"א, י\"ז, כ\"ב, כ\"ט, ל', ל\"א, ב', ג', ד', ה', ו', ז', ח', י\"ב, י\"ג, ט\"ו, י\"ח, י\"ט, כ', כ\"א, כ\"ב, כ\"ג, כ\"ד, כ\"ו, כ\"ח, כ\"ט, ל\"ב, ל\"ג, ל\"ד, ל\"ה, ל\"ח, מ\"א, מ\"ב, מ\"ג, מ\"ז, מ\"ט, נ\"א, נ\"ב, נ\"ד, נ\"ה, ס', ס\"ג, ס\"ד, ס\"ו, ס\"ח, ע', ע\"ג, ע\"ד, ע\"ה, ע\"ו, ע\"ז, ע\"ח, ע\"ט, פ', פ\"א, פ\"ב, פ\"ג, צ\"ה, ק\"ב, ק\"ה, ק\"ז, קי\"א, קי\"ב, קי\"ג, קי\"ד, א', ב', ג', ד', ה', ו', ז', ח', ט', י', י\"א, י\"ב, י\"ג, י\"ד, י\"ז, י\"ט, כ\"א, כ\"ב, כ\"ה, כ\"ו, ל', ל\"א, ל\"ד, ל\"ח, מ\"א, מ\"ו, מ\"ז, מ\"ח, מ\"ט, נ', נ\"א, נ\"ח, נ\"ט, ס', ס\"ג, ס\"ה, ס\"ו, ס\"ז, ע', א', ב', ג', ד', ח', ט', י', י\"ג, ט\"ו, ט\"ז, ה', ז', ח', י', י\"א, י\"ב, י\"ג, י\"ד, ט\"ו, ט\"ז, י\"ז, י\"ח, י\"ט, כ', כ\"א, כ\"ב, כ\"ו, כ\"ז, כ\"ח, כ\"ט, ל', ל\"א",
+  "גובה פסקה אינו כפולה של גובה השורה (m): 3.21 (טז., יחידה 1200)",
+  "טור גבוה מגובה הנטו: עמוד 10, י:: 1.30px (טקסט 770.1, דחיסה 0.0, מתיחה 0.0)",
+  "טור גבוה מגובה הנטו: עמוד 43, לד:: 0.63px (טקסט 801.0, דחיסה 0.0, מתיחה 0.0)",
+  "טור גבוה מגובה הנטו: עמוד 54, מג.: 1.26px (טקסט 702.2, דחיסה 0.0, מתיחה 0.0)"
+ ],
+ "pages": [
+  {
+   "n": 1,
+   "daf0": "ב.",
+   "daf1": "ג.",
+   "perek": "פרק ראשון",
+   "notes": [
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1007,
+    1006,
+    1008,
+    1009,
+    1011,
+    1010,
+    1013,
+    1012
+   ],
+   "cols": [
+    {
+     "lines": 29,
+     "textMm": 157.8,
+     "notes": 8,
+     "noteMm": 62.8,
+     "gapMm": 0,
+     "stretchPt": 0.18,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 35,
+     "textMm": 183.3,
+     "notes": 5,
+     "noteMm": 35.9,
+     "gapMm": 0,
+     "stretchPt": 0.24,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "daf0": "ג.",
+   "daf1": "ג:",
+   "perek": "פרק ראשון",
+   "notes": [
+    1014,
+    1015,
+    1016,
+    1018,
+    1017,
+    1020,
+    1021,
+    1022
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 188.3,
+     "notes": 4,
+     "noteMm": 30.3,
+     "gapMm": 0,
+     "stretchPt": 0.42,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 33,
+     "textMm": 175.8,
+     "notes": 4,
+     "noteMm": 24.4,
+     "gapMm": 21.2,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "daf0": "ג:",
+   "daf1": "ד:",
+   "perek": "פרק ראשון",
+   "notes": [
+    1023,
+    1024,
+    1026,
+    1028,
+    1027,
+    1029
+   ],
+   "cols": [
+    {
+     "lines": 37,
+     "textMm": 190.8,
+     "notes": 2,
+     "noteMm": 29.8,
+     "gapMm": 0,
+     "stretchPt": 0.16,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 35,
+     "textMm": 180.8,
+     "notes": 4,
+     "noteMm": 39,
+     "gapMm": 0,
+     "stretchPt": 0.29,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "daf0": "ד:",
+   "daf1": "ה.",
+   "perek": "פרק ראשון",
+   "notes": [
+    1030,
+    1032,
+    1031,
+    1034,
+    1033,
+    1025
+   ],
+   "cols": [
+    {
+     "lines": 32,
+     "textMm": 173.3,
+     "notes": 6,
+     "noteMm": 41.7,
+     "gapMm": 0,
+     "stretchPt": 1.08,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 40,
+     "textMm": 218.4,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.88,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "daf0": "ה.",
+   "daf1": "ז.",
+   "perek": "פרק ראשון",
+   "notes": [
+    1035,
+    1036,
+    1037,
+    1038,
+    1039
+   ],
+   "cols": [
+    {
+     "lines": 37,
+     "textMm": 193.3,
+     "notes": 2,
+     "noteMm": 12.5,
+     "gapMm": 15.6,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 38,
+     "textMm": 198.3,
+     "notes": 3,
+     "noteMm": 21.7,
+     "gapMm": 0,
+     "stretchPt": 0.66,
+     "split": 1039,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "daf0": "ז.",
+   "daf1": "ח.",
+   "perek": "פרק ראשון",
+   "notes": [
+    1040,
+    1041,
+    1042
+   ],
+   "cols": [
+    {
+     "lines": 35,
+     "textMm": 190.8,
+     "notes": 3,
+     "noteMm": 30.4,
+     "gapMm": 0,
+     "stretchPt": 0.06,
+     "split": 0,
+     "carry": 1039
+    },
+    {
+     "lines": 41,
+     "textMm": 223.7,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.07,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "daf0": "ח.",
+   "daf1": "ט.",
+   "perek": "פרק ראשון",
+   "notes": [
+    1044,
+    1043,
+    1047,
+    1046,
+    1045,
+    1048,
+    1049,
+    1050
+   ],
+   "cols": [
+    {
+     "lines": 31,
+     "textMm": 170.7,
+     "notes": 5,
+     "noteMm": 47.4,
+     "gapMm": 0,
+     "stretchPt": 0.83,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 35,
+     "textMm": 193.3,
+     "notes": 3,
+     "noteMm": 27.2,
+     "gapMm": 0,
+     "stretchPt": 0.17,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "daf0": "ט.",
+   "daf1": "י.",
+   "perek": "פרק ראשון",
+   "notes": [
+    1051,
+    1052,
+    1053,
+    1054,
+    1055,
+    1056
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 197.9,
+     "notes": 2,
+     "noteMm": 18.3,
+     "gapMm": 0,
+     "stretchPt": 0.91,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 34,
+     "textMm": 180.8,
+     "notes": 4,
+     "noteMm": 38.7,
+     "gapMm": 0,
+     "stretchPt": 0.36,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "daf0": "י.",
+   "daf1": "י:",
+   "perek": "פרק ראשון",
+   "notes": [],
+   "cols": [
+    {
+     "lines": 41,
+     "textMm": 215.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 1.28,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 41,
+     "textMm": 220.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.52,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "daf0": "י:",
+   "daf1": "יא.",
+   "perek": "פרק ראשון",
+   "notes": [
+    1057,
+    1058,
+    1059,
+    1060,
+    1061,
+    1062,
+    1063,
+    1064,
+    1065
+   ],
+   "cols": [
+    {
+     "lines": 38,
+     "textMm": 203.7,
+     "notes": 2,
+     "noteMm": 18,
+     "gapMm": -0.3,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 29,
+     "textMm": 158.2,
+     "notes": 7,
+     "noteMm": 59.4,
+     "gapMm": 0,
+     "stretchPt": 0.76,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 11,
+   "daf0": "יא.",
+   "daf1": "יא.",
+   "perek": "פרק ראשון",
+   "notes": [
+    1067,
+    1066,
+    1068,
+    1069,
+    1070,
+    1071,
+    1072,
+    1073,
+    1074
+   ],
+   "cols": [
+    {
+     "lines": 33,
+     "textMm": 173.3,
+     "notes": 6,
+     "noteMm": 48,
+     "gapMm": 0,
+     "stretchPt": 0.04,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 37,
+     "textMm": 197.4,
+     "notes": 3,
+     "noteMm": 21.2,
+     "gapMm": 0,
+     "stretchPt": 0.49,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 12,
+   "daf0": "יא.",
+   "daf1": "יג.",
+   "perek": "פרק ראשון",
+   "notes": [
+    2001,
+    2002,
+    2003,
+    2004,
+    2005,
+    2006,
+    2008,
+    2007
+   ],
+   "cols": [
+    {
+     "lines": 13,
+     "textMm": 77.6,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 146.4,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 27,
+     "textMm": 145.8,
+     "notes": 8,
+     "noteMm": 66.1,
+     "gapMm": 0,
+     "stretchPt": 2.45,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 13,
+   "daf0": "יג:",
+   "daf1": "יד.",
+   "perek": "פרק שני",
+   "notes": [
+    2009,
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2015,
+    2016
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 198.3,
+     "notes": 3,
+     "noteMm": 21.2,
+     "gapMm": 0,
+     "stretchPt": 0.21,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 30,
+     "textMm": 163.8,
+     "notes": 5,
+     "noteMm": 42,
+     "gapMm": 15.6,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 14,
+   "daf0": "יד.",
+   "daf1": "טו.",
+   "perek": "פרק שני",
+   "notes": [
+    2018,
+    2017,
+    2019,
+    2020,
+    2022,
+    2021,
+    2023
+   ],
+   "cols": [
+    {
+     "lines": 35,
+     "textMm": 183.3,
+     "notes": 2,
+     "noteMm": 24.1,
+     "gapMm": 0,
+     "stretchPt": 1.59,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 34,
+     "textMm": 181.8,
+     "notes": 5,
+     "noteMm": 33.6,
+     "gapMm": 0,
+     "stretchPt": 0.89,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 15,
+   "daf0": "טו.",
+   "daf1": "טז.",
+   "perek": "פרק שני",
+   "notes": [
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029,
+    2030
+   ],
+   "cols": [
+    {
+     "lines": 33,
+     "textMm": 180.8,
+     "notes": 3,
+     "noteMm": 27,
+     "gapMm": 0,
+     "stretchPt": 1.93,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 31,
+     "textMm": 167.1,
+     "notes": 4,
+     "noteMm": 32.7,
+     "gapMm": 21.6,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 16,
+   "daf0": "טז.",
+   "daf1": "טז:",
+   "perek": "פרק שני",
+   "notes": [
+    2031,
+    2032,
+    2033,
+    2034,
+    2035,
+    2036,
+    2037,
+    2038
+   ],
+   "cols": [
+    {
+     "lines": 35,
+     "textMm": 184.3,
+     "notes": 6,
+     "noteMm": 35.9,
+     "gapMm": 0,
+     "stretchPt": 0.16,
+     "split": 2036,
+     "carry": 0
+    },
+    {
+     "lines": 37,
+     "textMm": 201.1,
+     "notes": 2,
+     "noteMm": 15.7,
+     "gapMm": 0,
+     "stretchPt": 0.76,
+     "split": 0,
+     "carry": 2036
+    }
+   ]
+  },
+  {
+   "n": 17,
+   "daf0": "טז:",
+   "daf1": "יז.",
+   "perek": "פרק שני",
+   "notes": [
+    2039,
+    2040,
+    2041
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 213.4,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 0.48,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 38,
+     "textMm": 211.1,
+     "notes": 2,
+     "noteMm": 9.4,
+     "gapMm": 0,
+     "stretchPt": 0.25,
+     "split": 2041,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 18,
+   "daf0": "יז.",
+   "daf1": "יז:",
+   "perek": "פרק שני",
+   "notes": [
+    2043,
+    2042,
+    2044,
+    2045,
+    2046
+   ],
+   "cols": [
+    {
+     "lines": 37,
+     "textMm": 195.8,
+     "notes": 5,
+     "noteMm": 24.8,
+     "gapMm": 0,
+     "stretchPt": 0.12,
+     "split": 2046,
+     "carry": 2041
+    },
+    {
+     "lines": 4,
+     "textMm": 27.2,
+     "notes": 0,
+     "noteMm": 9.4,
+     "gapMm": 184.8,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 2046
+    }
+   ]
+  },
+  {
+   "n": 19,
+   "daf0": "יז:",
+   "daf1": "יח:",
+   "perek": "פרק שלישי",
+   "notes": [
+    3001,
+    3005,
+    3004,
+    3003,
+    3002,
+    3006,
+    3008,
+    3009,
+    3007,
+    3010,
+    3011,
+    3012,
+    3013
+   ],
+   "cols": [
+    {
+     "lines": 33,
+     "textMm": 173.8,
+     "notes": 5,
+     "noteMm": 41.7,
+     "gapMm": 0,
+     "stretchPt": 1.87,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 32,
+     "textMm": 173.3,
+     "notes": 8,
+     "noteMm": 48,
+     "gapMm": 0.1,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 20,
+   "daf0": "יח:",
+   "daf1": "יט.",
+   "perek": "פרק שלישי",
+   "notes": [
+    3014,
+    3015,
+    3016
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 208.4,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 1.54,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 38,
+     "textMm": 198.3,
+     "notes": 2,
+     "noteMm": 18.5,
+     "gapMm": 0,
+     "stretchPt": 0.92,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 21,
+   "daf0": "יט.",
+   "daf1": "כ.",
+   "perek": "פרק שלישי",
+   "notes": [
+    3017,
+    3018,
+    3019,
+    3020,
+    3022,
+    3023,
+    3021
+   ],
+   "cols": [
+    {
+     "lines": 38,
+     "textMm": 203.3,
+     "notes": 1,
+     "noteMm": 12.5,
+     "gapMm": 0,
+     "stretchPt": 0.75,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 30,
+     "textMm": 155.7,
+     "notes": 6,
+     "noteMm": 59.6,
+     "gapMm": 0,
+     "stretchPt": 1.23,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 22,
+   "daf0": "כ.",
+   "daf1": "כא.",
+   "perek": "פרק שלישי",
+   "notes": [
+    3024,
+    3026,
+    3025,
+    3027,
+    3028,
+    3030,
+    3029,
+    3031,
+    3032,
+    3033,
+    3034
+   ],
+   "cols": [
+    {
+     "lines": 32,
+     "textMm": 173.4,
+     "notes": 4,
+     "noteMm": 39,
+     "gapMm": 0,
+     "stretchPt": 1.7,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 31,
+     "textMm": 163.8,
+     "notes": 7,
+     "noteMm": 56.4,
+     "gapMm": 0,
+     "stretchPt": 0.25,
+     "split": 3034,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 23,
+   "daf0": "כא.",
+   "daf1": "כב.",
+   "perek": "פרק שלישי",
+   "notes": [
+    3035,
+    3036,
+    3037,
+    3038,
+    3039
+   ],
+   "cols": [
+    {
+     "lines": 32,
+     "textMm": 168.3,
+     "notes": 5,
+     "noteMm": 50.6,
+     "gapMm": 0,
+     "stretchPt": 0.35,
+     "split": 0,
+     "carry": 3034
+    },
+    {
+     "lines": 42,
+     "textMm": 220.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.42,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 24,
+   "daf0": "כב.",
+   "daf1": "כב:",
+   "perek": "פרק שלישי",
+   "notes": [
+    3040,
+    3041
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 220.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.46,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 36,
+     "textMm": 195.8,
+     "notes": 2,
+     "noteMm": 18.3,
+     "gapMm": 0,
+     "stretchPt": 0.89,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 25,
+   "daf0": "כב:",
+   "daf1": "כג.",
+   "perek": "פרק שלישי",
+   "notes": [
+    3043,
+    3042,
+    3044,
+    3045,
+    3046
+   ],
+   "cols": [
+    {
+     "lines": 34,
+     "textMm": 185.8,
+     "notes": 4,
+     "noteMm": 30.5,
+     "gapMm": 0,
+     "stretchPt": 0.91,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 39,
+     "textMm": 208.4,
+     "notes": 1,
+     "noteMm": 9.4,
+     "gapMm": 0,
+     "stretchPt": 0.74,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 26,
+   "daf0": "כג.",
+   "daf1": "כד.",
+   "perek": "פרק שלישי",
+   "notes": [
+    3047,
+    3048,
+    3049,
+    3050,
+    3051
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 193.3,
+     "notes": 2,
+     "noteMm": 15.4,
+     "gapMm": 0,
+     "stretchPt": 1.49,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 37,
+     "textMm": 195.8,
+     "notes": 3,
+     "noteMm": 24.1,
+     "gapMm": 0,
+     "stretchPt": 0.18,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 27,
+   "daf0": "כד.",
+   "daf1": "כה.",
+   "perek": "פרק שלישי",
+   "notes": [
+    3052,
+    3053,
+    3054,
+    3055
+   ],
+   "cols": [
+    {
+     "lines": 39,
+     "textMm": 208.4,
+     "notes": 1,
+     "noteMm": 9.4,
+     "gapMm": 0,
+     "stretchPt": 0.49,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 38,
+     "textMm": 200.8,
+     "notes": 3,
+     "noteMm": 18.6,
+     "gapMm": 0,
+     "stretchPt": 0.23,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 28,
+   "daf0": "כה.",
+   "daf1": "כה:",
+   "perek": "פרק שלישי",
+   "notes": [
+    3056,
+    3058,
+    3057,
+    3059,
+    3060
+   ],
+   "cols": [
+    {
+     "lines": 35,
+     "textMm": 188.3,
+     "notes": 3,
+     "noteMm": 27.5,
+     "gapMm": 0,
+     "stretchPt": 0.88,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 38,
+     "textMm": 208.9,
+     "notes": 2,
+     "noteMm": 12.6,
+     "gapMm": -0.1,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 29,
+   "daf0": "כה:",
+   "daf1": "כו.",
+   "perek": "פרק שלישי",
+   "notes": [
+    3062,
+    3061,
+    3063
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 195.8,
+     "notes": 2,
+     "noteMm": 12.3,
+     "gapMm": 0,
+     "stretchPt": 2.22,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 31,
+     "textMm": 172.6,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 42.3,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 30,
+   "daf0": "כו.",
+   "daf1": "כז.",
+   "perek": "פרק רביעי",
+   "notes": [
+    4001,
+    4003,
+    4002,
+    4004,
+    4005,
+    4009,
+    4010,
+    4008,
+    4007,
+    4006,
+    4011
+   ],
+   "cols": [
+    {
+     "lines": 33,
+     "textMm": 177.4,
+     "notes": 5,
+     "noteMm": 41.9,
+     "gapMm": 0,
+     "stretchPt": 0.37,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 32,
+     "textMm": 168.2,
+     "notes": 6,
+     "noteMm": 48.7,
+     "gapMm": 0,
+     "stretchPt": 0.96,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 31,
+   "daf0": "כז.",
+   "daf1": "כז:",
+   "perek": "פרק רביעי",
+   "notes": [
+    4012,
+    4014,
+    4013,
+    4015,
+    4016,
+    4017,
+    4020,
+    4019,
+    4018,
+    4021
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 193.3,
+     "notes": 1,
+     "noteMm": 12.5,
+     "gapMm": 15.6,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 31,
+     "textMm": 165.7,
+     "notes": 9,
+     "noteMm": 54.7,
+     "gapMm": 0,
+     "stretchPt": 0.22,
+     "split": 4021,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 32,
+   "daf0": "כז:",
+   "daf1": "כח:",
+   "perek": "פרק רביעי",
+   "notes": [
+    4022,
+    4023
+   ],
+   "cols": [
+    {
+     "lines": 41,
+     "textMm": 205.9,
+     "notes": 1,
+     "noteMm": 12.3,
+     "gapMm": 0,
+     "stretchPt": 0.42,
+     "split": 0,
+     "carry": 4021
+    },
+    {
+     "lines": 40,
+     "textMm": 210.9,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 0.46,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 33,
+   "daf0": "כח:",
+   "daf1": "כט.",
+   "perek": "פרק רביעי",
+   "notes": [],
+   "cols": [
+    {
+     "lines": 41,
+     "textMm": 223.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0.1,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 39,
+     "textMm": 211,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 1.67,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 34,
+   "daf0": "כט.",
+   "daf1": "כט:",
+   "perek": "פרק רביעי",
+   "notes": [
+    4024,
+    4025,
+    4026,
+    4028,
+    4029,
+    4030
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 208.4,
+     "notes": 2,
+     "noteMm": 12.5,
+     "gapMm": 0,
+     "stretchPt": 0.07,
+     "split": 4025,
+     "carry": 0
+    },
+    {
+     "lines": 34,
+     "textMm": 176.3,
+     "notes": 4,
+     "noteMm": 44.6,
+     "gapMm": 0,
+     "stretchPt": 0.09,
+     "split": 0,
+     "carry": 4025
+    }
+   ]
+  },
+  {
+   "n": 35,
+   "daf0": "כט:",
+   "daf1": "ל.",
+   "perek": "פרק רביעי",
+   "notes": [
+    4027,
+    4031,
+    4032,
+    4033,
+    4034,
+    4035,
+    4036,
+    4037,
+    4038,
+    4039,
+    4040,
+    4041,
+    4042,
+    4043
+   ],
+   "cols": [
+    {
+     "lines": 37,
+     "textMm": 193.9,
+     "notes": 3,
+     "noteMm": 25,
+     "gapMm": 0,
+     "stretchPt": 0.52,
+     "split": 4032,
+     "carry": 0
+    },
+    {
+     "lines": 30,
+     "textMm": 151.8,
+     "notes": 11,
+     "noteMm": 69.5,
+     "gapMm": 0,
+     "stretchPt": 0.07,
+     "split": 4043,
+     "carry": 4032
+    }
+   ]
+  },
+  {
+   "n": 36,
+   "daf0": "ל.",
+   "daf1": "ל.",
+   "perek": "פרק רביעי",
+   "notes": [],
+   "cols": [
+    {
+     "lines": 38,
+     "textMm": 204.4,
+     "notes": 0,
+     "noteMm": 9.9,
+     "gapMm": 0,
+     "stretchPt": 1.01,
+     "split": 0,
+     "carry": 4043
+    },
+    {
+     "lines": 6,
+     "textMm": 37.2,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 186.8,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 37,
+   "daf0": "ל.",
+   "daf1": "לא.",
+   "perek": "פרק חמישי",
+   "notes": [
+    5001,
+    5002,
+    5004,
+    5007,
+    5006,
+    5005,
+    5003,
+    5008,
+    5009
+   ],
+   "cols": [
+    {
+     "lines": 37,
+     "textMm": 195.8,
+     "notes": 2,
+     "noteMm": 18.6,
+     "gapMm": 0,
+     "stretchPt": 0.86,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 32,
+     "textMm": 168.2,
+     "notes": 7,
+     "noteMm": 48.3,
+     "gapMm": 0,
+     "stretchPt": 1.15,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 38,
+   "daf0": "לא.",
+   "daf1": "לא:",
+   "perek": "פרק חמישי",
+   "notes": [
+    5010,
+    5012,
+    5013,
+    5014
+   ],
+   "cols": [
+    {
+     "lines": 41,
+     "textMm": 210.9,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 0.63,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 37,
+     "textMm": 185.8,
+     "notes": 3,
+     "noteMm": 21.2,
+     "gapMm": 0,
+     "stretchPt": 2.04,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 39,
+   "daf0": "לא:",
+   "daf1": "לב:",
+   "perek": "פרק חמישי",
+   "notes": [
+    5015,
+    5011
+   ],
+   "cols": [
+    {
+     "lines": 41,
+     "textMm": 208.4,
+     "notes": 2,
+     "noteMm": 12.6,
+     "gapMm": 0,
+     "stretchPt": 0.06,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 42,
+     "textMm": 210.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 1.49,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 40,
+   "daf0": "לב:",
+   "daf1": "לב:",
+   "perek": "פרק חמישי",
+   "notes": [
+    5016,
+    5017,
+    5018,
+    5019
+   ],
+   "cols": [
+    {
+     "lines": 35,
+     "textMm": 190.8,
+     "notes": 4,
+     "noteMm": 21.7,
+     "gapMm": 0,
+     "stretchPt": 2.09,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 41,
+     "textMm": 215.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 1.04,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 41,
+   "daf0": "לב:",
+   "daf1": "לג:",
+   "perek": "פרק חמישי",
+   "notes": [
+    5020
+   ],
+   "cols": [
+    {
+     "lines": 38,
+     "textMm": 204.9,
+     "notes": 1,
+     "noteMm": 9.6,
+     "gapMm": 0,
+     "stretchPt": 1.29,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 40,
+     "textMm": 215.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 1.1,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 42,
+   "daf0": "לג:",
+   "daf1": "לד.",
+   "perek": "פרק חמישי",
+   "notes": [
+    5021,
+    5022,
+    5023,
+    5024
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 215,
+     "notes": 1,
+     "noteMm": 3.9,
+     "gapMm": 0,
+     "stretchPt": 0.42,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 35,
+     "textMm": 188.3,
+     "notes": 3,
+     "noteMm": 30.1,
+     "gapMm": 0,
+     "stretchPt": 0.65,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 43,
+   "daf0": "לד.",
+   "daf1": "לד:",
+   "perek": "פרק חמישי",
+   "notes": [
+    5025,
+    5026,
+    5027,
+    5028,
+    5029,
+    5030
+   ],
+   "cols": [
+    {
+     "lines": 35,
+     "textMm": 180.8,
+     "notes": 4,
+     "noteMm": 35.9,
+     "gapMm": 0,
+     "stretchPt": 0.78,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 40,
+     "textMm": 211.9,
+     "notes": 2,
+     "noteMm": 9.6,
+     "gapMm": -0.2,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 44,
+   "daf0": "לד:",
+   "daf1": "לה.",
+   "perek": "פרק חמישי",
+   "notes": [
+    5031,
+    5032,
+    6001,
+    6003,
+    6002,
+    6004,
+    6007,
+    6006,
+    6005,
+    6008,
+    6009
+   ],
+   "cols": [
+    {
+     "lines": 26,
+     "textMm": 142.5,
+     "notes": 2,
+     "noteMm": 12.8,
+     "gapMm": 66,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 28,
+     "textMm": 143.7,
+     "notes": 9,
+     "noteMm": 74.4,
+     "gapMm": 0,
+     "stretchPt": 0.84,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 45,
+   "daf0": "לה.",
+   "daf1": "לו.",
+   "perek": "פרק שישי",
+   "notes": [
+    6010,
+    6011,
+    6012,
+    6013,
+    6014,
+    6015,
+    6016,
+    6017
+   ],
+   "cols": [
+    {
+     "lines": 35,
+     "textMm": 178.3,
+     "notes": 3,
+     "noteMm": 24.4,
+     "gapMm": 18.8,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 35,
+     "textMm": 188.3,
+     "notes": 5,
+     "noteMm": 33.1,
+     "gapMm": 0,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 46,
+   "daf0": "לו.",
+   "daf1": "לז.",
+   "perek": "פרק שישי",
+   "notes": [
+    6018,
+    6022,
+    6021,
+    6020,
+    6019,
+    6023,
+    6024,
+    6025
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 205.9,
+     "notes": 1,
+     "noteMm": 6.8,
+     "gapMm": 0,
+     "stretchPt": 1.24,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 31,
+     "textMm": 168.2,
+     "notes": 7,
+     "noteMm": 51.2,
+     "gapMm": 0,
+     "stretchPt": 0.35,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 47,
+   "daf0": "לז.",
+   "daf1": "לז:",
+   "perek": "פרק שישי",
+   "notes": [
+    6029,
+    6026,
+    6028,
+    6030,
+    6031,
+    6032,
+    6033,
+    6035,
+    6034,
+    6036
+   ],
+   "cols": [
+    {
+     "lines": 33,
+     "textMm": 178.3,
+     "notes": 4,
+     "noteMm": 38.5,
+     "gapMm": 0,
+     "stretchPt": 0.73,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 31,
+     "textMm": 163.2,
+     "notes": 6,
+     "noteMm": 56.6,
+     "gapMm": 0,
+     "stretchPt": 0.26,
+     "split": 6036,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 48,
+   "daf0": "לז:",
+   "daf1": "לח:",
+   "perek": "פרק שישי",
+   "notes": [
+    6037,
+    6039,
+    6040,
+    6041,
+    6038,
+    6043,
+    6042,
+    6044,
+    6045,
+    6046
+   ],
+   "cols": [
+    {
+     "lines": 32,
+     "textMm": 173.8,
+     "notes": 5,
+     "noteMm": 45.2,
+     "gapMm": 0,
+     "stretchPt": 0.3,
+     "split": 0,
+     "carry": 6036
+    },
+    {
+     "lines": 32,
+     "textMm": 170.8,
+     "notes": 5,
+     "noteMm": 45.6,
+     "gapMm": 0,
+     "stretchPt": 0.62,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 49,
+   "daf0": "לח:",
+   "daf1": "לט:",
+   "perek": "פרק שישי",
+   "notes": [
+    6047,
+    6049,
+    6048,
+    6050,
+    6051,
+    6052,
+    6053,
+    6055,
+    6054,
+    6056,
+    6057,
+    6058,
+    6059
+   ],
+   "cols": [
+    {
+     "lines": 31,
+     "textMm": 165.7,
+     "notes": 5,
+     "noteMm": 38.8,
+     "gapMm": 16.9,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 24,
+     "textMm": 133.1,
+     "notes": 8,
+     "noteMm": 82.6,
+     "gapMm": 0,
+     "stretchPt": 1.34,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 50,
+   "daf0": "לט:",
+   "daf1": "מ.",
+   "perek": "פרק שישי",
+   "notes": [
+    6060,
+    6061,
+    6062,
+    6065,
+    6064,
+    6063
+   ],
+   "cols": [
+    {
+     "lines": 34,
+     "textMm": 178.3,
+     "notes": 3,
+     "noteMm": 39,
+     "gapMm": 0,
+     "stretchPt": 0.65,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 35,
+     "textMm": 188.3,
+     "notes": 3,
+     "noteMm": 24.1,
+     "gapMm": 0,
+     "stretchPt": 1.6,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 51,
+   "daf0": "מ.",
+   "daf1": "מא.",
+   "perek": "פרק שישי",
+   "notes": [
+    6066,
+    6067,
+    6068,
+    6070,
+    6069,
+    6071,
+    6075,
+    6079,
+    6082
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 195.4,
+     "notes": 3,
+     "noteMm": 24.1,
+     "gapMm": 0,
+     "stretchPt": 0.27,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 28,
+     "textMm": 146.2,
+     "notes": 6,
+     "noteMm": 50.6,
+     "gapMm": 24.6,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 52,
+   "daf0": "מא.",
+   "daf1": "מב.",
+   "perek": "פרק שישי",
+   "notes": [
+    6072,
+    6083,
+    6073,
+    6074,
+    6076,
+    6078,
+    6080,
+    6077,
+    6081,
+    6084,
+    6085,
+    6086,
+    6087,
+    6088,
+    6089
+   ],
+   "cols": [
+    {
+     "lines": 28,
+     "textMm": 145.7,
+     "notes": 9,
+     "noteMm": 75,
+     "gapMm": 0,
+     "stretchPt": 0.19,
+     "split": 6081,
+     "carry": 0
+    },
+    {
+     "lines": 29,
+     "textMm": 155.7,
+     "notes": 6,
+     "noteMm": 56.4,
+     "gapMm": 0,
+     "stretchPt": 1.46,
+     "split": 0,
+     "carry": 6081
+    }
+   ]
+  },
+  {
+   "n": 53,
+   "daf0": "מב.",
+   "daf1": "מג.",
+   "perek": "פרק שישי",
+   "notes": [
+    6090,
+    6091,
+    6092,
+    6093,
+    6094,
+    6095,
+    6096,
+    6097,
+    6098,
+    6099
+   ],
+   "cols": [
+    {
+     "lines": 32,
+     "textMm": 171.8,
+     "notes": 5,
+     "noteMm": 42.2,
+     "gapMm": 0,
+     "stretchPt": 1.75,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 34,
+     "textMm": 178.3,
+     "notes": 5,
+     "noteMm": 41.9,
+     "gapMm": 0,
+     "stretchPt": 0.2,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 54,
+   "daf0": "מג.",
+   "daf1": "מג:",
+   "perek": "פרק שישי",
+   "notes": [
+    6100,
+    6101,
+    6102,
+    6103,
+    6104,
+    6105
+   ],
+   "cols": [
+    {
+     "lines": 35,
+     "textMm": 185.8,
+     "notes": 5,
+     "noteMm": 35.9,
+     "gapMm": -0.3,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 39,
+     "textMm": 210.9,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 0.48,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 55,
+   "daf0": "מג:",
+   "daf1": "מד:",
+   "perek": "פרק שישי",
+   "notes": [
+    6106,
+    6107,
+    6108,
+    6109,
+    6110,
+    6111,
+    6112
+   ],
+   "cols": [
+    {
+     "lines": 35,
+     "textMm": 195.2,
+     "notes": 3,
+     "noteMm": 21.5,
+     "gapMm": 0,
+     "stretchPt": 1.04,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 34,
+     "textMm": 181,
+     "notes": 4,
+     "noteMm": 38.7,
+     "gapMm": 0,
+     "stretchPt": 0.27,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 56,
+   "daf0": "מד:",
+   "daf1": "מה.",
+   "perek": "פרק שישי",
+   "notes": [
+    6114,
+    6113
+   ],
+   "cols": [
+    {
+     "lines": 37,
+     "textMm": 200.8,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 23.2,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 2,
+     "textMm": 17.2,
+     "notes": 2,
+     "noteMm": 21.1,
+     "gapMm": 183.1,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 57,
+   "daf0": "מה.",
+   "daf1": "מה:",
+   "perek": "פרק שביעי",
+   "notes": [
+    7006,
+    7001,
+    7005,
+    7002,
+    7003,
+    7009,
+    7008,
+    7007,
+    7004
+   ],
+   "cols": [
+    {
+     "lines": 26,
+     "textMm": 138.7,
+     "notes": 9,
+     "noteMm": 79.9,
+     "gapMm": 0,
+     "stretchPt": 0.57,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 41,
+     "textMm": 215.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.92,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 58,
+   "daf0": "מה:",
+   "daf1": "מו:",
+   "perek": "פרק שביעי",
+   "notes": [
+    7010,
+    7011,
+    7012,
+    7013,
+    7014,
+    7015,
+    7016,
+    7017,
+    7018,
+    7019,
+    7020
+   ],
+   "cols": [
+    {
+     "lines": 32,
+     "textMm": 170.8,
+     "notes": 6,
+     "noteMm": 47.7,
+     "gapMm": 0,
+     "stretchPt": 0.52,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 30,
+     "textMm": 163.2,
+     "notes": 5,
+     "noteMm": 56.3,
+     "gapMm": 0,
+     "stretchPt": 0.41,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 59,
+   "daf0": "מו:",
+   "daf1": "מז:",
+   "perek": "פרק שביעי",
+   "notes": [
+    7021,
+    7022,
+    7023,
+    7024,
+    7025,
+    7026,
+    7027,
+    7028
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 195.8,
+     "notes": 2,
+     "noteMm": 18.9,
+     "gapMm": 0,
+     "stretchPt": 1.12,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 33,
+     "textMm": 181.3,
+     "notes": 6,
+     "noteMm": 39.4,
+     "gapMm": 0,
+     "stretchPt": 0.09,
+     "split": 7028,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 60,
+   "daf0": "מז:",
+   "daf1": "מח.",
+   "perek": "פרק שביעי",
+   "notes": [
+    7029,
+    7031,
+    7030,
+    7032,
+    7033,
+    7034
+   ],
+   "cols": [
+    {
+     "lines": 38,
+     "textMm": 202.4,
+     "notes": 2,
+     "noteMm": 18.6,
+     "gapMm": 0,
+     "stretchPt": 0.04,
+     "split": 7031,
+     "carry": 7028
+    },
+    {
+     "lines": 32,
+     "textMm": 173.3,
+     "notes": 4,
+     "noteMm": 41.9,
+     "gapMm": 0,
+     "stretchPt": 1.03,
+     "split": 0,
+     "carry": 7031
+    }
+   ]
+  },
+  {
+   "n": 61,
+   "daf0": "מח.",
+   "daf1": "מט.",
+   "perek": "פרק שביעי",
+   "notes": [
+    7035,
+    7036,
+    7037
+   ],
+   "cols": [
+    {
+     "lines": 37,
+     "textMm": 190.8,
+     "notes": 2,
+     "noteMm": 26.9,
+     "gapMm": 0,
+     "stretchPt": 0.66,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 39,
+     "textMm": 208.4,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 0.84,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 62,
+   "daf0": "מט.",
+   "daf1": "מט:",
+   "perek": "פרק שביעי",
+   "notes": [
+    7039,
+    7038,
+    7040,
+    7041,
+    7042,
+    7043,
+    7044
+   ],
+   "cols": [
+    {
+     "lines": 39,
+     "textMm": 205.9,
+     "notes": 2,
+     "noteMm": 15.5,
+     "gapMm": 0.1,
+     "stretchPt": 0,
+     "split": 7038,
+     "carry": 0
+    },
+    {
+     "lines": 34,
+     "textMm": 178.3,
+     "notes": 5,
+     "noteMm": 42.3,
+     "gapMm": 0,
+     "stretchPt": 0.14,
+     "split": 7044,
+     "carry": 7038
+    }
+   ]
+  },
+  {
+   "n": 63,
+   "daf0": "מט:",
+   "daf1": "נ.",
+   "perek": "פרק שביעי",
+   "notes": [
+    7048,
+    7045,
+    7046,
+    7047,
+    7049,
+    7050,
+    7051,
+    7052
+   ],
+   "cols": [
+    {
+     "lines": 31,
+     "textMm": 168.5,
+     "notes": 6,
+     "noteMm": 51.4,
+     "gapMm": 0,
+     "stretchPt": 0.31,
+     "split": 0,
+     "carry": 7044
+    },
+    {
+     "lines": 38,
+     "textMm": 204.9,
+     "notes": 2,
+     "noteMm": 15.1,
+     "gapMm": 0,
+     "stretchPt": 0.22,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 64,
+   "daf0": "נ.",
+   "daf1": "נא.",
+   "perek": "פרק שביעי",
+   "notes": [
+    7053,
+    7054,
+    7055,
+    7056,
+    7057,
+    7058,
+    7059,
+    7060,
+    7061,
+    7062,
+    7063
+   ],
+   "cols": [
+    {
+     "lines": 30,
+     "textMm": 158.7,
+     "notes": 8,
+     "noteMm": 60.3,
+     "gapMm": 0,
+     "stretchPt": 0.44,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 35,
+     "textMm": 190.8,
+     "notes": 3,
+     "noteMm": 27,
+     "gapMm": 0,
+     "stretchPt": 0.6,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 65,
+   "daf0": "נא.",
+   "daf1": "נא:",
+   "perek": "פרק שביעי",
+   "notes": [
+    7064,
+    7065,
+    7068,
+    7067,
+    7066,
+    7069,
+    7070
+   ],
+   "cols": [
+    {
+     "lines": 34,
+     "textMm": 183.3,
+     "notes": 2,
+     "noteMm": 18,
+     "gapMm": 20.1,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 28,
+     "textMm": 147.6,
+     "notes": 5,
+     "noteMm": 41.9,
+     "gapMm": 31.9,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 66,
+   "daf0": "נא:",
+   "daf1": "נב:",
+   "perek": "פרק שמיני",
+   "notes": [
+    8001,
+    8002,
+    8004,
+    8003
+   ],
+   "cols": [
+    {
+     "lines": 37,
+     "textMm": 200.7,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 23.3,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 35,
+     "textMm": 183.3,
+     "notes": 4,
+     "noteMm": 33.5,
+     "gapMm": 0,
+     "stretchPt": 0.77,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 67,
+   "daf0": "נב:",
+   "daf1": "נג.",
+   "perek": "פרק שמיני",
+   "notes": [
+    8005,
+    8006,
+    8007,
+    8008,
+    8009,
+    8010,
+    8011,
+    8012
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 188.3,
+     "notes": 4,
+     "noteMm": 30.1,
+     "gapMm": 0,
+     "stretchPt": 0.45,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 36,
+     "textMm": 193.3,
+     "notes": 4,
+     "noteMm": 27.3,
+     "gapMm": 0,
+     "stretchPt": 0.1,
+     "split": 8012,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 68,
+   "daf0": "נג.",
+   "daf1": "נג:",
+   "perek": "פרק שמיני",
+   "notes": [
+    8013,
+    8014
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 198.3,
+     "notes": 2,
+     "noteMm": 21.5,
+     "gapMm": 0,
+     "stretchPt": 0.21,
+     "split": 0,
+     "carry": 8012
+    },
+    {
+     "lines": 40,
+     "textMm": 218.4,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.66,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 69,
+   "daf0": "נג:",
+   "daf1": "נד.",
+   "perek": "פרק שמיני",
+   "notes": [
+    8015,
+    8016,
+    9001,
+    9002,
+    9003,
+    9004
+   ],
+   "cols": [
+    {
+     "lines": 37,
+     "textMm": 205.2,
+     "notes": 2,
+     "noteMm": 15.3,
+     "gapMm": 0.9,
+     "stretchPt": 0,
+     "split": 8016,
+     "carry": 0
+    },
+    {
+     "lines": 36,
+     "textMm": 187.5,
+     "notes": 4,
+     "noteMm": 30.5,
+     "gapMm": 0,
+     "stretchPt": 2.42,
+     "split": 0,
+     "carry": 8016
+    }
+   ]
+  },
+  {
+   "n": 70,
+   "daf0": "נד.",
+   "daf1": "נה.",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9005,
+    9006,
+    9008,
+    9007
+   ],
+   "cols": [
+    {
+     "lines": 36,
+     "textMm": 183.3,
+     "notes": 4,
+     "noteMm": 33.5,
+     "gapMm": 0,
+     "stretchPt": 1.3,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 42,
+     "textMm": 220.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": -0.0,
+     "stretchPt": 0.4,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 71,
+   "daf0": "נה.",
+   "daf1": "נה:",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9009,
+    9011
+   ],
+   "cols": [
+    {
+     "lines": 41,
+     "textMm": 210.9,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": -0.0,
+     "stretchPt": 0.5,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 40,
+     "textMm": 213.4,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 0.25,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 72,
+   "daf0": "נה:",
+   "daf1": "נו.",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9010
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 205.9,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 1.07,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 43,
+     "textMm": 223.4,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.1,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 73,
+   "daf0": "נו:",
+   "daf1": "נו:",
+   "perek": "פרק תשיעי",
+   "notes": [],
+   "cols": [
+    {
+     "lines": 43,
+     "textMm": 220.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.58,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 43,
+     "textMm": 215.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 2.55,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 74,
+   "daf0": "נו:",
+   "daf1": "נז:",
+   "perek": "פרק תשיעי",
+   "notes": [],
+   "cols": [
+    {
+     "lines": 44,
+     "textMm": 223.4,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.15,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 44,
+     "textMm": 220.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 1.1,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 75,
+   "daf0": "נז:",
+   "daf1": "נח.",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9012,
+    9013
+   ],
+   "cols": [
+    {
+     "lines": 38,
+     "textMm": 195.8,
+     "notes": 2,
+     "noteMm": 24.1,
+     "gapMm": 0,
+     "stretchPt": 0.3,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 43,
+     "textMm": 220.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.8,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 76,
+   "daf0": "נח.",
+   "daf1": "נח:",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9014,
+    9015
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 205.9,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 2.33,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 42,
+     "textMm": 210.9,
+     "notes": 1,
+     "noteMm": 9.4,
+     "gapMm": 0,
+     "stretchPt": 0.23,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 77,
+   "daf0": "נח:",
+   "daf1": "נט:",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9017,
+    9016,
+    9018,
+    9021,
+    9019
+   ],
+   "cols": [
+    {
+     "lines": 38,
+     "textMm": 193.3,
+     "notes": 2,
+     "noteMm": 15.3,
+     "gapMm": 0,
+     "stretchPt": 1.65,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 39,
+     "textMm": 196.9,
+     "notes": 3,
+     "noteMm": 24.1,
+     "gapMm": 0,
+     "stretchPt": 0.06,
+     "split": 9019,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 78,
+   "daf0": "נט:",
+   "daf1": "ס.",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9020
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 210.9,
+     "notes": 1,
+     "noteMm": 9.4,
+     "gapMm": 0,
+     "stretchPt": 0.12,
+     "split": 9020,
+     "carry": 9019
+    },
+    {
+     "lines": 41,
+     "textMm": 213.4,
+     "notes": 0,
+     "noteMm": 3.6,
+     "gapMm": 0,
+     "stretchPt": 0.59,
+     "split": 0,
+     "carry": 9020
+    }
+   ]
+  },
+  {
+   "n": 79,
+   "daf0": "ס.",
+   "daf1": "סא.",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9022,
+    9023,
+    9026,
+    9024,
+    9025,
+    9027
+   ],
+   "cols": [
+    {
+     "lines": 38,
+     "textMm": 190.8,
+     "notes": 3,
+     "noteMm": 27.5,
+     "gapMm": 0,
+     "stretchPt": 0.73,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 38,
+     "textMm": 198.3,
+     "notes": 3,
+     "noteMm": 15.7,
+     "gapMm": 0,
+     "stretchPt": 1.3,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 80,
+   "daf0": "סא.",
+   "daf1": "סב.",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9028,
+    9029
+   ],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 205.9,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 1.42,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 41,
+     "textMm": 213.4,
+     "notes": 1,
+     "noteMm": 6.5,
+     "gapMm": 0,
+     "stretchPt": 0.18,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 81,
+   "daf0": "סב.",
+   "daf1": "סב:",
+   "perek": "פרק תשיעי",
+   "notes": [
+    9031,
+    9030
+   ],
+   "cols": [
+    {
+     "lines": 39,
+     "textMm": 203.4,
+     "notes": 2,
+     "noteMm": 12.3,
+     "gapMm": 0,
+     "stretchPt": 0.78,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 41,
+     "textMm": 210.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 2.86,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 82,
+   "daf0": "סב:",
+   "daf1": "סג:",
+   "perek": "פרק תשיעי",
+   "notes": [],
+   "cols": [
+    {
+     "lines": 40,
+     "textMm": 222,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.28,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 44,
+     "textMm": 220.9,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 0,
+     "stretchPt": 0.49,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  },
+  {
+   "n": 83,
+   "daf0": "סג:",
+   "daf1": "סד.",
+   "perek": "פרק תשיעי",
+   "notes": [],
+   "cols": [
+    {
+     "lines": 29,
+     "textMm": 153.2,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 70.8,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    },
+    {
+     "lines": 27,
+     "textMm": 150.1,
+     "notes": 0,
+     "noteMm": 0,
+     "gapMm": 73.9,
+     "stretchPt": 0,
+     "split": 0,
+     "carry": 0
+    }
+   ]
+  }
+ ],
+ "notes": 487,
+ "placed": 487,
+ "moved": [
+  "ד'",
+  "ה'",
+  "ז'",
+  "ו'",
+  "י'",
+  "י\"ג",
+  "י\"ב",
+  "י\"ח",
+  "כ'",
+  "כ\"ז",
+  "כ\"ו",
+  "כ\"ח",
+  "כ\"ט",
+  "ל\"א",
+  "ל'",
+  "ל\"ג",
+  "ל\"ב",
+  "ל\"ח",
+  "מ\"ג",
+  "מ\"ב",
+  "מ\"ד",
+  "מ\"ז",
+  "נ\"ג",
+  "נ\"ח",
+  "ל\"ד",
+  "ל\"ה",
+  "מ'",
+  "ס\"ה",
+  "ס\"ח",
+  "ד'",
+  "ח'",
+  "ז'",
+  "י'",
+  "ט\"ו",
+  "י\"ח",
+  "י\"ז",
+  "כ'",
+  "כ\"ב",
+  "כ\"א",
+  "כ\"ד",
+  "כ\"ה",
+  "ל\"ב",
+  "ל\"ג",
+  "ל\"ו",
+  "מ\"ג",
+  "מ\"ב",
+  "מ\"ד",
+  "מ\"ה",
+  "ה'",
+  "ד'",
+  "ג'",
+  "ב'",
+  "ז'",
+  "י\"ג",
+  "י\"ד",
+  "ט\"ז",
+  "י\"ז",
+  "כ\"ג",
+  "כ\"א",
+  "כ\"ו",
+  "כ\"ה",
+  "כ\"ז",
+  "ל\"ד",
+  "מ'",
+  "מ\"ד",
+  "ל\"א",
+  "נ\"ד",
+  "נ\"ו",
+  "נ\"ז",
+  "י\"ד",
+  "י\"ג",
+  "כ\"ב",
+  "ה'",
+  "ח'",
+  "ז'",
+  "ו'",
+  "י\"ז",
+  "כ'",
+  "י\"ט",
+  "י\"ח",
+  "כ\"א",
+  "כ\"ד",
+  "ל\"ב",
+  "ו'",
+  "ה'",
+  "ג'",
+  "ל\"א",
+  "י\"א",
+  "כ\"ב",
+  "ל\"א",
+  "ב'",
+  "ז'",
+  "ו'",
+  "ה'",
+  "י\"ג",
+  "ט\"ו",
+  "י\"ח",
+  "כ\"ב",
+  "כ\"א",
+  "כ'",
+  "י\"ט",
+  "כ\"ו",
+  "ל\"ה",
+  "ל\"ד",
+  "כ\"ט",
+  "ל'",
+  "כ\"ג",
+  "ל\"ח",
+  "מ\"ג",
+  "מ\"ב",
+  "מ\"ז",
+  "נ\"א",
+  "נ\"ב",
+  "נ\"ד",
+  "ס\"ד",
+  "ס\"ג",
+  "ס\"ח",
+  "ע\"ה",
+  "ע\"ט",
+  "פ\"ב",
+  "פ\"ג",
+  "ק\"ב",
+  "ק\"ה",
+  "קי\"א",
+  "קי\"ב",
+  "קי\"ד",
+  "קי\"ג",
+  "ט'",
+  "ח'",
+  "ז'",
+  "י'",
+  "י\"ב",
+  "י\"ג",
+  "י\"ד",
+  "י\"ז",
+  "י\"ט",
+  "כ\"א",
+  "כ\"ה",
+  "ל\"ד",
+  "מ\"ז",
+  "נ'",
+  "נ\"ח",
+  "ס'",
+  "ס\"ג",
+  "ס\"ז",
+  "ס\"ו",
+  "מ\"א",
+  "א'",
+  "י'",
+  "ד'",
+  "ג'",
+  "ח'",
+  "ז'",
+  "י'",
+  "י\"ז",
+  "ט\"ז",
+  "כ\"א",
+  "ל\"א",
+  "ל'"
+ ],
+ "issues": [
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "ו:",
+   "unit": 381,
+   "detail": "סיע פסיעה גסה, ולהיכנס - ירוץ."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "יג:",
+   "unit": 948,
+   "detail": " כולה צריכה כוונה.⁠9 וכך הלכה."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "יט.",
+   "unit": 1530,
+   "detail": "פסוק עד שיגיעו לשורה - יתחילו."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "יט:",
+   "unit": 1532,
+   "detail": "רה, ושאינה רואה פנימה - חייבת."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "כ:",
+   "unit": 1604,
+   "detail": "שנו בזכירה, ונשים - בשמירה.⁠27"
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "כו.",
+   "unit": 1794755870357,
+   "detail": " זיבה - צריך טבילה, ור\"י פוטר."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "כז:",
+   "unit": 2392,
+   "detail": "ה? רבי יהושע: רשות, ר\"ג: חובה."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "כח:",
+   "unit": 2510,
+   "detail": "ֶה עֶשְׂרֵה, רי\"ה: מֵעֵין י\"ח,"
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "כט.",
+   "unit": 1794756328341,
+   "detail": "המבדיל בין קדש לחול⁠25'! קשיא."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "כט:",
+   "unit": 1794756335652,
+   "detail": "ום' - לעבודה, ואם סיים - לראש."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "לג:",
+   "unit": 1794765827540,
+   "detail": "ה, וכשכופל פסוק פסוק - משתקין."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "מא.",
+   "unit": 3742,
+   "detail": "ל, ויין פוטר כל מיני⁠80 משקים."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "מב.",
+   "unit": 3762,
+   "detail": "ן עליהן המוציא!⁠83 84 85 86 87"
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "מד:",
+   "unit": 4031,
+   "detail": "- בז', בי\"ז ובכ\"ז, וי\"א: בכ\"ג,"
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "מז:",
+   "unit": 4319,
+   "detail": "יב\"ל אמר: תשעה ועבד - מצטרפין."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "מט:",
+   "unit": 4527,
+   "detail": "ֵל, בְּאֶלֶף וָהוּא: בָּרְכוּ,"
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "נא:",
+   "unit": 4747,
+   "detail": "ֻּׁלְחָן, ולב\"ה: עַל הַכֶּסֶת."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "נג.",
+   "unit": 4875,
+   "detail": "תחלה אין מברכין, ובסוף מברכין."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "נג.",
+   "unit": 4885,
+   "detail": "- אין מברכין, וכשאין - מברכין."
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "ס.",
+   "unit": 5338,
+   "detail": "אֶת שְׁמָהּ דִּינָה', ורב דרש:"
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "סא.",
+   "unit": 1794764805577,
+   "detail": ", לב מבין, לשון מחתך, פה גומר,"
+  },
+  {
+   "type": "מילה בודדת בשורה אחרונה",
+   "daf": "סא.",
+   "unit": 1794764805577,
+   "detail": "מניחתו, טחול שוחק, קרקבן טוחן,"
+  },
+  {
+   "type": "חור בטור",
+   "page": 2,
+   "daf": "ג:",
+   "unit": 129,
+   "detail": "טור שמאלי: ריק של 4.2 שורות (ההערות של השורה הבאה אינן נכנסות)"
+  },
+  {
+   "type": "חור בטור",
+   "page": 5,
+   "daf": "ה.",
+   "unit": 342,
+   "detail": "טור ימני: ריק של 3.1 שורות (כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן))"
+  },
+  {
+   "type": "חור בטור",
+   "page": 13,
+   "daf": "יג:",
+   "unit": 997,
+   "detail": "טור שמאלי: ריק של 3.1 שורות (כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן))"
+  },
+  {
+   "type": "חור בטור",
+   "page": 15,
+   "daf": "טו:",
+   "unit": 1174,
+   "detail": "טור שמאלי: ריק של 4.3 שורות (כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן))"
+  },
+  {
+   "type": "חור בטור",
+   "page": 31,
+   "daf": "כז.",
+   "unit": 2323,
+   "detail": "טור ימני: ריק של 3.1 שורות (כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן))"
+  },
+  {
+   "type": "חור בטור",
+   "page": 45,
+   "daf": "לה.",
+   "unit": 3206,
+   "detail": "טור ימני: ריק של 3.7 שורות (כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן))"
+  },
+  {
+   "type": "חור בטור",
+   "page": 49,
+   "daf": "לח:",
+   "unit": 3515,
+   "detail": "טור ימני: ריק של 3.4 שורות (כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן))"
+  },
+  {
+   "type": "חור בטור",
+   "page": 51,
+   "daf": "מ:",
+   "unit": 3693,
+   "detail": "טור שמאלי: ריק של 4.9 שורות (כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן))"
+  },
+  {
+   "type": "חור בטור",
+   "page": 56,
+   "daf": "מד:",
+   "unit": 4004,
+   "detail": "טור ימני: ריק של 4.6 שורות (ההערות של השורה הבאה אינן נכנסות)"
+  },
+  {
+   "type": "חור בטור",
+   "page": 65,
+   "daf": "נא.",
+   "unit": 4677,
+   "detail": "טור ימני: ריק של 4 שורות (כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן))"
+  },
+  {
+   "type": "חור בטור",
+   "page": 66,
+   "daf": "נא:",
+   "unit": 4745,
+   "detail": "טור ימני: ריק של 4.6 שורות (כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן))"
+  }
+ ],
+ "holes": [
+  {
+   "page": 2,
+   "col": "שמאלי",
+   "daf": "ג:",
+   "lines": 4.2,
+   "why": "ההערות של השורה הבאה אינן נכנסות"
+  },
+  {
+   "page": 5,
+   "col": "ימני",
+   "daf": "ה.",
+   "lines": 3.1,
+   "why": "כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)"
+  },
+  {
+   "page": 13,
+   "col": "שמאלי",
+   "daf": "יג:",
+   "lines": 3.1,
+   "why": "כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)"
+  },
+  {
+   "page": 15,
+   "col": "שמאלי",
+   "daf": "טו:",
+   "lines": 4.3,
+   "why": "כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)"
+  },
+  {
+   "page": 31,
+   "col": "ימני",
+   "daf": "כז.",
+   "lines": 3.1,
+   "why": "כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)"
+  },
+  {
+   "page": 45,
+   "col": "ימני",
+   "daf": "לה.",
+   "lines": 3.7,
+   "why": "כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)"
+  },
+  {
+   "page": 49,
+   "col": "ימני",
+   "daf": "לח:",
+   "lines": 3.4,
+   "why": "כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)"
+  },
+  {
+   "page": 51,
+   "col": "שמאלי",
+   "daf": "מ:",
+   "lines": 4.9,
+   "why": "כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)"
+  },
+  {
+   "page": 56,
+   "col": "ימני",
+   "daf": "מד:",
+   "lines": 4.6,
+   "why": "ההערות של השורה הבאה אינן נכנסות"
+  },
+  {
+   "page": 65,
+   "col": "ימני",
+   "daf": "נא.",
+   "lines": 4,
+   "why": "כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)"
+  },
+  {
+   "page": 66,
+   "col": "ימני",
+   "daf": "נא:",
+   "lines": 4.6,
+   "why": "כלל עימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה, שורה בודדת או הדרן)"
+  }
+ ],
+ "t": {
+  "profile": 5,
+  "picks": 250,
+  "units": 260,
+  "fontsload": 269,
+  "measure": 77887,
+  "paginate": 78946,
+  "pages": 80984
+ },
+ "tosWarn": [
+  "א' (פרק 1, ב.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ד' (פרק 1, ב.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ה' (פרק 1, ב.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ו' (פרק 1, ב:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ז' (פרק 1, ב:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ח' (פרק 1, ב:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י' (פרק 1, ב:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"א (פרק 1, ב:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ב (פרק 1, ג.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ג (פרק 1, ג.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ט\"ז (פרק 1, ג.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ז (פרק 1, ג:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ח (פרק 1, ג:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ' (פרק 1, ג:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ד (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ה (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ו (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ז (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ח (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ט (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל' (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"א (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ב (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ג (פרק 1, ד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ד (פרק 1, ו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ה (פרק 1, ו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ז (פרק 1, ו.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ח (פרק 1, ו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ' (פרק 1, ז.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"א (פרק 1, ז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ\"ב (פרק 1, ח.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ג (פרק 1, ח.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ד (פרק 1, ח:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ה (פרק 1, ח:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ\"ו (פרק 1, ח:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ\"ז (פרק 1, ח:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ' (פרק 1, ט.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "נ\"ג (פרק 1, ט:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"ח (פרק 1, יא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"ט (פרק 1, יא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ס\"ה (פרק 1, יב.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ס\"ח (פרק 1, יב.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ס\"ט (פרק 1, יב.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ע\"ג (פרק 1, יב:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ד' (פרק 2, יג.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ה' (פרק 2, יג.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ו' (פרק 2, יג.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ז' (פרק 2, יג.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ח' (פרק 2, יג.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י' (פרק 2, יג:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ט\"ו (פרק 2, יד.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ט\"ז (פרק 2, יד.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ז (פרק 2, יד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ח (פרק 2, יד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ' (פרק 2, טו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"א (פרק 2, טו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ב (פרק 2, טו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ד (פרק 2, טו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ה (פרק 2, טו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"א (פרק 2, טז.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ב (פרק 2, טז.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ג (פרק 2, טז.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ו (פרק 2, טז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ב (פרק 2, יז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ג (פרק 2, יז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ד (פרק 2, יז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ה (פרק 2, יז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ו (פרק 2, יז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "א' (פרק 3, יז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ב' (פרק 3, יז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ג' (פרק 3, יז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ד' (פרק 3, יז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ה' (פרק 3, יז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ז' (פרק 3, יח.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"א (פרק 3, יח:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ג (פרק 3, יח:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ד (פרק 3, יח:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ט\"ז (פרק 3, יט.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ז (פרק 3, יט:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ' (פרק 3, יט:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"א (פרק 3, כ.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ב (פרק 3, כ.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ג (פרק 3, כ.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ה (פרק 3, כ:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ו (פרק 3, כ:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ז (פרק 3, כ:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ח (פרק 3, כ:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ט (פרק 3, כ:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"א (פרק 3, כ:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ב (פרק 3, כא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ג (פרק 3, כא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ד (פרק 3, כא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ה (פרק 3, כא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ו (פרק 3, כא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ז (פרק 3, כא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ' (פרק 3, כב:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ב (פרק 3, כב:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ\"ג (פרק 3, כב:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ\"ד (פרק 3, כב:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ט (פרק 3, כד.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "נ\"ב (פרק 3, כד:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "נ\"ד (פרק 3, כד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"ו (פרק 3, כה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"ז (פרק 3, כה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"ט (פרק 3, כה:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ס\"ב (פרק 3, כה:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ס\"ג (פרק 3, כו.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ב' (פרק 4, כו.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ג' (פרק 4, כו.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ה' (פרק 4, כו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ו' (פרק 4, כו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ז' (פרק 4, כו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ח' (פרק 4, כו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"א (פרק 4, כז.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ג (פרק 4, כז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ד (פרק 4, כז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ט\"ז (פרק 4, כז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ז (פרק 4, כז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ח (פרק 4, כז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ט (פרק 4, כז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ' (פרק 4, כז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"א (פרק 4, כז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ב (פרק 4, כז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ג (פרק 4, כח:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ד (פרק 4, כט.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ז (פרק 4, כט:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ח (פרק 4, כט:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"א (פרק 4, ל.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ב (פרק 4, ל.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ג (פרק 4, ל.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ד (פרק 4, ל.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "א' (פרק 5, ל.): העוגן שנקבע (\"כשרצו לצאת לדרך הקדימו להתפלל\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ב' (פרק 5, ל.): העוגן שנקבע (\"כשרצו לצאת לדרך הקדימו להתפלל\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ג' (פרק 5, לא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ה' (פרק 5, לא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ו' (פרק 5, לא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"א (פרק 5, לא:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ז (פרק 5, לב:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ב (פרק 5, לג:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ט (פרק 5, לד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל' (פרק 5, לד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"א (פרק 5, לד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "א' (פרק 6, לד:): העוגן שנקבע (\"והמפרש חטאיו דכסוי חטאה\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ב' (פרק 6, לה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ג' (פרק 6, לה.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ד' (פרק 6, לה.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ה' (פרק 6, לה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ו' (פרק 6, לה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ז' (פרק 6, לה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ח' (פרק 6, לה.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ב (פרק 6, לה:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ג (פרק 6, לה:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ט\"ו (פרק 6, לו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ח (פרק 6, לו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ט (פרק 6, לו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ' (פרק 6, לו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"א (פרק 6, לו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ב (פרק 6, לו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ג (פרק 6, לו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ד (פרק 6, לו:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ו (פרק 6, לז.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ח (פרק 6, לז.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ט (פרק 6, לז.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ב (פרק 6, לז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ג (פרק 6, לז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ד (פרק 6, לז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ה (פרק 6, לז:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ח (פרק 6, לח.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"א (פרק 6, לח.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ\"ב (פרק 6, לח:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ג (פרק 6, לח:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ז (פרק 6, לט.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ט (פרק 6, לט.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "נ\"א (פרק 6, לט.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"ב (פרק 6, לט.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"ד (פרק 6, לט:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"ה (פרק 6, לט:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ס' (פרק 6, לט:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ס\"ג (פרק 6, מ.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ס\"ד (פרק 6, מ.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ס\"ו (פרק 6, מ:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ס\"ח (פרק 6, מ:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ע' (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ע\"ג (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ע\"ד (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ע\"ה (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ע\"ו (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ע\"ז (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ע\"ח (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ע\"ט (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "פ' (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "פ\"א (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "פ\"ב (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "פ\"ג (פרק 6, מא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "צ\"ה (פרק 6, מב:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ק\"ב (פרק 6, מג.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ק\"ה (פרק 6, מג:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ק\"ז (פרק 6, מד.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "קי\"א (פרק 6, מד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "קי\"ב (פרק 6, מד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "קי\"ג (פרק 6, מה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "קי\"ד (פרק 6, מה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "א' (פרק 7, מה.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ב' (פרק 7, מה.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ג' (פרק 7, מה.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ד' (פרק 7, מה.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ה' (פרק 7, מה.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ו' (פרק 7, מה.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ז' (פרק 7, מה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ח' (פרק 7, מה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ט' (פרק 7, מה.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י' (פרק 7, מה:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"א (פרק 7, מה:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ב (פרק 7, מה:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ג (פרק 7, מו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ד (פרק 7, מו.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ז (פרק 7, מו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ט (פרק 7, מו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"א (פרק 7, מו:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ב (פרק 7, מז.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ה (פרק 7, מז.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ו (פרק 7, מז.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל' (פרק 7, מז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"א (פרק 7, מז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל\"ד (פרק 7, מח.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"ח (פרק 7, מט.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ\"א (פרק 7, מט:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ו (פרק 7, מט:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ\"ז (פרק 7, מט:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "מ\"ח (פרק 7, מט:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "מ\"ט (פרק 7, נ.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "נ' (פרק 7, נ.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"א (פרק 7, נ.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "נ\"ח (פרק 7, נ:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "נ\"ט (פרק 7, נ:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ס' (פרק 7, נ:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ס\"ג (פרק 7, נא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ס\"ה (פרק 7, נא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ס\"ו (פרק 7, נא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ס\"ז (פרק 7, נא.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ע' (פרק 7, נא:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "א' (פרק 8, נב.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ב' (פרק 8, נב.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ג' (פרק 8, נב.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ד' (פרק 8, נב.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ח' (פרק 8, נב:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ט' (פרק 8, נב:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י' (פרק 8, נב:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ג (פרק 8, נג.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ט\"ו (פרק 8, נג:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ט\"ז (פרק 8, נג:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ה' (פרק 9, נד.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ז' (פרק 9, נד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ח' (פרק 9, נד:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י' (פרק 9, נה:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"א (פרק 9, נה:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ב (פרק 9, נז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ג (פרק 9, נז:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ד (פרק 9, נח:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ט\"ו (פרק 9, נח:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ט\"ז (פרק 9, נט.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ז (פרק 9, נט.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "י\"ח (פרק 9, נט.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "י\"ט (פרק 9, נט:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ' (פרק 9, נט:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"א (פרק 9, נט:): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "כ\"ב (פרק 9, ס:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ו (פרק 9, ס:): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ז (פרק 9, סא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ח (פרק 9, סא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "כ\"ט (פרק 9, סא.): טקסט העוגן לא נמצא בדף - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "ל' (פרק 9, סב.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה",
+  "ל\"א (פרק 9, סב.): טקסט העוגן לא נמצא בדף - הוצמדה לסוף השורה הקרובה בפרק שלה"
+ ],
+ "sq25": 282,
+ "semicolons": 0,
+ "loneFixed": 380,
+ "glued": 181,
+ "msSqueeze": 6445,
+ "chunks": 19,
+ "noteSqueeze": 694,
+ "splits": 19,
+ "softBreaks": 14,
+ "loneMoved": 1,
+ "balanced": 1,
+ "stretched": 137,
+ "toc": [
+  {
+   "perek": "פרק ראשון",
+   "name": "מאמתי",
+   "page": 1,
+   "daf": "ב."
+  },
+  {
+   "perek": "פרק שני",
+   "name": "היה קורא",
+   "page": 12,
+   "daf": "יג."
+  },
+  {
+   "perek": "פרק שלישי",
+   "name": "מי שמתו.",
+   "page": 19,
+   "daf": "יז:"
+  },
+  {
+   "perek": "פרק רביעי",
+   "name": "תפלת השחר",
+   "page": 30,
+   "daf": "כו."
+  },
+  {
+   "perek": "פרק חמישי",
+   "name": "אין עומדין",
+   "page": 37,
+   "daf": "ל."
+  },
+  {
+   "perek": "פרק שישי",
+   "name": "כיצד מברכין",
+   "page": 44,
+   "daf": "לה."
+  },
+  {
+   "perek": "פרק שביעי",
+   "name": "שלשה שאכלו",
+   "page": 57,
+   "daf": "מה."
+  },
+  {
+   "perek": "פרק שמיני",
+   "name": "אלו דברים",
+   "page": 66,
+   "daf": "נא:"
+  },
+  {
+   "perek": "פרק תשיעי",
+   "name": "הרואה מקום",
+   "page": 69,
+   "daf": "נד."
+  }
+ ],
+ "cols": 166,
+ "lines": 5848,
+ "overlaps": [],
+ "bounds": [],
+ "fonts": [
+  "Frank 400 loaded",
+  "Vilna 400 loaded",
+  "Vilna 500 loaded",
+  "Vilna 700 loaded",
+  "Vilna 900 loaded",
+  "VilnaG normal unloaded",
+  "Franknatan normal error",
+  "Leukmey normal unloaded",
+  "Frank 700 loaded",
+  "Frank 900 loaded",
+  "LGVilna 300 unloaded",
+  "LGVilna 400 unloaded",
+  "LGVilna 500 unloaded",
+  "LGVilna 700 unloaded",
+  "LGVilnaXB 400 unloaded",
+  "LGVilnaTitle 400 unloaded",
+  "Vilna 300 loaded"
+ ],
+ "dom": {
+  "pg": 86,
+  "txt": 53,
+  "body": [
+   "NOSCRIPT#:none",
+   "svg#:none",
+   "DIV#mtop:none",
+   "DIV#mprog:none",
+   "NAV#mbot:none",
+   "DIV#mscrim:none",
+   "DIV#msheet:none",
+   "DIV#bar:none",
+   "DIV#search:none",
+   "DIV#toc:none",
+   "DIV#am:none",
+   "DIV#qa:none",
+   "DIV#ed:none",
+   "DIV#ln:none",
+   "DIV#nt:none",
+   "DIV#sg:none",
+   "DIV#sgq:none",
+   "DIV#flow:none",
+   "DIV#srcl:none",
+   "SCRIPT#:none",
+   "SCRIPT#:none",
+   "SCRIPT#:none",
+   "DIV#tzl:none",
+   "SCRIPT#:none",
+   "SCRIPT#:none",
+   "SCRIPT#:none",
+   "SCRIPT#:none",
+   "SCRIPT#:none",
+   "SCRIPT#:none",
+   "SCRIPT#:none",
+   "SCRIPT#:none",
+   "DIV#lm-layer:none",
+   "DIV#:none",
+   "DIV#prnout:block"
+  ]
+ },
+ "seconds": 85.4,
+ "console": [
+  "error: Failed to load resource: net::ERR_FAILED",
+  "error: Failed to load resource: net::ERR_FAILED",
+  "error: Failed to load resource: net::ERR_FAILED",
+  "warning: [print] עוגן תוספות: א' (פרק 5, ל.): העוגן שנקבע (\"כשרצו לצאת לדרך הקדימו להתפלל\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "warning: [print] עוגן תוספות: ב' (פרק 5, ל.): העוגן שנקבע (\"כשרצו לצאת לדרך הקדימו להתפלל\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "warning: [print] עוגן תוספות: א' (פרק 6, לד:): העוגן שנקבע (\"והמפרש חטאיו דכסוי חטאה\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+  "warning: [print] 270 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: א', ד', ה', ו', ז', ח', י', י\"א, י\"ב, י\"ג, ט\"ז, י\"ז, י\"ח, כ', כ\"ד, כ\"ה, כ\"ו, כ\"ז, כ\"ח, כ\"ט, ל', ל\"א, ל\"ב, ל\"ג, ל\"ד, ל\"ה, ל\"ז, ל\"ח, מ', מ\"א, מ\"ב, מ\"ג, מ\"ד, מ\"ה, מ\"ו, מ\"ז, נ', נ\"ג, נ\"ח, נ\"ט, ס\"ה, ס\"ח, ס\"ט, ע\"ג, ד', ה', ו', ז', ח', י', ט\"ו, ט\"ז, י\"ז, י\"ח, כ', כ\"א, כ\"ב, כ\"ד, כ\"ה, ל\"א, ל\"ב, ל\"ג, ל\"ו, מ\"ב, מ\"ג, מ\"ד, מ\"ה, מ\"ו, א', ב', ג', ד', ה', ז', י\"א, י\"ג, י\"ד, ט\"ז, י\"ז, כ', כ\"א, כ\"ב, כ\"ג, כ\"ה, כ\"ו, כ\"ז, כ\"ח, כ\"ט, ל\"א, ל\"ב, ל\"ג, ל\"ד, ל\"ה, ל\"ו, ל\"ז, מ', מ\"ב, מ\"ג, מ\"ד, מ\"ט, נ\"ב, נ\"ד, נ\"ו, נ\"ז, נ\"ט, ס\"ב, ס\"ג, ב', ג', ה', ו', ז', ח', י\"א, י\"ג, י\"ד, ט\"ז, י\"ז, י\"ח, י\"ט, כ', כ\"א, כ\"ב, כ\"ג, כ\"ד, כ\"ז, כ\"ח, ל\"א, ל\"ב, ל\"ג, ל\"ד, ג', ה', ו', י\"א, י\"ז, כ\"ב, כ\"ט, ל', ל\"א, ב', ג', ד', ה', ו', ז', ח', י\"ב, י\"ג, ט\"ו, י\"ח, י\"ט, כ', כ\"א, כ\"ב, כ\"ג, כ\"ד, כ\"ו, כ\"ח, כ\"ט, ל\"ב, ל\"ג, ל\"ד, ל\"ה, ל\"ח, מ\"א, מ\"ב, מ\"ג, מ\"ז, מ\"ט, נ\"א, נ\"ב, נ\"ד, נ\"ה, ס', ס\"ג, ס\"ד, ס\"ו, ס\"ח, ע', ע\"ג, ע\"ד, ע\"ה, ע\"ו, ע\"ז, ע\"ח, ע\"ט, פ', פ\"א, פ\"ב, פ\"ג, צ\"ה, ק\"ב, ק\"ה, ק\"ז, קי\"א, קי\"ב, קי\"ג, קי\"ד, א', ב', ג', ד', ה', ו', ז', ח', ט', י', י\"א, י\"ב, י\"ג, י\"ד, י\"ז, י\"ט, כ\"א, כ\"ב, כ\"ה, כ\"ו, ל', ל\"א, ל\"ד, ל\"ח, מ\"א, מ\"ו, מ\"ז, מ\"ח, מ\"ט, נ', נ\"א, נ\"ח, נ\"ט, ס', ס\"ג, ס\"ה, ס\"ו, ס\"ז, ע', א', ב', ג', ד', ח', ט', י', י\"ג, ט\"ו, ט\"ז, ה', ז', ח', י', י\"א, י\"ב, י\"ג, י\"ד, ט\"ו, ט\"ז, י\"ז, י\"ח, י\"ט, כ', כ\"א, כ\"ב, כ\"ו, כ\"ז, כ\"ח, כ\"ט, ל', ל\"א",
+  "warning: [print] גובה פסקה אינו כפולה של גובה השורה (m): 3.21 (טז., יחידה 1200)",
+  "warning: [print] טור גבוה מגובה הנטו: עמוד 10, י:: 1.30px (טקסט 770.1, דחיסה 0.0, מתיחה 0.0)",
+  "warning: [print] טור גבוה מגובה הנטו: עמוד 43, לד:: 0.63px (טקסט 801.0, דחיסה 0.0, מתיחה 0.0)",
+  "warning: [print] טור גבוה מגובה הנטו: עמוד 54, מג.: 1.26px (טקסט 702.2, דחיסה 0.0, מתיחה 0.0)",
+  "404: fonts/franknatan.woff2",
+  "error: Failed to load resource: the server responded with a status of 404 (Not Found)",
+  "404: fonts/franknatan.otf",
+  "error: Failed to load resource: the server responded with a status of 404 (Not Found)"
+ ]
+}

@@ -358,10 +358,21 @@ def ingest_one(slug, dry, log=print, deadline=None, limit=None):
     mk = (slug, old_sha, len(raw['edits']), len(doc['edits']), max([e.get('t') or 0 for e in raw['edits']] or [0]))
     if _BASE.get('k') != mk:
         pa, sa_raw, _ = view(path, slug, masechet, raw)
-        sa = view(path, slug, masechet, doc)[1] if gone else sa_raw
+        dchg = False
+        if gone:
+            # פרומפט 44: השער משווה אל השכבה בלי הרשומות הכפולות. נמדד שבברכות הכפולות (931)
+            # משנות את הדף (62 מקומות: אותה עריכה מוחלת בשני מקומות), ולכן מול השכבה הגולמית
+            # השער לא היה יכול לעבור לעולם - וזה מה שעצר את הקליטה מאז 15.11 15:10.
+            # הכרעת בעל הפרויקט (16.11.2026): בכפולות מטפלים לבד.
+            pd, sa, _ = view(path, slug, masechet, doc)
+            dchg = pd != pa
+            pa = pd
+        else:
+            sa = sa_raw
         _BASE.clear()
-        _BASE.update(k=mk, pa=pa, sa=sa)
+        _BASE.update(k=mk, pa=pa, sa=sa, dchg=dchg)
     pa, sa = _BASE['pa'], copy.deepcopy(_BASE['sa'])
+    rec['dups_change_page'] = _BASE.get('dchg')
     log('   מה שהמנהל רואה: %s' % json.dumps({k: sa.get(k) for k in ('n', 'done', 'taken', 'lost')}, ensure_ascii=False))
     work = os.path.join(WORK, os.path.basename(path))
     shutil.copyfile(path, work)
@@ -403,6 +414,16 @@ def ingest_one(slug, dry, log=print, deadline=None, limit=None):
     keep = [e for e in keep if (ekey(e), e.get('t')) not in noop_k]
     final = dict(doc, edits=keep)
     pb, sf, _ = view(work, slug, masechet, final)
+    if pb != pa:
+        # פרומפט 44: נמדד שבברכות הוצאת העריכות שכבר בוורד ("נקלטו") מן השכבה משנה לבדה את
+        # הדף, גם בלי לכתוב דבר: עריכות מאוחרות נשענות עליהן בהחלה. אז הן נשארות בשכבה (האתר
+        # מזהה שהן כבר בוורד ואינו מחיל אותן שוב), והשער נבדק על הוורד החדש עם כל השכבה.
+        pb2, sf2, _ = view(work, slug, masechet, doc)
+        if pb2 == pa:
+            log('   הוצאת העריכות שכבר בוורד משנה את הדף: הן נשארות בשכבה')
+            pb, sf, keep, final = pb2, sf2, list(doc['edits']), doc
+            noop, noop_k = [], set()
+            rec['kept_taken'] = True
     # הוורד לבדו: מידע בלבד (אינו חלק מן השער). בקבוצה שלא סיימה את התור הוא לעולם אינו
     # זהה, ולכן אינו נבנה בה (חוסך בנייה שלמה של המסכת בכל קבוצה)
     pc = view(work, slug, masechet, None)[0] if not more else None
@@ -709,9 +730,15 @@ def main():
         # עם הסיבה, וכל השאר ממשיך להיכתב.
         limit = a.limit or None
         sus_tried = False
+        end = _time.time() + a.budget * 60 if a.budget else None
+        first = True
         while True:
+            if not first and end and _time.time() > end - 120:
+                print('   תקציב הזמן של הריצה נגמר. הריצה הבאה ממשיכה מכאן')
+                break
+            first = False
             t_start = _time.time()
-            deadline = t_start + a.budget * 60 if a.budget else None
+            deadline = end
             try:
                 rec = ingest_one(slug, a.dry, deadline=deadline, limit=limit)
             except Exception as e:
@@ -745,7 +772,13 @@ def main():
                     why.append('היתה יוצרת שורת דובר יתומה')
                 hold_add(slug, tried[0], 'הכשילה את שער הוורד: ' + (', '.join(why) or 'לא ידוע'))
                 print('   העריכה %s מוחזקת בשכבה (הכשילה את השער). ממשיך בלעדיה' % tried[0])
-                limit = a.limit or None
+                limit = 1
+                continue
+            if rec.get('gate') == 'עבר' and rec.get('more') and not a.dry:
+                # הקבוצה נשמרה ויש עוד: ממשיכים באותה ריצה, והקבוצה גדלה כל עוד השער עובר
+                sus_tried = False
+                limit = (limit * 2) if limit else None
+                print('   ממשיך לקבוצה הבאה%s' % (' (עד %d עריכות)' % limit if limit else ''))
                 continue
             break
         if rec.get('gate') in ('נכשל', 'שגיאה'):

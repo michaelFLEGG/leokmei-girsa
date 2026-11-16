@@ -161,7 +161,7 @@
     document.addEventListener('click',function(e){if(!menu.contains(e.target))menu.style.display='none'},true);
     /* כל שינוי בנתוני הדף (עריכה, קבלת הצעה, פיצול) - עימוד חוזר */
     document.addEventListener('lg-dv',function(){if(S.open&&!S.editing)pmSoon()});
-    window.addEventListener('resize',function(){if(S.open&&S.zoom==='fit')pmZoom('fit')})}
+    window.addEventListener('resize',function(){if(!S.open)return;pmFrameSize(S.fr);if(S.zoom==='fit')pmZoom('fit')})}
 
   /* ---------- פתיחה, טעינה, עימוד ---------- */
   function pmProfile(){return (P.paper==='a4'?'a4':'b5')+(+P.big?'lg':'')}
@@ -197,11 +197,21 @@
     q.set('from',D.pages[a].daf);q.set('to',D.pages[b].daf);q.set('pk',pk);
     q.set('tos',+P.tos?'1':'0');q.set('duplex','0');q.set('profile',pmProfile());
     return location.pathname.split('/').pop()+'?'+q.toString()}
+  /* מסך צר (טלפון, חלון קטן): עיצוב האתר לטלפון משנה את הגופן והרוחב של הסרגל, והמנוע היה מודד עליו עימוד אחר.
+     לכן המסגרת תמיד ברוחב של מחשב (FRW), ומוקטנת כגוש להתאים למסך. העימוד זהה להדפסה גם בטלפון */
+  var FRW=1100;
+  function pmFrameSize(fr){
+    var box=document.getElementById('pmmain');if(!fr||!box)return;
+    var w=box.clientWidth||innerWidth;
+    if(w>=FRW){fr.style.cssText='';return}
+    var k=w/FRW,h=(box.clientHeight||innerHeight)/k;
+    fr.style.cssText='flex:none;width:'+FRW+'px;height:'+h+'px;transform:scale('+k+');transform-origin:top right;position:absolute;top:0;right:0'}
   function pmStat(t,busy){var e=document.getElementById('pm-stat');if(!e)return;e.textContent=t||'';e.classList.toggle('busy',!!busy)}
   function pmLoad(){
     /* מסגרת חדשה בכל טעינה: המסמך הקודם (פרק אחר, פרופיל אחר) נזרק מיד ואינו יכול "לסיים" במקום החדש */
     var old=document.getElementById('pmf'),fr=document.createElement('iframe');fr.id='pmf';fr.title='מצב דפוס';
     old.parentNode.replaceChild(fr,old);
+    pmFrameSize(fr);
     S.fr=fr;S.busy=true;S.t0=performance.now();S.report=null;S.pages=[];S.issues=[];
     pmStat('מעמד...',1);
     fr.src=pmUrl();
@@ -286,6 +296,7 @@
         fp.style.position='absolute';fp.style.left='0';fp.style.top='0';fp.style.transformOrigin='0 0';fp.style.transform='scale('+sh+')';
         var cl=c.cloneNode(true);cl.style.left='0';cl.style.top='0';cl.style.height=h+'px';
         [].forEach.call(cl.querySelectorAll('[id]'),function(x){x.removeAttribute('id')});   /* בלי מזהים כפולים */
+        [].forEach.call(cl.querySelectorAll('[data-u]'),function(x){x.setAttribute('data-cu',x.getAttribute('data-u'));x.removeAttribute('data-u')});   /* הממצאים והעריכה - בעמודים עצמם */
         fp.appendChild(cl);wrap.appendChild(fp);
         var nm=doc.createElement('div');nm.className='pmcn';nm.textContent=(pi+1)+(ci===0?' ימ\'':' שמ\'');wrap.appendChild(nm);
         wrap.setAttribute('data-pg',pi+1);
@@ -527,7 +538,8 @@
       var row=p.closest('.row'),u=+row.getAttribute('data-u'),li=p.tagName==='P'?[].indexOf.call(row.querySelectorAll(':scope > .main > p'),p)+1:0;
       var menu=document.getElementById('pmmenu'),fr=S.fr.getBoundingClientRect();
       menu.innerHTML='<div data-a="later">לבדוק אחר כך</div><div data-a="note">לבדוק אחר כך, עם הערה...</div><div data-a="edit">ערוך את השורה</div><div data-a="main">פתח בדף הרגיל</div>';
-      menu.style.top=(fr.top+e.clientY)+'px';menu.style.left=(fr.left+e.clientX)+'px';menu.style.display='block';
+      var kk=fr.width/(S.fr.offsetWidth||fr.width||1);
+      menu.style.top=(fr.top+e.clientY*kk)+'px';menu.style.left=(fr.left+e.clientX*kk)+'px';menu.style.display='block';
       menu.onclick=function(ev){var a=ev.target.getAttribute('data-a');menu.style.display='none';
         if(a==='later'||a==='note'){var note=a==='note'?(prompt('הערה:','')||''):'';
           var daf='';try{var pg=S.pages[pmPageOf(p)-1];daf=(S.report.pages[pmPageOf(p)-1]||{}).daf0||''}catch(x){}

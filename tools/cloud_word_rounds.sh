@@ -33,7 +33,9 @@ while true; do
   if [ $((left - 12)) -lt "$b" ]; then b=$((left - 12)); fi
   if [ "$b" -lt 3 ]; then echo "אין זמן לקבוצה נוספת בריצה הזו. הריצה הבאה תמשיך."; break; fi
   echo "=== קבוצה $round (עד $b דקות החלה, נשארו $left דקות לריצה)"
-  python tools/cloud_word.py --budget "$b"
+  # קבוצה ראשונה קטנה (40 עריכות), וגדלה כל עוד השער עובר. נמדד 16.11: קבוצה של 25 דקות (531 עריכות)
+  # נכשלה בשער, והריצה כולה לא שמרה דבר
+  python tools/cloud_word.py --budget "$b" --limit "${CW_LIMIT:-40}"
   rc=$?
   save || { code=1; break; }
   python tools/cloud_word.py --tombstones || true

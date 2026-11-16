@@ -40,6 +40,64 @@
     "flagged": 0,
     "questions": 71
    }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-16T00:40:22Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nazir-p03-u01",
+    "nazir-p03-u02",
+    "nazir-p03-u03",
+    "nazir-p03-u04",
+    "nazir-p03-u05"
+   ],
+   "result": {
+    "generated": 104,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 59
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-16T00:40:23Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nazir-p04-u01",
+    "nazir-p04-u02",
+    "nazir-p04-u03",
+    "nazir-p04-u04",
+    "nazir-p04-u05",
+    "nazir-p04-u06",
+    "nazir-p04-u07",
+    "nazir-p04-u08"
+   ],
+   "result": {
+    "generated": 202,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 106
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-16T00:40:23Z",
+   "unc_done": true,
+   "handoff_units": [
+    "nazir-p05-u01",
+    "nazir-p05-u02",
+    "nazir-p05-u03"
+   ],
+   "result": {
+    "generated": 58,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 41
+   }
   }
  },
  "created": "2026-11-08T12:39:45Z",
@@ -55,7 +113,25 @@
    "mean": 0.463,
    "n": 11,
    "at": "2026-11-08T18:40:05Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.305,
+   "n": 9,
+   "at": "2026-11-16T00:40:22Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.335,
+   "n": 15,
+   "at": "2026-11-16T00:40:22Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.229,
+   "n": 5,
+   "at": "2026-11-16T00:40:23Z"
   }
  ],
- "updated": "2026-11-08T18:40:06Z"
+ "updated": "2026-11-16T00:40:23Z"
 }

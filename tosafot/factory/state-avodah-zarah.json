@@ -64,6 +64,25 @@
     "flagged": 2,
     "questions": 79
    }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-16T00:40:22Z",
+   "unc_done": true,
+   "handoff_units": [
+    "avodah-zarah-p04-u01",
+    "avodah-zarah-p04-u02",
+    "avodah-zarah-p04-u03",
+    "avodah-zarah-p04-u04",
+    "avodah-zarah-p04-u05"
+   ],
+   "result": {
+    "generated": 102,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 99
+   }
   }
  },
  "created": "2026-11-15T18:39:46Z",
@@ -85,7 +104,13 @@
    "mean": 0.466,
    "n": 9,
    "at": "2026-11-15T18:39:47Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.419,
+   "n": 9,
+   "at": "2026-11-16T00:40:21Z"
   }
  ],
- "updated": "2026-11-15T18:39:47Z"
+ "updated": "2026-11-16T00:40:22Z"
 }

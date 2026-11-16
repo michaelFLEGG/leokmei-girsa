@@ -1,0 +1,1 @@
+ - 15.11.2026 UTC - הושלמה avodah-zarah-p04-u05. finalize: 2 תוספות, 0 לעיון המנהל. מנועים: {"write": ["sonnet"], "rv": "haiku"}.

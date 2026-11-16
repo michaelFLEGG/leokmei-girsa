@@ -2273,6 +2273,35 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   if _drop:
       for _p in pages: _p['units']=[u for u in _p['units'] if id(u) not in _drop]
       qa.append(('טופל בתצוגה: עיטור לפני משנה','%d עיטורים שלפני משנה אינם מוצגים, ובמקומם רווח. הוורד לא נגע'%len(_drop)))
+  # פרומפט 48 סבב ב (16.11.2026, משימה 060): קודי עיטור של גופני BA (למשל "F...E" או "FGH...CGE" סביב
+  # "הדרן עלך" בברכות, ב"ב, ב"ק, גיטין, חגיגה ומו"ק) הם אותיות לטיניות שהגופן מצייר כקישוט. הגופן אינו
+  # באתר, ולכן בדף ובהדפסה נראו "Eהדרן עלך היה קוראF". כאן מוסרות אותיות לטיניות גדולות (רצף, עם רווחים
+  # ונקודות שביניהן) בקצה הטקסט הנראה של יחידה עברית. הוורד אינו נכתב. הבודק בהדפסה מונה כל אות לטינית.
+  _ORN_RUN=r'[A-H](?:[A-H\s.]*[A-H])?'
+  def _orn_clean(h):
+      if not isinstance(h,str): return h
+      parts=re.split(r'(<[^>]+>)',h)
+      txt=[k for k,x in enumerate(parts) if x and not x.startswith('<') and x.strip()]
+      if not txt or not re.search(r'[\u05d0-\u05ea]',''.join(parts[k] for k in txt)): return h
+      a,b=txt[0],txt[-1]
+      m=re.match(r'^\s*'+_ORN_RUN+r'\s*(?=[\u0590-\u05ff"\'(\[]|$)',parts[a])
+      if m and (m.end()<len(parts[a]) or len(txt)>1): parts[a]=parts[a][m.end():]
+      b=[k for k,x in enumerate(parts) if x and not x.startswith('<') and x.strip()][-1] if any(x and not x.startswith('<') and x.strip() for x in parts) else b
+      m=re.search(r'(?:(?<=[\u0590-\u05ff.,:;!?)\]\'"])|^)\s*'+_ORN_RUN+r'\s*$',parts[b])
+      if m and (m.start()>0 or b!=a): parts[b]=parts[b][:m.start()]
+      return ''.join(parts)
+  n_orn=0
+  for _p in pages:
+      for _u in _p['units']:
+          _old=_u.get('a')
+          _u['a']=_orn_clean(_old)
+          if _u['a']!=_old: n_orn+=1
+          for _ln in (_u.get('l') or []):
+              if len(_ln)>1 and isinstance(_ln[1],str):
+                  _o=_ln[1]; _ln[1]=_orn_clean(_o)
+                  if _ln[1]!=_o: n_orn+=1
+  if n_orn:
+      qa.append(('טופל בתצוגה: קודי עיטור לטיניים','%d יחידות שבקצה הטקסט שלהן קוד עיטור לטיני (כמו F...E סביב הדרן) - הקוד אינו מוצג. הוורד לא נגע'%n_orn))
   data={'mbt':mbt,'mnseg':mnseg,'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 

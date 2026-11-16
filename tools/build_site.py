@@ -865,6 +865,44 @@ def blocks_sha(blocks):
                         .encode('utf-8')).hexdigest()
 
 
+
+def _syn_dh_edits(pages, slug, ed_stat, qa):
+    """עריכות טקסט של המנהל על ד"ה משנה אוטומטי (u7xxxxx.0). העריכה האחרונה לכל מפתח, באותו דף בלבד."""
+    path = os.path.join(EDITS_DIR, slug + '.json')
+    if not os.path.exists(path):
+        return
+    eds = json.load(io.open(path, encoding='utf-8')).get('edits') or []
+    last = {}
+    for e in sorted(eds, key=lambda x: x.get('t') or 0):
+        k = str(e.get('k') or '')
+        m = re.match(r'^u(7\d{5})\.0$', k)
+        if not m or e.get('op') or e.get('del') or 'now' not in e:
+            continue
+        last[k] = (int(m.group(1)), e)
+    n = 0
+    for k, (uid, e) in last.items():
+        hit = [u for p in pages if (p.get('daf') or '').strip() == (e.get('daf') or '').strip()
+               for u in p['units'] if u.get('id') == uid and u.get('syn') and u.get('k') == 'dh']
+        if len(hit) != 1 or not _wn(e.get('now') or ''):
+            continue
+        u = hit[0]
+        h = e.get('nowH')
+        if h is None:
+            h = html.escape(e['now'], quote=False)
+        u['a'] = h.rstrip() + ' '
+        u['s'] = ' '.join(c for c in (u.get('s') or '').split() if c != 'dhauto')
+        u.pop('syn', None)
+        n += 1
+        if isinstance(ed_stat, dict):
+            b = ed_stat.get('b')
+            if isinstance(b, list) and e.get('t') not in b:
+                b.append(e.get('t'))
+                b.sort()
+                ed_stat['lost'] = max(0, (ed_stat.get('lost') or 0) - 1)
+                ed_stat['done'] = (ed_stat.get('done') or 0) + 1
+    if n:
+        qa.append(('ד"ה משנה שנערך', '%d ד"ה משנה אוטומטיים קיבלו את הנוסח שכתב המנהל' % n))
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
@@ -919,6 +957,15 @@ def _apply_site_edits(pages, slug, qa):
     # סדר הזמן: שינוי מבנה נשען על הנוסח שאחרי התיקון שקדם לו (כמו בדפדפן)
     _rec = [x for x in _rec if x.get('t') not in _abs]
     edits = sorted((doc.get('edits') or []) + _rec, key=lambda e: e.get('t') or 0)
+    # פרומפט 47 (16.11.2026): מצבה ({"k", "del": 1, "t"}) אינה עריכה. היא מבטלת כל רשומה באותו מפתח שזמנה
+    # אינו מאוחר ממנה (כמו בשרת), ואינה מוחלת בעצמה. בלי זה רשומה בלי was/now עלולה לנחות על שורה ריקה.
+    _tomb = {}
+    for _x in edits:
+        if _x.get('del') and _x.get('k'):
+            _tomb[_x['k']] = max(_tomb.get(_x['k'], 0), _x.get('t') or 0)
+    if _tomb:
+        edits = [_x for _x in edits if not _x.get('del')
+                 and not (_x.get('k') in _tomb and (_x.get('t') or 0) <= _tomb[_x.get('k')])]
     if not edits:
         return {'n': 0, 'taken': 0, 'lost': 0, 'done': 0, 'b': sorted(_abs)}
     slots = _slots(pages)
@@ -2120,6 +2167,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       mishna_semantics.check_daf_order(pages,qa)
   except Exception as _e:
       qa.append(('סמנטיקת משנה','לא רצה: %s'%_e))
+  # פרומפט 47 (16.11.2026): ד"ה משנה אוטומטי (dhauto, מפתח u700000+n) נוצר רק כאן, אחרי תיקוני האתר, ולכן
+  # עריכה של המנהל בשורה הזו לא הוחלה בבנייה (ל., לד., יג.): הגולש וההדפסה ראו את מילות המשנה, והמנהל את נוסחו
+  # או את הנוסח הישן. כאן היא מוחלת על היחידה הסינתטית שבאותו דף ובאותו מפתח, והשורה נעשית ד"ה רגיל.
+  try:
+      _syn_dh_edits(pages,os.path.basename(out_path)[:-5],ed_stat,qa)
+  except Exception as _e:
+      qa.append(('ד"ה משנה שנערך','לא הוחל: %s'%_e))
   mbt=mishna_box.table(pages)     # מחדש: תיקון מספר משנה שנעשה באתר משנה את הטבלה
 
   # ג-ג: בדיקות בקרה נוספות, עם קישור למקום המדויק (tools/qa_checks.py)

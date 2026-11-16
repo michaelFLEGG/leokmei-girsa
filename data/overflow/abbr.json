@@ -173,7 +173,7 @@
   {
    "long": "יום טוב",
    "short": "יו\"ט",
-   "nLong": 42,
+   "nLong": 43,
    "nShort": 163,
    "kind": "abbr"
   },
@@ -202,7 +202,7 @@
    "long": "תלמוד לומר",
    "short": "ת\"ל",
    "nLong": 49,
-   "nShort": 548,
+   "nShort": 547,
    "kind": "abbr"
   },
   {
@@ -348,7 +348,7 @@
   {
    "long": "שלש",
    "short": "ג'",
-   "nLong": 534,
+   "nLong": 533,
    "nShort": 961,
    "kind": "num"
   },
@@ -376,7 +376,7 @@
   {
    "long": "ארבעה",
    "short": "ד'",
-   "nLong": 359,
+   "nLong": 360,
    "nShort": 597,
    "kind": "num"
   },
@@ -397,7 +397,7 @@
   {
    "long": "ששה",
    "short": "ו'",
-   "nLong": 218,
+   "nLong": 219,
    "nShort": 94,
    "kind": "num"
   },

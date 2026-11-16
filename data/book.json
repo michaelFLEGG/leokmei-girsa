@@ -1,1 +1,34 @@
-{"slugs": ["berakhot"], "note": "פרומפט 51: מסכתות שהספר שלהן מתקפל בלילה"}
+{
+ "slugs": [
+  "berakhot",
+  "shabbat",
+  "kiddushin",
+  "eruvin",
+  "pesachim",
+  "yoma",
+  "beitzah",
+  "rosh-hashanah",
+  "taanit",
+  "megillah",
+  "moed-katan",
+  "chagigah",
+  "yevamot",
+  "nedarim",
+  "nazir",
+  "sotah",
+  "gittin",
+  "bava-kamma",
+  "bava-metzia",
+  "makkot",
+  "shevuot",
+  "zevachim",
+  "menachot",
+  "chullin",
+  "arakhin",
+  "temurah",
+  "keritot",
+  "meilah",
+  "niddah"
+ ],
+ "note": "פרומפט 51: מסכתות שהספר שלהן (input/docx) נכתב רק בקיפול הלילי. נוספה מסכת רק אחרי הרצה יבשה עוברת (tools/fold.py --dry). חסרות עדיין: bava-batra, bekhorot (השער), sukkah, ketubot (מוצמדות לצילום), sanhedrin, avodah-zarah, horayot, shekalim, tamid (כמה קבצים / קובץ משותף)."
+}

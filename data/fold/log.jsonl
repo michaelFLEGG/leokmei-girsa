@@ -1,3 +1,32 @@
 {"when": "2026-11-16T19:07:51Z", "slug": "berakhot", "file": "ברכות בר מצוה יהודה.docx", "layer": 5163, "changed_pages": 107, "rekeyed": 165, "result": "עבר", "reverted": ["מ:", "מא.", "מב.", "נא:", "נב.", "נב:", "נג."], "remain": 324, "retired": 5004, "tlushot": 516, "dups": [2, 2], "secs": 154}
 {"when": "2026-11-16T19:13:06Z", "slug": "shabbat", "file": "שבת.docx", "layer": 2162, "changed_pages": 58, "rekeyed": 27, "result": "עבר", "reverted": ["ב.", "ג.", "ה:", "יט:"], "remain": 127, "retired": 2062, "tlushot": 643, "dups": [2, 2], "secs": 171}
 {"when": "2026-11-16T19:15:58Z", "slug": "kiddushin", "file": "שיננא קידושין.docx", "layer": 8, "changed_pages": 0, "rekeyed": 0, "result": "עבר", "reverted": [], "remain": 0, "retired": 8, "tlushot": 7, "dups": [0, 0], "secs": 7}
+{"when": "2026-11-17T07:58:59Z", "slug": "berakhot", "file": "ברכות בר מצוה יהודה.docx", "layer": 313, "changed_pages": 12, "rekeyed": 148, "result": "עבר", "reverted": ["מ:", "מא.", "מב.", "נא:", "נב.", "נב:", "נג."], "remain": 301, "retired": 160, "tlushot": 6, "dups": [2, 2], "secs": 35}
+{"when": "2026-11-17T07:59:35Z", "slug": "shabbat", "file": "שבת.docx", "layer": 831, "changed_pages": 30, "rekeyed": 49, "result": "עבר", "reverted": ["ב.", "ה:", "יט.", "יט:"], "remain": 150, "retired": 730, "tlushot": 25, "dups": [2, 2], "secs": 84}
+{"when": "2026-11-17T08:00:59Z", "slug": "kiddushin", "file": "שיננא קידושין.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:00Z", "slug": "eruvin", "file": "עירובין.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:00Z", "slug": "pesachim", "file": "שיננא פסחים ניסן פו.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:00Z", "slug": "yoma", "file": "שיננא יומא.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:00Z", "slug": "beitzah", "file": "שיננא ביצה.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:00Z", "slug": "rosh-hashanah", "file": "שיננא ראש השנה.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:01Z", "slug": "taanit", "file": "שיננא תענית.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:01Z", "slug": "megillah", "file": "שיננא מגילה.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:01Z", "slug": "moed-katan", "file": "שיננא מועד קטן.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:01Z", "slug": "chagigah", "file": "שיננא חגיגה.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:01Z", "slug": "yevamot", "file": "שיננא יבמות.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:01Z", "slug": "nedarim", "file": "נדרים שיננא לאוקמי גירסא ערה פו.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:01Z", "slug": "nazir", "file": "שיננא נזיר (משוחזר).docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:02Z", "slug": "sotah", "file": "סוטה שיננא.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:02Z", "slug": "gittin", "file": "שיננא גיטין2.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:02Z", "slug": "bava-kamma", "file": "שיננא ב''ק.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:02Z", "slug": "bava-metzia", "file": "שיננא ב''מ פסח שני פד  2.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:02Z", "slug": "makkot", "file": "אחרון אייר פה שיננא מכות לדף היומי.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:02Z", "slug": "shevuot", "file": "שיננא שבועות .docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:02Z", "slug": "zevachim", "file": "זבחים.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:03Z", "slug": "menachot", "file": "מנחות.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:03Z", "slug": "chullin", "file": "חולין לקלוד שיננא.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:03Z", "slug": "arakhin", "file": "ערכין.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:03Z", "slug": "temurah", "file": "תמורה.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:03Z", "slug": "keritot", "file": "כריתות.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:03Z", "slug": "meilah", "file": "מעילה.docx", "layer": 0, "result": "ריק"}
+{"when": "2026-11-17T08:01:03Z", "slug": "niddah", "file": "נדה.docx", "layer": 0, "result": "ריק"}

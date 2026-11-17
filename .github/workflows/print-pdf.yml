@@ -56,11 +56,14 @@ jobs:
             fi
           done
           ls -la _work/out
+      # פרומפט 55: הקבצים נשמרים גם כשבדיקה נכשלה (למשל שוליים), כדי שאפשר יהיה לראות מה נכשל
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: pdf-${{ github.event.inputs.slug }}
           path: _work/out
       - name: שמירה בענף prints
+        if: always()
         run: |
           set -e
           git config user.name "leokmei-print"

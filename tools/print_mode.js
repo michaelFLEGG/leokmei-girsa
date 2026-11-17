@@ -16,7 +16,7 @@
   function pmMsg(m){try{if(typeof flash==='function')flash(m);else if(typeof toast==='function')toast(m,3000)}catch(e){}}
   var CARD_MM=85.6;                             /* רוחב כרטיס אשראי (ISO 7810) לכיול "גודל טבעי" */
   var S={open:false,fr:null,busy:false,dirty:false,report:null,pk:null,view:'page',spread:false,zoom:'fit',z:1,
-         pages:[],issues:[],ii:-1,pend:0,bal:0,staleFrom:0,cross:0,badges:{},mv:{},base:{},cmdMs:[],kbuf:'',later:pmLs('lg-pm-later-'+(typeof SLUG!=='undefined'?SLUG:''),[]),t0:0,lastMs:0,anchor:null};
+         pages:[],issues:[],ii:-1,pend:0,bal:0,staleFrom:0,cross:0,badges:{},mv:{},base:{},cmdMs:[],kbuf:'',ok:pmLs('lg-pm-ok-'+(typeof SLUG!=='undefined'?SLUG:''),{}),later:pmLs('lg-pm-later-'+(typeof SLUG!=='undefined'?SLUG:''),[]),t0:0,lastMs:0,anchor:null};
   var P=pmLs('lg-pm-prefs',{paper:'b5',big:1,tos:1,view:'page',spread:0,zoom:'fit',z:1,auto:0});
   var PXMM=pmLs('lg-pm-pxmm',0);              /* פיקסלים למילימטר במסך הזה (אחרי כיול). 0 = לא כויל: 96/25.4 */
   S.view=P.view||'page';S.spread=!!P.spread;S.zoom=P.zoom||'fit';S.z=+P.z||1;
@@ -100,7 +100,7 @@
       '#pmcols .pmcn{position:absolute;right:-9mm;top:0;font:10px Frank,serif;color:#6b6b6b}'+
       '.pmmk{position:absolute;width:12px;height:12px;margin-top:-1px;border-radius:50%;cursor:pointer;z-index:5;'+
         'font:bold 9px/12px sans-serif;text-align:center;color:#fff;background:#c0392b;box-shadow:0 0 0 1.5px #fff}'+
-      '.pmmk.k-hole,.pmmk.k-bal{background:#b9770e}.pmmk.k-ov{background:#7d3c98}.pmmk.k-later{background:#1d6fa5}.pmmk.cur{outline:2px solid #1d3557;outline-offset:2px}'+
+      '.pmmk.k-hole,.pmmk.k-bal{background:#b9770e}.pmmk.k-ov{background:#7d3c98}.pmmk.k-later{background:#1d6fa5}.pmmk.k-done{background:#2e7d3c}.pmmk.cur{outline:2px solid #1d3557;outline-offset:2px}'+
       '.pmready{position:absolute;z-index:5;font:bold 12px Frank,serif;color:#2e7d3c;border:1px solid #2e7d3c;border-radius:4px;padding:1px 6px;background:#fff}'+
       '.pmdelta{position:absolute;z-index:6;font:bold 11px sans-serif;color:#1d3557;border:1px solid #1d3557;border-radius:4px;padding:0 4px;white-space:nowrap}'+
       '.pmdelta.up{color:#a3361f;border-color:#a3361f}.pmdelta.dn{color:#2e7d3c;border-color:#2e7d3c}.pmdelta.eq{color:#6b6b6b;border-color:#b8b0a0}'+
@@ -133,7 +133,8 @@
         '<span class="pmg">עמוד <input type="number" id="pm-pg" min="1" value="1" title="עמוד בקובץ"> <span id="pm-pgn">/ -</span></span>'+
         '<span class="pmg pmwide">דף <select id="pm-daf" title="קפיצה לדף"></select></span>'+
         '<span class="pmsep"></span>'+
-        '<button id="pm-next" title="הממצא הבא (N)">-</button>'+
+        '<button id="pm-next" title="הממצא הבא, והסמן כבר בשורה (F4, ובלי עריכה גם N)">-</button>'+
+        '<button id="pm-ok" title="הממצא הזה בסדר: לא יוצג עוד, וממשיכים לבא (Shift+F4)">✓ בסדר</button>'+
         '<button id="pm-later" class="pmwide" title="רשימת \'לבדוק אחר כך\'">לבדוק אחר כך <span id="pm-ln">0</span></button>'+
         '<button id="pm-done" title="עימוד מלא של הפרק אחרי התיקונים (F9)">השלם עימוד</button>'+
         '<select id="pm-auto" class="pmwide" title="השלמת עימוד לבד אחרי שקט"><option value="0">השלמה ידנית</option><option value="5">לבד אחרי 5 שנ\'</option><option value="15">לבד אחרי 15 שנ\'</option><option value="30">לבד אחרי 30 שנ\'</option></select>'+
@@ -162,6 +163,7 @@
     $p('pm-pg').addEventListener('change',function(){pmGoPage(+this.value)});
     $p('pm-daf').addEventListener('change',function(){pmGoDaf(this.value)});
     $p('pm-next').addEventListener('click',function(){pmNext()});
+    $p('pm-ok').addEventListener('click',function(){pmOkNext()});
     $p('pm-later').addEventListener('click',function(){$p('pmside').classList.toggle('on');pmSide()});
     $p('pm-print').addEventListener('click',pmPrint);
     $p('pm-done').addEventListener('click',function(){pmComplete()});
@@ -429,16 +431,37 @@
       if(!el&&i.page&&S.pages[i.page-1])el=S.pages[i.page-1];
       if(!el&&i.src==='engine')el=S.pages[0];
       i.el=el;if(el&&!i.page)i.page=pmPageOf(el)});
-    L=L.filter(function(i){return i.el});
+    L=L.filter(function(i){return i.el&&!(i.src!=='later'&&S.ok[pmSig(i)])});
     L.sort(function(a,b){return (a.page-b.page)||(a.el.getBoundingClientRect().top-b.el.getBoundingClientRect().top)});
     S.issues=L;S.ii=-1;
-    var nb=L.filter(function(i){return i.src!=='later'}).length;
-    var bt=document.getElementById('pm-next');bt.textContent=nb?(nb+' לבדיקה ‹ הבא'):'מוכן לדפוס ✓';bt.classList.toggle('ok',!nb);
+    var nb=pmNextBtn();
     document.getElementById('pm-ln').textContent=S.later.length;
     L.forEach(function(i,k){var m=doc.createElement('div');m.className='pmmk k-'+(KIND[i.type]||'e');m.textContent=i.src==='later'?'?':'!';
       m.title=i.type+(i.detail?'\n'+i.detail:'')+(HINT[i.type]?'\n'+HINT[i.type]:'');m.setAttribute('data-i',k);i.mk=m;out.appendChild(m)});
     if(!nb&&S.pages[0]){var rd=doc.createElement('div');rd.className='pmready';rd.textContent='מוכן לדפוס';out.appendChild(rd);S.readyEl=rd}else S.readyEl=null;
     pmIssuesPos();pmSide()}
+  /* 17.11.2026: הכפתור "N לבדיקה ‹ הבא" סופר רק מה שעוד לא סודר ולא אושר */
+  function pmNextBtn(){var nb=(S.issues||[]).filter(function(i){return i.src!=='later'&&!i.done}).length;
+    var bt=document.getElementById('pm-next');if(bt){bt.textContent=nb?(nb+' לבדיקה ‹ הבא'):'מוכן לדפוס ✓';bt.classList.toggle('ok',!nb)}return nb}
+  /* ממצא שמיכאל אישר "בסדר": לא מוצג עוד בפרק (נשמר במכשיר), גם אחרי השלמת עימוד */
+  function pmSig(i){return i.type+'|'+(i.u||'')+'|'+(i.li||0)+'|'+String(i.detail||'').replace(/\d+/g,'#')}
+  function pmOkNext(){var i=S.curIssue;if(!i||i.src==='later'){pmNext();return}
+    S.ok[pmSig(i)]=1;pmLsSet('lg-pm-ok-'+SLUG,S.ok);i.done=1;if(i.mk){i.mk.classList.add('k-done');i.mk.textContent='✓'}
+    pmNextBtn();pmNext()}
+  /* אחרי עריכה: הממצאים של היחידות שנערכו נבדקים מיד, באותה מדידה של המנוע. מה שסודר מסומן ✓ ויוצא מן הספירה */
+  function pmRecheck(uids){
+    var w=pmWin(),X=w&&w.__PRNX,doc=pmDoc();if(!X||!doc||!S.issues)return;var fixed=0,U={};uids.forEach(function(u){U[u]=1});
+    S.issues.forEach(function(i){if(i.done||!i.u||!U[i.u])return;
+      var el=pmFindRow(doc,i.u,i.li||0);if(el)i.el=el;var row=el&&(el.closest?el.closest('.row'):null),ok=false;
+      try{
+        if(!row)ok=true;
+        else if(i.type==='כותרת שנשברה'){var m=row.querySelector(':scope > .main');ok=!m||X.headNL(m)<2}
+        else if(i.type==='אות לועזית'){ok=!/[A-Za-z]/.test((row.textContent||'').replace(/leokmei\.com/g,''))}
+        else if(i.type==='שורה שהתארכה'){var p=row.querySelectorAll(':scope > .main > p')[(i.li||1)-1];var f=p&&X.lineInfo(p);ok=!f||f.n<2}
+        else if(i.type==='מילה בודדת בשורה אחרונה'){ok=[].every.call(row.querySelectorAll(':scope > .main > p'),function(p){var f=X.lineInfo(p);return !f||f.n<2||f.text.slice(f.start).trim().split(/\s+/).length>1})}
+        else return}catch(e){return}
+      if(ok){i.done=1;fixed++;if(i.mk){i.mk.classList.add('k-done');i.mk.textContent='✓';i.mk.title='סודר: '+i.type}}});
+    if(fixed){pmNextBtn();pmStat('סודר ✓'+(fixed>1?' '+fixed+' ממצאים':'')+' · F4 לבא',0)}}
   function pmPageOf(el){for(var i=0;i<S.pages.length;i++)if(S.pages[i].contains(el))return i+1;return 0}
   function pmIssuesPos(){
     var doc=pmDoc();if(!doc)return;var out=doc.getElementById('prnout');if(!out)return;
@@ -451,22 +474,30 @@
       i.mk.style.left=((pr.right-o.left)/z+6)+'px'});
     /* "מוכן לדפוס": בשוליים העליונים של העמוד הראשון, בפינה השמאלית (אין שם טקסט) */
     if(S.readyEl&&S.pages[0]){var pr0=S.pages[0].getBoundingClientRect();S.readyEl.style.top=((pr0.top-o.top)/z+6)+'px';S.readyEl.style.left=((pr0.left-o.left)/z+8)+'px'}}
+  /* 17.11.2026: "הבא" ממשיך מן השורה שבה אתה עומד (או מן הממצא הנוכחי) אל הממצא הבא שעוד לא סודר, ומכניס את הסמן לשורה
+     מיד - בלי לחיצה נוספת. "שורה שהתארכה" פותחת את חלונית ההצעות */
   function pmNext(){
-    var L=S.issues.filter(function(i){return i.src!=='later'});if(!L.length){pmMsg('מוכן לדפוס: אין ממצאים בפרק');return}
-    var doc=pmDoc(),y=(S.fr.clientHeight||600)*0.3;
-    var nx=L.find(function(i){return i.el.getBoundingClientRect().top>y+4})||L[0];
-    pmFocusIssue(nx)}
+    var doc=pmDoc();var L=S.issues.filter(function(i){return i.src!=='later'&&!i.done});if(!L.length){pmMsg('מוכן לדפוס: אין ממצאים פתוחים בפרק');return}
+    L.forEach(function(i){if(i.el&&!i.el.isConnected&&i.u){var e=pmFindRow(doc,i.u,i.li||0);if(e)i.el=e}});
+    var ref=S.editing&&S.editing.p.isConnected?S.editing.p:(S.curIssue&&S.curIssue.el&&S.curIssue.el.isConnected?S.curIssue.el:null);
+    var y=ref?ref.getBoundingClientRect().top:(S.fr.clientHeight||600)*0.3,pg=ref?pmPageOf(ref):0;
+    var nx=L.find(function(i){if(i===S.curIssue)return false;var t=i.el.getBoundingClientRect().top;return pg?(i.page>pg||(i.page===pg&&t>y+4)):t>y+4})||L[0];
+    pmIssueClick(nx)}
   function pmFocusIssue(i){
+    S.curIssue=i;
     if(S.view==='col'){S.view='page';pmApplyView()}
     S.issues.forEach(function(x){if(x.mk)x.mk.classList.toggle('cur',x===i)});
     pmScrollTo(i.el,'center');
     try{i.el.classList.add('pmflash');setTimeout(function(){i.el.classList.remove('pmflash')},1600)}catch(e){}
     pmStat(i.type+(i.detail?': '+i.detail:''),0)}
   function pmIssueClick(i){
-    if(i.ov){pmOv(i.ov);return}
+    if(i.ov){pmFocusIssue(i);pmOv(i.ov);return}
     if(i.src==='later'){pmFocusIssue(i);return}
+    /* יציאה מן השורה הקודמת קודם (היא נבנית מחדש), ורק אז איתור השורה של הממצא, כניסה אליה, והתיאור בסרגל */
+    pmLeave();var doc=pmDoc();if(i.el&&!i.el.isConnected&&i.u&&doc){var e=pmFindRow(doc,i.u,i.li||0);if(e)i.el=e}
     var p=i.el&&i.el.tagName==='P'?i.el:(i.el&&i.el.querySelector&&i.el.querySelector('.main > p'));
-    pmFocusIssue(i);if(p&&p.closest('.ptx'))pmEdit(p)}
+    if(p&&p.closest('.ptx'))pmEdit(p);
+    pmFocusIssue(i)}
   /* שורה שהתארכה: חלונית ההצעות הקיימת (overflow_ui), מעל מצב הדפוס. Enter מקבל */
   function pmOv(it){
     try{if(!it._p||!it._p.isConnected){if(typeof ovMark==='function')ovMark()}
@@ -710,7 +741,8 @@
     for(var i=0;i<ow.length;i++)if(ow[i].textContent!==nw[i].textContent)return;
     nr.setAttribute('style',or.getAttribute('style')||'');nr.className=or.className;
     for(var j=0;j<ow.length;j++){nw[j].setAttribute('style',ow[j].getAttribute('style')||'');nw[j].className=ow[j].className}}
-  function pmRender(uids){
+  function pmRender(uids){pmRender0(uids);try{pmRecheck(uids)}catch(e){}}
+  function pmRender0(uids){
     var w=pmWin(),doc=pmDoc();if(!w||!w.__pmEng||!doc)return;
     var FD=w.__pmEng.data(),seen={};
     uids.forEach(function(uid){if(seen[uid])return;seen[uid]=1;
@@ -933,6 +965,7 @@
         if(e.key.length===1&&!e.ctrlKey&&!e.altKey&&!e.metaKey){e.preventDefault();S.kbuf=(S.kbuf||'')+e.key;return}
         if(e.key!=='F8'&&e.key!=='F9'){e.preventDefault();return}}
       if(e.key==='F9'){e.preventDefault();pmComplete();return}
+      if(e.key==='F4'){e.preventDefault();if(e.shiftKey)pmOkNext();else pmNext();return}
       if(S.editing&&S.editing.p.isConnected){
         if(e.key==='Escape'){e.preventDefault();pmLeave();return}
         if(e.key==='F8'){e.preventDefault();pmClose();return}
@@ -984,6 +1017,7 @@
     if(e.key==='F9'){e.preventDefault();pmComplete();return true}
     if(e.key==='F8'||e.key==='Escape'){e.preventDefault();pmClose();return true}
     if((e.key==='n'||e.key==='מ')&&!e.ctrlKey&&!e.altKey&&!e.metaKey){e.preventDefault();pmNext();return true}
+    if(e.key==='F4'){e.preventDefault();if(e.shiftKey)pmOkNext();else pmNext();return true}
     if(e.key==='PageDown'||e.key==='PageUp'){var n=(+document.getElementById('pm-pg').value||1)+(e.key==='PageDown'?1:-1);e.preventDefault();pmGoPage(n);return true}
     if((e.ctrlKey||e.metaKey)&&(e.key==='p'||e.key==='פ')){e.preventDefault();pmPrint();return true}
     return false}

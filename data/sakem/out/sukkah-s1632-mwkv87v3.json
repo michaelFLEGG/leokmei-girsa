@@ -151,7 +151,7 @@
   }
  ],
  "total": 24,
- "done": 1,
+ "done": 2,
  "items": [
   {
    "iid": "s1",
@@ -189,7 +189,28 @@
    "warn": [],
    "read": [],
    "keep": []
+  },
+  {
+   "iid": "s2",
+   "kind": "seg",
+   "seg": 1,
+   "sugya": 2,
+   "ids": [
+    1646,
+    700022
+   ],
+   "nochange": true,
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 333,
+    "lenB": 333
+   }
   }
  ],
- "t": 1794937284188
+ "t": 1794937308404
 }

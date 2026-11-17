@@ -6,7 +6,7 @@
    "long": "הקדוש ברוך הוא",
    "short": "הקב\"ה",
    "nLong": 2,
-   "nShort": 773,
+   "nShort": 775,
    "kind": "abbr"
   },
   {
@@ -48,14 +48,14 @@
    "long": "אמר לו",
    "short": "א\"ל",
    "nLong": 448,
-   "nShort": 3858,
+   "nShort": 3857,
    "kind": "abbr"
   },
   {
    "long": "שמע מינה",
    "short": "ש\"מ",
    "nLong": 23,
-   "nShort": 685,
+   "nShort": 686,
    "kind": "abbr"
   },
   {
@@ -82,7 +82,7 @@
   {
    "long": "בית הכנסת",
    "short": "ביהכנ\"ס",
-   "nLong": 18,
+   "nLong": 19,
    "nShort": 26,
    "kind": "abbr"
   },
@@ -125,7 +125,7 @@
    "long": "אם כן",
    "short": "א\"כ",
    "nLong": 84,
-   "nShort": 291,
+   "nShort": 292,
    "kind": "abbr"
   },
   {
@@ -209,7 +209,7 @@
    "long": "מכל מקום",
    "short": "מ\"מ",
    "nLong": 72,
-   "nShort": 118,
+   "nShort": 117,
    "kind": "abbr"
   },
   {
@@ -223,7 +223,7 @@
    "long": "עבודה זרה",
    "short": "ע\"ז",
    "nLong": 34,
-   "nShort": 286,
+   "nShort": 287,
    "kind": "abbr"
   },
   {
@@ -244,14 +244,14 @@
    "long": "בני אדם",
    "short": "בנ\"א",
    "nLong": 170,
-   "nShort": 54,
+   "nShort": 52,
    "kind": "abbr"
   },
   {
    "long": "קל וחומר",
    "short": "ק\"ו",
    "nLong": 11,
-   "nShort": 304,
+   "nShort": 303,
    "kind": "abbr"
   },
   {
@@ -306,7 +306,7 @@
   {
    "long": "דבר אחר",
    "short": "ד\"א",
-   "nLong": 131,
+   "nLong": 128,
    "nShort": 108,
    "kind": "abbr"
   },
@@ -341,7 +341,7 @@
   {
    "long": "שתי",
    "short": "ב'",
-   "nLong": 966,
+   "nLong": 965,
    "nShort": 785,
    "kind": "num"
   },
@@ -370,14 +370,14 @@
    "long": "ארבע",
    "short": "ד'",
    "nLong": 448,
-   "nShort": 594,
+   "nShort": 595,
    "kind": "num"
   },
   {
    "long": "ארבעה",
    "short": "ד'",
    "nLong": 360,
-   "nShort": 594,
+   "nShort": 595,
    "kind": "num"
   },
   {
@@ -418,15 +418,15 @@
   {
    "long": "תשעה",
    "short": "ט'",
-   "nLong": 117,
+   "nLong": 118,
    "nShort": 155,
    "kind": "num"
   },
   {
    "long": "עשרה",
    "short": "י'",
-   "nLong": 593,
-   "nShort": 171,
+   "nLong": 594,
+   "nShort": 172,
    "kind": "num"
   }
  ]

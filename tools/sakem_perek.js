@@ -555,13 +555,29 @@
     const R=SKP.rev,it0=R.items[R.i];
     const rest=R.items.map((x,i)=>[x,i]).filter(([x])=>!R.dec[x.iid]&&(scope==='per'||x.sugya===it0.sugya));
     if(!rest.length)return;
-    if(!confirm('לקבל '+rest.length+' קטעים שטרם הוכרעו '+(scope==='per'?'בפרק':'בסוגיה')+'?'))return;
-    skmClose(true);let ok=0,skip=0;
-    rest.forEach(([x,i])=>{
+    /* פרומפט 56 ג1 (17.11.2026): בלי חלון אישור של הדפדפן. כל ההחלפות בזיכרון, בנייה אחת של כל עמוד, שמירה אחת ופרסום אחד
+       (skmBatchStart/End), ו"בטל" בהודעה מחזיר את כל המנה. קודם: החלה, בנייה ושמירה אחרי כל קטע */
+    skmClose(true);let ok=0,skip=0;const t0=performance.now(),done=[];
+    const B=window.skmBatchStart?skmBatchStart():null;
+    try{rest.forEach(([x,i])=>{
       if(x.kind==='seg'&&!skmSame(x.ids,x.orig)){skip++;return}
-      try{const r=skpApplyOne(x,x.text);R.cnt.accept++;R.hist.push({i,iid:x.iid,act:'accept',undo:r.n>0});skpDec(x,'accept');ok++}catch(e){skip++}});
-    toast('התקבלו '+ok+(skip?' · '+skip+' נשארו להכרעה (נערכו בינתיים או לא הוחלו)':''),5000);
+      try{skpApplyOne(x,x.text);done.push([x,i]);ok++}catch(e){skip++}})}
+    finally{if(B)skmBatchEnd(B)}
+    done.forEach(([x,i])=>{R.cnt.accept++;R.hist.push({i,iid:x.iid,act:'accept',undo:false});skpDec(x,'accept')});
+    const ms=Math.round(performance.now()-t0);SKP.lastAllMs=ms;
+    skpAllToast('התקבלו '+ok+(skip?' · '+skip+' נשארו להכרעה (נערכו בינתיים או לא הוחלו)':''),B&&ok?()=>{
+      if(!skmBatchUndo(B)){flash('הביטול לא הצליח - בטל בעורך');return}
+      done.forEach(([x])=>{R.cnt.accept--;skpDec(x,'undo')});
+      R.hist=R.hist.filter(h=>!done.some(([x])=>x.iid===h.iid));R.i=done[0][1];skpShow();toast('בוטל: '+ok+' קטעים חזרו לנוסח הקודם',4000)}:null);
     skpMove(1)}
+  /* הודעה עם כפתור "בטל" (8 שניות), במקום confirm שחוסם את הדף */
+  function skpAllToast(msg,onUndo){
+    let h=document.getElementById('skpalltoast');if(h)h.remove();
+    h=document.createElement('div');h.id='skpalltoast';h.className='hint';h.style.cssText='display:flex;gap:10px;align-items:center';
+    const s=document.createElement('span');s.textContent=msg;h.appendChild(s);
+    if(onUndo){const b=document.createElement('button');b.type='button';b.textContent='בטל';b.style.cssText='font:inherit;padding:2px 10px;cursor:pointer';
+      b.onclick=()=>{h.remove();onUndo()};h.appendChild(b)}
+    document.body.appendChild(h);setTimeout(()=>h.remove(),8000)}
   function skpEditOn(){const g=SKM.ghost;if(!g||SKP.rev.items[SKP.rev.i].kind!=='seg')return;
     /* המילים שהמנוע מחק נשארות גלויות גם בעריכה (4.11.2026), פרושות במלואן ונעולות לעריכה:
        הן מידע בלבד, ואינן נקראות בחזרה לנוסח (skmReadBack מסיר אותן) */

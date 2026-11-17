@@ -528,6 +528,23 @@
       if(F[h][j-1]<=-1e9)continue;const v=F[h][j-1]+sim(h,i,j-1);if(v>F[i][j]){F[i][j]=v;P[i][j]=h}}
     const sz=[];let i=n;for(let j=m;j>=1;j--){const h=P[i][j];sz.unshift(i-h);i=h}
     return sz}
+  /* פרומפט 56 ג1: החלה מרוכזת. התחלה, סוף (בנייה אחת של כל עמוד שנגע, שמירה אחת ופרסום אחד), וביטול של הכל */
+  function skmBatchStart(){window.SKMB={pre:new Map(),befores:new Map(),undo:[],n:0};return window.SKMB}
+  function skmBatchEnd(B){
+    window.SKMB=null;if(!B)return;
+    SLOTS=null;if(B.n)saveED();
+    B.befores.forEach(b=>patchPage(b));
+    if(B.n){drawEd();pubSoon();syncSoon();if($('#edn'))$('#edn').textContent=ED.length}}
+  function skmBatchUndo(B){
+    if(!B||!B.undo.length)return false;
+    const befores=[...B.pre.keys()].map(pi=>snapOf(pi));
+    B.undo.slice().reverse().forEach(x=>{try{if(x&&x.fn)x.fn()}catch(e){}});
+    B.pre.forEach((snap,pi)=>{D.pages[pi].units=JSON.parse(snap)});
+    UNDO.length=0;SLOTS=null;saveED();
+    befores.forEach(b=>patchPage(b));
+    drawEd();pubSoon();syncSoon();if($('#edn'))$('#edn').textContent=ED.length;
+    return true}
+  window.skmBatchStart=skmBatchStart;window.skmBatchEnd=skmBatchEnd;window.skmBatchUndo=skmBatchUndo;
   function skmApply(p,newText){
     let os=skmUnits(p.ids);
     if(!skmSame(p.ids,p.orig))throw new Error('הקטע השתנה מאז ההצעה. בקש הצעה חדשה');
@@ -554,14 +571,18 @@
     /* 10.11.2026: עיטור למחיקה שמחוץ לגבולות הקטע - מאותר בדף כולו, ונכנס לגיבוי לביטול */
     const hdOut=(p.hdel||[]).filter(id=>!os.some(x=>x.u.id===id)).map(id=>skmUnits([id]).find(x=>x.u.k==='hatz')).filter(Boolean);
     const pis=[...new Set(os.concat(hdOut).map(o=>o.pi))];
-    const pre=pis.map(pi=>({pi,snap:JSON.stringify(D.pages[pi].units)})),befores=pis.map(snapOf);
+    /* פרומפט 56 ג1: במצב מרוכז (window.SKMB, "קבל את כל הנותרים") הדף אינו נבנה, נשמר ומתפרסם אחרי כל קטע:
+       הצילום של כל עמוד נלקח פעם אחת (לפני הקטע הראשון שנוגע בו), והבנייה, השמירה והפרסום - פעם אחת בסוף (skmBatchEnd) */
+    const B=window.SKMB||null;
+    const pre=pis.map(pi=>({pi,snap:JSON.stringify(D.pages[pi].units)})),befores=B?[]:pis.map(snapOf);
+    if(B)pis.forEach((pi,ix)=>{if(!B.pre.has(pi)){B.pre.set(pi,pre[ix].snap);B.befores.set(pi,snapOf(pi))}});
     const RECS=[],OLDS=[];let T0=Date.now();
     const nt=()=>(T0=Math.max(T0+1,Date.now()));
     const add=e=>{e.t=nt();e.pub=0;e._ap=1;ED.push(e);RECS.push(e);if(SKM.seenS)SKM.seenS.add(e.t);return e};
     /* פרומפט 27: עיטור ליד כותרת שההצעה מוחקת ([מחק-עיטור:<מזהה>], ראה SKC.hatzDel). רק יחידת עיטור
        (k=hatz), ובאותה רשומה בדיוק שהעורך כותב ב"מחק עיטור" (hdel) - כך המחיקה עוברת לאתר ולוורד */
     const undoAll=()=>{pre.forEach(z=>{D.pages[z.pi].units=JSON.parse(z.snap)});
-      RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});SLOTS=null;befores.forEach(b=>patchPage(b))};
+      RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});SLOTS=null;if(!B)befores.forEach(b=>patchPage(b))};
     if(p.hdel&&p.hdel.length){
       try{p.hdel.forEach(id=>{
           const o=os.find(x=>x.u.id===id)||hdOut.find(x=>x.u.id===id);
@@ -782,7 +803,7 @@
       pre.forEach(z=>{D.pages[z.pi].units=JSON.parse(z.snap)});
       RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});
       OLDS.reverse().forEach(([o,j])=>{Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,JSON.parse(j))});
-      SLOTS=null;befores.forEach(b=>patchPage(b));
+      SLOTS=null;if(!B)befores.forEach(b=>patchPage(b));
       throw err}
     const n=RECS.length+OLDS.length;
     if(!n)return {n:0};
@@ -790,6 +811,7 @@
     UNDO.push({e:null,snaps:pre,key:'u'+os[0].u.id+'.1',t:Date.now()+1,fn:()=>{
       edKeys();RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1){tomb(e.k);ED.splice(i,1)}});
       OLDS.slice().reverse().forEach(([o,j])=>{Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,JSON.parse(j))})}});
+    if(B){SLOTS=null;B.undo.push(UNDO[UNDO.length-1]);B.n+=n;return {n,recs:RECS}}
     SLOTS=null;saveED();
     befores.forEach(b=>patchPage(b));
     const first=skmUnits(p.ids).find(o=>o.u.l&&o.u.l.length)||flatU().find(o=>o.u.l&&o.u.l.length&&pis.indexOf(o.pi)>-1);

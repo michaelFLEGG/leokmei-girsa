@@ -1,0 +1,1 @@
+ - 17.11.2026 UTC - הושלמה menachot-p04-u04. finalize: 27 תוספות, 0 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku"}.

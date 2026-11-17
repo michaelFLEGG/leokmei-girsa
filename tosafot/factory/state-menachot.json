@@ -35,6 +35,102 @@
     "flagged": 0,
     "questions": 27
    }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-17T06:40:22Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p03-u01",
+    "menachot-p03-u02",
+    "menachot-p03-u03",
+    "menachot-p03-u04",
+    "menachot-p03-u05",
+    "menachot-p03-u06",
+    "menachot-p03-u07",
+    "menachot-p03-u08",
+    "menachot-p03-u09"
+   ],
+   "result": {
+    "generated": 217,
+    "decided": 0,
+    "unchecked": 5,
+    "flagged": 5,
+    "questions": 171
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-17T06:40:22Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p04-u01",
+    "menachot-p04-u02",
+    "menachot-p04-u03",
+    "menachot-p04-u04",
+    "menachot-p04-u05",
+    "menachot-p04-u06",
+    "menachot-p04-u07"
+   ],
+   "result": {
+    "generated": 171,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 112
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-17T06:40:23Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p05-u01",
+    "menachot-p05-u02",
+    "menachot-p05-u03",
+    "menachot-p05-u04"
+   ],
+   "result": {
+    "generated": 99,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 90
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-17T06:40:23Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p06-u01",
+    "menachot-p06-u02",
+    "menachot-p06-u03",
+    "menachot-p06-u04"
+   ],
+   "result": {
+    "generated": 86,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 73
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-17T06:40:24Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p07-u01",
+    "menachot-p07-u02"
+   ],
+   "result": {
+    "generated": 39,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 28
+   }
   }
  },
  "created": "2026-11-17T00:39:14Z",
@@ -50,7 +146,37 @@
    "mean": 0.355,
    "n": 3,
    "at": "2026-11-17T00:39:14Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.43,
+   "n": 17,
+   "at": "2026-11-17T06:40:21Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.335,
+   "n": 13,
+   "at": "2026-11-17T06:40:22Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.384,
+   "n": 7,
+   "at": "2026-11-17T06:40:22Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.53,
+   "n": 7,
+   "at": "2026-11-17T06:40:23Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.384,
+   "n": 3,
+   "at": "2026-11-17T06:40:23Z"
   }
  ],
- "updated": "2026-11-17T00:39:15Z"
+ "updated": "2026-11-17T06:40:24Z"
 }

@@ -1,0 +1,1 @@
+ - 17.11.2026 UTC - הושלמה menachot-p03-u07. finalize: 29 תוספות, 1 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku"}.

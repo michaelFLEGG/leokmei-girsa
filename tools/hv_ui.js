@@ -221,7 +221,7 @@
   function hvTabOk(){return isAdmin()&&!!admKey()}
   function hvTabsHTML(){
     if(!hvTabOk())return '';
-    return '<span class="srctabs" role="tablist"><button id="st-per" role="tab" class="'+(HV.tab||HV.tabWas?'':'on')+'" onclick="hvTabSet(\'per\')" title="פירוש הגמרא (Alt+ח מחליף לחברותא)">פירוש הגמרא</button>'+
+    return '<span class="srctabs" role="tablist"><button id="st-per" role="tab" class="'+(HV.tab||HV.tabWas?'':'on')+'" onclick="hvTabSet(\'per\')" title="פירוש הגמרא (Alt+ח מחליף לחברותא)">פירוש</button>'+
       '<button id="st-hv" role="tab" class="'+(HV.tab||HV.tabWas?'on':'')+'" onclick="hvTabSet(\'hv\')" title="ביאור חברותא, לעיון המנהל בלבד (Alt+ח)">חברותא</button></span>'}
   function hvTabCss(){
     if(document.getElementById('hvtcss'))return;
@@ -232,9 +232,10 @@
       '#hvt{flex:1 1 auto;overflow:auto;padding:4px 18px 24px}'+
       '#hvt .hvdh{position:sticky;top:-4px;z-index:1;background:var(--paper);margin:14px 0 6px;font-size:14px;font-weight:500;color:#8a7d66;border-bottom:1px solid #e0d8c4;padding-bottom:3px}'+
       /* גופן וגודל כמו פירוש הגמרא (.prs) */
-      '#hvt .sg{font-size:.84em;line-height:1.5;color:#4a4137;background:#f2ede0;border-right:2px solid #cdc3a8;border-radius:3px;margin:2px 5px 6px;padding:5px 9px}'+
-      '#hvt .sg b{color:#2b2620}#hvt .sg .k{font-size:11px;color:#a08f6c;margin-left:5px}'+
-      '#hvt .sg.follow{background:#f8e6b8;border-right-color:var(--gold)}#hvt .sg.ref{background:#fdf1d8}'+
+      /* (17.11.2026) קריאה רציפה: בלי תיבה לכל שורה ובלי מספרי שורה - טקסט זורם כמו דף, השורה המקבילה מודגשת בעדינות */
+      '#hvt .sg{font-size:.9em;line-height:1.7;color:#3a332a;background:transparent;border:0;border-radius:3px;margin:0;padding:1px 4px}'+
+      '#hvt .sg+.sg{margin-top:.25em}#hvt .sg b{color:#2b2620;font-weight:700}#hvt .sg .k{display:none}'+
+      '#hvt .sg.follow{background:#fbf0d2;box-shadow:inset 3px 0 0 var(--gold)}#hvt .sg.ref{background:#fdf1d8}'+
       '#hvt .dim{font-size:12px;color:#8a7d66}#hvt .hvraw{color:#8a3b2f;margin:0 5px 6px}'+
       '#hvt .nt{font-size:.8em;margin:0 5px 6px;padding:3px 8px;border-right:3px solid #2e5b8a;background:#eef3f9}'+
       '#hvt sup.hvn{cursor:pointer;color:#fff;background:#2e5b8a;border-radius:8px;padding:0 5px;margin:0 2px;font-size:.68em;font-weight:700}'+

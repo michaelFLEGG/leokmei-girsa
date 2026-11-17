@@ -81,7 +81,7 @@ html.dev-phone body.splitsrc .flow,html.dev-tab body.splitsrc .flow{width:auto;m
 #msh{flex:none;height:44px;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab;position:relative}
 #msh::before{content:"";width:46px;height:5px;border-radius:3px;background:#c9a24a;opacity:.85}
 #msh .mshb{position:absolute;inset-inline-end:6px;top:0;display:flex;gap:2px}
-html.dev-phone #srcx .srchd button,html.dev-tab #srcx .srchd button{min-height:44px;min-width:44px}
+
 html.dev-phone .srcdrag,html.dev-phone .srcdragv,html.dev-tab .srcdrag,html.dev-tab .srcdragv{display:none}
 body.msrcopen #lm-fin{display:none!important}
 
@@ -120,9 +120,9 @@ html.dev-phone #lm-pbar,html.dev-tab #lm-pbar{display:none!important}
 @media (prefers-reduced-motion:reduce){#mtop,#mbot,#msheet,#mscrim,#mprog{transition:none}}
 
 /* כותרת המגירה: כפתורים של 44 לפחות, מרווח 8 */
-html.dev-phone .srchd,html.dev-tab .srchd{flex-wrap:wrap;gap:8px;padding:10px 10px 8px;align-items:center}
-html.dev-phone .srchd button,html.dev-tab .srchd button{min-height:44px;min-width:44px;margin:0}
-html.dev-phone .srchd .srcsep,html.dev-tab .srchd .srcsep{display:none}
+
+
+
 /* צורת הדף: גיליון תחתון באותו אופן, וסרגל כפתורים גדול */
 html.dev-phone .tzx.split,html.dev-tab .tzx.split{left:0!important;right:0!important;top:auto!important;bottom:var(--mbh);width:auto!important;height:min(74dvh,calc(100dvh - var(--mtop) - var(--mbh) - 6px));border-radius:16px 16px 0 0;z-index:26;box-shadow:0 -8px 24px rgba(0,0,0,.35)}
 html.dev-tab.land .tzx.split{left:86px!important}
@@ -157,3 +157,25 @@ html.dev-tab.land #srcx.src{max-height:calc(100dvh - var(--mtop) - 12px)}
 
 /* בוררי מסכת ודף (12.10.2026): שם המסכת בכותרת הטלפון פותח את רשימת המסכתות, והשאר את רשימת הדפים; שטח לחיצה לפחות 44 */
 html.dev-phone #mttl .mmn,html.dev-tab #mttl .mmn{padding:12px 10px;margin:-12px -4px;border-radius:10px}
+
+/* (17.11.2026) כותרת מגירת המקור: שורה אחת דקה של סמלים עדינים, בכל המכשירים - בקשת בעל הפרויקט
+   ("סתם תופסת מקום"). הכפתור הנראה קטן; אזור המגע בטלפון ובטאבלט נשמר ברוחב סביר בלי להגדיל את הנראה. */
+#srcx .srchd{flex:none;display:flex;flex-wrap:nowrap;align-items:center;gap:2px;padding:2px 8px;min-height:0;height:32px;box-sizing:border-box;overflow:visible;font-size:14px;background:var(--sheet,#fbf8f0);border-bottom:1px solid var(--line,#e0d8c4)}
+#srcx .srchd>b{display:none}
+#srcx .srchd .sp{flex:1 1 auto;min-width:4px}
+#srcx .srchd>button,#srcx .srchd>.smenu>button,#srcx .srchd .srctabs button{min-height:0!important;min-width:0!important;height:26px;width:auto;margin:0!important;padding:0 6px!important;border:0!important;background:transparent!important;
+  color:#8a6a1e!important;font:400 18px/26px 'VilnaG','Vilna',serif!important;border-radius:5px!important;box-shadow:none!important;display:inline-flex;align-items:center;justify-content:center;opacity:1}
+#srcx .srchd>button:hover,#srcx .srchd>.smenu>button:hover{opacity:1;background:rgba(201,162,74,.14)!important}
+#srcx .srchd>button.on{opacity:1}
+#srcx .srchd #ssync:not(.on){opacity:.45}
+#srcx .srchd .sic{width:17px;height:17px;display:block}
+#srcx .srchd .sdaf{font-family:'VilnaG','Vilna',serif;font-size:16px;min-width:2em;text-align:center;color:var(--tx,#2b2620);padding:0 2px}
+#srcx .srchd .srcsep{display:inline-block;width:1px;height:16px;align-self:center;background:var(--line,#e0d8c4);margin:0 4px}
+#srcx .srchd .srctabs{display:inline-flex;gap:0;background:transparent!important;border:1px solid var(--line,#e0d8c4);border-radius:999px;padding:1px;margin-left:6px}
+#srcx .srchd .srctabs button{font:500 12.5px/22px var(--ui,system-ui,sans-serif)!important;height:22px;padding:0 9px!important;border-radius:999px!important;color:var(--tx2,#7a6e58)!important;opacity:1}
+#srcx .srchd .srctabs button.on{background:var(--gold,#c9a24a)!important;color:#2b2620!important}
+html.dev-phone #srcx .srchd>button,html.dev-phone #srcx .srchd>.smenu>button,html.dev-tab #srcx .srchd>button,html.dev-tab #srcx .srchd>.smenu>button{min-width:30px!important;height:30px;padding:0 4px!important}
+html.dev-phone #srcx .srchd,html.dev-tab #srcx .srchd{height:36px}
+@media (max-width:420px){#srcx .srchd .srctabs button{padding:0 5px!important}html #srcx.src .srchd>button,html #srcx.src .srchd>.smenu>button{min-width:26px!important;padding:0 2px!important}#srcx .srchd{padding:2px 4px}#srcx .srchd #ss-prev,#srcx .srchd #ss-next,#srcx .srchd .srcsep{display:none}}
+/* ידית הגרירה של הגיליון בטלפון ובטאבלט: דקה יותר (הייתה 44 פיקסלים של ריק) */
+html.dev-phone #msh,html.dev-tab #msh{height:20px}

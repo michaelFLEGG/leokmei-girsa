@@ -6551,7 +6551,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(SRCSYNC){SRCSYNC=false;try{localStorage.setItem('lg-srcsync','0')}catch(e){}srcSyncUi()}}
   function srcSyncUi(){
     const a=$('#ssync'),b=$('#sback');
-    if(a){a.textContent=SRCSYNC?'צמוד לטקסט':'דפדוף חופשי';a.classList.toggle('on',SRCSYNC)}
+    if(a){a.title=SRCSYNC?'צמוד לטקסט (לחיצה: דפדוף חופשי)':'דפדוף חופשי (לחיצה: צמוד לטקסט)';a.classList.toggle('on',SRCSYNC)}
     if(b)b.style.display=SRCSYNC?'none':''}
   function srcPage(d){
     const b=srcBody();if(!b||!SX)return;
@@ -6594,17 +6594,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     box.className='src '+mode;
     document.body.classList.toggle('splitsrc',mode==='split');
     SX={ref,lo:0,hi:-1,keys:[]};REFS=null;
+    /* (17.11.2026) כותרת המגירה: שורה אחת של סמלים עדינים, המילה בריחוף - בקשת בעל הפרויקט. שם הדף באמצע הוא הכותרת */
+    const SVI=(d)=>'<svg class="sic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';
     box.innerHTML='<div class="srchd"><b>מקור</b>'+hvTabsHTML()+
-      '<button id="sp-prev" title="הדף הקודם בגמרא (Alt+חץ ימינה)">› דף קודם</button>'+
+      '<button id="sp-prev" class="sic-b" title="הדף הקודם בגמרא (Alt+חץ ימינה)" aria-label="הדף הקודם">»</button>'+
       '<span class="sdaf" id="sdaf"></span>'+
-      '<button id="sp-next" title="הדף הבא בגמרא (Alt+חץ שמאלה)">דף הבא ‹</button>'+
-      '<button id="ss-prev" title="הקטע הקודם בגמרא">קטע קודם</button>'+
-      '<button id="ss-next" title="הקטע הבא בגמרא">קטע הבא</button>'+
+      '<button id="sp-next" class="sic-b" title="הדף הבא בגמרא (Alt+חץ שמאלה)" aria-label="הדף הבא">«</button>'+
+      '<span class="srcsep"></span>'+
+      '<button id="ss-prev" class="sic-b" title="הקטע הקודם בגמרא" aria-label="הקטע הקודם">›</button>'+
+      '<button id="ss-next" class="sic-b" title="הקטע הבא בגמרא" aria-label="הקטע הבא">‹</button>'+
       '<span class="sp"></span>'+
-      '<button id="ssync" title="צמוד לטקסט: המגירה עוקבת אחרי הסמן. דפדוף חופשי: אפשר לגלול בה בלי שתזוז">צמוד לטקסט</button>'+
-      '<button id="sback" style="display:none" title="מחזיר את המגירה לקטע של הסמן ומחזיר את הצמידות">חזור למקום</button>'+
-      '<span class="smenu"><button id="smb" title="'+(perOk()?'מה מוצג, וגודל המגירה':'גודל המגירה')+'">תצוגה ▾</button>'+srcMenuHTML(mode)+'</span>'+
-      '<button onclick="closeSrc()" title="סגירה (Esc)">×</button></div>'+
+      '<button id="ssync" class="sic-b" title="צמוד לטקסט: המגירה עוקבת אחרי הסמן. דפדוף חופשי: אפשר לגלול בה בלי שתזוז">'+SVI('<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>')+'</button>'+
+      '<button id="sback" class="sic-b" style="display:none" title="חזור למקום: מחזיר את המגירה לקטע של הסמן ומחזיר את הצמידות" aria-label="חזור למקום">'+SVI('<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>')+'</button>'+
+      '<span class="smenu"><button id="smb" class="sic-b" title="תצוגה: '+(perOk()?'מה מוצג, וגודל המגירה':'גודל המגירה')+'" aria-label="תצוגה">'+SVI('<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>')+'</button>'+srcMenuHTML(mode)+'</span>'+
+      '<button class="sic-b" onclick="closeSrc()" title="סגירה (Esc)" aria-label="סגירה">×</button></div>'+
       '<div class="srcbody" tabindex="-1"><div class="ld">טוען את הגמרא…</div></div>'+
       (mode==='split'?'<div class="srcdrag" id="srcdrag" title="גרור לשינוי היחס בין הטקסט והמקור; לחיצה כפולה: חצי-חצי"></div>':
        mode==='peek'?'<div class="srcdragv" id="srcdragv" title="גרור לשינוי גובה המקור; לחיצה כפולה: גובה רגיל"></div>':'');

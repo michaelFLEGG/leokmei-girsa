@@ -325,6 +325,8 @@ def commit(slug, chosen):
     lp = lock_fp(slug)
     ld = jload(lp, {'slug': slug, 'items': {}, 'released': []})
     for c in chosen:
+        if c.get('tool') == 7:
+            continue  # אות מספור (פרומפט 60): אינה בדיקת "נכנס בשורה אחת" - לא ננעלת
         for part in (c['afterH'] if c['kind'] == 'split' else [c['afterH']]):
             k = KEEP.norm(part)
             if k and h16(k) not in ld['items']:
@@ -422,9 +424,78 @@ def coin(slug, site, skip_slugs=('shabbat',)):
     return chosen
 
 
+# ---------------- פרומפט 60 ד: אות מספור בסגנון אמוראים (כלל 49) ----------------
+def locked_slug(slug):
+    """מסכת שיש עליה נעילה חיה (פחות משלוש שעות) של עבודה אחרת (סכם, הגירה): לא נוגעים בה בסבב הזה"""
+    d = os.path.join(ROOT, '.locks')
+    if not os.path.isdir(d):
+        return ''
+    for fn in os.listdir(d):
+        if slug not in fn or not fn.endswith('.lock'):
+            continue
+        fp = os.path.join(d, fn)
+        txt = io.open(fp, encoding='utf-8', errors='replace').read()
+        m = re.search(r'(\d{4}-\d\d-\d\dT\d\d:\d\d)Z?', txt)
+        ts = time.mktime(time.strptime(m.group(1), '%Y-%m-%dT%H:%M')) - time.timezone if m else os.path.getmtime(fp)
+        if time.time() - ts < 3 * 3600:
+            return fn
+    return ''
+
+
+def enum(slug, site):
+    """אותיות מספור (א. ב. ג.) בשורות הגוף - בסגנון אמוראים, דרך השכבה החיה. שורה שיש לה עריכה חיה - לא נוגעים (אחרי
+    הקיפול היא בספר, והסבב הבא מטפל בה). מסכת נעולה בעבודה אחרת - מדולגת. הדוח: data/overflow/enum/<מסכת>.json"""
+    import enum_am as EA
+    fp = os.path.join(ODIR, 'enum', slug + '.json')
+    lk = locked_slug(slug)
+    if lk:
+        print('אותיות מספור (%s): מדולגת - נעולה (%s)' % (slug, lk))
+        jsave(fp, {'slug': slug, 'made': now_s(), 'skipped': 'נעולה: ' + lk})
+        return []
+    lines, order, pcls = site_data(site, slug)
+    try:
+        import urllib.request
+        with urllib.request.urlopen(urllib.request.Request(KEEP.API + '/live?slug=' + slug, headers={'user-agent': 'Mozilla/5.0 leokmei-keep/1.0'}), timeout=60) as r:
+            lv = json.loads(r.read().decode('utf-8'))
+        live_keys = {e.get('k') for e in ((lv.get('doc') or {}).get('edits') or []) if e.get('k')}
+    except Exception:
+        print('אותיות מספור (%s): השכבה החיה לא נקראה - לא מחילים' % slug)
+        return []
+    txt = io.open(os.path.join(site, slug + '.data.js'), encoding='utf-8').read()
+    D = json.loads(txt[txt.index('{'):txt.rindex('}') + 1])
+    P = EA.plan_all(D)
+    lg = jload(log_fp(slug), {'slug': slug, 'log': [], 'pending': []})
+    done = {e['id'] for e in lg.get('log') or []}
+    chosen, t, live_n, ex = [], int(time.time() * 1000), 0, []
+    for u, li, before, after, daf in P:
+        k = 'u%s.%s' % (u['id'], li)
+        if k in live_keys:
+            live_n += 1
+            continue
+        cid = 'enum:' + h16(slug + k + plain(before))
+        if cid in done:
+            continue
+        it = {'id': cid, 'key': k, 'u': u['id'], 'li': li, 'html': before, 'daf': daf}
+        try:
+            recs = records(it, {'kind': 'replace', 'html': after}, lines, order, pcls, t)
+        except ValueError:
+            continue
+        for r in recs:
+            r['by'] = 'אותיות מספור (פרומפט 60)'
+        t += 2
+        chosen.append({'id': cid, 'key': k, 'daf': daf, 'tool': 7, 'toolName': 'אות מספור', 'why': 'כלל 49',
+                       'before': plain(before), 'after': plain(after), 'kind': 'replace', 'beforeH': before, 'afterH': domh(after),
+                       'cls': lines[(u['id'], li)][0], 'recs': recs, 'at': now_s()})
+        if len(ex) < 5:
+            ex.append({'daf': daf, 'key': k, 'before': before, 'after': domh(after)})
+    jsave(fp, {'slug': slug, 'made': now_s(), 'found': len(P), 'applied': len(chosen), 'liveSkipped': live_n, 'examples': ex})
+    print('אותיות מספור (%s): נמצאו %d שורות, הוחלו %d, %d בשורות עם עריכה חיה (בסבב הבא)' % (slug, len(P), len(chosen), live_n))
+    return chosen
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=['pick', 'lock', 'check', 'push', 'coin'])
+    ap.add_argument('cmd', choices=['pick', 'lock', 'check', 'push', 'coin', 'enum'])
     ap.add_argument('--slug', default='berakhot')
     ap.add_argument('--gen', default='')
     ap.add_argument('--site', default='')
@@ -443,6 +514,11 @@ def main():
         return 0
     if a.cmd == 'coin':
         ch = coin(a.slug, a.site)
+        if a.commit and ch:
+            commit(a.slug, ch)
+        return 0
+    if a.cmd == 'enum':
+        ch = enum(a.slug, a.site)
         if a.commit and ch:
             commit(a.slug, ch)
         return 0

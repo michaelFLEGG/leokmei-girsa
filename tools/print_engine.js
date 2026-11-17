@@ -497,6 +497,8 @@
         'span.tmg{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;line-height:0;vertical-align:baseline;margin:0;padding:0}'+
         'sup.tm{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-family:'+(n.markFamily||n.family)+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0;padding:0;color:#7a7a7a}'+
         'span.tmg sup.tm{display:inline;width:auto;margin:0}span.tmg sup.tm+sup.tm{margin-left:.12em}'+
+        /* פרומפט 60 ה: ברשימה ממוספרת (row.enl) ההפניות תופסות את מקומן אחרי המילה, זו אחר זו באותו קו - לא ערימה ברוחב אפס שמרחפת מעל טקסט אחר */
+        '.row.enl span.tmg,.row.enl sup.tm{width:auto!important}.row.enl span.tmg sup.tm,.row.enl sup.tm{margin-right:.08em;top:-.3em!important}'+
         '.pg sup.tm,.pg sup.tm *{color:#7a7a7a!important}sup.tm a{text-decoration:none}'+
         '.pfn .fnum{font-size:'+n.numberScale+'em;line-height:0;position:relative;top:-'+n.numberRise+'em;vertical-align:baseline;margin-left:.18em;font-weight:'+n.numberWeight+';text-decoration:none}'+
         '.pfn .fnn{margin:'+n.betweenMm+'mm 0 0}.pfn .fnn:first-child{margin-top:0}'+
@@ -885,7 +887,7 @@
           var lbl=!!(rail&&rail.textContent.trim()&&bi===0);
           /* פרומפט 60 ב: פסקת כותרת בתוך יחידה רגילה (p.nose / p.dh, למשל "מחזקת ראשו ורובו ושולחנו" בסוכה ג.) היא כותרת
              לכל דבר בעימוד: אינה נשארת בתחתית טור בלי שתי שורות מן התוכן שלה אחריה */
-          var hb=QS.get('hb0')!=='1'&&!HEADS[x.kind]&&b!==main&&/(^|\s)(nose|dh)(\s|$)/.test(b.className);
+          var hb=!HEADS[x.kind]&&b!==main&&/(^|\s)(nose|dh)(\s|$)/.test(b.className);
           for(var k=0;k<n;k++){
             L.push({ri:ri,kind:x.kind,block:bi,k:k,n:n,y0:top+k*lh,y1:top+(k+1)*lh,
                     daf:x.daf,perek:x.perek,perekName:x.perekName,notes:[],first:false,last:false,wc:wc,lbl:lbl&&k===0,hb:hb})}});

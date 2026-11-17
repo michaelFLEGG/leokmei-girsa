@@ -159,6 +159,7 @@ log["סגנון שהוסר ממונחים"] = un.get("הוסר", 0)
 am = {}
 style_names(doc, SHEMOT, BODY, AM_STYLE, am)
 style_regex(doc, NAME_RT, BODY, AM_STYLE, am)
+style_regex(doc, ENUM_RT, BODY, AM_STYLE, am)   # פרומפט 60 ד: אות מספור (כלל 49)
 log["שמות שסוגננו"] = am.get("מופעים", 0)
 un2 = {}
 for st in (AM_STYLE, "אמוראים תו"): unstyle_words(doc, NOT_NAME, ALL, st, un2)

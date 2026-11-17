@@ -602,7 +602,19 @@
       var ti=titleIssues(newText,origText);ti.errs.forEach(function(e){errs.push(e)});ti.warns.forEach(function(e){warns.push(e)});
       quality(newText,o).forEach(function(e){errs.push(e)});
       var ci=coinIssues(origText,newText);ci.errs.forEach(function(e){errs.push(e)});ci.warns.forEach(function(e){warns.push(e)});
+      enumIssues(newText).forEach(function(e){warns.push(e)});
       return {errs:errs,warns:warns}}
+    /* פרומפט 60 ד (17.11.2026, מיכאל): כלל 49 - אות מספור של שיטה/דעה (א. ב. ג. ...) בתוך שורה: {אם:ב.}, לא רגיל.
+       אזהרה (לא עצירה): ההחלה האוטומטית (tools/overflow/enum_am.py, בפעולה overflow.yml) משלימה בשכבה החיה. לא בתיבת המשנה */
+    var ENUM=/(?:^|,\s?|\s)((?:[אבגדהוזחטיכ]|י[אבגדזחט]|כ[א-ט]|טו|טז)\.)(?=\s?[א-ת"'])/;
+    function enumIssues(newText){var W=[],inM=false;
+      String(newText||'').split('\n').forEach(function(v){var t=v.trim();
+        if(/^\[משנה/.test(t))inM=true;else if(/^\[גמרא\]/.test(t))inM=false;
+        if(inM||!t||/^\[/.test(t))return;
+        var body=cutSp(t.replace(/^[א-י]\.\s*(?=\{|\[)/,''),spans(t,'אם').concat(spans(t,'כב'),spans(t,'פס')));
+        var m=ENUM.exec(body.replace(/\[[^\]]*\]/g,''));
+        if(m&&!/(?:דף|\()\s*$/.test(body.slice(0,m.index+m[0].indexOf(m[1]))))W.push('אות מספור בלי סגנון אמוראים (כלל 49): "'+m[1]+'" בשורה "'+t.slice(0,40)+'" - כתוב {אם:'+m[1]+'}')});
+      return W}
     /* פרומפט 56 ב3 (17.11.2026, מיכאל): מטבעות לשון - כללים 26-29. "שונה כאן" -> שאני, "לשון אחרת" -> איכא דאמרי (א"ד),
        "יש ביניהם" / "מה ביניהם" -> נפק"מ, "שנינו שם" -> תנן שם (משנה) / תנא שם, תניא שם (ברייתא). בשורה שהכותב כתב או שינה -
        עוצר. בשורה שלא נגע בה (זהה למקור) - אזהרה שמבקשת לתקן. לא בתיבת המשנה ולא בלשון הגמרא המובאת ({כב:}) */

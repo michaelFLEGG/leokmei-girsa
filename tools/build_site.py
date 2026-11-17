@@ -2589,6 +2589,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .row.hatz{break-after:avoid-column}
   /* 7.11.2026: רווח בין שתי דעות באותה שורה (ראה lgLook), ואות מספור מודגשת בכותרת צד */
   .og{display:inline-block;width:1.3em;height:0}
+  /* פרומפט 60 ה: רשימה ממוספרת (ראה enlLook) - יישור לימין באותה נקודה, בלי מתיחת רווחים ובלי הרווח הקבוע */
+  .row.enl .main,.row.enl .main p{text-align:right!important;text-align-last:right!important}
+  .row.enl .og{display:none!important}
   .main p[data-e]{display:none}
   @media screen{body:not(.prn) .dupmark{outline:2px solid #d0342c;outline-offset:1px;background:rgba(208,52,44,.09)}}
   @media print{.dupmark{outline:0!important;background:none!important}}
@@ -3632,7 +3635,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const d=document.createElement('div');d.innerHTML=h;
     d.querySelectorAll('i.ns,i.mk').forEach(x=>x.remove());
     return !d.textContent.replace(/[\s‏‎]/g,'')}
-  function unitHTML(u,daf,pi){const h=LTX(unitHTML0(u,daf,pi));return EDIT?h:emptyLook(u.k==='u'?asymLook(lgLook(h)):h)}
+  function unitHTML(u,daf,pi){const h=LTX(unitHTML0(u,daf,pi));return EDIT?enlLook(u,h):emptyLook(u.k==='u'?asymLook(lgLook(enlLook(u,h))):h)}
+  /* פרומפט 60 ה (17.11.2026, מיכאל): רשימה ממוספרת חייבת להיות סימטרית. יחידה שיש בה שתי אותיות מספור או יותר (א. ב. ג.,
+     בסגנון אמוראים או עוד לא) היא רשימה: השורה מקבלת enl, וב-CSS - כל השורות מיושרות לימין באותה נקודה (בלי יישור לשני
+     הצדדים, שמותח רווחים), בלי הרווח הקבוע שלפני דעה שנייה (lgLook: כאן האות היא ההפרדה), וסימני ההפניה לתוס' באותו קו,
+     זה אחר זה. תצוגה בלבד: אינו נוגע בנתונים ובוורד. הרווח האחיד אחרי האות - בנתונים (tools/overflow/enum_am.py) */
+  const ENL_RX=/(?:<i class="am">|<p class="[^"]*">(?:\s|&nbsp;)*|,(?:\s|&nbsp;)?)(?:[אבגדהוזחטיכ]|י[אבגדזחט]|כ[א-ט]|טו|טז)\.(?=<\/i>|\s|&nbsp;|[א-ת])/g;
+  function enlCount(h){const k=h.indexOf('<div class="main"');if(k<0)return 0;const m=h.slice(k).match(ENL_RX);return m?m.length:0}
+  function enlLook(u,h){if(u.k!=='u'||enlCount(h)<2)return h;return h.replace('<div class="row u"','<div class="row u enl"')}
   /* 17.11.2026 (מיכאל): "לא להשאיר אף פעם סתם שתי שורות או שני מעברי פסקה בזה אחר זה". פסקה בלי שום אות (עריכה
      שרוקנה אותה, ועוד לא קופלה) אינה נראית ואינה תופסת שורה - בדף ובהדפסה. בעריכה היא נשארת, כדי שאפשר יהיה לכתוב
      בה או למחוק אותה. בבנייה ובקיפול היא נמחקת מן הנתונים ומן הספר (_drop_empty ב-build_site.py) */
@@ -3664,7 +3674,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const k=h.indexOf('<div class="main"');if(k<0)return h;
     let r=h.slice(0,k),m=h.slice(k);
     r=r.replace(/(<span class="anchor">(?:<i class="[a-z]+">)?)([א-ת]{1,2}\.)(?=[\s<&])/,'$1<b class="rlt">$2</b>');
-    m=m.replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,'$1<span class="bkx og" contenteditable="false"></span> ');
+    if(h.indexOf('class="row u enl"')<0)m=m.replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,'$1<span class="bkx og" contenteditable="false"></span> ');
     return lgAmWords(r)+lgAmWords(m)}
   function unitHTML0(u,daf,pi){
     const mk=daf!=null?dafMark(pi):'';

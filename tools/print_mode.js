@@ -398,6 +398,7 @@
     'שורה יתומה בסוף טור':'קצר או האריך את הפסקה בשורה',
     'סימן דף קרוב משלוש אותיות לטקסט':'קצר את כותרת הצד או הזז את סימן הדף',
     'כותרת שנשברה':'קצר את הכותרת לשורה אחת',
+    'רשימה לא סימטרית':'רווח רגיל אחד אחרי כל אות (א. ב. ג.), שני פריטים בשורה - פסיק ורווח',
     'אות לועזית':'מחק את האות הלועזית',
     'שורה שהתארכה':'לחיצה: ההצעות לקיצור. Enter מקבל',
     'לבדוק אחר כך':'סימון שלך. לחיצה ימנית על הסימן מסירה אותו'};
@@ -414,6 +415,11 @@
       var row=m.parentElement,u=+row.getAttribute('data-u');if(!u||seenH[u])return;seenH[u]=1;
       var rg=doc.createRange();rg.selectNodeContents(m);var tops={};[].forEach.call(rg.getClientRects(),function(r){if(r.width>1)tops[Math.round(r.top)]=1});
       if(Object.keys(tops).length>1)L.push({type:'כותרת שנשברה',page:pmPageOf(row),u:u,detail:'הכותרת נשברה ל-'+Object.keys(tops).length+' שורות',src:'pm'})});
+    /* פרומפט 60 ה: רשימה ממוספרת (row.enl) - כל השורות מתחילות באותה נקודה, רווח רגיל אחד בדיוק אחרי כל אות מספור, בלי רווח
+       מתוח ובלי הרווח הקבוע. מה שאינו כך - "רשימה לא סימטרית" */
+    var seenE={};
+    [].forEach.call(out.querySelectorAll('.pg .ptx .row.enl[data-u]'),function(row){var u=+row.getAttribute('data-u');if(!u||seenE[u]||(parseFloat(row.style.top)||0)<-0.5)return;seenE[u]=1;
+      var why=pmEnlWhy(doc,row);if(why)L.push({type:'רשימה לא סימטרית',page:pmPageOf(row),u:u,detail:why,src:'pm'})});
     var seenL={};
     [].forEach.call(out.querySelectorAll('.pg .ptx .row[data-u] .main'),function(m){var row=m.closest('.row');var u=+row.getAttribute('data-u');if(seenL[u])return;
       var t=m.textContent||'';var mm=/[A-Za-z]/.exec(t.replace(/leokmei\.com/g,''));if(mm){seenL[u]=1;L.push({type:'אות לועזית',page:pmPageOf(row),u:u,detail:'"'+t.substr(Math.max(0,mm.index-8),18)+'"',src:'pm'})}});
@@ -462,6 +468,22 @@
         else return}catch(e){return}
       if(ok){i.done=1;fixed++;if(i.mk){i.mk.classList.add('k-done');i.mk.textContent='✓';i.mk.title='סודר: '+i.type}}});
     if(fixed){pmNextBtn();pmStat('סודר ✓'+(fixed>1?' '+fixed+' ממצאים':'')+' · F4 לבא',0)}}
+  function pmEnlWhy(doc,row){
+    var ps=[].slice.call(row.querySelectorAll(':scope > .main > p')).filter(function(p){return p.textContent.trim()});if(!ps.length)return '';
+    /* הרווח הקשיח של "מילה בודדת" (glueLastWords) נראה כרווח רגיל אחד - מותר */
+    var bad0='';ps.some(function(p){var t=p.textContent.replace(/[\u2060\u2063\u2064]/g,'');
+      var rx=/(?:^|[\s,])((?:[אבגדהוזחטיכ]|י[אבגדזחט]|כ[א-ט]|טו|טז)\.)(?=[\s\u00a0]*[א-ת"'])/g,m;
+      while((m=rx.exec(t))){var nx=t.slice(m.index+m[0].length,m.index+m[0].length+2);
+        if(!/^[ \u00a0][^\s\u00a0]/.test(nx)){bad0='אחרי "'+m[1]+'" '+(/^[\s\u00a0]{2}/.test(nx)?'יותר מרווח אחד':'אין רווח')+' (צריך רווח רגיל אחד)';return true}}
+      return false});
+    if(bad0)return bad0;
+    if(row.querySelector('.og'))return 'רווח קבוע בתוך רשימה';
+    var R0=null,bad=false;ps.forEach(function(p){var rg=doc.createRange();rg.selectNodeContents(p);var rs=[].filter.call(rg.getClientRects(),function(r){return r.width>1});if(!rs.length)return;
+      var top=Math.min.apply(null,rs.map(function(r){return r.top})),first=rs.filter(function(r){return Math.abs(r.top-top)<2}),right=Math.max.apply(null,first.map(function(r){return r.right}));
+      if(R0===null)R0=right;else if(Math.abs(right-R0)>1.5)bad=true});
+    if(bad)return 'השורות אינן מתחילות באותה נקודה';
+    var ta=getComputedStyle(ps[0]).textAlign;if(ta==='justify')return 'יישור לשני הצדדים (רווחים מתוחים)';
+    return ''}
   function pmPageOf(el){for(var i=0;i<S.pages.length;i++)if(S.pages[i].contains(el))return i+1;return 0}
   function pmIssuesPos(){
     var doc=pmDoc();if(!doc)return;var out=doc.getElementById('prnout');if(!out)return;
@@ -787,7 +809,39 @@
       var c=pmRows(nx)[0];if(!c||c.getAttribute('data-u')!==u||(parseFloat(c.style.top)||0)>-0.5)break;
       var Hc=parseFloat(tx.style.height)||tx.clientHeight,want=-(Hc-(parseFloat(last.style.top)||0));
       if(Math.abs((parseFloat(c.style.top)||0)-want)<=0.3&&c.offsetHeight===last.offsetHeight)break;
-      c.style.top=want+'px';tx=nx;k++}}
+      c.style.top=want+'px';tx=nx;k++}
+    if(!S.hbT)S.hbT=requestAnimationFrame(function(){S.hbT=0;try{pmHbCheck()}catch(e){}})}
+  /* פרומפט 60 ב (17.11.2026): כלל ברזל - כותרת לעולם אינה אחרונה בטור. התיקון המהיר אינו מעמד מחדש, ולכן אחרי כל
+     פריסה של טור נבדק מיד: כותרת (יחידת נושא/ד"ה/פתיחת פרק, או פסקת כותרת בתוך יחידה) שאחריה פחות משתי שורות תוכן באותו
+     טור - ממצא "כותרת בתחתית טור", עד "השלם עימוד" (F9), שהמנוע שבו אינו מניח לכותרת להיפרד מן התוכן שלה */
+  function pmHbFind(doc){
+    var lh=S.lh||20,out=[];
+    pmCols2(doc).forEach(function(tx,ci,all){
+      var H=parseFloat(tx.style.height)||tx.clientHeight,R=pmRows(tx).filter(function(r){return (parseFloat(r.style.top)||0)>=-0.5});if(!R.length)return;
+      var nx=all[ci+1],more=nx&&pmRows(nx).length>0;
+      for(var i=R.length-1;i>=0;i--){var r=R[i],t=parseFloat(r.style.top)||0;if(t>H-0.5)continue;
+        var hd=null,hb=0;
+        if(r.classList.contains('nose')||r.classList.contains('dh')||r.classList.contains('perek-start')){hd=r;hb=t+r.offsetHeight}
+        else{var ps=r.querySelectorAll(':scope > .main > p'),lp=ps[ps.length-1];if(lp&&/(^|\s)(nose|dh)(\s|$)/.test(lp.className)){hd=lp;hb=t+lp.offsetTop+lp.offsetHeight}}
+        if(!hd){if(t+r.offsetHeight<H-2*lh)break;continue}
+        if(hb>H+1)break;
+        var after=0;for(var j=i+1;j<R.length;j++){var tj=parseFloat(R[j].style.top)||0;after+=Math.max(0,Math.min(H,tj+R[j].offsetHeight)-Math.max(tj,hb))}
+        if(hd!==r){/* פסקת כותרת: מה שאחריה באותה יחידה */after+=Math.max(0,Math.min(H,t+r.offsetHeight)-hb)}
+        var rest=i+1<R.length||more;
+        if(rest&&after<2*lh-2)out.push({row:r,u:+r.getAttribute('data-u'),n:Math.round(after/lh)});
+        break}});
+    return out}
+  function pmHbCheck(){
+    var doc=pmDoc();if(!doc||!S.issues)return;var out=doc.getElementById('prnout');if(!out)return;
+    var F=pmHbFind(doc),key={};F.forEach(function(f){key[f.u]=f});
+    /* מה שסודר בעריכה: ✓ ויוצא מן הספירה */
+    S.issues.forEach(function(i){if(!i.pmhb||i.done)return;if(!key[i.u]){i.done=1;if(i.mk){i.mk.classList.add('k-done');i.mk.textContent='✓';i.mk.title='סודר: '+i.type}}});
+    var has={};S.issues.forEach(function(i){if(i.type==='כותרת בתחתית טור'&&!i.done)has[i.u]=1});
+    var add=0;F.forEach(function(f){if(has[f.u])return;
+      var i={type:'כותרת בתחתית טור',u:f.u,page:pmPageOf(f.row),el:f.row,src:'pm',pmhb:1,detail:'אחרי עריכה: '+(f.n?'שורה אחת בלבד אחריה':'אין אחריה תוכן')+' באותו טור. השלם עימוד (F9) מוריד אותה לטור הבא'};
+      var m=doc.createElement('div');m.className='pmmk k-e';m.textContent='!';m.title=i.type+'\n'+i.detail;m.setAttribute('data-i',S.issues.length);i.mk=m;out.appendChild(m);
+      S.issues.push(i);add++});
+    if(add){pmIssuesPos();pmNextBtn();pmStat('כותרת ירדה לתחתית טור - השלם עימוד (F9)',0)}}
   function pmOverflow(tx){
     var H=parseFloat(tx.style.height)||tx.clientHeight,over=0;
     var cols=pmCols2(tx.ownerDocument),nx=cols[cols.indexOf(tx)+1],c0=nx&&pmRows(nx)[0],cont=c0&&(parseFloat(c0.style.top)||0)<-0.5?c0.getAttribute('data-u'):null;

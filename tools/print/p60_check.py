@@ -22,14 +22,34 @@ EXTRA = os.environ.get('P60_EXTRA', '')
 sys.path.insert(0, HERE)
 
 
+def base_ref():
+    """הבסיס להשוואה: נקודת ההתפצלות מן הענף הראשי (main), כדי שגם עבודה שכבר נשמרה בענף תיחשב אחרי"""
+    r = subprocess.run(['git', 'merge-base', 'HEAD', 'origin/main'], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    return r or 'HEAD'
+
+
 def git_show(path):
-    return subprocess.run(['git', 'show', 'HEAD:' + path], cwd=ROOT, capture_output=True, text=True, encoding='utf-8').stdout
+    return subprocess.run(['git', 'show', base_ref() + ':' + path], cwd=ROOT, capture_output=True, text=True, encoding='utf-8').stdout
 
 
 def js_patches():
-    """זוגות (ישן, חדש) מתוך tools/print/p60_patches.json - שינויי ה-JS שב-build_site.py, להחלה על mas.js החי"""
-    p = os.path.join(HERE, 'p60_patches.json')
-    return json.load(open(p, encoding='utf-8')) if os.path.exists(p) else []
+    """זוגות (ישן, חדש): ההבדלים בין build_site.py שבעץ לזה שב-HEAD, בהקשר של שתי שורות - להחלה על mas.js החי
+    (הקוד המשותף שבאתר נבנה מאותו טקסט). שורות פייתון שאינן בקוד המשותף אינן נמצאות ב-mas.js - ואז עוצרים בקול"""
+    import difflib
+    a = git_show('tools/build_site.py').split('\n')
+    b = open(os.path.join(ROOT, 'tools', 'build_site.py'), encoding='utf-8').read().split('\n')
+    out = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+        if tag == 'equal':
+            continue
+        c = 2
+        while True:
+            old = '\n'.join(a[max(0, i1 - c):i2 + c])
+            if c >= 6 or old.strip():
+                break
+            c += 1
+        out.append(['\n'.join(a[max(0, i1 - c):i2 + c]), '\n'.join(a[max(0, i1 - c):i1] + b[j1:j2] + a[i2:i2 + c]), b[j1:j2]])
+    return out
 
 
 def make_mas(live, base):
@@ -44,10 +64,19 @@ def make_mas(live, base):
     s1 = js.index('  })();\n', s0) + len('  })();\n')
     js = js[:s0] + pm + '\n' + js[s1:]
     if not base:
-        for old, new in js_patches():
-            if old not in js:
-                raise SystemExit('תיקון שאינו נמצא ב-mas.js החי: ' + old[:80])
-            js = js.replace(old, new, 1)
+        css = []
+        for old, new, added in js_patches():
+            if old in js:
+                js = js.replace(old, new, 1)
+                continue
+            # ה-CSS של הדף אינו ב-mas.js: שורות CSS שנוספו מוזרקות כגיליון סגנון
+            body = [x for x in added if x.strip() and not x.strip().startswith('/*')]
+            if body and all('{' in x and 'function' not in x and '=>' not in x for x in body):
+                css.extend(body)
+                continue
+            raise SystemExit('תיקון שאינו נמצא ב-mas.js החי: ' + old[:80])
+        if css:
+            js = '(function(){var s=document.createElement("style");s.textContent=' + json.dumps('\n'.join(css)) + ';document.head.appendChild(s)})();\n' + js
     return js
 
 
@@ -67,7 +96,8 @@ DUMP = r"""()=>{const G=window.__PRNDBG,R=window.__PRN.report;if(!G)return null;
   r.querySelectorAll(':scope > .rail > .win').forEach(w=>{const t=w.textContent.replace(/\s+/g,' ').trim();if(!t)return;
    const a=w.querySelector('.anchor')||w,rg=document.createRange();rg.selectNodeContents(a);const tops=new Set([...rg.getClientRects()].filter(x=>x.height>0.5&&x.width>0.5).map(x=>Math.round(x.top)));
    labels.push({u:+u,t:t,words:t.split(' ').filter(Boolean).length,lines:tops.size,w2:w.classList.contains('w2'),fs:w.style.fontSize||''})})});
- return {pages:R.pages.length,issues:(R.issues||[]).map(i=>({type:i.type,page:i.page,daf:i.daf,unit:i.unit,detail:i.detail})),headBottom,loneTop,loneBot,labels,t:R.t}}"""
+ const ulines={};L.forEach(l=>{const u=recs[l.ri].u;if(u!=null)ulines[u]=(ulines[u]||0)+1});
+ return {ulines,pages:R.pages.length,issues:(R.issues||[]).map(i=>({type:i.type,page:i.page,daf:i.daf,unit:i.unit,detail:i.detail})),headBottom,loneTop,loneBot,labels,t:R.t}}"""
 
 
 async def run_perek(b, mas, slug, perek, profile, tos):

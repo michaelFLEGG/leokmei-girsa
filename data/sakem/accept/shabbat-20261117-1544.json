@@ -1,0 +1,62 @@
+{
+ "slug": "shabbat",
+ "jobs": [
+  {
+   "jid": "shabbat-p11",
+   "items": 30,
+   "open": 2,
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p12",
+   "items": 17,
+   "open": 17,
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p13",
+   "items": 16,
+   "open": 16,
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p14",
+   "items": 21,
+   "open": 21,
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p15",
+   "items": 22,
+   "open": 22,
+   "pending_after": 0
+  }
+ ],
+ "started": "2026-11-17 13:41",
+ "diag": {
+  "admin": true,
+  "key": true,
+  "jobs": 16,
+  "status": 200,
+  "all": 47,
+  "slug": [
+   "shabbat-p2:done",
+   "shabbat-p4:done",
+   "shabbat-p5:done",
+   "shabbat-s1-mwev8jkj:done",
+   "shabbat-s2222-mwhl72w1:done",
+   "shabbat-p1:done",
+   "shabbat-p6:done",
+   "shabbat-p7:done",
+   "shabbat-p8:done",
+   "shabbat-p9:done",
+   "shabbat-p10:done",
+   "shabbat-p11:ready",
+   "shabbat-p12:ready",
+   "shabbat-p13:ready",
+   "shabbat-p14:ready",
+   "shabbat-p15:ready"
+  ]
+ },
+ "errors": []
+}

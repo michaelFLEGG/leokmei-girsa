@@ -3544,7 +3544,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const d=document.createElement('div');d.innerHTML=h;
     d.querySelectorAll('i.ns,i.mk').forEach(x=>x.remove());
     return !d.textContent.replace(/[\s‏‎]/g,'')}
-  function unitHTML(u,daf,pi){const h=LTX(unitHTML0(u,daf,pi));return (u.k==='u'&&!EDIT)?lgLook(h):h}
+  function unitHTML(u,daf,pi){const h=LTX(unitHTML0(u,daf,pi));return (u.k==='u'&&!EDIT)?asymLook(lgLook(h)):h}
+  /* 17.11.2026 (מיכאל): כותרת צד שכולה כוכבית (סמליל זמני, שיוחלף במעוין) - בתצוגה ובהדפסה מוצגת כסימן המעוין
+     (p.mu, כלל 24) ואינה תופסת מקום במסילה. עד כאן הכוכבית בגופן וילנא תפסה את הנתיב הפנימי, וציון הדף נדחק החוצה
+     עד שכמעט לא נראה. בעריכה הכוכבית נשארת כמו שהיא (אפשר למחוק או להעתיק אותה), והנתונים והוורד אינם משתנים */
+  function asymLook(h){
+    const re=/<span class="anchor">(?:\s|&nbsp;)*[*\u2731\uFF0A\u25C6]+(?:\s|&nbsp;)*<\/span>/;
+    if(h.indexOf('class="anchor"')<0||!re.test(h))return h;
+    const h2=h.replace(re,'');
+    if(!/<span class="win[^"]*">\s*<\/span>/.test(h2))return h;
+    h=h2.replace('<div class="rail hw">','<div class="rail">');
+    return h.replace(/(<div class="main"[^>]*>\s*<p class=")(?![^"]*\bmu\b)/,'$1mu ')}
   /* תצוגה בלבד (7.11.2026, בקשת בעל הפרויקט). אינו נוגע בנתונים ובוורד, ואינו פועל במצב עריכה.
      א. שתי דעות באותה שורה: רווח קבוע לפני הדעה השנייה (פסיק או נקודה, ואחריו שם בסגנון אמוראים
         או אות מספור). הרווח הוא רהיט (bkx) ולכן אינו נכנס לעולם לנוסח שנשלח לוורד. רווחים

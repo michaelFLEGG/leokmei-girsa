@@ -63,8 +63,24 @@ def call(method, path, body=None):
         return json.loads(r.read().decode('utf-8'))
 
 
+def items_of(slug):
+    """המרשם, ועוד כל הכרעת "קבל"/"ערוך" שבקובץ ההכרעות שבמאגר (learn.py כותב אותו מן השרת)"""
+    fp, doc = load(slug)
+    items = list(doc.get('items') or [])
+    have = {it.get('id') for it in items}
+    dp = os.path.join(ROOT, 'data', 'overflow', 'decisions', slug + '.json')
+    if os.path.exists(dp):
+        for d in json.load(io.open(dp, encoding='utf-8')).get('items') or []:
+            if d.get('d') not in ('ok', 'edit') or d.get('id') in have or not (d.get('now') or '').strip():
+                continue
+            lines = [x.strip() for x in d['now'].split(' / ')] if ':split' in (d.get('kind') or '') else [d['now'].strip()]
+            items.append({'id': d.get('id'), 'daf': '', 'kind': 'decision', 'lines': lines, 'src': 'הכרעה בשרת'})
+    return items
+
+
 def check(slug, report, partial=False):
     fp, doc = load(slug)
+    doc = dict(doc, items=items_of(slug))
     R = json.load(io.open(report, encoding='utf-8'))
     pl = R.get('plines') or []
     if not pl:

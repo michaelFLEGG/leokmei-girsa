@@ -182,3 +182,6 @@ html.dev-phone #srcx .srchd,html.dev-tab #srcx .srchd{height:36px}
 html.dev-phone #msh,html.dev-tab #msh{height:20px}
 /* (17.11.2026, פרומפט 49) התווית הצפה של לחיצה ארוכה על סמל בכותרת */
 .hdtip{position:fixed;z-index:80;background:#2b2620;color:#f1ead9;font:500 13px/1.3 var(--ui,system-ui,sans-serif);padding:4px 10px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap}
+/* (17.11.2026, פרומפט 49) אזור מגע שקוף סביב סמלי הכותרות בטלפון ובטאבלט (38 בגובה) - הסמל הנראה נשאר קטן */
+html.dev-phone #srcx .srchd button,html.dev-tab #srcx .srchd button,html.dev-phone .tzhd button,html.dev-tab .tzhd button{position:relative}
+html.dev-phone #srcx .srchd button::after,html.dev-tab #srcx .srchd button::after,html.dev-phone .tzhd button::after,html.dev-tab .tzhd button::after{content:"";position:absolute;inset:-4px -1px}

@@ -138,6 +138,10 @@
         '<b>סכם על קטע מסומן:</b> '+(st.capped?'הגעת לתקרת החודש':'אין מפתח')+' - קטע נכנס לתור הזה. '+
         '<label>מפתח: <input id="skpkey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-..." style="width:40%"></label> <button id="skpkeyb">שמור</button>'}).catch(()=>{const d=$('#skpnow');if(d)d.textContent=''})}
   window.skpPanel=skpPanel;
+  /* פרומפט 56 ד1: לפעולת "קבל הכל בשבת" (sakem-accept.yml) - אותו מסלול בדיוק של הכפתור, דרך הדף עצמו, למנהל בלבד */
+  window.skpAuto={open:jid=>skpOpen(jid),all:()=>{if(!SKP.rev)return null;skpAll('per');return SKP.lastAll||null},
+    state:()=>SKP.rev?{jid:SKP.rev.jid,items:SKP.rev.items.length,open:SKP.rev.items.filter(x=>!SKP.rev.dec[x.iid]).length}:null,
+    jobs:()=>(SKP.jobs||[]).map(j=>({jid:j.jid,kind:j.kind,perek:j.perek,st:j.st}))};
 
   /* =================== הסקירה =================== */
   async function skpOpen(jid){
@@ -565,6 +569,7 @@
     finally{if(B)skmBatchEnd(B)}
     done.forEach(([x,i])=>{R.cnt.accept++;R.hist.push({i,iid:x.iid,act:'accept',undo:false});skpDec(x,'accept')});
     const ms=Math.round(performance.now()-t0);SKP.lastAllMs=ms;
+    SKP.lastAll={ok,skip,skipped:rest.filter(([x])=>!done.some(([y])=>y.iid===x.iid)).map(([x])=>x.iid),ms};
     skpAllToast('התקבלו '+ok+(skip?' · '+skip+' נשארו להכרעה (נערכו בינתיים או לא הוחלו)':''),B&&ok?()=>{
       if(!skmBatchUndo(B)){flash('הביטול לא הצליח - בטל בעורך');return}
       done.forEach(([x])=>{R.cnt.accept--;skpDec(x,'undo')});

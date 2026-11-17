@@ -1,0 +1,48 @@
+name: סכם - קבל את כל הנותרים במסכת
+# פרומפט 56 ד1 (17.11.2026): "קבל את כל הנותרים בפרק" לכל עבודות סכם של מסכת, דרך הדף עצמו במצב מנהל
+# (אותו מסלול בדיוק של הכפתור: החלה, הכרעות accept, פרסום לשכבה החיה). הפעלה ידנית בלבד. dry=1 - רק ספירה
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'מסכת'
+        required: true
+        default: shabbat
+      jobs:
+        description: 'עבודות מופרדות בפסיקים (ריק = כל המוכנות)'
+        required: false
+        default: ''
+      dry:
+        description: '1 = רק פתיחה וספירה, בלי קבלה'
+        required: false
+        default: ''
+permissions:
+  contents: write
+concurrency:
+  group: sakem-accept
+  cancel-in-progress: false
+jobs:
+  accept:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: קבלה
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          D=""; if [ "${{ github.event.inputs.dry }}" = "1" ]; then D="--dry"; fi
+          python tools/sakem/accept_all.py --slug "${{ github.event.inputs.slug }}" --jobs "${{ github.event.inputs.jobs }}" $D --out _accept.json
+      - name: הדוח בריפו
+        if: always()
+        run: |
+          [ -f _accept.json ] || exit 0
+          mkdir -p data/sakem/accept
+          cp _accept.json "data/sakem/accept/${{ github.event.inputs.slug }}-$(TZ=Asia/Jerusalem date +%Y%m%d-%H%M).json"
+          git config user.name "leokmei-sakem"; git config user.email "sakem@leokmei.com"
+          git add data/sakem/accept
+          git commit -qm "סכם: דוח קבלת הכל [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done

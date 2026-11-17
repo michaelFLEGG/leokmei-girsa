@@ -999,13 +999,17 @@
         if(lk){if(lk[1]==='מקור')continue;flush();inM=lk[1]==='משנה';continue}
         if(/^\[צד:/.test(s)){continue}
         var m=/^\(רווח\)\s*/.exec(s);
+        /* שורת המשך (בלי סימן, בלי כותרת צד) צמודה לחבר האחרון ברצף: חלק מאותה פסקה. האורך מצטבר, ופסקה
+           שעברה שורה וחצי יוצאת מן הרצף */
+        if(!m&&!inM&&run.length&&run[run.length-1].e===i-1&&!/^\(/.test(s)){var lr=run[run.length-1];lr.n+=lineLen(s)+1;lr.e=i;
+          if(lr.n>MU_MAX){run.pop();flush()}continue}
         if(!m||inM){flush();continue}
         var t=i>0&&/^\[צד:/.test(P[i-1].trim());
-        var short=lineLen(s.slice(m[0].length))<=MU_MAX;
-        if(!short){flush();continue}
+        var n0=lineLen(s.slice(m[0].length));
+        if(n0>MU_MAX){flush();continue}
         /* הפסקה הקודמת ברצף חייבת להיות צמודה: רק כותרות צד (של הפסקה הזו) ביניהן */
-        if(run.length){var j=i-1;while(j>run[run.length-1].i&&/^\[צד:/.test(P[j].trim()))j--;if(j!==run[run.length-1].i)flush()}
-        run.push({i:i,t:t})}
+        if(run.length){var j=i-1;while(j>run[run.length-1].e&&/^\[צד:/.test(P[j].trim()))j--;if(j!==run[run.length-1].e)flush()}
+        run.push({i:i,t:t,e:i,n:n0})}
       flush();
       /* (מעוין) בשורה שיש לה כותרת צד: הכותרת במקום המעוין */
       for(var q=1;q<P.length;q++)if(/^\s*\(מעוין\)/.test(P[q])&&/^\[צד:/.test(P[q-1].trim())&&(orig===undefined||!had[P[q].trim()])){P[q]=P[q].replace(/^(\s*)\(מעוין\)\s*/,'$1');notes.push('מעוין: פסקה עם כותרת צד - בלי מעוין')}

@@ -1,21 +1,21 @@
 {
  "slug": "megillah",
- "made": "2026-11-17 14:25",
+ "made": "2026-11-17 15:07",
  "profile": "a4-large",
  "pages": {
   "a4": 21,
   "a4-large": 22
  },
  "sq25": {
-  "a4": 12,
+  "a4": 11,
   "a4-large": 74
  },
- "count": 4,
+ "count": 3,
  "firstTool": {
-  "5": 2
+  "5": 1
  },
- "joinCands": 3,
- "mechSplitCands": 3,
+ "joinCands": 2,
+ "mechSplitCands": 0,
  "ctlMismatch": [],
  "rejected": 1,
  "stale": [],
@@ -43,67 +43,6 @@
   }
  },
  "items": [
-  {
-   "key": "u558.4",
-   "id": "ca76ec7fc225513a",
-   "u": 558,
-   "li": 4,
-   "daf": "י:",
-   "cls": "b0 a0",
-   "mc": "main",
-   "html": "<i class=\"am\">א.</i> ויהי בימי אחשורוש, <i class=\"am\">ב,</i> ויהי בימי שפט השפטים,<i class=\"b\"> </i><i class=\"am\">ג.</i> ויהי בימי אמרפל",
-   "ph": "<i class=\"am\">א.</i> ויהי בימי אחשורוש, <i class=\"am\">ב,</i> ויהי בימי שפט השפטים,<i class=\"b\"> </i><i class=\"am\">ג.</i> ויהי בימי אמרפל",
-   "text": "א. ויהי בימי אחשורוש, ב, ויהי בימי שפט השפטים, ג. ויהי בימי אמרפל",
-   "over": "בימי אמרפל",
-   "nA4": 1,
-   "nLarge": 2,
-   "missPx": 61.0,
-   "miss": 11,
-   "long": false,
-   "tail": false,
-   "sug": [
-    {
-     "tool": 5,
-     "kind": "join",
-     "target": "next",
-     "html": "<i class=\"am\">א.</i> ויהי בימי אחשורוש, <i class=\"am\">ב,</i> ויהי בימי שפט השפטים,<i class=\"b\"> </i><i class=\"am\">ג.</i> ויהי בימי אמרפל <i class=\"am\">ד.</i> ויהי בימי אחז,<i class=\"b\"> </i><i class=\"am\">ה.</i> ויהי בימי יהויקים.",
-     "targetOrig": "<i class=\"am\">ד.</i> ויהי בימי אחז,<i class=\"b\"> </i><i class=\"am\">ה.</i> ויהי בימי יהויקים.",
-     "targetLines": 1,
-     "why": "איחוי עם השורה הבאה",
-     "ok": {
-      "large": [
-       2
-      ],
-      "a4": [
-       2
-      ]
-     }
-    },
-    {
-     "tool": 4,
-     "split_before": "ויהי בימי ש",
-     "side": "",
-     "kind": "split",
-     "parts": [
-      "<i class=\"am\">א.</i> ויהי בימי אחשורוש, <i class=\"am\">ב,</i>",
-      "ויהי בימי שפט השפטים,<i class=\"b\"> </i><i class=\"am\">ג.</i> ויהי בימי אמרפל"
-     ],
-     "why": "חיתוך אחרי סימן פיסוק",
-     "src": "mech",
-     "ok": {
-      "large": [
-       1,
-       1
-      ],
-      "a4": [
-       1,
-       1
-      ]
-     }
-    }
-   ],
-   "tool6": false
-  },
   {
    "key": "u846.1",
    "id": "8e31f6f0a4214945",

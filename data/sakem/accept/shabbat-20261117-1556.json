@@ -1,0 +1,272 @@
+{
+ "slug": "shabbat",
+ "jobs": [
+  {
+   "jid": "shabbat-p11",
+   "items": 30,
+   "open": 2,
+   "result": {
+    "ok": 0,
+    "skip": 2,
+    "skipped": [
+     "s2",
+     "s19"
+    ],
+    "ms": 2
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p12",
+   "items": 17,
+   "open": 17,
+   "result": {
+    "ok": 17,
+    "skip": 0,
+    "skipped": [],
+    "ms": 3867
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p13",
+   "items": 16,
+   "open": 16,
+   "result": {
+    "ok": 13,
+    "skip": 3,
+    "skipped": [
+     "s2",
+     "s4",
+     "s9"
+    ],
+    "ms": 2945
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p14",
+   "items": 21,
+   "open": 21,
+   "result": {
+    "ok": 19,
+    "skip": 2,
+    "skipped": [
+     "s4",
+     "s9"
+    ],
+    "ms": 5074
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p15",
+   "items": 22,
+   "open": 22,
+   "result": {
+    "ok": 21,
+    "skip": 1,
+    "skipped": [
+     "s17"
+    ],
+    "ms": 5196
+   },
+   "pending_after": 0
+  }
+ ],
+ "started": "2026-11-17 13:48",
+ "diag": {
+  "admin": true,
+  "key": true,
+  "jobs": 16,
+  "status": 200,
+  "all": 47,
+  "slug": [
+   "shabbat-p2:done",
+   "shabbat-p4:done",
+   "shabbat-p5:done",
+   "shabbat-s1-mwev8jkj:done",
+   "shabbat-s2222-mwhl72w1:done",
+   "shabbat-p1:done",
+   "shabbat-p6:done",
+   "shabbat-p7:done",
+   "shabbat-p8:done",
+   "shabbat-p9:done",
+   "shabbat-p10:done",
+   "shabbat-p11:ready",
+   "shabbat-p12:ready",
+   "shabbat-p13:ready",
+   "shabbat-p14:ready",
+   "shabbat-p15:ready"
+  ]
+ },
+ "enqueued": [
+  {
+   "perek": 1,
+   "title": "שבת פרק 1 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s1-mwkr9e5n",
+   "again": null
+  },
+  {
+   "perek": 2,
+   "title": "שבת פרק 2 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s1192-mwkr9f0d",
+   "again": null
+  },
+  {
+   "perek": 3,
+   "title": "שבת פרק 3 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s2426-mwkr9fsp",
+   "again": null
+  },
+  {
+   "perek": 4,
+   "title": "שבת פרק 4 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s3082-mwkr9gjr",
+   "again": null
+  },
+  {
+   "perek": 5,
+   "title": "שבת פרק 5 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s3269-mwkr9hbd",
+   "again": null
+  },
+  {
+   "perek": 6,
+   "title": "שבת פרק 6 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s3559-mwkr9i0c",
+   "again": null
+  },
+  {
+   "perek": 7,
+   "title": "שבת פרק 7 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s4064-mwkr9isa",
+   "again": null
+  },
+  {
+   "perek": 8,
+   "title": "שבת פרק 8 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s4434-mwkr9jmz",
+   "again": null
+  },
+  {
+   "perek": 9,
+   "title": "שבת פרק 9 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s4810-mwkr9kdg",
+   "again": null
+  },
+  {
+   "perek": 10,
+   "title": "שבת פרק 10 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s5239-mwkr9l5h",
+   "again": null
+  },
+  {
+   "perek": 11,
+   "title": "שבת פרק 11 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s5520-mwkr9m55",
+   "again": null
+  },
+  {
+   "perek": 12,
+   "title": "שבת פרק 12 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s5863-mwkr9mvm",
+   "again": null
+  },
+  {
+   "perek": 13,
+   "title": "שבת פרק 13 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s6036-mwkr9nhz",
+   "again": null
+  },
+  {
+   "perek": 14,
+   "title": "שבת פרק 14 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s6189-mwkr9o5s",
+   "again": null
+  },
+  {
+   "perek": 15,
+   "title": "שבת פרק 15 - סבב שני (פרומפט 56)",
+   "kind": "seg",
+   "jid": "shabbat-s6464-mwkr9owt",
+   "again": null
+  },
+  {
+   "perek": 16,
+   "title": "שבת פרק ששה עשר - כל כתבי",
+   "kind": "perek",
+   "jid": "shabbat-p16",
+   "again": null
+  },
+  {
+   "perek": 17,
+   "title": "שבת פרק שבעה עשר - כל הכלים",
+   "kind": "perek",
+   "jid": "shabbat-p17",
+   "again": null
+  },
+  {
+   "perek": 18,
+   "title": "שבת פרק שמונה עשר - מפנין",
+   "kind": "perek",
+   "jid": "shabbat-p18",
+   "again": null
+  },
+  {
+   "perek": 19,
+   "title": "שבת פרק תשעה עשר - ר\"א דמילה",
+   "kind": "perek",
+   "jid": "shabbat-p19",
+   "again": null
+  },
+  {
+   "perek": 20,
+   "title": "שבת פרק עשרים - תולין",
+   "error": "Page.evaluate: Error: שגיאה: KV PUT failed: 429 Too Many Requests\n    at api (https://leokmei.com/mas.js?v=78bd8026:3284:34)\n    at async <anonymous>:381:23"
+  },
+  {
+   "perek": 21,
+   "title": "שבת פרק אחד ועשרים - נוטל",
+   "kind": "perek",
+   "jid": "shabbat-p21",
+   "again": null
+  },
+  {
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים - חבית",
+   "kind": "perek",
+   "jid": "shabbat-p22",
+   "again": null
+  },
+  {
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל",
+   "kind": "perek",
+   "jid": "shabbat-p23",
+   "again": null
+  },
+  {
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים - מי שהחשיך",
+   "kind": "perek",
+   "jid": "shabbat-p24",
+   "again": null
+  }
+ ],
+ "errors": []
+}

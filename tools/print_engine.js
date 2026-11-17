@@ -914,7 +914,17 @@
     var GAP=N.gapAboveMm*MM;
     /* חור = ריק של יותר משורה וחצי (בקרה, קבוע). המתיחה: עד stretch.maxLines שורות, ועד stretch.maxPtPerGap נק' לכל גבול פסקה (מן הפרופיל) */
     var STR=prof.stretch||{},NLH=N.linePt*PT,LH=prof.body.linePt*PT,HOLE=1.5*LH,STRMAX=(STR.maxLines||1.5)*LH,STRETCH=(STR.maxPtPerGap||3)*PT;
-    var HFIX=QS.get('holefix')!=='0';                    /* holefix=0: בלי פיצול ומתיחה, לבקרת לפני/אחרי בלבד */
+    var HFIX=QS.get('holefix')!=='0';
+    /* 17.11.2026 (מיכאל: "רווחים לא נכונים בין שורה לשורה"): בלאוקמי גירסא כמעט כל שורה היא פסקה, ולכן מתיחה "בין
+       גבולות הפסקאות" פיזרה רווח בין כל שתי שורות, ובכל טור במידה אחרת - רשת השורות לא הייתה אחידה. מעכשיו מותחים
+       רק במקום שכבר יש בו הפסקה: לפני כותרת (ד"ה, נושא, חציצה, פתיחת פרק), לפני שורה עם "רווח לפני" (sp / b1-b4),
+       ולפני תיבת משנה. טור שאין בו מקום כזה - הריק נשאר בתחתיתו, והשורות במרווח הרגיל */
+    function brkRi(ri){var x=recs[ri];if(!x)return false;var h=String(x.html2||x.html||'');
+      var cls=(h.match(/^\s*<div[^>]*class="([^"]*)"/)||[])[1]||'';
+      if(/\b(dh|nose|hatz|perek-start|perek-range|gapm)\b/.test(cls)||(x.el&&x.el.classList&&x.el.classList.contains('gapm')))return true;
+      if(/\b(dh|nose|hatz)\b/.test(x.kind||''))return true;
+      var m=h.match(/<p class="([^"]*)"/);return !!(m&&/\b(sp|b[1-4])\b/.test(m[1]))}
+    function nbBrk(r0,r1){var n=0;for(var q=r0+1;q<=r1;q++)if(brkRi(q))n++;return n}                    /* holefix=0: בלי פיצול ומתיחה, לבקרת לפני/אחרי בלבד */
     function noteIds(a,b){var s=[];for(var i=a;i<b;i++)for(var t=0;t<L[i].notes.length;t++)s.push(L[i].notes[t]);
       return s.sort(function(x,y){return ((byN[x]&&byN[x].dn)||0)-((byN[y]&&byN[y].dn)||0)||x-y})}
 
@@ -1110,7 +1120,7 @@
         /* פרומפט 48 סבב ב (16.11.2026): כשאין נקודת שבירה שמאזנת עד שתי שורות, הטור הקצר של סוף הפרק נמתח בגבולות הפסקאות
            (עד stretch.maxPtPerGap לכל גבול, כמו מתיחת חור), כך שתחתית שני הטורים מתקרבת. הבודק מודד אחרי המתיחה */
         if(HFIX&&c.bal&&cols[ci-1].bal&&Math.abs(hu1-hu2)>2*LH+0.5){
-          var sc=hu1<hu2?cols[ci-1]:c,nbS=L[sc.e-1].ri-L[sc.s].ri;
+          var sc=hu1<hu2?cols[ci-1]:c,nbS=nbBrk(L[sc.s].ri,L[sc.e-1].ri);
           if(nbS>0){sc.balPer=Math.min(STRETCH,Math.abs(hu1-hu2)/nbS);R.perekStretched=(R.perekStretched||0)+1;
             if(hu1<hu2)hu1+=sc.balPer*nbS;else hu2+=sc.balPer*nbS}}
         if(Math.abs(hu1-hu2)>2*LH+0.5&&Math.min(hu1,hu2)<A-2*LH)iss('סוף פרק לא מאוזן',b,'הפרש '+(Math.abs(hu1-hu2)/LH).toFixed(1)+' שורות')}
@@ -1160,7 +1170,7 @@
         /* פרומפט 16, ב: ריק קטן שנשאר (עד שורה וחצי) מתפזר בשווה בין גבולות הפסקאות שבטור - לא בתוך פסקה, ועד 3 נק'
            לכל גבול. טור שמסיים פרק (או את הטווח) נשאר כמות שהוא. ג: ריק גדול מזה נרשם בבקרה */
         var endCol=c.bal||c.e>=L.length||isForce(c.e);
-        var gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0),nb=le.ri-ln.ri,per=0;
+        var gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0),nb=nbBrk(ln.ri,le.ri),per=0;
         if(HFIX&&!endCol&&!sqz&&gapPx>0.5&&gapPx<=STRMAX&&nb>0){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;R.stretched=(R.stretched||0)+1}
         else if(c.balPer&&nb>0&&!sqz){per=Math.min(c.balPer,Math.max(0,gapPx)/nb);gapPx-=per*nb}
         /* שמירה (פרומפט 41): הטור לעולם אינו גבוה מגובה הנטו. מתיחה שהייתה מוציאה אותו מן השוליים מוקטנת, וחריגה שנשארת נרשמת */
@@ -1187,7 +1197,7 @@
              וההפניה המורמת של השורה הראשונה בטור הבא נראתה גם בתחתית הטור הקודם */
           [].slice.call(cl.querySelectorAll('sup.tm')).forEach(function(mk){var li=LNOF[mk.getAttribute('data-n')];
             if(li===undefined||li<c.s||li>=c.e){mk.style.visibility='hidden';mk.removeAttribute('id')}});
-          cl.style.position='absolute';cl.style.top=(rc.gtop-yS-sqz*Math.max(0,Math.min(1,(rc.gtop-ln.y0)/spanY))+per*(ri-ln.ri))+'px';cl.style.right='0';cl.style.width=(prof.rail+prof.measure)+'mm';
+          cl.style.position='absolute';cl.style.top=(rc.gtop-yS-sqz*Math.max(0,Math.min(1,(rc.gtop-ln.y0)/spanY))+per*nbBrk(ln.ri,ri))+'px';cl.style.right='0';cl.style.width=(prof.rail+prof.measure)+'mm';
           rowsHtml+=cl.outerHTML}
         body+='<div class="pcol" style="left:'+boxLeft+'mm;top:'+MG.top+'mm;width:'+(prof.rail+prof.measure)+'mm;height:'+A_mm+'mm">'+
           '<div class="ptx flow" style="height:'+(yE-yS-sqz+per*nb)+'px;overflow:visible;clip-path:inset(-'+MARKROOM+'pt 0 0 0)">'+rowsHtml+'</div>'+

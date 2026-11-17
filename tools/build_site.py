@@ -4122,6 +4122,29 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const hits=win.filter(s=>WN(s.t)===w);if(hits.length===1)return hits[0].k}
     return null}
 
+  function spliceLocate(e){
+    const w=WN(e.was);if(!w||w.length<8||e.now===undefined)return null;
+    if(!SLOTS)SLOTS=slots();
+    const k0=dafKey(e.daf);
+    const win=SLOTS.filter(s=>{const k=dafKey(s.daf);return k0===null||k===null?true:Math.abs(k-k0)<=1});
+    const hits=[];for(const s of win){const t=WN(s.t);if(t===w||t.length<=w.length)continue;
+      if(t.startsWith(w))hits.push([s,1]);else if(t.endsWith(w))hits.push([s,0])}
+    if(hits.length!==1)return null;
+    const [s,pre]=hits[0],d=document.createElement('div');d.innerHTML=dataHtml(s.k);
+    const raw=d.textContent;let cut=-1;
+    if(pre){for(let i=1;i<=raw.length;i++)if(WN(raw.slice(0,i))===w){cut=i;break}}
+    else{for(let j=raw.length-1;j>=0;j--)if(WN(raw.slice(j))===w){cut=j;break}}
+    if(cut<0)return null;
+    const tw=document.createTreeWalker(d,NodeFilter.SHOW_TEXT);let n,acc=0,node=null,off=0;
+    while((n=tw.nextNode())){const L=n.nodeValue.length;if(acc+L>=cut){node=n;off=cut-acc;break}acc+=L}
+    if(!node)return null;
+    const r=document.createRange();
+    if(pre){r.setStart(node,off);r.setEnd(d,d.childNodes.length)}else{r.setStart(d,0);r.setEnd(node,off)}
+    const box=document.createElement('div');box.appendChild(r.cloneContents());
+    const rest=box.innerHTML,nowH=e.nowH!==undefined?e.nowH:esc(e.now);
+    const ws=x=>/(\s|&nbsp;)$/.test(x),wsS=x=>/^(\s|&nbsp;)/.test(x);
+    const h=pre?nowH+(ws(nowH)||wsS(rest)?'':' ')+rest:rest+(ws(rest)||wsS(nowH)?'':' ')+nowH;
+    return {k:s.k,h}}
   /* ---- מודל הנתונים ----
      הדף נבנה מ-D, וכל עריכה מוחלת עליו - לא רק על ה-DOM. כך פעולה חדשה
      (פיצול, איחוי, כותרת צד) נשענת על הנוסח שאחרי התיקון הממתין, ולא על
@@ -4437,7 +4460,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(BAKED&&BAKED.has(e.t)){e._ap=1;e.lost=0;if(e.op!=='struct')e._cur=e.now;continue}
       if(e.op!=='struct'){
         const k=locate(e);
-        if(k===null){e.lost=1;continue}
+        if(k===null){
+          /* 17.11.2026: עריכה שנרשמה על חלק של פסקה שאוחתה מאז (האיחוי שלפניה לא נמצא אז בגלל רווח בסוף השורה, ומיכאל
+             עבד על המצב שראה). הנוסח שהיה הוא תחילת הפסקה הנוכחית או סופה, במקום יחיד: מחליפים רק את החלק הזה. בלי זה
+             כל השרשרת שאחריה (הקלדה, איחוי חוזר) נעשתה תלושה ונעלמה */
+          const sp=spliceLocate(e);
+          if(sp){dataSet(sp.k,sp.h);slotPut(sp.k,sp.h);if(e.ps!==undefined)dataCls(sp.k,e.ps);e.lost=0;e._ap=1;e._cur=plain(sp.h);any=true;continue}
+          e.lost=1;continue}
         e.lost=0;if(k!==e.k&&String(e.k).indexOf('~')<0)e.k=k;     /* מפתח קפוא אינו מוחלף במקום הנוכחי */
         const cur=(slotIdx().get(k)||{}).t;
         const htmlSame=e.nowH===undefined||normH(dataHtml(k))===normH(e.nowH);

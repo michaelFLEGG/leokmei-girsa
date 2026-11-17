@@ -1,0 +1,14 @@
+{
+ "slug": "menachot",
+ "shown": 150,
+ "moved": [
+  {
+   "perek": 2,
+   "n": 29,
+   "to": "טז.",
+   "was": "לרמ פיגול וחייבין עליו"
+  }
+ ],
+ "errors": [],
+ "ok": true
+}

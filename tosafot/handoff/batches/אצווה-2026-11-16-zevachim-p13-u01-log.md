@@ -1,0 +1,1 @@
+ - 16.11.2026 UTC - הושלמה zevachim-p13-u01. finalize: 29 תוספות, 0 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku"}.

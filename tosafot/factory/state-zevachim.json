@@ -144,6 +144,104 @@
     "flagged": 1,
     "questions": 95
    }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-11-17T00:39:15Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p09-u01",
+    "zevachim-p09-u02",
+    "zevachim-p09-u03"
+   ],
+   "result": {
+    "generated": 52,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 44
+   }
+  },
+  "10": {
+   "status": "published",
+   "published": "2026-11-17T00:39:16Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p10-u01",
+    "zevachim-p10-u02"
+   ],
+   "result": {
+    "generated": 31,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 24
+   }
+  },
+  "11": {
+   "status": "published",
+   "published": "2026-11-17T00:39:16Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p11-u01",
+    "zevachim-p11-u02"
+   ],
+   "result": {
+    "generated": 47,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 46
+   }
+  },
+  "12": {
+   "status": "published",
+   "published": "2026-11-17T00:39:17Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p12-u01",
+    "zevachim-p12-u02"
+   ],
+   "result": {
+    "generated": 43,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 35
+   }
+  },
+  "13": {
+   "status": "published",
+   "published": "2026-11-17T00:39:17Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p13-u01",
+    "zevachim-p13-u02"
+   ],
+   "result": {
+    "generated": 56,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 40
+   }
+  },
+  "14": {
+   "status": "published",
+   "published": "2026-11-17T00:39:18Z",
+   "unc_done": true,
+   "handoff_units": [
+    "zevachim-p14-u01",
+    "zevachim-p14-u02",
+    "zevachim-p14-u03"
+   ],
+   "result": {
+    "generated": 59,
+    "decided": 0,
+    "unchecked": 2,
+    "flagged": 2,
+    "questions": 43
+   }
   }
  },
  "created": "2026-11-16T12:40:22Z",
@@ -195,7 +293,44 @@
    "mean": 0.697,
    "n": 9,
    "at": "2026-11-16T18:39:48Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.336,
+   "n": 5,
+   "at": "2026-11-17T00:39:15Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.366,
+   "n": 3,
+   "at": "2026-11-17T00:39:15Z"
+  },
+  {
+   "perek": 11,
+   "mean": 0.219,
+   "n": 4,
+   "at": "2026-11-17T00:39:16Z"
+  },
+  {
+   "perek": 12,
+   "mean": 0.466,
+   "n": 4,
+   "at": "2026-11-17T00:39:16Z"
+  },
+  {
+   "perek": 13,
+   "mean": 0.3,
+   "n": 4,
+   "at": "2026-11-17T00:39:17Z"
+  },
+  {
+   "perek": 14,
+   "mean": 0.346,
+   "n": 5,
+   "at": "2026-11-17T00:39:17Z"
   }
  ],
- "updated": "2026-11-16T18:39:48Z"
+ "updated": "2026-11-17T00:39:18Z",
+ "done": "2026-11-17T00:39:18Z"
 }

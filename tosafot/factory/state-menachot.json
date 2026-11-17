@@ -1,0 +1,56 @@
+{
+ "slug": "menachot",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-17T00:39:14Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p01-u01",
+    "menachot-p01-u02",
+    "menachot-p01-u03",
+    "menachot-p01-u04",
+    "menachot-p01-u05"
+   ],
+   "result": {
+    "generated": 117,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 84
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-17T00:39:15Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p02-u01",
+    "menachot-p02-u02"
+   ],
+   "result": {
+    "generated": 32,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 27
+   }
+  }
+ },
+ "created": "2026-11-17T00:39:14Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.325,
+   "n": 9,
+   "at": "2026-11-17T00:39:14Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.355,
+   "n": 3,
+   "at": "2026-11-17T00:39:14Z"
+  }
+ ],
+ "updated": "2026-11-17T00:39:15Z"
+}

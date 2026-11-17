@@ -1,0 +1,1 @@
+ - 16.11.2026 UTC - הושלמה zevachim-p09-u03. finalize: 3 תוספות, 0 לעיון המנהל. מנועים: {"write": ["sonnet"], "rv": "haiku"}.

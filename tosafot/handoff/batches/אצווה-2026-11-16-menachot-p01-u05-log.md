@@ -1,0 +1,1 @@
+ - 16.11.2026 UTC - הושלמה menachot-p01-u05. finalize: 14 תוספות, 0 לעיון המנהל. מנועים: {"write": ["sonnet"], "rv": "haiku"}.

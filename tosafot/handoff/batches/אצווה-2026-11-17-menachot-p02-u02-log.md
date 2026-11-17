@@ -1,0 +1,1 @@
+ - 17.11.2026 UTC - הושלמה menachot-p02-u02. finalize: 6 תוספות, 0 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku"}.

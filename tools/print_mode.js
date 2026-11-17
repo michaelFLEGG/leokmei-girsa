@@ -16,8 +16,8 @@
   function pmMsg(m){try{if(typeof flash==='function')flash(m);else if(typeof toast==='function')toast(m,3000)}catch(e){}}
   var CARD_MM=85.6;                             /* רוחב כרטיס אשראי (ISO 7810) לכיול "גודל טבעי" */
   var S={open:false,fr:null,busy:false,dirty:false,report:null,pk:null,view:'page',spread:false,zoom:'fit',z:1,
-         pages:[],issues:[],ii:-1,later:pmLs('lg-pm-later-'+(typeof SLUG!=='undefined'?SLUG:''),[]),t0:0,lastMs:0,anchor:null};
-  var P=pmLs('lg-pm-prefs',{paper:'b5',big:1,tos:1,view:'page',spread:0,zoom:'fit',z:1});
+         pages:[],issues:[],ii:-1,pend:0,bal:0,staleFrom:0,cross:0,badges:{},cmdMs:[],kbuf:'',later:pmLs('lg-pm-later-'+(typeof SLUG!=='undefined'?SLUG:''),[]),t0:0,lastMs:0,anchor:null};
+  var P=pmLs('lg-pm-prefs',{paper:'b5',big:1,tos:1,view:'page',spread:0,zoom:'fit',z:1,auto:0});
   var PXMM=pmLs('lg-pm-pxmm',0);              /* פיקסלים למילימטר במסך הזה (אחרי כיול). 0 = לא כויל: 96/25.4 */
   S.view=P.view||'page';S.spread=!!P.spread;S.zoom=P.zoom||'fit';S.z=+P.z||1;
 
@@ -43,9 +43,9 @@
     try{if(typeof SEC!=='undefined'&&typeof cur!=='undefined'&&SEC[cur]){var p=D.pages[SEC[cur].to];return (p.perek||'')+'|'+(p.perekName||'')}}catch(e){}
     return L[0].key}
   /* הדף הרגיל עובר לפרק הזה, כדי שהעריכה תיכתב בעורך הקיים על השורה הנכונה */
-  function pmShowPerek(pk){
+  function pmShowPerek(pk,force){
     try{if(typeof SEC==='undefined'||typeof render!=='function')return;
-      for(var i=0;i<SEC.length;i++){var p=D.pages[SEC[i].to];if(p&&((p.perek||'')+'|'+(p.perekName||''))===pk){if(i!==cur)render(i);return}}}catch(e){}}
+      for(var i=0;i<SEC.length;i++){var p=D.pages[SEC[i].to];if(p&&((p.perek||'')+'|'+(p.perekName||''))===pk){if(i!==cur||force)render(i);return}}}catch(e){}}
 
   /* ---------- העיצוב של המצב (בדף המנהל) ---------- */
   function pmCss(){
@@ -74,6 +74,10 @@
       '#pmcal input[type=range]{width:min(560px,80vw)}'+
       '#pmmenu{position:fixed;z-index:72;background:#fff;border:1px solid #c9bfa8;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.2);padding:3px 0;display:none;direction:rtl}'+
       '#pmmenu div{padding:4px 14px;cursor:pointer}#pmmenu div:hover{background:#f1ece2}'+
+      '#pm-done.hot{border-color:#a3361f;color:#a3361f;font-weight:700}#pm-pend{color:#a3361f;font-size:12px;max-width:40em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
+      'body.pmopen #keyscard{z-index:80!important}'+
+      /* הדף הרגיל שמתחת למצב אינו נפרס על המסך: העורך עובד עליו, אבל הדפדפן אינו מחשב את הפריסה שלו בכל פקודה */
+      'body.pmopen #flow{content-visibility:hidden}'+
       '@media (max-width:700px){#pmbar{font-size:12px}#pmbar .pmwide{display:none}#pmside{display:none!important}}'+
       '@media print{#pm,#pmbtn{display:none!important}}';
     document.head.appendChild(c)}
@@ -97,12 +101,15 @@
         'font:bold 9px/12px sans-serif;text-align:center;color:#fff;background:#c0392b;box-shadow:0 0 0 1.5px #fff}'+
       '.pmmk.k-hole,.pmmk.k-bal{background:#b9770e}.pmmk.k-ov{background:#7d3c98}.pmmk.k-later{background:#1d6fa5}.pmmk.cur{outline:2px solid #1d3557;outline-offset:2px}'+
       '.pmready{position:absolute;z-index:5;font:bold 12px Frank,serif;color:#2e7d3c;border:1px solid #2e7d3c;border-radius:4px;padding:1px 6px;background:#fff}'+
-      '.pmdelta{position:absolute;z-index:6;font:bold 12px sans-serif;color:#1d3557;background:#fff;border:1px solid #1d3557;border-radius:4px;padding:0 5px;transition:opacity .6s}'+
+      '.pmdelta{position:absolute;z-index:6;font:bold 11px sans-serif;color:#1d3557;border:1px solid #1d3557;border-radius:4px;padding:0 4px;white-space:nowrap}'+
+      '.pmdelta.up{color:#a3361f;border-color:#a3361f}.pmdelta.dn{color:#2e7d3c;border-color:#2e7d3c}.pmdelta.eq{color:#6b6b6b;border-color:#b8b0a0}'+
+      '#prnout > .pmstale{box-shadow:0 0 0 .35px #555,inset -3px 0 0 #d68910!important}'+
+      '.pmovl{position:absolute;right:0;z-index:6;font:bold 10px sans-serif;color:#a3361f;white-space:nowrap}'+
       '.ptx .main p,.ptx .main.dh,.ptx .main.nose{cursor:text}'+
-      '[contenteditable].pmed{outline:1.5px solid #1d6fa5;outline-offset:1px;background:#fff;position:relative;z-index:4}'+
+      '[contenteditable].pmed{outline:1px solid #1d6fa5;outline-offset:1px;position:relative;z-index:4;caret-color:#1d6fa5}'+
       '.pmflash{outline:2px solid #1d6fa5;outline-offset:2px;transition:outline-color 1.2s}'+
     '}'+
-    '@media print{.pmmk,.pmready,.pmdelta,#pmcols{display:none!important}}';
+    '@media print{.pmmk,.pmready,.pmdelta,.pmovl,#pmcols{display:none!important}}';
 
   /* ---------- סרגל המצב ---------- */
   function pmBuild(){
@@ -127,6 +134,9 @@
         '<span class="pmsep"></span>'+
         '<button id="pm-next" title="הממצא הבא (N)">-</button>'+
         '<button id="pm-later" class="pmwide" title="רשימת \'לבדוק אחר כך\'">לבדוק אחר כך <span id="pm-ln">0</span></button>'+
+        '<button id="pm-done" title="עימוד מלא של הפרק אחרי התיקונים (F9)">השלם עימוד</button>'+
+        '<select id="pm-auto" class="pmwide" title="השלמת עימוד לבד אחרי שקט"><option value="0">השלמה ידנית</option><option value="5">לבד אחרי 5 שנ\'</option><option value="15">לבד אחרי 15 שנ\'</option><option value="30">לבד אחרי 30 שנ\'</option></select>'+
+        '<span id="pm-pend"></span>'+
         '<button id="pm-print" title="הדפסה של העימוד הזה בדיוק">הדפס מה שאני רואה</button>'+
         '<span id="pm-stat"></span>'+
         '<button id="pm-x" title="יציאה (Esc או F8)">✕ יציאה</button>'+
@@ -153,14 +163,16 @@
     $p('pm-next').addEventListener('click',function(){pmNext()});
     $p('pm-later').addEventListener('click',function(){$p('pmside').classList.toggle('on');pmSide()});
     $p('pm-print').addEventListener('click',pmPrint);
+    $p('pm-done').addEventListener('click',function(){pmComplete()});
+    $p('pm-auto').value=String(+P.auto||0);$p('pm-auto').addEventListener('change',function(){P.auto=+this.value;pmLsSet('lg-pm-prefs',P);pmAutoArm()});
     $p('pm-x').addEventListener('click',pmClose);
     $p('pmcr').addEventListener('input',function(){$p('pmcard').style.width=(CARD_MM*this.value)+'px'});
     $p('pmcok').addEventListener('click',function(){PXMM=+$p('pmcr').value;pmLsSet('lg-pm-pxmm',PXMM);cal.classList.remove('on');pmZoom('nat')});
     $p('pmcx').addEventListener('click',function(){cal.classList.remove('on')});
     $p('pmcr0').addEventListener('click',function(){PXMM=0;pmLsSet('lg-pm-pxmm',0);cal.classList.remove('on');pmZoom('nat')});
     document.addEventListener('click',function(e){if(!menu.contains(e.target))menu.style.display='none'},true);
-    /* כל שינוי בנתוני הדף (עריכה, קבלת הצעה, פיצול) - עימוד חוזר */
-    document.addEventListener('lg-dv',function(){if(S.open&&!S.editing)pmSoon()});
+    /* פרומפט 52: שינוי בנתוני הדף שלא בא מן המצב (קבלת הצעה, סכם) - רק היחידות שהשתנו נבנות מחדש, בלי עימוד */
+    document.addEventListener('lg-dv',function(){if(S.open)setTimeout(pmExternal,0)});
     window.addEventListener('resize',function(){if(!S.open)return;pmFrameSize(S.fr);if(S.zoom==='fit')pmZoom('fit')})}
 
   /* ---------- פתיחה, טעינה, עימוד ---------- */
@@ -176,6 +188,10 @@
     var uid=pmTopUnit();S.anchor=uid;
     S.pk=pmCurPerek(uid);
     var PL=pmPerakim();if(!PL.some(function(x){return x.key===S.pk}))S.pk=PL.length?PL[0].key:S.pk;   /* תמיד פרק אחד, לעולם לא המסכת כולה */
+    /* פרומפט 52: העורך שמתחת למצב מחזיק רק את הפרק, לא את המסכת כולה ("רצף"). כל פקודה של העורך מעבדת את הדף שלו,
+       ובמסכת שלמה (כ-3000 שורות) פיצול אחד לקח כ-120 אלפיות; בפרק אחד כ-20. ביציאה התצוגה חוזרת למה שהיתה */
+    try{if(typeof ALL!=='undefined'&&ALL){S.wasAll=true;ALL=false}}catch(e){}
+    pmShowPerek(S.pk,S.wasAll);
     document.getElementById('pm-pk').value=S.pk||'';
     document.getElementById('pm').classList.add('open');document.body.classList.add('pmopen');
     S.open=true;pmLsSet('lg-pm-on',1);
@@ -187,6 +203,8 @@
     S.open=false;pmLsSet('lg-pm-on',0);
     document.getElementById('pm').classList.remove('open');document.body.classList.remove('pmopen');
     var fr=document.getElementById('pmf');if(fr)fr.src='about:blank';S.fr=null;
+    /* הדף הרגיל נצבע מחדש: בזמן המצב הוא לא נפרס על המסך (content-visibility), והתצוגה ("רצף") חוזרת */
+    try{if(S.wasAll){ALL=true;S.wasAll=false}if(typeof render==='function'&&typeof cur!=='undefined')render(cur)}catch(e){}
     /* חזרה לדף הרגיל - למקום שבו עמדת במצב הדפוס */
     if(a){var r=document.getElementById('u'+a);if(r)r.scrollIntoView({block:'center'})}}
   function pmUrl(){
@@ -194,6 +212,7 @@
     var pk=S.pk,a=-1,b=-1;
     D.pages.forEach(function(p,i){if(p.units&&p.units.length&&((p.perek||'')+'|'+(p.perekName||''))===pk){if(a<0)a=i;b=i}});
     if(a<0){a=0;b=D.pages.length-1}
+    S.pkPi=[Math.max(0,a-1),Math.min(D.pages.length-1,b+1)];
     q.set('from',D.pages[a].daf);q.set('to',D.pages[b].daf);q.set('pk',pk);
     q.set('tos',+P.tos?'1':'0');q.set('duplex','0');q.set('profile',pmProfile());
     return location.pathname.split('/').pop()+'?'+q.toString()}
@@ -213,6 +232,7 @@
     old.parentNode.replaceChild(fr,old);
     pmFrameSize(fr);
     S.fr=fr;S.busy=true;S.t0=performance.now();S.report=null;S.pages=[];S.issues=[];
+    S.editing=null;S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};S.completing=null;S.resume=null;
     pmStat('מעמד...',1);
     fr.src=pmUrl();
     pmWait()}
@@ -275,8 +295,9 @@
     var dl='';if(oldPages&&oldPages!==n)dl=' · '+(n>oldPages?'+':'')+(n-oldPages)+' עמ\'';
     pmStat('פרק: '+n+' עמודים'+dl+' · '+(S.lastMs/1000).toFixed(1)+' שנ\'',0);
     /* מקום הקריאה: היחידה שבה עמדת, או הפסקה שנערכה - באותו גובה על המסך */
-    if(keep){var el=pmFindRow(doc,keep.k.u,keep.k.li);if(el){var dy=el.getBoundingClientRect().top-keep.y;doc.scrollingElement.scrollTop+=dy;pmDelta(doc,el)}}
+    if(keep){var el=pmFindRow(doc,keep.k.u,keep.k.li);if(el){var dy=el.getBoundingClientRect().top-keep.y;doc.scrollingElement.scrollTop+=dy}}
     else if(S.anchor){var r0=pmFindRow(doc,S.anchor,0);if(r0)pmScrollTo(r0,'start')}
+    if(S.completing)pmAfterFull();else pmBar();
     if(S.dirty)pmSoon()}
 
   /* ---------- תצוגות: עמוד / כפולה / טור ---------- */
@@ -457,55 +478,303 @@
   function pmLaterSave(){pmLsSet('lg-pm-later-'+SLUG,S.later)}
   function pmRefreshIssues(){var doc=pmDoc();if(doc&&S.report)pmIssues(doc,doc.getElementById('prnout'),S.report)}
 
-  /* ---------- עריכה בתוך העמוד ----------
-     לחיצה על שורה פותחת את הפסקה לעריכה במקום, ברוחב הטור המודפס ובגופן המודפס. בזמן העריכה בפסקה נוסח העורך
-     (בלי סימני התוספות ובלי רכיבי תצוגה). Enter או יציאה מן הפסקה שומרים: הנוסח נכתב לשורה המקבילה בעורך הקיים
-     (אותה רשומה, אותה שמירה ואותו פרסום), ואז עימוד חוזר מן הנתונים. Esc מבטל. */
-  function pmMainEl(u,li){
-    var k='u'+u+'.'+(li||0);
-    var el=document.querySelector('#flow [data-ek="'+k+'"]');
-    if(!el){pmShowPerek(S.pk);try{if(typeof revealTail==='function')revealTail()}catch(e){}el=document.querySelector('#flow [data-ek="'+k+'"]')}
-    return el}
-  function pmEdit(p){
-    if(S.editing)pmCommit();
-    var row=p.closest('.row');if(!row||!row.getAttribute('data-u'))return;
+  /* ---------- עריכה בתוך העמוד (פרומפט 52, 17.11.2026): העורך עצמו, בעמוד המודפס, ומהיר ----------
+     מצב דפוס הוא העורך הקיים, רק בעמוד המודפס. אין עורך שני:
+     א. לחיצה על שורה מכניסה את הסמן לפסקה במקום שנלחץ (בנוסח העורך, בלי מספרי התוס'). הקלדה רגילה נשארת בדפדפן
+        ואינה מפעילה שום עבודה כבדה: הנוסח עובר לשורה המקבילה בעורך (pmMainEl) כ-150 אלפיות אחרי ההקשה האחרונה,
+        עם אירוע input, ומשם השמירה של העורך עצמו (captureSoon).
+     ב. כל פקודה של העורך (Enter, Delete בסוף, Backspace בהתחלה, Ctrl/Alt עם מקש, Ctrl+Z/Y וכו') מועברת אל העורך:
+        הנוסח והסמן מועתקים לשורה המקבילה בדף המנהל, והמקש נשלח אליה. מה שהעורך שינה בנתונים (יחידה אחת או כמה,
+        גם יחידות חדשות או שנמחקו) נבנה מחדש במסגרת בפונקציה של מנוע ההדפסה (__pmEng.row), ומשובץ במקומו בטור.
+        הסמן חוזר למקום שבו העורך השאיר אותו. פקודה שהעורך אינו מטפל בה - נשארת לדפדפן במסגרת.
+     ג. אין עימוד מחדש של הפרק אחרי עריכה. הפסקה נשברת לשורות בעצמה (אותו רוחב ואותו גופן), ושאר הטור זז
+        למעלה או למטה בלבד. אם מספר השורות לא השתנה - שום שורה אחרת אינה זזה, והעמוד אינו מסומן. אם השתנה -
+        העמוד ומה שאחריו מסומנים "לא מעודכן" (קו דק בשולי הדף), שורה שגולשת מתחת לטור נראית חלשה, והסרגל אומר
+        כמה שינויים ממתינים. "השלם עימוד" (F9) מעמד את הפרק כולו כמו קודם. */
+  var LINESEL='#prnout .pg .ptx .main > p, #prnout .pg .ptx .main.dh, #prnout .pg .ptx .main.nose, #prnout .pg .ptx .rail .anchor';
+  function pmWin(){try{return S.fr&&S.fr.contentWindow}catch(e){return null}}
+  /* היעד במסגרת -> מפתח העורך (u<יחידה>.<n>): פסקה n, 0 = כותרת או כותרת צד, w = חלון המשנה */
+  function pmKeyOf(t){
+    var row=t&&t.closest&&t.closest('.row');if(!row||!row.getAttribute('data-u'))return null;
     var u=+row.getAttribute('data-u');
-    var li=0;if(p.tagName==='P'){li=[].indexOf.call(row.querySelectorAll(':scope > .main > p'),p)+1}
-    if(row.classList.contains('hatz')||p.classList.contains('hatz')){pmMsg('עיטור אינו נערך כאן');return}
-    var el=pmMainEl(u,li);
+    if(t.classList.contains('anchor'))return {u:u,k:row.classList.contains('u')?'0':'w'};
+    if(t.tagName==='P')return {u:u,k:String([].indexOf.call(row.querySelectorAll(':scope > .main > p'),t)+1)};
+    return {u:u,k:'0'}}
+  function pmMainEl(u,k){
+    var key='u'+u+'.'+(k==null?0:k);
+    var el=document.querySelector('#flow [data-ek="'+key+'"]');
+    if(!el){pmShowPerek(S.pk);try{if(typeof revealTail==='function')revealTail()}catch(e){}el=document.querySelector('#flow [data-ek="'+key+'"]')}
+    if(el&&el.getAttribute('contenteditable')!=='true'){try{if(typeof setEdit==='function'&&typeof EDIT!=='undefined'&&!EDIT)setEdit(true)}catch(e){}}
+    return el}
+  /* העותק הנראה של היעד בעמוד (שורה שחוצה טור נמצאת בשני הטורים: זו שבחלון הנראה) */
+  function pmVisible(t){var tx=t.closest('.ptx');if(!tx)return true;var r=t.getBoundingClientRect(),b=tx.getBoundingClientRect();return r.bottom>b.top+2&&r.top<b.top+(parseFloat(tx.style.height)||b.height)*(S.z||1)-2}
+  function pmFrameEl(doc,u,k){
+    var rows=doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+u+'"]'),c=[];
+    [].forEach.call(rows,function(row){var t=null;
+      if(k==='w'||(k==='0'&&row.classList.contains('u')&&!row.querySelector(':scope > .main.dh,:scope > .main.nose')))t=row.querySelector('.rail .anchor');
+      else if(k==='0')t=row.querySelector(':scope > .main.dh,:scope > .main.nose')||row.querySelector('.rail .anchor');
+      else t=row.querySelectorAll(':scope > .main > p')[+k-1];
+      if(t)c.push(t)});
+    return c.find(pmVisible)||c[0]||null}
+  /* היסט בטקסט (בלי סימני התוס') <-> מקום בעץ */
+  function pmOff(root,node,off){try{var r=root.ownerDocument.createRange();r.setStart(root,0);r.setEnd(node,off);
+    var f=r.cloneContents();[].forEach.call(f.querySelectorAll('sup.tm,span.tmg'),function(x){x.remove()});return f.textContent.length}catch(e){return 0}}
+  function pmPos(root,off){var w=root.ownerDocument.createTreeWalker(root,NodeFilter.SHOW_TEXT),n,last=null;
+    while((n=w.nextNode())){if(n.parentElement&&n.parentElement.closest('sup.tm,span.tmg'))continue;last=n;var L=n.nodeValue.length;if(off<=L)return [n,off];off-=L}
+    return last?[last,last.nodeValue.length]:[root,root.childNodes.length]}
+  function pmSetSel(root,a,b){var d=root.ownerDocument,s=d.getSelection();if(!s)return;var A=pmPos(root,a);
+    try{var r=d.createRange();r.setStart(A[0],A[1]);r.collapse(true);s.removeAllRanges();s.addRange(r);
+      if(b!=null&&b!==a&&s.extend){var B=pmPos(root,b);s.extend(B[0],B[1])}}catch(e){}}
+  function pmGetSel(root){var s=root.ownerDocument.getSelection();if(!s||!s.rangeCount||!root.contains(s.anchorNode))return null;
+    return [pmOff(root,s.anchorNode,s.anchorOffset),pmOff(root,s.focusNode,s.focusOffset)]}
+  function pmLines(el){if(!el)return 0;var rg=el.ownerDocument.createRange();rg.selectNodeContents(el);var t={};
+    [].forEach.call(rg.getClientRects(),function(r){if(r.width>1&&r.height>1)t[Math.round((r.top+r.bottom)/2/3)]=1});return Object.keys(t).length}
+
+  /* ---- כניסה לשורה ---- */
+  function pmEdit(t,ev,off){
+    if(S.phone||!t)return;
+    var K=pmKeyOf(t);if(!K)return;
+    var row=t.closest('.row');
+    if(row.classList.contains('hatz')||t.classList.contains('hatz')){pmMsg('עיטור אינו נערך כאן');return}
+    if(S.editing&&S.editing.p===t)return;
+    if(off==null&&ev){var doc=t.ownerDocument,cr=doc.caretRangeFromPoint&&doc.caretRangeFromPoint(ev.clientX,ev.clientY);if(cr&&t.contains(cr.startContainer))off=pmOff(t,cr.startContainer,cr.startOffset)}
+    pmLeave();
+    var el=pmMainEl(K.u,K.k);
     if(!el){pmMsg('השורה לא נמצאה בעורך. פתח אותה בדף הרגיל');return}
     try{if(el.__was===undefined&&typeof edBase==='function')edBase(el)}catch(e){}
-    var before=el.innerHTML;
-    S.editing={p:p,el:el,u:u,li:li,before:before,orig:p.innerHTML};
-    S.focusKey={u:u,li:li};
-    p.innerHTML=before;
-    p.setAttribute('contenteditable','true');p.classList.add('pmed');p.spellcheck=false;
-    p.focus();
-    try{var sel=p.ownerDocument.getSelection(),rg=p.ownerDocument.createRange();rg.selectNodeContents(p);rg.collapse(false);sel.removeAllRanges();sel.addRange(rg)}catch(e){}
-    pmStat('עריכה: Enter שומר · Esc מבטל',0)}
-  function pmCommit(cancel){
-    var E=S.editing;if(!E)return;S.editing=null;
-    var p=E.p;p.removeAttribute('contenteditable');p.classList.remove('pmed');
-    var now=p.innerHTML;
-    if(cancel||now===E.before){p.innerHTML=E.orig;pmStat('',0);return}
-    if(!E.el.isConnected){var el2=pmMainEl(E.u,E.li);if(el2)E.el=el2}
-    if(!E.el||!E.el.isConnected){p.innerHTML=E.orig;pmMsg('העריכה לא נשמרה: השורה לא נמצאה בעורך');return}
-    try{E.el.innerHTML=now;if(typeof capture==='function')capture(E.el);else throw new Error('העורך אינו זמין')}
-    catch(e){p.innerHTML=E.orig;pmMsg('העריכה לא נשמרה: '+(e.message||e));return}
-    pmMsg('נשמר, ויפורסם עם שאר העריכות');
-    pmSoon()}
-  function pmDelta(doc,el){
-    var E=S.lastEdit;if(!E)return;S.lastEdit=null;
-    try{var row=el.closest?el.closest('.row'):null;if(!row)return;
-      var r=pmLines(el.tagName==='P'?el:row.querySelector('.main'));
-      var d=r-E.lines;if(!d)return;
-      var out=doc.getElementById('prnout'),o=out.getBoundingClientRect(),z=S.z||1,er=el.getBoundingClientRect();
-      var b=doc.createElement('div');b.className='pmdelta';b.textContent=(d>0?'+':'')+d+' שורה';
-      b.style.top=((er.top-o.top)/z)+'px';b.style.left=((er.left-o.left)/z-60)+'px';out.appendChild(b);
-      setTimeout(function(){b.style.opacity='0'},1600);setTimeout(function(){b.remove()},2400)}catch(e){}}
-  function pmLines(el){if(!el)return 0;var rg=el.ownerDocument.createRange();rg.selectNodeContents(el);var t={};[].forEach.call(rg.getClientRects(),function(r){if(r.width>1)t[Math.round(r.top)]=1});return Object.keys(t).length}
+    t=pmFrameEl(pmDoc(),K.u,K.k)||t;row=t.closest('.row');
+    S.editing={p:t,el:el,u:K.u,k:K.k,row:row,orig:t.innerHTML,dirty:false,n:pmLines(t),h:row.offsetHeight};
+    S.focusKey={u:K.u,li:+K.k||0};
+    t.innerHTML=el.innerHTML;
+    t.setAttribute('contenteditable','true');t.classList.add('pmed');t.spellcheck=false;
+    try{t.focus({preventScroll:true})}catch(e){}
+    pmSetSel(t,off==null?t.textContent.length:off);
+    pmStat('עריכה: כמו בעורך · Esc יציאה מן השורה · F9 השלם עימוד',0)}
+  /* יציאה מן השורה: הנוסח עובר לעורך (אם לא עבר), והיחידה נבנית מחדש מן הנתונים (עם סימני התוס') */
+  function pmLeave(){
+    var E=S.editing;if(!E)return;
+    pmSyncNow();S.editing=null;
+    E.p.removeAttribute('contenteditable');E.p.classList.remove('pmed');
+    var el=pmEnsureEl(E);
+    if(el&&E.touched){try{if(typeof capture==='function')capture(el)}catch(e){}}
+    if(E.touched)pmRender([E.u]);else E.p.innerHTML=E.orig;
+    pmStat('',0)}
+  function pmCommit(cancel){pmLeave()}
+  function pmEnsureEl(E){if(E.el&&E.el.isConnected)return E.el;var el=pmMainEl(E.u,E.k);if(el)E.el=el;return el}
+  /* הקלדה: בלי עבודה על כל הקשה. רק מדידת השורות של הפסקה (בפריים הבא), והעברה לעורך אחרי הפסקה קצרה */
+  function pmOnInput(){var E=S.editing;if(!E)return;E.dirty=E.touched=true;
+    clearTimeout(S.syncT);S.syncT=setTimeout(pmSyncNow,150);
+    if(!S.raf)S.raf=requestAnimationFrame(function(){S.raf=0;pmMeasure()});
+    pmAutoArm()}
+  function pmSyncNow(){
+    clearTimeout(S.syncT);var E=S.editing;if(!E||!E.dirty)return;E.dirty=false;
+    var el=pmEnsureEl(E);if(!el)return;
+    if(el.innerHTML!==E.p.innerHTML){el.innerHTML=E.p.innerHTML;try{el.dispatchEvent(new Event('input',{bubbles:true}))}catch(e){}}}
+  /* הפסקה שבעריכה נשברה לשורות אחרות: שאר הטור זז, מדד ליד הפסקה, וסימון "לא מעודכן" */
+  function pmMeasure(){
+    var E=S.editing;if(!E||!E.p.isConnected)return;
+    var n=pmLines(E.p),h=E.row.offsetHeight;
+    if(h!==E.h){pmShift(E.row,h-E.h);E.h=h}
+    if(n!==E.n){S.bal+=n-E.n;pmBadge(E.u+'.'+E.k,E.p,n-E.n);E.n=n;pmStaleAt(E.row);pmCross(E.row);pmBar()}}
 
-  var LINESEL='#prnout .pg .ptx .main > p, #prnout .pg .ptx .main.dh, #prnout .pg .ptx .main.nose';
+  /* ---- שינוי בטור: הזזה בתוך הטור בלבד, גלישה, וסימון ---- */
+  function pmShift(row,dh){
+    if(!dh)return;var tx=row.parentElement;if(!tx)return;var t0=parseFloat(row.style.top)||0;
+    [].forEach.call(tx.children,function(r){if(r===row||!r.classList.contains('row'))return;var t=parseFloat(r.style.top)||0;if(t>t0+0.5)r.style.top=(t+dh)+'px'});
+    pmOverflow(tx);pmStaleAt(row)}
+  function pmOverflow(tx){
+    var H=parseFloat(tx.style.height)||tx.clientHeight,over=0;
+    [].forEach.call(tx.querySelectorAll(':scope > .row'),function(r){var t=parseFloat(r.style.top)||0;if(t+r.offsetHeight>H+1)over=Math.max(over,t+r.offsetHeight-H)});
+    if(tx.dataset.pmclip===undefined)tx.dataset.pmclip=tx.style.clipPath||'';
+    var col=tx.parentElement,lb=col&&col.querySelector(':scope > .pmovl');
+    if(over>1){
+      tx.style.clipPath='inset('+(String(tx.dataset.pmclip).match(/inset\(([^ ]+)/)||[0,'0'])[1]+' 0 -'+Math.ceil(over+4)+'px 0)';
+      tx.style.webkitMaskImage=tx.style.maskImage='linear-gradient(to bottom,#000 0,#000 '+H+'px,rgba(0,0,0,.32) '+H+'px)';
+      var lh=parseFloat(getComputedStyle(tx).lineHeight)||20;
+      if(!lb&&col){lb=tx.ownerDocument.createElement('div');lb.className='pmovl';col.appendChild(lb)}
+      if(lb){lb.style.top=(H+1)+'px';lb.textContent='גולש '+Math.max(1,Math.round(over/lh))+' שורות · השלם עימוד (F9)'}}
+    else{tx.style.clipPath=tx.dataset.pmclip;tx.style.webkitMaskImage=tx.style.maskImage='';if(lb)lb.remove()}}
+  function pmStaleAt(el){
+    var pi=pmPageOf(el);if(!pi)return;
+    S.pend++;
+    if(!S.staleFrom||pi<S.staleFrom)S.staleFrom=pi;
+    for(var i=S.staleFrom-1;i<S.pages.length;i++)S.pages[i].classList.add('pmstale');
+    pmBar();pmAutoArm()}
+  /* שורה שחוצה טור או עמוד: אם מספר השורות שלה השתנה, החלוקה בין החלקים כבר אינה מדויקת - רק "השלם עימוד" יודע */
+  function pmCross(row){var u=row.getAttribute('data-u'),doc=row.ownerDocument;
+    if(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+u+'"]').length>1){S.cross=1;pmBar()}}
+  function pmBadge(key,el,d){
+    var doc=pmDoc();if(!doc)return;var out=doc.getElementById('prnout');if(!out)return;
+    var b=S.badges[key];
+    if(!b){b=doc.createElement('div');b.className='pmdelta';out.appendChild(b);S.badges[key]={el:b,d:0}}else b=b.el;
+    var tot=S.badges[key].d+=d;
+    b.className='pmdelta '+(tot<0?'dn':tot>0?'up':'eq');
+    b.textContent=tot?((tot>0?'+':'')+tot+' שורה'):'✓ לא זז';
+    var o=out.getBoundingClientRect(),z=S.z||1,er=el.getBoundingClientRect(),pg=el.closest('.pg'),pr=pg?pg.getBoundingClientRect():er;
+    b.style.top=((er.top-o.top)/z)+'px';b.style.left=((pr.left-o.left)/z-62)+'px'}
+
+  /* ---- בנייה מחדש של יחידות במסגרת, מן הנתונים של דף המנהל ---- */
+  function pmLoc(DD,uid){for(var i=0;i<DD.pages.length;i++){var U=DD.pages[i].units;for(var k=0;k<U.length;k++)if(U[k].id===uid)return {pi:i,ki:k,u:U[k]}}return null}
+  function pmCarryMarks(oldRow,newRow){
+    var op=oldRow.querySelectorAll(':scope > .main > p'),np=newRow.querySelectorAll(':scope > .main > p');
+    [].forEach.call(op,function(p,i){var q=np[i];if(!q)return;
+      var ms=[].filter.call(p.querySelectorAll('sup.tm,span.tmg'),function(m){return !m.parentElement.closest('span.tmg')});
+      ms.forEach(function(m){var r=p.ownerDocument.createRange();r.setStart(p,0);r.setEndBefore(m);var f=r.cloneContents();
+        [].forEach.call(f.querySelectorAll('sup.tm,span.tmg'),function(x){x.remove()});var at=pmPos(q,f.textContent.length);
+        try{var rr=q.ownerDocument.createRange();rr.setStart(at[0],at[1]);rr.insertNode(m.cloneNode(true))}catch(e){}})})}
+  function pmRender(uids){
+    var w=pmWin(),doc=pmDoc();if(!w||!w.__pmEng||!doc)return;
+    var FD=w.__pmEng.data(),seen={};
+    uids.forEach(function(uid){if(seen[uid])return;seen[uid]=1;
+      var loc=pmLoc(D,uid),floc=pmLoc(FD,uid);
+      var rows=[].slice.call(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+uid+'"]'));
+      if(!loc){rows.forEach(function(r){pmShift(r,-r.offsetHeight);r.remove()});if(floc)FD.pages[floc.pi].units.splice(floc.ki,1);return}
+      var nu=JSON.parse(JSON.stringify(loc.u));
+      if(floc)FD.pages[floc.pi].units[floc.ki]=nu;
+      else{var at=0,pu=D.pages[loc.pi].units;for(var k=loc.ki-1;k>=0;k--){var fp=pmLoc(FD,pu[k].id);if(fp){at=fp.ki+1;break}}FD.pages[loc.pi].units.splice(at,0,nu)}
+      var html=w.__pmEng.row(nu,loc.pi),tpl=doc.createElement('template');
+      if(!rows.length){
+        /* יחידה חדשה: אחרי השורה של היחידה שלפניה, באותו טור */
+        var prev=null;for(var q=loc.ki-1;q>=0&&!prev;q--){var pr=doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+D.pages[loc.pi].units[q].id+'"]');if(pr.length)prev=pr[pr.length-1]}
+        if(!prev){S.cross=1;pmBar();return}
+        tpl.innerHTML=html;var nr=tpl.content.firstElementChild;if(!nr)return;
+        nr.removeAttribute('id');nr.setAttribute('data-u',uid);nr.style.cssText=prev.style.cssText;
+        nr.style.top=((parseFloat(prev.style.top)||0)+prev.offsetHeight)+'px';
+        prev.parentNode.insertBefore(nr,prev.nextSibling);
+        var t1=parseFloat(nr.style.top);[].forEach.call(nr.parentNode.children,function(r){if(r!==nr&&r.classList.contains('row')&&(parseFloat(r.style.top)||0)>=t1-0.5)r.style.top=((parseFloat(r.style.top)||0)+nr.offsetHeight)+'px'});
+        pmOverflow(nr.parentNode);pmStaleAt(nr);return}
+      rows.forEach(function(r){
+        tpl.innerHTML=html;var nr=tpl.content.firstElementChild;if(!nr)return;
+        nr.removeAttribute('id');nr.setAttribute('data-u',uid);nr.style.cssText=r.style.cssText;
+        if(r.classList.contains('gapm'))nr.classList.add('gapm');
+        var o1=r.querySelector(':scope > .main > p:first-child')||r.querySelector(':scope > .main'),n1=nr.querySelector(':scope > .main > p:first-child')||nr.querySelector(':scope > .main');
+        if(o1&&n1&&o1.style.marginTop)n1.style.marginTop=o1.style.marginTop;
+        pmCarryMarks(r,nr);
+        var h0=r.offsetHeight;r.replaceWith(nr);var dh=nr.offsetHeight-h0;
+        if(dh)pmShift(nr,dh)});
+      if(rows.length>1)pmCross(rows[0])})}
+  /* מה השתנה בנתונים סביב יחידה (העמוד שלה ושניים סמוכים): לפני ואחרי פקודה */
+  function pmSnap(uid){var L=pmLoc(D,uid),m={pis:[]};if(!L)return m;
+    for(var i=Math.max(0,L.pi-1);i<=Math.min(D.pages.length-1,L.pi+1);i++){m.pis.push(i);D.pages[i].units.forEach(function(u){m[u.id]=JSON.stringify(u)})}return m}
+  function pmDiff(m){var ch=[],now={};
+    m.pis.forEach(function(i){D.pages[i].units.forEach(function(u){now[u.id]=1;if(m[u.id]!==JSON.stringify(u))ch.push(u.id)})});
+    Object.keys(m).forEach(function(k){if(k!=='pis'&&!now[k])ch.push(+k)});return ch}
+
+  /* ---- פקודה של העורך: מועברת לשורה המקבילה בדף המנהל ---- */
+  function pmProxy(e){
+    var E=S.editing;if(!E)return false;
+    var t0=performance.now(),TP={};var tp=function(k){TP[k]=Math.round(performance.now()-t0)};
+    pmSyncNow();tp('sync');
+    var el=pmEnsureEl(E);if(!el)return false;
+    var sel=pmGetSel(E.p)||[0,0],snap=pmSnap(E.u);
+    S.proxying=true;
+    var ev=new KeyboardEvent('keydown',{key:e.key,code:e.code,ctrlKey:e.ctrlKey,altKey:e.altKey,shiftKey:e.shiftKey,metaKey:e.metaKey,bubbles:true,cancelable:true});
+    try{try{el.focus({preventScroll:true})}catch(x){}
+      pmSetSel(el,sel[0],sel[1]);
+      el.dispatchEvent(ev);tp('editor')}
+    finally{S.proxying=false}
+    if(!ev.defaultPrevented){try{E.p.focus({preventScroll:true})}catch(x){}pmSetSel(E.p,sel[0],sel[1]);return false}
+    e.preventDefault();
+    /* הסמן בדף המנהל, אחרי הפקודה */
+    var s=document.getSelection(),an=s&&s.anchorNode,ae=document.activeElement;
+    var host=(an&&(an.nodeType===1?an:an.parentElement)||{}).closest?(an.nodeType===1?an:an.parentElement).closest('[data-ek]'):null;
+    if(!host&&ae&&ae.closest)host=ae.closest('[data-ek]');
+    var ek=host&&host.getAttribute('data-ek'),g=host?pmGetSel(host):null;
+    /* נוסח שהעורך שינה בלי לשמור (סגנון תו) - נשמר עכשיו, כדי שהנתונים יהיו מעודכנים */
+    try{if(host&&typeof capture==='function')capture(host);if(el.isConnected&&el!==host&&typeof capture==='function')capture(el)}catch(x){}
+    tp('capture');var ch=pmDiff(snap);if(ch.indexOf(E.u)<0)ch.push(E.u);tp('diff');
+    E.p.removeAttribute('contenteditable');E.p.classList.remove('pmed');S.editing=null;
+    var n0=E.n;
+    pmRender(ch);tp('render');
+    var m=ek&&/^u(\d+)\.(\w+)$/.exec(ek);
+    var t=m&&pmFrameEl(pmDoc(),+m[1],m[2]);
+    if(t){pmEdit(t,null,g?g[1]:0);if(g&&g[0]!==g[1])pmSetSel(t,g[0],g[1])}
+    else{try{(pmDoc().body||{}).focus&&pmDoc().body.focus()}catch(x){}}
+    /* מדד השורות של הפסקה שבה עמדת לפני הפקודה */
+    var tt=pmFrameEl(pmDoc(),E.u,E.k);if(tt&&m&&+m[1]===E.u){var nn=pmLines(tt);if(nn!==n0){S.bal+=nn-n0;pmBadge(E.u+'.'+E.k,tt,nn-n0);pmStaleAt(tt)}if(S.editing)S.editing.n=pmLines(S.editing.p)}
+    tp('caret');S.lastCmd={tp:TP,key:(e.ctrlKey?'Ctrl+':'')+(e.altKey?'Alt+':'')+(e.shiftKey?'Shift+':'')+(e.code||e.key),ms:Math.round(performance.now()-t0)};
+    S.cmdMs.push(S.lastCmd.ms);if(S.cmdMs.length>200)S.cmdMs.shift();
+    pmBar();pmAutoArm();
+    return true}
+
+  /* ---- ניווט בין השורות של העמוד (חיצים, PageUp/PageDown) ---- */
+  function pmTargets(){var doc=pmDoc();if(!doc)return [];return [].filter.call(doc.querySelectorAll(LINESEL),function(t){return pmVisible(t)&&!t.closest('.hatz')})}
+  function pmCaretRect(doc){var s=doc.getSelection();if(!s||!s.rangeCount)return null;var r=s.getRangeAt(0).cloneRange();r.collapse(!(s.focusNode===r.endContainer&&s.focusOffset===r.endOffset));
+    var rs=r.getClientRects();if(rs.length)return rs[0];var b=r.getBoundingClientRect();return b.height?b:null}
+  function pmNav(e){
+    var E=S.editing,doc=pmDoc();if(!E||!doc)return false;
+    var k=e.key;if(e.ctrlKey||e.altKey||e.metaKey||e.shiftKey)return false;
+    var p=E.p,L=pmTargets(),i=L.indexOf(p);
+    var go=function(t,end,x){if(!t)return true;
+      var off=null;if(x!=null){var r=t.getClientRects(),rr=end?r[r.length-1]:r[0];if(rr){var cr=doc.caretRangeFromPoint&&doc.caretRangeFromPoint(Math.max(rr.left+1,Math.min(rr.right-1,x)),rr.top+rr.height/2);if(cr&&t.contains(cr.startContainer))off=pmOff(t,cr.startContainer,cr.startOffset)}}
+      pmEdit(t,null,off==null?(end?1e9:0):off);if(S.editing)pmSetSel(S.editing.p,Math.min(off==null?(end?S.editing.p.textContent.length:0):off,S.editing.p.textContent.length));
+      var pe=S.editing&&S.editing.p.getBoundingClientRect();if(pe&&(pe.bottom>(S.fr.clientHeight||600)-20||pe.top<20))pmScrollTo(S.editing.p,'center');return true};
+    if(k==='ArrowDown'||k==='ArrowUp'){
+      var c=pmCaretRect(doc),rs=p.getClientRects();if(!c||!rs.length)return false;
+      var lastTop=rs[rs.length-1].top,firstTop=rs[0].top;
+      if(k==='ArrowDown'&&c.top>=lastTop-2){e.preventDefault();return go(L[i+1],false,c.left)}
+      if(k==='ArrowUp'&&c.top<=firstTop+2){e.preventDefault();return go(L[i-1],true,c.left)}
+      return false}
+    if(k==='ArrowLeft'||k==='ArrowRight'){
+      var g=pmGetSel(p);if(!g||g[0]!==g[1])return false;var len=p.textContent.length;
+      /* מימין לשמאל: שמאלה = קדימה בטקסט */
+      if(k==='ArrowLeft'&&g[1]>=len){e.preventDefault();return go(L[i+1],false,null)}
+      if(k==='ArrowRight'&&g[1]<=0){e.preventDefault();return go(L[i-1],true,null)}
+      return false}
+    if(k==='PageDown'||k==='PageUp'){
+      e.preventDefault();var pg=pmPageOf(p)+(k==='PageDown'?1:-1);if(pg<1||pg>S.pages.length)return true;
+      var t=L.find(function(x){return pmPageOf(x)===pg});pmGoPage(pg);return go(t,false,null)}
+    return false}
+
+  /* ---- השלם עימוד (F9) ---- */
+  function pmComplete(then){
+    if(S.busy){S.then=then||S.then;S.dirty=true;S.completing=S.completing||{pages:S.pages.length,cols:[]};return}
+    var E=S.editing,keep=null;
+    if(E){var g=pmGetSel(E.p);keep={u:E.u,k:E.k,off:g?g[1]:0};pmLeave()}
+    S.resume=keep;S.then=then||null;S.completing={pages:S.pages.length,cols:S.report?S.report.pages.map(function(p){return p.cols.reduce(function(a,c){return a+c.lines},0)}):[]};
+    S.focusKey=keep?{u:keep.u,li:+keep.k||0}:S.focusKey;
+    pmRelayout()}
+  /* אחרי עימוד מלא: הסימונים נמחקים, מה זז, והסמן חוזר */
+  function pmAfterFull(){
+    var C=S.completing;S.completing=null;
+    var n=S.pages.length,msg='';
+    if(C){var nc=S.report.pages.map(function(p){return p.cols.reduce(function(a,c){return a+c.lines},0)});
+      msg='הפרק: '+(C.pages===n?n+' עמודים':C.pages+' → '+n+' עמודים');
+      for(var i=0;i<Math.min(C.cols.length,nc.length);i++)if(C.cols[i]!==nc[i]){var d=nc[i]-C.cols[i];msg+=' · עמוד '+(i+1)+(d>0?' קיבל '+d:' מסר '+(-d))+' שורות';break}}
+    S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};
+    pmBar(msg);
+    var R=S.resume;S.resume=null;
+    if(R){var t=pmFrameEl(pmDoc(),R.u,R.k);if(t){pmEdit(t,null,R.off);if(S.kbuf&&S.editing){try{pmDoc().execCommand('insertText',false,S.kbuf)}catch(e){}}}}
+    S.kbuf='';
+    if(S.then){var f=S.then;S.then=null;setTimeout(f,50)}}
+  /* השלמה לבד אחרי X שניות שקט (הגדרה, ברירת מחדל: כבוי) */
+  function pmAutoArm(){clearTimeout(S.autoT);var x=+P.auto||0;if(!x||!S.pend)return;S.autoT=setTimeout(function(){if(S.open&&S.pend&&!S.busy)pmComplete()},x*1000)}
+
+  /* ---- הסרגל: שינויים ממתינים, מאזן השורות, חיסכון עמוד ---- */
+  function pmBar(msg){
+    var b=document.getElementById('pm-done'),pd=document.getElementById('pm-pend');if(!b||!pd)return;
+    var t='';
+    if(S.pend||S.bal||S.cross){
+      t=(S.pend?S.pend+' שינויים ממתינים':'')+(S.bal?' · הפרק: '+(S.bal>0?'+':'')+S.bal+' שורות מאז ההשלמה':'');
+      var lp=S.report&&S.report.pages&&S.report.pages[S.report.pages.length-1];
+      if(lp&&S.bal<=0){var need=lp.cols.reduce(function(a,c){return a+c.lines},0)+S.bal;if(need>0&&need<=15)t+=' · לחיסכון עמוד: עוד כ-'+need+' שורות'}
+      if(S.cross)t+=' · השלם עימוד לבדיקה'}
+    else if(msg)t=msg;
+    pd.textContent=t;b.classList.toggle('hot',!!(S.pend||S.cross))}
+
+  /* ---- שינוי שלא בא מן המצב (קבלת הצעה בחלונית, סכם): רק היחידות שהשתנו ---- */
+  function pmExternal(){
+    if(!S.open||S.busy||S.proxying)return;
+    var w=pmWin();if(!w||!w.__pmEng||!S.report||!S.pkPi)return;
+    var FD=w.__pmEng.data(),ch=[],E=S.editing;
+    for(var i=S.pkPi[0];i<=S.pkPi[1];i++){var p=D.pages[i],fp=FD.pages[i];if(!p||!fp)continue;
+      var fu={};fp.units.forEach(function(u){fu[u.id]=JSON.stringify(u)});
+      p.units.forEach(function(u){var j=JSON.stringify(u);
+        if(fu[u.id]!==j){if(E&&u.id===E.u){var fl=pmLoc(FD,u.id);if(fl)FD.pages[fl.pi].units[fl.ki]=JSON.parse(j)}else ch.push(u.id)}
+        delete fu[u.id]});
+      Object.keys(fu).forEach(function(k){ch.push(+k)})}
+    if(ch.length)pmRender(ch)}
+
   function pmLineAt(doc,e){
     var p=e.target.closest&&e.target.closest(LINESEL);if(p)return p;
     var L=doc.elementsFromPoint?doc.elementsFromPoint(e.clientX,e.clientY):[];
@@ -520,14 +789,32 @@
       /* קישורי הקובץ (ציון דף, סימן התוס') אינם קופצים במצב דפוס: הלחיצה היא על השורה שמתחתם */
       if(e.target.closest&&e.target.closest('#prnout a'))e.preventDefault();
       var p=pmLineAt(doc,e);
-      if(S.editing)pmCommit();
-      if(!p||S.phone)return;
-      var sel=doc.getSelection();if(sel&&!sel.isCollapsed)return;
-      pmEdit(p)},true);
+      if(!p||S.phone){pmLeave();return}
+      var sel=doc.getSelection();if(sel&&!sel.isCollapsed&&!(S.editing&&S.editing.p.contains(sel.anchorNode)))return;
+      pmEdit(p,e)},true);
+    doc.addEventListener('input',function(e){if(S.editing&&S.editing.p.contains(e.target))pmOnInput()},true);
+    doc.addEventListener('paste',function(e){if(!S.editing||!S.editing.p.contains(e.target))return;e.preventDefault();
+      var t=(e.clipboardData||{}).getData?e.clipboardData.getData('text/plain').replace(/\s+/g,' '):'';doc.execCommand('insertText',false,t)},true);
     doc.addEventListener('keydown',function(e){
-      if(S.editing){
-        if(e.key==='Escape'){e.preventDefault();pmCommit(true);return}
-        if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();var E=S.editing;S.lastEdit={lines:pmLines(E.p)};pmCommit();return}
+      if(S.busy&&!S.editing){
+        /* בזמן השלמת העימוד: הקלדה נשמרת, ונכנסת לשורה כשהעימוד מסתיים. הקלדה תמיד קודמת */
+        if(e.key.length===1&&!e.ctrlKey&&!e.altKey&&!e.metaKey){e.preventDefault();S.kbuf=(S.kbuf||'')+e.key;return}
+        if(e.key!=='F8'&&e.key!=='F9'){e.preventDefault();return}}
+      if(e.key==='F9'){e.preventDefault();pmComplete();return}
+      if(S.editing&&S.editing.p.isConnected){
+        if(e.key==='Escape'){e.preventDefault();pmLeave();return}
+        if(e.key==='F8'){e.preventDefault();pmClose();return}
+        if((e.ctrlKey||e.metaKey)&&!e.altKey&&(e.key==='p'||e.key==='פ')){e.preventDefault();pmPrint();return}
+        if(e.altKey&&!e.ctrlKey&&(e.key==='PageDown'||e.key==='PageUp')){e.preventDefault();pmMishna(e.key==='PageDown'?1:-1);return}
+        if(pmNav(e))return;
+        var k=e.key,mod=e.ctrlKey||e.altKey||e.metaKey;
+        /* העתקה, גזירה, בחירת הכל - של הדפדפן */
+        if(mod&&!e.altKey&&/^(KeyC|KeyX|KeyA|KeyV)$/.test(e.code))return;
+        var g=null;
+        if(k==='Delete'||k==='Backspace'){g=pmGetSel(S.editing.p);if(!g||g[0]!==g[1])return;
+          if(k==='Delete'&&g[1]<S.editing.p.textContent.length&&!mod)return;
+          if(k==='Backspace'&&g[1]>0&&!mod)return}
+        if(mod||k==='Enter'||k==='Delete'||k==='Backspace'||k==='Tab')pmProxy(e);
         return}
       pmKeys(e)});
     doc.addEventListener('contextmenu',function(e){
@@ -535,20 +822,28 @@
       if(mk){e.preventDefault();var i=S.issues[+mk.getAttribute('data-i')];if(i&&i.later){S.later.splice(S.later.indexOf(i.later),1);pmLaterSave();pmRefreshIssues()}return}
       var p=pmLineAt(doc,e);if(!p)return;
       e.preventDefault();
-      var row=p.closest('.row'),u=+row.getAttribute('data-u'),li=p.tagName==='P'?[].indexOf.call(row.querySelectorAll(':scope > .main > p'),p)+1:0;
+      var row=p.closest('.row'),u=+row.getAttribute('data-u'),K=pmKeyOf(p),li=K?(+K.k||0):0;
       var menu=document.getElementById('pmmenu'),fr=S.fr.getBoundingClientRect();
       menu.innerHTML='<div data-a="later">לבדוק אחר כך</div><div data-a="note">לבדוק אחר כך, עם הערה...</div><div data-a="edit">ערוך את השורה</div><div data-a="main">פתח בדף הרגיל</div>';
       var kk=fr.width/(S.fr.offsetWidth||fr.width||1);
       menu.style.top=(fr.top+e.clientY*kk)+'px';menu.style.left=(fr.left+e.clientX*kk)+'px';menu.style.display='block';
       menu.onclick=function(ev){var a=ev.target.getAttribute('data-a');menu.style.display='none';
         if(a==='later'||a==='note'){var note=a==='note'?(prompt('הערה:','')||''):'';
-          var daf='';try{var pg=S.pages[pmPageOf(p)-1];daf=(S.report.pages[pmPageOf(p)-1]||{}).daf0||''}catch(x){}
+          var daf='';try{daf=(S.report.pages[pmPageOf(p)-1]||{}).daf0||''}catch(x){}
           S.later.push({u:u,li:li,txt:(p.textContent||'').trim().slice(0,60),daf:daf,note:note,t:Date.now()});pmLaterSave();pmRefreshIssues();pmMsg('נרשם ברשימת "לבדוק אחר כך"')}
         else if(a==='edit')pmEdit(p);
-        else if(a==='main'){S.anchor=u;pmClose();var el=pmMainEl(u,li);if(el){el.scrollIntoView({block:'center'});try{el.focus()}catch(x){}}}}});
-    doc.addEventListener('scroll',function(){clearTimeout(S.st);S.st=setTimeout(pmTrackPage,80)},{passive:true});
-    doc.addEventListener('keydown',function(){},true)}
+        else if(a==='main'){S.anchor=u;pmClose();var el=pmMainEl(u,K?K.k:0);if(el){el.scrollIntoView({block:'center'});try{el.focus()}catch(x){}}}}});
+    doc.addEventListener('scroll',function(){clearTimeout(S.st);S.st=setTimeout(pmTrackPage,80)},{passive:true})}
+  /* Alt+PageUp/PageDown: המשנה הבאה / הקודמת בעמודים */
+  function pmMishna(d){var doc=pmDoc();if(!doc)return;
+    var L=[].filter.call(doc.querySelectorAll('#prnout .pg .ptx > .row > .main.mishna > p:first-child'),pmVisible);
+    var cur=S.editing?S.editing.p.getBoundingClientRect().top:0,pg0=S.editing?pmPageOf(S.editing.p):0;
+    var srt=L.map(function(t){return {t:t,pg:pmPageOf(t),y:t.getBoundingClientRect().top}});
+    var nx=d>0?srt.find(function(x){return x.pg>pg0||(x.pg===pg0&&x.y>cur+2)}):srt.slice().reverse().find(function(x){return x.pg<pg0||(x.pg===pg0&&x.y<cur-2)});
+    if(nx){pmEdit(nx.t,null,0);pmScrollTo(nx.t,'center')}}
   function pmKeys(e){
+    if(S.proxying)return false;
+    if(e.key==='F9'){e.preventDefault();pmComplete();return true}
     if(e.key==='F8'||e.key==='Escape'){e.preventDefault();pmClose();return true}
     if((e.key==='n'||e.key==='מ')&&!e.ctrlKey&&!e.altKey&&!e.metaKey){e.preventDefault();pmNext();return true}
     if(e.key==='PageDown'||e.key==='PageUp'){var n=(+document.getElementById('pm-pg').value||1)+(e.key==='PageDown'?1:-1);e.preventDefault();pmGoPage(n);return true}
@@ -558,6 +853,7 @@
   /* ---------- הדפס מה שאני רואה ---------- */
   function pmPrint(){
     pmCommit();
+    if(S.pend||S.cross||S.busy){pmMsg('משלים עימוד לפני הדפסה');pmComplete(pmPrint);return}
     var w=null;try{w=S.fr.contentWindow}catch(e){}
     if(!w||!S.report){pmMsg('העימוד עוד לא הסתיים');return}
     try{w.focus();w.print()}catch(e){pmMsg('ההדפסה לא נפתחה: '+(e.message||e))}}
@@ -581,6 +877,7 @@
     /* זוכר את הבחירה במכשיר: מנהל שיצא מן הדף במצב דפוס חוזר אליו */
     if(pmAdm()&&pmLs('lg-pm-on',0)&&innerWidth>700&&!S.open)setTimeout(function(){if(!S.open)pmOpen()},600)},3200);
   setInterval(function(){if(pmAdm()&&!document.getElementById('pmbtn'))pmButton()},5000);
-  window.lkPrintMode={open:pmOpen,close:pmClose,state:function(){return {open:S.open,busy:S.busy,pages:S.pages.length,issues:S.issues.map(function(i){return {type:i.type,page:i.page,u:i.u,detail:i.detail,src:i.src}}),ms:S.lastMs,zoom:S.z,view:S.view}},
+  window.lkPrintMode={open:pmOpen,close:pmClose,state:function(){return {open:S.open,busy:S.busy,pages:S.pages.length,issues:S.issues.map(function(i){return {type:i.type,page:i.page,u:i.u,detail:i.detail,src:i.src}}),ms:S.lastMs,zoom:S.z,view:S.view,editing:S.editing?{u:S.editing.u,k:S.editing.k}:null,pend:S.pend,bal:S.bal,cross:S.cross,lastCmd:S.lastCmd,cmdMs:S.cmdMs.slice()}},
+    complete:pmComplete,
     relayout:pmRelayout,next:pmNext,go:pmGoPage,report:function(){return S.report}};
   })();

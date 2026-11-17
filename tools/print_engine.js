@@ -272,6 +272,14 @@
     if(kind==='nose'||kind==='dh'||kind==='perek-start')h=h.replace(/(\s|&nbsp;)\[([א-ת]{1,3})\](\s*)(?=<\/div>)/g,'$1<span class="cnt">[$2]</span>$3');
     if(h.indexOf('°')>-1)h=h.replace(/(<p class="[^"]*")>(\s|&nbsp;)*°(\s|&nbsp;)*/g,'$1 data-bul="1">');
     return h}
+  /* פרומפט 52 (17.11.2026): מצב דפוס מהיר. דף המנהל מבקש מן המסגרת את ה-HTML של יחידה אחת אחרי עריכה, באותה פונקציה
+     שהעימוד משתמש בה (unitHTML + prnFix), כדי לשבץ אותה במקומה בטור בלי עימוד מחדש. רק במסגרת של מצב הדפוס (pm=1);
+     אינו משנה דבר בהדפסה */
+  if(QS.get('pm')==='1')window.__pmEng={
+    data:function(){return D},
+    row:function(u,pi){var pg=D.pages[pi],first=false;
+      if(pg){for(var k=0;k<pg.units.length;k++){var x=pg.units[k];if(x.k==='perek-range'||((x.k==='nose'||x.k==='dh')&&emptyHead(x)))continue;first=x===u;break}}
+      return prnFix(u.k,unitHTML(u,first?pg.daf:null,first?pi:null))}};
 
   /* ---------- מנוע ההדפסה ---------- */
   /* פרומפט 41: מידע השורות של פסקה - מספר השורות, רוחב השורה האחרונה, והיכן היא מתחילה (היסט בטקסט הנקי).

@@ -2525,8 +2525,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main p.mu{position:relative}
   .main p.mu::before{content:'';position:absolute;left:calc(100% + .5em);top:calc(var(--lhpx) * .5 - .2em);
     width:.3em;height:.3em;background:#4a4a4a;transform:rotate(45deg);pointer-events:none}
-  /* בשורה שבמסילתה ציון דף (הנתיב הצמוד לטקסט) - המעוין מעבר לציון הדף */
-  .row:has(>.rail .dafmark)>.main>p.mu:first-child::before{left:calc(100% + var(--dafw,2.9em) + var(--dafgap,.3em) + .5em)}
+  /* בשורה שבמסילתה ציון דף: המעוין צמוד לטקסט, וציון הדף זז החוצה ממנו (מיכאל, 17.11.2026: "המעוין צריך להיות צמוד
+     לשורה ולא סימון הדף - תחליף ביניהם"). עד כאן המעוין עמד מעבר לציון הדף */
+  .row:has(>.main>p.mu:first-child)>.rail .dafmark{translate:1.1em 0}
+  /* לשורה יש כותרת צד: הכותרת היא ההפרדה, והמעוין אינו מצויר (אחרת הוא עולה על הכותרת) */
+  .row:has(>.rail .anchor)>.main>p.mu:first-child::before{display:none}
   /* פסקה שהוחלף סגנונה לכותרת מן האתר וטרם עלתה מן הוורד: נראית ככותרת מיד */
   .main p.nose,.main p.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif}
   .main p.nose{font-family:'Frank','Frank Ruhl Libre',serif;font-weight:700;font-size:calc(var(--k-nose) * 1em)}
@@ -5762,6 +5765,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     saveED();
     reflow(nk,off,snp);
     return nk}
+  /* המעוין (p.mu): מוסיף, ואם כבר יש - מסיר. on=true: רק מוסיף (בהדבקה) */
+  const MU_RE=/^[\s*\u25C6\u25C7\u2666\u2756\u2B25\u2B26\u2B29\u2B2A\u2731\uFF0A]+$/;
+  function muToggle(on){const el=edEl();if(!el||el.tagName!=='P'||!isTxt(el))return false;
+    const has=el.classList.contains('mu');if(has&&on)return true;
+    if(!has){const rw=el.closest('.row'),an=rw&&rw.querySelector('.rail .anchor');
+      if(an&&an.textContent.trim()&&el===rw.querySelector('.main > p')){flash('לשורה הזו יש כותרת צד - היא ההפרדה, ומעוין לא נוסף');return true}}
+    if(!has&&!PSTY.some(p=>p[0]==='mu'))return false;
+    setPs(has?'':'mu');flash(has?'המעוין הוסר':'מעוין בצד השורה (Alt+0 שוב מסיר)');return true}
   function setPs(c){
     const el=edEl();if(!isTxt(el))return;
     if(el.tagName==='DIV'){
@@ -6097,6 +6108,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* Ctrl+0 (כמו בוורד): "רווח לפני". חוסם את איפוס הזום של הדפדפן */
     if(EDIT&&e.ctrlKey&&!e.altKey&&!e.shiftKey&&!e.metaKey&&(e.code==='Digit0'||e.code==='Numpad0')){
       e.preventDefault();spToggle();return}
+    /* 17.11.2026 (מיכאל): Alt+0 - סימן המעוין בצד השורה (סגנון הפסקה "מעוין"); שוב - מסיר. גם הדבקה של המעוין עושה את זה */
+    if(EDIT&&e.altKey&&!e.ctrlKey&&!e.metaKey&&(e.code==='Digit0'||e.code==='Numpad0')){e.preventDefault();muToggle();return}
     if(!EDIT||!e.target.isContentEditable)return;
     const el=e.target.closest('[contenteditable="true"]');
     if(!el)return;
@@ -6190,7 +6203,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!EDIT||!e.target.isContentEditable)return;
     e.preventDefault();
     const t=(e.clipboardData||window.clipboardData).getData('text/plain').replace(/\s+/g,' ');
+    /* 17.11.2026: מעוין שהועתק (לחיצה על המעוין שבצד השורה) - מודבק כסימן בצד השורה, לא כאות בתוכה */
+    if(t.trim()&&MU_RE.test(t)&&/[\u25C6\u25C7\u2666\u2756\u2B25\u2B26\u2B29\u2B2A]/.test(t)&&muToggle(true))return;
     document.execCommand('insertText',false,t)});
+  /* לחיצה על המעוין שבצד השורה (בדף הרגיל ובמצב דפוס): מעתיקה אותו, להדבקה בתחילת שורות אחרות */
+  window.lgMuCopy=function(ev){try{const rw=ev.target&&ev.target.closest&&ev.target.closest('.row');if(!rw)return false;
+    const p=[...rw.querySelectorAll(':scope > .main > p.mu')].find(q=>{const r=q.getBoundingClientRect(),lh=parseFloat(getComputedStyle(q).lineHeight)||20;
+      return ev.clientY>=r.top-2&&ev.clientY<=r.top+lh+2&&ev.clientX>r.right+1&&ev.clientX<r.right+40});if(!p)return false;
+    ev.preventDefault();ev.stopPropagation();
+    const ta=document.createElement('textarea');ta.value='\u25C6';ta.style.cssText='position:fixed;top:0;left:0;opacity:0';document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy')}catch(x){}ta.remove();try{navigator.clipboard.writeText('\u25C6')}catch(x){}
+    (window.top.flash||flash)('המעוין הועתק. עמוד בשורה אחרת ולחץ Ctrl+V - הוא יעמוד בצד השורה');return true}catch(x){return false}};
+  document.addEventListener('mousedown',ev=>{if(EDIT)window.lgMuCopy(ev)},true);
   document.addEventListener('focusin',edFocus);
   document.addEventListener('focusout',edBlur);
   document.addEventListener('input',e=>{const el=e.target.closest&&e.target.closest('[contenteditable="true"]');

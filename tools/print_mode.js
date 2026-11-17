@@ -1063,6 +1063,11 @@
       Object.keys(fu).forEach(function(k){ch.push(+k)})}
     if(ch.length)pmRender(ch)}
 
+  /* העתקה ללוח: גם בלי הרשאת הלוח של המסגרת (textarea ו-copy בתוך הלחיצה עצמה) */
+  function pmClip(doc,t){try{var ta=doc.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;top:0;left:0;opacity:0';doc.body.appendChild(ta);ta.select();
+    try{doc.execCommand('copy')}catch(x){}ta.remove()}catch(x){}
+    try{window.top.__lgMuClip=Date.now()}catch(x){}
+    try{navigator.clipboard.writeText(t)}catch(x){}}
   function pmLineAt(doc,e){
     var p=e.target.closest&&e.target.closest(LINESEL);if(p)return p;
     var L=doc.elementsFromPoint?doc.elementsFromPoint(e.clientX,e.clientY):[];
@@ -1073,6 +1078,12 @@
     doc.addEventListener('click',function(e){
       var mk=e.target.closest&&e.target.closest('.pmmk');
       if(mk){e.preventDefault();var i=S.issues[+mk.getAttribute('data-i')];if(i)pmIssueClick(i);return}
+      /* 17.11.2026: לחיצה על המעוין שבצד השורה מעתיקה אותו. Ctrl+V בשורה אחרת - הוא עומד בצד שלה (Alt+0 בעורך) */
+      var mup=null,mrw=e.target.closest&&e.target.closest('.row');
+      if(mrw)[].forEach.call(mrw.querySelectorAll(':scope > .main > p.mu'),function(q){var rr=q.getBoundingClientRect();if(e.clientY>=rr.top-2&&e.clientY<=rr.top+rr.height/Math.max(1,Math.round(rr.height/((parseFloat(getComputedStyle(q).lineHeight)||rr.height))))+2&&e.clientX>rr.right+1&&e.clientX<rr.right+40)mup=q});
+      if(mup){e.preventDefault();e.stopPropagation();
+        pmClip(doc,'\u25C6');
+        pmMsg('המעוין הועתק. עמוד בשורה אחרת ולחץ Ctrl+V - הוא יעמוד בצד השורה');return}
       if(S.editing&&S.editing.p.contains(e.target))return;
       /* קישורי הקובץ (ציון דף, סימן התוס') אינם קופצים במצב דפוס: הלחיצה היא על השורה שמתחתם */
       if(e.target.closest&&e.target.closest('#prnout a'))e.preventDefault();
@@ -1084,6 +1095,11 @@
     doc.addEventListener('paste',function(e){if(!S.editing||!S.editing.p.contains(e.target))return;e.preventDefault();
       var t=(e.clipboardData||{}).getData?e.clipboardData.getData('text/plain').replace(/\s+/g,' '):'';
       /* הודבקה כותרת צד שהועתקה מכותרת צד: נכנסת ככותרת צד, בלי להחיל עליה סגנון שוב */
+      /* מעוין שהודבק: סימן בצד השורה (Alt+0 בעורך), לא אות בתוכה */
+      if(t.trim()&&/^[\s\u25C6\u25C7\u2666\u2756\u2B25\u2B26\u2B29\u2B2A]+$/.test(t)){
+        if(!S.editing.p.classList.contains('mu'))
+          pmProxy({key:'0',code:'Digit0',ctrlKey:false,altKey:true,shiftKey:false,metaKey:false,preventDefault:function(){},getModifierState:function(){return false}});
+        return}
       if(pmIsSide(t)){var E=S.editing,g=pmGetSel(E.p)||[0,0],a=Math.min(g[0],g[1]);doc.execCommand('insertText',false,t.trim());pmOnInput();
         pmSetSel(E.p,a,a+t.trim().length);
         pmProxy({key:'.',code:'Period',ctrlKey:true,altKey:false,shiftKey:false,metaKey:false,preventDefault:function(){},getModifierState:function(){return false}});return}

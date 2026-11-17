@@ -1,24 +1,24 @@
 {
  "slug": "arakhin",
- "made": "2026-11-17 12:25",
+ "made": "2026-11-17 13:46",
  "profile": "a4-large",
  "pages": {
   "a4": 36,
   "a4-large": 38
  },
  "sq25": {
-  "a4": 43,
-  "a4-large": 81
+  "a4": 46,
+  "a4-large": 86
  },
- "count": 50,
+ "count": 55,
  "firstTool": {
-  "5": 21,
-  "4": 3
+  "5": 22,
+  "4": 5
  },
- "joinCands": 39,
- "mechSplitCands": 3,
+ "joinCands": 41,
+ "mechSplitCands": 6,
  "ctlMismatch": [],
- "rejected": 19,
+ "rejected": 20,
  "stale": [],
  "unplaced": [],
  "heads": {
@@ -58,8 +58,8 @@
    "over": "הן היו באותו הנס.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 64.8,
-   "miss": 11,
+   "missPx": 68.1,
+   "miss": 12,
    "long": true,
    "tail": false,
    "sug": [
@@ -97,7 +97,7 @@
    "over": "לא יתחייבו,",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 29.8,
+   "missPx": 33.0,
    "miss": 6,
    "long": true,
    "tail": false,
@@ -214,7 +214,7 @@
    "over": "הוא דבא!",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 31.6,
+   "missPx": 33.7,
    "miss": 6,
    "long": false,
    "tail": false,
@@ -235,12 +235,51 @@
    "over": "בן חודש",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 31.7,
+   "missPx": 33.9,
    "miss": 6,
    "long": false,
    "tail": false,
    "sug": [],
    "tool6": true
+  },
+  {
+   "key": "u248.2",
+   "id": "4d40ee5df0d2aa54",
+   "u": 248,
+   "li": 2,
+   "daf": "ה:",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "<i class=\"am\">כר&quot;מ</i> ואפי&#x27; דכבר אמרה <i class=\"am\">רב</i> <i class=\"am\">דאר&quot;ג</i> <i class=\"am\">מרב</i>: האומר ערך כלי עלי - נותן דמיו! ",
+   "ph": "<i class=\"am\">כר&quot;מ</i> ואפי&#x27; דכבר אמרה <i class=\"am\">רב</i> <i class=\"am\">דאר&quot;ג</i> <i class=\"am\">מרב</i>: האומר ערך כלי עלי - נותן דמיו! ",
+   "text": "כר\"מ ואפי' דכבר אמרה רב דאר\"ג מרב: האומר ערך כלי עלי - נותן דמיו!",
+   "over": "נותן דמיו!",
+   "nA4": 1,
+   "nLarge": 2,
+   "missPx": 33.2,
+   "miss": 6,
+   "long": false,
+   "tail": false,
+   "sug": [
+    {
+     "tool": 5,
+     "kind": "join",
+     "target": "prev",
+     "html": "המקדיש בהמת חבירו - נותן ושנה, <i class=\"am\">כר&quot;מ</i> ואפי&#x27; דכבר אמרה <i class=\"am\">רב</i> <i class=\"am\">דאר&quot;ג</i> <i class=\"am\">מרב</i>: האומר ערך כלי עלי - נותן דמיו!",
+     "targetOrig": "המקדיש בהמת חבירו - נותן ושנה, ",
+     "targetLines": 1,
+     "why": "איחוי עם השורה הקודמת",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u418.1",
@@ -275,11 +314,11 @@
    "html": "ד&#x27;<i class=\"ps\">וּבְהַקְהִיל אֶת הַקָּהָל תִּתְקְעוּ וְלֹא תָרִיעוּ</i>&#x27;, ואם ס&quot;ד תקיעה תרועה ותקיעה אחת היא, אמר התורה עשה פלגא דמצוה? <i class=\"am\">ולר&quot;י</i> סימנא סתם הוא.",
    "ph": "ד&#x27;<i class=\"ps\">וּבְהַקְהִיל אֶת הַקָּהָל תִּתְקְעוּ וְלֹא תָרִיעוּ</i>&#x27;, ואם ס&quot;ד תקיעה תרועה ותקיעה אחת היא, אמר התורה עשה פלגא דמצוה? <i class=\"am\">ולר&quot;י</i> סימנא סתם הוא.",
    "text": "ד'וּבְהַקְהִיל אֶת הַקָּהָל תִּתְקְעוּ וְלֹא תָרִיעוּ', ואם ס\"ד תקיעה תרועה ותקיעה אחת היא, אמר התורה עשה פלגא דמצוה? ולר\"י סימנא סתם הוא.",
-   "over": "סתם הוא.",
+   "over": "ולר\"י סימנא סתם הוא.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 38.9,
-   "miss": 7,
+   "missPx": 48.9,
+   "miss": 9,
    "long": true,
    "tail": false,
    "sug": [],
@@ -415,7 +454,7 @@
    "over": "הו\"ל בשנה שישית",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 78.4,
+   "missPx": 79.8,
    "miss": 13,
    "long": true,
    "tail": false,
@@ -502,8 +541,8 @@
    "over": "ראויה לפרדיסות אומר.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 52.8,
-   "miss": 9,
+   "missPx": 60.8,
+   "miss": 10,
    "long": true,
    "tail": false,
    "sug": [],
@@ -524,25 +563,52 @@
    "over": "להיות שדה אחוזה.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 69.8,
-   "miss": 12,
+   "missPx": 80.9,
+   "miss": 14,
    "long": true,
+   "tail": false,
+   "sug": [],
+   "tool6": true,
+   "leave": true
+  },
+  {
+   "key": "u1021.1",
+   "id": "cf374537f43c9bfa",
+   "u": 1021,
+   "li": 1,
+   "daf": "טו.",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "<i class=\"am\">רבה</i> <i class=\"am\">אר&quot;ל</i> &#x27;<i class=\"ps\">וַיָּמוּתוּ הָאֲנָשִׁים מוֹצִיאֵי דִבַּת הָאָרֶץ רָעָה</i>&#x27;, על דבת הארץ שהוציאו.",
+   "ph": "<i class=\"am\">רבה</i> <i class=\"am\">אר&quot;ל</i> &#x27;<i class=\"ps\">וַיָּמוּתוּ הָאֲנָשִׁים מוֹצִיאֵי דִבַּת הָאָרֶץ רָעָה</i>&#x27;, על דבת הארץ שהוציאו.",
+   "text": "רבה אר\"ל 'וַיָּמוּתוּ הָאֲנָשִׁים מוֹצִיאֵי דִבַּת הָאָרֶץ רָעָה', על דבת הארץ שהוציאו.",
+   "over": "הארץ שהוציאו.",
+   "nA4": 1,
+   "nLarge": 2,
+   "missPx": 41.3,
+   "miss": 8,
+   "long": false,
    "tail": false,
    "sug": [
     {
-     "tool": 5,
-     "kind": "join",
-     "target": "prev",
-     "html": "וקרא <i class=\"am\">לכדר&quot;מ</i> בא, אלא לא משום דאזיל אחר פדיון! <i class=\"am\">ארנב&quot;י</i> <i class=\"am\">ר&quot;י</i> <i class=\"am\">ור&quot;ש</i> קרא אשכחו ודרוש: אם כן, לכתוב התורה <i class=\"ps\">אם את שדה מקנתו אשר לא</i> אחוזתו, מה משדה? שדה שאינה ראויה להיות שדה אחוזה.",
-     "targetOrig": "וקרא <i class=\"am\">לכדר&quot;מ</i> בא, אלא לא משום דאזיל אחר פדיון! ",
-     "targetLines": 1,
-     "why": "איחוי עם השורה הקודמת",
+     "tool": 4,
+     "split_before": "על דבת",
+     "side": "",
+     "kind": "split",
+     "parts": [
+      "<i class=\"am\">רבה</i> <i class=\"am\">אר&quot;ל</i> &#x27;<i class=\"ps\">וַיָּמוּתוּ הָאֲנָשִׁים מוֹצִיאֵי דִבַּת הָאָרֶץ רָעָה</i>',",
+      "על דבת הארץ שהוציאו."
+     ],
+     "why": "חיתוך אחרי סימן פיסוק",
+     "src": "mech",
      "ok": {
       "large": [
-       3
+       1,
+       1
       ],
       "a4": [
-       3
+       1,
+       1
       ]
      }
     }
@@ -563,8 +629,8 @@
    "over": "שְׁנוּנִים עִם גַּחֲלֵי רְתָמִים',",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 66.5,
-   "miss": 12,
+   "missPx": 74.2,
+   "miss": 13,
    "long": true,
    "tail": false,
    "sug": [
@@ -602,8 +668,8 @@
    "over": "חֲטָאָה גְדוֹלָה',",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 29.8,
-   "miss": 6,
+   "missPx": 36.8,
+   "miss": 7,
    "long": false,
    "tail": false,
    "sug": [
@@ -680,7 +746,7 @@
    "over": "מכל מקום,",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 23.7,
+   "missPx": 27.7,
    "miss": 5,
    "long": true,
    "tail": false,
@@ -731,11 +797,11 @@
    "html": "ה&quot;ד תוכחה לשמה וענוה שלא לשמה? כי הא <i class=\"am\">דר&quot;ה</i> וחב&quot;ר ישבו לפני <i class=\"am\">שמואל</i> א&quot;ל חב&quot;ר ראה מר דמצער לי, קביל עליו דתו לא מצער לו.",
    "ph": "ה&quot;ד תוכחה לשמה וענוה שלא לשמה? כי הא <i class=\"am\">דר&quot;ה</i> וחב&quot;ר ישבו לפני <i class=\"am\">שמואל</i> א&quot;ל חב&quot;ר ראה מר דמצער לי, קביל עליו דתו לא מצער לו.",
    "text": "ה\"ד תוכחה לשמה וענוה שלא לשמה? כי הא דר\"ה וחב\"ר ישבו לפני שמואל א\"ל חב\"ר ראה מר דמצער לי, קביל עליו דתו לא מצער לו.",
-   "over": "לא מצער לו.",
+   "over": "דתו לא מצער לו.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 40.6,
-   "miss": 7,
+   "missPx": 45.2,
+   "miss": 8,
    "long": true,
    "tail": false,
    "sug": [
@@ -812,7 +878,7 @@
    "over": "ת\"ל: 'אִם דַּל הוּא'.",
    "nA4": 3,
    "nLarge": 4,
-   "missPx": 53.3,
+   "missPx": 55.7,
    "miss": 10,
    "long": true,
    "tail": false,
@@ -917,8 +983,8 @@
    "over": "לו דרך,",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 28.8,
-   "miss": 5,
+   "missPx": 30.1,
+   "miss": 6,
    "long": false,
    "tail": false,
    "sug": [
@@ -943,6 +1009,67 @@
    "tool6": false
   },
   {
+   "key": "u1511.1",
+   "id": "4b1f39d41fff7d83",
+   "u": 1511,
+   "li": 1,
+   "daf": "כ.",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "המעריך חצי ערך כלי - <i class=\"am\">ר&quot;מ</i> אומר: נותן דמיו, וחכ&quot;א: לא אמר כלום.",
+   "ph": "המעריך חצי ערך כלי - <i class=\"am\">ר&quot;מ</i> אומר: נותן דמיו, וחכ&quot;א: לא אמר כלום.",
+   "text": "המעריך חצי ערך כלי - ר\"מ אומר: נותן דמיו, וחכ\"א: לא אמר כלום.",
+   "over": "אמר כלום.",
+   "nA4": 1,
+   "nLarge": 2,
+   "missPx": 28.3,
+   "miss": 6,
+   "long": false,
+   "tail": false,
+   "sug": [
+    {
+     "tool": 5,
+     "kind": "join",
+     "target": "next",
+     "html": "המעריך חצי ערך כלי - <i class=\"am\">ר&quot;מ</i> אומר: נותן דמיו, וחכ&quot;א: לא אמר כלום. <i class=\"am\">רבא</i> חלש, עול <i class=\"am\">לאביי</i> ורבנן, ויתבי ואמרו: בשלמא <i class=\"am\">ר&quot;מ</i>, סבר: אין אדם מוציא דבריו לבטלה, ל&quot;ש כולו ול&quot;ש חציו,",
+     "targetOrig": "<i class=\"am\">רבא</i> חלש, עול <i class=\"am\">לאביי</i> ורבנן, ויתבי ואמרו: בשלמא <i class=\"am\">ר&quot;מ</i>, סבר: אין אדם מוציא דבריו לבטלה, ל&quot;ש כולו ול&quot;ש חציו, ",
+     "targetLines": 2,
+     "why": "איחוי עם השורה הבאה",
+     "ok": {
+      "large": [
+       3
+      ],
+      "a4": [
+       3
+      ]
+     }
+    },
+    {
+     "tool": 4,
+     "split_before": "וחכ\"א:",
+     "side": "",
+     "kind": "split",
+     "parts": [
+      "המעריך חצי ערך כלי - <i class=\"am\">ר&quot;מ</i> אומר: נותן דמיו,",
+      "וחכ\"א: לא אמר כלום."
+     ],
+     "why": "חיתוך אחרי סימן פיסוק",
+     "src": "mech",
+     "ok": {
+      "large": [
+       1,
+       1
+      ],
+      "a4": [
+       1,
+       1
+      ]
+     }
+    }
+   ],
+   "tool6": false
+  },
+  {
    "key": "u1530.1",
    "id": "d3a9a5a763de1198",
    "u": 1530,
@@ -956,8 +1083,8 @@
    "over": "להביאו אומר.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 39.1,
-   "miss": 7,
+   "missPx": 42.0,
+   "miss": 8,
    "long": true,
    "tail": false,
    "sug": [],
@@ -978,8 +1105,8 @@
    "over": "אמוראי ודאי חלקו.",
    "nA4": 3,
    "nLarge": 4,
-   "missPx": 48.7,
-   "miss": 8,
+   "missPx": 55.2,
+   "miss": 9,
    "long": true,
    "tail": false,
    "sug": [],
@@ -1000,8 +1127,8 @@
    "over": "וקשה לר\"פ",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 26.7,
-   "miss": 5,
+   "missPx": 32.1,
+   "miss": 6,
    "long": false,
    "tail": false,
    "sug": [],
@@ -1021,8 +1148,8 @@
    "over": "מן הערב",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 41.2,
-   "miss": 7,
+   "missPx": 43.0,
+   "miss": 8,
    "long": false,
    "tail": false,
    "sug": [],
@@ -1084,8 +1211,8 @@
    "over": "מחשב חדשים,",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 37.9,
-   "miss": 7,
+   "missPx": 48.6,
+   "miss": 8,
    "long": true,
    "tail": false,
    "sug": [],
@@ -1149,8 +1276,8 @@
    "over": "שלקחו ממנו?",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 50.0,
-   "miss": 10,
+   "missPx": 59.3,
+   "miss": 11,
    "long": false,
    "tail": false,
    "sug": [],
@@ -1170,8 +1297,8 @@
    "over": "ת\"ל: 'לַאֲשֶׁר קָנָהוּ'.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 47.7,
-   "miss": 8,
+   "missPx": 52.5,
+   "miss": 9,
    "long": true,
    "tail": false,
    "sug": [
@@ -1209,13 +1336,57 @@
    "over": "דברי ר\"י ור\"ש,",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 21.5,
-   "miss": 4,
+   "missPx": 33.6,
+   "miss": 6,
    "long": true,
    "tail": false,
    "sug": [],
    "tool6": true,
    "leave": true
+  },
+  {
+   "key": "u2035.1",
+   "id": "b619658438586ea1",
+   "u": 2035,
+   "li": 1,
+   "daf": "כו:",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "קנין פירות כקנין הגוף דמי, <i class=\"am\">ולר&quot;י</i> <i class=\"am\">ולר&quot;ש</i>: קנין פירות לא כקנין הגוף דמי! ",
+   "ph": "קנין פירות כקנין הגוף דמי, <i class=\"am\">ולר&quot;י</i> <i class=\"am\">ולר&quot;ש</i>: קנין פירות לא כקנין הגוף דמי! ",
+   "text": "קנין פירות כקנין הגוף דמי, ולר\"י ולר\"ש: קנין פירות לא כקנין הגוף דמי!",
+   "over": "כקנין הגוף דמי!",
+   "nA4": 1,
+   "nLarge": 2,
+   "missPx": 58.1,
+   "miss": 11,
+   "long": false,
+   "tail": false,
+   "sug": [
+    {
+     "tool": 4,
+     "split_before": "ולר\"י ",
+     "side": "",
+     "kind": "split",
+     "parts": [
+      "קנין פירות כקנין הגוף דמי,",
+      "<i class=\"am\">ולר&quot;י</i> <i class=\"am\">ולר&quot;ש</i>: קנין פירות לא כקנין הגוף דמי!"
+     ],
+     "why": "חיתוך אחרי סימן פיסוק",
+     "src": "mech",
+     "ok": {
+      "large": [
+       1,
+       1
+      ],
+      "a4": [
+       1,
+       1
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u2097.4",
@@ -1275,8 +1446,8 @@
    "over": "של כהן.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 29.3,
-   "miss": 5,
+   "missPx": 34.1,
+   "miss": 6,
    "long": true,
    "tail": false,
    "sug": [
@@ -1314,8 +1485,8 @@
    "over": "ושב לאחוזתו',",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 50.7,
-   "miss": 10,
+   "missPx": 56.6,
+   "miss": 11,
    "long": false,
    "tail": false,
    "sug": [
@@ -1358,8 +1529,30 @@
    "over": "ולא ידענא הי ממנו.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 58.0,
+   "missPx": 61.4,
    "miss": 11,
+   "long": true,
+   "tail": false,
+   "sug": [],
+   "tool6": true,
+   "leave": true
+  },
+  {
+   "key": "u2286.1",
+   "id": "8f6defbed1834f19",
+   "u": 2286,
+   "li": 1,
+   "daf": "כט.",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "ניחזי אנן, מדתניא בברייתא: המוכר עבדו בחו&quot;ל - יצא לחירות וצריך גט שיחרור מרבו שני, ש&quot;מ מדקרי לו לשני רבו, ומשמע שלא הדרי זביני, וכי אומר <i class=\"am\">שמואל</i> כאן אינה מכורה ומעות חוזרין.",
+   "ph": "ניחזי אנן, מדתניא בברייתא: המוכר עבדו בחו&quot;ל - יצא לחירות וצריך גט שיחרור מרבו שני, ש&quot;מ מדקרי לו לשני רבו, ומשמע שלא הדרי זביני, וכי אומר <i class=\"am\">שמואל</i> כאן אינה מכורה ומעות חוזרין.",
+   "text": "ניחזי אנן, מדתניא בברייתא: המוכר עבדו בחו\"ל - יצא לחירות וצריך גט שיחרור מרבו שני, ש\"מ מדקרי לו לשני רבו, ומשמע שלא הדרי זביני, וכי אומר שמואל כאן אינה מכורה ומעות חוזרין.",
+   "over": "מכורה ומעות חוזרין.",
+   "nA4": 3,
+   "nLarge": 4,
+   "missPx": 25.7,
+   "miss": 5,
    "long": true,
    "tail": false,
    "sug": [],
@@ -1419,7 +1612,7 @@
    "over": "פירות - אסור,",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 55.5,
+   "missPx": 56.5,
    "miss": 10,
    "long": true,
    "tail": false,
@@ -1441,7 +1634,7 @@
    "over": "עשר באדר של שנה הבאה.",
    "nA4": 4,
    "nLarge": 5,
-   "missPx": 92.2,
+   "missPx": 95.3,
    "miss": 15,
    "long": true,
    "tail": false,
@@ -1541,8 +1734,8 @@
    "over": "ביובל ובגרעון כסף,",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 63.9,
-   "miss": 11,
+   "missPx": 68.1,
+   "miss": 12,
    "long": true,
    "tail": false,
    "sug": [],
@@ -1563,8 +1756,8 @@
    "over": "לּוֹ', מיד,",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 24.1,
-   "miss": 4,
+   "missPx": 27.5,
+   "miss": 5,
    "long": true,
    "tail": false,
    "sug": [

@@ -395,5 +395,25 @@
   classify(); applyMode(false); updTop();
   /* בזמן סקירה (bk-on) מושהה: הוא קורא את גובה הזרם */
   setInterval(function () { if (!document.body.classList.contains('bk-on')) updTop(); }, 700);
+  /* (17.11.2026, פרומפט 49) לחיצה ארוכה על סמל בכותרת המגירה או בכותרת צורת הדף: תווית צפה קצרה עם שם הפעולה */
+  (function () {
+    var tip = null, tmr = 0, fired = false;
+    function hide() { clearTimeout(tmr); if (tip) { tip.remove(); tip = null; } }
+    function show(btn) {
+      var t = btn.getAttribute('aria-label') || btn.title || ''; t = String(t).split(/[:(]/)[0].trim(); if (!t) return;
+      hide(); tip = document.createElement('div'); tip.className = 'hdtip'; tip.textContent = t; document.body.appendChild(tip);
+      var r = btn.getBoundingClientRect(), w = tip.offsetWidth;
+      tip.style.left = Math.max(6, Math.min(innerWidth - w - 6, r.left + r.width / 2 - w / 2)) + 'px';
+      tip.style.top = (r.bottom + 6) + 'px'; buzz(8); fired = true;
+      setTimeout(hide, 1600);
+    }
+    document.addEventListener('touchstart', function (e) {
+      var b = e.target.closest && e.target.closest('#srcx .srchd button, .tzhd button'); fired = false;
+      if (!b || e.touches.length !== 1) return; clearTimeout(tmr); tmr = setTimeout(function () { show(b); }, 480);
+    }, { passive: true });
+    document.addEventListener('touchmove', function () { clearTimeout(tmr); }, { passive: true });
+    document.addEventListener('touchend', function (e) { clearTimeout(tmr); if (fired) { e.preventDefault(); fired = false; } }, { passive: false });
+    document.addEventListener('contextmenu', function (e) { if (e.target.closest && e.target.closest('#srcx .srchd button, .tzhd button')) e.preventDefault(); });
+  })();
   window.LGMOBILE = { classify: classify, applyMode: applyMode, dev: dev };
 })();

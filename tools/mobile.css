@@ -129,9 +129,10 @@ html.dev-tab.land .tzx.split{left:86px!important}
 html.dev-phone body.tzsplit .flow,html.dev-tab body.tzsplit .flow{width:auto;margin-left:0}
 html.dev-phone .tzx.full,html.dev-tab .tzx.full{z-index:45}
 html.dev-phone .tzdrag,html.dev-tab .tzdrag{display:none}
-html.dev-phone .tzhd,html.dev-tab .tzhd{gap:8px;padding:8px 10px}
-html.dev-phone .tzhd button,html.dev-phone .tzhd select,html.dev-tab .tzhd button,html.dev-tab .tzhd select{min-height:44px;min-width:44px;font-size:15px;padding:4px 12px;margin:0}
-html.dev-phone .tzhd b,html.dev-tab .tzhd b{flex:1 1 100%;min-width:0}
+/* (17.11.2026, פרומפט 49) כותרת צורת הדף בטלפון ובטאבלט: שורה אחת של סמלים, גובה 36; הנראה קטן, אזור המגע רחב מעט */
+html.dev-phone .tzhd,html.dev-tab .tzhd{height:36px;flex-wrap:nowrap}
+html.dev-phone .tzhd button,html.dev-tab .tzhd button{min-width:30px;height:30px;padding:0 4px}
+html.dev-phone .tzpop select,html.dev-tab .tzpop select{min-height:36px;font-size:15px}
 /* טלפון: חלונות הפתיחה והשיעורים מעל הסרגל התחתון */
 html.dev-phone .sgpop,html.dev-tab .sgpop{max-height:calc(100dvh - var(--mtop) - var(--mbh))}
 
@@ -179,3 +180,5 @@ html.dev-phone #srcx .srchd,html.dev-tab #srcx .srchd{height:36px}
 @media (max-width:420px){#srcx .srchd .srctabs button{padding:0 5px!important}html #srcx.src .srchd>button,html #srcx.src .srchd>.smenu>button{min-width:26px!important;padding:0 2px!important}#srcx .srchd{padding:2px 4px}#srcx .srchd #ss-prev,#srcx .srchd #ss-next,#srcx .srchd .srcsep{display:none}}
 /* ידית הגרירה של הגיליון בטלפון ובטאבלט: דקה יותר (הייתה 44 פיקסלים של ריק) */
 html.dev-phone #msh,html.dev-tab #msh{height:20px}
+/* (17.11.2026, פרומפט 49) התווית הצפה של לחיצה ארוכה על סמל בכותרת */
+.hdtip{position:fixed;z-index:80;background:#2b2620;color:#f1ead9;font:500 13px/1.3 var(--ui,system-ui,sans-serif);padding:4px 10px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap}

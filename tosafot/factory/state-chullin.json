@@ -1,0 +1,118 @@
+{
+ "slug": "chullin",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-17T18:40:29Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chullin-p01-u01",
+    "chullin-p01-u02",
+    "chullin-p01-u03",
+    "chullin-p01-u04",
+    "chullin-p01-u05",
+    "chullin-p01-u06",
+    "chullin-p01-u07",
+    "chullin-p01-u08",
+    "chullin-p01-u09",
+    "chullin-p01-u10"
+   ],
+   "result": {
+    "generated": 231,
+    "decided": 0,
+    "unchecked": 5,
+    "flagged": 5,
+    "questions": 190
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-17T18:40:30Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chullin-p02-u01",
+    "chullin-p02-u02",
+    "chullin-p02-u03",
+    "chullin-p02-u04",
+    "chullin-p02-u05",
+    "chullin-p02-u06"
+   ],
+   "result": {
+    "generated": 154,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 117
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-17T18:40:30Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chullin-p03-u01",
+    "chullin-p03-u02",
+    "chullin-p03-u03",
+    "chullin-p03-u04",
+    "chullin-p03-u05",
+    "chullin-p03-u06",
+    "chullin-p03-u07",
+    "chullin-p03-u08",
+    "chullin-p03-u09"
+   ],
+   "result": {
+    "generated": 220,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 165
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-17T18:40:31Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chullin-p04-u01",
+    "chullin-p04-u02",
+    "chullin-p04-u03",
+    "chullin-p04-u04"
+   ],
+   "result": {
+    "generated": 91,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 75
+   }
+  }
+ },
+ "created": "2026-11-17T18:40:29Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.45,
+   "n": 19,
+   "at": "2026-11-17T18:40:29Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.446,
+   "n": 12,
+   "at": "2026-11-17T18:40:29Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.375,
+   "n": 17,
+   "at": "2026-11-17T18:40:30Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.206,
+   "n": 7,
+   "at": "2026-11-17T18:40:30Z"
+  }
+ ],
+ "updated": "2026-11-17T18:40:31Z"
+}

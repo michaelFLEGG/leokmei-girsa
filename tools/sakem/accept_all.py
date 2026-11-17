@@ -17,6 +17,7 @@ ap.add_argument('--slug', default='shabbat')
 ap.add_argument('--jobs', default='', help='רשימה מופרדת בפסיקים. ריק = כל העבודות המוכנות של המסכת')
 ap.add_argument('--dry', action='store_true', help='רק פתיחה וספירה, בלי קבלה')
 ap.add_argument('--out', default='accept-report.json')
+ap.add_argument('--only', default='', help='הזמנה רק לפרקים האלה (מספרים מופרדים בפסיקים), למשל אחרי 429')
 ap.add_argument('--round', default='', help='פרומפט 56 ד2: "1-15" - אחרי הקבלה, עבודת "סבב שני" לכל פרק בטווח, ועבודת סכם מלאה לפרקים שאחריו')
 a = ap.parse_args()
 KEY = os.environ.get('LEOKMEI_ADMIN_KEY', '')
@@ -48,7 +49,7 @@ with sync_playwright() as p:
         jobs = [{'jid': x.split(':')[0], 'st': x.split(':')[1]} for x in diag['slug']]
     want = [x for x in a.jobs.split(',') if x] or [j['jid'] for j in jobs if j['st'] in ('ready',)]
     print('עבודות:', want)
-    for jid in want:
+    for jid in (want if not a.only else []):
         r = {'jid': jid}
         try:
             pg.evaluate("j=>skpAuto.open(j)", jid)
@@ -73,6 +74,8 @@ with sync_playwright() as p:
         rep['enqueued'] = []
         for sc in secs:
             n = sc['si'] + 1
+            if a.only and str(n) not in a.only.split(','):
+                continue
             base = pg.evaluate("i=>skpAuto.title(i)", sc['si'])
             if lo <= n <= hi:
                 t, kind = '%s פרק %d - סבב שני (פרומפט 56)' % ('שבת' if a.slug == 'shabbat' else a.slug, n), 'seg'

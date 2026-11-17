@@ -16,6 +16,10 @@ on:
         description: '1 = רק פתיחה וספירה, בלי קבלה'
         required: false
         default: ''
+      only:
+        description: 'הזמנה רק לפרקים האלה (למשל 20), בלי קבלה'
+        required: false
+        default: ''
       round:
         description: 'פרומפט 56 ד2: למשל 1-15 = אחרי הקבלה, סבב שני לפרקים 1-15 וסכם מלא לפרקים שאחריהם'
         required: false
@@ -39,7 +43,7 @@ jobs:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
         run: |
           D=""; if [ "${{ github.event.inputs.dry }}" = "1" ]; then D="--dry"; fi
-          python tools/sakem/accept_all.py --slug "${{ github.event.inputs.slug }}" --jobs "${{ github.event.inputs.jobs }}" $D --round "${{ github.event.inputs.round }}" --out _accept.json
+          python tools/sakem/accept_all.py --slug "${{ github.event.inputs.slug }}" --jobs "${{ github.event.inputs.jobs }}" $D --round "${{ github.event.inputs.round }}" --only "${{ github.event.inputs.only }}" --out _accept.json
       - name: הדוח בריפו
         if: always()
         run: |

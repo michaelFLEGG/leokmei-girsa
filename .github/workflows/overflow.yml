@@ -6,73 +6,120 @@ name: שורה שהתארכה - מחולל הרשימה וההצעות
 # פרומפט 53 (17.11.2026): חוזר לרוץ אחרי כל פרסום, כי זה הלב של "מה שנכנס נשאר" - הוא אינו סנכרון לוורד:
 # כותב רק את data/overflow (המרשם, היומן וההצעות) ושולח רשומות עריכה לשכבה החיה, כמו העורך. משם /live והקיפול.
 # מיכאל: "אני לא מעוניין לאשר פיזית איחויים. זה צריך להיות אוטומטית. אם זה נכנס - שיישאר כך."
+# פרומפט 55 (17.11.2026): בכל המסכתות שיש להן דף באתר (config.json: "all"), שבת ראשונה. עבודה אחת לכל מסכת, במקביל,
+# ורק מסכתות שהשתנו מאז הסבב הקודם (tools/overflow/plan.py, חותמות ב-data/overflow/stamps/<מסכת>.txt). בהפעלה ידנית אפשר
+# לבקש מסכתות מסוימות או את כולן.
 on:
   workflow_run:
     workflows: ["השומר - בנייה ופרסום מקובצי הוורד"]
     types: [completed]
   workflow_dispatch:
+    inputs:
+      slugs:
+        description: 'מסכתות מופרדות ברווח, או all לכולן (ריק = רק מה שהשתנה)'
+        required: false
+        default: ''
 permissions:
   contents: write
 concurrency:
   group: overflow
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
-  gen:
+  plan:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 15
+    outputs:
+      slugs: ${{ steps.p.outputs.slugs }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: אילו מסכתות
+        id: p
+        run: |
+          IN="${{ github.event.inputs.slugs }}"
+          if [ "$IN" = "all" ]; then L=$(python tools/overflow/plan.py --all)
+          elif [ -n "$IN" ]; then L=$(python -c "import json,sys;print(json.dumps(sys.argv[1:]))" $IN)
+          else L=$(python tools/overflow/plan.py); fi
+          echo "slugs=$L" >> $GITHUB_OUTPUT
+          echo "$L"
+      # הלמידה ורשימת הקיצורים משותפות לכל המסכתות: פעם אחת, לפני העבודות
       - name: למידה מן ההכרעות
+        if: steps.p.outputs.slugs != '[]'
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
         run: |
-          for s in $(python -c "import json;print(' '.join(json.load(open('data/overflow/config.json'))['slugs']))"); do
+          for s in $(python -c "import json,sys;print(' '.join(json.loads(sys.argv[1])))" '${{ steps.p.outputs.slugs }}'); do
             python tools/overflow/learn.py --slug $s || echo "::warning::הלמידה נכשלה ב-$s"
           done
           python tools/overflow/abbr.py || echo "::warning::רשימת הקיצורים לא נבנתה מחדש (אין קובצי וורד בענן), נשארת הקודמת"
+          git config user.name "leokmei-overflow"
+          git config user.email "overflow@leokmei.com"
+          git add data/overflow
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -qm "שורה שהתארכה: למידה [skip ci]"
+          for i in 1 2 3 4; do git pull --rebase -q -X theirs && git push -q && exit 0; git rebase --abort 2>/dev/null || true; sleep $((i*5)); done
+          echo "::error::הדחיפה נכשלה"; exit 1
+  gen:
+    needs: plan
+    if: ${{ needs.plan.outputs.slugs != '[]' && needs.plan.outputs.slugs != '' }}
+    runs-on: ubuntu-latest
+    # שבת (156 דפים) לבדה: המנוע מעמד את כל המסכת כמה פעמים
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        slug: ${{ fromJSON(needs.plan.outputs.slugs) }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: חותמת לפני הסבב
+        run: echo "STAMP=$(python tools/overflow/plan.py --now ${{ matrix.slug }})" >> $GITHUB_ENV
       - name: מחולל
         run: |
-          for s in $(python -c "import json;print(' '.join(json.load(open('data/overflow/config.json'))['slugs']))"); do
-            python tools/overflow/mirror_site.py --slug $s --out _work/mirror-$s
-            python tools/overflow/overflow_gen.py --slug $s --site _work/mirror-$s --tmp _work/overflow-$s
-          done
+          s=${{ matrix.slug }}
+          git pull -q || true
+          python tools/overflow/mirror_site.py --slug $s --out _work/mirror-$s
+          python tools/overflow/overflow_gen.py --slug $s --site _work/mirror-$s --tmp _work/overflow-$s
       # פרומפט 53: הנעילה (כל שורה שבשני הגדלים בשורה אחת) והבודק - שורה נעולה שנשברה עוצרת בקול
       - name: נעילה אוטומטית
         run: |
+          s=${{ matrix.slug }}
           bad=0
-          for s in $(python -c "import json;print(' '.join(json.load(open('data/overflow/config.json'))['slugs']))"); do
-            python tools/overflow/auto.py lock --slug $s --large _work/overflow-$s/$s-a4-large.pdf.json --a4 _work/overflow-$s/$s-a4.pdf.json || bad=1
-          done
+          python tools/overflow/auto.py lock --slug $s --large _work/overflow-$s/$s-a4-large.pdf.json --a4 _work/overflow-$s/$s-a4.pdf.json || bad=1
           echo "LOCKBAD=$bad" >> $GITHUB_ENV
       # פרומפט 53: החלה אוטומטית - הקטן ביותר שמספיק (כלי 2, כלי 4, כלי 3 מזערי), נבדק במנוע בשני הגדלים
       - name: החלה אוטומטית
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
         run: |
-          for s in $(python -c "import json;print(' '.join(json.load(open('data/overflow/config.json'))['slugs']))"); do
-            python tools/overflow/auto.py pick --slug $s --site _work/mirror-$s --commit
-            python tools/overflow/auto.py push --slug $s
-          done
+          s=${{ matrix.slug }}
+          python tools/overflow/auto.py pick --slug $s --site _work/mirror-$s --commit
+          python tools/overflow/auto.py push --slug $s
+          if [ "$LOCKBAD" != 1 ]; then python tools/overflow/plan.py --stamp $s --value "$STAMP"; fi
       - name: שמירה בריפו
         run: |
+          s=${{ matrix.slug }}
           git config user.name "leokmei-overflow"
           git config user.email "overflow@leokmei.com"
           git add data/overflow
           if git diff --cached --quiet; then echo "אין שינוי"; exit 0; fi
-          git commit -m "שורה שהתארכה: רשימה והצעות מעודכנות [skip ci]"
+          git commit -m "שורה שהתארכה ($s): רשימה, נעילה והחלות [skip ci]"
           ok=0
-          for i in 1 2 3; do
+          for i in 1 2 3 4 5 6; do
+            # כל מסכת כותבת רק את הקבצים שלה (גם החותמת: stamps/<מסכת>.txt), ולכן אין התנגשות
             if git pull --rebase -q -X theirs && git push -q; then ok=1; break; fi
             git rebase --abort 2>/dev/null || true
-            sleep 5
+            sleep $((i*7))
           done
-          if [ "$ok" != 1 ]; then echo "::error::הדחיפה לריפו נכשלה שלוש פעמים"; exit 1; fi
+          if [ "$ok" != 1 ]; then echo "::error::הדחיפה לריפו נכשלה"; exit 1; fi
       - name: שורה נעולה נשברה
         if: env.LOCKBAD == '1'
         run: |
-          echo "::error::שורה שננעלה (נכנסה לשורה אחת) נשברה. פרטים בשלב 'נעילה אוטומטית'"
+          echo "::error::שורה שננעלה (נכנסה לשורה אחת) נשברה ב-${{ matrix.slug }}. פרטים בשלב 'נעילה אוטומטית'"
           exit 1

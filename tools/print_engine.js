@@ -395,7 +395,8 @@
     function W(m){R.warn.push(m);try{console.warn('[print] '+m)}catch(e){}}
     /* 7.11.2026: לשם הפרופיל עשויה להיצמד גרסת העריכות (a4v...), ראה prnGo. הקובץ הוא שם הפרופיל בלעדיה */
     /* פרומפט 41: שירות ההפקה מקבל שם פרופיל של עד 8 תווים, אותיות קטנות וספרות. "A4 מוגדל" עובר בשם הקצר a4lg */
-    var PNAME=((QS.get('profile')||'a4').replace(/v[0-9a-z]+$/,'')||'a4');if(PNAME==='a4lg')PNAME='a4-large';if(PNAME==='b5lg')PNAME='b5-large';
+    /* פרומפט 55 (17.11.2026): ברירת המחדל בכל נתיבי ההדפסה היא המוגדל. a4 (רגיל) רק כשמבקשים אותו במפורש */
+    var PNAME=((QS.get('profile')||'a4lg').replace(/v[0-9a-z]+$/,'')||'a4lg');if(PNAME==='a4lg')PNAME='a4-large';if(PNAME==='b5lg')PNAME='b5-large';
     var prof=await (await fetch('print-profiles/'+PNAME+'.json',{cache:'no-store'})).json();PROF=prof;
     /* פרומפט 48 (16.11.2026 20:45, הכרעת בעל הפרויקט): B5 לעולם אינו מעומד מחדש. פרופיל B5 הוא רק "הקטנה" של פרופיל A4
        (שדה from): העימוד כולו נעשה בפרופיל ה-A4, ושבירת השורות זהה לו בדיוק. בסוף כל עמוד מוקטן כגוש אחד לדף B5 (ראה applyShrink) */
@@ -1484,8 +1485,9 @@
           /* 16.11.2026 (פרומפט 51 בצ'אט): גודל דף B5 בחלון ההדפסה עצמו, לצד A4. הפרופילים b5 ו-b5-large כבר קיימים */
           '<div class="pr" id="prn-paper"><span>גודל דף:</span><label><input type="radio" name="prpaper" value="a4" checked>A4</label>'+
             '<label><input type="radio" name="prpaper" value="b5">B5</label></div>'+
-          '<div class="pr" id="prn-size"><span>גודל אות:</span><label><input type="radio" name="prsize" value="a4" checked>רגיל</label>'+
-            '<label><input type="radio" name="prsize" value="a4lg">מוגדל</label></div>'+
+          /* פרומפט 55 (17.11.2026): המוגדל הוא ברירת המחדל לכולם. לגולש אין בורר גודל, הוא מקבל תמיד מוגדל */
+          (ADM?'<div class="pr" id="prn-size"><span>גודל אות:</span><label><input type="radio" name="prsize" value="a4lg" checked>מוגדל</label>'+
+            '<label><input type="radio" name="prsize" value="a4">רגיל (קטן)</label></div>':'')+
           (ADM?'<div class="pr" id="prn-lay"><span>פריסה:</span><label><input type="radio" name="prlay" value="a4" checked>A4 רגיל</label>'+
             '<label><input type="radio" name="prlay" value="2up">שניים בעמוד</label>'+
             '<label><input type="radio" name="prlay" value="book">הדפס לחוברת (A5, כריכה מימין)</label></div>'+
@@ -1677,13 +1679,15 @@
             if(P&&P.state==='done'){clearInterval(iv);var rep=P.report;f.remove();DRYFR=null;ok(rep)}
             else if(P&&P.state==='error'){clearInterval(iv);f.remove();DRYFR=null;no()}}catch(e){}
           if(Date.now()-t0>90000){clearInterval(iv);f.remove();DRYFR=null;no()}},300)})}
+    /* פרומפט 55: מוגדל תמיד, חוץ ממנהל שבחר במפורש "רגיל (קטן)" */
+    function prnBig(){return !(isAdm()&&PRD&&PRD.querySelector('input[name=prsize][value=a4]:checked'))}
     /* פרומפט 51: הדפסה בדפדפן. אותו מנוע ואותם כללי עימוד, בלי שירות ההפקה ובלי משימת ענן */
     function prnPrint(){
       var r=prnRange(),err=document.getElementById('prn-err');
       var a=pageIdxOf(r.from),b=pageIdxOf(r.to);
       if(r.t!=='all'&&(a<0||b<a)){err.textContent='הדף שנבחר אינו במסכת';err.hidden=false;return}
       var q=prnQuery(r);
-      var big=PRD&&PRD.querySelector('input[name=prsize][value=a4lg]:checked');
+      var big=prnBig();
       var b5=PRD&&PRD.querySelector('input[name=prpaper][value=b5]:checked');
       q.set('profile',(b5?'b5':'a4')+(big?'lg':''));
       q.set('autoprint','1');
@@ -1720,13 +1724,13 @@
         try{var et=JSON.parse(t).doc.t;if(et)q.set('et',String(et))}catch(e){}
         if(!t)t=String(Date.now());
         var h=2166136261;for(var i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}
-        var big=isAdm()&&PRD&&PRD.querySelector('input[name=prsize][value=a4lg]:checked');
+        var big=prnBig();
         var b5=isAdm()&&PRD&&PRD.querySelector('input[name=prpaper][value=b5]:checked');
         /* שם הפרופיל לשירות: עד 8 תווים. a4 / a4lg / b5 / b5lg ואחריהם טביעת גרסת העריכות */
         var base=(b5?'b5':'a4')+(big?'lg':''),room=8-base.length-1,hh=(h>>>0).toString(36);
         q.set('profile',base+'v'+('000000'+hh).slice(-room));
         if(b5)fname=fname.replace(/\.pdf$/,' - B5.pdf');
-        if(big)fname=fname.replace(/\.pdf$/,' - מוגדל.pdf');
+        if(!big)fname=fname.replace(/\.pdf$/,' - רגיל.pdf');
         return fetch(PRINT_API+'/pdf?'+q.toString(),{signal:ctrl.signal,headers:admHdr(),cache:'no-store'})}).then(function(res){
         if(!res.ok){return res.text().then(function(t){var m='';try{m=JSON.parse(t).error||''}catch(e){}throw new Error(m||('קוד '+res.status))})}
         return res.blob()}).then(function(blob){

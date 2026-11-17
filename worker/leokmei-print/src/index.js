@@ -83,7 +83,7 @@ async function pdf(req, env, ctx, url) {
   if (!all && (!DAF_RE.test(from) || !DAF_RE.test(to))) return json({ error: 'טווח לא תקין' }, 400);
   const tos = q.get('tos') === '1' ? '1' : '0';
   const duplex = q.get('duplex') === '1' ? '1' : '0';
-  const profile = /^[a-z0-9]{2,8}$/.test(q.get('profile') || '') ? q.get('profile') : 'a4';
+  const profile = /^[a-z0-9]{2,8}$/.test(q.get('profile') || '') ? q.get('profile') : 'a4lg';  /* פרומפט 55: המוגדל ברירת מחדל */
   /* 8.11.2026: חותמת גרסת התיקונים שהלקוח רואה - הדף מחכה לה לפני העימוד, ואחרת נעצר בהודעה */
   const et = /^\d{10,15}$/.test(q.get('et') || '') ? q.get('et') : '';
   /* פרומפט 31 (11.11.2026): מפתח הפרק מחלון ההדפסה ("פרק שלישי|כירה"). בלעדיו הדף גזר את הפרק בעקיפין מטווח הדפים,

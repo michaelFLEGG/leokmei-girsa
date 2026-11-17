@@ -14,7 +14,7 @@ on:
       profiles:
         description: 'פרופילים, מופרדים ברווח'
         required: true
-        default: 'a4 a4-large b5 b5-large'
+        default: 'a4-large b5-large a4 b5'
       tos:
         description: 'עם תוספות (1/0)'
         required: true

@@ -71,7 +71,7 @@ def main():
     ap.add_argument('--pk', default='', help='מפתח הפרק כמו בחלון ההדפסה ("פרק שלישי|כירה"): הדפסת פרק שלם')
     ap.add_argument('--tos', default='1')
     ap.add_argument('--duplex', default='0')
-    ap.add_argument('--profile', default='a4')
+    ap.add_argument('--profile', default='a4-large')  # פרומפט 55: המוגדל ברירת מחדל
     ap.add_argument('--holefix', default='1', help='0: בלי פיצול הערות ומתיחה (מדידת "לפני" בבקרת החורים)')
     ap.add_argument('--out', required=True)
     ap.add_argument('--lines', action='store_true', help='פרומפט 41: רישום השורות של כל פסקה בדוח (plines), למחולל "שורה שהתארכה"')

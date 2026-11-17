@@ -1,6 +1,6 @@
 {
  "slug": "taanit",
- "made": "2026-11-17 12:03",
+ "made": "2026-11-17 13:25",
  "profile": "a4-large",
  "pages": {
   "a4": 19,
@@ -8,15 +8,15 @@
  },
  "sq25": {
   "a4": 16,
-  "a4-large": 75
+  "a4-large": 81
  },
- "count": 11,
+ "count": 13,
  "firstTool": {
-  "5": 3,
-  "4": 1
+  "5": 4,
+  "4": 2
  },
- "joinCands": 8,
- "mechSplitCands": 1,
+ "joinCands": 9,
+ "mechSplitCands": 4,
  "ctlMismatch": [],
  "rejected": 5,
  "stale": [],
@@ -58,8 +58,8 @@
    "over": "עָבְרָה וַתְּטַהֲרֵם.",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 34.9,
-   "miss": 8,
+   "missPx": 43.7,
+   "miss": 10,
    "long": false,
    "tail": false,
    "sug": [
@@ -97,13 +97,57 @@
    "over": "מַיִם עַל פְּנֵי חוּצוֹת,",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 34.1,
-   "miss": 6,
+   "missPx": 40.2,
+   "miss": 7,
    "long": true,
    "tail": false,
    "sug": [],
    "tool6": true,
    "leave": true
+  },
+  {
+   "key": "u531.1",
+   "id": "727eeb2e7f557a44",
+   "u": 531,
+   "li": 1,
+   "daf": "י.",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "העולם שותה <i class=\"am\">ריב&quot;ל</i> מתמצית<i class=\"am\"> </i>גן עדן, <i class=\"am\">תנא</i>: מתמצית בית כור תרקב",
+   "ph": "העולם שותה <i class=\"am\">ריב&quot;ל</i> מתמצית<i class=\"am\"> </i>גן עדן, <i class=\"am\">תנא</i>: מתמצית בית כור תרקב",
+   "text": "העולם שותה ריב\"ל מתמצית גן עדן, תנא: מתמצית בית כור תרקב",
+   "over": "כור תרקב",
+   "nA4": 1,
+   "nLarge": 2,
+   "missPx": 26.7,
+   "miss": 5,
+   "long": false,
+   "tail": false,
+   "sug": [
+    {
+     "tool": 4,
+     "split_before": "תנא: מ",
+     "side": "",
+     "kind": "split",
+     "parts": [
+      "העולם שותה <i class=\"am\">ריב&quot;ל</i> מתמצית<i class=\"am\"> </i>גן עדן,",
+      "<i class=\"am\">תנא</i>: מתמצית בית כור תרקב"
+     ],
+     "why": "חיתוך אחרי סימן פיסוק",
+     "src": "mech",
+     "ok": {
+      "large": [
+       1,
+       1
+      ],
+      "a4": [
+       1,
+       1
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u573.5",
@@ -163,8 +207,8 @@
    "over": "או מעות.",
    "nA4": 3,
    "nLarge": 4,
-   "missPx": 25.2,
-   "miss": 5,
+   "missPx": 33.2,
+   "miss": 6,
    "long": true,
    "tail": false,
    "sug": [
@@ -202,8 +246,8 @@
    "over": "ממנו ואז אמר גם זו לטובה,",
    "nA4": 4,
    "nLarge": 5,
-   "missPx": 69.4,
-   "miss": 12,
+   "missPx": 75.4,
+   "miss": 13,
    "long": true,
    "tail": false,
    "sug": [],
@@ -224,7 +268,7 @@
    "over": "עליה. ותנ''ה",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 1.0,
+   "missPx": 2.9,
    "miss": 1,
    "long": true,
    "tail": false,
@@ -246,8 +290,8 @@
    "over": "יִשְׂמַח אָבִיךָ וְאִמֶּךָ וְתָגֵל יוֹלַדְתֶּיךָ.",
    "nA4": 4,
    "nLarge": 5,
-   "missPx": 38.8,
-   "miss": 7,
+   "missPx": 46.2,
+   "miss": 8,
    "long": true,
    "tail": false,
    "sug": [],
@@ -268,13 +312,74 @@
    "over": "דעכשיו שיורד מטר תוזל התבואה,",
    "nA4": 3,
    "nLarge": 4,
-   "missPx": 88.1,
-   "miss": 15,
+   "missPx": 93.6,
+   "miss": 16,
    "long": true,
    "tail": false,
    "sug": [],
    "tool6": true,
    "leave": true
+  },
+  {
+   "key": "u1641.3",
+   "id": "0bb40a0e976af4c3",
+   "u": 1641,
+   "li": 3,
+   "daf": "כו:",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "<i class=\"am\">ר&quot;נ:</i> <i class=\"b\">הלכה כר&#x27; יוסי</i>. <i class=\"b\">וכן הלכה, </i>ומ&#x27;&#x27;מ נו&#x27;&#x27;כ במנחה<i class=\"hs\"> [דסמוך לשקיעה וכנעילה]</i>",
+   "ph": "<i class=\"am\">ר&quot;נ:</i> <i class=\"b\">הלכה כר&#x27; יוסי</i>. <i class=\"b\">וכן הלכה, </i>ומ&#x27;&#x27;מ נו&#x27;&#x27;כ במנחה<i class=\"hs\"> [דסמוך לשקיעה וכנעילה]</i>",
+   "text": "ר\"נ: הלכה כר' יוסי. וכן הלכה, ומ''מ נו''כ במנחה [דסמוך לשקיעה וכנעילה]",
+   "over": "לשקיעה וכנעילה]",
+   "nA4": 1,
+   "nLarge": 2,
+   "missPx": 31.1,
+   "miss": 7,
+   "long": false,
+   "tail": false,
+   "sug": [
+    {
+     "tool": 5,
+     "kind": "join",
+     "target": "prev",
+     "html": "<i class=\"am\">רב: </i><i class=\"b\">הלכה </i><i class=\"am\">כר&quot;מ</i><i class=\"b\">,</i><i class=\"am\"> רי&quot;ו:</i> <i class=\"b\">נהגו </i><i class=\"am\">כר&quot;מ</i><i class=\"b\">,</i><i class=\"am\"> רבא:</i> <i class=\"b\">מנהג </i><i class=\"am\">כר&quot;מ</i><i class=\"b\">.</i> <i class=\"am\">ר&quot;נ:</i> <i class=\"b\">הלכה כר&#x27; יוסי</i>. <i class=\"b\">וכן הלכה, </i>ומ&#x27;&#x27;מ נו&#x27;&#x27;כ במנחה<i class=\"hs\"> [דסמוך לשקיעה וכנעילה]</i>",
+     "targetOrig": "<i class=\"am\">רב: </i><i class=\"b\">הלכה </i><i class=\"am\">כר&quot;מ</i><i class=\"b\">,</i><i class=\"am\"> רי&quot;ו:</i> <i class=\"b\">נהגו </i><i class=\"am\">כר&quot;מ</i><i class=\"b\">,</i><i class=\"am\"> רבא:</i> <i class=\"b\">מנהג </i><i class=\"am\">כר&quot;מ</i><i class=\"b\">.</i> ",
+     "targetLines": 1,
+     "why": "איחוי עם השורה הקודמת",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    },
+    {
+     "tool": 4,
+     "split_before": "ומ''מ ",
+     "side": "",
+     "kind": "split",
+     "parts": [
+      "<i class=\"am\">ר&quot;נ:</i> <i class=\"b\">הלכה כר&#x27; יוסי</i>. <i class=\"b\">וכן הלכה, </i>",
+      "ומ&#x27;&#x27;מ נו&#x27;&#x27;כ במנחה<i class=\"hs\"> [דסמוך לשקיעה וכנעילה]</i>"
+     ],
+     "why": "חיתוך אחרי סימן פיסוק",
+     "src": "mech",
+     "ok": {
+      "large": [
+       1,
+       1
+      ],
+      "a4": [
+       1,
+       1
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u1758.2",
@@ -290,8 +395,8 @@
    "over": "נכרים וכבשום- וכן בשניה.",
    "nA4": 3,
    "nLarge": 4,
-   "missPx": 86.0,
-   "miss": 15,
+   "missPx": 90.5,
+   "miss": 16,
    "long": true,
    "tail": false,
    "sug": [],
@@ -312,8 +417,8 @@
    "over": "תביאני לעוה''ב?",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 15.6,
-   "miss": 3,
+   "missPx": 23.4,
+   "miss": 5,
    "long": true,
    "tail": false,
    "sug": [
@@ -351,8 +456,8 @@
    "over": "לתוך האש.",
    "nA4": 3,
    "nLarge": 4,
-   "missPx": 39.8,
-   "miss": 7,
+   "missPx": 42.4,
+   "miss": 8,
    "long": true,
    "tail": false,
    "sug": [],

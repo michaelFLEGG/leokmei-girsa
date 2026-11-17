@@ -291,6 +291,7 @@
     var out=doc.getElementById('prnout');if(!out)return;
     S.pages=[].slice.call(out.querySelectorAll(':scope > .shp, :scope > .pg'));
     pmCols(doc,out);
+    pmGaps(doc);
     pmApplyView(true);
     pmBind(doc);
     pmIssues(doc,out,rep);
@@ -553,13 +554,17 @@
     if(!el){pmMsg('השורה לא נמצאה בעורך. פתח אותה בדף הרגיל');return}
     try{if(el.__was===undefined&&typeof edBase==='function')edBase(el)}catch(e){}
     t=pmFrameEl(pmDoc(),K.u,K.k)||t;row=t.closest('.row');
-    var b0=pmBase(K.u,row),cur0=(S.mv[K.u]?S.mv[K.u].px:0);
-    S.editing={p:t,el:el,u:K.u,k:K.k,row:row,orig:t.innerHTML,dirty:false,n:0,h:0,px0:cur0};
+    pmBase(K.u,row);
+    var h0=row.offsetHeight;
+    S.editing={p:t,el:el,u:K.u,k:K.k,row:row,orig:t.innerHTML,origSt:t.getAttribute('style'),dirty:false,n:0,h:0};
     S.focusKey={u:K.u,li:+K.k||0};
-    t.innerHTML=el.innerHTML;
+    /* 17.11.2026: הפסקה מקבלת את נוסח העורך, ומיד את אותו ליטוש של העימוד (הצרה עד 2.5%, בלי רווח קשיח שנוגע בטקסט).
+       עד כאן הנוסח של העורך החליף את הנוסח המלוטש, ושורה שנכנסה בזכות ההצרה נשברה לשתיים ברגע הלחיצה - ועלתה על השורה
+       שמתחתיה. ואם הגובה בכל זאת השתנה - שאר הטור זז, ולעולם אין חפיפה */
+    if(t.innerHTML!==el.innerHTML){t.innerHTML=el.innerHTML;pmFitEd(t)}
     t.setAttribute('contenteditable','true');t.classList.add('pmed');t.spellcheck=false;
-    /* קו הבסיס נמדד אחרי שהפסקה קיבלה את נוסח העורך (בלי ההצרה והאיחוי של המנוע), כדי שהמדד ישווה בין שני נוסחים באותו מצב */
-    S.editing.h=S.editing.hIn=row.offsetHeight;S.editing.n=pmLines(t);
+    var h1=row.offsetHeight;if(h1!==h0)pmShift(row,h1-h0,0);
+    S.editing.h=row.offsetHeight;S.editing.n=pmLines(t);
     try{t.focus({preventScroll:true})}catch(e){}
     pmSetSel(t,off==null?t.textContent.length:off);
     pmStat('עריכה: כמו בעורך · Esc יציאה מן השורה · F9 השלם עימוד',0)}
@@ -573,8 +578,12 @@
     /* פרומפט 53: שורה שמיכאל תיקן כאן ונכנסה לשורה אחת - ננעלת מיד (המרשם הקבוע מתעדכן בסבב הבא מן הנוסח החי) */
     if(E.touched){try{if(pmLines(E.p)===1){var kn=String(E.p.textContent||'').replace(/\u2060\d+/g,'').replace(/[^\u05d0-\u05ea]/g,'');
       if(kn){window.__OVLOCK=window.__OVLOCK||new Set();window.__OVLOCK.add(kn)}}}catch(e){}}
-    if(E.touched)pmRender([E.u]);else E.p.innerHTML=E.orig;
+    if(E.touched)pmRender([E.u]);
+    else{var r=E.row,h0=r.offsetHeight;E.p.innerHTML=E.orig;if(E.origSt==null)E.p.removeAttribute('style');else E.p.setAttribute('style',E.origSt);
+      var h1=r.offsetHeight;if(h1!==h0)pmShift(r,h1-h0,0)}
     pmStat('',0)}
+  /* ליטוש הפסקה שבעריכה (סגנון בלבד, הטקסט אינו משתנה): כמו בעימוד המלא */
+  function pmFitEd(p){var w=pmWin();try{if(w&&w.__pmEng&&w.__pmEng.fitP)w.__pmEng.fitP(p,false)}catch(e){}}
   function pmCommit(cancel){pmLeave()}
   function pmEnsureEl(E){if(E.el&&E.el.isConnected)return E.el;var el=pmMainEl(E.u,E.k);if(el)E.el=el;return el}
   /* הקלדה: בלי עבודה על כל הקשה. רק מדידת השורות של הפסקה (בפריים הבא), והעברה לעורך אחרי הפסקה קצרה */
@@ -585,22 +594,52 @@
   function pmSyncNow(){
     clearTimeout(S.syncT);var E=S.editing;if(!E||!E.dirty)return;E.dirty=false;
     var el=pmEnsureEl(E);if(!el)return;
-    if(el.innerHTML!==E.p.innerHTML){el.innerHTML=E.p.innerHTML;try{el.dispatchEvent(new Event('input',{bubbles:true}))}catch(e){}}}
+    if(el.innerHTML!==E.p.innerHTML){el.innerHTML=E.p.innerHTML;try{el.dispatchEvent(new Event('input',{bubbles:true}))}catch(e){}}
+    /* אחרי ההקלדה: שוב הליטוש של העימוד, כדי לראות מיד אם השורה נכנסת */
+    if(E.p.isConnected){pmFitEd(E.p);pmMeasure()}}
   /* הפסקה שבעריכה נשברה לשורות אחרות: שאר הטור זז, מדד ליד הפסקה, וסימון "לא מעודכן" */
   function pmMeasure(){
     var E=S.editing;if(!E||!E.p.isConnected)return;
     var h=E.row.offsetHeight;
-    if(h!==E.h){pmShift(E.row,h-E.h,0);E.h1=h;E.h=h;pmCross(E.row)}
-    pmSetPx(E.row,E.px0+((E.h1||E.h)-E.hIn))}
+    if(h!==E.h){pmShift(E.row,h-E.h,0);E.h=h;pmCross(E.row)}
+    var b=S.base[E.u];if(b!=null)pmSetPx(E.row,h-b)}
 
   /* ---- שינוי בטור: הזזה בתוך הטור בלבד, גלישה, וסימון ---- */
+  /* 17.11.2026: הטור נפרס מחדש מן השורות עצמן, ולא בהזזה של "כמה פיקסלים": כל שורה מתחילה מתחת לקודמת, עם הרווח
+     שהיה ביניהן בעימוד המלא (רווח לפני כותרת וכד'). כך לעולם אין שתי שורות זו על זו, מה שלא יקרה בדרך (כניסה לשורה,
+     הקלדה, פקודה של העורך, שינוי שבא מבחוץ). שורה שממשיכה לטור הבא - ההמשך שלה מתעדכן, והטור הבא נפרס גם הוא */
   function pmShift(row,dh,cnt){
-    if(!dh){if(cnt)pmMove(row,cnt);return}var tx=row.parentElement;if(!tx)return;var t0=parseFloat(row.style.top)||0;
-    [].forEach.call(tx.children,function(r){if(r===row||!r.classList.contains('row'))return;var t=parseFloat(r.style.top)||0;if(t>t0+0.5)r.style.top=(t+dh)+'px'});
-    pmOverflow(tx);pmMove(row,cnt===undefined?dh:cnt)}
+    var tx=row&&row.parentElement;if(tx)pmRepack(tx);
+    if(row&&row.isConnected)pmMove(row,cnt===undefined?dh:cnt)}
+  function pmRows(tx){return [].filter.call(tx.children,function(r){return r.classList.contains('row')})}
+  /* הרווחים שבין השורות, כפי שהעימוד המלא קבע אותם: נרשמים פעם אחת אחרי כל עימוד מלא */
+  function pmGaps(doc){
+    pmCols2(doc).forEach(function(tx){var R=pmRows(tx),T=R.map(function(r){return parseFloat(r.style.top)||0}),H=R.map(function(r){return r.offsetHeight});
+      R.forEach(function(r,i){r.__pmGap=i+1<R.length?Math.max(0,T[i+1]-T[i]-H[i]):0})})}
+  /* הטורים של העמודים עצמם, לפי סדר הקריאה (בלי ההעתקים של תצוגת "טור" שב-#pmcols) */
+  function pmCols2(doc){return [].slice.call(doc.querySelectorAll('#prnout > .shp .pg .ptx, #prnout > .pg .ptx'))}
+  function pmRepack(tx){
+    var doc=tx.ownerDocument,cols=pmCols2(doc),k=cols.indexOf(tx),guard=0;
+    while(tx&&guard++<6){
+      var R=pmRows(tx);
+      /* אותה יחידה פעמיים באותו טור (שארית של בנייה חוזרת): נשאר רק העותק הראשון */
+      var seen={};R=R.filter(function(r){var u=r.getAttribute('data-u');if(u&&(parseFloat(r.style.top)||0)>=-0.5){if(seen[u]){r.remove();return false}seen[u]=1}return true});
+      if(!R.length)break;
+      var H=R.map(function(r){return r.offsetHeight});
+      var cur=parseFloat(R[0].style.top)||0;
+      for(var i=1;i<R.length;i++){cur+=H[i-1]+(R[i-1].__pmGap||0);if(Math.abs((parseFloat(R[i].style.top)||0)-cur)>0.3)R[i].style.top=cur+'px'}
+      pmOverflow(tx);
+      /* השורה האחרונה ממשיכה בטור הבא: ההמשך מתחיל בדיוק במקום שבו הטור הזה נחתך */
+      var last=R[R.length-1],nx=cols[k+1],u=last.getAttribute('data-u');if(!nx||!u)break;
+      var c=pmRows(nx)[0];if(!c||c.getAttribute('data-u')!==u||(parseFloat(c.style.top)||0)>-0.5)break;
+      var Hc=parseFloat(tx.style.height)||tx.clientHeight,want=-(Hc-(parseFloat(last.style.top)||0));
+      if(Math.abs((parseFloat(c.style.top)||0)-want)<=0.3&&c.offsetHeight===last.offsetHeight)break;
+      c.style.top=want+'px';tx=nx;k++}}
   function pmOverflow(tx){
     var H=parseFloat(tx.style.height)||tx.clientHeight,over=0;
-    [].forEach.call(tx.querySelectorAll(':scope > .row'),function(r){var t=parseFloat(r.style.top)||0;if(t+r.offsetHeight>H+1)over=Math.max(over,t+r.offsetHeight-H)});
+    var cols=pmCols2(tx.ownerDocument),nx=cols[cols.indexOf(tx)+1],c0=nx&&pmRows(nx)[0],cont=c0&&(parseFloat(c0.style.top)||0)<-0.5?c0.getAttribute('data-u'):null;
+    [].forEach.call(tx.querySelectorAll(':scope > .row'),function(r){if(cont&&r.getAttribute('data-u')===cont)return;   /* ממשיכה בטור הבא: אינה גולשת */
+      var t=parseFloat(r.style.top)||0;if(t+r.offsetHeight>H+1)over=Math.max(over,t+r.offsetHeight-H)});
     if(tx.dataset.pmclip===undefined)tx.dataset.pmclip=tx.style.clipPath||'';
     var col=tx.parentElement,lb=col&&col.querySelector(':scope > .pmovl');
     if(over>1){
@@ -644,10 +683,11 @@
   /* ---- מאזן השורות: גובה "גולמי" של יחידה (מן הנתונים, בלי ההצרה והאיחוי של המנוע), מול הגובה שלה בהשלמה האחרונה ---- */
   function pmProbe(html,ctx){var doc=ctx.ownerDocument,tpl=doc.createElement('template');tpl.innerHTML=html;var x=tpl.content.firstElementChild;if(!x)return 0;
     x.removeAttribute('id');x.style.cssText=ctx.style.cssText;x.style.visibility='hidden';ctx.parentNode.appendChild(x);var h=x.offsetHeight;x.remove();return h}
+  /* 17.11.2026: הבסיס הוא הגובה של היחידה כפי שהיא בעמוד מן ההשלמה האחרונה, לפני שנגעו בה (ולא נוסח "גולמי" בלי
+     הליטוש): עכשיו גם השורה החדשה מלוטשת, ולכן ההשוואה היא בין שני מצבים מלוטשים, והמדד אומר בדיוק כמה שורות זזו */
   function pmBase(uid,ctx){
     if(S.base[uid]!==undefined)return S.base[uid];
-    var w=pmWin(),FD=w&&w.__pmEng&&w.__pmEng.data(),fl=FD&&pmLoc(FD,+uid);if(!fl||!ctx)return (S.base[uid]=null);
-    return (S.base[uid]=pmProbe(w.__pmEng.row(fl.u,fl.pi),ctx))}
+    return (S.base[uid]=ctx&&ctx.isConnected?ctx.offsetHeight:null)}
   function pmSetPx(row,px){if(!row||!row.getAttribute)return;var uid=row.getAttribute('data-u');if(!uid)return;
     var m=S.mv[uid]||(S.mv[uid]={px:0,pg:0});m.px=px;m.row=row;
     if(!S.rcT)S.rcT=requestAnimationFrame(function(){S.rcT=0;pmRecalc()})}
@@ -661,13 +701,23 @@
       ms.forEach(function(m){var r=p.ownerDocument.createRange();r.setStart(p,0);r.setEndBefore(m);var f=r.cloneContents();
         [].forEach.call(f.querySelectorAll('sup.tm,span.tmg'),function(x){x.remove()});var at=pmPos(q,f.textContent.length);
         try{var rr=q.ownerDocument.createRange();rr.setStart(at[0],at[1]);rr.insertNode(m.cloneNode(true))}catch(e){}})})}
+  /* כותרת הצד בשורה שנבנתה מחדש: ההתאמה שהעימוד המלא עשה לה (הקטנה, שבירה לשתי שורות, גלישה למסילה הבאה) עוברת אליה
+     כשהכותרת לא השתנתה. בלעדיה כותרת ארוכה חזרה לגודלה והגביהה את השורה */
+  function pmCarryRail(oldRow,newRow){
+    var or=oldRow.querySelector(':scope > .rail'),nr=newRow.querySelector(':scope > .rail');if(!or||!nr)return;
+    var ow=or.querySelectorAll('.win'),nw=nr.querySelectorAll('.win');
+    if(ow.length!==nw.length)return;
+    for(var i=0;i<ow.length;i++)if(ow[i].textContent!==nw[i].textContent)return;
+    nr.setAttribute('style',or.getAttribute('style')||'');nr.className=or.className;
+    for(var j=0;j<ow.length;j++){nw[j].setAttribute('style',ow[j].getAttribute('style')||'');nw[j].className=ow[j].className}}
   function pmRender(uids){
     var w=pmWin(),doc=pmDoc();if(!w||!w.__pmEng||!doc)return;
     var FD=w.__pmEng.data(),seen={};
     uids.forEach(function(uid){if(seen[uid])return;seen[uid]=1;
       var loc=pmLoc(D,uid),floc=pmLoc(FD,uid);
       var rows=[].slice.call(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+uid+'"]'));
-      if(!loc){rows.forEach(function(r){var b=pmBase(uid,r);pmShift(r,-r.offsetHeight,0);if(b!=null&&(parseFloat(r.style.top)||0)>=-0.5){var m=S.mv[uid]||(S.mv[uid]={px:0,pg:pmPageOf(r)});m.px=-b;m.row=null;m.pg=pmPageOf(r)||m.pg}r.remove()});if(!S.rcT)S.rcT=requestAnimationFrame(function(){S.rcT=0;pmRecalc()});if(floc)FD.pages[floc.pi].units.splice(floc.ki,1);return}
+      if(!loc){rows.forEach(function(r){var b=pmBase(uid,r),tx0=r.parentElement,pr=r.previousElementSibling;if(pr&&pr.classList.contains('row'))pr.__pmGap=Math.max(pr.__pmGap||0,r.__pmGap||0);
+        var isMain=(parseFloat(r.style.top)||0)>=-0.5;r.remove();if(tx0)pmRepack(tx0);if(b!=null&&isMain&&(parseFloat(r.style.top)||0)>=-0.5){var m=S.mv[uid]||(S.mv[uid]={px:0,pg:pmPageOf(r)});m.px=-b;m.row=null;m.pg=pmPageOf(r)||m.pg}r.remove()});if(!S.rcT)S.rcT=requestAnimationFrame(function(){S.rcT=0;pmRecalc()});if(floc)FD.pages[floc.pi].units.splice(floc.ki,1);return}
       var nu=JSON.parse(JSON.stringify(loc.u));
       if(floc){floc.oldJ=JSON.stringify(FD.pages[floc.pi].units[floc.ki]);FD.pages[floc.pi].units[floc.ki]=nu}
       else{var at=0,pu=D.pages[loc.pi].units;for(var k=loc.ki-1;k>=0;k--){var fp=pmLoc(FD,pu[k].id);if(fp){at=fp.ki+1;break}}FD.pages[loc.pi].units.splice(at,0,nu)}
@@ -679,25 +729,29 @@
         tpl.innerHTML=html;var nr=tpl.content.firstElementChild;if(!nr)return;
         nr.removeAttribute('id');nr.setAttribute('data-u',uid);nr.style.cssText=prev.style.cssText;
         nr.style.top=((parseFloat(prev.style.top)||0)+prev.offsetHeight)+'px';
+        nr.__pmGap=prev.__pmGap||0;prev.__pmGap=0;
         prev.parentNode.insertBefore(nr,prev.nextSibling);
-        var t1=parseFloat(nr.style.top);[].forEach.call(nr.parentNode.children,function(r){if(r!==nr&&r.classList.contains('row')&&(parseFloat(r.style.top)||0)>=t1-0.5)r.style.top=((parseFloat(r.style.top)||0)+nr.offsetHeight)+'px'});
-        pmOverflow(nr.parentNode);S.base[uid]=0;pmSetPx(nr,pmProbe(html,nr));return}
+        try{w.__pmEng.fit&&w.__pmEng.fit(nr)}catch(e){}
+        pmRepack(nr.parentNode);S.base[uid]=0;pmSetPx(nr,nr.offsetHeight);return}
       /* המאזן נמדד בין שני נוסחים "גולמיים" (בלי ההצרה והאיחוי שהמנוע עשה בעימוד המלא): היחידה כפי שהיתה בנתונים
          של המסגרת, והיחידה החדשה. כך יציאה מפסקה בלי שינוי אינה נספרת כ"+1 שורה" */
-      var cnt=null;
-      if(rows.length){var r0=rows.find(function(r){return (parseFloat(r.style.top)||0)>=-0.5})||rows[0];
-        if(S.base[uid]===undefined&&floc&&floc.oldJ){try{S.base[uid]=pmProbe(w.__pmEng.row(JSON.parse(floc.oldJ),loc.pi),r0)}catch(e){}}
-        if(S.base[uid]!=null)cnt=pmProbe(html,r0)-S.base[uid]}
+      var r0=rows.find(function(r){return (parseFloat(r.style.top)||0)>=-0.5})||rows[0];pmBase(uid,r0);
       rows.forEach(function(r){
         tpl.innerHTML=html;var nr=tpl.content.firstElementChild;if(!nr)return;
         nr.removeAttribute('id');nr.setAttribute('data-u',uid);nr.style.cssText=r.style.cssText;
         if(r.classList.contains('gapm'))nr.classList.add('gapm');
         var o1=r.querySelector(':scope > .main > p:first-child')||r.querySelector(':scope > .main'),n1=nr.querySelector(':scope > .main > p:first-child')||nr.querySelector(':scope > .main');
-        if(o1&&n1&&o1.style.marginTop)n1.style.marginTop=o1.style.marginTop;
-        pmCarryMarks(r,nr);
-        var h0=r.offsetHeight;r.replaceWith(nr);var dh=nr.offsetHeight-h0;
-        if(dh)pmShift(nr,dh,0);
-        if((parseFloat(nr.style.top)||0)>=-0.5){if(cnt!==null)pmSetPx(nr,cnt);else pmMove(nr,dh)}});
+        /* המרווח שהעימוד קבע לשורה הראשונה (חצי שורה לפני כותרת, ביטול "רווח לפני" בראש טור) עובר - אלא אם "רווח לפני"
+           עצמו השתנה (Ctrl+0), שאז המרווח החדש נראה מיד */
+        if(o1&&n1&&o1.style.marginTop&&o1.classList.contains('sp')===n1.classList.contains('sp'))n1.style.marginTop=o1.style.marginTop;
+        nr.__pmGap=r.__pmGap||0;
+        pmCarryMarks(r,nr);pmCarryRail(r,nr);
+        var h0=r.offsetHeight;r.replaceWith(nr);
+        /* הליטוש של העימוד המלא, על השורה הזו בלבד (במקומה בעמוד, כדי שהמדידה תהיה ברוחב האמיתי) */
+        try{w.__pmEng.fit&&w.__pmEng.fit(nr)}catch(e){}
+        var dh=nr.offsetHeight-h0;
+        if(nr.parentNode)pmRepack(nr.parentNode);
+        if((parseFloat(nr.style.top)||0)>=-0.5){var b=S.base[uid];if(b!=null)pmSetPx(nr,nr.offsetHeight-b);else pmMove(nr,dh)}});
       if(rows.length>1)pmCross(rows[0])})}
   /* מה השתנה בנתונים סביב יחידה (העמוד שלה ושניים סמוכים): לפני ואחרי פקודה */
   function pmSnap(uid){var L=pmLoc(D,uid),m={pis:[]};if(!L)return m;
@@ -766,6 +820,11 @@
     pmBar();pmAutoArm();
     return true}
 
+  /* מחיקת שורה שלמה: הנוסח מתרוקן, ו-Backspace על הפסקה הריקה עובר לעורך (שם היא נעלמת, ואיתה כותרת הצד אם לא נשאר בה דבר) */
+  function pmDelLine(e){var E=S.editing;if(!E)return;e.preventDefault();
+    E.p.innerHTML='';E.dirty=E.touched=true;pmSyncNow();
+    var fake={key:'Backspace',code:'Backspace',ctrlKey:false,altKey:false,shiftKey:false,metaKey:false,preventDefault:function(){},getModifierState:function(){return false}};
+    if(!pmProxy(fake)){fake.key=fake.code='Delete';pmProxy(fake)}}
   /* ---- ניווט בין השורות של העמוד (חיצים, PageUp/PageDown) ---- */
   function pmTargets(){var doc=pmDoc();if(!doc)return [];return [].filter.call(doc.querySelectorAll(LINESEL),function(t){var r=t.closest('.row');return r&&r.getAttribute('data-u')&&!t.closest('.hatz')&&!r.closest('.pmcpg')&&(parseFloat(r.style.top)||0)>=-0.5})}
   function pmCaretRect(doc){var s=doc.getSelection();if(!s||!s.rangeCount)return null;var r=s.getRangeAt(0).cloneRange();r.collapse(!(s.focusNode===r.endContainer&&s.focusOffset===r.endOffset));
@@ -886,7 +945,11 @@
         /* העתקה, גזירה, בחירת הכל - של הדפדפן */
         if(mod&&!e.altKey&&/^(KeyC|KeyX|KeyA|KeyV)$/.test(e.code))return;
         var g=null;
-        if(k==='Delete'||k==='Backspace'){g=pmGetSel(S.editing.p);if(!g||g[0]!==g[1])return;
+        if(k==='Delete'||k==='Backspace'){g=pmGetSel(S.editing.p);if(!g)return;
+          /* 17.11.2026: כל השורה מסומנת (לחיצה משולשת) ו-Delete או Backspace: השורה כולה נמחקת בלחיצה אחת, כמו בוורד
+             (הנוסח, ואחריו הפסקה הריקה עם כותרת הצד שלה), ולא נשארת שורה ריקה שצריך למחוק שוב */
+          if(!mod&&g[0]!==g[1]&&Math.min(g[0],g[1])===0&&Math.max(g[0],g[1])>=pmOff(S.editing.p,S.editing.p,S.editing.p.childNodes.length)){pmDelLine(e);return}
+          if(g[0]!==g[1])return;
           if(k==='Delete'&&g[1]<S.editing.p.textContent.length&&!mod)return;
           if(k==='Backspace'&&g[1]>0&&!mod)return}
         if(mod||k==='Enter'||k==='Delete'||k==='Backspace'||k==='Tab')pmProxy(e);

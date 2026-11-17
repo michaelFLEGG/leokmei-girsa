@@ -279,7 +279,31 @@
     data:function(){return D},
     row:function(u,pi){var pg=D.pages[pi],first=false;
       if(pg){for(var k=0;k<pg.units.length;k++){var x=pg.units[k];if(x.k==='perek-range'||((x.k==='nose'||x.k==='dh')&&emptyHead(x)))continue;first=x===u;break}}
-      return prnFix(u.k,unitHTML(u,first?pg.daf:null,first?pi:null))}};
+      return prnFix(u.k,unitHTML(u,first?pg.daf:null,first?pi:null))},
+    /* 17.11.2026: אותו "ליטוש" שהעימוד המלא נותן לכל פסקה, על שורה אחת שנבנתה מחדש אחרי עריכה: הצרה עד 2.5%,
+       מילה בודדת בשורה אחרונה (דחיסה עדינה או רווח קשיח) וכותרת של שתי שורות. בלעדיו שורה שנכנסה בעימוד המלא
+       בזכות ההצרה נשברה מחדש אחרי כל עריכה (שורה נוספת, חפיפה עם השורה שמתחתיה). glue=false: בלי רווח קשיח
+       (בזמן הקלדה, כדי לא לגעת בטקסט שתחת הסמן) */
+    fit:function(row,glue){var C=window.__pmFitCtx;if(!C||!row||!row.isConnected)return 0;var n=0,a=fitOn(C);
+      try{[].slice.call(row.querySelectorAll(':scope > .main > p')).forEach(function(p){fitP(p,C,glue)&&n++});
+        [].slice.call(row.querySelectorAll(':scope.nose > .main,:scope.dh > .main')).forEach(function(h){h.style.wordSpacing='';h.style.letterSpacing='';if(headSqueeze(h))n++})}
+      finally{if(a)C.sq.remove()}
+      return n},
+    fitP:function(p,glue){var C=window.__pmFitCtx;if(!C)return false;var a=fitOn(C);try{return fitP(p,C,glue)}finally{if(a)C.sq.remove()}}};
+  /* סרגל המדידה של העימוד מוסר בסופו: לליטוש של שורה אחת הוא מוחזר לרגע */
+  function fitOn(C){if(C.sq.isConnected)return false;document.body.appendChild(C.sq);return true}
+  function fitP(p,C,glue){
+    p.style.wordSpacing='';p.style.letterSpacing='';delete p.dataset.sq25;delete p.dataset.sq;
+    if(p.textContent.trim().length<12)return false;
+    if(squeeze25(p,C.GM,C.GP,C.W))return true;
+    if(!loneStrict(p))return false;
+    if(glue===false){
+      C.GM.className=p.parentElement.className;C.GP.className=p.className;C.GP.style.wordSpacing='';C.GP.style.letterSpacing='';C.GP.innerHTML=p.innerHTML;
+      var h0=C.GP.offsetHeight;
+      for(var s2=0;s2<STEPS.length;s2++){C.GP.style.wordSpacing=STEPS[s2][0]?STEPS[s2][0]+'em':'';C.GP.style.letterSpacing=STEPS[s2][1]?STEPS[s2][1]+'em':'';
+        if(C.GP.offsetHeight<h0){p.style.wordSpacing=C.GP.style.wordSpacing;p.style.letterSpacing=C.GP.style.letterSpacing;p.dataset.sq='1';return true}}
+      return false}
+    return loneFix(p,C.GM,C.GP)}
 
   /* ---------- מנוע ההדפסה ---------- */
   /* פרומפט 41: מידע השורות של פסקה - מספר השורות, רוחב השורה האחרונה, והיכן היא מתחילה (היסט בטקסט הנקי).
@@ -579,6 +603,7 @@
     sq.innerHTML='<div class="row"><div class="rail"></div><div class="main"><p></p></div></div>';
     document.body.appendChild(sq);
     var GM=sq.querySelector('.main'),GP=sq.querySelector('p');
+    if(QS.get('pm')==='1')window.__pmFitCtx={sq:sq,GM:GM,GP:GP,W:P_MEAS_PX()};   /* מצב דפוס: ליטוש שורה אחת אחרי עריכה (__pmEng.fit) */
     /* ב2-ב3 (5.11.2026): המספור הנראה (dn) נקבע לפי סדר ההפניות בטקסט עצמו, ולא לפי שורת הגמרא של התוספות;
        כך צירוף הפניות במקום אחד עולה תמיד, וסדר ההערות בטור תואם לסדר ההפניות */
     var LNOF={};

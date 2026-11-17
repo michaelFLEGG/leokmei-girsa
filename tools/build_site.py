@@ -4576,8 +4576,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(pl.err){flash(pl.err);return false}
     const ph=P.l[P.l.length-1],nh=U.l[0];
     const texts=[plain(ph[1]),plain(nh[1])].concat(pl.del.map(plain));
+    /* 17.11.2026 (בעל הפרויקט): כותרת הצד היא ההמשך של הטקסט. Delete בסוף השורה (או Backspace בתחילת הבאה) מעלה אותה
+       לתוך השורה, במקומה (לפני הנוסח של השורה הבאה), בסגנון התו "אמוראים" - ולא מוחק אותה. שורה תחתונה ריקה (מחיקת שורה)
+       - הכותרת נמחקת איתה כמו קודם. רשומת המבנה לא השתנתה: הנוסח המאוחד (res[0][1]) נושא את הכותרת בתוכו, והבנייה
+       והקיפול מחילים אותו כפי שהוא */
+    const amT=texts[1].trim()?pl.del.map(x=>plain(x).trim()).filter(Boolean).join(' '):'';
+    const lower=amT?'<i class="am">'+amT.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</i>'+(/^\s/.test(texts[1])?'':' ')+nh[1]:nh[1];
     /* רווח בנקודת החיבור, אם אין (בלעדיו "קצרה.ששמע"); בוורד נוסף כרווח במעקב */
-    const h=ph[1]+(/\s$/.test(texts[0])||/^\s/.test(texts[1])||!texts[0].trim()?'':' ')+nh[1];
+    const h=ph[1]+(/\s$/.test(texts[0])||(!amT&&/^\s/.test(texts[1]))||!texts[0].trim()?'':' ')+lower;
     const pis=[...new Set([pv.pi,info.pi])];
     const snp=pis.map(snapOf),pre=pis.map(pi=>({pi,snap:JSON.stringify(D.pages[pi].units)}));
     freezeEdits(texts);
@@ -4590,7 +4596,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     reflow(key,texts[0].length,snp);
     const q=s=>"'"+s+"'";
     const gone=pl.del.map(x=>q(plain(x).trim()));
-    let msg=gone.length?(gone.length>1?'כותרות הצד '+gone.join(', ')+' נמחקו והשורה אוחתה':'כותרת הצד '+gone[0]+' נמחקה והשורה אוחתה')
+    let msg=amT?'השורה אוחתה, וכותרת הצד '+q(amT)+' עלתה לתוכה בסגנון אמוראים'
+              :gone.length?(gone.length>1?'כותרות הצד '+gone.join(', ')+' נמחקו והשורה אוחתה':'כותרת הצד '+gone[0]+' נמחקה והשורה אוחתה')
                       :'השורה אוחתה';
     if(pl.note==='near')msg+=' (בערימה נמחקה רק הקרובה לשורה)';
     else if(pl.keep.length)msg+='; '+pl.keep.map(x=>q(plain(x).trim())).join(', ')+' נשאר בצד';
@@ -5130,7 +5137,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       ['Ctrl+חץ ימינה/שמאלה','קפיצה למילה'],['Ctrl+ד','שמירה ופרסום מיידי'],
       ['Alt+1 עד Alt+4, Alt+נקודה','גיבוי למקרה שהדפדפן תופס את Ctrl (בזמן בקרה עם כרטיס ממצא פתוח, Alt+1/2/3 = אשר / דחה / ערוך)'],
       ['Enter','בסוף פסקה - פסקה חדשה מתחתיה; בתחילתה - פסקה חדשה מעליה; באמצעה - פיצול. בכותרת: החלק החדש נעשה גוף רגיל'],
-      ['Backspace בתחילת פסקה / Delete בסופה','איחוי עם הקודמת / איחוי עם הבאה. אם לשורה השנייה יש כותרת צד - הכותרת נמחקת והשורות מתאחות (Ctrl+ז מחזיר הכול)'],
+      ['Backspace בתחילת פסקה / Delete בסופה','איחוי עם הקודמת / איחוי עם הבאה. אם לשורה השנייה יש כותרת צד - הכותרת עולה לתוך השורה בסגנון אמוראים והשורות מתאחות (Ctrl+ז מחזיר הכול)'],
       ['חצים, Home, End, PageUp, PageDown (עריכה)','הסמן זז, והדף נגלל אחריו; חץ בקצה הפרק עובר לפרק הסמוך'],
       ['חצים, Home, End, PageUp, PageDown (קריאה)','גלילת שורה / תחילת הפרק וסופו / גלילת מסך'],
       ['Alt+חץ ימינה / שמאלה (במגירת המקור)','הדף הקודם / הבא בגמרא'],

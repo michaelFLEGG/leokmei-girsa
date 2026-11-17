@@ -32,8 +32,20 @@ with sync_playwright() as p:
     pg.on('pageerror', lambda e: errs.append(str(e)[:200]))
     pg.on('dialog', lambda d: d.accept())
     pg.goto('https://leokmei.com/' + a.slug + '.html', wait_until='networkidle', timeout=180000)
-    pg.wait_for_function("()=>window.skpAuto&&window.skpAuto.jobs().length>0", timeout=120000)
+    pg.wait_for_function("()=>!!window.skpAuto", timeout=120000)
+    try:
+        pg.wait_for_function("()=>window.skpAuto.jobs().length>0", timeout=60000)
+    except Exception:
+        pass
+    diag = pg.evaluate("""async()=>{const o={admin:typeof isAdmin==='function'&&isAdmin(),key:!!localStorage.getItem('lg-adm'),jobs:skpAuto.jobs().length};
+      try{const r=await fetch(SUGGEST_API+'/sakem/jobs',{headers:{'x-admin-key':localStorage.getItem('lg-adm')}});o.status=r.status;const j=await r.json();
+        const it=(j.items||[]);o.all=it.length;o.slug=it.filter(x=>x.slug===SLUG).map(x=>x.jid+':'+x.st).slice(0,60)}catch(e){o.err=String(e)}
+      return o}""")
+    print('אבחון:', json.dumps(diag, ensure_ascii=False))
+    rep['diag'] = diag
     jobs = pg.evaluate("()=>skpAuto.jobs()")
+    if not jobs and diag.get('slug'):
+        jobs = [{'jid': x.split(':')[0], 'st': x.split(':')[1]} for x in diag['slug']]
     want = [x for x in a.jobs.split(',') if x] or [j['jid'] for j in jobs if j['st'] in ('ready',)]
     print('עבודות:', want)
     for jid in want:

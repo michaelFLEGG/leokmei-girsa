@@ -585,10 +585,14 @@ def _hmerge_apply(pages, e):
     if len(texts) != 2 or not res:
         return False
     hits = []
-    for p in pages:
-        us = p['units']
-        for n in range(len(us) - 1):
-            x, y = us[n], us[n + 1]
+    # 17.11.2026: גם מעבר לגבול דף - רק כותרת שפותחת את הדף שלה וכשנשאר בו עוד (כמו hMerge בדפדפן)
+    flat = [(p, u, i) for p in pages for i, u in enumerate(p['units'])]
+    for n in range(len(flat) - 1):
+        p, x, _i = flat[n]
+        py, y, yi = flat[n + 1]
+        if py is not p and not (_is_head(y) and yi == 0 and len(py['units']) > 1):
+            continue
+        if True:
             for uk, ui in _h_hosts(x, True):
                 for lk, li in _h_hosts(y, False):
                     if uk == 'p' and lk == 'p':
@@ -597,12 +601,12 @@ def _hmerge_apply(pages, e):
                         continue
                     if _bare(y.get('a') if y['k'] == 'u' else y.get('w') or '').strip():
                         continue
-                    hits.append((p, x, uk, ui, y, lk, li))
+                    hits.append((p, x, uk, ui, y, lk, li, py))
     cand = [(h[0], h) for h in hits]
     hit = _pick_h([(c[0], c[1]) for c in cand], e.get('daf'))
     if hit is None:
         return False
-    p, x, uk, ui, y, lk, li = hit[1]
+    p, x, uk, ui, y, lk, li, py = hit[1]
     merged = _h_html(x, uk, ui) + _h_html(y, lk, li)
     if uk == 'head':
         x['a'] = merged
@@ -610,12 +614,12 @@ def _hmerge_apply(pages, e):
         x['l'][ui][1] = merged
     x.pop('lv', None)
     if lk == 'head':
-        p['units'].remove(y)
+        py['units'].remove(y)
     else:
         y['l'].pop(li)
         y.pop('lv', None)
         if not y['l']:
-            p['units'].remove(y)
+            py['units'].remove(y)
     return True
 
 
@@ -854,6 +858,51 @@ def _side_tidy(pages, qa):
             u[k] = '<br>'.join(keep)
     if any(stats):
         print('כותרות צד: %d כפולות הוסרו, %d שורות גוף כפולות הוסרו, %d ארוכות הוחזרו לגוף' % tuple(stats))
+    _drop_empty(pages, qa)
+
+
+_EMPTY_RE = re.compile(r'[\s\u200e\u200f\u2060\u2063\u2064\ufeff]+')
+
+
+def _is_empty_html(h):
+    return not _EMPTY_RE.sub('', _bare(h or ''))
+
+
+def _drop_empty(pages, qa):
+    """17.11.2026 (מיכאל): "אם יש שורה ריקה בטעות... עליך למחוק אותה. לא להשאיר אף פעם סתם שתי שורות או שני
+    מעברי פסקה בזה אחר זה". פסקת גוף ריקה (בלי שום אות) נמחקת; כותרת (נושא, ד"ה) ריקה נמחקת, ויחידה שלא נשאר בה
+    דבר - גם היא. כאן, אחרי החלת התיקונים: הקיפול מסנכרן את הוורד אל מה שהמנהל רואה, ולכן גם בוורד היא נמחקת.
+    לא נמחקים: יחידה שיש לה כותרת צד או חלון משנה בלי גוף (נשארת פסקה אחת), היחידה היחידה בדף (ציון הדף), ועיטור."""
+    n = 0
+    for p in pages:
+        us = p['units']
+        for u in list(us):
+            k = u.get('k')
+            if k in ('u', 'm') and u.get('l'):
+                L = u['l']
+                keep = [x for x in L if not (len(x) > 1 and _is_empty_html(x[1]))]
+                if len(keep) == len(L):
+                    continue
+                win = u.get(_wkey(u)) or ''
+                if not keep:
+                    if _is_empty_html(win) and not u.get('mbw') and len(us) > 1:
+                        us.remove(u)
+                        n += len(L)
+                        continue
+                    keep = [L[0]]
+                # מחלקת המרווח של הפסקה הראשונה שנמחקה עוברת לבאה אחריה (רווח לפני)
+                if keep[0] is not L[0] and 'sp' in (L[0][0] or '').split() and 'sp' not in (keep[0][0] or '').split():
+                    keep[0] = [(keep[0][0] + ' sp').strip()] + list(keep[0][1:])
+                n += len(L) - len(keep)
+                u['l'] = keep
+                u.pop('lv', None)
+            elif k in ('dh', 'nose') and _is_empty_html(u.get('a')) and _is_empty_html(u.get('w')) \
+                    and not u.get('syn') and len(us) > 1:
+                us.remove(u)
+                n += 1
+    if n:
+        print('שורות ריקות שנמחקו: %d' % n)
+        qa.append(('שורה ריקה', '%d שורות ריקות נמחקו (כלל: לעולם לא שורה ריקה בספר)' % n))
 
 
 _BLOCKS_SHA = {'v': None}
@@ -2537,6 +2586,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .row.hatz{break-after:avoid-column}
   /* 7.11.2026: רווח בין שתי דעות באותה שורה (ראה lgLook), ואות מספור מודגשת בכותרת צד */
   .og{display:inline-block;width:1.3em;height:0}
+  .main p[data-e]{display:none}
   @media screen{body:not(.prn) .dupmark{outline:2px solid #d0342c;outline-offset:1px;background:rgba(208,52,44,.09)}}
   @media print{.dupmark{outline:0!important;background:none!important}}
   .rail b.rlt{font-weight:900}
@@ -3573,7 +3623,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const d=document.createElement('div');d.innerHTML=h;
     d.querySelectorAll('i.ns,i.mk').forEach(x=>x.remove());
     return !d.textContent.replace(/[\s‏‎]/g,'')}
-  function unitHTML(u,daf,pi){const h=LTX(unitHTML0(u,daf,pi));return (u.k==='u'&&!EDIT)?asymLook(lgLook(h)):h}
+  function unitHTML(u,daf,pi){const h=LTX(unitHTML0(u,daf,pi));return EDIT?h:emptyLook(u.k==='u'?asymLook(lgLook(h)):h)}
+  /* 17.11.2026 (מיכאל): "לא להשאיר אף פעם סתם שתי שורות או שני מעברי פסקה בזה אחר זה". פסקה בלי שום אות (עריכה
+     שרוקנה אותה, ועוד לא קופלה) אינה נראית ואינה תופסת שורה - בדף ובהדפסה. בעריכה היא נשארת, כדי שאפשר יהיה לכתוב
+     בה או למחוק אותה. בבנייה ובקיפול היא נמחקת מן הנתונים ומן הספר (_drop_empty ב-build_site.py) */
+  function emptyLook(h){return h.indexOf('<p ')<0?h:h.replace(/<p class="([^"]*)">((?:\s|&nbsp;|&#160;|\u200e|\u200f|\u2060|\u2063|\u2064|<i class="[a-z]+"><\/i>|<span class="[a-z]+">[\u2063\u2064]<\/span>)*)<\/p>/g,'<p class="$1" data-e="1">$2</p>')}
   /* 17.11.2026 (מיכאל): כותרת צד שכולה כוכבית (סמליל זמני, שיוחלף במעוין) - בתצוגה ובהדפסה מוצגת כסימן המעוין
      (p.mu, כלל 24) ואינה תופסת מקום במסילה. עד כאן הכוכבית בגופן וילנא תפסה את הנתיב הפנימי, וציון הדף נדחק החוצה
      עד שכמעט לא נראה. בעריכה הכוכבית נשארת כמו שהיא (אפשר למחוק או להעתיק אותה), והנתונים והוורד אינם משתנים */
@@ -3911,7 +3965,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       EDD=(o&&o.v==='d2')?{v:'d2',s:new Set(o.s||[]),srv:o.srv||0}:{v:'d2',s:new Set(),srv:0}}
     return EDD}
   function edSig(e){return e._sig||(String(e.k)+'|'+(e.t||0))}
-  function edDoneSave(){clearTimeout(EDDT);EDDT=setTimeout(()=>{try{const d=edDone();
+  function edDoneSave(){clearTimeout(EDDT);EDDT=setTimeout(()=>{try{if(PRNRO)return;const d=edDone();
     localStorage.setItem(EDDK,JSON.stringify({v:d.v,s:[...d.s].slice(-30000),srv:d.srv}))}catch(e){}},800)}
   let EDIT=false, EDSTAT={taken:0,lost:0}, EDTAKEN=0, EDWORD=0;
   /* מצב הצעה (מנה 2, 7.10.2026): מציע תיקון עובד באותו עורך בדיוק; כל פעולה נרשמת כהצעה ואינה מתפרסמת (suggest_edit.js) */
@@ -3944,11 +3998,21 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function ghTok(){try{return localStorage.getItem(TKEY)||''}catch(e){return ''}}
   /* אצל לומד שאינו מנהל ED הוא שכבת התיקונים שהתקבלו (מנקודת הקליטה),
      והיא אינה נשמרת במכשיר */
-  function saveED(){if(SUGM)return;if(typeof EDRO!=='undefined'&&EDRO)return;try{localStorage.setItem(EKEY,JSON.stringify(ED))}catch(e){}}
+  /* 17.11.2026 (נמצא בבדיקה, "עריכות שנעלמו ברענון"): דף ההדפסה (print=1) - גם המסגרת של מצב הדפוס - הוא אותו דף, ועד כאן
+     גם הוא כתב את רשימת העריכות למכשיר: בטעינה, ובכל טעינה מחדש של המסגרת (מעבר פרק, השלם עימוד), הוא כתב את הרשימה
+     שהייתה בידו - ישנה או ריקה - מעל הרשימה של דף המנהל. רענון אחרי זה איבד כל מה שטרם פורסם לשרת (והפרסום ביציאה
+     מן הדף מדלג על רשימה גדולה). דף ההדפסה קורא בלבד: אינו כותב למכשיר ואינו שולח עריכות */
+  const PRNRO=(()=>{try{return new URLSearchParams(location.search).get('print')==='1'}catch(e){return false}})();
+  function saveED(){if(SUGM||PRNRO)return;if(typeof EDRO!=='undefined'&&EDRO)return;try{localStorage.setItem(EKEY,JSON.stringify(ED))}catch(e){}}
   /* plain: הטקסט שבמחרוזת HTML. טקסט בלי תגיות וישויות חוזר כמות שהוא (המנתח
      אינו משנה אותו); השאר מנותח פעם אחת ונשמר. בעבר נוצר אלמנט חדש ונותח
      HTML לכל מקום ולכל תיקון: עשרות אלפי ניתוחים בטעינה (11.10.2026). */
   const PLC=new Map();let PLD=null;
+  /* 17.11.2026: השוואת נוסח בהחלה חוזרת של עריכות - רווחים (גם קשיחים) ורצפים נחשבים רווח אחד, והשוליים נחתכים, כמו
+     _wn בבנייה. עד כאן הדפדפן השווה בדיוק: עריכה שנרשמה על "כר"י, " (רווח בסוף) לא נמצאה אחרי שהבנייה קיצצה את הרווח,
+     נעשתה "תלושה" ונעלמה ברענון (ברכות ח:, איחוי "א. השלימו... ג. והזהרו" של מיכאל, 17.11) */
+  const WN=s=>String(s==null?'':s).replace(/[\s\u00a0\u200e\u200f]+/g,' ').trim();
+  const weq=(a,b)=>a===b||WN(a)===WN(b);
   function plain(h){
     if(h===null)return '';
     if(typeof h!=='string')h=String(h);
@@ -3965,7 +4029,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function edClone(el){const d=el.cloneNode(true);
     d.querySelectorAll('.srcb,.mlabel,.bkx').forEach(x=>x.remove());
     d.querySelectorAll('mark').forEach(m=>m.replaceWith(...m.childNodes));
-    d.querySelectorAll('span.ltab').forEach(m=>m.replaceWith(...m.childNodes));   /* טאב-לשמאל: בנתונים נשאר רק התו */
+    d.querySelectorAll('span.ltab,span.altab').forEach(m=>m.replaceWith(...m.childNodes));   /* טאב-לשמאל ויישור הדעה השנייה: בנתונים נשאר רק התו */
     return d}
   function txtOf(el){return edClone(el).textContent}
   /* השוואה בלי ניקוד. במשנה, הטקסט שעל המסך מגיע משכבת הניקוד ואילו
@@ -4053,6 +4117,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           return (!e.ctx.b||(p&&p.t.slice(-40)===e.ctx.b))&&(!e.ctx.a||(n&&n.t.slice(0,40)===e.ctx.a))})}
       if(hits.length===1)return hits[0].k;
     }
+    /* אותו נוסח בלי הבדלי רווחים (ראה WN) - רק כשיש התאמה אחת */
+    for(const want of wants){const w=WN(want);if(!w)continue;
+      const hits=win.filter(s=>WN(s.t)===w);if(hits.length===1)return hits[0].k}
     return null}
 
   /* ---- מודל הנתונים ----
@@ -4340,7 +4407,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const L=o.u.l;
       for(let i=0;i+texts.length<=L.length;i++){
         let ok=true;
-        for(let j=0;j<texts.length;j++)if(plain(L[i+j][1])!==texts[j]){ok=false;break}
+        for(let j=0;j<texts.length;j++)if(!weq(plain(L[i+j][1]),texts[j])){ok=false;break}
         if(ok)hits.push({u:o.u,i,daf:o.daf,pi:o.pi});
       }
     }
@@ -4600,7 +4667,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(let n=1;n<all.length;n++){
       const cu=all[n],pv=all[n-1],U=cu.u,P=pv.u;
       if((U.k!=='u'&&U.k!=='m')||P.k!==U.k||!U.l.length||!P.l.length)continue;
-      if(plain(U.l[0][1])!==t[1]||plain(P.l[P.l.length-1][1])!==t[0])continue;
+      if(!weq(plain(U.l[0][1]),t[1])||!weq(plain(P.l[P.l.length-1][1]),t[0]))continue;
       const w=(U[wkey(U)]||'').split('<br>').map(plain);
       if(!gone.every(g=>w.indexOf(g)>-1))continue;
       hits.push({pv,cu,daf:D.pages[cu.pi].daf})}
@@ -4611,12 +4678,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     return null}
   function usmDone(e){
     const r=(e.resT||[])[0];if(!r)return false;
-    return unitsAll().some(o=>o.u.l.some(x=>plain(x[1])===r))}
+    return unitsAll().some(o=>o.u.l.some(x=>weq(plain(x[1]),r)))}
   function usmCmd(info,pv){
     const U=info.u,cu={u:U,pi:info.pi},P=pv.u;
-    const pl=usmPlan(pv,cu);
-    if(pl.err){flash(pl.err);return false}
+    let pl=usmPlan(pv,cu);
     const ph=P.l[P.l.length-1],nh=U.l[0];
+    /* 17.11.2026: השורה העליונה ריקה (שורה ריקה שנמחקת ב-Delete): רק היא נעלמת. השורה שמתחתיה נשארת כפי שהיא, עם כותרת
+       הצד שלה במקומה. עד כאן הכותרת ירדה לתוך השורה בסגנון אמוראים, וברענון העריכה לא נמצאה (אין שורה ריקה בספר) */
+    if(!plain(ph[1]).trim()&&plain(nh[1]).trim())pl={del:[],keep:[],note:'',where:'down',fuse:false};
+    if(pl.err){flash(pl.err);return false}
     const texts=[plain(ph[1]),plain(nh[1])].concat(pl.del.map(plain));
     /* 17.11.2026 (בעל הפרויקט): כותרת הצד היא ההמשך של הטקסט. Delete בסוף השורה (או Backspace בתחילת הבאה) מעלה אותה
        לתוך השורה, במקומה (לפני הנוסח של השורה הבאה), בסגנון התו "אמוראים" - ולא מוחק אותה. שורה תחתונה ריקה (מחיקת שורה)
@@ -4691,14 +4761,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     SLOTS=null;return mergedH}
   function hMerge(up,lo,el){
     if(!up||!lo)return false;
-    if(up.pi!==lo.pi){flash('אי אפשר לאחד מעבר לגבול דף');return false}
+    /* 17.11.2026 (מיכאל: "מדוע הוא לא מאפשר לי למחוק את הכותרת"): כותרת שפותחת דף, והכותרת או השורה שלפניה בדף
+       הקודם - האיחוי מותר. התחתונה יוצאת מן הדף שלה, וציון הדף עובר לשורה שאחריה (הוא שייך לדף ולא לשורה). רק כשהיא
+       כל הדף - אסור, כי ציון הדף היה נעלם. בבנייה ובקיפול: _hmerge_apply, ובהחלה בדפדפן: hFindMerge - אותו כלל */
+    if(up.pi!==lo.pi){
+      const us=D.pages[lo.pi].units;
+      if(lo.kind!=='head'||us[0]!==lo.u||us.length<2){flash('אי אפשר לאחד מעבר לגבול דף');return false}}
     if((lo.kind==='head'||lo.i===0)&&plain(winOf(lo.u)).trim()){
       flash('אי אפשר לאחד כאן: לשורה התחתונה יש כותרת צד משלה, והאיחוד היה מנתק אותה');return false}
     if(up.kind==='p'&&up.u.k==='m'&&lo.kind==='head'){flash('אי אפשר לאחד כותרת לתוך משנה');return false}
     const texts=[plain(hHtml(up)),plain(hHtml(lo))];
     const cls=up.kind==='head'?up.u.k:up.u.l[up.i][0];
-    const snp=[snapOf(up.pi)];
-    const pre=[{pi:up.pi,snap:JSON.stringify(D.pages[up.pi].units)}];
+    const hpis=[...new Set([up.pi,lo.pi])];
+    const snp=hpis.map(snapOf);
+    const pre=hpis.map(pi=>({pi,snap:JSON.stringify(D.pages[pi].units)}));
     freezeEdits(texts);
     const ce=cancelSplit(texts);
     UNDO.length=0;
@@ -4749,16 +4825,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(near.length===1)return near[0]}
     return null}
   function hFindSplit(e){
-    const hits=flatU().filter(x=>isHeadU(x.u)&&plain(x.u.a)===e.texts[0]);
+    const hits=flatU().filter(x=>isHeadU(x.u)&&weq(plain(x.u.a),e.texts[0]));
     return hPick(hits,e.daf)}
   function hSplitDone(e){
     const F=flatU();
-    return F.some((x,i)=>isHeadU(x.u)&&plain(x.u.a)===e.resT[0]&&F[i+1]&&F[i+1].pi===x.pi&&
+    return F.some((x,i)=>isHeadU(x.u)&&weq(plain(x.u.a),e.resT[0])&&F[i+1]&&F[i+1].pi===x.pi&&
       F[i+1].u.l&&F[i+1].u.l.length&&plain(F[i+1].u.l[0][1])===e.resT[1])}
   /* איחוי: כל צירוף של שני שכנים שלפחות אחד מהם כותרת, שנוסחם texts */
   function hFindMerge(e){
     const F=flatU(),hits=[];
-    F.forEach((x,i)=>{const y=F[i+1];if(!y||y.pi!==x.pi)return;
+    F.forEach((x,i)=>{const y=F[i+1];if(!y)return;
+      /* מעבר לגבול דף: רק כותרת שפותחת את הדף שלה, כשנשאר בו עוד (ראה hMerge) */
+      if(y.pi!==x.pi&&!(isHeadU(y.u)&&y.n===0&&D.pages[y.pi].units.length>1))return;
       const ups=[];
       if(isHeadU(x.u))ups.push({kind:'head',u:x.u,pi:x.pi,n:x.n});
       if((x.u.k==='u'||x.u.k==='m')&&x.u.l.length)ups.push({kind:'p',u:x.u,pi:x.pi,n:x.n,i:x.u.l.length-1});
@@ -4767,13 +4845,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if((y.u.k==='u'||y.u.k==='m')&&y.u.l.length)los.push({kind:'p',u:y.u,pi:y.pi,n:y.n,i:0});
       for(const up of ups)for(const lo of los){
         if(up.kind==='p'&&lo.kind==='p')continue;
-        if(plain(hHtml(up))!==e.texts[0]||plain(hHtml(lo))!==e.texts[1])continue;
+        if(!weq(plain(hHtml(up)),e.texts[0])||!weq(plain(hHtml(lo)),e.texts[1]))continue;
         if(plain(winOf(lo.u)).trim())continue;
         hits.push({up,lo,pi:x.pi})}});
     return hPick(hits,e.daf)}
   function hMergeDone(e){
-    return flatU().some(x=>isHeadU(x.u)?plain(x.u.a)===e.resT[0]:
-      ((x.u.k==='u'||x.u.k==='m')&&x.u.l.some(l=>plain(l[1])===e.resT[0])))}
+    return flatU().some(x=>isHeadU(x.u)?weq(plain(x.u.a),e.resT[0]):
+      ((x.u.k==='u'||x.u.k==='m')&&x.u.l.some(l=>weq(plain(l[1]),e.resT[0]))))}
   /* Ctrl+/: הפסקה חוזרת לסגנון רגיל (כמו בוורד). בכותרת צד - חוזרת לגוף. */
   function plainPara(){
     const el=edEl();
@@ -5813,7 +5891,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     return m===1?'בעוד דקה':'בעוד '+m+' דקות'}
   function pubPending(){const np=ED.filter(x=>!x.pub).length;return np||(PUBDIRTY?1:0)}
   const PDKEY='lg-pdirty-'+SLUG;
-  function pdSave(){try{if(PUBDIRTY)localStorage.setItem(PDKEY,'1');else localStorage.removeItem(PDKEY)}catch(e){}}
+  function pdSave(){if(PRNRO)return;try{if(PUBDIRTY)localStorage.setItem(PDKEY,'1');else localStorage.removeItem(PDKEY)}catch(e){}}
   function queuePub(){
     if(SUGM){sugSoon();return}
     if(PUBMSG&&PUBMSG.indexOf('לא פורסם')!==0)PUBMSG='';
@@ -5841,6 +5919,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      keepalive, שהדפדפן משלים גם אחרי שהדף נסגר. אם התור גדול מדי לכך, או
      שאין מפתח במכשיר - הוא נשאר שמור ויישלח בכניסה הבאה. */
   function pubFlush(){
+    if(PRNRO)return;
     if(SUGM){sugFlush();return}
     if(!isAdmin()||PUBBUSY||!pubPending())return;
     const k=admKey();if(!k)return;
@@ -5870,6 +5949,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
            ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t})},null,1)}
   async function pubNow(loud){
+    if(PRNRO)return;
     if(SUGM)return sugPush(loud);
     clearTimeout(PUBT);
     if(PUBBUSY)return;
@@ -6375,7 +6455,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* ---- סנכרון עריכות המנהל בין מכשירים ---- */
   let TOMB=[]; try{TOMB=JSON.parse(localStorage.getItem(TKEY2)||'[]')}catch(e){TOMB=[]}
   let SYNCT=null,SYNCBUSY=false,EDRO=false;
-  function tomb(k){TOMB.push({k,del:1,t:Date.now()});TOMB=TOMB.slice(-300);try{localStorage.setItem(TKEY2,JSON.stringify(TOMB))}catch(e){}}
+  function tomb(k){TOMB.push({k,del:1,t:Date.now()});TOMB=TOMB.slice(-300);if(PRNRO)return;try{localStorage.setItem(TKEY2,JSON.stringify(TOMB))}catch(e){}}
   /* שינוי מבנה (פיצול/איחוי) אין לו מפתח מקום, ומפתחו לסנכרון נגזר מזמנו */
   function edKeys(){ED.forEach(e=>{if(e.op==='struct'&&!e.k)e.k='s'+e.t})}
   function edOut(){edKeys();return ED.filter(e=>!e.lost).map(e=>e.op==='struct'
@@ -6399,7 +6479,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function syncSoon(){queuePub()}
   async function syncNow(){
     if(!isAdmin()||!admKey()||SYNCBUSY)return;SYNCBUSY=true;
-    try{const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty})});
+    try{const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:PRNRO?[]:edOut(),sty:D.sty})});
       if(mergeIn(j.doc&&j.doc.edits))applyIncoming()}
     catch(e){if(/אין הרשאה/.test(e.message||''))devRevoked()}
     SYNCBUSY=false}

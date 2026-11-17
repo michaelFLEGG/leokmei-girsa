@@ -12,16 +12,86 @@
      (w:ptab, יישור לשמאל מול השוליים) - tools/word_apply ו-tools/docx2json. באתר הוא נעטף
      ב-span.ltab, ורוחבו נמדד כך שהטקסט שאחריו יסתיים בקצה השמאלי של השורה. */
   const LTCH='⁣';
-  function LTX(h){return (typeof h==='string'&&h.indexOf(LTCH)>-1)?h.split(LTCH).join('<span class="ltab">'+LTCH+'</span>'):h}
+  /* 17.11.2026 (מיכאל): "שהדעה השנייה תתחיל בטאב מתחת לשורה שמעליה... כשרואים את שתי הדעות אחת מתחת לשנייה".
+     הסימן U+2064 (בלתי נראה) בראש הפסקה: הטקסט שאחריו מתחיל בדיוק מתחת למקום המקביל בשורה הראשונה של הפסקה
+     שמעליה. המקום נמצא לבד (alPick): המילה שדומה למילה הראשונה של הדעה השנייה ("כמצודה" מול "כמצולה"), ואם אין -
+     אחרי המקף (" - "), ואם אין - אחרי נקודתיים, ואם אין - טאב קבוע. בוורד הסימן הוא תו בלתי נראה בטקסט (עובר כמו שהוא
+     בקיפול ובהורדה), ולכן אין סגנון חדש ואין שינוי בצינור. בעריכה: Tab בכל מקום בפסקה מוסיף, Shift+Tab מסיר */
+  const ALCH='\u2064';
+  function LTX(h){if(typeof h!=='string')return h;
+    if(h.indexOf(LTCH)>-1)h=h.split(LTCH).join('<span class="ltab">'+LTCH+'</span>');
+    if(h.indexOf(ALCH)>-1)h=h.split(ALCH).join('<span class="altab">'+ALCH+'</span>');
+    return h}
   (function(){const st=document.createElement('style');st.textContent=
     '.ltab{display:inline-block;width:0;height:1em;vertical-align:baseline}'+
+    '.altab{display:inline-block;width:2em;height:1em;vertical-align:baseline}'+
+    'body.ed .altab{border-bottom:1px dotted var(--blue)}'+
     'body.ed .ltab{background:linear-gradient(90deg,transparent 0,transparent calc(100% - 2px),var(--blue) 0);min-width:2px}'+
     '.main.nose:empty::before,.main.dh:empty::before{content:"כתוב כאן את הכותרת";color:#b9ac8e}'+
     '.main.nose:empty,.main.dh:empty{min-height:1.5em}';
     document.head.appendChild(st)})();
   let LTT=null;
   function ltFitSoon(){clearTimeout(LTT);LTT=setTimeout(()=>ltFit($('#flow')),90)}
+  /* ---- יישור הדעה השנייה (U+2064) ---- */
+  function alWord(t){return String(t||'').replace(/[\u0591-\u05C7]/g,'').replace(/[^\u05D0-\u05EA]/g,'')}
+  function alSim(a,b){if(!a||!b||a.length<3||b.length<3)return false;if(a===b)return true;
+    if(Math.abs(a.length-b.length)>1)return false;
+    let d=0;const n=Math.min(a.length,b.length);for(let i=0;i<n;i++)if(a[i]!==b[i])d++;
+    d+=Math.abs(a.length-b.length);return d<=(n>=6?2:1)}
+  /* הפסקה הקודמת בסדר הקריאה: באותה יחידה, או האחרונה ביחידה שלפניה (גם בטור של עמוד מודפס) */
+  function alPrev(p){
+    let x=p.previousElementSibling;while(x&&(x.tagName!=='P'||x.dataset.e))x=x.previousElementSibling;if(x)return x;
+    let r=p.closest('.row');r=r&&r.previousElementSibling;
+    while(r){const ps=[...r.querySelectorAll(':scope > .main > p')].filter(q=>!q.dataset.e);if(ps.length)return ps[ps.length-1];
+      if(r.querySelector(':scope > .main.nose,:scope > .main.dh'))return null;r=r.previousElementSibling}
+    return null}
+  /* המילים של השורה הראשונה בפסקה, כל אחת עם הקצה הימני שלה */
+  function alWords(p){
+    const out=[],tw=document.createTreeWalker(p,NodeFilter.SHOW_TEXT),rg=document.createRange();let n,top=null;
+    while((n=tw.nextNode())){const pe=n.parentElement;if(pe&&pe.closest('sup,.tm,.tmg,.bkx,.altab,.ltab'))continue;
+      const re=/\S+/g,v=n.nodeValue;let m;
+      while((m=re.exec(v))){rg.setStart(n,m.index);rg.setEnd(n,m.index+m[0].length);const rs=rg.getClientRects();if(!rs.length)continue;
+        const r0=rs[0];if(top===null)top=r0.top;if(Math.abs(r0.top-top)>r0.height*0.6)return out;
+        out.push({t:m[0],right:Math.max(...[...rs].map(r=>r.right))})}}
+    return out}
+  function alPick(p,prev){
+    const W=alWords(prev);if(W.length<2)return null;
+    const own=[...p.childNodes].map(c=>c.textContent).join('').replace(/[\u2063\u2064]/g,'').trim().split(/\s+/)[0];
+    const w0=alWord(own);
+    for(let i=1;i<W.length;i++)if(alSim(alWord(W[i].t),w0))return W[i].right;
+    for(let i=0;i<W.length-1;i++)if(/^[-–־]$/.test(W[i].t))return W[i+1].right;
+    for(let i=0;i<W.length-1;i++)if(/:$/.test(W[i].t))return W[i+1].right;
+    return null}
+  function alFit(root){
+    if(!root||!root.querySelectorAll)return;
+    const all=[...root.querySelectorAll('.altab')];if(root.classList&&root.classList.contains('altab'))all.push(root);
+    all.forEach(sp=>{
+      const p=sp.closest('p');if(!p)return;
+      const prev=alPrev(p);
+      if(!prev){if(!sp.style.width)sp.style.width='2em';return}
+      const cs=getComputedStyle(p),pr=p.getBoundingClientRect(),right=pr.right-(parseFloat(cs.paddingRight)||0);
+      const x=alPick(p,prev);
+      if(x==null){sp.style.width='2em';return}
+      /* הקצה הימני של המילה שמעל, מן הקצה הימני של הפסקה הזו (באותו רוחב). לכל היותר 60% מן השורה */
+      /* הגדלה בתצוגה (מצב דפוס: transform על העמוד) - המדידה במסך, הרוחב ביחידות הדף */
+      const z=(p.offsetWidth&&pr.width)?pr.width/p.offsetWidth:1;
+      let w=right-x;const sr=sp.getBoundingClientRect(),cur=sr.width/z,start=right-sr.right;   /* start: מה שלפני הסימן (בדרך כלל 0) */
+      w=Math.max(0,Math.min(w-start,(pr.width||0)*0.6))/z;
+      if(Math.abs(w-cur)>0.5)sp.style.width=w.toFixed(1)+'px'})}
+  window.alFit=alFit;
+  function alToggle(off){
+    const el=edEl();
+    if(!el||!isTxt(el)||el.tagName!=='P'){flash('העמד את הסמן בתוך פסקת טקסט');return}
+    const has=el.querySelector('.altab')||el.textContent.indexOf(ALCH)>-1;
+    if(off&&!has)return;
+    sPush(el);
+    if(has){el.querySelectorAll('.altab').forEach(x=>x.remove());
+      const tw=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let n;while((n=tw.nextNode()))if(n.nodeValue.indexOf(ALCH)>-1)n.nodeValue=n.nodeValue.split(ALCH).join('')}
+    else{const sp=document.createElement('span');sp.className='altab';sp.textContent=ALCH;el.insertBefore(sp,el.firstChild);alFit(sp)}
+    capture(el);ltFitSoon();
+    flash(has?'הפסקה חזרה לתחילת השורה (Ctrl+ז מחזיר)':'הדעה מתחילה מתחת לשורה שמעליה (Shift+Tab מבטל)')}
   function ltFit(root){
+    if(root)alFit(root);
     if(!root||!root.querySelector('.ltab'))return;
     const all=[...root.querySelectorAll('.ltab')];
     all.forEach(sp=>{sp.style.width='0px'});
@@ -62,6 +132,10 @@
   document.addEventListener('keydown',e=>{
     if(!EDIT||!e.target.isContentEditable||e.altKey||e.metaKey||!e.ctrlKey)return;
     if(e.code==='KeyL'){e.preventDefault();e.stopPropagation();ltInsert()}},true);
+  /* Tab (בלי Ctrl/Alt) בכל מקום בפסקה: הדעה השנייה מתחילה מתחת לשורה שמעליה. Shift+Tab: חזרה */
+  document.addEventListener('keydown',e=>{
+    if(!EDIT||!e.target.isContentEditable||e.key!=='Tab'||e.ctrlKey||e.altKey||e.metaKey)return;
+    e.preventDefault();e.stopPropagation();alToggle(e.shiftKey)},true);
 
   /* ---------- ד. Ctrl+1 על תנא או אמורא: גם הנקודתיים, בלי הרווח שלפניהן ---------- */
   function amColon(el,s){

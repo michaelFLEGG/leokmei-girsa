@@ -285,15 +285,18 @@
        בזכות ההצרה נשברה מחדש אחרי כל עריכה (שורה נוספת, חפיפה עם השורה שמתחתיה). glue=false: בלי רווח קשיח
        (בזמן הקלדה, כדי לא לגעת בטקסט שתחת הסמן) */
     fit:function(row,glue){var C=window.__pmFitCtx;if(!C||!row||!row.isConnected)return 0;var n=0,a=fitOn(C);
+      /* 17.11.2026: יישור הדעה השנייה (U+2064) נמדד לפני הליטוש, כמו בעימוד המלא (ltFit) */
+      try{if(typeof window.alFit==='function')window.alFit(row)}catch(e){}
       try{[].slice.call(row.querySelectorAll(':scope > .main > p')).forEach(function(p){fitP(p,C,glue)&&n++});
         [].slice.call(row.querySelectorAll(':scope.nose > .main,:scope.dh > .main')).forEach(function(h){h.style.wordSpacing='';h.style.letterSpacing='';if(headSqueeze(h))n++})}
       finally{if(a)C.sq.remove()}
       return n},
-    fitP:function(p,glue){var C=window.__pmFitCtx;if(!C)return false;var a=fitOn(C);try{return fitP(p,C,glue)}finally{if(a)C.sq.remove()}}};
+    fitP:function(p,glue){var C=window.__pmFitCtx;if(!C)return false;var a=fitOn(C);try{try{if(typeof window.alFit==='function')window.alFit(p)}catch(e){}return fitP(p,C,glue)}finally{if(a)C.sq.remove()}}};
   /* סרגל המדידה של העימוד מוסר בסופו: לליטוש של שורה אחת הוא מוחזר לרגע */
   function fitOn(C){if(C.sq.isConnected)return false;document.body.appendChild(C.sq);return true}
   function fitP(p,C,glue){
-    p.style.wordSpacing='';p.style.letterSpacing='';delete p.dataset.sq25;delete p.dataset.sq;
+    p.style.wordSpacing='';p.style.letterSpacing='';delete p.dataset.sq25;delete p.dataset.sq;delete p.dataset.og;
+    [].forEach.call(p.querySelectorAll('.og'),function(x){x.style.width=''});
     if(p.textContent.trim().length<12)return false;
     if(squeeze25(p,C.GM,C.GP,C.W))return true;
     if(!loneStrict(p))return false;
@@ -356,12 +359,30 @@
       var v=0;for(var x=Math.round(full*100)-5;x>0;x-=5){setP(p,x/100);if(ok()){v=x/100;break}}
       if(!v)setP(p,0);st.reduced++;st.to[v]=(st.to[v]||0)+1});
     return st}
+  /* 17.11.2026 (מיכאל): הרווח הקבוע לפני הדעה השנייה (span.og של lgLook, 1.3em) הוא חלק ממנגנון האיחוי: אם בלעדיו
+     (או בחציו) הפסקה נכנסת בשורה אחת פחות - הוא מצטמצם או נמחק, כי "הנראות של כלל הקטע חשובה לא פחות". קודם הצרה
+     רגילה עם הרווח המלא; אחר כך חצי רווח, ואחר כך בלי רווח (רק הרווח הרגיל), כל אחד עם הצרה עד 2.5%. סגנון בלבד:
+     הטקסט והנתונים אינם משתנים. מסומן data-og="half" / "0" */
+  var OGW=['0.55em','0'];
   function squeeze25(p,GM,GP,W){
-    var inf=lineInfo(p);if(!inf||inf.n<2)return false;
-    /* הסינון המהיר רחב בכוונה: השורה הקודמת אינה מלאה עד הקצה, ולכן מה שחסר קטן מרוחב השורה האחרונה. הבדיקה האמיתית בסרגל */
-    var cap=SQ25*W;if(inf.lastW/(inf.n-1)>8*cap)return false;
+    var og=p.querySelectorAll('.og');
+    [].forEach.call(og,function(x){x.style.width=''});delete p.dataset.og;
+    if(!og.length)return sqCore(p,GM,GP,W,null);
     GM.className=p.parentElement.className;GP.className=p.className;GP.style.wordSpacing='';GP.style.letterSpacing='';GP.innerHTML=p.innerHTML;
-    var h0=GP.offsetHeight,fs=parseFloat(getComputedStyle(GP).fontSize)||16;
+    var h0=GP.offsetHeight;
+    if(sqCore(p,GM,GP,W,null))return true;
+    for(var k=0;k<OGW.length;k++){
+      [].forEach.call(og,function(x){x.style.width=OGW[k]});
+      if(sqCore(p,GM,GP,W,h0)){p.dataset.og=k?'0':'half';return true}}
+    [].forEach.call(og,function(x){x.style.width=''});return false}
+  /* h00: גובה הבסיס (עם הרווח המלא) כשבודקים צמצום של הרווח; אז גם בלי הצרה כלל (f=0) נחשב הצלחה */
+  function sqCore(p,GM,GP,W,h00){
+    var inf=lineInfo(p);if(!inf||(h00==null&&inf.n<2))return false;
+    /* הסינון המהיר רחב בכוונה: השורה הקודמת אינה מלאה עד הקצה, ולכן מה שחסר קטן מרוחב השורה האחרונה. הבדיקה האמיתית בסרגל */
+    var cap=SQ25*W;if(h00==null&&inf.lastW/(inf.n-1)>8*cap)return false;
+    GM.className=p.parentElement.className;GP.className=p.className;GP.style.wordSpacing='';GP.style.letterSpacing='';GP.innerHTML=p.innerHTML;
+    var h0=h00!=null?h00:GP.offsetHeight,fs=parseFloat(getComputedStyle(GP).fontSize)||16;
+    if(h00!=null&&GP.offsetHeight<h0-1){p.style.wordSpacing='';p.style.letterSpacing='';return true}
     var t=inf.text,sp=(t.match(/ /g)||[]).length/inf.n,ch=t.replace(/[\s֑-ׇ⁠]/g,'').length/inf.n;
     if(sp<1)sp=1;if(ch<1)ch=1;
     var WSMAX=0.14*fs;   /* רוב ההצרה ברווחים, עד גבול שהמילים לא ייצמדו */

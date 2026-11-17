@@ -646,6 +646,13 @@
     var key='u'+u+'.'+(k==null?0:k);
     var el=document.querySelector('#flow [data-ek="'+key+'"]');
     if(!el){pmShowPerek(S.pk);try{if(typeof revealTail==='function')revealTail()}catch(e){}el=document.querySelector('#flow [data-ek="'+key+'"]')}
+    /* 17.11.2026 (נמצא בבדיקה): הדף שבו פרק נגמר ופרק חדש מתחיל (ברכות יג.) שייך בדף הרגיל לפרק הבא, ולכן השורות של סוף
+       הפרק שבו לא היו בעורך: לחיצה עליהן במצב דפוס לא נכנסה לעריכה, וההקלדה הלכה לאיבוד. עכשיו - מציירים בעורך את
+       הקטע שמכיל את הדף של השורה */
+    if(!el){try{var upi=-1;for(var q=0;q<D.pages.length&&upi<0;q++)if(D.pages[q].units.some(function(x){return x.id===+u}))upi=q;
+      if(upi>-1&&typeof SEC!=='undefined'&&typeof render==='function')for(var si=0;si<SEC.length;si++){if(SEC[si].from<=upi&&upi<=SEC[si].to){if(si!==cur)render(si);break}}
+      try{if(typeof revealTail==='function')revealTail()}catch(e){}
+      el=document.querySelector('#flow [data-ek="'+key+'"]')}catch(e){}}
     if(el&&el.getAttribute('contenteditable')!=='true'){try{if(typeof setEdit==='function'&&typeof EDIT!=='undefined'&&!EDIT)setEdit(true)}catch(e){}}
     return el}
   /* העותק הנראה של היעד בעמוד (שורה שחוצה טור נמצאת בשני הטורים: זו שבחלון הנראה) */

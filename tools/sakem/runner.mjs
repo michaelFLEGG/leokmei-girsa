@@ -263,6 +263,9 @@ if (cmd === 'status') {
   pk.units.forEach((u, i) => { l += '⟦' + u.id + '⟧' + (TEXTK(u) ? '' : ' (כותרת / עיטור)') + '\n' + pu[i] + '\n'; });
   fs.writeFileSync(path.join(dir, 'leokmei.md'), l);
   console.log('העבודה:', jid, '·', pk.title || '');
+  /* פרומפט 56 ד3: עבודת "סבב שני" - ההנחיה המיוחדת (docs/sakem-round-56.md), כמו שדה note/focus */
+  if (/סבב שני/.test(pk.title || '')) { const RF = path.join(ROOT, 'docs', 'sakem-round-56.md');
+    if (fs.existsSync(RF)) console.log('\n######## הנחיית הסבב השני (גוברת על כלל כללי)\n' + fs.readFileSync(RF, 'utf8')); }
   console.log('יחידות:', pk.units.length, '· דפים:', (pk.pages || []).map((p) => p.daf).join(' '));
   console.log('לקריאה:', path.relative(ROOT, dir) + '/{gemara.md, leokmei.md' + (hv ? ', chavruta.md' : '') + '}');
   if (o) console.log('המשך מהרצה קודמת: ' + o.done + ' מתוך ' + o.total + ' קטעים כבר נכתבו. הקטע הבא: ' + (o.plan.findIndex((s, i) => !o.items.some((x) => x.seg === i)) + 1));
@@ -482,6 +485,19 @@ if (cmd === 'status') {
       bold: S.bold, space: S.space, dash: S.dash, side: S.side, nose: sum('nose'), hatz: S.hatz, abbr: sum('abbr'),
       warnLeft, block: blockers.length, lenPct: lenA ? Math.round((lenB / lenA - 1) * 1000) / 10 : 0,
       model: model ? { segs: model.segs, perSeg: model.perSeg, lenPct: model.lenPct } : null };
+    /* פרומפט 56 ד5: בסבב השני - כמה איחודים, כמה כותרות חדשות, כמה מטבעות לשון תוקנו, כמה שורות גולשות נשארו (היעד 0) */
+    { const COIN = /שונה כאן|לשון אחרת|(?:^|\s)ו?יש ביניהם|מה ביניהם|שנינו שם/;
+      let merges = 0, newTitles = 0, coins = 0, over = 0;
+      segs.forEach((x) => { if (x.nochange) return;
+        const r = origOf(pk, x.ids[0], x.ids[x.ids.length - 1]);
+        const L = (t) => String(t || '').split('\n').filter((l) => l.trim() && !/^\[/.test(l.trim()));
+        const a = L(r.text), b = L(x.text);
+        if (b.length < a.length) merges += a.length - b.length;
+        newTitles += Math.max(0, b.filter((l) => /^\(נושא\)/.test(l)).length - a.filter((l) => /^\(נושא\)/.test(l)).length);
+        coins += Math.max(0, a.filter((l) => COIN.test(SKC.plainI(l))).length - b.filter((l) => COIN.test(SKC.plainI(l))).length);
+        over += b.filter((l) => !/^\(נושא\)/.test(l) && SKC.plainI(l).length > (SKC.LINE_BIG || 52)).length; });
+      o.score.round2 = { merges, newTitles, coins, overLeft: over };
+      console.log('סבב שני: ' + JSON.stringify(o.score.round2)); }
     console.log('כרטיס הציון: ' + JSON.stringify(o.score)); }
   o.status = 'ready';
   o.t = Date.now();
@@ -493,6 +509,22 @@ if (cmd === 'status') {
   console.log('נרשם ביומן ההרצות (data/sakem/runs.jsonl): ' + JSON.stringify(rec));
   console.log('פרק אחד בהרצה: צא עכשיו. הפרק הבא - בהרצה הבאה, בשיחה חדשה.');
   if (PUSH) push('סכם: ' + (pk.title || jid) + ' - מוכן לסקירה', [outF(jid), RUNS].concat(fs.existsSync(path.join(D, 'learn', 'rules.json')) ? [path.join(D, 'learn', 'rules.json')] : []));
+  /* פרומפט 56 ד6: כשהעבודה האחרונה של שבת בסבב השני מגיעה ל"מוכן לסקירה" - התראה אחת למיכאל (ווטסאפ לעצמו, מייל, דחיפה).
+     ווטסאפ: notify-me.sh של zohar-nikud (תור ההתראות). המייל והדחיפה - בידי העובד, לפי ההודעה שמודפסת כאן */
+  if (/סבב שני/.test(pk.title || '') && pk.slug === 'shabbat') {
+    const all = fs.readdirSync(path.join(D, 'out')).filter((f) => f.endsWith('.json') && !f.endsWith('.old.json')).map((f) => { try { return rd(path.join(D, 'out', f)); } catch (e) { return null; } })
+      .filter((x) => x && x.slug === 'shabbat' && /סבב שני/.test(x.title || ''));
+    const q = fs.existsSync(path.join(D, 'queue')) ? fs.readdirSync(path.join(D, 'queue')).filter((f) => f.endsWith('.json')).map((f) => { try { return rd(path.join(D, 'queue', f)); } catch (e) { return null; } })
+      .filter((x) => x && x.slug === 'shabbat' && /סבב שני/.test(x.title || '')) : [];
+    const open = q.filter((p0) => { const ox = all.find((x) => x.jid === ((p0.job || {}).jid)); return !ox || ox.status !== 'ready'; });
+    if (!open.length && all.length) {
+      const props = all.reduce((n, x) => n + (x.items || []).filter((i) => !i.nochange).length, 0);
+      const msg = 'שבת מוכנה לסקירה: ' + all.length + ' פרקים, ' + props + ' הצעות\nhttps://leokmei.com/shabbat.html';
+      const NS = '/home/user/zohar-nikud/זוהר-דף-כלים/notify-me.sh';
+      try { if (fs.existsSync(NS)) execFileSync('bash', [NS, msg], { stdio: 'inherit' }); } catch (e) { console.log('הווטסאפ לא נשלח: ' + e.message); }
+      console.log('\n######## התראה למיכאל (פרומפט 56 ד6) - שלח גם מייל ל-m7654301@gmail.com והודעת דחיפה, ואז הפעל zyomi-wa.yml במצב notify:\n' + msg);
+    }
+  }
 } else if (cmd === 'lessons') {
   const stF = path.join(D, 'lessons-state.json'), st = fs.existsSync(stF) ? rd(stF) : { done: [] };
   /* 6.11.2026: סבב שני על אותו פרק (אותו jid) נשא הכרעות חדשות והן דולגו. המפתח הוא עכשיו jid@זמן העבודה */

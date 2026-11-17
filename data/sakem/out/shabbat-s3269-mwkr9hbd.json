@@ -163,7 +163,7 @@
   }
  ],
  "total": 26,
- "done": 7,
+ "done": 8,
  "items": [
   {
    "iid": "s1",
@@ -408,6 +408,28 @@
    "keep": []
   },
   {
+   "iid": "s7",
+   "kind": "seg",
+   "seg": 6,
+   "sugya": 6,
+   "ids": [
+    3324,
+    3325
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 197,
+    "lenB": 197
+   }
+  },
+  {
    "iid": "s8",
    "kind": "seg",
    "seg": 7,
@@ -448,5 +470,5 @@
    "keep": []
   }
  ],
- "t": 1794958803813
+ "t": 1794958810833
 }

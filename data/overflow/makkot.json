@@ -1,22 +1,21 @@
 {
  "slug": "makkot",
- "made": "2026-11-17 13:38",
+ "made": "2026-11-17 14:37",
  "profile": "a4-large",
  "pages": {
   "a4": 18,
   "a4-large": 20
  },
  "sq25": {
-  "a4": 39,
+  "a4": 37,
   "a4-large": 121
  },
- "count": 22,
+ "count": 20,
  "firstTool": {
-  "4": 1,
-  "5": 6
+  "5": 5
  },
- "joinCands": 10,
- "mechSplitCands": 4,
+ "joinCands": 9,
+ "mechSplitCands": 0,
  "ctlMismatch": [],
  "rejected": 7,
  "stale": [],
@@ -64,50 +63,6 @@
    "tail": false,
    "sug": [],
    "tool6": true
-  },
-  {
-   "key": "u153.1",
-   "id": "f278c4a8855185b4",
-   "u": 153,
-   "li": 1,
-   "daf": "ד.",
-   "cls": "b0 a0",
-   "mc": "main",
-   "html": "ביין, <i class=\"am\">וכן </i>כיכר תרומה שנפל שם שטמא, <i class=\"am\">וקמ&#x27;&#x27;ל </i>שלא מעמידים אחזקה ",
-   "ph": "ביין, <i class=\"am\">וכן </i>כיכר תרומה שנפל שם שטמא, <i class=\"am\">וקמ&#x27;&#x27;ל </i>שלא מעמידים אחזקה ",
-   "text": "ביין, וכן כיכר תרומה שנפל שם שטמא, וקמ''ל שלא מעמידים אחזקה",
-   "over": "מעמידים אחזקה",
-   "nA4": 1,
-   "nLarge": 2,
-   "missPx": 60.0,
-   "miss": 10,
-   "long": false,
-   "tail": false,
-   "sug": [
-    {
-     "tool": 4,
-     "split_before": "וקמ''ל",
-     "side": "",
-     "kind": "split",
-     "parts": [
-      "ביין, <i class=\"am\">וכן </i>כיכר תרומה שנפל שם שטמא,",
-      "<i class=\"am\">וקמ&#x27;&#x27;ל </i>שלא מעמידים אחזקה"
-     ],
-     "why": "חיתוך אחרי סימן פיסוק",
-     "src": "mech",
-     "ok": {
-      "large": [
-       1,
-       1
-      ],
-      "a4": [
-       1,
-       1
-      ]
-     }
-    }
-   ],
-   "tool6": false
   },
   {
    "key": "u215.1",
@@ -493,67 +448,6 @@
       ],
       "a4": [
        2
-      ]
-     }
-    }
-   ],
-   "tool6": false
-  },
-  {
-   "key": "u1558.2",
-   "id": "6c808178b79d2e8f",
-   "u": 1558,
-   "li": 2,
-   "daf": "כב.",
-   "cls": "b0 a0",
-   "mc": "main",
-   "html": "<i class=\"am\">א.</i> משום אוכל גיד, <i class=\"am\">ב.</i> מבשל ביו&quot;ט שלא לצורך, <i class=\"am\">ג. </i>מבשל גיד בחלב",
-   "ph": "<i class=\"am\">א.</i> משום אוכל גיד, <i class=\"am\">ב.</i> מבשל ביו&quot;ט שלא לצורך, <i class=\"am\">ג. </i>מבשל גיד בחלב",
-   "text": "א. משום אוכל גיד, ב. מבשל ביו\"ט שלא לצורך, ג. מבשל גיד בחלב",
-   "over": "מבשל גיד בחלב",
-   "nA4": 1,
-   "nLarge": 2,
-   "missPx": 61.3,
-   "miss": 10,
-   "long": false,
-   "tail": false,
-   "sug": [
-    {
-     "tool": 5,
-     "kind": "join",
-     "target": "next",
-     "html": "<i class=\"am\">א.</i> משום אוכל גיד, <i class=\"am\">ב.</i> מבשל ביו&quot;ט שלא לצורך, <i class=\"am\">ג. </i>מבשל גיד בחלב <i class=\"am\">ד. </i>אוכל בשר בחלב, <i class=\"am\">ה. </i>הבערה.",
-     "targetOrig": "<i class=\"am\">ד. </i>אוכל בשר בחלב, <i class=\"am\">ה. </i>הבערה.",
-     "targetLines": 1,
-     "why": "איחוי עם השורה הבאה",
-     "ok": {
-      "large": [
-       2
-      ],
-      "a4": [
-       2
-      ]
-     }
-    },
-    {
-     "tool": 4,
-     "split_before": "מבשל ב",
-     "side": "",
-     "kind": "split",
-     "parts": [
-      "<i class=\"am\">א.</i> משום אוכל גיד, <i class=\"am\">ב.</i>",
-      "מבשל ביו\"ט שלא לצורך, <i class=\"am\">ג. </i>מבשל גיד בחלב"
-     ],
-     "why": "חיתוך אחרי סימן פיסוק",
-     "src": "mech",
-     "ok": {
-      "large": [
-       1,
-       1
-      ],
-      "a4": [
-       1,
-       1
       ]
      }
     }

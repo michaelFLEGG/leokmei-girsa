@@ -722,9 +722,10 @@
     /* פרומפט 53: שורה שמיכאל תיקן כאן ונכנסה לשורה אחת - ננעלת מיד (המרשם הקבוע מתעדכן בסבב הבא מן הנוסח החי) */
     if(E.touched){try{if(pmLines(E.p)===1){var kn=String(E.p.textContent||'').replace(/\u2060\d+/g,'').replace(/[^\u05d0-\u05ea]/g,'');
       if(kn){window.__OVLOCK=window.__OVLOCK||new Set();window.__OVLOCK.add(kn)}}}catch(e){}}
-    if(E.touched){pmRender([E.u]);pmLogAfter(E.c0,'type',[E.u]);
-      /* איחוי מכני מיד, אחרי שהשורה נבנתה מחדש (לא בזמן הקלדה) */
-      setTimeout(function(){if(!S.editing||S.editing.u!==E.u)pmAutoMerge(E.u)},0)}
+    if(E.touched){pmRender([E.u]);pmLogAfter(E.c0,'type',[E.u])}
+    /* איחוי מכני מיד, אחרי שהשורה נבנתה מחדש (לא בזמן הקלדה): אחרי הקלדה, ואחרי פקודה (איחוי, חיתוך, כותרת צד) */
+    if(E.touched||E.cmd)setTimeout(function(){if(!S.editing||S.editing.u!==E.u)pmAutoMerge(E.u)},0);
+    if(E.touched){}
     else{var r=E.row,h0=r.offsetHeight;E.p.innerHTML=E.orig;if(E.origSt==null)E.p.removeAttribute('style');else E.p.setAttribute('style',E.origSt);
       var h1=r.offsetHeight;if(h1!==h0)pmShift(r,h1-h0,0)}
     pmStat('',0)}
@@ -961,7 +962,7 @@
     var t=m&&pmFrameEl(pmDoc(),+m[1],m[2]);
     /* העורך לא השאיר סמן (למשל ביטול ב-Ctrl+ז): הסמן חוזר לשורה שבה עמדת */
     if(!t){t=pmFrameEl(pmDoc(),E.u,E.k);g=null;if(t){pmEdit(t,null,Math.min(sel[1],t.textContent.length));t=null}}
-    if(t){pmEdit(t,null,g?g[1]:0);if(g&&g[0]!==g[1])pmSetSel(t,g[0],g[1])}
+    if(t){pmEdit(t,null,g?g[1]:0);if(g&&g[0]!==g[1])pmSetSel(t,g[0],g[1]);if(S.editing)S.editing.cmd=1}
     else{try{(pmDoc().body||{}).focus&&pmDoc().body.focus()}catch(x){}}
     /* מדד השורות של הפסקה שבה עמדת לפני הפקודה */
     tp('caret');S.lastCmd={path:!!xs,tp:TP,key:(e.ctrlKey?'Ctrl+':'')+(e.altKey?'Alt+':'')+(e.shiftKey?'Shift+':'')+(e.code||e.key),ms:Math.round(performance.now()-t0)};

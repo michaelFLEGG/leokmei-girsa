@@ -220,7 +220,9 @@ if (cmd === 'status') {
   /* next <jid>: עבודה מסוימת (כמה עובדים במקביל, כל אחד על פרק אחר; 6.11.2026) */
   /* פרומפט 51 (16.11.2026): מסכת בהגירה נעולה ב-.locks/p51-<slug>.lock - העובד מדלג עליה */
   const p51Locked = (j) => { try { const s = pkOf(j).slug; return !!s && fs.existsSync(path.join(ROOT, '.locks', 'p51-' + s + '.lock')); } catch (e) { return false; } };
-  const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j); });
+  /* פרומפט 59 (17.11.2026): עבודות "סבב מבני" נעשות בשיחה ייעודית (.locks/p59-<slug>.lock) - next בלי מזהה מדלג עליהן כל עוד הנעילה קיימת */
+  const p59Mine = (j) => { try { const k = pkOf(j); return /סבב מבני/.test(k.title || '') && fs.existsSync(path.join(ROOT, '.locks', 'p59-' + k.slug + '.lock')); } catch (e) { return false; } };
+  const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || !p59Mine(j)); });
   if (!jid) die('התור ריק.', 3);
   /* פרומפט 29: פרק אחד בכל הרצה, בהקשר נקי */
   if (process.argv.includes('--new-run')) { try { fs.unlinkSync(MARK); } catch (e) {} }
@@ -266,6 +268,9 @@ if (cmd === 'status') {
   /* פרומפט 56 ד3: עבודת "סבב שני" - ההנחיה המיוחדת (docs/sakem-round-56.md), כמו שדה note/focus */
   if (/סבב שני/.test(pk.title || '')) { const RF = path.join(ROOT, 'docs', 'sakem-round-56.md');
     if (fs.existsSync(RF)) console.log('\n######## הנחיית הסבב השני (גוברת על כלל כללי)\n' + fs.readFileSync(RF, 'utf8')); }
+  /* פרומפט 59 (17.11.2026): "סבב מבני" לפי עריכות מיכאל בברכות פרק א - ההנחיה והדוגמאות */
+  if (/סבב מבני/.test(pk.title || '')) ['הנחיה.md', 'דוגמאות.md'].forEach((n) => { const F = path.join(ROOT, 'docs', 'פרומפט-59', n);
+    if (fs.existsSync(F)) console.log('\n######## פרומפט 59 - ' + n + ' (גובר על כלל כללי)\n' + fs.readFileSync(F, 'utf8')); });
   console.log('יחידות:', pk.units.length, '· דפים:', (pk.pages || []).map((p) => p.daf).join(' '));
   console.log('לקריאה:', path.relative(ROOT, dir) + '/{gemara.md, leokmei.md' + (hv ? ', chavruta.md' : '') + '}');
   if (o) console.log('המשך מהרצה קודמת: ' + o.done + ' מתוך ' + o.total + ' קטעים כבר נכתבו. הקטע הבא: ' + (o.plan.findIndex((s, i) => !o.items.some((x) => x.seg === i)) + 1));

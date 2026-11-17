@@ -1192,9 +1192,11 @@
     if(S.open&&!(e.target&&e.target.closest&&e.target.closest('#pmbar input,#ovpop,#pmcal'))){
       if(document.getElementById('ovpop'))return;
       if(pmKeys(e))e.stopPropagation()}},true);
-  setTimeout(function(){pmButton();
-    /* זוכר את הבחירה במכשיר: מנהל שיצא מן הדף במצב דפוס חוזר אליו */
-    if(pmAdm()&&pmLs('lg-pm-on',0)&&innerWidth>700&&!S.open)setTimeout(function(){if(!S.open)pmOpen()},600)},3200);
+  /* 17.11.2026: מנהל שיצא במצב דפוס חוזר אליו מיד כשהדף מוכן (עד כאן אחרי כארבע שניות של המתנה קבועה) */
+  (function(){var t0=Date.now();var go=function(){if(S.open)return;if(typeof D==='undefined'||!document.getElementById('flow')||!document.querySelector('#flow .row')||!window.__LGSYNC){if(Date.now()-t0<8000)return setTimeout(go,150)}   /* __LGSYNC: העריכות מן השרת כבר בנתונים */
+      if(pmAdm()&&pmLs('lg-pm-on',0)&&innerWidth>700&&!S.open)pmOpen()};
+    if(pmAdm()&&pmLs('lg-pm-on',0))setTimeout(go,200)})();
+  setTimeout(function(){pmButton()},3200);
   setInterval(function(){if(pmAdm()&&!document.getElementById('pmbtn'))pmButton()},5000);
   window.lkPrintMode={open:pmOpen,close:pmClose,state:function(){return {open:S.open,busy:S.busy,pages:S.pages.length,issues:S.issues.map(function(i){return {type:i.type,page:i.page,u:i.u,detail:i.detail,src:i.src}}),ms:S.lastMs,zoom:S.z,view:S.view,editing:S.editing?{u:S.editing.u,k:S.editing.k}:null,pend:S.pend,bal:S.bal,cross:S.cross,lastCmd:S.lastCmd,cmdMs:S.cmdMs.slice()}},
     complete:pmComplete,

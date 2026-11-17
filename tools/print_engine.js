@@ -364,32 +364,39 @@
      רגילה עם הרווח המלא; אחר כך חצי רווח, ואחר כך בלי רווח (רק הרווח הרגיל), כל אחד עם הצרה עד 2.5%. סגנון בלבד:
      הטקסט והנתונים אינם משתנים. מסומן data-og="half" / "0" */
   var OGW=['0.55em','0'];
+  /* 17.11.2026, מהירות: בעימוד המלא ההחלה על הפסקאות נדחית לסוף הסבב (SQDEFER), כדי שכל מדידה לא תכריח פריסה מחדש
+     של כל הפרק אחרי שהפסקה הקודמת שונתה. התוצאה זהה: כל פסקה נמדדת בסרגל שלה (GP), בלי תלות באחרות */
+  var SQDEFER=null;
+  function sqApply(p,r){var f=function(){p.style.wordSpacing=r.ws;p.style.letterSpacing=r.ls;if(r.sq)p.dataset.sq25=r.sq;
+      if(r.og!=null){p.dataset.og=r.og?'0':'half';[].forEach.call(p.querySelectorAll('.og'),function(x){x.style.width=OGW[r.og]})}};
+    if(SQDEFER)SQDEFER.push(f);else f();return true}
   function squeeze25(p,GM,GP,W){
     var og=p.querySelectorAll('.og');
-    [].forEach.call(og,function(x){x.style.width=''});delete p.dataset.og;
-    if(!og.length)return sqCore(p,GM,GP,W,null);
+    if(p.dataset.og){[].forEach.call(og,function(x){x.style.width=''});delete p.dataset.og}
+    if(!og.length)return sqCore(p,GM,GP,W,null,null);
+    if(sqCore(p,GM,GP,W,null,null))return true;
     GM.className=p.parentElement.className;GP.className=p.className;GP.style.wordSpacing='';GP.style.letterSpacing='';GP.innerHTML=p.innerHTML;
     var h0=GP.offsetHeight;
-    if(sqCore(p,GM,GP,W,null))return true;
-    for(var k=0;k<OGW.length;k++){
-      [].forEach.call(og,function(x){x.style.width=OGW[k]});
-      if(sqCore(p,GM,GP,W,h0)){p.dataset.og=k?'0':'half';return true}}
-    [].forEach.call(og,function(x){x.style.width=''});return false}
-  /* h00: גובה הבסיס (עם הרווח המלא) כשבודקים צמצום של הרווח; אז גם בלי הצרה כלל (f=0) נחשב הצלחה */
-  function sqCore(p,GM,GP,W,h00){
+    for(var k=0;k<OGW.length;k++)if(sqCore(p,GM,GP,W,h0,k))return true;
+    return false}
+  /* h00: גובה הבסיס (עם הרווח המלא) כשבודקים צמצום של הרווח; אז גם בלי הצרה כלל (f=0) נחשב הצלחה. ogk: רוחב הרווח (OGW) בסרגל */
+  function sqCore(p,GM,GP,W,h00,ogk){
+    /* פסקה של שורה אחת (רוב הפסקאות) אינה צריכה הצרה: הגובה מספיק כדי לדעת, בלי lineInfo */
+    if(h00==null){var lhq=parseFloat(getComputedStyle(p).lineHeight)||0;if(lhq&&p.offsetHeight<lhq*1.6)return false}
     var inf=lineInfo(p);if(!inf||(h00==null&&inf.n<2))return false;
     /* הסינון המהיר רחב בכוונה: השורה הקודמת אינה מלאה עד הקצה, ולכן מה שחסר קטן מרוחב השורה האחרונה. הבדיקה האמיתית בסרגל */
     var cap=SQ25*W;if(h00==null&&inf.lastW/(inf.n-1)>8*cap)return false;
     GM.className=p.parentElement.className;GP.className=p.className;GP.style.wordSpacing='';GP.style.letterSpacing='';GP.innerHTML=p.innerHTML;
+    if(ogk!=null)[].forEach.call(GP.querySelectorAll('.og'),function(x){x.style.width=OGW[ogk]});
     var h0=h00!=null?h00:GP.offsetHeight,fs=parseFloat(getComputedStyle(GP).fontSize)||16;
-    if(h00!=null&&GP.offsetHeight<h0-1){p.style.wordSpacing='';p.style.letterSpacing='';return true}
-    var t=inf.text,sp=(t.match(/ /g)||[]).length/inf.n,ch=t.replace(/[\s֑-ׇ⁠]/g,'').length/inf.n;
+    if(h00!=null&&GP.offsetHeight<h0-1)return sqApply(p,{ws:'',ls:'',og:ogk});
+    var t=inf.text,sp=(t.match(/ /g)||[]).length/inf.n,ch=t.replace(/[\s\u0591-\u05C7\u2060]/g,'').length/inf.n;
     if(sp<1)sp=1;if(ch<1)ch=1;
     var WSMAX=0.14*fs;   /* רוב ההצרה ברווחים, עד גבול שהמילים לא ייצמדו */
     for(var f=0.25;f<=1.0001;f+=0.25){
       var R=cap*f,ws=Math.min(R/sp,WSMAX),ls=Math.max(0,(R-ws*sp)/ch);
       GP.style.wordSpacing=(-ws).toFixed(3)+'px';GP.style.letterSpacing=ls?(-ls).toFixed(3)+'px':'';
-      if(GP.offsetHeight<h0-1){p.style.wordSpacing=GP.style.wordSpacing;p.style.letterSpacing=GP.style.letterSpacing;p.dataset.sq25=String(Math.round(f*25)/10);return true}}
+      if(GP.offsetHeight<h0-1)return sqApply(p,{ws:GP.style.wordSpacing,ls:GP.style.letterSpacing,sq:String(Math.round(f*25)/10),og:ogk})}
     return false}
   /* לבודק ההצעות של "שורה שהתארכה" (tools/overflow/overflow_gen.py): אותה מדידה ואותה הצרה כמו בהדפסה */
   /* אותו טיפול במילה בודדת בשורה אחרונה כמו בלולאת העימוד (דחיסה עדינה, ואם אינה מספיקה - רווח קשיח), לבודק ההצעות */
@@ -734,8 +741,10 @@
       /* איחוי שורה יתומה (כלל עימוד 4): בדיקה במקום, וניסיונות בסרגל; רק התוצאה נכתבת לפסקה */
       var tSq=performance.now();
       /* כלי 1 (פרומפט 41): הצרה עד 2.5% לפסקה שהשורה האחרונה שלה קצרה מספיק. לפני איחוי היתומה, ובמקומו */
-      if(QS.get('sq25')!=='0'){var W25=P_MEAS_PX();[].slice.call(f.querySelectorAll('.main p')).forEach(function(p){
-        if(p.textContent.trim().length>=12&&squeeze25(p,GM,GP,W25))R.sq25=(R.sq25||0)+1})}
+      if(QS.get('sq25')!=='0'){var W25=P_MEAS_PX();SQDEFER=[];
+        try{[].slice.call(f.querySelectorAll('.main p')).forEach(function(p){
+          if(p.textContent.trim().length>=12&&squeeze25(p,GM,GP,W25))R.sq25=(R.sq25||0)+1})}
+        finally{var sqq=SQDEFER;SQDEFER=null;sqq.forEach(function(fn){fn()})}}
       /* פרומפט 48 (תיקון 4, 16.11.2026): כותרת (נושא, ד"ה משנה) שתופסת יותר משורה: קודם הצרה עד 2.5% (רווחים ואותיות, בלי לגעת בטקסט);
          ואם אינה מספיקה - שבירה במקום הנכון: אחרי מקף או נקודתיים, כשכל חלק נכנס בשורה אחת; ואחרת שורות מאוזנות (לא מילה בודדת בשנייה).
          מה שנשאר ביותר משורה נרשם בלוח התקלות, להצעת ניסוח קצר יותר בידי המנהל */

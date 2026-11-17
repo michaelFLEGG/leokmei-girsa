@@ -4047,7 +4047,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     [...root.querySelectorAll('*')].forEach(n=>{
       if(!n.isConnected||(n.closest&&n.closest('.srcb,.mlabel,.bkx')))return;
       const tag=n.tagName.toLowerCase();
-      const lt=(tag==='span'&&n.classList.contains('ltab'));
+      const lt=(tag==='span'&&(n.classList.contains('ltab')||n.classList.contains('altab')));
       if(!lt)n.removeAttribute('style');
       const ok=lt||(tag==='i'&&n.classList.length===1&&OKCLS.indexOf(n.className)>-1)||
                (tag==='b'&&!n.className);
@@ -6552,6 +6552,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* ---- בטעינה: המנהל מושך את התור ואת העריכות; הלומד מקבל את מה
      שהתקבל ---- */
   async function netInit(force){
+    /* 17.11.2026: המסגרת של מצב הדפוס מקבלת את הנתונים מדף המנהל (כולל כל העריכות). עד כאן גם היא משכה מן השרת את
+       כל רשימת העריכות של המסכת (מאות קילובייט) והחילה אותה שוב - עבודה כפולה בכל פתיחה של מצב הדפוס */
+    if(PRNRO&&new URLSearchParams(location.search).get('pm')==='1')return;
     if(isAdmin()&&admKey()){
       await syncNow();window.__LGSYNC=Date.now();queueLoad();   /* פרומפט 36: בדיקת ההתיישנות של סכם ממתינה לזה */
       clearInterval(QQTIMER);QQTIMER=setInterval(queueLoad,60000);

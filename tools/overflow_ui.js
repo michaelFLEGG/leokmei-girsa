@@ -96,9 +96,23 @@
     else if(s.kind==='move')h+='<div class="ovl">'+ovDiff(it.html,s.html)+'</div><div class="ovl ovnb">'+ovDiff(s.targetOrig||'',s.targetHtml)+'</div>';
     else h+='<div class="ovl">'+ovDiff(it.html,s.html)+'</div>';
     return h}
+  /* 17.11.2026 (מיכאל, דחוף): דילוג על השורה הנוכחית בלי להכריע עליה - "הבא ›" בחלונית, או Tab.
+     השורה נשארת פתוחה (לא "השאר"), והחלונית עוברת מיד לשורה הבאה שטרם הוכרעה בסדר הדף. Shift+Tab - לקודמת.
+     במצב דפוס, מצב הדפוס קובע מהו "הבא" (window.ovSkipFn, נקבע ב-pmOv). */
+  function ovSkip(dir){
+    const it=OVS.cur,f=window.ovSkipFn;
+    if(f&&dir<0){flash('במצב דפוס: Tab או F4 לשורה הבאה');return}
+    if(f){ovClose();try{f()}catch(e){}return}
+    const list=OVS.items.filter(x=>x!==it&&!ovDone(x)&&x._p&&x._p.isConnected);
+    if(!list.length){ovClose();flash('אין שורות נוספות שטרם הוכרעו');return}
+    const after=x=>it&&it._p&&it._p.isConnected?!!(it._p.compareDocumentPosition(x._p)&Node.DOCUMENT_POSITION_FOLLOWING)||(x._p===it._p&&OVS.items.indexOf(x)>OVS.items.indexOf(it)):true;
+    let nx;
+    if(dir>0)nx=list.find(after)||list[0];
+    else{const bef=list.filter(x=>!after(x));nx=bef.length?bef[bef.length-1]:list[list.length-1]}
+    ovClose();nx._p.scrollIntoView({block:'center'});setTimeout(()=>ovOpen(nx),200)}
   function ovOpen(it){
-    ovClose();OVS.cur=it;OVS.alt=0;
-    const d=document.createElement('div');d.id='ovpop';d.className='ovpop';d.setAttribute('role','dialog');d.setAttribute('dir','rtl');
+    ovClose();OVS.cur=it;OVS.alt=0;window.ovSkipFn=null;
+    const d=document.createElement('div');d.id='ovpop';d.className='ovpop';d.setAttribute('role','dialog');d.setAttribute('dir','rtl');d.tabIndex=-1;d.style.outline='none';
     document.body.appendChild(d);OVS.pop=d;ovDraw();
     const r=it._p.getBoundingClientRect();
     d.style.top=Math.max(54,Math.min(innerHeight-d.offsetHeight-10,r.bottom+6))+'px';
@@ -113,9 +127,9 @@
       '<div class="ovbody">'+ovSugHtml(it,s)+'</div>'+
       '<div class="ovbtns">'+
       (s?'<button data-a="ok" class="ovp">קבל</button>':'')+'<button data-a="edit">ערוך</button>'+
-      (more?'<button data-a="alt">הצעה אחרת</button>':'')+'<button data-a="leave">השאר</button><button data-a="x">בטל</button>'+
+      (more?'<button data-a="alt">הצעה אחרת</button>':'')+'<button data-a="leave">השאר</button><button data-a="prev" title="השורה הקודמת (Shift+Tab)">‹ הקודם</button><button data-a="skip" class="ovskip" title="דלג על השורה הזו בלי להכריע - לשורה הבאה (Tab)">הבא ›</button><button data-a="x">בטל</button>'+
       (type&&nType>1?'<button data-a="all" class="ovall">קבל את כל ההצעות מהסוג הזה במסכת ('+nType+')</button>':'')+'</div>'+
-      '<div class="ovkeys">Enter קבל · Esc בטל</div>';
+      '<div class="ovkeys">Enter קבל · Tab הבא · Shift+Tab הקודם · Esc בטל</div>';
     d.querySelectorAll('button').forEach(b=>{b.addEventListener('mousedown',e=>e.preventDefault());b.onclick=()=>ovAct(b.dataset.a)})}
   function ovClose(){if(OVS.pop){OVS.pop.remove();OVS.pop=null}OVS.cur=null}
   function ovSend(it,d,extra){
@@ -127,6 +141,8 @@
   async function ovAct(a){
     const it=OVS.cur;if(!it)return;
     if(a==='x'){ovClose();return}
+    if(a==='skip'){ovSkip(1);return}
+    if(a==='prev'){ovSkip(-1);return}
     if(a==='alt'){ovSend(it,'todo',{rs:'other'});OVS.alt=(OVS.alt+1)%it.sug.length;ovDraw();return}
     if(a==='leave'){ovSend(it,'no');ovClose();ovAfter();flash('הושאר כמות שהוא');return}
     if(a==='edit'){ovEditBox(it);return}
@@ -228,6 +244,7 @@
   document.addEventListener('keydown',e=>{
     if(!OVS.pop||e.target.closest&&e.target.closest('.ovta'))return;
     if(e.key==='Escape'){e.preventDefault();e.stopPropagation();ovClose()}
+    else if(e.key==='Tab'){e.preventDefault();e.stopPropagation();ovSkip(e.shiftKey?-1:1)}
     else if(e.key==='Enter'&&!e.ctrlKey&&!e.shiftKey){const it=OVS.cur;if(it&&it.sug[OVS.alt]){e.preventDefault();e.stopPropagation();ovAct('ok')}}},true);
   (function(){const s=document.createElement('style');s.textContent=
     '::highlight(ovline){text-decoration:underline wavy #c62828;text-decoration-thickness:1px;text-underline-offset:3px}'+
@@ -239,7 +256,7 @@
     '.ovsplit .ovl{border-right:2px solid #c9bfa8;padding-right:6px;margin:2px 0}.ovside{font-weight:700;color:#2e5b8a;margin-left:6px;font-size:.85em}'+
     '.ovdel{color:#9a3b3b}.ovadd{color:#1f6b3a}.ovnone{color:#5a5044}'+
     '.ovbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.ovbtns button{font:inherit;font-size:14px;border:1px solid #c9bfa8;background:#f7f4ee;border-radius:5px;padding:3px 12px;cursor:pointer}'+
-    '.ovbtns button.ovp{background:#2e7d3c;border-color:#2e7d3c;color:#fff}.ovbtns button.ovall{flex-basis:100%}'+
+    '.ovbtns button.ovp{background:#2e7d3c;border-color:#2e7d3c;color:#fff}.ovbtns button.ovskip{border-color:#2e5b8a;color:#2e5b8a;font-weight:700}.ovbtns button.ovall{flex-basis:100%}'+
     '.ovkeys{font-size:11px;color:#8a7d66;margin-top:4px}.ovta{width:100%;font:17px/1.6 Frank,serif;box-sizing:border-box}'+
     '@media print{.ovpop,.ovtop{display:none!important}}';document.head.appendChild(s)})();
   setTimeout(()=>{ovLoad().catch(()=>{})},2600);

@@ -502,7 +502,7 @@
   function pmOv(it){
     try{if(!it._p||!it._p.isConnected){if(typeof ovMark==='function')ovMark()}
       if(typeof ovOpen!=='function'||!it._p){pmMsg('ההצעות לשורה זו אינן זמינות כרגע');return}
-      ovOpen(it);var d=document.getElementById('ovpop');if(d){d.style.zIndex=71;d.style.top='60px';d.style.left='12px'}}catch(e){pmMsg('ההצעות לא נפתחו: '+(e.message||e))}}
+      ovOpen(it);window.ovSkipFn=pmNext;var d=document.getElementById('ovpop');if(d){d.style.zIndex=71;d.style.top='60px';d.style.left='12px'}}catch(e){pmMsg('ההצעות לא נפתחו: '+(e.message||e))}}
   function pmSide(){
     var s=document.getElementById('pmside');if(!s||!s.classList.contains('on'))return;
     var h='<h4>לבדוק אחר כך</h4>';
@@ -1106,6 +1106,8 @@
       doc.execCommand('insertText',false,t)},true);
     doc.addEventListener('copy',pmSideCopy,true);doc.addEventListener('cut',pmSideCopy,true);
     doc.addEventListener('keydown',function(e){
+      /* חלונית "שורה שהתארכה" פתוחה והמיקוד נשאר בעמוד: Tab מדלג לשורה הבאה (Shift+Tab לקודמת) */
+      if(e.key==='Tab'&&document.getElementById('ovpop')&&typeof ovAct==='function'){e.preventDefault();e.stopPropagation();ovAct(e.shiftKey?'prev':'skip');return}
       if(S.busy&&!S.editing){
         /* בזמן השלמת העימוד: הקלדה נשמרת, ונכנסת לשורה כשהעימוד מסתיים. הקלדה תמיד קודמת */
         if(e.key.length===1&&!e.ctrlKey&&!e.altKey&&!e.metaKey){e.preventDefault();S.kbuf=(S.kbuf||'')+e.key;return}

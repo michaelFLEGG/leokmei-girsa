@@ -10,6 +10,12 @@
      Enter קבל · Delete דחה · E ערוך (Enter מסיים ומקבל) · חצים הבא/קודם · Ctrl+ז ביטול ההכרעה האחרונה.
      הקבלה עוברת ב-skmApply - אותן רשומות שהעורך כותב, ומשם לפרסום ולוורד כמו כל עריכה. */
   const SKP={jobs:[],all:[],rev:null,tm:null};
+  /* 17.11.2026 (מיכאל, ברכות): "סקור סכם" הופיע כל הזמן, ובלחיצה - "אין מה לסקור". עבודה "מוכנה" שאין בה אף קטע
+     פתוח שאפשר לאתר בדף (הכל הוכרע, או שהקטעים התיישנו ונשלחו לסבב חדש) אינה מוצגת עוד כמוכנה: לא "סקור סכם",
+     לא בראש הפרק ולא ב"מה מוכן לי". נבדק ברקע בכל טעינה (skpBgCheck) ובכל פתיחה שנכשלה, ונזכר במכשיר. */
+  const SKP_EMPTY=(()=>{try{return JSON.parse(localStorage.getItem('lg-skp-empty')||'{}')||{}}catch(e){return {}}})();
+  function skpEmptySet(jid,on){if(on)SKP_EMPTY[jid]=1;else delete SKP_EMPTY[jid];try{localStorage.setItem('lg-skp-empty',JSON.stringify(SKP_EMPTY))}catch(e){}}
+  function skpEmptyApply(){[SKP.all,SKP.jobs].forEach(a=>a.forEach(x=>{if(x.st==='ready'&&SKP_EMPTY[x.jid]){x.st='done';x._empty=1}}))}
   const SKP_H0=location.hash;   /* הקישור הישיר (#skp=...) נקרא לפני שהדף כותב את מספר הפרק בכתובת */
   const SKP_ST={wait:'ממתין לסכם',sent:'ממתין לסכם',work:'בעבודה',ready:'מוכן לסקירה',done:'נסקר'};
   const skpA=t=>esc(String(t||'')).replace(/"/g,'&quot;');
@@ -49,6 +55,7 @@
   async function skpLoad(){
     if(!skpOK())return;
     try{const j=await api('/sakem/jobs');SKP.all=j.items||[];SKP.jobs=SKP.all.filter(x=>x.slug===SLUG)}catch(e){return}
+    skpEmptyApply();
     skpDraw();
     skpBgCheck();
     clearTimeout(SKP.tm);
@@ -171,6 +178,7 @@
        קודם ההודעה אמרה "כל הקטעים כבר הוכרעו" אף שרובם רק דולגו, והפרק נשאר ב"מה מוכן לי" בלי שאפשר לסקור. */
     const nBad=R.items.filter(it=>!R.dec[it.iid]&&R.bad.has(it.iid)).length;
     if(R.i<0){
+      skpEmptySet(jid,1);
       if(nBad)flash(nBad+' קטעים בפרק לא נמצאו בדף, כי הנוסח השתנה מאז שנכתבו, וסבב חדש עליהם לא הוזמן. הם לא הוכרעו, וייבדקו שוב בפתיחה הבאה'+(R.stale?' ('+R.stale+' אחרים נשלחו לסבב על הנוסח החי)':''));
       else if(R.sup)flash('ההצעות בפרק הזה נכתבו על נוסח ישן. יש לו כבר סבב מחודש על הנוסח החי ('+R.sup+'), ולכן הפרק הישן יצא מן התור');
       else flash(R.stale?'כל הקטעים שנותרו התיישנו ונשלחו לסבב על הנוסח החי ('+R.stale+')':'כל הקטעים בפרק הזה כבר הוכרעו');
@@ -241,15 +249,20 @@
     for(let k=0;k<30&&!window.__LGSYNC;k++)await new Promise(r=>setTimeout(r,2000));
     if(!window.__LGSYNC||SKP.rev)return;
     let any=0;
-    for(const x of SKP.jobs.filter(y=>y.st==='ready'&&!SKP_BG.has(y.jid))){
+    let chg=0;
+    for(const x of SKP.jobs.filter(y=>(y.st==='ready'||y._empty)&&!SKP_BG.has(y.jid))){
       SKP_BG.add(x.jid);
       try{const j=await api('/sakem/out?jid='+encodeURIComponent(x.jid));
         const R={jid:x.jid,job:j.job||x,out:j.out,items:(j.out.items||[]).filter(y=>!y.nochange),dec:j.dec||{},cnt:{accept:0,reject:0,edit:0},bad:new Set()};
         try{skpRelocate(R)}catch(e){}
         const n=await skpRedo(R);
-        if(n){any+=n;toast(esc(x.title||x.jid)+': '+n+' קטעים התיישנו ונשלחו לסבב חדש של סכם על הנוסח החי',6000)}}
+        if(n){any+=n;toast(esc(x.title||x.jid)+': '+n+' קטעים התיישנו ונשלחו לסבב חדש של סכם על הנוסח החי',6000)}
+        /* קטעים פתוחים שאפשר באמת לסקור: לא הוכרעו, ומאותרים בדף */
+        const {list:lost}=skpStaleList(R),open=R.items.filter(it=>!R.dec[it.iid]).length-lost.length;
+        if(open<=0&&!SKP_EMPTY[x.jid]){skpEmptySet(x.jid,1);chg=1}
+        else if(open>0&&SKP_EMPTY[x.jid]){skpEmptySet(x.jid,0);chg=1}}
       catch(e){}}
-    if(any)setTimeout(skpLoad,1500)}
+    if(any||chg)setTimeout(skpLoad,any?1500:0)}
   /* 1.11.2026: מזהה יחידה הוא מספר הפסקה בוורד, וכל עריכה בוורד שלפני הפרק מזיזה אותו. הצעה שנכתבה
      לפני העריכה הצביעה על יחידות אחרות, ולכן הופיעה במקום הלא נכון וסורבה ("האלמנטים הנעולים אינם
      במקומם"). כאן כל הצעה מאותרת מחדש לפי תוכנה: אותיות הנוסח שההצעה נכתבה עליו מול אותיות היחידות שבדף.

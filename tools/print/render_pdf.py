@@ -90,7 +90,8 @@ def main():
         q['holefix'] = '0'
     # פרומפט 49 חלק 0: יש מרשם של הכרעות "שורה שהתארכה" למסכת - רושמים את השורות כדי לבדוק אותן בסוף
     keep_fp = os.path.join(ROOT, 'data', 'overflow', 'keep', a.slug + '.json')
-    if a.lines or os.path.exists(keep_fp):
+    auto_fp = os.path.join(ROOT, 'data', 'overflow', 'keep', a.slug + '.auto.json')   # פרומפט 53: נעילה אוטומטית
+    if a.lines or os.path.exists(keep_fp) or os.path.exists(auto_fp):
         q['lines'] = '1'
     if a.sq25 == '0':
         q['sq25'] = '0'
@@ -220,6 +221,11 @@ def main():
         sys.path.insert(0, os.path.join(ROOT, 'tools', 'overflow'))
         import keep as KEEP
         kb = KEEP.check(a.slug, a.report or (a.out + '.json'), partial=not a.all)
+    # פרומפט 53: כל שורה שננעלה אוטומטית (נכנסה לשורה אחת) - עדיין בשורה אחת. שבירה עוצרת את המסירה
+    if os.path.exists(auto_fp) and a.profile in ('a4', 'a4-large', 'b5', 'b5-large'):
+        sys.path.insert(0, os.path.join(ROOT, 'tools', 'overflow'))
+        import auto as AUTO
+        kb += AUTO.check(a.slug, a.report or (a.out + '.json'), partial=not a.all)
     # פרומפט 48: סוף פרק לא מאוזן עוצר את המסירה, כמו חפיפה
     if ov or bd or ce or oo or kb:
         sys.exit(3)

@@ -487,6 +487,8 @@
     let p,t=text;
     if(it.kind==='missing'){const at=skpAnchor(it);if(!at)throw new Error('המקום לא נמצא');const o=skmInter([at]);p={id:SKP.rev.jid+':'+it.iid,ids:[at.u.id],orig:o};t=o+'\n'+it.text}
     else p={id:SKP.rev.jid+':'+it.iid,ids:it.ids,orig:orig||it.orig};
+    /* פרומפט 53: "החלף בהצעה" על קטע שנערך מאז - ההצעה נכתבה על it.orig, והנעילה בודקת מולו (skmApply) */
+    if(orig&&orig!==it.orig)p.stale=it.orig;
     /* פרומפט 27: עיטור ליד כותרת שההצעה מוחקת - יוצא מן המקור ומן ההצעה, ונמחק בהחלה */
     const hd=SKC.hatzDel(p.orig,t);
     /* 10.11.2026: עיטור שההצעה מוחקת אך הוא יושב מחוץ לגבולות הקטע (צמוד מלמעלה או מלמטה) - לא חוסמים

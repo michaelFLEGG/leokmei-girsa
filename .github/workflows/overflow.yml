@@ -3,8 +3,13 @@ name: שורה שהתארכה - מחולל הרשימה וההצעות
 # בשני הפרופילים (a4, a4-large), כותבים את רשימת השורות הגולשות ואת ההצעות שנבדקו במנוע, ולומדים מן ההכרעות.
 # הרשימה נקראת בדף במצב מנהל. אינו בונה ואינו מפרסם את האתר.
 # פרומפט 51 (16.11.2026): מושבת (בלי מחיקה). עורכים רק באתר, העריכות מוגשות ב-/live, והקיפול הלילי (fold.yml) מכניס אותן לספר.
-# להפעלה ידנית בלבד. להחזרה: להחזיר את הטריגרים מהיסטוריית הקובץ.
+# פרומפט 53 (17.11.2026): חוזר לרוץ אחרי כל פרסום, כי זה הלב של "מה שנכנס נשאר" - הוא אינו סנכרון לוורד:
+# כותב רק את data/overflow (המרשם, היומן וההצעות) ושולח רשומות עריכה לשכבה החיה, כמו העורך. משם /live והקיפול.
+# מיכאל: "אני לא מעוניין לאשר פיזית איחויים. זה צריך להיות אוטומטית. אם זה נכנס - שיישאר כך."
 on:
+  workflow_run:
+    workflows: ["השומר - בנייה ופרסום מקובצי הוורד"]
+    types: [completed]
   workflow_dispatch:
 permissions:
   contents: write
@@ -35,6 +40,23 @@ jobs:
             python tools/overflow/mirror_site.py --slug $s --out _work/mirror-$s
             python tools/overflow/overflow_gen.py --slug $s --site _work/mirror-$s --tmp _work/overflow-$s
           done
+      # פרומפט 53: הנעילה (כל שורה שבשני הגדלים בשורה אחת) והבודק - שורה נעולה שנשברה עוצרת בקול
+      - name: נעילה אוטומטית
+        run: |
+          bad=0
+          for s in $(python -c "import json;print(' '.join(json.load(open('data/overflow/config.json'))['slugs']))"); do
+            python tools/overflow/auto.py lock --slug $s --large _work/overflow-$s/$s-a4-large.pdf.json --a4 _work/overflow-$s/$s-a4.pdf.json || bad=1
+          done
+          echo "LOCKBAD=$bad" >> $GITHUB_ENV
+      # פרומפט 53: החלה אוטומטית - הקטן ביותר שמספיק (כלי 2, כלי 4, כלי 3 מזערי), נבדק במנוע בשני הגדלים
+      - name: החלה אוטומטית
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          for s in $(python -c "import json;print(' '.join(json.load(open('data/overflow/config.json'))['slugs']))"); do
+            python tools/overflow/auto.py pick --slug $s --site _work/mirror-$s --commit
+            python tools/overflow/auto.py push --slug $s
+          done
       - name: שמירה בריפו
         run: |
           git config user.name "leokmei-overflow"
@@ -49,3 +71,8 @@ jobs:
             sleep 5
           done
           if [ "$ok" != 1 ]; then echo "::error::הדחיפה לריפו נכשלה שלוש פעמים"; exit 1; fi
+      - name: שורה נעולה נשברה
+        if: env.LOCKBAD == '1'
+        run: |
+          echo "::error::שורה שננעלה (נכנסה לשורה אחת) נשברה. פרטים בשלב 'נעילה אוטומטית'"
+          exit 1

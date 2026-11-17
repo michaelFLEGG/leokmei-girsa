@@ -570,6 +570,9 @@
     E.p.removeAttribute('contenteditable');E.p.classList.remove('pmed');
     var el=pmEnsureEl(E);
     if(el&&E.touched){try{if(typeof capture==='function')capture(el)}catch(e){}}
+    /* פרומפט 53: שורה שמיכאל תיקן כאן ונכנסה לשורה אחת - ננעלת מיד (המרשם הקבוע מתעדכן בסבב הבא מן הנוסח החי) */
+    if(E.touched){try{if(pmLines(E.p)===1){var kn=String(E.p.textContent||'').replace(/\u2060\d+/g,'').replace(/[^\u05d0-\u05ea]/g,'');
+      if(kn){window.__OVLOCK=window.__OVLOCK||new Set();window.__OVLOCK.add(kn)}}}catch(e){}}
     if(E.touched)pmRender([E.u]);else E.p.innerHTML=E.orig;
     pmStat('',0)}
   function pmCommit(cancel){pmLeave()}

@@ -260,9 +260,79 @@
     OVS.keepLost=lost;
     if(lost.length)toast('שורה שהתארכה: '+lost.length+' הכרעות שלך אינן עוד בדף כפי שהוכרעו: '+lost.slice(0,4).join(' | ')+(lost.length>4?' ...':''),12000)}
   setTimeout(()=>{ovKeepCheck().catch(()=>{})},9000);
+  /* =================== פרומפט 53 (17.11.2026): איחוי אוטומטי - "מה שנכנס נשאר" ===================
+     המרשם האוטומטי (keep/<מסכת>.auto.json) - כל שורה שבהדפסה בשורה אחת - נטען ל-window.__OVLOCK, ו-skmApply
+     חוסם בו קבלת הצעה שנכתבה על נוסח ישן. היומן (auto/<מסכת>.json) - מה שהוחל לבד: כפתור בסרגל פותח רשימה
+     (דף, לפני, אחרי, כלי) עם "בטל" אחד לכל שורה. בטל מחזיר את הנוסח ונרשם כ"השאר", כדי שלא יוחל שוב.
+     ליד שורה שהוחלה בשבוע האחרון - נקודה זעירה בשוליים, בלי רקע מאחורי הטקסט. */
+  const OVA={log:[],undone:new Set()};
+  async function ovAutoLoad(){
+    if(!ovOK())return;
+    const get=async f=>{try{const r=await fetch(OV_RAW+f+'?t='+Math.floor(Date.now()/300000),{cache:'no-store'});if(r.ok)return await r.json()}catch(e){}return null};
+    const lk=await get('keep/'+SLUG+'.auto.json');
+    if(lk&&lk.items)window.__OVLOCK=new Set(Object.values(lk.items).map(x=>String(x.k||'').replace(/[0-9]/g,'')).filter(Boolean));
+    const lg=await get('auto/'+SLUG+'.json');
+    OVA.log=((lg&&lg.log)||[]).filter(e=>!e.undone);
+    /* הכרעות "השאר" שנרשמו מן היומן (rs=undo) - לא מוצגות עוד, גם לפני שהמחולל רץ */
+    Object.keys(OVS.dec||{}).forEach(id=>{const d=OVS.dec[id];if(d&&d.rs==='undo')OVA.undone.add(id)});
+    ovAutoMark();ovAutoBar()}
+  function ovAutoLive(){return OVA.log.filter(e=>!OVA.undone.has(e.id))}
+  function ovAutoParas(e){
+    const row=document.getElementById('u'+String(e.key||'').replace(/^u(\d+)\..*$/,'$1'));if(!row)return [];
+    const ps=[...row.querySelectorAll(':scope > .main > p')];
+    const want=(e.kind==='split'?String(e.after).split(' / '):[e.after]).map(ovNorm);
+    return ps.filter(p=>want.indexOf(ovNorm(ovPText(p)))>-1)}
+  function ovAutoMark(){
+    document.querySelectorAll('#flow p.ovauto').forEach(p=>p.classList.remove('ovauto'));
+    const wk=Date.now()-7*864e5;
+    ovAutoLive().forEach(e=>{const t=Date.parse(String(e.at||'').replace(' ','T'));if(!(t>wk))return;
+      ovAutoParas(e).forEach(p=>{p.classList.add('ovauto');p.title='הוחל אוטומטית ('+(e.toolName||'')+') - אפשר לבטל ברשימת האיחויים האוטומטיים'})})}
+  function ovAutoBar(){
+    const n=ovAutoLive().length;let b=$('#ovauto');
+    if(!n){if(b)b.remove();return}
+    if(!b){b=document.createElement('button');b.id='ovauto';b.type='button';b.className='skpbtn skptop ovtop';
+      b.addEventListener('mousedown',e=>e.preventDefault());b.onclick=e=>{e.stopPropagation();ovAutoPanel()};
+      const after=$('#ovnext')||$('#skpnext')||$('#skpbtn')||$('#peresel');if(after)after.after(b);else ($('#bar')||document.body).appendChild(b)}
+    b.textContent='⤶ '+n;b.title='איחויים אוטומטיים: '+n+' שורות שנכנסו לשורה אחת בלי אישור. לחיצה פותחת את הרשימה, עם "בטל" לכל שורה';
+    b.setAttribute('aria-label','איחויים אוטומטיים, '+n);
+    try{if(typeof barH==='function')barH()}catch(e){}}
+  function ovAutoPanel(){
+    ovClose();
+    const d=document.createElement('div');d.id='ovpop';d.className='ovpop ovapanel';d.setAttribute('role','dialog');d.setAttribute('dir','rtl');
+    document.body.appendChild(d);OVS.pop=d;
+    const L=ovAutoLive();
+    d.innerHTML='<div class="ovhd" style="color:#2b2620">איחויים אוטומטיים · '+L.length+'<span class="ovdaf"><button data-x="1">✕</button></span></div>'+
+      '<div class="ovalist">'+L.map((e,i)=>'<div class="ovarow"><div class="ovameta">'+ge(e.daf||'')+' · '+ge(e.toolName||'')+(e.why?' · '+ge(e.why):'')+'</div>'+
+        '<div class="ovl">'+(e.kind==='split'?ge(e.before)+'<div class="ovnb">↓ '+ge(String(e.after).split(' / ').join(' ⏎ '))+'</div>':ovDiff(e.before,e.after))+'</div>'+
+        '<button data-i="'+i+'">בטל</button></div>').join('')+'</div>';
+    d.style.top='60px';d.style.left=Math.max(8,(innerWidth-d.offsetWidth)/2)+'px';
+    d.querySelector('[data-x]').onclick=()=>ovClose();
+    d.querySelectorAll('.ovarow button').forEach(b=>{b.addEventListener('mousedown',e=>e.preventDefault());b.onclick=()=>{
+      const e=L[+b.dataset.i];try{ovAutoUndo(e);b.disabled=true;b.textContent='בוטל';flash('הנוסח הוחזר, ולא יוחל שוב')}catch(er){flash('לא בוטל: '+(er.message||er))}}})}
+  /* בטל: אותו מסלול כמו כל עריכה (ovApply -> skmApply). טקסט: מחליף בחזרה. חיתוך: מאחה את שני החלקים לנוסח הקודם */
+  function ovAutoUndo(e){
+    const u=+String(e.key).replace(/^u(\d+)\..*$/,'$1'),ps=ovAutoParas(e);
+    if(!ps.length)throw new Error('השורה כבר אינה בדף כפי שהוחלה (נערכה מאז)');
+    const all=[...document.getElementById('u'+u).querySelectorAll(':scope > .main > p')];
+    if(e.kind==='split'){
+      const parts=String(e.after).split(' / '),i1=all.findIndex(p=>ovNorm(ovPText(p))===ovNorm(parts[0]));
+      if(i1<0||!all[i1+1]||ovNorm(ovPText(all[i1+1]))!==ovNorm(parts[1]))throw new Error('שני החלקים אינם עוד זה אחר זה');
+      ovApply({u,li:i1+1,html:ge(parts[0])},{kind:'join',target:'next',html:e.beforeH,targetOrig:ge(parts[1])})}
+    else{const i1=all.indexOf(ps[0]);ovApply({u,li:i1+1,html:e.afterH},{kind:'replace',html:e.beforeH})}
+    OVA.undone.add(e.id);
+    const rec={id:e.id,d:'no',rs:'undo',txt:String(e.before).slice(0,1000),det:'auto',kind:'ov'+e.tool+':undo',sug:String(e.after).slice(0,1000),t:Date.now()};
+    OVS.dec[e.id]=rec;
+    api('/bakara/dec',{method:'POST',body:JSON.stringify({slug:'ov-'+SLUG,items:[rec]})}).catch(er=>toast('הביטול לא נשמר בשרת: '+(er.message||er),5000));
+    ovAutoMark();ovAutoBar()}
+  setTimeout(()=>{(async()=>{for(let i=0;i<20&&!OVS.loaded;i++)await new Promise(r=>setTimeout(r,500));await ovAutoLoad()})().catch(()=>{})},4000);
+  (function(){const s=document.createElement('style');s.textContent=
+    '#flow .main p.ovauto{position:relative}#flow .main p.ovauto::after{content:"";position:absolute;right:-9px;top:.7em;width:3px;height:3px;border-radius:50%;background:#b39b62;pointer-events:none}'+
+    '.ovapanel{max-height:72vh;overflow:auto;width:min(620px,94vw)}.ovarow{border-top:1px solid #e6dfcf;padding:6px 0;display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}'+
+    '.ovarow .ovl{flex:1 1 80%}.ovameta{flex-basis:100%;font-size:12px;color:#8a7d66}.ovarow button,.ovapanel .ovdaf button{font:inherit;font-size:13px;border:1px solid #c9bfa8;background:#f7f4ee;border-radius:5px;padding:1px 10px;cursor:pointer}'+
+    '@media print{#flow .main p.ovauto::after{display:none}}';document.head.appendChild(s)})();
   /* אחרי פרסום, עריכה או מעבר עמוד - הסימון מחושב מחדש (שורה שתוקנה אינה מסומנת עוד) */
   document.addEventListener('input',()=>{clearTimeout(OVS.ti);OVS.ti=setTimeout(()=>{if(OVS.items.length){ovMark();ovBar()}},1200)},true);
   /* הדף נפרס בהדרגה (הזנב נטען בגלילה): שורות שנוספו מסומנות כשהן מגיעות */
   setTimeout(()=>{const f=document.getElementById('flow');if(!f||typeof MutationObserver==='undefined')return;
     new MutationObserver(()=>{if(!OVS.items.length||OVS.pop)return;clearTimeout(OVS.tm);OVS.tm=setTimeout(()=>{ovMark();ovBar()},700)}).observe(f,{childList:true})},3000);
-  window.lkOverflow={load:ovLoad,mark:ovMark,next:ovNext,keepCheck:ovKeepCheck,state:()=>({items:OVS.items.length,left:ovLeft(),shown:OVS.shown||0,keepLost:OVS.keepLost||null})};
+  window.lkOverflow={/* לבדיקות קבלה (פרומפט 53) */_apply:(it,z)=>ovApply(it,z),_skm:(p,t)=>skmApply(p,t),_inter:id=>skmInter(skmUnits([id])),_ed:()=>ED.slice(-6),auto:()=>({log:ovAutoLive().length,lock:window.__OVLOCK?window.__OVLOCK.size:0}),autoLoad:ovAutoLoad,autoUndo:ovAutoUndo,load:ovLoad,mark:ovMark,next:ovNext,keepCheck:ovKeepCheck,state:()=>({items:OVS.items.length,left:ovLeft(),shown:OVS.shown||0,keepLost:OVS.keepLost||null})};

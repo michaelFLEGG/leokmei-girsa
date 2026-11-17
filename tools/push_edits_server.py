@@ -22,6 +22,16 @@ def main():
     bad = 0
     # פרומפט 49 חלק 0 (17.11.2026): "keep:<מסכת>" - רק רשומות השחזור של מרשם "שורה שהתארכה"
     # (data/overflow/keep/<מסכת>.json), בלי שאר המאגר: שכבת המאגר עשויה להחזיק עריכות שנמחקו בשרת בכוונה.
+    # פרומפט 53: "auto:<מסכת>" - רשומות האיחוי האוטומטי שממתינות (data/overflow/auto/<מסכת>.json)
+    autos = [s[5:] for s in slugs if s.startswith('auto:')]
+    if autos:
+        sys.path.insert(0, os.path.join(HERE, 'tools', 'overflow'))
+        import auto as AUTO
+        for slug in autos:
+            bad += AUTO.push(slug)
+        slugs = [s for s in slugs if not s.startswith('auto:')]
+        if not slugs:
+            sys.exit(1 if bad else 0)
     keeps = [s[5:] for s in slugs if s.startswith('keep:')]
     if keeps:
         sys.path.insert(0, os.path.join(HERE, 'tools', 'overflow'))

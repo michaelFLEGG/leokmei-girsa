@@ -531,6 +531,21 @@
   function skmApply(p,newText){
     let os=skmUnits(p.ids);
     if(!skmSame(p.ids,p.orig))throw new Error('הקטע השתנה מאז ההצעה. בקש הצעה חדשה');
+    /* פרומפט 53 (17.11.2026): שורה שבהדפסה נכנסה לשורה אחת נעולה (data/overflow/keep/<מסכת>.auto.json ומרשם ההכרעות).
+       הצעה שנכתבה על נוסח ישן (p.stale - "החלף בהצעה" כשהקטע נערך מאז) אינה דורסת שורה נעולה שאינה בנוסח שעליו נכתבה.
+       כך נדרסו ב-16.11 שתי הכרעות של מיכאל (ד:, ח.). עריכה טרייה של מיכאל עצמו - עוברת תמיד. */
+    if(p.stale&&window.__OVLOCK&&window.__OVLOCK.size){
+      const KN=s=>String(s||'').replace(/<sup[^>]*>.*?<\/sup>/g,'').replace(/\[[^\]]*\]/g,'').replace(/<[^>]+>/g,'').replace(/&[a-z#0-9]+;/gi,'')
+        .replace(/\u2060\d+/g,'').replace(/[^א-ת]/g,'');
+      /* נוסח הביניים לשורות: כל שורת תוכן מנורמלת, לבדה וגם עם כותרת הצד שלפניה ([צד:X]), כי בנתונים הדובר עשוי להיות חלק מן השורה.
+         שורה נעולה "שלמה" רק אם היא שווה בדיוק לאחת מהן (הארכה של שורה אינה נחשבת שלמה) */
+      const RB=t=>{const S=new Set();let side='';String(t||'').split('\n').forEach(r=>{const m=/^\[צד:(.*)\]$/.exec(r);if(m){side=m[1];return}
+        if(/^\[/.test(r)){side='';return}
+        r=r.replace(/^\([א-ת]+\)\s*/,'').replace(/\[תוס':[^\]]*\]/g,'');let b=r;try{b=SKC.bare(SKC.i2h(r))}catch(e){}
+        S.add(KN(b));if(side)S.add(KN(side+' '+b));side=''});return S};
+      const nb=RB(newText),ob=RB(p.stale),hit=[];
+      os.forEach(o=>(o.u.l||[]).forEach(x=>{const k=KN(x&&x[1]);if(k&&window.__OVLOCK.has(k)&&!nb.has(k)&&!ob.has(k))hit.push(plain(x[1]).split(' ').slice(0,4).join(' '))}));
+      if(hit.length)throw new Error('ההצעה נכתבה על נוסח ישן, ושורה שנכנסה לשורה אחת בהדפסה ננעלה מאז ('+hit.join(' | ')+'). השורה לא נדרסה. אם תרצה, ערוך אותה ביד')}
     /* פרומפט 43 (15.11.2026): גבולות הקטע בדף - היחידה שלפניו והיחידה שאחריו - לבדיקה שאחרי ההחלה */
     const FU0=flatU(),i0=FU0.findIndex(o=>o.u===os[0].u),i1=FU0.findIndex(o=>o.u===os[os.length-1].u);
     /* היחידות הסמוכות נכללות בהשוואה: כותרת צד שנמחקה מצרפת את שורתה ליחידה שלפניה (כמו בעורך) */

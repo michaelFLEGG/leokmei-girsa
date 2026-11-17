@@ -74,7 +74,11 @@ def items_of(slug):
             if d.get('d') not in ('ok', 'edit') or d.get('id') in have or not (d.get('now') or '').strip():
                 continue
             lines = [x.strip() for x in d['now'].split(' / ')] if ':split' in (d.get('kind') or '') else [d['now'].strip()]
-            items.append({'id': d.get('id'), 'daf': '', 'kind': 'decision', 'lines': lines, 'src': 'הכרעה בשרת'})
+            it = {'id': d.get('id'), 'daf': '', 'kind': 'decision', 'lines': lines, 'src': 'הכרעה בשרת'}
+            # פרומפט 53: איחוי (כלי 5) מאחד שתי שורות לפסקה אחת - היא בשתי שורות לכל היותר, לא באחת
+            if ':join' in (d.get('kind') or ''):
+                it['maxn'] = 2
+            items.append(it)
     return items
 
 
@@ -99,7 +103,7 @@ def check(slug, report, partial=False):
                 # נכנסה לתוך פסקה אחרת: תקין רק אם הפסקה כולה בשורה אחת (חיתוך שאוחה בחזרה ונשבר = תקלה)
                 inside = [p for p in pl if norm(ln) and norm(ln) in norm(p.get('text'))]
                 st = 'חסרה' if not inside else 'בתוך פסקה אחרת (%s, %d שורות)' % (inside[0].get('daf'), inside[0].get('n'))
-                okin = bool(inside) and min(p.get('n') or 0 for p in inside) == 1
+                okin = bool(inside) and min(p.get('n') or 0 for p in inside) <= (it.get('maxn') or 1)
                 if partial and not inside:
                     print('  - %s | %s | מחוץ לטווח שהודפס' % (it.get('daf'), ln[:60]))
                     continue
@@ -108,10 +112,10 @@ def check(slug, report, partial=False):
                 print('  %s %s | %s | %s' % ('V' if okin else 'X', it.get('daf'), ln[:60], st))
                 continue
             n = min(p.get('n') or 0 for p in hits)
-            ok = n == 1
+            ok = n <= (it.get('maxn') or 1)
             if not ok:
                 bad += 1
-            print('  %s %s | %s | %s' % ('V' if ok else 'X', it.get('daf'), ln[:60], 'שורה אחת' if ok else '%d שורות' % n))
+            print('  %s %s | %s | %s' % ('V' if ok else 'X', it.get('daf'), ln[:60], ('שורה אחת' if n == 1 else '%d שורות (איחוי)' % n) if ok else '%d שורות' % n))
     print('תקלות: %d' % bad)
     return 1 if bad else 0
 

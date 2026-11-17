@@ -518,6 +518,45 @@ def main():
             parts = s['parts'] if s['kind'] == 'split' else [s['html']]
             cands.append({'id': cid, 'mc': it['mc'], 'pc': it['cls'], 'parts': [lg_look(x) for x in parts]})
             meta[cid] = (it, s)
+    # ---- כלי 4 מכני (פרומפט 53, 17.11.2026): חיתוך במקום טבעי, בלי שינוי מילה ----
+    # מיכאל: "אם זה נכנס - שיישאר כך", בלי אישור ידני. עד היום חיתוך הוצע רק כשהעובד כתב אותו. כאן הוא נגזר
+    # בקוד: אחרי סימן פיסוק (, . : ; ? !) הקרוב לאמצע השורה. אותם כללים כמו חיתוך של העובד (worker_to_html):
+    # כל חלק שלוש מילים לפחות, לא אחרי מילית, לא בתוך הסבר/פסוק/אמוראים. ונבדק במנוע: כל חלק בשורה אחת בשני הגדלים
+    msplit = 0
+    for it in items:
+        if it['nA4'] != 1 or it['mc'] != 'main':
+            continue
+        if any((s0.get('tool') == 4) for s0 in (wsug.get(it['key']) or {}).get('sug', [])):
+            continue
+        runs, flat, mp, dep_at = _flatmap(it['html'])
+        L = len(flat.strip())
+        # בלי נקודתיים: שורה שנגמרת בנקודתיים היא שורת דובר/פתיחה, ואינה מקום חיתוך מכני.
+        # ולא בתוך ציטוט או סוגריים (protected_spans של כלי 2)
+        spans = protected_spans(flat)
+        pts = [m.end() for m in re.finditer(r'[,.;?!](?=\s+\S)', flat) if not any(a0 < m.end() < b0 for a0, b0 in spans)]
+        pts = [x + len(re.match(r'\s*', flat[x:]).group(0)) for x in pts]
+        pts = sorted(set(x for x in pts if 0 < x < len(flat)), key=lambda x: abs(x - L / 2))
+        k = 0
+        for x in pts:
+            if k >= 3:
+                break
+            if x < L * 0.25 or x > L * 0.8:
+                continue
+            key = None
+            for ln in range(6, len(flat) - x + 1):
+                if flat.count(flat[x:x + ln]) == 1:
+                    key = flat[x:x + ln]
+                    break
+            if not key:
+                continue
+            sg, err = worker_to_html(it['html'], {'tool': 4, 'split_before': key, 'side': ''})
+            if err:
+                continue
+            cid = '%s|4m|%d' % (it['key'], k)
+            cands.append({'id': cid, 'mc': it['mc'], 'pc': it['cls'], 'parts': [lg_look(z) for z in sg['parts']]})
+            meta[cid] = (it, dict(sg, why='חיתוך אחרי סימן פיסוק', src='mech'))
+            k += 1
+            msplit += 1
     # ---- כלי 5: איחוי עם השורה הסמוכה (פרומפט 44) ----
     # בעל הפרויקט, 16.11.2026: איחוי אוטומטי של שורות מסתדר פעמים רבות, גם בשורות ארוכות.
     # עד היום הכלי לא הוצע כלל (העובד לא כתב הצעות כאלה, והמחולל לא הכיר אותן). כאן הוא מכני:
@@ -593,7 +632,7 @@ def main():
     doc = {'slug': a.slug, 'made': time.strftime('%Y-%m-%d %H:%M'), 'profile': 'a4-large',
            'pages': {'a4': len(rep['a4']['pages']), 'a4-large': len(rep['a4-large']['pages'])},
            'sq25': {'a4': rep['a4'].get('sq25', 0), 'a4-large': rep['a4-large'].get('sq25', 0)},
-           'count': len(items), 'firstTool': by_tool, 'joinCands': joins, 'ctlMismatch': ctl_bad, 'rejected': bad, 'stale': neighbor.get('stale', []), 'unplaced': neighbor.get('unplaced', []),
+           'count': len(items), 'firstTool': by_tool, 'joinCands': joins, 'mechSplitCands': msplit, 'ctlMismatch': ctl_bad, 'rejected': bad, 'stale': neighbor.get('stale', []), 'unplaced': neighbor.get('unplaced', []),
            'heads': {'count': hst['count'], 'withSug': sum(1 for x in hitems if x['sug']), 'rejected': hst['rejected'], 'ctlMismatch': hst['ctlMismatch'],
                      'stale': hst['stale'], 'unplaced': hst['unplaced'], 'engine': {p: {k: v for k, v in hmulti[p].items() if k != 'list'} for p in hmulti}},
            'items': items + hitems}

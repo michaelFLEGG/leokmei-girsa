@@ -5627,11 +5627,22 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       [...el.classList].filter(x=>/^[ba]\d$/.test(x)).forEach(x=>el.classList.remove(x));
       (wantSp?['b1','a0']:['b0','a0']).forEach(x=>el.classList.add(x))}
     capture(el);STYSIG='';styLater()}
-  /* Ctrl+0 (כמו בוורד): "רווח לפני" מופעל, ובלחיצה שנייה מוסר */
+  /* Ctrl+0 (כמו בוורד): דו-כיווני (מיכאל, 17.11.2026). יש רווח לפני השורה - מכל מקור: "רווח לפני" (sp), רווח לפני
+     שבא מסגנון הוורד (b1-b9), או רווח אחרי של הפסקה שמעליה (a1-a9) - הוא מוסר. אין רווח - נוסף "רווח לפני".
+     עד כאן הלחיצה הראשונה על שורה עם רווח מן הוורד רק הוסיפה רווח */
   function spToggle(){
     const el=edEl();
-    if(!el||el.tagName!=='P'||!PSTY.some(p=>p[0]==='sp'))return;
-    setPs(el.classList.contains('sp')?'':'sp')}
+    if(!el||el.tagName!=='P')return;
+    const hs=editHosts();let pv=null;
+    for(let j=hs.indexOf(el)-1;j>=0;j--){if(hs[j].tagName==='P'){pv=hs[j];break}if(!hs[j].classList.contains('anchor'))break}
+    const hasB=el.classList.contains('sp')||/(^|\s)b[1-9](\s|$)/.test(el.className),hasA=!!pv&&/(^|\s)a[1-9](\s|$)/.test(pv.className);
+    if(hasB||hasA){
+      if(el.classList.contains('sp'))setPs('');
+      else if(hasB){sPush(el);[...el.classList].filter(x=>/^b\d$/.test(x)).forEach(x=>el.classList.remove(x));el.classList.add('b0');capture(el)}
+      if(hasA){sPush(pv);[...pv.classList].filter(x=>/^a\d$/.test(x)).forEach(x=>pv.classList.remove(x));pv.classList.add('a0');capture(pv)}
+      STYSIG='';styLater();flash('הרווח לפני השורה הוסר (Ctrl+0 שוב מוסיף)');return}
+    if(!PSTY.some(p=>p[0]==='sp'))return;
+    setPs('sp')}
 
   /* רשימת העריכות נבנית רק כשהחלונית פתוחה (26.10.2026): בבכורות 7,000 שורות, שנבנו מחדש
      אחרי כל קבל גם כשאיש אינו רואה אותן. נפתחה - נבנית אז (panel). */

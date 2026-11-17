@@ -1,0 +1,61 @@
+{
+ "slug": "shabbat",
+ "jobs": [],
+ "started": "2026-11-17 14:01",
+ "diag": {
+  "admin": true,
+  "key": true,
+  "jobs": 39,
+  "status": 200,
+  "all": 70,
+  "slug": [
+   "shabbat-p2:done",
+   "shabbat-p4:done",
+   "shabbat-p5:done",
+   "shabbat-s1-mwev8jkj:done",
+   "shabbat-s2222-mwhl72w1:done",
+   "shabbat-p1:done",
+   "shabbat-p6:done",
+   "shabbat-p7:done",
+   "shabbat-p8:done",
+   "shabbat-p9:done",
+   "shabbat-p10:done",
+   "shabbat-p11:ready",
+   "shabbat-p12:ready",
+   "shabbat-p13:ready",
+   "shabbat-p14:ready",
+   "shabbat-p15:ready",
+   "shabbat-s1-mwkr9e5n:wait",
+   "shabbat-s1192-mwkr9f0d:wait",
+   "shabbat-s2426-mwkr9fsp:wait",
+   "shabbat-s3082-mwkr9gjr:wait",
+   "shabbat-s3269-mwkr9hbd:wait",
+   "shabbat-s3559-mwkr9i0c:wait",
+   "shabbat-s4064-mwkr9isa:wait",
+   "shabbat-s4434-mwkr9jmz:wait",
+   "shabbat-s4810-mwkr9kdg:wait",
+   "shabbat-s5239-mwkr9l5h:wait",
+   "shabbat-s5520-mwkr9m55:wait",
+   "shabbat-s5863-mwkr9mvm:wait",
+   "shabbat-s6036-mwkr9nhz:wait",
+   "shabbat-s6189-mwkr9o5s:wait",
+   "shabbat-s6464-mwkr9owt:wait",
+   "shabbat-p16:wait",
+   "shabbat-p17:wait",
+   "shabbat-p18:wait",
+   "shabbat-p19:wait",
+   "shabbat-p21:wait",
+   "shabbat-p22:wait",
+   "shabbat-p23:wait",
+   "shabbat-p24:wait"
+  ]
+ },
+ "enqueued": [
+  {
+   "perek": 20,
+   "title": "שבת פרק עשרים - תולין",
+   "error": "Page.evaluate: Error: שגיאה: KV PUT failed: 429 Too Many Requests\n    at api (https://leokmei.com/mas.js?v=78bd8026:3284:34)\n    at async <anonymous>:381:23"
+  }
+ ],
+ "errors": []
+}

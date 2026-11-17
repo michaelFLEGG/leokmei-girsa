@@ -158,7 +158,7 @@ def items_of_page(pg):
         k = u.get('k')
         if k == 'u':
             side(u.get('a'))
-            for cls, h in u.get('l') or []:
+            for li, (cls, h) in enumerate(u.get('l') or []):
                 if cls == 'hatz':
                     # חציצה (***) שהבנייה שמה בתוך היחידה - בוורד היא פסקת חציצה, כמו יחידת חציצה
                     if plain(h): out.append({'t': 'X:חציצה', 'm': to_inter(h), 'ps': 'חציצה'})
@@ -170,6 +170,10 @@ def items_of_page(pg):
                     continue
                 if not plain(h):
                     continue            # שורה ריקה לגמרי: אין לה פסקה בוורד
+                # פרומפט 53 (17.11.2026): מעוין - בוורד חלון שכל תוכנו ◆ לפני הפסקה (הבנייה מחזירה אותו למחלקה mu).
+                # פסקה ראשונה של יחידה שיש לה כותרת צד: הכותרת במקום המעוין
+                if 'mu' in cl and not (li == 0 and plain(u.get('a'))):
+                    out.append({'t': 'S', 'm': '\u25c6'})
                 it = {'t': 'L', 'm': to_inter(h)}
                 p = ps_of(cls)
                 if p: it['ps'] = p

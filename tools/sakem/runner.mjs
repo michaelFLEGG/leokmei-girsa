@@ -344,7 +344,7 @@ if (cmd === 'status') {
     { const af = SKC.autofixTitles(text); if (af.changed) { text = af.text; s.changes = (s.changes || []).concat(af.notes.map((x) => 'אוטומטי: ' + x)); } }
     /* פרומפט 28 (9.11.2026): כללי צורה של בעל הפרויקט, בקוד ולא רק בהנחיה - דובר בפתח שורה לכותרת צד, אות ומילה
        נסמכות לשם בסגנון האמורא, רווח לפני גופא / ת"ר / אמר מר. אינם משנים מילה בנוסח */
-    { const ff = SKC.autofixForm(text); if (ff.changed) { text = ff.text; s.changes = (s.changes || []).concat(ff.notes.map((x) => 'אוטומטי: ' + x)); } }
+    { const ff = SKC.autofixForm(text, { orig: r.text }); if (ff.changed) { text = ff.text; s.changes = (s.changes || []).concat(ff.notes.map((x) => 'אוטומטי: ' + x)); } }
     const gem = (pk.pages || []).filter((p) => r.ids.some((id) => (pk.units.find((u) => u.id === id) || {}).daf === p.daf)).map((p) => (p.g || []).map(strip).join(' ')).join(' ');
     /* הקשר המספור (6.11.2026): רשימה שהתחילה לפני הקטע או נמשכת אחריו. בקטע הראשון של הפרק - הרשימה עשויה
        להתחיל בפרק הקודם (סוכה ה, "ב. ג." אחרי "א." של פרק ד): אז ההקשר הוא המספר שהנוסח המקורי פותח בו */

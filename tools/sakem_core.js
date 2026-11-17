@@ -22,7 +22,8 @@
   var SKC=(function(){
     var C2T={am:'אם',hs:'הס',ps:'פס',dm:'דה',ns:'נש',mf:'מפ',b:'ב',tn:'מש',kt:'כב',ot:'אות'};
     var T2C={};Object.keys(C2T).forEach(function(k){T2C[C2T[k]]=k});
-    var P2T={'in':'תשובה',sp:'רווח',nose:'נושא',dh:'דה',hr:'רקע',nk:'נקודה',mi:'משנה'};
+    /* mu (פרומפט 53, 17.11.2026): מעוין - פסקה קצרה ברצף פסקאות קצרות: בלי רווח לפניה, וסמליל מעוין במסילה */
+    var P2T={'in':'תשובה',sp:'רווח',nose:'נושא',dh:'דה',hr:'רקע',nk:'נקודה',mi:'משנה',mu:'מעוין'};
     var T2P={};Object.keys(P2T).forEach(function(k){T2P[P2T[k]]=k});
     var ENT={amp:'&',lt:'<',gt:'>',quot:'"',apos:"'",nbsp:' '};
     function dec(s){return String(s).replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi,function(m,e){
@@ -116,7 +117,7 @@
         m=/^\[צד:(.*)\]$/.exec(s);
         if(m){out.push({t:'title',v:m[1].trim()});return}
         var sty='';
-        m=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(s);
+        m=/^\((תשובה|רווח|מעוין|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(s);
         if(m){sty=T2P[m[1]];s=s.slice(m[0].length)}
         else{m=/^\{נושא:(.*)\}$/.exec(s);if(m){sty='nose';s=m[1]}}
         out.push({t:'line',sty:sty,v:s})});
@@ -351,7 +352,7 @@
         var k=j+1;while(k<out.length&&/^\[צד:/.test(out[k].trim()))k++;
         if(k>=out.length)continue;
         var nl=out[k].trim();if(/^\[(?:דף|משנה|גמרא|קבוע|מקור|כותרת-נושא|כותרת-דה)/.test(nl))continue;
-        var sty=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(nl),body=sty?nl.slice(sty[0].length):nl;
+        var sty=/^\((תשובה|רווח|מעוין|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(nl),body=sty?nl.slice(sty[0].length):nl;
         if(tn&&sty&&sty[1]==='נושא')continue;
         var n=overlapN(tp,body);if(!n)continue;
         var tw=twWords(plainI(tp));
@@ -392,6 +393,12 @@
        0.362em (149,565 תווים נמדדו מטבלת הרוחבים של הגופן, 26.10.2026). 20.75/0.362 = 57.
        אותו קבוע משמש את ההנחיה (כלל 17) ואת השומר. */
     var LINE=57;
+    /* שורה מודפסת בהדפסה המוגדלת (a4-large, פרומפט 53, 17.11.2026), באותו חישוב: באותו טור (77.5 מ"מ) גוף
+       הטקסט גדול יותר - הטור הוא 19.103em במקום 20.75em (tools/print/profiles/a4-large.json, fsFromMeasure),
+       ו-19.103/0.362 = 52.8, כלומר 52 תווים שלמים. גבול האיחוד בכללים 21-25 ואזהרת השומר על שורה שאוחדה. */
+    var LINE_BIG=52;
+    /* פסקה קצרה לסימן המעוין (כלל 24): עד שורה וחצי מודפסת */
+    var MU_MAX=Math.floor(LINE*1.5);
     var NIK=/[֑-ׇ]/g;
     var HV={'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10};
     /* פתיחת פריט נוסף שבמקומה בא מספר (כלל 18ב) */
@@ -589,6 +596,8 @@
         var w=plainI(r.v).replace(NIK,'').replace(/\s+/g,' ').trim().split(' '),cur=0,last=[];
         w.forEach(function(x){if(cur&&cur+1+x.length>LINE){cur=x.length;last=[x]}else{cur+=(cur?1:0)+x.length;last.push(x)}});
         if(last.length<=2)warns.push('שורה אלמנה ('+last.join(' ')+') - להדק או לשבור מוקדם')});
+      /* פרומפט 53 (17.11.2026): שורה שאוחדה (נושאת שתי שורות או יותר של המקור) ועוברת את השורה המודפסת המוגדלת */
+      mergedLong(origText,newText).forEach(function(m){warns.push('שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת ('+m.n+' תווים, עד '+LINE_BIG+'): '+m.p.slice(0,40))});
       /* ---- פרומפט עבודה גרסה 2 (5.11.2026): שלמות, עקביות וסימטריה - חובה לפני העימוד ---- */
       var ti=titleIssues(newText,origText);ti.errs.forEach(function(e){errs.push(e)});ti.warns.forEach(function(e){warns.push(e)});
       quality(newText,o).forEach(function(e){errs.push(e)});
@@ -666,7 +675,7 @@
         var t=ln.trim(),lock=LOCK_RE.test(t);
         if(!lock){
           var i=0,ls=P.length;
-          var m0=/^\s*(\((?:תשובה|רווח|נושא|דה|רקע|נקודה)\)\s*|\[צד:)/.exec(ln),end=ln.length;if(m0)i=m0[0].length;
+          var m0=/^\s*(\((?:תשובה|רווח|מעוין|נושא|דה|רקע|נקודה)\)\s*|\[צד:)/.exec(ln),end=ln.length;if(m0)i=m0[0].length;
           if(m0&&m0[1]==='[צד:'&&/\]\s*$/.test(ln))end=ln.lastIndexOf(']');
           while(i<end){
             var c=ln[i];
@@ -840,7 +849,7 @@
         else{pos=T.i[pl-1]+1;while(pos<text.length&&text[pos]==='}')pos++;
           /* עוגן שעמד בפתח שורה (מספר משנה) - בפתח השורה הבאה, אחרי סימן הסגנון */
           if(a.ls){var nl=text.indexOf('\n',pos-1);if(nl>-1){pos=nl+1;
-            var pf=/^(\((?:תשובה|רווח|נושא|דה|רקע|נקודה)\)\s*)/.exec(text.slice(pos,pos+12));if(pf)pos+=pf[0].length}}}
+            var pf=/^(\((?:תשובה|רווח|מעוין|נושא|דה|רקע|נקודה)\)\s*)/.exec(text.slice(pos,pos+12));if(pf)pos+=pf[0].length}}}
         ins.push({q:q2,pl:pl,pos:pos,s:a.s})}
       ins.sort(function(x,y){return y.pos-x.pos||y.q-x.q});
       ins.forEach(function(z){text=text.slice(0,z.pos)+z.s+text.slice(z.pos)});
@@ -919,7 +928,7 @@
         var raw=P[i],s=raw.trim(),lk=LOCK_RE.exec(s);
         if(lk){if(lk[1]!=='מקור'&&lk[1]!=='דף')inM=lk[1]==='משנה';out.push(raw);continue}
         if(/^\[צד:/.test(s)||inM){out.push(raw);continue}
-        var sty=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(s);
+        var sty=/^\((תשובה|רווח|מעוין|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(s);
         if(sty&&sty[1]!=='רווח'&&sty[1]!=='תשובה'){out.push(raw);continue}
         var body=sty?s.slice(sty[0].length):s,num=(/^[א-י]\.\s+/.exec(body)||[''])[0];body=body.slice(num.length);
         var m=/^\{אם:([^{}]+)\}\s*/.exec(body);
@@ -961,16 +970,58 @@
         var pk=P[k].trim();if(isHeadLine(pk)||/^\[(משנה|גמרא|דף|כותרת-|קבוע)/.test(pk))continue;
         P[j]='(רווח) '+P[j].replace(/^\s+/,'');notes.push('רווח לפני: '+plainI(L).slice(0,30))}
       return {text:P.join('\n'),notes:notes}}
+    /* ---- פרומפט 53 (17.11.2026): שורה שאוחדה - נושאת שתי שורות או יותר של המקור (כל אחת לפחות 60% ממילותיה בה),
+       ואורכה עובר את LINE_BIG. מחזיר [{p,n}] */
+    function mergedLong(origText,newText){
+      var O=rows(origText).filter(function(r){return r.k==='line'}).map(function(r){return qnorm(r.p).split(' ').filter(function(w){return w.length>1})}).filter(function(a){return a.length>=2}),out=[];
+      rows(newText).forEach(function(r){if(r.k!=='line')return;var n=lineLen(r.v);if(n<=LINE_BIG)return;
+        var bag={};qnorm(r.p).split(' ').forEach(function(w){bag[w]=(bag[w]||0)+1});
+        var hit=O.filter(function(a){var b={},k=0;a.forEach(function(w){if((bag[w]||0)>(b[w]||0)){b[w]=(b[w]||0)+1;k++}});return k>=0.6*a.length}).length;
+        if(hit>=2)out.push({p:r.p,n:n})});
+      return out}
+    /* ---- פרומפט 53 (17.11.2026), כלל 24: סימן המעוין. רצף של שלוש פסקאות קצרות או יותר (כל אחת עד שורה וחצי
+       מודפסת, MU_MAX), שכל אחת פותחת ב-(רווח) - הראשונה נשארת (רווח), והשאר (מעוין): בלי רווח בתוך הרצף, וסמליל
+       מעוין במסילה. פסקה ברצף שיש לה כותרת צד - הכותרת במקומה ובלי מעוין (ה-(רווח) שלה בלבד יורד). orig: הנוסח
+       שלפני ההרצה - רצף שכולו כבר היה בו כמות שהוא (עריכה של המחבר) אינו נוגעים בו. רק בהרצות חדשות. */
+    function meuyanFix(text,orig){
+      var P=String(text||'').replace(/\r/g,'').split('\n'),notes=[],had={};
+      if(orig!==undefined)String(orig||'').split('\n').forEach(function(l){had[l.trim()]=1});
+      var inM=false,run=[];
+      function flush(){
+        if(run.length>=3&&(orig===undefined||run.some(function(x){return !had[P[x.i].trim()]}))){
+          run.slice(1).forEach(function(x){
+            P[x.i]=P[x.i].replace(/^(\s*)\(רווח\)\s*/,x.t?'$1':'$1(מעוין) ')});
+          notes.push('מעוין: '+(run.length-1)+' פסקאות קצרות ברצף בלי רווח ביניהן ('+plainI(P[run[0].i].replace(/^\s*\(רווח\)\s*/,'')).slice(0,24)+'...)')}
+        run=[]}
+      for(var i=0;i<P.length;i++){
+        var s=P[i].trim();if(!s)continue;
+        var lk=LOCK_RE.exec(s);
+        if(lk){if(lk[1]==='מקור')continue;flush();inM=lk[1]==='משנה';continue}
+        if(/^\[צד:/.test(s)){continue}
+        var m=/^\(רווח\)\s*/.exec(s);
+        if(!m||inM){flush();continue}
+        var t=i>0&&/^\[צד:/.test(P[i-1].trim());
+        var short=lineLen(s.slice(m[0].length))<=MU_MAX;
+        if(!short){flush();continue}
+        /* הפסקה הקודמת ברצף חייבת להיות צמודה: רק כותרות צד (של הפסקה הזו) ביניהן */
+        if(run.length){var j=i-1;while(j>run[run.length-1].i&&/^\[צד:/.test(P[j].trim()))j--;if(j!==run[run.length-1].i)flush()}
+        run.push({i:i,t:t})}
+      flush();
+      /* (מעוין) בשורה שיש לה כותרת צד: הכותרת במקום המעוין */
+      for(var q=1;q<P.length;q++)if(/^\s*\(מעוין\)/.test(P[q])&&/^\[צד:/.test(P[q-1].trim())&&(orig===undefined||!had[P[q].trim()])){P[q]=P[q].replace(/^(\s*)\(מעוין\)\s*/,'$1');notes.push('מעוין: פסקה עם כותרת צד - בלי מעוין')}
+      return {text:P.join('\n'),notes:notes}}
     /* כל התיקונים הצורניים יחד (put של המשימה, ובשרת אחרי המודל) - אינם משנים מילה בנוסח */
-    function autofixForm(text){
+    function autofixForm(text,o){
       var notes=[],P=String(text||'').split('\n').map(function(l){
-        var s=l,sty=/^(\((?:תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*)/.exec(s),pre=sty?sty[1]:'';
+        var s=l,sty=/^(\((?:תשובה|רווח|מעוין|נושא|דה|רקע|נקודה|משנה)\)\s*)/.exec(s),pre=sty?sty[1]:'';
         var tm=/^(\[צד:)(.*)(\])$/.exec(s.trim());
         if(tm){var a0=amAttach(tm[2]);if(a0.ch){notes.push('אות או מילה נסמכת לשם - בסגנון האמורא');return tm[1]+a0.v+tm[3]}return l}
         if(/^\[/.test(s.trim()))return l;
         var a=amAttach(s.slice(pre.length));if(a.ch){notes.push('אות או מילה נסמכת לשם - בסגנון האמורא');return pre+a.v}return l});
       var t=P.join('\n'),so=speakerOut(t);t=so.text;notes=notes.concat(so.notes);
       var sf=spaceFix(t);t=sf.text;notes=notes.concat(sf.notes);
+      /* פרומפט 53: המעוין - רק כשהקורא מוסר את הנוסח שלפני ההרצה (הרצת סכם חדשה), לא בסבב צורה על נוסח חי */
+      if(o&&o.orig!==undefined){var mf=meuyanFix(t,o.orig);t=mf.text;notes=notes.concat(mf.notes)}
       var seen={};notes=notes.filter(function(x){if(seen[x])return false;seen[x]=1;return true});
       return {text:t,notes:notes,changed:t!==String(text||'')}}
     /* ---- בודק הציות (בלי מודל). o: {hatz:[מזהי עיטור בקטע], dropDash:[], final:true} ----
@@ -1208,6 +1259,6 @@
       var rk=Object.keys(rep);if(rk.length)out.push('צירוף שחוזר בקטע: "'+rk.slice(0,2).join('", "')+'"');
       return out}
     return {dupFlags:dupFlags,acceptSafe:acceptSafe,acceptWhy:acceptWhy,fixLocks:fixLocks,acceptPrep:acceptPrep,acceptErrs:acceptErrs,obey:obey,SELF_CHECK:SELF_CHECK,selfCheckMissing:selfCheckMissing,OBEY_ARAM:OBEY_ARAM,absStat:absStat,absAvg:absAvg,widows:widows,abbrOpen:abbrOpen,wordy:wordy,keepOk:keepOk,wrapW:wrapW,isDashTitle:isDashTitle,dashTitles:dashTitles,dashLost:dashLost,isKushTitle:isKushTitle,amAttach:amAttach,speakerOut:speakerOut,spaceFix:spaceFix,autofixForm:autofixForm,comply:comply,mishnaBlocks:mishnaBlocks,boldBag:boldBag,hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
-            quality:quality,qnorm:qnorm,aramNew:aramNew,aramWords:aramWords,squeeze:squeeze,SQ:{SEG:SQ_SEG,LINE:SQ_LINE,MIN:SQ_MIN},C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
+            quality:quality,qnorm:qnorm,aramNew:aramNew,aramWords:aramWords,squeeze:squeeze,SQ:{SEG:SQ_SEG,LINE:SQ_LINE,MIN:SQ_MIN},C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,LINE_BIG:LINE_BIG,MU_MAX:MU_MAX,meuyanFix:meuyanFix,mergedLong:mergedLong,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

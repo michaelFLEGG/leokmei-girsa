@@ -803,7 +803,7 @@
   function skmVerifyLines(text){
     return String(text||'').split('\n').map(x=>x.trim()).filter(x=>x&&!/^\[(מקור|דף|גמרא|משנה)(:[^\]]*)?\]$/.test(x)&&!/^\[קבוע:/.test(x)).map(x=>{
       const m=/^\[צד:(.*)\]$/.exec(x);
-      const body=(m?m[1]:x).replace(/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/,'').replace(/\[(מס|תוס'):[^\]]*\]/g,'');
+      const body=(m?m[1]:x).replace(/^\((תשובה|רווח|מעוין|נושא|דה|רקע|נקודה|משנה)\)\s*/,'').replace(/\[(מס|תוס'):[^\]]*\]/g,'');
       const t=SKC.bare(SKC.i2h(body)).replace(/[\u0591-\u05C7\u00a0\u2060]/g,'').replace(/\s+/g,' ').trim();
       return (m?'צד: ':'')+t}).filter(x=>x&&x!=='צד: ')}
   function skmVerify(text,VB){
@@ -868,7 +868,7 @@
     '.skmghost{position:relative;margin:4px 0 10px;border:1px solid rgba(46,125,60,.35);background:rgba(46,125,60,.05);border-radius:6px;padding:6px 8px 4px}'+
     '.skmghost.skmbusy{opacity:.6}.skmghost.edit{background:#fff;border-color:#2e7d3c;box-shadow:0 0 0 2px rgba(46,125,60,.15)}'+
     '.skmrow{display:flex;gap:10px;margin:2px 0}.skmrail{flex:0 0 auto;min-width:3.4em;max-width:8em;text-align:left;font-size:.82em;color:#2e5d3a;font-weight:700;display:flex;flex-direction:column}'+
-    '.skmmain{flex:1}.skmmain p{margin:0 0 2px;color:#1f4d2a}.skmmain p.in{padding-right:1.2em}.skmmain p.sp{margin-top:.6em}.skmmain p.nose,.skmhead{text-align:center;font-weight:700}'+
+    '.skmmain{flex:1}.skmmain p{margin:0 0 2px;color:#1f4d2a}.skmmain p.in{padding-right:1.2em}.skmmain p.sp{margin-top:.6em}.skmmain p.mu::before{content:"\\25C6";color:#4a4a4a;font-size:.6em;margin-left:.4em;vertical-align:.2em}.skmmain p.nose,.skmhead{text-align:center;font-weight:700}'+
     '.skmbad{outline:1.5px solid #b0574c;outline-offset:3px;border-radius:3px}'+
     '.skmhead{margin:4px 0;color:#1f4d2a}.skmlock{font-size:12px;color:#7a6a45;background:#f4ecd8;border-radius:4px;display:inline-block;padding:0 6px;margin:2px 0}.skmlock.skmhid,.skmsrc{display:none}'+
     '.skmghost i.am{font-weight:700}.skmghost i.hs{color:#5a6b78;font-size:.92em}.skmghost i.ps{font-style:italic}.skmghost i.b{font-weight:700}'+

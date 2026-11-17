@@ -16,7 +16,7 @@ import argparse, difflib, glob, html, io, json, os, re, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NIK = re.compile(r'[֑-ׇ ⁠]')
 LOCK = re.compile(r'^\[(מקור|דף|גמרא|משנה|קבוע|כותרת-נושא|כותרת-דה)(:[^\]]*)?\]$')
-STY = re.compile(r'^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*')
+STY = re.compile(r'^\((תשובה|רווח|מעוין|נושא|דה|רקע|נקודה|משנה)\)\s*')
 
 
 def norm(t):

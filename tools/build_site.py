@@ -4,6 +4,7 @@ from styles_map import MISHNA_CS_NAMES, MISHNA_CS_BY_CLASS,  ROLE, CS, MISSING_F
 from styles_map import MISHNA_RAISE_PT, TANAI_BELOW_PT, HS_BELOW_PT
 # סמן החץ שוורד מציב במסגרת צפה ליד שורה. אינו תוכן.
 ARROW = chr(0x25c4)
+MU_CH = chr(0x25c6)   # פרומפט 53: סימן המעוין (◆) - בוורד חלון שכל תוכנו התו הזה
 # העיטור האחיד של החציצה: שלוש כוכביות, שגופן וילנא הופך בליגטורת rlig
 # לעיטור האמצעי - בדיוק כפי שנראה בסוכה. כל חציצה מוצגת כך, בכל מספר
 # כוכביות שנכתב בוורד (הכרעת בעל הפרויקט, 28.9.2026: אחידות). הנתונים
@@ -1177,7 +1178,9 @@ def _apply_site_edits(pages, slug, qa):
             keepsp = ' '.join(c for c in (s['holder'][0] or '').split()
                               if c[:1] in 'ba' and c[1:].isdigit())
             # "רווח לפני" הוא חצי שורה; הסרתו מחזירה לאפס
-            if 'sp' in (ps or '').split():
+            if 'mu' in (ps or '').split():
+                keepsp = 'b0 a0'          # מעוין (פרומפט 53): בלי רווח לפני
+            elif 'sp' in (ps or '').split():
                 keepsp = 'b1 a0'
             elif 'sp' in (s['holder'][0] or '').split():
                 keepsp = 'b0 a0'
@@ -1520,6 +1523,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   n_stack_drop=0 # חלון שנערם מעבר לתקרה ואינו מוצג
   n_tail_win=0   # חלון בסוף המסכת שאין אחריו דבר
   n_hatz_dup=0   # חציצה מיד אחרי חציצה (עיטור ואחריו כוכביות) - מוצגת פעם אחת
+  mu_pend=False      # פרומפט 53: חלון מעוין ממתין לפסקת הגוף שאחריו
   def take_pend():
       """החלון הממתין נמסר ליחידה. מונה כמה חלונות נערמו בו."""
       nonlocal pend, n_stack
@@ -1653,6 +1657,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if r=='anchor':
           if t and set(t) <= {ARROW}:
               n_hal+=1; continue            # סמן פריסה של וורד, אינו יחידה
+          # פרומפט 53 (17.11.2026): סימן המעוין. בוורד הוא חלון (כותרת צד) שכל תוכנו התו ◆, לפני פסקה קצרה
+          # ברצף פסקאות קצרות. באתר אינו כותרת צד ואינו פותח יחידה: הפסקה שאחריו מקבלת את המחלקה mu
+          # (בלי רווח לפניה, והסמליל במסילה בעיצוב). ראה items_of_page בקיפול ו-word_export.js.
+          if t and t.strip()==MU_CH and pend is None:
+              mu_pend=True; continue
           if pend is not None:
               if pend[2]>=STACK_MAX:
                   n_stack_drop+=1
@@ -1668,7 +1677,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
               w=take_pend(); unit={'k':'u','a':w[0],'l':[],'id':w[1]}; cur['units'].append(unit)
           elif unit is None or unit['k']!='u':
               unit={'k':'u','a':'','l':[],'id':b['i']}; cur['units'].append(unit)
-          unit['l'].append([((r[5:] if len(r)>4 else '')+' '+sp_cls(b['style'])).strip(),h])
+          if mu_pend:
+              # מעוין: בלי רווח לפני, גם כשסגנון הפסקה בוורד נושא רווח
+              _bc=(r[5:] if len(r)>4 else '').replace('sp','').strip()
+              unit['l'].append([(_bc+' mu b0 a0').strip(),h]); mu_pend=False
+          else:
+              unit['l'].append([((r[5:] if len(r)>4 else '')+' '+sp_cls(b['style'])).strip(),h])
       elif r=='mishna':
           if cur['units'] and cur['units'][-1]['k']=='m' and pend is None:
               cur['units'][-1]['l'].append([sp_cls(b['style']),h])
@@ -2132,6 +2146,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       # בקובץ שאין בו הסגנון, הוא נוצר בוורד בעת הכתיבה הראשונה (word_apply)
       _spn=next((n for n in SP_BEFORE if n in spacing),'רווח לפני')
       sty['p'].append(['sp','רווח לפני',_spn])
+  # מעוין (פרומפט 53, 17.11.2026): מוצע תמיד. בוורד אינו סגנון פסקה אלא חלון ובו ◆ לפני הפסקה (הקיפול והורדת הוורד)
+  if not any(p[0]=='mu' for p in sty['p']):
+      sty['p'].append(['mu','מעוין',''])
   absent=[lab for c,lab in CSLAB if not cs_cnt[c]]
   if absent:
       qa.append(('סגנון תו שאינו בקובץ',
@@ -2453,6 +2470,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main p{margin:0} .main p:empty::before{content:'\200b'} .main p.nk{font-size:1.09em} .main p.hr{font-size:.82em;color:#4a4137}
   /* פסקה מוזחת (פיסקת תשובה, וסעיפי רשימה): הזחה תלויה, כמו בוורד */
   .main p.in{padding-right:.9em;text-indent:-.9em}
+  /* פרומפט 53 (17.11.2026), כלל 24: סימן המעוין - פסקה קצרה ברצף פסקאות קצרות. בלי רווח לפניה (b0), ובמסילה, במקום
+     כותרת הצד ובצמוד לטקסט כמוה, סמליל מעוין קטן באפור כהה. מצויר בעיצוב (ריבוע מסובב), ולא כתו: בגופני וילנא שבידינו
+     אין מעוין, ותו מגופן מערכת היה משתנה ממכשיר למכשיר. אינו תופס מקום בשורה ואינו מזיז דבר (מיקום מוחלט). */
+  .main p.mu{position:relative}
+  .main p.mu::before{content:'';position:absolute;left:calc(100% + .5em);top:calc(var(--lhpx) * .5 - .2em);
+    width:.3em;height:.3em;background:#4a4a4a;transform:rotate(45deg);pointer-events:none}
+  /* בשורה שבמסילתה ציון דף (הנתיב הצמוד לטקסט) - המעוין מעבר לציון הדף */
+  .row:has(>.rail .dafmark)>.main>p.mu:first-child::before{left:calc(100% + var(--dafw,2.9em) + var(--dafgap,.3em) + .5em)}
   /* פסקה שהוחלף סגנונה לכותרת מן האתר וטרם עלתה מן הוורד: נראית ככותרת מיד */
   .main p.nose,.main p.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif}
   .main p.nose{font-family:'Frank','Frank Ruhl Libre',serif;font-weight:700;font-size:calc(var(--k-nose) * 1em)}
@@ -2856,6 +2881,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     .rail>*{line-height:inherit}
     .win{display:inline;white-space:normal}
     .win.w2{line-height:inherit}
+    /* מעוין בטלפון: אין מסילה לצד הטקסט, ולכן הסמליל בפתח הפסקה */
+    .main p.mu::before{position:static;display:inline-block;vertical-align:.25em;margin-left:.45em}
     .anchor{display:inline;font-size:.82em;color:#4a4137}
     .dafmark{display:inline-block;margin-left:.5em}
     .mlabel{display:inline-block;margin-left:.4em}}
@@ -4041,7 +4068,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(u.id!==id||!u.l||!u.l[+m[2]-1])continue;
       let keep=(u.l[+m[2]-1][0]||'').split(' ').filter(c=>c.length===2&&'ba'.indexOf(c[0])>-1&&/\d/.test(c[1])).join(' ');
       /* "רווח לפני" הוא חצי שורה; הסרתו מחזירה לאפס */
-      if((ps||'').split(' ').indexOf('sp')>-1)keep='b1 a0';
+      if((ps||'').split(' ').indexOf('mu')>-1)keep='b0 a0';   /* מעוין (פרומפט 53): בלי רווח לפני */
+      else if((ps||'').split(' ').indexOf('sp')>-1)keep='b1 a0';
       else if((u.l[+m[2]-1][0]||'').split(' ').indexOf('sp')>-1)keep='b0 a0';
       u.l[+m[2]-1][0]=((ps||'')+' '+keep).trim();delete u.lv;return true}
     return false}

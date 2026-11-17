@@ -178,7 +178,7 @@
     /* שורות התוכן של היחידה: כל מה שאינו נעול ואינו כותרת צד */
     const content=[];L.forEach((x,i)=>{if(!/^\[(דף|מקור|משנה|גמרא|קבוע|כותרת-|צד:)/.test(x))content.push(i)});
     const at=content[it.li-1];if(at===undefined)throw new Error('השורה לא נמצאה בקטע');
-    const old=L[at],pm=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(old),pre=pm?pm[0]:'',oldBody=old.slice(pre.length);
+    const old=L[at],pm=/^\((תשובה|רווח|מעוין|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(old),pre=pm?pm[0]:'',oldBody=old.slice(pre.length);
     if(ovNorm(SKC.bare(SKC.i2h(oldBody)).replace(/\[תוס':[^\]]*\]/g,''))!==ovNorm(ovPlain(it.html)))throw new Error('השורה השתנתה מאז ההצעה. המחולל ירוץ שוב אחרי הפרסום');
     const tos=[...oldBody.matchAll(/\[תוס':([^\]]*)\]/g)].map(m=>m[1]);
     const T=(typeof skmTos==='function'?skmTos(D.pages[os[0].pi].daf):[]);
@@ -197,7 +197,7 @@
     /* פרומפט 44, כלי 5: איחוי עם השורה הסמוכה. השורה יוצאת, והסמוכה מקבלת את שתיהן (עוגני התוספות של שתיהן נשמרים) */
     if(s.kind==='join'){
       const ti=content[it.li-1+(s.target==='prev'?-1:1)];if(ti===undefined)throw new Error('השורה הסמוכה לא נמצאה');
-      const tOld=L[ti],tm=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(tOld),tp=tm?tm[0]:'',tBody=tOld.slice(tp.length);
+      const tOld=L[ti],tm=/^\((תשובה|רווח|מעוין|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(tOld),tp=tm?tm[0]:'',tBody=tOld.slice(tp.length);
       if(ovNorm(SKC.bare(SKC.i2h(tBody)).replace(/\[תוס':[^\]]*\]/g,''))!==ovNorm(ovPlain(s.targetOrig||'')))throw new Error('השורה הסמוכה השתנתה מאז ההצעה');
       [...tBody.matchAll(/\[תוס':([^\]]*)\]/g)].forEach(m=>{if(tos.indexOf(m[1])<0)tos.push(m[1])});
       const L3=L.slice();L3[ti]=(s.target==='prev'?tp:pre)+putTos(one(s.html));L3.splice(at,1);
@@ -209,7 +209,7 @@
     let extra=null;
     if(s.kind==='move'){
       const ti=content[it.li-1+(s.target==='prev'?-1:1)];if(ti===undefined)throw new Error('השורה הסמוכה לא נמצאה');
-      const tIdx=ti+(ti>at?rep.length-1:0),tOld=L2[tIdx],tm=/^\((תשובה|רווח|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(tOld),tp=tm?tm[0]:'';
+      const tIdx=ti+(ti>at?rep.length-1:0),tOld=L2[tIdx],tm=/^\((תשובה|רווח|מעוין|נושא|דה|רקע|נקודה|משנה)\)\s*/.exec(tOld),tp=tm?tm[0]:'';
       L2[tIdx]=tp+one(s.targetHtml);extra=1}
     const text=L2.join('\n');
     const errs=SKC.acceptErrs(orig,text);

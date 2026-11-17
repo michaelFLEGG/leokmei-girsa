@@ -67,6 +67,8 @@
           var cl=cls.split(/\s+/);
           if(cl.indexOf('nose')>-1||cl.indexOf('dh')>-1){out.push({t:cl.indexOf('nose')>-1?'H':'D',h:h});return}
           if(!plainOf(h))return;
+          /* פרומפט 53: מעוין - חלון (סגנון כותרת הצד) ובו ◆, לפני הפסקה; אם יש לפסקה כותרת צד - הכותרת במקומו */
+          if(cl.indexOf('mu')>-1&&!(li===0&&plainOf(u.a)))out.push({t:'S',h:'\u25c6'});
           out.push({t:'L',h:h,ps:psOf(cls)})})}
       else if(k==='m'){
         if(u.mbw&&u.mbh==='word')out.push({t:'X',st:'משנה בצד',h:u.mbw});

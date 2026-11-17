@@ -17,6 +17,7 @@ ap.add_argument('--slug', default='shabbat')
 ap.add_argument('--jobs', default='', help='רשימה מופרדת בפסיקים. ריק = כל העבודות המוכנות של המסכת')
 ap.add_argument('--dry', action='store_true', help='רק פתיחה וספירה, בלי קבלה')
 ap.add_argument('--out', default='accept-report.json')
+ap.add_argument('--round', default='', help='פרומפט 56 ד2: "1-15" - אחרי הקבלה, עבודת "סבב שני" לכל פרק בטווח, ועבודת סכם מלאה לפרקים שאחריו')
 a = ap.parse_args()
 KEY = os.environ.get('LEOKMEI_ADMIN_KEY', '')
 if not KEY:
@@ -54,6 +55,25 @@ with sync_playwright() as p:
             r['error'] = str(e)[:300]
         print(json.dumps(r, ensure_ascii=False))
         rep['jobs'].append(r)
+    if a.round and not a.dry:
+        lo, hi = [int(x) for x in a.round.split('-')]
+        secs = pg.evaluate("()=>skpAuto.sections()")
+        rep['enqueued'] = []
+        for sc in secs:
+            n = sc['si'] + 1
+            base = pg.evaluate("i=>skpAuto.title(i)", sc['si'])
+            if lo <= n <= hi:
+                t, kind = '%s פרק %d - סבב שני (פרומפט 56)' % ('שבת' if a.slug == 'shabbat' else a.slug, n), 'seg'
+            elif n > hi:
+                t, kind = base, 'perek'
+            else:
+                continue
+            try:
+                r = pg.evaluate("([i,t,k])=>skpAuto.enqueue(i,t,k)", [sc['si'], t, kind])
+                rep['enqueued'].append({'perek': n, 'title': t, 'kind': kind, 'jid': (r or {}).get('jid'), 'again': (r or {}).get('again')})
+            except Exception as e:
+                rep['enqueued'].append({'perek': n, 'title': t, 'error': str(e)[:200]})
+            print('הוזמן:', json.dumps(rep['enqueued'][-1], ensure_ascii=False))
     rep['errors'] = errs[:20]
     b.close()
 json.dump(rep, open(a.out, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

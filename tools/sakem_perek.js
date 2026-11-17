@@ -141,7 +141,14 @@
   /* פרומפט 56 ד1: לפעולת "קבל הכל בשבת" (sakem-accept.yml) - אותו מסלול בדיוק של הכפתור, דרך הדף עצמו, למנהל בלבד */
   window.skpAuto={open:jid=>skpOpen(jid),all:()=>{if(!SKP.rev)return null;skpAll('per');return SKP.lastAll||null},
     state:()=>SKP.rev?{jid:SKP.rev.jid,items:SKP.rev.items.length,open:SKP.rev.items.filter(x=>!SKP.rev.dec[x.iid]).length}:null,
-    jobs:()=>(SKP.jobs||[]).map(j=>({jid:j.jid,kind:j.kind,perek:j.perek,st:j.st}))};
+    jobs:()=>(SKP.jobs||[]).map(j=>({jid:j.jid,kind:j.kind,perek:j.perek,st:j.st,title:j.title||''})),
+    /* פרומפט 56 ד2: הזמנת עבודה על פרק שלם מן הנוסח החי, באותה חבילה שהכפתור בונה. kind 'seg' מקבל מזהה חדש, ולכן
+       פרק שכבר נסקר נכנס שוב ("סבב שני") בלי לגעת בהכרעות הקודמות */
+    sections:()=>SEC.map((S,i)=>({si:i,perek:S.perek,name:S.perekName})),
+    enqueue:async(si,title,kind)=>{const S=SEC[si];const os=flatU().filter(o=>o.pi>=S.from&&o.pi<=S.to);if(!os.length)return null;
+      const packet=await skpPacket(kind||'seg',os);
+      return api('/sakem/job',{method:'POST',body:JSON.stringify({slug:SLUG,kind:kind||'seg',perek:si+1,title:title||skpTitle(si),packet})})},
+    title:si=>skpTitle(si)};
 
   /* =================== הסקירה =================== */
   async function skpOpen(jid){

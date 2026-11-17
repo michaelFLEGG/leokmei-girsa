@@ -339,7 +339,7 @@ if (cmd === 'status') {
     const c0 = SKC.comply(r.text, r.text, Object.assign({ strict: true, keep: s.keep }, cx));
     if (c0.errs.length) die('אי אפשר "ללא שינוי": ' + c0.errs.join(' · ') + '\nתקן בהצעה.');
     if (DRY) { console.log('השומר: עבר (ללא שינוי). לא נשמר דבר (--dry).'); process.exit(0); }
-    o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, nochange: true, stat: c0.stat });
+    o.items.push({ iid: 's' + (si + 1), kind: 'seg', seg: si, sugya: seg.sugya, ids: r.ids, nochange: true, keep: s.keep || [], stat: c0.stat }); /* פרומפט 58: הנימוק נשמר, כדי ש-finish לא ייעצר על מה שכבר נומק */
   } else {
     let text = String(s.text || '').replace(/\r/g, '').trim();
     if (!text) die('אין text');

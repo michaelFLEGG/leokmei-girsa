@@ -29,11 +29,21 @@
    '.tzx.split{left:0;top:var(--barH,52px);bottom:0;width:var(--tzw,46vw)}'+
    '.tzx.full{left:0;right:0;top:0;bottom:0}'+
    'body.tzsplit .flow{width:calc(100vw - var(--tzw,46vw));margin-left:auto}'+
-   '.tzhd{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;padding:7px 12px;background:#2b2620;color:#f1ead9;font-size:14px;flex:0 0 auto}'+
-   '.tzhd b{font-family:"VilnaG","Vilna",serif;font-size:17px;font-weight:400}'+
-   '.tzhd .sp{flex:1}'+
-   '.tzhd button,.tzhd select{font:inherit;font-size:13px;background:#4a4137;color:#f1ead9;border:0;border-radius:4px;padding:3px 10px;cursor:pointer;min-height:28px}'+
-   '.tzhd button.on{background:var(--gold);color:#2b2620}'+
+   /* (17.11.2026, פרומפט 49) כותרת צורת הדף: שורה אחת של סמלים קטנים, המילה בריחוף ובלחיצה ארוכה */
+   '.tzhd{display:flex;flex-wrap:nowrap;gap:2px;align-items:center;padding:2px 8px;height:32px;box-sizing:border-box;background:#2b2620;color:#f1ead9;font-size:14px;flex:0 0 auto;position:relative}'+
+   '.tzhd b{font-family:"VilnaG","Vilna",serif;font-size:15px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;padding:0 2px}'+
+   '.tzhd .sp{flex:1 1 auto;min-width:4px}'+
+   '.tzhd button{font:400 18px/26px "VilnaG","Vilna",serif;height:26px;min-width:26px;background:transparent;color:#e2c77e;border:0;border-radius:5px;padding:0 5px;margin:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none}'+
+   '.tzhd button:hover,.tzhd button:focus-visible{background:rgba(201,162,74,.22)}'+
+   '.tzhd .tic{width:17px;height:17px;display:block}'+
+   '.tzhd #tztr:not(.on){opacity:.5}'+
+   '.tzhd #tztr.on .tic{fill:rgba(226,199,126,.35)}'+
+   '.tzhd .tzsep{display:inline-block;width:1px;height:16px;background:rgba(241,234,217,.25);margin:0 4px;flex:none}'+
+   '.tzmenu{position:relative;display:inline-flex}'+
+   '.tzpop{display:none;position:absolute;top:30px;left:0;z-index:3;background:#2b2620;border:1px solid #4a4137;border-radius:8px;padding:8px 10px;box-shadow:0 6px 18px rgba(0,0,0,.35);white-space:nowrap;font-size:13px}'+
+   '.tzpop.open{display:grid;grid-template-columns:auto auto;gap:6px 8px;align-items:center}'+
+   '.tzpop select{font:inherit;font-size:13px;background:#4a4137;color:#f1ead9;border:0;border-radius:4px;padding:3px 8px;min-height:28px}'+
+   '@media (max-width:420px){.tzhd{padding:2px 4px}.tzhd button{min-width:24px;padding:0 3px}.tzhd .tzsep{display:none}}'+
    '.tzbody{flex:1 1 auto;overflow-y:scroll;overflow-x:auto;background:#e9e3d3;position:relative;touch-action:pan-x pan-y}'+
    '.tzbody canvas{display:block;margin:0 auto;-webkit-touch-callout:none}'+
    '.tzmsg{padding:30px;text-align:center;color:#6e6350}'+
@@ -113,14 +123,18 @@
     document.documentElement.style.setProperty('--tzw',w+'vw');
     document.body.classList.toggle('tzsplit',mode==='split');
     box.innerHTML=
-      '<div class="tzhd"><b id="tztl"></b>'+
-      '<button id="tzpv" title="הצד הקודם (Alt+חץ ימינה)">› קודם</button><button id="tznx" title="הצד הבא (Alt+חץ שמאלה)">הבא ‹</button>'+
+      /* (17.11.2026, פרומפט 49) שורה אחת: דף קודם, שם הדף, דף הבא | זום, התאמה, מעקב, הגדרות ההדגשה, סגירה */
+      '<div class="tzhd">'+
+      '<button id="tzpv" title="הצד הקודם (Alt+חץ ימינה)" aria-label="הצד הקודם">»</button><b id="tztl"></b><button id="tznx" title="הצד הבא (Alt+חץ שמאלה)" aria-label="הצד הבא">«</button>'+
       '<span class="sp"></span>'+
-      '<button id="tzzo" title="הקטנה">−</button><button id="tzzi" title="הגדלה">+</button><button id="tzz1" title="התאמה לרוחב">התאם</button>'+
-      '<button id="tztr" title="ההדגשה נעה עם השורה שבטקסט"></button>'+
-      '<select id="tzin" title="עוצמת העמעום"><option value="off">ללא</option><option value="mid">עדין</option><option value="hi">בולט</option></select>'+
-      '<select id="tzst" title="צורת ההדגשה"><option value="dim">עמעום</option><option value="line">קו זהב</option></select>'+
-      '<button id="tzcl" title="סגירה (Esc)">×</button></div>'+
+      '<button id="tzzo" title="הקטנה (-)" aria-label="הקטנה">−</button><button id="tzzi" title="הגדלה (+)" aria-label="הגדלה">+</button>'+
+      '<button id="tzz1" title="התאמה לרוחב" aria-label="התאמה לרוחב">'+'<svg class="tic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5v14M20 5v14M7 12h10M10 9l-3 3 3 3M14 9l3 3-3 3"/></svg>'+'</button>'+
+      '<span class="tzsep"></span>'+
+      '<button id="tztr" title="מעקב: ההדגשה נעה עם השורה שבטקסט" aria-label="מעקב">'+'<svg class="tic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>'+'</button>'+
+      '<span class="tzmenu"><button id="tzmb" title="תצוגת ההדגשה: עוצמה וצורה" aria-label="תצוגת ההדגשה">'+'<svg class="tic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>'+'</button>'+
+      '<span class="tzpop" id="tzpop"><span>עמעום</span><select id="tzin" title="עוצמת העמעום"><option value="off">ללא</option><option value="mid">עדין</option><option value="hi">בולט</option></select>'+
+      '<span>הדגשה</span><select id="tzst" title="צורת ההדגשה"><option value="dim">עמעום</option><option value="line">קו זהב</option></select></span></span>'+
+      '<button id="tzcl" title="סגירה (Esc)" aria-label="סגירה">×</button></div>'+
       '<div class="tzbody" id="tzbd"><div class="tzmsg">טוען את הדף…</div></div>'+
       '<div class="tzft">צורת הדף מוצגת כאן ברישיון פרטי, לצפייה בלבד ושלא למטרה מסחרית. הקובץ אינו ניתן להורדה.</div>'+
       (mode==='split'?'<div class="tzdrag" id="tzdr" title="גרור לשינוי הרוחב"></div>':'');
@@ -131,8 +145,12 @@
     document.getElementById('tzzo').onclick=function(){tzZoom(TZ.zoom/1.25)};
     document.getElementById('tzz1').onclick=function(){tzZoom(1)};
     var tr=document.getElementById('tztr');
-    function trUi(){tr.textContent=TZ.track?'מעקב: דלוק':'מעקב: כבוי';tr.classList.toggle('on',TZ.track)}
+    function trUi(){tr.title=TZ.track?'מעקב דלוק: ההדגשה נעה עם השורה שבטקסט':'מעקב כבוי: לחץ כדי שההדגשה תנוע עם השורה שבטקסט';tr.setAttribute('aria-pressed',TZ.track?'true':'false');tr.classList.toggle('on',TZ.track)}
     trUi();tr.onclick=function(){TZ.track=!TZ.track;tzSet('tz-track',TZ.track?'1':'0');trUi();if(TZ.track)tzFollow()};
+    var tzp=document.getElementById('tzpop');
+    document.getElementById('tzmb').onclick=function(ev){ev.stopPropagation();tzp.classList.toggle('open')};
+    tzp.addEventListener('click',function(ev){ev.stopPropagation()});
+    box.addEventListener('click',function(){tzp.classList.remove('open')});
     var si=document.getElementById('tzin'),ss=document.getElementById('tzst');
     si.value=TZ.inten;ss.value=TZ.style;
     si.onchange=function(){TZ.inten=si.value;tzSet('tz-int',TZ.inten);tzDraw()};
@@ -162,7 +180,7 @@
   function tzClose(){var b=tzBox();if(b)b.remove();TZ.open=false;document.body.classList.remove('tzsplit');
     try{fitAnchors();squeezeRun()}catch(e){}}
   function tzStep(d){var i=TZ.i+d;if(i<0||i>=tzSides.length)return;TZ.track=false;tzSet('tz-track','0');
-    var t=document.getElementById('tztr');if(t){t.textContent='מעקב: כבוי';t.classList.remove('on')}
+    var t=document.getElementById('tztr');if(t){t.classList.remove('on');t.setAttribute('aria-pressed','false');t.title='מעקב כבוי: לחץ כדי שההדגשה תנוע עם השורה שבטקסט'}
     tzShow(i,true)}
   function tzShow(i,reset){
     TZ.i=i;TZ.data=null;TZ.img=null;TZ.imgKind='';

@@ -1,0 +1,33 @@
+{
+ "slug": "avodah-zarah",
+ "made": "2026-11-17 21:47",
+ "found": 4,
+ "applied": 4,
+ "liveSkipped": 0,
+ "examples": [
+  {
+   "daf": "ג:",
+   "key": "u124.2",
+   "before": "ומעיקרא מיגמר להו? א. מיטטרון. ב. שניהם עושה.",
+   "after": "ומעיקרא מיגמר להו? <i class=\"am\">א.</i> מיטטרון. <i class=\"am\">ב.</i> שניהם עושה."
+  },
+  {
+   "daf": "ו:",
+   "key": "u388.1",
+   "before": "א. ישב רב יוסף אחרי <i class=\"am\">ר&quot;א</i> שישבו לפני <i class=\"am\">ר&quot;ה</i> ",
+   "after": "<i class=\"am\">א.</i> ישב רב יוסף אחרי <i class=\"am\">ר\"א</i> שישבו לפני <i class=\"am\">ר\"ה</i> "
+  },
+  {
+   "daf": "יא:",
+   "key": "u686.1",
+   "before": "ו. יריד שבעין בכי, <i class=\"am\">ז.</i> נדבכה <i class=\"am\">[א&quot;ד.</i> נתברא<i class=\"am\">]</i> שבעכו. ",
+   "after": "<i class=\"am\">ו.</i> יריד שבעין בכי, <i class=\"am\">ז.</i> נדבכה <i class=\"am\">[א\"ד.</i> נתברא<i class=\"am\">]</i> שבעכו. "
+  },
+  {
+   "daf": "מג:",
+   "key": "u2746.2",
+   "before": "ב.<i class=\"b\"> נ</i> חוליות חוליות היה ",
+   "after": "<i class=\"am\">ב.</i> <i class=\"b\"> נ</i> חוליות חוליות היה "
+  }
+ ]
+}

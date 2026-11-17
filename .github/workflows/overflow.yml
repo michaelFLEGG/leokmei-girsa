@@ -109,6 +109,8 @@ jobs:
         run: |
           s=${{ matrix.slug }}
           python tools/overflow/auto.py pick --slug $s --site _work/mirror-$s --commit
+          # פרומפט 56 ב4: מטבעות לשון - ספירה בכל מסכת, והחלה של שלושת הבטוחים בפתח שורה (לא בשבת)
+          python tools/overflow/auto.py coin --slug $s --site _work/mirror-$s --commit || echo "::warning::מטבעות לשון נכשל ב-$s"
           python tools/overflow/auto.py push --slug $s
           if [ "$LOCKBAD" != 1 ]; then python tools/overflow/plan.py --stamp $s --value "$STAMP"; fi
       - name: שמירה בריפו

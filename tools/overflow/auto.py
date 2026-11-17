@@ -356,9 +356,75 @@ def push(slug):
     return 0
 
 
+
+# ---------------- פרומפט 56 ב4: מטבעות לשון (כללים 26-29) ----------------
+COIN_ALL = [('שונה כאן', r'שונה כאן'), ('לשון אחרת', r'לשון אחרת'), ('יש ביניהם', r'(?:^|\s)ו?יש ביניהם'),
+            ('מה ביניהם', r'מה ביניהם'), ('שנינו שם', r'שנינו שם')]
+# בפתח שורה בלבד, ותמיד קצר יותר או שווה ובגופן קטן יותר (סגנון אמוראים) - ולכן אינו יכול להוסיף גלישה
+COIN_FIX = [(re.compile(r'^(\s*)שונה כאן'), 'שאני כאן'), (re.compile(r'^(\s*)לשון אחרת'), 'א"ד'),
+            (re.compile(r'^(\s*)(?:ו?יש|מה) ביניהם'), 'נפק"מ')]
+
+
+def coin(slug, site, skip_slugs=('shabbat',)):
+    """סופר את חמשת הביטויים בטקסט החי של המסכת, ומחיל אוטומטית את שלושת הבטוחים בפתח שורה (לא בשבת: שם הסבב השני של סכם).
+    "שנינו שם" - רק נספר (צריך אימות מול הגמרא: משנה או ברייתא). שורה שיש לה עריכה חיה (של מיכאל או של כל אחד) - לא נוגעים"""
+    lines, order, pcls = site_data(site, slug)
+    try:
+        import urllib.request
+        with urllib.request.urlopen(urllib.request.Request(KEEP.API + '/live?slug=' + slug, headers={'user-agent': 'Mozilla/5.0 leokmei-keep/1.0'}), timeout=60) as r:
+            lv = json.loads(r.read().decode('utf-8'))
+        live_keys = {e.get('k') for e in ((lv.get('doc') or {}).get('edits') or []) if e.get('k')}
+    except Exception:
+        live_keys = None
+    cnt = {k: 0 for k, _ in COIN_ALL}
+    chosen, t = [], int(time.time() * 1000)
+    lg = jload(log_fp(slug), {'slug': slug, 'log': [], 'pending': []})
+    done = {e['id'] for e in lg.get('log') or []}
+    for key in order:
+        cls, h = lines[key][0], lines[key][1]
+        p = NIK.sub('', plain(h)).replace(' ', ' ')
+        for nm, rx in COIN_ALL:
+            if re.search(rx, p):
+                cnt[nm] += 1
+        if slug in skip_slugs or live_keys is None:
+            continue
+        k = 'u%s.%s' % key
+        if k in live_keys:
+            continue
+        hh = domh(h)
+        m = re.match(r'^((?:<[^>]+>)*)([^<]*)', hh)
+        lead_tags, txt = m.group(1), m.group(2)
+        if '<i class="am">' in lead_tags or '<i' in lead_tags:
+            continue  # כבר בסגנון (או בתוך הסבר/פסוק) - לא נוגעים
+        for rx, rep in COIN_FIX:
+            mm = rx.match(txt)
+            if not mm:
+                continue
+            new = lead_tags + mm.group(1) + '<i class="am">' + rep + '</i>' + txt[mm.end():]
+            cid = 'coin:' + h16(slug + k + plain(h))
+            if cid in done:
+                break
+            it = {'id': cid, 'key': k, 'u': key[0], 'li': key[1], 'html': h, 'daf': ''}
+            try:
+                recs = records(it, {'kind': 'replace', 'html': new}, lines, order, pcls, t)
+            except ValueError:
+                break
+            for r in recs:
+                r['by'] = 'מטבעות לשון (פרומפט 56)'
+            t += 2
+            chosen.append({'id': cid, 'key': k, 'daf': '', 'tool': 6, 'toolName': 'מטבע לשון', 'why': rep,
+                           'before': plain(h), 'after': plain(new), 'kind': 'replace', 'beforeH': h, 'afterH': domh(new),
+                           'cls': cls, 'recs': recs, 'at': now_s()})
+            break
+    jsave(os.path.join(ODIR, 'coins', slug + '.json'), {'slug': slug, 'made': now_s(), 'count': cnt,
+                                                        'applied': len(chosen), 'liveRead': live_keys is not None})
+    print('מטבעות לשון (%s): %s, הוחלו %d' % (slug, cnt, len(chosen)))
+    return chosen
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=['pick', 'lock', 'check', 'push'])
+    ap.add_argument('cmd', choices=['pick', 'lock', 'check', 'push', 'coin'])
     ap.add_argument('--slug', default='berakhot')
     ap.add_argument('--gen', default='')
     ap.add_argument('--site', default='')
@@ -373,6 +439,11 @@ def main():
     if a.cmd == 'pick':
         ch = pick(a.slug, a.gen or os.path.join(ODIR, a.slug + '.json'), a.site, a.apply_file)
         if a.commit:
+            commit(a.slug, ch)
+        return 0
+    if a.cmd == 'coin':
+        ch = coin(a.slug, a.site)
+        if a.commit and ch:
             commit(a.slug, ch)
         return 0
     if a.cmd == 'lock':

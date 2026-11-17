@@ -446,7 +446,8 @@
   /* ממצא שמיכאל אישר "בסדר": לא מוצג עוד בפרק (נשמר במכשיר), גם אחרי השלמת עימוד */
   function pmSig(i){return i.type+'|'+(i.u||'')+'|'+(i.li||0)+'|'+String(i.detail||'').replace(/\d+/g,'#')}
   function pmOkNext(){var i=S.curIssue;if(!i||i.src==='later'){pmNext();return}
-    S.ok[pmSig(i)]=1;pmLsSet('lg-pm-ok-'+SLUG,S.ok);i.done=1;if(i.mk){i.mk.classList.add('k-done');i.mk.textContent='✓'}
+    S.ok[pmSig(i)]=1;pmLsSet('lg-pm-ok-'+SLUG,S.ok);
+    try{var rr=i.el&&(i.el.closest?i.el.closest('.row'):null);pmLog({d:'ok',act:'ok',before:rr?pmTxt(rr):'',after:'',lay:i.type.slice(0,20)+' '+pmLayS(pmLayRow(rr)),ctx:{u:i.u,type:i.type,detail:i.detail,pg:i.page}})}catch(e){}i.done=1;if(i.mk){i.mk.classList.add('k-done');i.mk.textContent='✓'}
     pmNextBtn();pmNext()}
   /* אחרי עריכה: הממצאים של היחידות שנערכו נבדקים מיד, באותה מדידה של המנוע. מה שסודר מסומן ✓ ויוצא מן הספירה */
   function pmRecheck(uids){
@@ -515,6 +516,111 @@
   function pmLaterSave(){pmLsSet('lg-pm-later-'+SLUG,S.later)}
   function pmRefreshIssues(){var doc=pmDoc();if(doc&&S.report)pmIssues(doc,doc.getElementById('prnout'),S.report)}
 
+
+
+  /* =================== הדבקת כותרת צד (17.11.2026) ===================
+     העתקה (Ctrl+C או Ctrl+X) מתוך כותרת צד נזכרת. הדבקה של אותו נוסח (Ctrl+V) בתוך שורה - נכנסת ככותרת צד של השורה
+     (בדיוק כמו סימון והפעלת Ctrl+נקודה), גם בדף הרגיל וגם במצב דפוס. כך כוכבית או סמליל שהוכן פעם אחת מודבקים בכל מקום */
+  function pmSideCopy(e){try{var d=(e.target&&e.target.ownerDocument)||document,s=d.getSelection();if(!s||!s.rangeCount)return;
+    var n=s.anchorNode,el=n&&(n.nodeType===1?n:n.parentElement);var t=String(s.toString()||'').replace(/\s+/g,' ').trim();
+    window.top.__lgSideClip=(el&&el.closest&&el.closest('.anchor,.rail .win'))&&t?t:''}catch(x){}}
+  function pmIsSide(t){try{var c=window.top.__lgSideClip;return !!c&&String(t||'').replace(/\s+/g,' ').trim()===c}catch(x){return false}}
+  document.addEventListener('copy',pmSideCopy,true);document.addEventListener('cut',pmSideCopy,true);
+  document.addEventListener('paste',function(e){
+    try{if(typeof EDIT==='undefined'||!EDIT||typeof sideCmd!=='function')return;
+      var el=e.target&&e.target.closest&&e.target.closest('#flow p[contenteditable="true"]');if(!el)return;
+      var t=(e.clipboardData||{}).getData?e.clipboardData.getData('text/plain'):'';if(!pmIsSide(t))return;
+      e.preventDefault();e.stopImmediatePropagation();t=t.replace(/\s+/g,' ').trim();
+      var s=getSelection();if(!s.rangeCount)return;var r=s.getRangeAt(0);r.deleteContents();var tn=document.createTextNode(t);r.insertNode(tn);
+      var r2=document.createRange();r2.selectNodeContents(tn);s.removeAllRanges();s.addRange(r2);
+      try{el.dispatchEvent(new Event('input',{bubbles:true}))}catch(x){}
+      sideCmd()}catch(x){}},true);
+  /* =================== 17.11.2026 (מיכאל: "צא לדרך"): לומדים מן העימוד, ומאחים לבד ===================
+     א. תיעוד: כל הכרעה במצב דפוס נשמרת בשרת (bakara/dec, מסכת "pm-<מסכת>") עם מצב השורות לפני ואחרי -
+        כמה שורות, כמה מלאה השורה האחרונה, מילה בודדת, ומה נעשה (הקלדה, Enter, Delete, Ctrl+נקודה, Ctrl+0,
+        "בסדר", איחוי אוטומטי). זה חומר הלימוד של "כללי העימוד" (tools/overflow/pm_learn.py, docs/כללי-עימוד-נלמדים.md):
+        מתי מיכאל מעדיף שורה מאוזנת ומתי יחידת רעיון לכל שורה.
+     ב. איחוי מכני מיד: אחרי שמיכאל עוזב שורה, פסקה שהשורה האחרונה שלה קצרה מנסה את כלי 2 של "שורה שהתארכה"
+        (ראשי תיבות שמיכאל עצמו כותב, data/overflow/abbr.json, ורווח מיותר), אחת אחת מן הסוף ואחר כך הכול יחד.
+        מה שחוסך שורה (במדידה של המנוע, עם הליטוש) מוחל לבד דרך העורך, נרשם, ונאמר בסרגל; Ctrl+ז מחזיר. */
+  var PMLOG=[],PMLT=0,PMAB=null;
+  function pmHex(){return (Date.now().toString(16)+Math.random().toString(16).slice(2,10)).slice(0,22)}
+  function pmTxt(el){if(!el)return '';var c=el.cloneNode(true);[].forEach.call(c.querySelectorAll('sup,.tm,.tmg,.bkx,.og'),function(x){x.remove()});return c.textContent.replace(/⁠/g,'').replace(/\s+/g,' ').trim()}
+  /* מצב השורות של פסקה בעמוד: שורות, מילוי השורה האחרונה (0-1), ומילה בודדת */
+  function pmLay(p){var w=pmWin(),X=w&&w.__PRNX;if(!X||!p||!p.isConnected)return null;try{var f=X.lineInfo(p);if(!f)return null;
+    var W=p.clientWidth||1,tail=f.text.slice(f.start).trim();return {n:f.n,f:Math.round(f.lastW/W*100)/100,w:tail.split(/\s+/).filter(Boolean).length}}catch(e){return null}}
+  function pmLayRow(row){if(!row)return [];return [].map.call(row.querySelectorAll(':scope > .main > p'),pmLay)}
+  function pmLayS(L){return (L||[]).map(function(x){return x?x.n+':'+x.f+(x.w===1?'!':''):'-'}).join(' ')}
+  function pmNear(row,d){var r=row;for(var i=0;i<1&&r;i++)r=d<0?r.previousElementSibling:r.nextElementSibling;return r&&r.classList&&r.classList.contains('row')?pmTxt(r).slice(0,90):''}
+  function pmLog(o){try{if(!pmAdm())return;
+    var it={id:pmHex(),d:o.d||'edit',txt:String(o.before||'').slice(0,1000),now:String(o.after||'').slice(0,1000),det:String(o.act||'').slice(0,20),
+      kind:String(o.lay||'').slice(0,40),sug:JSON.stringify(o.ctx||{}).slice(0,1000),t:Date.now()};
+    PMLOG.push(it);try{var q=pmLs('lg-pm-logq-'+SLUG,[]);q.push(it);pmLsSet('lg-pm-logq-'+SLUG,q.slice(-400))}catch(e){}
+    clearTimeout(PMLT);PMLT=setTimeout(pmLogFlush,15000)}catch(e){}}
+  async function pmLogFlush(){var q=pmLs('lg-pm-logq-'+SLUG,[]);if(!q.length||typeof api!=='function')return;
+    try{await api('/bakara/dec',{method:'POST',body:JSON.stringify({slug:'pm-'+SLUG,items:q.slice(0,300)})});
+      var left=pmLs('lg-pm-logq-'+SLUG,[]).filter(function(x){return !q.some(function(y){return y.id===x.id})});pmLsSet('lg-pm-logq-'+SLUG,left)}catch(e){}}
+  window.addEventListener('pagehide',function(){try{pmLogFlush()}catch(e){}});
+  /* הקשר של שורה לפני פעולה: הנוסח, מצב השורות, והשכנות */
+  function pmCtx0(row){if(!row)return null;return {u:+row.getAttribute('data-u'),t:pmTxt(row),lay:pmLayRow(row),pg:pmPageOf(row),prev:pmNear(row,-1),next:pmNear(row,1)}}
+  function pmLogAfter(c0,act,uids){try{if(!c0)return;var doc=pmDoc(),parts=[],lays=[];
+    (uids&&uids.length?uids:[c0.u]).forEach(function(u){var r=[].find.call(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+u+'"]'),function(x){return (parseFloat(x.style.top)||0)>=-0.5});
+      if(r){parts.push(pmTxt(r));lays=lays.concat(pmLayRow(r))}});
+    var after=parts.join(' ¶ ');if(after===c0.t&&act==='type')return;
+    pmLog({act:act,before:c0.t,after:after,lay:pmLayS(c0.lay)+' > '+pmLayS(lays),ctx:{u:c0.u,pg:c0.pg,prev:c0.prev,next:c0.next,a:c0.lay,b:lays}})}catch(e){}}
+
+  /* ---- כלי 2 בדפדפן: אותם כללים כמו mech_cands (tools/overflow/overflow_gen.py) ---- */
+  function pmAbbr(){if(PMAB)return PMAB;PMAB=[];
+    var base='https://raw.githubusercontent.com/michaelFLEGG/leokmei-girsa/main/data/overflow/',t=Math.floor(Date.now()/3600000);
+    ['abbr.json','approved-abbr.json'].forEach(function(f){fetch(base+f+'?t='+t,{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
+      ((j&&j.items)||[]).forEach(function(x){if(x.long&&x.short)PMAB.push({long:x.long,short:x.short,kind:x.kind||'abbr'})})}).catch(function(){})});
+    return PMAB}
+  function pmEsc(x){return x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+  function pmMechCands(el){
+    var tw=el.ownerDocument.createTreeWalker(el,NodeFilter.SHOW_TEXT),n,nodes=[],flat='';
+    while((n=tw.nextNode())){var pe=n.parentElement;if(pe&&pe.closest&&pe.closest('i.ps,sup,.tm,.tmg,.bkx,.og'))continue;nodes.push({n:n,a:flat.length});flat+=n.nodeValue}
+    var prot=[],m,re;
+    re=/(?:^|(?<=[\s>דושכלבמה]))'[^']{2,}?'(?=[\s.,:;!?)\-]|$)/g;while((m=re.exec(flat)))prot.push([m.index,m.index+m[0].length]);
+    re=/"[^"]{4,}?"(?=[\s.,:;!?)\-]|$)/g;while((m=re.exec(flat)))if(m[0].indexOf(' ')>-1)prot.push([m.index,m.index+m[0].length]);
+    re=/\[[^\]]*\]|\([^)]*\)/g;while((m=re.exec(flat)))prot.push([m.index,m.index+m[0].length]);
+    var isP=function(a,b){return prot.some(function(x){return !(b<=x[0]||a>=x[1])})};
+    var nodeOf=function(a,b){for(var i=0;i<nodes.length;i++){var s0=nodes[i].a,e0=s0+nodes[i].n.nodeValue.length;if(s0<=a&&b<=e0)return i}return -1};
+    var C=[];
+    pmAbbr().forEach(function(it){var r=it.kind==='num'?new RegExp('(?<![א-ת"\'])'+pmEsc(it.long)+'(?= [א-ת])','g'):new RegExp('(?<![א-ת"\'])'+pmEsc(it.long)+'(?![א-ת"])','g');
+      while((m=r.exec(flat))){if(isP(m.index,m.index+m[0].length))continue;var k=nodeOf(m.index,m.index+m[0].length);if(k<0)continue;
+        C.push({k:k,a:m.index-nodes[k].a,b:m.index+m[0].length-nodes[k].a,rep:it.short,why:it.short+' במקום '+it.long})}});
+    re=/ {2,}| +(?=[.,:;!?])|(?<= -) {2,}/g;
+    while((m=re.exec(flat))){if(isP(m.index,m.index+m[0].length))continue;var k2=nodeOf(m.index,m.index+m[0].length);if(k2<0)continue;
+      C.push({k:k2,a:m.index-nodes[k2].a,b:m.index+m[0].length-nodes[k2].a,rep:/^ +(?=[.,:;!?])/.test(flat.slice(m.index))?'':' ',why:'רווח מיותר'})}
+    C.sort(function(x,y){return (nodes[y.k].a+y.a)-(nodes[x.k].a+x.a)});   /* מן הסוף */
+    return {nodes:nodes,C:C}}
+  /* HTML של העורך אחרי החלת הבחירה (על עותק) */
+  function pmMechApply(el,sel){var c=el.cloneNode(true),M=pmMechCands(c);
+    var pick=sel.map(function(x){return M.C.find(function(y){return y.k===x.k&&y.a===x.a&&y.b===x.b})}).filter(Boolean);
+    pick.sort(function(x,y){return (M.nodes[y.k].a+y.a)-(M.nodes[x.k].a+x.a)}).forEach(function(x){var t=M.nodes[x.k].n;t.nodeValue=t.nodeValue.slice(0,x.a)+x.rep+t.nodeValue.slice(x.b)});
+    return c.innerHTML}
+  /* בדיקה במנוע: הפסקה בעמוד מקבלת את הנוסח לרגע, מלוטשת, ונמדדת. לעולם אינה נשארת שונה */
+  function pmTry(fp,html){var w=pmWin();var h0=fp.innerHTML,st=fp.getAttribute('style'),n=99;
+    var rw=fp.closest('.row');if(rw&&rw.classList.contains('u'))html=pmLook(html);
+    try{fp.innerHTML=html;if(w.__pmEng.fitP)w.__pmEng.fitP(fp,true);var L=pmLay(fp);n=L?L.n:99}catch(e){}
+    fp.innerHTML=h0;if(st==null)fp.removeAttribute('style');else fp.setAttribute('style',st);return n}
+  function pmAutoMerge(u){
+    if(!pmAdm()||S.proxying)return;var doc=pmDoc(),w=pmWin();if(!doc||!w||!w.__pmEng)return;
+    var row=[].find.call(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+u+'"]'),function(x){return (parseFloat(x.style.top)||0)>=-0.5});if(!row)return;
+    var ps=row.querySelectorAll(':scope > .main > p');
+    for(var i=0;i<ps.length;i++){var fp=ps[i],L=pmLay(fp);if(!L||L.n<2||L.f>0.35)continue;   /* רק זנב קצר (עד כשליש שורה) */
+      var el=pmMainEl(u,String(i+1));if(!el)continue;var M=pmMechCands(el);if(!M.C.length)continue;
+      var tries=M.C.map(function(c){return [c]});if(M.C.length>1)tries.push(M.C.slice());
+      for(var t=0;t<tries.length;t++){var html=pmMechApply(el,tries[t]);if(pmTry(fp,html)<L.n){
+        var before=pmTxt(row),why=tries[t].map(function(c){return c.why}).join(', ');
+        try{if(typeof edBase==='function'&&el.__was===undefined)edBase(el)}catch(e){}
+        try{if(typeof sPush==='function')sPush(el)}catch(e){}   /* Ctrl+ז של העורך מחזיר */
+        el.innerHTML=html;try{el.dispatchEvent(new Event('input',{bubbles:true}))}catch(e){}try{if(typeof capture==='function')capture(el)}catch(e){}
+        pmRender([u]);
+        var nr=[].find.call(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+u+'"]'),function(x){return (parseFloat(x.style.top)||0)>=-0.5});
+        pmLog({act:'auto2',before:before,after:pmTxt(nr),lay:pmLayS([L])+' > '+pmLayS(pmLayRow(nr)),ctx:{u:u,why:why}});
+        pmStat('אוחה לבד: '+why+' (חסך שורה)',0);return true}}}
+    return false}
   /* ---------- עריכה בתוך העמוד (פרומפט 52, 17.11.2026): העורך עצמו, בעמוד המודפס, ומהיר ----------
      מצב דפוס הוא העורך הקיים, רק בעמוד המודפס. אין עורך שני:
      א. לחיצה על שורה מכניסה את הסמן לפסקה במקום שנלחץ (בנוסח העורך, בלי מספרי התוס'). הקלדה רגילה נשארת בדפדפן
@@ -572,6 +678,11 @@
   function pmLines(el){if(!el)return 0;var rg=el.ownerDocument.createRange();rg.selectNodeContents(el);var t={};
     [].forEach.call(rg.getClientRects(),function(r){if(r.width>1&&r.height>1)t[Math.round((r.top+r.bottom)/2/3)]=1});return Object.keys(t).length}
 
+  /* 17.11.2026: בתצוגה (וגם בהדפסה) יש רווח קבוע לפני הדעה השנייה באותה שורה (lgLook ב-build_site.py: span.bkx.og
+     של 1.3em לפני אות מספור או שם בסגנון אמוראים). בעורך אין אותו. עד כאן השורה בעריכה במצב דפוס הייתה בלעדיו -
+     צרה יותר מן ההדפסה - ונראתה נכנסת בשתי שורות, וביציאה (בנוסח של ההדפסה) חזרה לשלוש. עכשיו גם בעריכה הרווח
+     נמצא, כך שמה שרואים בעריכה הוא מה שיודפס. הרווח הוא רהיט (bkx): capture מסיר אותו, ואינו נכנס לנתונים */
+  function pmLook(h){return String(h||'').replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,'$1<span class="bkx og" contenteditable="false"></span> ')}
   /* ---- כניסה לשורה ---- */
   function pmEdit(t,ev,off){
     if(S.phone||!t)return;
@@ -586,13 +697,15 @@
     try{if(el.__was===undefined&&typeof edBase==='function')edBase(el)}catch(e){}
     t=pmFrameEl(pmDoc(),K.u,K.k)||t;row=t.closest('.row');
     pmBase(K.u,row);
+    var c0=pmCtx0(row);
     var h0=row.offsetHeight;
-    S.editing={p:t,el:el,u:K.u,k:K.k,row:row,orig:t.innerHTML,origSt:t.getAttribute('style'),dirty:false,n:0,h:0};
+    S.editing={p:t,el:el,u:K.u,k:K.k,row:row,orig:t.innerHTML,origSt:t.getAttribute('style'),dirty:false,n:0,h:0,c0:c0};
     S.focusKey={u:K.u,li:+K.k||0};
     /* 17.11.2026: הפסקה מקבלת את נוסח העורך, ומיד את אותו ליטוש של העימוד (הצרה עד 2.5%, בלי רווח קשיח שנוגע בטקסט).
        עד כאן הנוסח של העורך החליף את הנוסח המלוטש, ושורה שנכנסה בזכות ההצרה נשברה לשתיים ברגע הלחיצה - ועלתה על השורה
        שמתחתיה. ואם הגובה בכל זאת השתנה - שאר הטור זז, ולעולם אין חפיפה */
-    if(t.innerHTML!==el.innerHTML){t.innerHTML=el.innerHTML;pmFitEd(t)}
+    var eh=row.classList.contains('u')?pmLook(el.innerHTML):el.innerHTML;
+    if(t.innerHTML!==eh){t.innerHTML=eh;pmFitEd(t)}
     t.setAttribute('contenteditable','true');t.classList.add('pmed');t.spellcheck=false;
     var h1=row.offsetHeight;if(h1!==h0)pmShift(row,h1-h0,0);
     S.editing.h=row.offsetHeight;S.editing.n=pmLines(t);
@@ -609,7 +722,9 @@
     /* פרומפט 53: שורה שמיכאל תיקן כאן ונכנסה לשורה אחת - ננעלת מיד (המרשם הקבוע מתעדכן בסבב הבא מן הנוסח החי) */
     if(E.touched){try{if(pmLines(E.p)===1){var kn=String(E.p.textContent||'').replace(/\u2060\d+/g,'').replace(/[^\u05d0-\u05ea]/g,'');
       if(kn){window.__OVLOCK=window.__OVLOCK||new Set();window.__OVLOCK.add(kn)}}}catch(e){}}
-    if(E.touched)pmRender([E.u]);
+    if(E.touched){pmRender([E.u]);pmLogAfter(E.c0,'type',[E.u]);
+      /* איחוי מכני מיד, אחרי שהשורה נבנתה מחדש (לא בזמן הקלדה) */
+      setTimeout(function(){if(!S.editing||S.editing.u!==E.u)pmAutoMerge(E.u)},0)}
     else{var r=E.row,h0=r.offsetHeight;E.p.innerHTML=E.orig;if(E.origSt==null)E.p.removeAttribute('style');else E.p.setAttribute('style',E.origSt);
       var h1=r.offsetHeight;if(h1!==h0)pmShift(r,h1-h0,0)}
     pmStat('',0)}
@@ -840,6 +955,8 @@
     E.p.removeAttribute('contenteditable');E.p.classList.remove('pmed');S.editing=null;
     var n0=E.n;
     pmRender(ch);tp('render');
+    var kn=(e.ctrlKey?'Ctrl+':'')+(e.altKey?'Alt+':'')+(e.shiftKey?'Shift+':'')+(e.code||e.key);
+    if(!/^(Ctrl\+)?(KeyZ|KeyY)$/.test(kn))pmLogAfter(E.c0,kn.replace('Digit0','0').replace('Period','.'),ch);
     var m=ek&&/^u(\d+)\.(\w+)$/.exec(ek);
     var t=m&&pmFrameEl(pmDoc(),+m[1],m[2]);
     /* העורך לא השאיר סמן (למשל ביטול ב-Ctrl+ז): הסמן חוזר לשורה שבה עמדת */
@@ -958,7 +1075,13 @@
       pmEdit(p,e)},true);
     doc.addEventListener('input',function(e){if(S.editing&&S.editing.p.contains(e.target))pmOnInput()},true);
     doc.addEventListener('paste',function(e){if(!S.editing||!S.editing.p.contains(e.target))return;e.preventDefault();
-      var t=(e.clipboardData||{}).getData?e.clipboardData.getData('text/plain').replace(/\s+/g,' '):'';doc.execCommand('insertText',false,t)},true);
+      var t=(e.clipboardData||{}).getData?e.clipboardData.getData('text/plain').replace(/\s+/g,' '):'';
+      /* הודבקה כותרת צד שהועתקה מכותרת צד: נכנסת ככותרת צד, בלי להחיל עליה סגנון שוב */
+      if(pmIsSide(t)){var E=S.editing,g=pmGetSel(E.p)||[0,0],a=Math.min(g[0],g[1]);doc.execCommand('insertText',false,t.trim());pmOnInput();
+        pmSetSel(E.p,a,a+t.trim().length);
+        pmProxy({key:'.',code:'Period',ctrlKey:true,altKey:false,shiftKey:false,metaKey:false,preventDefault:function(){},getModifierState:function(){return false}});return}
+      doc.execCommand('insertText',false,t)},true);
+    doc.addEventListener('copy',pmSideCopy,true);doc.addEventListener('cut',pmSideCopy,true);
     doc.addEventListener('keydown',function(e){
       if(S.busy&&!S.editing){
         /* בזמן השלמת העימוד: הקלדה נשמרת, ונכנסת לשורה כשהעימוד מסתיים. הקלדה תמיד קודמת */

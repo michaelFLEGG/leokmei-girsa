@@ -473,8 +473,15 @@ def main():
     items = []
     for x in B:
         ax = A[(x['u'], x['li'])]
+        # 17.11.2026 (מיכאל: "צא לדרך"): גם פסקה שלא גלשה בהגדלה, אבל השורה האחרונה שלה היא מילה בודדת או זנב קצר
+        # (עד 15% מן השורה) בגודל הרגיל החדש (המוגדל) - מועמדת לאיחוי: היעד שורה אחת פחות. רק שינוי מכני (כלי 2)
+        # או ניסוח מזערי (כלי 3) מוחלים בה לבד; חיתוך ואיחוי עם שורה סמוכה אינם מקצרים אותה ואינם מוצעים
+        tail = False
         if x['n'] <= ax['n']:
-            continue
+            tw = re.sub(r'\u2060\d+', '', x['text'][x['start']:]).strip()
+            if x['n'] < 2 or (x.get('mc') or 'main') != 'main' or not (len(tw.split()) == 1 or x['lastW'] <= 0.15 * x['W']):
+                continue
+            tail = True
         # הנוסח כפי שהוא בדף בזמן ההדפסה (כולל עריכות המנהל החיות), ולא הנוסח הבנוי
         l = [x['dc'], x['dh']] if x.get('dh') is not None else data.get((x['u'], x['li']))
         if not l:
@@ -488,7 +495,7 @@ def main():
         items.append({'key': 'u%d.%d' % (x['u'], x['li']), 'id': key_id('u%d.%d' % (x['u'], x['li'])), 'u': x['u'], 'li': x['li'],
                       'daf': x['daf'], 'cls': l[0], 'mc': x.get('mc') or 'main', 'html': l[1], 'ph': l[1], 'text': re.sub(r'\s+', ' ', plain(l[1])).strip(), 'over': over,
                       'nA4': ax['n'], 'nLarge': x['n'], 'missPx': round(miss_px, 1), 'miss': int(math.ceil(miss_px / avg)),
-                      'long': ax['n'] >= 2, 'sug': []})
+                      'long': ax['n'] >= 2, 'tail': tail, 'sug': []})
     # ---- הצעות ----
     abbr = json.load(io.open(os.path.join(ODIR, 'abbr.json'), encoding='utf-8'))['items']
     sp = os.path.join(ODIR, 'sugg', a.slug + '.json')
@@ -524,7 +531,7 @@ def main():
     # כל חלק שלוש מילים לפחות, לא אחרי מילית, לא בתוך הסבר/פסוק/אמוראים. ונבדק במנוע: כל חלק בשורה אחת בשני הגדלים
     msplit = 0
     for it in items:
-        if it['nA4'] != 1 or it['mc'] != 'main':
+        if it['nA4'] != 1 or it['mc'] != 'main' or it.get('tail'):
             continue
         if any((s0.get('tool') == 4) for s0 in (wsug.get(it['key']) or {}).get('sug', [])):
             continue
@@ -565,7 +572,7 @@ def main():
     # הפסקאות יחד בהדפסה הרגילה - כלומר אינה גולשת ואינה דוחקת שורה אחרת.
     joins = 0
     for it in items:
-        if it['mc'] != 'main':
+        if it['mc'] != 'main' or it.get('tail'):
             continue
         for tgt, dl in (('prev', -1), ('next', 1)):
             nk = (it['u'], it['li'] + dl)
@@ -604,7 +611,14 @@ def main():
             need = [it['nA4'] + s.get('targetLines', 1)]
         else:
             need = [it['nA4']]
-        ok = all(n <= m for n, m in zip(r['a4-large'], need)) and all(n <= m for n, m in zip(r['a4'], need))
+        if it.get('tail'):
+            # זנב קצר: ההצעה עוברת רק אם חסכה שורה בגודל הרגיל (המוגדל), ואינה מוסיפה שורה בקטן
+            if s.get('kind') in ('split', 'move', 'join'):
+                bad += 1
+                continue
+            ok = r['a4-large'][0] <= it['nLarge'] - 1 and r['a4'][0] <= it['nA4']
+        else:
+            ok = all(n <= m for n, m in zip(r['a4-large'], need)) and all(n <= m for n, m in zip(r['a4'], need))
         if not ok:
             bad += 1
             continue

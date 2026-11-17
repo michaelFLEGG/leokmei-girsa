@@ -183,12 +183,15 @@ def choose(it, skip_ids):
     """הקטן ביותר שמספיק. מחזיר (הצעה, סיבה) או (None, סיבה)"""
     if it.get('head'):
         return None, 'כותרת: נשארת הצעה'
-    if it.get('nA4') != 1:
+    if it.get('nA4') != 1 and not it.get('tail'):
         return None, 'פסקה ארוכה (יותר משורה ב-A4)'
     if it['id'] in skip_ids:
         return None, 'מיכאל השאיר או ביטל'
     sug = it.get('sug') or []
     one = lambda s: s.get('ok') and all(n == 1 for n in s['ok'].get('large', [])) and all(n == 1 for n in s['ok'].get('a4', []))
+    if it.get('tail'):
+        # זנב קצר (17.11.2026): חוסכת שורה בגודל הרגיל, ורק כלי 2 או שינוי מזערי של כלי 3
+        one = lambda s: s.get('ok') and s['ok'].get('large', [99])[0] <= it['nLarge'] - 1 and s['ok'].get('a4', [99])[0] <= it['nA4']
     t2 = [s for s in sug if s['tool'] == 2 and s.get('kind') == 'replace' and one(s)]
     t2 = sorted(t2, key=lambda s: (s.get('type') == 'multi', len(plain(s['html']))), reverse=False)
     if t2:

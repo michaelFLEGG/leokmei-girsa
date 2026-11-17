@@ -53,6 +53,10 @@ jobs:
           for s in $(python -c "import json,sys;print(' '.join(json.loads(sys.argv[1])))" '${{ steps.p.outputs.slugs }}'); do
             python tools/overflow/learn.py --slug $s || echo "::warning::הלמידה נכשלה ב-$s"
           done
+          # 17.11.2026: הכרעות העימוד של מיכאל במצב דפוס (pm-<מסכת>) - חומר הלימוד של כללי העימוד, לכל המסכתות שיש להן
+          for s in $(python -c "import json;print(' '.join(json.load(open('data/overflow/config.json')).get('all') or []))" 2>/dev/null || echo berakhot); do
+            python tools/overflow/pm_learn.py --slug $s || true
+          done
           python tools/overflow/abbr.py || echo "::warning::רשימת הקיצורים לא נבנתה מחדש (אין קובצי וורד בענן), נשארת הקודמת"
           git config user.name "leokmei-overflow"
           git config user.email "overflow@leokmei.com"

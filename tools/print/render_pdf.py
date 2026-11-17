@@ -88,7 +88,9 @@ def main():
     q = {'print': '1', 'tos': a.tos, 'duplex': a.duplex, 'profile': a.profile}
     if a.holefix == '0':
         q['holefix'] = '0'
-    if a.lines:
+    # פרומפט 49 חלק 0: יש מרשם של הכרעות "שורה שהתארכה" למסכת - רושמים את השורות כדי לבדוק אותן בסוף
+    keep_fp = os.path.join(ROOT, 'data', 'overflow', 'keep', a.slug + '.json')
+    if a.lines or os.path.exists(keep_fp):
         q['lines'] = '1'
     if a.sq25 == '0':
         q['sq25'] = '0'
@@ -212,8 +214,14 @@ def main():
     print('פתיחה_מחוץ_לטווח=%d' % len(oo))
     for o in oo[:20]:
         print('  פתיחה מחוץ לטווח: %s' % o.get('detail'))
+    # פרומפט 49 חלק 0: כל הכרעת "שורה שהתארכה" שבמרשם - בשורה אחת. שורה שחסרה או נשברה עוצרת את המסירה
+    kb = 0
+    if os.path.exists(keep_fp):
+        sys.path.insert(0, os.path.join(ROOT, 'tools', 'overflow'))
+        import keep as KEEP
+        kb = KEEP.check(a.slug, a.report or (a.out + '.json'), partial=not a.all)
     # פרומפט 48: סוף פרק לא מאוזן עוצר את המסירה, כמו חפיפה
-    if ov or bd or ce or oo:
+    if ov or bd or ce or oo or kb:
         sys.exit(3)
 
 

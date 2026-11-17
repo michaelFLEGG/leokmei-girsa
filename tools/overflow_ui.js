@@ -243,9 +243,26 @@
     '.ovkeys{font-size:11px;color:#8a7d66;margin-top:4px}.ovta{width:100%;font:17px/1.6 Frank,serif;box-sizing:border-box}'+
     '@media print{.ovpop,.ovtop{display:none!important}}';document.head.appendChild(s)})();
   setTimeout(()=>{ovLoad().catch(()=>{})},2600);
+  /* פרומפט 49 חלק 0 (17.11.2026): הכרעות "שורה שהתארכה" נשמרות לתמיד (data/overflow/keep/<מסכת>.json).
+     למנהל: אם שורה שהוכרעה אינה עוד פסקה בדף (נדרסה, למשל בקבלת הצעת סכם שנכתבה על נוסח ישן) - הודעה בקול,
+     עם הדף והמילים הראשונות. בלי רקע ובלי לגעת בטקסט. הבודק של ההפקה (tools/overflow/keep.py) עוצר את המסירה. */
+  async function ovKeepCheck(){
+    if(!ovOK()||typeof D==='undefined'||!D.pages)return;
+    /* מחכים שהעריכות של המנהל מן השרת יוחלו על הנתונים (syncNow מסמן __LGSYNC) */
+    for(let i=0;i<40&&!window.__LGSYNC;i++)await new Promise(r=>setTimeout(r,1500));
+    await new Promise(r=>setTimeout(r,3000));
+    let doc=null;
+    try{const r=await fetch(OV_RAW+'keep/'+SLUG+'.json?t='+Math.floor(Date.now()/300000),{cache:'no-store'});if(r.ok)doc=await r.json()}catch(e){}
+    if(!doc||!doc.items||!doc.items.length)return;
+    const K=s=>String(s||'').replace(/<[^>]+>/g,'').replace(/&[^;]+;/g,'').replace(/[^א-ת0-9]/g,'');
+    const have=new Set();D.pages.forEach(pg=>(pg.units||[]).forEach(u=>(u.l||[]).forEach(x=>have.add(K(x&&x[1])))));
+    const lost=[];doc.items.forEach(it=>(it.lines||[]).forEach(ln=>{if(!have.has(K(ln)))lost.push((it.daf?it.daf+' ':'')+ln.split(' ').slice(0,4).join(' '))}));
+    OVS.keepLost=lost;
+    if(lost.length)toast('שורה שהתארכה: '+lost.length+' הכרעות שלך אינן עוד בדף כפי שהוכרעו: '+lost.slice(0,4).join(' | ')+(lost.length>4?' ...':''),12000)}
+  setTimeout(()=>{ovKeepCheck().catch(()=>{})},9000);
   /* אחרי פרסום, עריכה או מעבר עמוד - הסימון מחושב מחדש (שורה שתוקנה אינה מסומנת עוד) */
   document.addEventListener('input',()=>{clearTimeout(OVS.ti);OVS.ti=setTimeout(()=>{if(OVS.items.length){ovMark();ovBar()}},1200)},true);
   /* הדף נפרס בהדרגה (הזנב נטען בגלילה): שורות שנוספו מסומנות כשהן מגיעות */
   setTimeout(()=>{const f=document.getElementById('flow');if(!f||typeof MutationObserver==='undefined')return;
     new MutationObserver(()=>{if(!OVS.items.length||OVS.pop)return;clearTimeout(OVS.tm);OVS.tm=setTimeout(()=>{ovMark();ovBar()},700)}).observe(f,{childList:true})},3000);
-  window.lkOverflow={load:ovLoad,mark:ovMark,next:ovNext,state:()=>({items:OVS.items.length,left:ovLeft(),shown:OVS.shown||0})};
+  window.lkOverflow={load:ovLoad,mark:ovMark,next:ovNext,keepCheck:ovKeepCheck,state:()=>({items:OVS.items.length,left:ovLeft(),shown:OVS.shown||0,keepLost:OVS.keepLost||null})};

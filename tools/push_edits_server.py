@@ -20,6 +20,17 @@ def main():
     if not slugs:
         slugs = sorted(f[:-5] for f in os.listdir(os.path.join(HERE, 'data', 'edits')) if f.endswith('.json'))
     bad = 0
+    # פרומפט 49 חלק 0 (17.11.2026): "keep:<מסכת>" - רק רשומות השחזור של מרשם "שורה שהתארכה"
+    # (data/overflow/keep/<מסכת>.json), בלי שאר המאגר: שכבת המאגר עשויה להחזיק עריכות שנמחקו בשרת בכוונה.
+    keeps = [s[5:] for s in slugs if s.startswith('keep:')]
+    if keeps:
+        sys.path.insert(0, os.path.join(HERE, 'tools', 'overflow'))
+        import keep as KEEP
+        for slug in keeps:
+            bad += KEEP.push(slug)
+        slugs = [s for s in slugs if not s.startswith('keep:')]
+        if not slugs:
+            sys.exit(1 if bad else 0)
     for slug in slugs:
         rep = json.load(open(os.path.join(HERE, 'data', 'edits', slug + '.json'), encoding='utf-8'))
         eds = rep.get('edits') or []

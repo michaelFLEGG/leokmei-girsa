@@ -123,7 +123,6 @@
         '<span class="pmt">מצב דפוס</span>'+
         '<select id="pm-pk" title="פרק">'+pks+'</select>'+
         '<span class="pmg"><select id="pm-paper" title="גודל הדף"><option value="b5">B5</option><option value="a4">A4</option></select>'+
-        '<select id="pm-big" title="גודל הגוף"><option value="1">מוגדל</option><option value="0">רגיל</option></select>'+
         '<label title="עם הערות התוס\'"><input type="checkbox" id="pm-tos"> תוס\'</label></span>'+
         '<span class="pmsep"></span>'+
         '<span class="pmg"><button data-v="page" title="עמודים כפי שיודפסו">עמוד</button><button data-v="spread" class="pmwide" title="עמוד מול עמוד">כפולה</button><button data-v="col" title="הטורים בלבד, זה מתחת לזה">טור</button></span>'+
@@ -151,9 +150,9 @@
     document.body.appendChild(cal);
     var menu=document.createElement('div');menu.id='pmmenu';document.body.appendChild(menu);
     var $p=function(id){return document.getElementById(id)};
-    $p('pm-paper').value=P.paper;$p('pm-big').value=String(P.big);$p('pm-tos').checked=!!P.tos;
-    ['pm-paper','pm-big','pm-tos'].forEach(function(id){$p(id).addEventListener('change',function(){
-      P.paper=$p('pm-paper').value;P.big=+$p('pm-big').value;P.tos=$p('pm-tos').checked?1:0;pmLsSet('lg-pm-prefs',P);pmLoad()})});
+    $p('pm-paper').value=P.paper;$p('pm-tos').checked=!!P.tos;
+    ['pm-paper','pm-tos'].forEach(function(id){$p(id).addEventListener('change',function(){
+      P.paper=$p('pm-paper').value;P.tos=$p('pm-tos').checked?1:0;pmLsSet('lg-pm-prefs',P);pmLoad()})});
     $p('pm-pk').addEventListener('change',function(){S.pk=this.value;S.anchor=null;pmShowPerek(S.pk);pmLoad()});
     [].forEach.call(d.querySelectorAll('[data-v]'),function(b){b.addEventListener('click',function(){
       var n=+document.getElementById('pm-pg').value||1;
@@ -182,7 +181,7 @@
     window.addEventListener('resize',function(){if(!S.open)return;pmFrameSize(S.fr);if(S.zoom==='fit')pmZoom('fit')})}
 
   /* ---------- פתיחה, טעינה, עימוד ---------- */
-  function pmProfile(){return (P.paper==='a4'?'a4':'b5')+(+P.big?'lg':'')}
+  function pmProfile(){return (P.paper==='a4'?'a4':'b5')+'lg'}   /* פרומפט 56: גודל אחד */
   function pmOpen(){
     if(!pmAdm()){pmMsg('מצב דפוס - למנהל בלבד');return}
     if(S.open)return;

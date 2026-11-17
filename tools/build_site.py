@@ -2898,6 +2898,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   # המסכת הזאת. הם נכתבים בסוף גיליון הסגנונות, ולכן גוברים על מה
   # שנכתב למעלה. מרווח השורה של כותרות פרק אינו נוגע כאן במתכוון:
   # פתיחת פרק תופסת מקום גם בספר.
+  # פרומפט 56 א5: יחס המוגדל לרגיל הישן (גוף 11.5 מול 10.5872 נק', tools/print/profiles/a4-large.json ו-archive/a4.json)
+  _S56 = 11.5 / 10.5872
+  SCREEN_BIG = {'fs': 18 * _S56, 'fsm': 20 * _S56, 'meas': 20.75 / _S56, 'rail': 6.92 / _S56, 'gut': 3.46 / _S56,
+                'k': 1 / _S56, 'mrail': 3.1 / _S56, 'amp': 1 / 11.5, 'ps': 0.2 / 11.5, 'tot': (20.75 + 6.92 + 3.46) / _S56}
   CSS = CSS + ('''
   @font-face{font-family:'Frank';src:url(fonts/frank-b.woff2) format('woff2'),url(fonts/frank-b.ttf);font-weight:700;
              font-display:swap;size-adjust:%.2f%%}
@@ -2923,6 +2927,31 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   #prnnote{display:none}
   @media print{#prnnote{display:block;font:11px/1.4 Frank,serif;color:#555;text-align:center;border-bottom:1px solid #ccc;margin:0 0 4px;padding:2px 0}}
   ''' % (K_BOLD * 100, K_BOLD * 100, K_NOSE, K_DH, K_MISHNA, K_INK, 9.0 / MISHNA_PT, line_ratio('hatz')))
+
+  # פרומפט 56 א5 (17.11.2026, מיכאל): "גודל האותיות צריך להיות החלטה לגבי כל האתר, וכל המסכתות, וכן גודל האותיות של
+  # האמוראים שצריכים לגדול בעוד מספר אחד בהתאמה". הטקסט הרץ על המסך גדל ביחס של המוגדל לרגיל הישן (11.5 / 10.5872),
+  # ורוחב הטור נשאר בפיקסלים (הטור הוא 19.103em כמו בהדפסה המוגדלת, במקום 20.75em) - כמו בהדפסה: פחות אותיות בשורה.
+  # כותרת הצד (המסילה), ההסבר, המשנה, ד"ה משנה, הנושא והחציצה נשארים בגודלם המוחלט (--sk). אמוראים: הגודל המוחלט ועוד
+  # נקודה אחת (--amp = נקודה אחת ביחס לגוף 11.5). פסוק: ריווח אותיות 0.2 נק' (ביחס לגוף 11.5), רק במילות הפסוק.
+  # מנוע ההדפסה (html.prn) מגדיר את כל אלה בעצמו מן הפרופיל, ולכן שם --sk=1 ו---amp=0.
+  CSS = CSS + '''
+  @media screen{
+    :root{--fs:%(fs).3fpx;--measure:%(meas).4fem;--rail:%(rail).4fem;--gut:%(gut).4fem;--sk:%(k).5f;--amp:%(amp).5fem}
+    html.prn{--sk:1;--amp:0em}
+    .main p.nose,.main.nose{font-size:calc(var(--k-nose) * var(--sk) * 1em)}
+    .main p.dh,.main.dh,.dm{font-size:calc(var(--k-dh) * var(--sk) * 1em)}
+    .main.mishna{font-size:calc(var(--k-mishna) * var(--sk) * 1em)}
+    .main.mishna .dm,.main.dh .dm{font-size:calc(var(--k-dh) / var(--k-mishna) * 1em)}
+    .main.hatz{font-size:calc(var(--sk) * 1em)}
+    .main:not(.mishna) .hs{font-size:calc(.82em * var(--sk))}
+    .main:not(.mishna) .am{font-size:calc(.77em * var(--sk) + var(--amp))}
+    .rail{font-size:calc(var(--sk) * 1em)}
+    html:not(.prn) .ps{letter-spacing:%(ps).5fem}
+  }
+  @media screen and (max-width:760px){:root{--fs:%(fsm).3fpx}}
+  @media screen{html.dev-phone{--mrail:%(mrail).4fem}}
+  @media screen and (max-width:900px){.flow.book{font-size:min(var(--fs),calc((100vw - 2.2rem) / %(tot).4f))}}
+  ''' % SCREEN_BIG
 
   JS=r'''
   const D=DATA;const MNSEG=D.mnseg||{};const $=s=>document.querySelector(s);
@@ -3712,9 +3741,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function goScreen(d){const f=$('#flow');
     if(f.classList.contains('vert'))f.scrollBy({top:d*f.clientHeight*.9,behavior:'smooth'});
     else f.scrollBy({left:-d*f.clientWidth,behavior:'smooth'})}
+  /* פרומפט 56 א5: הגודל הנבחר נשמר בסולם הישן (18 = רגיל), ומוצג מוגדל ביחס המוגדל לרגיל הישן (11.5 / 10.5872).
+     כך כפתורי הגודל ובחירה שנשמרה במכשיר ממשיכים לעבוד, יחסית לברירת המחדל החדשה */
+  const FSK=1.08622;
   function fs(d){const r=document.documentElement;
-    const v=Math.max(12,Math.min(60,parseFloat(getComputedStyle(r).getPropertyValue('--fs'))+d));setFs(v)}
-  function setFs(v){document.documentElement.style.setProperty('--fs',v+'px');localStorage.setItem('lg-fs',v);sizeBtns(v);setDafW();fitAnchors()}
+    const v=Math.max(12,Math.min(60,Math.round(parseFloat(getComputedStyle(r).getPropertyValue('--fs'))/FSK)+d));setFs(v)}
+  function setFs(v){document.documentElement.style.setProperty('--fs',(v*FSK).toFixed(3)+'px');localStorage.setItem('lg-fs',v);sizeBtns(v);setDafW();fitAnchors()}
   function sizeBtns(v){document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',+b.dataset.fs===+v));
     const n=$('#fsnow');if(n){n.textContent=(+v===18||!v)?'רגיל':String(+v);n.title=(+v===18||!v)?'הגודל הרגיל':'חזרה לגודל הרגיל'}}
   /* ניגודיות גבוהה: מתג תחת "נגישות", נזכר במכשיר (פרומפט 28) */

@@ -376,7 +376,11 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     _pp = os.path.join(SITE, 'print-profiles')
     os.makedirs(_pp, exist_ok=True)
     for _f in os.listdir(os.path.join(ROOT, 'tools', 'print', 'profiles')):
-        shutil.copy(os.path.join(ROOT, 'tools', 'print', 'profiles', _f), os.path.join(_pp, _f))
+        _src = os.path.join(ROOT, 'tools', 'print', 'profiles', _f)
+        if os.path.isdir(_src):  # פרומפט 56: archive/ (a4 הישן, בסיס המדידה של "שורה שהתארכה")
+            shutil.copytree(_src, os.path.join(_pp, _f), dirs_exist_ok=True)
+        else:
+            shutil.copy(_src, os.path.join(_pp, _f))
     shutil.copy(os.path.join(ROOT, 'tools', 'print', 'qrcode.js'), os.path.join(SITE, 'print-qr.js'))
     # פרומפט 41: רשימת "שורה שהתארכה" (נקראת בדף במצב מנהל; המקור הראשי הוא הקובץ שבמאגר)
     _ov = os.path.join(ROOT, 'data', 'overflow')

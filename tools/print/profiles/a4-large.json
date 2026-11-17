@@ -1,95 +1,98 @@
 {
-  "id": "a4-large",
-  "name": "A4 מוגדל",
-  "_הערה": "פרומפט 41 (15.11.2026): גוף 11.5 נק' (77.5 מ\"מ חלקי 19.103), מרווח 14.21 כמו a4, פסוק גדל עם הגוף, תוס' 7.85. keepAbsoluteFrom: משנה, ד\"ה משנה, נושא, חציצה, הסבר ואמוראים נשארים בגודלם המוחלט של a4 (גוף 10.5872): המנוע מכפיל את הגודל היחסי שלהם ב-10.5872 חלקי גוף הפרופיל. a4 נשאר ברירת המחדל.",
-  "page": {
-    "w": 210,
-    "h": 297
-  },
-  "margins": {
-    "top": 15,
-    "bottom": 15,
-    "right": 4,
-    "left": 15
-  },
-  "duplexInnerExtra": 0,
+ "id": "a4-large",
+ "name": "A4 מוגדל",
+ "_הערה": "פרומפט 41 (15.11.2026): גוף 11.5 נק' (77.5 מ\"מ חלקי 19.103), מרווח 14.21 כמו a4, פסוק גדל עם הגוף, תוס' 7.85. keepAbsoluteFrom: משנה, ד\"ה משנה, נושא, חציצה, הסבר ואמוראים נשארים בגודלם המוחלט של a4 (גוף 10.5872): המנוע מכפיל את הגודל היחסי שלהם ב-10.5872 חלקי גוף הפרופיל. a4 נשאר ברירת המחדל.",
+ "page": {
+  "w": 210,
+  "h": 297
+ },
+ "margins": {
+  "top": 15,
+  "bottom": 15,
+  "right": 4,
+  "left": 15
+ },
+ "duplexInnerExtra": 0,
+ "cols": 2,
+ "rail": 16,
+ "dafPullMm": 5,
+ "mishnaGapPt": 7.1,
+ "measure": 77.5,
+ "body": {
+  "fsFromMeasure": 19.103,
+  "linePt": 14.21
+ },
+ "header": {
+  "pt": 12,
+  "topMm": 6,
+  "family": "Vilna",
+  "weight": 900
+ },
+ "footer": {
+  "pt": 8,
+  "numberFromBottomMm": 8.5,
+  "siteText": "לאוקמי גירסא",
+  "siteUrlText": "leokmei.com",
+  "sitePt": 7,
+  "qrMm": 10,
+  "pageQr": false,
+  "bookQr": true,
+  "siteUrl": "https://leokmei.com/"
+ },
+ "notes": {
+  "family": "Frank",
+  "weight": 400,
+  "dhFamily": "Vilna",
+  "dhWeight": 700,
+  "dhPt": 7.85,
+  "dhLetterSpacingPt": 0.2,
+  "markFamily": "Vilna",
+  "pt": 7.85,
+  "linePt": 9.33,
+  "letterSpacingPt": 0,
   "cols": 2,
-  "rail": 16,
-  "dafPullMm": 5,
-  "mishnaGapPt": 7.1,
-  "measure": 77.5,
-  "body": {
-    "fsFromMeasure": 19.103,
-    "linePt": 14.21
-  },
-  "header": {
-    "pt": 12,
-    "topMm": 6,
-    "family": "Vilna",
-    "weight": 900
-  },
-  "footer": {
-    "pt": 8,
-    "numberFromBottomMm": 8.5,
-    "siteText": "לאוקמי גירסא",
-    "siteUrlText": "leokmei.com",
-    "sitePt": 7,
-    "qrMm": 10,
-    "pageQr": false,
-    "bookQr": true,
-    "siteUrl": "https://leokmei.com/"
-  },
-  "notes": {
-    "family": "Frank",
-    "weight": 400,
-    "dhFamily": "Vilna",
-    "dhWeight": 700,
-    "dhPt": 7.85,
-    "dhLetterSpacingPt": 0.2,
-    "markFamily": "Vilna",
-    "pt": 7.85,
-    "linePt": 9.33,
-    "letterSpacingPt": 0,
-    "cols": 2,
-    "colGapMm": 3,
-    "gapAboveMm": 2.6,
-    "betweenMm": 0.35,
-    "numberScale": 0.62,
-    "numberRise": 0.45,
-    "numberWeight": 400,
-    "markScale": 0.58,
-    "markWeight": 400,
-    "markRise": 1.15,
-    "nameScale": 0.86,
-    "parenLessPt": 2,
-    "nameColor": "#6b6b6b",
-    "numbering": "digits",
-    "clusterDir": "ltr",
-    "markRoomPt": 1.5,
-    "squeeze": [
-      [
-        -0.03,
-        0
-      ],
-      [
-        -0.06,
-        -0.01
-      ],
-      [
-        -0.09,
-        -0.02
-      ]
-    ]
-  },
-  "continuationPt": 8.4,
-  "stretch": {
-    "maxLines": 3,
-    "maxPtPerGap": 3
-  },
-  "widowOrphan": 2,
-  "keepAfterHeading": 2,
-  "vilnaLetterSpacingPt": 0.2,
-  "labelMinScale": 0.74,
-  "shortLineWords": 2,
-  "keepAbsoluteFrom": 10.5872
+  "colGapMm": 3,
+  "gapAboveMm": 2.6,
+  "betweenMm": 0.35,
+  "numberScale": 0.62,
+  "numberRise": 0.45,
+  "numberWeight": 400,
+  "markScale": 0.58,
+  "markWeight": 400,
+  "markRise": 1.15,
+  "nameScale": 0.86,
+  "parenLessPt": 2,
+  "nameColor": "#6b6b6b",
+  "numbering": "digits",
+  "clusterDir": "ltr",
+  "markRoomPt": 1.5,
+  "squeeze": [
+   [
+    -0.03,
+    0
+   ],
+   [
+    -0.06,
+    -0.01
+   ],
+   [
+    -0.09,
+    -0.02
+   ]
+  ]
+ },
+ "continuationPt": 8.4,
+ "stretch": {
+  "maxLines": 3,
+  "maxPtPerGap": 3
+ },
+ "widowOrphan": 2,
+ "keepAfterHeading": 2,
+ "vilnaLetterSpacingPt": 0.2,
+ "labelMinScale": 0.74,
+ "shortLineWords": 2,
+ "keepAbsoluteFrom": 10.5872,
+ "amPlusPt": 1,
+ "_הערה_56": "פרומפט 56 (17.11.2026): גודל אחד - זה הפרופיל היחיד (a4 ו-b5 הישנים בארכיון). amPlusPt: אמוראים גדל בנקודה אחת מעל גודלו המוחלט של a4 הישן (8.15 -> 9.15 נק'). psLetterSpacingPt: ריווח אותיות 0.2 בסגנון פסוק, יורד במדרגות רק בשורה שבלעדיו לא הייתה גולשת.",
+ "psLetterSpacingPt": 0.2
 }

@@ -75,7 +75,7 @@ def log_fp(slug):
 
 
 # ---------------- א. נעילה ----------------
-def lock(slug, large, a4):
+def lock(slug, large, a4, release_broken=False):
     """מעדכן את המרשם האוטומטי מתוך שני דוחות המנוע (עם --lines). מחזיר 0, או 1 אם נמצאה שבירה של שורה נעולה"""
     L = jload(large, {}).get('plines') or []
     A = jload(a4, {}).get('plines') or []
@@ -107,6 +107,13 @@ def lock(slug, large, a4):
             del items[h]
             gone += 1
         elif c['n'] > 1 or nA.get(k, 1) > 1:
+            if release_broken:
+                # פרומפט 56 א6: שינוי גודל (אמוראים +1) - שורה נעולה שגלשה רק בגלל הגודל החדש משתחררת פעם אחת,
+                # והמחולל וההחלה מאחים אותה מחדש בגודל החדש. בלי הדגל זו שבירה שעוצרת
+                rel.append({'k': k[:80], 'daf': it.get('daf'), 'since': it.get('since'), 'out': t, 'why': 'גודל חדש (פרומפט 56)'})
+                del items[h]
+                gone += 1
+                continue
             broken.append((it.get('daf'), it.get('s') or k[:40], c['n']))
     for k, c in cur.items():
         if c['n'] == 1 and nA.get(k) == 1:
@@ -361,6 +368,7 @@ def main():
     ap.add_argument('--a4', default='')
     ap.add_argument('--report', default='')
     ap.add_argument('--partial', action='store_true')
+    ap.add_argument('--release-broken', action='store_true', help='lock: שחרור חד-פעמי של נעולות שגלשו בגלל שינוי גודל (פרומפט 56)')
     a = ap.parse_args()
     if a.cmd == 'pick':
         ch = pick(a.slug, a.gen or os.path.join(ODIR, a.slug + '.json'), a.site, a.apply_file)
@@ -368,7 +376,7 @@ def main():
             commit(a.slug, ch)
         return 0
     if a.cmd == 'lock':
-        return lock(a.slug, a.large, a.a4)
+        return lock(a.slug, a.large, a.a4, a.release_broken)
     if a.cmd == 'check':
         return check(a.slug, a.report, a.partial)
     return push(a.slug)

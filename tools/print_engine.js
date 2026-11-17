@@ -337,6 +337,25 @@
   /* כלי 1 (פרומפט 41): הצרה עד 2.5% מרוחב השורה - word-spacing שלילי קודם, ואחריו letter-spacing. אינו נוגע בטקסט.
      אם 2.5% אינם מחזירים את השורה האחרונה - לא מצרים כלל */
   var SQ25=0.025;
+  /* פרומפט 56 א8 (17.11.2026, מיכאל): "סגנון פסוק - הבסיס שלו גם צריך להיות 0.2, ורק כשאין מקום מצמצמים אותו".
+     פסקה עם פסוק נמדדת פעמיים: בלי ריווח בפסוק (כמו עד היום) ועם הריווח המלא. אם הריווח הוסיף שורה - הריווח בפסוקים שלה
+     יורד במדרגות עד שמספר השורות חוזר להיות כבלעדיו. הריווח לעולם אינו שובר שורה ואינו מבטל איחוי. ההצרה (כלי 1) באה אחריו */
+  function psSpace(f){
+    var full=PROF&&PROF.psLetterSpacingPt;if(!full)return null;
+    var ps=[].slice.call(f.querySelectorAll('.main p .ps'));if(!ps.length)return null;
+    var paras=[],seen=new Set();ps.forEach(function(s){var p=s.closest('p');if(p&&!seen.has(p)){seen.add(p);paras.push(p)}});
+    var setP=function(p,v){[].forEach.call(p.querySelectorAll('.ps'),function(s){s.style.letterSpacing=v?v+'pt':''})};
+    /* המצב הסופי של השורה (אחרי ההצרה והטיפול ביתומה) נמדד פעם אחת, ואחר כך כל הפסוקים מקבלים את הריווח המלא יחד */
+    var h0=paras.map(function(p){return p.offsetHeight}),l0=paras.map(function(p){return p.textContent.trim().length>=12&&loneStrict(p)});
+    paras.forEach(function(p){setP(p,full)});
+    var h1=paras.map(function(p){return p.offsetHeight});
+    var st={full:0,reduced:0,to:{}};
+    paras.forEach(function(p,i){
+      var ok=function(){return p.offsetHeight<=h0[i]+0.5&&(l0[i]||!(p.textContent.trim().length>=12&&loneStrict(p)))};
+      if(h1[i]<=h0[i]+0.5&&ok()){st.full++;return}
+      var v=0;for(var x=Math.round(full*100)-5;x>0;x-=5){setP(p,x/100);if(ok()){v=x/100;break}}
+      if(!v)setP(p,0);st.reduced++;st.to[v]=(st.to[v]||0)+1});
+    return st}
   function squeeze25(p,GM,GP,W){
     var inf=lineInfo(p);if(!inf||inf.n<2)return false;
     /* הסינון המהיר רחב בכוונה: השורה הקודמת אינה מלאה עד הקצה, ולכן מה שחסר קטן מרוחב השורה האחרונה. הבדיקה האמיתית בסרגל */
@@ -396,7 +415,10 @@
     /* 7.11.2026: לשם הפרופיל עשויה להיצמד גרסת העריכות (a4v...), ראה prnGo. הקובץ הוא שם הפרופיל בלעדיה */
     /* פרומפט 41: שירות ההפקה מקבל שם פרופיל של עד 8 תווים, אותיות קטנות וספרות. "A4 מוגדל" עובר בשם הקצר a4lg */
     /* פרומפט 55 (17.11.2026): ברירת המחדל בכל נתיבי ההדפסה היא המוגדל. a4 (רגיל) רק כשמבקשים אותו במפורש */
-    var PNAME=((QS.get('profile')||'a4lg').replace(/v[0-9a-z]+$/,'')||'a4lg');if(PNAME==='a4lg')PNAME='a4-large';if(PNAME==='b5lg')PNAME='b5-large';
+    /* פרומפט 56 (17.11.2026, מיכאל): גודל אחד - המוגדל הוא היחיד. a4/b5 הישנים (a4.json, b5.json) עברו לארכיון, וכל בקשה
+       בשמם מקבלת את המוגדל. a4ref = הפרופיל הישן מן הארכיון, למדידה בלבד ("שורה שהתארכה" משווה אליו את השורה שכיוון הכותב) */
+    var PNAME=((QS.get('profile')||'a4lg').replace(/v[0-9a-z]+$/,'')||'a4lg');
+    PNAME=({a4:'a4-large',a4lg:'a4-large',b5:'b5-large',b5lg:'b5-large',a4ref:'archive/a4'})[PNAME]||PNAME;
     var prof=await (await fetch('print-profiles/'+PNAME+'.json',{cache:'no-store'})).json();PROF=prof;
     /* פרומפט 48 (16.11.2026 20:45, הכרעת בעל הפרויקט): B5 לעולם אינו מעומד מחדש. פרופיל B5 הוא רק "הקטנה" של פרופיל A4
        (שדה from): העימוד כולו נעשה בפרופיל ה-A4, ושבירת השורות זהה לו בדיוק. בסוף כל עמוד מוקטן כגוש אחד לדף B5 (ראה applyShrink) */
@@ -466,7 +488,8 @@
       c.textContent='html.prn{--k-nose:'+(v('--k-nose',1.2222)*K).toFixed(5)+';--k-dh:'+(v('--k-dh',1.1211)*K).toFixed(5)+';--k-mishna:'+(v('--k-mishna',1.1211)*K).toFixed(5)+'}'+
         'html.prn .main.hatz{font-size:'+(1.1*K).toFixed(5)+'em}'+
         'html.prn .main:not(.mishna) .hs{font-size:'+(0.82*K).toFixed(5)+'em}'+
-        'html.prn .main:not(.mishna) .am{font-size:'+(0.77*K).toFixed(5)+'em}';
+        /* פרומפט 56 א4: אמוראים גדל במספר אחד (amPlusPt) מעל גודלו המוחלט של a4 הישן. השאר נשארים בדיוק בגודלם */
+        'html.prn .main:not(.mishna) .am{font-size:'+((0.77*P.keepAbsoluteFrom+(P.amPlusPt||0))/bodyPt).toFixed(5)+'em}';
       document.head.appendChild(c);R.keepAbs=+K.toFixed(4)})();
     TM('profile');
     var withTos=QS.get('tos')==='1'&&tosItems().length>0;
@@ -730,6 +753,8 @@
         fixedLone++});
       sqMs+=performance.now()-tSq;
       if(todo.length&&typeof fitAnchors==='function'){fitAnchors();labelWrap(f);railNoGap(f)}
+      /* פרומפט 56 א8: ריווח הפסוק בא אחרי כל תיקוני השורה (הצרה, יתומה), ותופס רק מקום פנוי */
+      var psSt=psSpace(f);if(psSt)R.psSpace=psSt;
       /* שער: מילה בודדת שנותרה אחרי הדחיסה והרווח הקשיח נרשמת בלוח התקלות (לעולם לא בשקט) */
       [].slice.call(f.querySelectorAll('.main p')).forEach(function(p){
         if(p.textContent.trim().length>=12&&loneStrict(p)){
@@ -1495,9 +1520,7 @@
           /* 16.11.2026 (פרומפט 51 בצ'אט): גודל דף B5 בחלון ההדפסה עצמו, לצד A4. הפרופילים b5 ו-b5-large כבר קיימים */
           '<div class="pr" id="prn-paper"><span>גודל דף:</span><label><input type="radio" name="prpaper" value="a4" checked>A4</label>'+
             '<label><input type="radio" name="prpaper" value="b5">B5</label></div>'+
-          /* פרומפט 55 (17.11.2026): המוגדל הוא ברירת המחדל לכולם. לגולש אין בורר גודל, הוא מקבל תמיד מוגדל */
-          (ADM?'<div class="pr" id="prn-size"><span>גודל אות:</span><label><input type="radio" name="prsize" value="a4lg" checked>מוגדל</label>'+
-            '<label><input type="radio" name="prsize" value="a4">רגיל (קטן)</label></div>':'')+
+          /* פרומפט 56 (17.11.2026): גודל אחד. אין בורר גודל אות, לא לגולש ולא למנהל */
           (ADM?'<div class="pr" id="prn-lay"><span>פריסה:</span><label><input type="radio" name="prlay" value="a4" checked>A4 רגיל</label>'+
             '<label><input type="radio" name="prlay" value="2up">שניים בעמוד</label>'+
             '<label><input type="radio" name="prlay" value="book">הדפס לחוברת (A5, כריכה מימין)</label></div>'+
@@ -1690,7 +1713,7 @@
             else if(P&&P.state==='error'){clearInterval(iv);f.remove();DRYFR=null;no()}}catch(e){}
           if(Date.now()-t0>90000){clearInterval(iv);f.remove();DRYFR=null;no()}},300)})}
     /* פרומפט 55: מוגדל תמיד, חוץ ממנהל שבחר במפורש "רגיל (קטן)" */
-    function prnBig(){return !(isAdm()&&PRD&&PRD.querySelector('input[name=prsize][value=a4]:checked'))}
+    function prnBig(){return true}   /* פרומפט 56: גודל אחד */
     /* פרומפט 51: הדפסה בדפדפן. אותו מנוע ואותם כללי עימוד, בלי שירות ההפקה ובלי משימת ענן */
     function prnPrint(){
       var r=prnRange(),err=document.getElementById('prn-err');
@@ -1740,7 +1763,6 @@
         var base=(b5?'b5':'a4')+(big?'lg':''),room=8-base.length-1,hh=(h>>>0).toString(36);
         q.set('profile',base+'v'+('000000'+hh).slice(-room));
         if(b5)fname=fname.replace(/\.pdf$/,' - B5.pdf');
-        if(!big)fname=fname.replace(/\.pdf$/,' - רגיל.pdf');
         return fetch(PRINT_API+'/pdf?'+q.toString(),{signal:ctrl.signal,headers:admHdr(),cache:'no-store'})}).then(function(res){
         if(!res.ok){return res.text().then(function(t){var m='';try{m=JSON.parse(t).error||''}catch(e){}throw new Error(m||('קוד '+res.status))})}
         return res.blob()}).then(function(blob){

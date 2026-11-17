@@ -71,7 +71,7 @@ def main():
     ap.add_argument('--pk', default='', help='מפתח הפרק כמו בחלון ההדפסה ("פרק שלישי|כירה"): הדפסת פרק שלם')
     ap.add_argument('--tos', default='1')
     ap.add_argument('--duplex', default='0')
-    ap.add_argument('--profile', default='a4-large')  # פרומפט 55: המוגדל ברירת מחדל
+    ap.add_argument('--profile', default='a4-large')  # פרומפט 55-56: המוגדל הוא היחיד (a4ref = הישן, למדידה בלבד)
     ap.add_argument('--holefix', default='1', help='0: בלי פיצול הערות ומתיחה (מדידת "לפני" בבקרת החורים)')
     ap.add_argument('--out', required=True)
     ap.add_argument('--lines', action='store_true', help='פרומפט 41: רישום השורות של כל פסקה בדוח (plines), למחולל "שורה שהתארכה"')
@@ -222,7 +222,7 @@ def main():
         import keep as KEEP
         kb = KEEP.check(a.slug, a.report or (a.out + '.json'), partial=not a.all)
     # פרומפט 53: כל שורה שננעלה אוטומטית (נכנסה לשורה אחת) - עדיין בשורה אחת. שבירה עוצרת את המסירה
-    if os.path.exists(auto_fp) and a.profile in ('a4', 'a4-large', 'b5', 'b5-large'):
+    if os.path.exists(auto_fp) and a.profile in ('a4', 'a4-large', 'b5', 'b5-large', 'a4lg', 'b5lg'):
         sys.path.insert(0, os.path.join(ROOT, 'tools', 'overflow'))
         import auto as AUTO
         kb += AUTO.check(a.slug, a.report or (a.out + '.json'), partial=not a.all)

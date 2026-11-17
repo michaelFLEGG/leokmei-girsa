@@ -78,6 +78,37 @@
       else if(k==='dh'||k==='nose'){side(u.w);out.push({t:k==='dh'?'D':'H',h:mka+(u.a||'')})}});
     return out}
 
+  /* פרומפט 56 א3 (17.11.2026): הוורד הוא תוצר של הדף, ולכן גם בו הגודל המוגדל. דף הספר בוורד קטן (90 מ"מ, גוף 9 נק',
+     מרווח מדויק 11), ולכן הגוף והמרווח מוגדלים ביחס המוגדל לרגיל הישן (11.5 / 10.5872) ולא ל-11.5 נק' עצמו (שהיה שובר
+     כל שורה בעמוד של 90 מ"מ). כמו בהדפסה: כותרת הצד, ההסבר, המשנה, ד"ה משנה, הנושא והחציצה נשארים בגודלם (סגנון שירש
+     את גודלו מן הגוף מקבל את גודלו הישן במפורש). אמוראים: נקודה אחת יותר. פסוק: הריווח 0.2 כבר בסגנון "פסוק תו" */
+  function bigStyles(stx){
+    var S=11.5/10.5872,GROW={'Normal':1,'נקודה':1,'פיסקת תשובה':1,'רווח לפני':1},AM={'אמוראים תו':1};
+    var sty={},order=[];
+    stx.replace(/<w:style\b([^>]*)>([\s\S]*?)<\/w:style>/g,function(all,at,body){
+      var id=(at.match(/w:styleId="([^"]+)"/)||[])[1],nm=((body.match(/<w:name w:val="([^"]+)"/)||[])[1]||'').replace(/&apos;/g,"'"),
+          ty=(at.match(/w:type="(\w+)"/)||[])[1],bo=(body.match(/<w:basedOn w:val="([^"]+)"/)||[])[1],
+          sz=(body.match(/<w:sz w:val="(\d+)"/)||[])[1],cs=(body.match(/<w:szCs w:val="(\d+)"/)||[])[1];
+      sty[id]={id:id,nm:nm,ty:ty,bo:bo,sz:sz?+sz:null,cs:cs?+cs:null,all:all};order.push(id);return all});
+    var nid=order.filter(function(i){return sty[i].nm==='Normal'})[0];if(!nid)return stx;
+    var eff=function(i,k){for(var n=0;i&&sty[i]&&n<20;n++){if(sty[i][k]!=null)return {v:sty[i][k],from:i};i=sty[i].bo}return null};
+    var rep={};
+    order.forEach(function(i){var s=sty[i],a=s.all;
+      var setSz=function(x,k,v){var tag=k==='sz'?'w:sz':'w:szCs';
+        if(new RegExp('<'+tag+' w:val="\\d+"/>').test(x))return x.replace(new RegExp('<'+tag+' w:val="\\d+"/>'),'<'+tag+' w:val="'+v+'"/>');
+        if(/<w:rPr>/.test(x))return x.replace('<w:rPr>','<w:rPr><'+tag+' w:val="'+v+'"/>');
+        return x.replace('</w:style>','<w:rPr><'+tag+' w:val="'+v+'"/></w:rPr></w:style>')};
+      if(GROW[s.nm]){
+        if(s.sz!=null)a=setSz(a,'sz',Math.round(s.sz*S));if(s.cs!=null)a=setSz(a,'cs',Math.round(s.cs*S));
+        if(s.nm==='Normal')a=a.replace(/(<w:spacing [^>]*w:line=")(\d+)("[^>]*w:lineRule="exact")/,function(_,p,v,q){return p+Math.round(+v*S)+q})}
+      else if(AM[s.nm]){var e1=eff(i,'cs'),e2=eff(i,'sz');if(e1)a=setSz(a,'cs',e1.v+2);if(e2)a=setSz(a,'sz',e2.v+2)}
+      else if(s.ty==='paragraph'){
+        /* גודל שבא מן הגוף (Normal או סגנון שגדל) - נקבע במפורש לגודל הישן */
+        var e3=eff(i,'cs'),e4=eff(i,'sz');
+        if(e3&&GROW[sty[e3.from].nm]&&e3.from!==i)a=setSz(a,'cs',e3.v);
+        if(e4&&GROW[sty[e4.from].nm]&&e4.from!==i)a=setSz(a,'sz',e4.v)}
+      if(a!==s.all)rep[i]=a});
+    return stx.replace(/<w:style\b([^>]*)>([\s\S]*?)<\/w:style>/g,function(all,at){var id=(at.match(/w:styleId="([^"]+)"/)||[])[1];return rep[id]||all})}
   window.wordExport=async function(btn){
     var lab=btn&&btn.textContent;
     function say(t){if(btn)btn.textContent=t}
@@ -89,6 +120,7 @@
       var get=function(n){return files.find(function(f){return f.name===n})};
       var dec=function(f){return new TextDecoder().decode(f.data)};
       var stx=dec(get('word/styles.xml')),doc=dec(get('word/document.xml'));
+      stx=bigStyles(stx);get('word/styles.xml').data=u8(stx);
       /* שם סגנון -> מזהה, ובחירה בין שמות חלופיים לפי השימוש בספר עצמו */
       var ID={};stx.replace(/<w:style\b[^>]*w:styleId="([^"]+)"[^>]*>[\s\S]*?<w:name w:val="([^"]+)"/g,function(_,id,nm){ID[nm.replace(/&apos;/g,"'").replace(/&quot;/g,'"')]=id;return _});
       var use=function(id,kind){if(!id)return -1;var m=doc.match(new RegExp('<w:'+kind+' w:val="'+id.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'"','g'));return m?m.length:0};

@@ -27,7 +27,9 @@ NIK = re.compile(r'[֑-ׇ⁠]')
 
 
 def run_engine(site, slug, profile, out, extra=(), probe=None, frm=None):
-    cmd = [sys.executable, RENDER, '--site', site, '--slug', slug, '--dev', '--no-pdf', '--profile', profile, '--out', out]
+    # פרומפט 56: a4 הישן בוטל ו-a4 מקבל את המוגדל. השורה שכיוון הכותב נמדדת בפרופיל הישן מן הארכיון (a4ref)
+    eng = 'a4ref' if profile == 'a4' else profile
+    cmd = [sys.executable, RENDER, '--site', site, '--slug', slug, '--dev', '--no-pdf', '--profile', eng, '--out', out]
     cmd += (['--from', frm, '--to', frm] if frm else ['--all', '--lines'])
     if probe:
         cmd += ['--probe', probe]

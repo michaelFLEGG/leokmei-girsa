@@ -19,6 +19,10 @@ on:
         description: 'מסכתות מופרדות ברווח, או all לכולן (ריק = רק מה שהשתנה)'
         required: false
         default: ''
+      release_broken:
+        description: '1 = שחרור חד-פעמי של שורות נעולות שגלשו בגלל שינוי גודל (פרומפט 56), ואיחוי מחדש'
+        required: false
+        default: ''
 permissions:
   contents: write
 concurrency:
@@ -95,7 +99,8 @@ jobs:
         run: |
           s=${{ matrix.slug }}
           bad=0
-          python tools/overflow/auto.py lock --slug $s --large _work/overflow-$s/$s-a4-large.pdf.json --a4 _work/overflow-$s/$s-a4.pdf.json || bad=1
+          RB=""; if [ "${{ github.event.inputs.release_broken }}" = "1" ]; then RB="--release-broken"; fi
+          python tools/overflow/auto.py lock --slug $s --large _work/overflow-$s/$s-a4-large.pdf.json --a4 _work/overflow-$s/$s-a4.pdf.json $RB || bad=1
           echo "LOCKBAD=$bad" >> $GITHUB_ENV
       # פרומפט 53: החלה אוטומטית - הקטן ביותר שמספיק (כלי 2, כלי 4, כלי 3 מזערי), נבדק במנוע בשני הגדלים
       - name: החלה אוטומטית

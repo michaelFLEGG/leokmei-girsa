@@ -1,0 +1,1 @@
+ - 17.11.2026 UTC - הושלמה menachot-p12-u01. finalize: 26 תוספות, 1 לעיון המנהל. מנועים: {"write": ["fable", "sonnet"], "rv": "haiku"}.

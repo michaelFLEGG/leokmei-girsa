@@ -1,0 +1,1 @@
+ - 17.11.2026 UTC - הושלמה menachot-p11-u03. finalize: 8 תוספות, 0 לעיון המנהל. מנועים: {"write": ["sonnet"], "rv": "haiku"}.

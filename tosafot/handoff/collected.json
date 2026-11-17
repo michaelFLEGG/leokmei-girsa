@@ -6405,7 +6405,206 @@
    "at": "2026-11-17T06:40:20Z",
    "ntos": 26,
    "flagged": 0,
-   "cal": 0.595
+   "cal": 0.595,
+   "published": "2026-11-17T12:38:47Z"
+  },
+  "chullin-p01-u01": {
+   "ok": true,
+   "done_at": "2026-11-17T10:36:15Z",
+   "at": "2026-11-17T12:38:44Z",
+   "ntos": 28,
+   "flagged": 1,
+   "cal": 0.58
+  },
+  "chullin-p01-u02": {
+   "ok": true,
+   "done_at": "2026-11-17T10:42:05Z",
+   "at": "2026-11-17T12:38:44Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.154
+  },
+  "chullin-p01-u03": {
+   "ok": true,
+   "done_at": "2026-11-17T11:28:05Z",
+   "at": "2026-11-17T12:38:44Z",
+   "ntos": 29,
+   "flagged": 0,
+   "cal": 0.265
+  },
+  "chullin-p01-u04": {
+   "ok": true,
+   "done_at": "2026-11-17T11:32:52Z",
+   "at": "2026-11-17T12:38:44Z",
+   "ntos": 27,
+   "flagged": 0,
+   "cal": 0.641
+  },
+  "chullin-p01-u05": {
+   "ok": true,
+   "done_at": "2026-11-17T11:37:40Z",
+   "at": "2026-11-17T12:38:44Z",
+   "ntos": 26,
+   "flagged": 0,
+   "cal": 0.785
+  },
+  "chullin-p01-u06": {
+   "ok": true,
+   "done_at": "2026-11-17T11:41:06Z",
+   "at": "2026-11-17T12:38:44Z",
+   "ntos": 24,
+   "flagged": 0,
+   "cal": 0.52
+  },
+  "chullin-p01-u07": {
+   "ok": true,
+   "done_at": "2026-11-17T12:27:13Z",
+   "at": "2026-11-17T12:38:44Z",
+   "ntos": 24,
+   "flagged": 1,
+   "cal": 0.394
+  },
+  "chullin-p01-u08": {
+   "ok": true,
+   "done_at": "2026-11-17T12:31:56Z",
+   "at": "2026-11-17T12:38:44Z",
+   "ntos": 24,
+   "flagged": 1,
+   "cal": 0.559
+  },
+  "chullin-p01-u09": {
+   "ok": true,
+   "done_at": "2026-11-17T12:37:20Z",
+   "at": "2026-11-17T12:38:44Z",
+   "ntos": 26,
+   "flagged": 2,
+   "cal": 0.235
+  },
+  "menachot-p08-u02": {
+   "ok": true,
+   "done_at": "2026-11-17T07:26:18Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.567,
+   "published": "2026-11-17T12:38:47Z"
+  },
+  "menachot-p08-u03": {
+   "ok": true,
+   "done_at": "2026-11-17T07:27:48Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 2,
+   "flagged": 0,
+   "cal": 0.2,
+   "published": "2026-11-17T12:38:47Z"
+  },
+  "menachot-p09-u01": {
+   "ok": true,
+   "done_at": "2026-11-17T07:31:58Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 27,
+   "flagged": 0,
+   "cal": 0.765,
+   "published": "2026-11-17T12:38:47Z"
+  },
+  "menachot-p09-u02": {
+   "ok": true,
+   "done_at": "2026-11-17T07:33:16Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 3,
+   "flagged": 0,
+   "cal": 0.424,
+   "published": "2026-11-17T12:38:47Z"
+  },
+  "menachot-p10-u01": {
+   "ok": true,
+   "done_at": "2026-11-17T08:28:08Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 26,
+   "flagged": 0,
+   "cal": 0.246,
+   "published": "2026-11-17T12:38:48Z"
+  },
+  "menachot-p10-u02": {
+   "ok": true,
+   "done_at": "2026-11-17T08:31:49Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 27,
+   "flagged": 1,
+   "cal": 0.219,
+   "published": "2026-11-17T12:38:48Z"
+  },
+  "menachot-p10-u03": {
+   "ok": true,
+   "done_at": "2026-11-17T08:35:27Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 17,
+   "flagged": 0,
+   "cal": 0.462,
+   "published": "2026-11-17T12:38:48Z"
+  },
+  "menachot-p11-u01": {
+   "ok": true,
+   "done_at": "2026-11-17T08:39:14Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 26,
+   "flagged": 0,
+   "cal": 0.559,
+   "published": "2026-11-17T12:38:48Z"
+  },
+  "menachot-p11-u02": {
+   "ok": true,
+   "done_at": "2026-11-17T09:26:32Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 27,
+   "flagged": 1,
+   "cal": 0.19,
+   "published": "2026-11-17T12:38:48Z"
+  },
+  "menachot-p11-u03": {
+   "ok": true,
+   "done_at": "2026-11-17T09:29:38Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 8,
+   "flagged": 0,
+   "cal": 0.129,
+   "published": "2026-11-17T12:38:48Z"
+  },
+  "menachot-p12-u01": {
+   "ok": true,
+   "done_at": "2026-11-17T09:33:23Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 26,
+   "flagged": 1,
+   "cal": 0.307,
+   "published": "2026-11-17T12:38:49Z"
+  },
+  "menachot-p12-u02": {
+   "ok": true,
+   "done_at": "2026-11-17T09:35:57Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 8,
+   "flagged": 0,
+   "cal": 0.161,
+   "published": "2026-11-17T12:38:49Z"
+  },
+  "menachot-p13-u01": {
+   "ok": true,
+   "done_at": "2026-11-17T10:27:12Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 25,
+   "flagged": 0,
+   "cal": 0.446,
+   "published": "2026-11-17T12:38:49Z"
+  },
+  "menachot-p13-u02": {
+   "ok": true,
+   "done_at": "2026-11-17T10:31:02Z",
+   "at": "2026-11-17T12:38:45Z",
+   "ntos": 21,
+   "flagged": 0,
+   "cal": 0.44,
+   "published": "2026-11-17T12:38:49Z"
   }
  },
  "files": {

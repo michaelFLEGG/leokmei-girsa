@@ -131,6 +131,105 @@
     "flagged": 1,
     "questions": 28
    }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-17T12:38:47Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p08-u01",
+    "menachot-p08-u02",
+    "menachot-p08-u03"
+   ],
+   "result": {
+    "generated": 53,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 43
+   }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-11-17T12:38:47Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p09-u01",
+    "menachot-p09-u02"
+   ],
+   "result": {
+    "generated": 30,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 21
+   }
+  },
+  "10": {
+   "status": "published",
+   "published": "2026-11-17T12:38:48Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p10-u01",
+    "menachot-p10-u02",
+    "menachot-p10-u03"
+   ],
+   "result": {
+    "generated": 69,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 42
+   }
+  },
+  "11": {
+   "status": "published",
+   "published": "2026-11-17T12:38:48Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p11-u01",
+    "menachot-p11-u02",
+    "menachot-p11-u03"
+   ],
+   "result": {
+    "generated": 60,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 39
+   }
+  },
+  "12": {
+   "status": "published",
+   "published": "2026-11-17T12:38:49Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p12-u01",
+    "menachot-p12-u02"
+   ],
+   "result": {
+    "generated": 33,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 23
+   }
+  },
+  "13": {
+   "status": "published",
+   "published": "2026-11-17T12:38:49Z",
+   "unc_done": true,
+   "handoff_units": [
+    "menachot-p13-u01",
+    "menachot-p13-u02"
+   ],
+   "result": {
+    "generated": 46,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 27
+   }
   }
  },
  "created": "2026-11-17T00:39:14Z",
@@ -176,7 +275,44 @@
    "mean": 0.384,
    "n": 3,
    "at": "2026-11-17T06:40:23Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.504,
+   "n": 5,
+   "at": "2026-11-17T12:38:46Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.652,
+   "n": 3,
+   "at": "2026-11-17T12:38:47Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.278,
+   "n": 5,
+   "at": "2026-11-17T12:38:47Z"
+  },
+  {
+   "perek": 11,
+   "mean": 0.325,
+   "n": 5,
+   "at": "2026-11-17T12:38:48Z"
+  },
+  {
+   "perek": 12,
+   "mean": 0.258,
+   "n": 3,
+   "at": "2026-11-17T12:38:48Z"
+  },
+  {
+   "perek": 13,
+   "mean": 0.443,
+   "n": 4,
+   "at": "2026-11-17T12:38:49Z"
   }
  ],
- "updated": "2026-11-17T06:40:24Z"
+ "updated": "2026-11-17T12:38:49Z",
+ "done": "2026-11-17T12:38:49Z"
 }

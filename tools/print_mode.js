@@ -16,7 +16,7 @@
   function pmMsg(m){try{if(typeof flash==='function')flash(m);else if(typeof toast==='function')toast(m,3000)}catch(e){}}
   var CARD_MM=85.6;                             /* רוחב כרטיס אשראי (ISO 7810) לכיול "גודל טבעי" */
   var S={open:false,fr:null,busy:false,dirty:false,report:null,pk:null,view:'page',spread:false,zoom:'fit',z:1,
-         pages:[],issues:[],ii:-1,pend:0,bal:0,staleFrom:0,cross:0,badges:{},cmdMs:[],kbuf:'',later:pmLs('lg-pm-later-'+(typeof SLUG!=='undefined'?SLUG:''),[]),t0:0,lastMs:0,anchor:null};
+         pages:[],issues:[],ii:-1,pend:0,bal:0,staleFrom:0,cross:0,badges:{},mv:{},cmdMs:[],kbuf:'',later:pmLs('lg-pm-later-'+(typeof SLUG!=='undefined'?SLUG:''),[]),t0:0,lastMs:0,anchor:null};
   var P=pmLs('lg-pm-prefs',{paper:'b5',big:1,tos:1,view:'page',spread:0,zoom:'fit',z:1,auto:0});
   var PXMM=pmLs('lg-pm-pxmm',0);              /* פיקסלים למילימטר במסך הזה (אחרי כיול). 0 = לא כויל: 96/25.4 */
   S.view=P.view||'page';S.spread=!!P.spread;S.zoom=P.zoom||'fit';S.z=+P.z||1;
@@ -75,7 +75,7 @@
       '#pmmenu{position:fixed;z-index:72;background:#fff;border:1px solid #c9bfa8;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.2);padding:3px 0;display:none;direction:rtl}'+
       '#pmmenu div{padding:4px 14px;cursor:pointer}#pmmenu div:hover{background:#f1ece2}'+
       '#pm-done.hot{border-color:#a3361f;color:#a3361f;font-weight:700}#pm-pend{color:#a3361f;font-size:12px;max-width:40em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
-      'body.pmopen #keyscard{z-index:80!important}'+
+      'body.pmopen #keyscard,body.pmopen .modal{z-index:80!important}'+
       /* הדף הרגיל שמתחת למצב אינו נפרס על המסך: העורך עובד עליו, אבל הדפדפן אינו מחשב את הפריסה שלו בכל פקודה */
       'body.pmopen #flow{content-visibility:hidden}'+
       '@media (max-width:700px){#pmbar{font-size:12px}#pmbar .pmwide{display:none}#pmside{display:none!important}}'+
@@ -232,7 +232,7 @@
     old.parentNode.replaceChild(fr,old);
     pmFrameSize(fr);
     S.fr=fr;S.busy=true;S.t0=performance.now();S.report=null;S.pages=[];S.issues=[];
-    S.editing=null;S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};S.completing=null;S.resume=null;
+    S.editing=null;S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};S.mv={};S.completing=null;S.resume=null;
     pmStat('מעמד...',1);
     fr.src=pmUrl();
     pmWait()}
@@ -282,6 +282,7 @@
   function pmDone(rep,keep,oldPages){
     var doc=pmDoc();S.busy=false;if(!doc||!rep)return;
     S.report=rep;S.lastMs=Math.round(performance.now()-S.t0);
+    try{S.lh=parseFloat(getComputedStyle(doc.querySelector('#prnout .ptx')).lineHeight)||S.lh}catch(e){}
     if(!doc.getElementById('pmfcss')){var st=doc.createElement('style');st.id='pmfcss';st.textContent=FRAME_CSS;doc.head.appendChild(st)}
     var out=doc.getElementById('prnout');if(!out)return;
     S.pages=[].slice.call(out.querySelectorAll(':scope > .shp, :scope > .pg'));
@@ -519,12 +520,17 @@
   /* היסט בטקסט (בלי סימני התוס') <-> מקום בעץ */
   function pmOff(root,node,off){try{var r=root.ownerDocument.createRange();r.setStart(root,0);r.setEnd(node,off);
     var f=r.cloneContents();[].forEach.call(f.querySelectorAll('sup.tm,span.tmg'),function(x){x.remove()});return f.textContent.length}catch(e){return 0}}
-  function pmPos(root,off){var w=root.ownerDocument.createTreeWalker(root,NodeFilter.SHOW_TEXT),n,last=null;
-    while((n=w.nextNode())){if(n.parentElement&&n.parentElement.closest('sup.tm,span.tmg'))continue;last=n;var L=n.nodeValue.length;if(off<=L)return [n,off];off-=L}
+  /* fwd: גבול בין שני צמתים - תחילת הבא (לתחילת בחירה), ולא סוף הקודם. כך בחירה של מילה שבתוך סגנון תו נשארת בתוכו */
+  function pmPos(root,off,fwd){var w=root.ownerDocument.createTreeWalker(root,NodeFilter.SHOW_TEXT),n,last=null;
+    while((n=w.nextNode())){if(n.parentElement&&n.parentElement.closest('sup.tm,span.tmg'))continue;last=n;var L=n.nodeValue.length;if(off<L||(off===L&&!fwd))return [n,off];off-=L}
     return last?[last,last.nodeValue.length]:[root,root.childNodes.length]}
-  function pmSetSel(root,a,b){var d=root.ownerDocument,s=d.getSelection();if(!s)return;var A=pmPos(root,a);
+  function pmSetSel(root,a,b){var d=root.ownerDocument,s=d.getSelection();if(!s)return;
+    var sel=b!=null&&b!==a,lo=sel?Math.min(a,b):a,A=pmPos(root,a,sel&&a===lo);
     try{var r=d.createRange();r.setStart(A[0],A[1]);r.collapse(true);s.removeAllRanges();s.addRange(r);
-      if(b!=null&&b!==a&&s.extend){var B=pmPos(root,b);s.extend(B[0],B[1])}}catch(e){}}
+      if(sel&&s.extend){var B=pmPos(root,b,b===lo);s.extend(B[0],B[1])}}catch(e){}}
+  /* מקום מדויק בעץ (מסלול של מספרי ילדים): בין שני עותקים זהים של אותו HTML - המסגרת ושורת העורך */
+  function pmPath(root,node){var p=[];while(node&&node!==root){var par=node.parentNode;if(!par)return null;p.unshift([].indexOf.call(par.childNodes,node));node=par}return node===root?p:null}
+  function pmAt(root,path){var n=root;for(var i=0;i<path.length;i++){n=n.childNodes[path[i]];if(!n)return null}return n}
   function pmGetSel(root){var s=root.ownerDocument.getSelection();if(!s||!s.rangeCount||!root.contains(s.anchorNode))return null;
     return [pmOff(root,s.anchorNode,s.anchorOffset),pmOff(root,s.focusNode,s.focusOffset)]}
   function pmLines(el){if(!el)return 0;var rg=el.ownerDocument.createRange();rg.selectNodeContents(el);var t={};
@@ -573,15 +579,14 @@
   /* הפסקה שבעריכה נשברה לשורות אחרות: שאר הטור זז, מדד ליד הפסקה, וסימון "לא מעודכן" */
   function pmMeasure(){
     var E=S.editing;if(!E||!E.p.isConnected)return;
-    var n=pmLines(E.p),h=E.row.offsetHeight;
-    if(h!==E.h){pmShift(E.row,h-E.h);E.h=h}
-    if(n!==E.n){S.bal+=n-E.n;pmBadge(E.u+'.'+E.k,E.p,n-E.n);E.n=n;pmStaleAt(E.row);pmCross(E.row);pmBar()}}
+    var h=E.row.offsetHeight;
+    if(h!==E.h){pmShift(E.row,h-E.h);E.h=h;pmCross(E.row)}else pmMove(E.row,0)}
 
   /* ---- שינוי בטור: הזזה בתוך הטור בלבד, גלישה, וסימון ---- */
   function pmShift(row,dh){
     if(!dh)return;var tx=row.parentElement;if(!tx)return;var t0=parseFloat(row.style.top)||0;
     [].forEach.call(tx.children,function(r){if(r===row||!r.classList.contains('row'))return;var t=parseFloat(r.style.top)||0;if(t>t0+0.5)r.style.top=(t+dh)+'px'});
-    pmOverflow(tx);pmStaleAt(row)}
+    pmOverflow(tx);pmMove(row,dh)}
   function pmOverflow(tx){
     var H=parseFloat(tx.style.height)||tx.clientHeight,over=0;
     [].forEach.call(tx.querySelectorAll(':scope > .row'),function(r){var t=parseFloat(r.style.top)||0;if(t+r.offsetHeight>H+1)over=Math.max(over,t+r.offsetHeight-H)});
@@ -594,25 +599,37 @@
       if(!lb&&col){lb=tx.ownerDocument.createElement('div');lb.className='pmovl';col.appendChild(lb)}
       if(lb){lb.style.top=(H+1)+'px';lb.textContent='גולש '+Math.max(1,Math.round(over/lh))+' שורות · השלם עימוד (F9)'}}
     else{tx.style.clipPath=tx.dataset.pmclip;tx.style.webkitMaskImage=tx.style.maskImage='';if(lb)lb.remove()}}
-  function pmStaleAt(el){
-    var pi=pmPageOf(el);if(!pi)return;
-    S.pend++;
-    if(!S.staleFrom||pi<S.staleFrom)S.staleFrom=pi;
-    for(var i=S.staleFrom-1;i<S.pages.length;i++)S.pages[i].classList.add('pmstale');
+  /* מאזן לפי יחידה: כמה שורות היחידה הרוויחה או הפסידה מאז ההשלמה. יחידה שחזרה לאפס - העמוד שוב מדויק */
+  function pmMove(row,dh){
+    if(!row||!row.getAttribute)return;var uid=row.getAttribute('data-u');if(!uid)return;
+    if((parseFloat(row.style.top)||0)<-0.5)return;     /* ההמשך של שורה שחוצה טור: נספר פעם אחת */
+    var m=S.mv[uid]||(S.mv[uid]={px:0,pg:0});m.px+=dh||0;m.row=row;
+    /* הסימנים מתעדכנים פעם אחת לפריים, ולא בכל שורה שזזה: כל קריאת מיקום אחרי כתיבה מכריחה פריסה של כל העמודים */
+    if(!S.rcT)S.rcT=requestAnimationFrame(function(){S.rcT=0;pmRecalc()})}
+  function pmStaleAt(el){pmMove(el&&el.closest?el.closest('.row'):el,0)}
+  function pmRecalc(){
+    var lh=S.lh||20,pend=0,bal=0,from=0,doc=pmDoc();if(!doc)return;var out=doc.getElementById('prnout');if(!out)return;
+    var ids=Object.keys(S.mv),geo=[];
+    /* קריאה: כל המיקומים בבת אחת */
+    var o=out.getBoundingClientRect(),z=S.z||1;
+    ids.forEach(function(uid){var m=S.mv[uid],n=Math.round(m.px/lh),row=m.row;
+      if(!row||!row.isConnected)row=m.row=[].find.call(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+uid+'"]'),function(r){return (parseFloat(r.style.top)||0)>=-0.5})||null;
+      if(row)m.pg=pmPageOf(row)||m.pg;
+      if(n){pend++;bal+=n;if(!from||m.pg<from)from=m.pg}
+      if(row){var er=row.getBoundingClientRect(),pg=row.closest('.pg'),pr=pg?pg.getBoundingClientRect():er;geo.push([uid,n,(er.top-o.top)/z,(pr.left-o.left)/z-62])}
+      else geo.push([uid,n,null,null])});
+    /* כתיבה */
+    geo.forEach(function(g){var b=S.badges[g[0]];
+      if(g[2]==null){if(b)b.remove();delete S.badges[g[0]];return}
+      if(!b||!b.isConnected){b=doc.createElement('div');out.appendChild(b);S.badges[g[0]]=b}
+      b.className='pmdelta '+(g[1]<0?'dn':g[1]>0?'up':'eq');b.textContent=g[1]?((g[1]>0?'+':'')+g[1]+' שורה'):'✓ לא זז';
+      b.style.top=g[2]+'px';b.style.left=g[3]+'px'});
+    if(from!==S.staleFrom)S.pages.forEach(function(pe,i){pe.classList.toggle('pmstale',!!from&&i+1>=from)});
+    S.pend=pend;S.bal=bal;S.staleFrom=from;
     pmBar();pmAutoArm()}
   /* שורה שחוצה טור או עמוד: אם מספר השורות שלה השתנה, החלוקה בין החלקים כבר אינה מדויקת - רק "השלם עימוד" יודע */
   function pmCross(row){var u=row.getAttribute('data-u'),doc=row.ownerDocument;
     if(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+u+'"]').length>1){S.cross=1;pmBar()}}
-  function pmBadge(key,el,d){
-    var doc=pmDoc();if(!doc)return;var out=doc.getElementById('prnout');if(!out)return;
-    var b=S.badges[key];
-    if(!b){b=doc.createElement('div');b.className='pmdelta';out.appendChild(b);S.badges[key]={el:b,d:0}}else b=b.el;
-    var tot=S.badges[key].d+=d;
-    b.className='pmdelta '+(tot<0?'dn':tot>0?'up':'eq');
-    b.textContent=tot?((tot>0?'+':'')+tot+' שורה'):'✓ לא זז';
-    var o=out.getBoundingClientRect(),z=S.z||1,er=el.getBoundingClientRect(),pg=el.closest('.pg'),pr=pg?pg.getBoundingClientRect():er;
-    b.style.top=((er.top-o.top)/z)+'px';b.style.left=((pr.left-o.left)/z-62)+'px'}
-
   /* ---- בנייה מחדש של יחידות במסגרת, מן הנתונים של דף המנהל ---- */
   function pmLoc(DD,uid){for(var i=0;i<DD.pages.length;i++){var U=DD.pages[i].units;for(var k=0;k<U.length;k++)if(U[k].id===uid)return {pi:i,ki:k,u:U[k]}}return null}
   function pmCarryMarks(oldRow,newRow){
@@ -642,7 +659,7 @@
         nr.style.top=((parseFloat(prev.style.top)||0)+prev.offsetHeight)+'px';
         prev.parentNode.insertBefore(nr,prev.nextSibling);
         var t1=parseFloat(nr.style.top);[].forEach.call(nr.parentNode.children,function(r){if(r!==nr&&r.classList.contains('row')&&(parseFloat(r.style.top)||0)>=t1-0.5)r.style.top=((parseFloat(r.style.top)||0)+nr.offsetHeight)+'px'});
-        pmOverflow(nr.parentNode);pmStaleAt(nr);return}
+        pmOverflow(nr.parentNode);pmMove(nr,nr.offsetHeight);return}
       rows.forEach(function(r){
         tpl.innerHTML=html;var nr=tpl.content.firstElementChild;if(!nr)return;
         nr.removeAttribute('id');nr.setAttribute('data-u',uid);nr.style.cssText=r.style.cssText;
@@ -651,7 +668,7 @@
         if(o1&&n1&&o1.style.marginTop)n1.style.marginTop=o1.style.marginTop;
         pmCarryMarks(r,nr);
         var h0=r.offsetHeight;r.replaceWith(nr);var dh=nr.offsetHeight-h0;
-        if(dh)pmShift(nr,dh)});
+        if(dh)pmShift(nr,dh);else pmMove(nr,0)});
       if(rows.length>1)pmCross(rows[0])})}
   /* מה השתנה בנתונים סביב יחידה (העמוד שלה ושניים סמוכים): לפני ואחרי פקודה */
   function pmSnap(uid){var L=pmLoc(D,uid),m={pis:[]};if(!L)return m;
@@ -667,12 +684,34 @@
     pmSyncNow();tp('sync');
     var el=pmEnsureEl(E);if(!el)return false;
     var sel=pmGetSel(E.p)||[0,0],snap=pmSnap(E.u);
+    /* אותו מקום בדיוק בעץ (העותקים זהים אחרי pmSyncNow): גם גבול של סגנון תו נשמר כפי שהוא */
+    var fs=E.p.ownerDocument.getSelection(),xs=null;
+    if(fs&&fs.rangeCount&&E.p.contains(fs.anchorNode)&&(el.innerHTML===E.p.innerHTML||el.textContent===E.p.textContent)){var pa=pmPath(E.p,fs.anchorNode),pf=pmPath(E.p,fs.focusNode);if(pa&&pf)xs=[pa,fs.anchorOffset,pf,fs.focusOffset]}
     S.proxying=true;
-    var ev=new KeyboardEvent('keydown',{key:e.key,code:e.code,ctrlKey:e.ctrlKey,altKey:e.altKey,shiftKey:e.shiftKey,metaKey:e.metaKey,bubbles:true,cancelable:true});
-    try{try{el.focus({preventScroll:true})}catch(x){}
-      pmSetSel(el,sel[0],sel[1]);
+    /* פקודה של העורך שמכניסה HTML במקום הסמן (טאב יישור לשמאל): document.execCommand אינו פועל בדף המנהל כשהמיקוד
+       הוא במסגרת. בזמן ההעברה בלבד - אותה פעולה בטווח הבחירה, בלי execCommand */
+    var EX=document.execCommand;
+    document.execCommand=function(cmd,ui,val){
+      if(cmd==='insertHTML'||cmd==='insertText'){var s0=getSelection();if(!s0.rangeCount)return false;var rg=s0.getRangeAt(0);rg.deleteContents();
+        var sc=rg.startContainer;if(sc.nodeType===3&&rg.startOffset>0&&sc.nodeValue.charAt(rg.startOffset-1)===' '){var so=rg.startOffset;sc.nodeValue=sc.nodeValue.slice(0,so-1)+'\u00a0'+sc.nodeValue.slice(so);rg.setStart(sc,so);rg.collapse(true)}
+        var fr=cmd==='insertHTML'?rg.createContextualFragment(String(val)):document.createTextNode(String(val));
+        /* כמו execCommand: רווח בקצה של מה שהוכנס נשמר כרווח קשיח, כדי שלא יתמזג */
+        var tw=document.createTreeWalker(fr.nodeType===3?(function(){var d=document.createDocumentFragment();d.appendChild(fr);fr=d;return d})():fr,NodeFilter.SHOW_TEXT),tn,tl=[];while((tn=tw.nextNode()))tl.push(tn);
+        if(tl.length){tl[0].nodeValue=tl[0].nodeValue.replace(/^ /,'\u00a0');var z=tl[tl.length-1];z.nodeValue=z.nodeValue.replace(/ $/,'\u00a0')}
+        var last=fr.lastChild||fr;rg.insertNode(fr);
+        try{rg.setStartAfter(last);rg.collapse(true);s0.removeAllRanges();s0.addRange(rg)}catch(x){}
+        try{(rg.startContainer.nodeType===1?rg.startContainer:rg.startContainer.parentElement).dispatchEvent(new Event('input',{bubbles:true}))}catch(x){}
+        return true}
+      return EX.apply(document,arguments)};
+    var ev=new KeyboardEvent('keydown',{key:e.key,code:e.code,ctrlKey:e.ctrlKey,altKey:e.altKey,shiftKey:e.shiftKey,metaKey:e.metaKey,modifierAltGraph:!!(e.getModifierState&&e.getModifierState('AltGraph')),bubbles:true,cancelable:true});
+    try{try{window.focus();el.focus({preventScroll:true})}catch(x){}
+      var ok=false;
+      if(xs){var na=pmAt(el,xs[0]),nf=pmAt(el,xs[2]),fa=pmAt(E.p,xs[0]),ff=pmAt(E.p,xs[2]);
+        var same=function(x,y){return x&&y&&x.nodeType===y.nodeType&&(x.nodeType!==3||x.nodeValue===y.nodeValue)};
+        if(same(na,fa)&&same(nf,ff)){try{var ms=getSelection(),mr=document.createRange();mr.setStart(na,xs[1]);mr.collapse(true);ms.removeAllRanges();ms.addRange(mr);if(na!==nf||xs[1]!==xs[3])ms.extend(nf,xs[3]);ok=true}catch(x){}}}
+      if(!ok)pmSetSel(el,sel[0],sel[1]);
       el.dispatchEvent(ev);tp('editor')}
-    finally{S.proxying=false}
+    finally{S.proxying=false;document.execCommand=EX}
     if(!ev.defaultPrevented){try{E.p.focus({preventScroll:true})}catch(x){}pmSetSel(E.p,sel[0],sel[1]);return false}
     e.preventDefault();
     /* הסמן בדף המנהל, אחרי הפקודה */
@@ -691,8 +730,7 @@
     if(t){pmEdit(t,null,g?g[1]:0);if(g&&g[0]!==g[1])pmSetSel(t,g[0],g[1])}
     else{try{(pmDoc().body||{}).focus&&pmDoc().body.focus()}catch(x){}}
     /* מדד השורות של הפסקה שבה עמדת לפני הפקודה */
-    var tt=pmFrameEl(pmDoc(),E.u,E.k);if(tt&&m&&+m[1]===E.u){var nn=pmLines(tt);if(nn!==n0){S.bal+=nn-n0;pmBadge(E.u+'.'+E.k,tt,nn-n0);pmStaleAt(tt)}if(S.editing)S.editing.n=pmLines(S.editing.p)}
-    tp('caret');S.lastCmd={tp:TP,key:(e.ctrlKey?'Ctrl+':'')+(e.altKey?'Alt+':'')+(e.shiftKey?'Shift+':'')+(e.code||e.key),ms:Math.round(performance.now()-t0)};
+    tp('caret');S.lastCmd={path:!!xs,tp:TP,key:(e.ctrlKey?'Ctrl+':'')+(e.altKey?'Alt+':'')+(e.shiftKey?'Shift+':'')+(e.code||e.key),ms:Math.round(performance.now()-t0)};
     S.cmdMs.push(S.lastCmd.ms);if(S.cmdMs.length>200)S.cmdMs.shift();
     pmBar();pmAutoArm();
     return true}
@@ -741,7 +779,7 @@
     if(C){var nc=S.report.pages.map(function(p){return p.cols.reduce(function(a,c){return a+c.lines},0)});
       msg='הפרק: '+(C.pages===n?n+' עמודים':C.pages+' → '+n+' עמודים');
       for(var i=0;i<Math.min(C.cols.length,nc.length);i++)if(C.cols[i]!==nc[i]){var d=nc[i]-C.cols[i];msg+=' · עמוד '+(i+1)+(d>0?' קיבל '+d:' מסר '+(-d))+' שורות';break}}
-    S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};
+    S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};S.mv={};
     pmBar(msg);
     var R=S.resume;S.resume=null;
     if(R){var t=pmFrameEl(pmDoc(),R.u,R.k);if(t){pmEdit(t,null,R.off);if(S.kbuf&&S.editing){try{pmDoc().execCommand('insertText',false,S.kbuf)}catch(e){}}}}
@@ -804,6 +842,8 @@
       if(S.editing&&S.editing.p.isConnected){
         if(e.key==='Escape'){e.preventDefault();pmLeave();return}
         if(e.key==='F8'){e.preventDefault();pmClose();return}
+        /* F2 (כניסה ויציאה ממצב עריכה) אינו פועל כאן: מצב דפוס הוא תמיד עריכה */
+        if(e.key==='F2'){e.preventDefault();pmMsg('מצב דפוס הוא תמיד מצב עריכה. F8 יוצא ממנו');return}
         if((e.ctrlKey||e.metaKey)&&!e.altKey&&(e.key==='p'||e.key==='פ')){e.preventDefault();pmPrint();return}
         if(e.altKey&&!e.ctrlKey&&(e.key==='PageDown'||e.key==='PageUp')){e.preventDefault();pmMishna(e.key==='PageDown'?1:-1);return}
         if(pmNav(e))return;

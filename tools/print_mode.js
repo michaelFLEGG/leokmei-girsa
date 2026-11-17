@@ -16,7 +16,7 @@
   function pmMsg(m){try{if(typeof flash==='function')flash(m);else if(typeof toast==='function')toast(m,3000)}catch(e){}}
   var CARD_MM=85.6;                             /* רוחב כרטיס אשראי (ISO 7810) לכיול "גודל טבעי" */
   var S={open:false,fr:null,busy:false,dirty:false,report:null,pk:null,view:'page',spread:false,zoom:'fit',z:1,
-         pages:[],issues:[],ii:-1,pend:0,bal:0,staleFrom:0,cross:0,badges:{},mv:{},cmdMs:[],kbuf:'',later:pmLs('lg-pm-later-'+(typeof SLUG!=='undefined'?SLUG:''),[]),t0:0,lastMs:0,anchor:null};
+         pages:[],issues:[],ii:-1,pend:0,bal:0,staleFrom:0,cross:0,badges:{},mv:{},base:{},cmdMs:[],kbuf:'',later:pmLs('lg-pm-later-'+(typeof SLUG!=='undefined'?SLUG:''),[]),t0:0,lastMs:0,anchor:null};
   var P=pmLs('lg-pm-prefs',{paper:'b5',big:1,tos:1,view:'page',spread:0,zoom:'fit',z:1,auto:0});
   var PXMM=pmLs('lg-pm-pxmm',0);              /* פיקסלים למילימטר במסך הזה (אחרי כיול). 0 = לא כויל: 96/25.4 */
   S.view=P.view||'page';S.spread=!!P.spread;S.zoom=P.zoom||'fit';S.z=+P.z||1;
@@ -76,8 +76,9 @@
       '#pmmenu div{padding:4px 14px;cursor:pointer}#pmmenu div:hover{background:#f1ece2}'+
       '#pm-done.hot{border-color:#a3361f;color:#a3361f;font-weight:700}#pm-pend{color:#a3361f;font-size:12px;max-width:40em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'+
       'body.pmopen #keyscard,body.pmopen .modal{z-index:80!important}'+
-      /* הדף הרגיל שמתחת למצב אינו נפרס על המסך: העורך עובד עליו, אבל הדפדפן אינו מחשב את הפריסה שלו בכל פקודה */
-      'body.pmopen #flow{content-visibility:hidden}'+
+      /* הדף הרגיל שמתחת למצב אינו מוצג כלל: העורך עובד על העץ שלו (נתונים, בחירה, רשומות), אבל הדפדפן אינו מחשב
+         לו סגנון ופריסה בכל פקודה. נמדד בקידושין פרק א (כ-1300 שורות): כ-85 אלפיות לפקודה עם פריסה, ראה הדוח */
+      'body.pmopen #flow{display:none!important}'+
       '@media (max-width:700px){#pmbar{font-size:12px}#pmbar .pmwide{display:none}#pmside{display:none!important}}'+
       '@media print{#pm,#pmbtn{display:none!important}}';
     document.head.appendChild(c)}
@@ -173,6 +174,9 @@
     document.addEventListener('click',function(e){if(!menu.contains(e.target))menu.style.display='none'},true);
     /* פרומפט 52: שינוי בנתוני הדף שלא בא מן המצב (קבלת הצעה, סכם) - רק היחידות שהשתנו נבנות מחדש, בלי עימוד */
     document.addEventListener('lg-dv',function(){if(S.open)setTimeout(pmExternal,0)});
+    /* פרומפט 52: בזמן המצב, שינויי הבחירה בדף הרגיל (סרגל הסגנונות, ציון הדף, הצעת סכם על בחירה) אינם רלוונטיים -
+       הדף מוסתר - וכל אחד מהם מודד מיקום ומכריח פריסה. הם נחסמים כל עוד המצב פתוח */
+    document.addEventListener('selectionchange',function(e){if(S.open)e.stopImmediatePropagation()},true);
     window.addEventListener('resize',function(){if(!S.open)return;pmFrameSize(S.fr);if(S.zoom==='fit')pmZoom('fit')})}
 
   /* ---------- פתיחה, טעינה, עימוד ---------- */
@@ -232,7 +236,7 @@
     old.parentNode.replaceChild(fr,old);
     pmFrameSize(fr);
     S.fr=fr;S.busy=true;S.t0=performance.now();S.report=null;S.pages=[];S.issues=[];
-    S.editing=null;S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};S.mv={};S.completing=null;S.resume=null;
+    S.editing=null;S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};S.mv={};S.base={};S.completing=null;S.resume=null;
     pmStat('מעמד...',1);
     fr.src=pmUrl();
     pmWait()}
@@ -516,7 +520,7 @@
       else if(k==='0')t=row.querySelector(':scope > .main.dh,:scope > .main.nose')||row.querySelector('.rail .anchor');
       else t=row.querySelectorAll(':scope > .main > p')[+k-1];
       if(t)c.push(t)});
-    return c.find(pmVisible)||c[0]||null}
+    return c.find(function(t){return (parseFloat(t.closest('.row').style.top)||0)>=-0.5})||c[0]||null}
   /* היסט בטקסט (בלי סימני התוס') <-> מקום בעץ */
   function pmOff(root,node,off){try{var r=root.ownerDocument.createRange();r.setStart(root,0);r.setEnd(node,off);
     var f=r.cloneContents();[].forEach.call(f.querySelectorAll('sup.tm,span.tmg'),function(x){x.remove()});return f.textContent.length}catch(e){return 0}}
@@ -549,10 +553,13 @@
     if(!el){pmMsg('השורה לא נמצאה בעורך. פתח אותה בדף הרגיל');return}
     try{if(el.__was===undefined&&typeof edBase==='function')edBase(el)}catch(e){}
     t=pmFrameEl(pmDoc(),K.u,K.k)||t;row=t.closest('.row');
-    S.editing={p:t,el:el,u:K.u,k:K.k,row:row,orig:t.innerHTML,dirty:false,n:pmLines(t),h:row.offsetHeight};
+    var b0=pmBase(K.u,row),cur0=(S.mv[K.u]?S.mv[K.u].px:0);
+    S.editing={p:t,el:el,u:K.u,k:K.k,row:row,orig:t.innerHTML,dirty:false,n:0,h:0,px0:cur0};
     S.focusKey={u:K.u,li:+K.k||0};
     t.innerHTML=el.innerHTML;
     t.setAttribute('contenteditable','true');t.classList.add('pmed');t.spellcheck=false;
+    /* קו הבסיס נמדד אחרי שהפסקה קיבלה את נוסח העורך (בלי ההצרה והאיחוי של המנוע), כדי שהמדד ישווה בין שני נוסחים באותו מצב */
+    S.editing.h=S.editing.hIn=row.offsetHeight;S.editing.n=pmLines(t);
     try{t.focus({preventScroll:true})}catch(e){}
     pmSetSel(t,off==null?t.textContent.length:off);
     pmStat('עריכה: כמו בעורך · Esc יציאה מן השורה · F9 השלם עימוד',0)}
@@ -580,13 +587,14 @@
   function pmMeasure(){
     var E=S.editing;if(!E||!E.p.isConnected)return;
     var h=E.row.offsetHeight;
-    if(h!==E.h){pmShift(E.row,h-E.h);E.h=h;pmCross(E.row)}else pmMove(E.row,0)}
+    if(h!==E.h){pmShift(E.row,h-E.h,0);E.h1=h;E.h=h;pmCross(E.row)}
+    pmSetPx(E.row,E.px0+((E.h1||E.h)-E.hIn))}
 
   /* ---- שינוי בטור: הזזה בתוך הטור בלבד, גלישה, וסימון ---- */
-  function pmShift(row,dh){
-    if(!dh)return;var tx=row.parentElement;if(!tx)return;var t0=parseFloat(row.style.top)||0;
+  function pmShift(row,dh,cnt){
+    if(!dh){if(cnt)pmMove(row,cnt);return}var tx=row.parentElement;if(!tx)return;var t0=parseFloat(row.style.top)||0;
     [].forEach.call(tx.children,function(r){if(r===row||!r.classList.contains('row'))return;var t=parseFloat(r.style.top)||0;if(t>t0+0.5)r.style.top=(t+dh)+'px'});
-    pmOverflow(tx);pmMove(row,dh)}
+    pmOverflow(tx);pmMove(row,cnt===undefined?dh:cnt)}
   function pmOverflow(tx){
     var H=parseFloat(tx.style.height)||tx.clientHeight,over=0;
     [].forEach.call(tx.querySelectorAll(':scope > .row'),function(r){var t=parseFloat(r.style.top)||0;if(t+r.offsetHeight>H+1)over=Math.max(over,t+r.offsetHeight-H)});
@@ -630,6 +638,17 @@
   /* שורה שחוצה טור או עמוד: אם מספר השורות שלה השתנה, החלוקה בין החלקים כבר אינה מדויקת - רק "השלם עימוד" יודע */
   function pmCross(row){var u=row.getAttribute('data-u'),doc=row.ownerDocument;
     if(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+u+'"]').length>1){S.cross=1;pmBar()}}
+  /* ---- מאזן השורות: גובה "גולמי" של יחידה (מן הנתונים, בלי ההצרה והאיחוי של המנוע), מול הגובה שלה בהשלמה האחרונה ---- */
+  function pmProbe(html,ctx){var doc=ctx.ownerDocument,tpl=doc.createElement('template');tpl.innerHTML=html;var x=tpl.content.firstElementChild;if(!x)return 0;
+    x.removeAttribute('id');x.style.cssText=ctx.style.cssText;x.style.visibility='hidden';ctx.parentNode.appendChild(x);var h=x.offsetHeight;x.remove();return h}
+  function pmBase(uid,ctx){
+    if(S.base[uid]!==undefined)return S.base[uid];
+    var w=pmWin(),FD=w&&w.__pmEng&&w.__pmEng.data(),fl=FD&&pmLoc(FD,+uid);if(!fl||!ctx)return (S.base[uid]=null);
+    return (S.base[uid]=pmProbe(w.__pmEng.row(fl.u,fl.pi),ctx))}
+  function pmSetPx(row,px){if(!row||!row.getAttribute)return;var uid=row.getAttribute('data-u');if(!uid)return;
+    var m=S.mv[uid]||(S.mv[uid]={px:0,pg:0});m.px=px;m.row=row;
+    if(!S.rcT)S.rcT=requestAnimationFrame(function(){S.rcT=0;pmRecalc()})}
+
   /* ---- בנייה מחדש של יחידות במסגרת, מן הנתונים של דף המנהל ---- */
   function pmLoc(DD,uid){for(var i=0;i<DD.pages.length;i++){var U=DD.pages[i].units;for(var k=0;k<U.length;k++)if(U[k].id===uid)return {pi:i,ki:k,u:U[k]}}return null}
   function pmCarryMarks(oldRow,newRow){
@@ -645,9 +664,9 @@
     uids.forEach(function(uid){if(seen[uid])return;seen[uid]=1;
       var loc=pmLoc(D,uid),floc=pmLoc(FD,uid);
       var rows=[].slice.call(doc.querySelectorAll('#prnout .pg .ptx > .row[data-u="'+uid+'"]'));
-      if(!loc){rows.forEach(function(r){pmShift(r,-r.offsetHeight);r.remove()});if(floc)FD.pages[floc.pi].units.splice(floc.ki,1);return}
+      if(!loc){rows.forEach(function(r){var b=pmBase(uid,r);pmShift(r,-r.offsetHeight,0);if(b!=null&&(parseFloat(r.style.top)||0)>=-0.5){var m=S.mv[uid]||(S.mv[uid]={px:0,pg:pmPageOf(r)});m.px=-b;m.row=null;m.pg=pmPageOf(r)||m.pg}r.remove()});if(!S.rcT)S.rcT=requestAnimationFrame(function(){S.rcT=0;pmRecalc()});if(floc)FD.pages[floc.pi].units.splice(floc.ki,1);return}
       var nu=JSON.parse(JSON.stringify(loc.u));
-      if(floc)FD.pages[floc.pi].units[floc.ki]=nu;
+      if(floc){floc.oldJ=JSON.stringify(FD.pages[floc.pi].units[floc.ki]);FD.pages[floc.pi].units[floc.ki]=nu}
       else{var at=0,pu=D.pages[loc.pi].units;for(var k=loc.ki-1;k>=0;k--){var fp=pmLoc(FD,pu[k].id);if(fp){at=fp.ki+1;break}}FD.pages[loc.pi].units.splice(at,0,nu)}
       var html=w.__pmEng.row(nu,loc.pi),tpl=doc.createElement('template');
       if(!rows.length){
@@ -659,7 +678,13 @@
         nr.style.top=((parseFloat(prev.style.top)||0)+prev.offsetHeight)+'px';
         prev.parentNode.insertBefore(nr,prev.nextSibling);
         var t1=parseFloat(nr.style.top);[].forEach.call(nr.parentNode.children,function(r){if(r!==nr&&r.classList.contains('row')&&(parseFloat(r.style.top)||0)>=t1-0.5)r.style.top=((parseFloat(r.style.top)||0)+nr.offsetHeight)+'px'});
-        pmOverflow(nr.parentNode);pmMove(nr,nr.offsetHeight);return}
+        pmOverflow(nr.parentNode);S.base[uid]=0;pmSetPx(nr,pmProbe(html,nr));return}
+      /* המאזן נמדד בין שני נוסחים "גולמיים" (בלי ההצרה והאיחוי שהמנוע עשה בעימוד המלא): היחידה כפי שהיתה בנתונים
+         של המסגרת, והיחידה החדשה. כך יציאה מפסקה בלי שינוי אינה נספרת כ"+1 שורה" */
+      var cnt=null;
+      if(rows.length){var r0=rows.find(function(r){return (parseFloat(r.style.top)||0)>=-0.5})||rows[0];
+        if(S.base[uid]===undefined&&floc&&floc.oldJ){try{S.base[uid]=pmProbe(w.__pmEng.row(JSON.parse(floc.oldJ),loc.pi),r0)}catch(e){}}
+        if(S.base[uid]!=null)cnt=pmProbe(html,r0)-S.base[uid]}
       rows.forEach(function(r){
         tpl.innerHTML=html;var nr=tpl.content.firstElementChild;if(!nr)return;
         nr.removeAttribute('id');nr.setAttribute('data-u',uid);nr.style.cssText=r.style.cssText;
@@ -668,7 +693,8 @@
         if(o1&&n1&&o1.style.marginTop)n1.style.marginTop=o1.style.marginTop;
         pmCarryMarks(r,nr);
         var h0=r.offsetHeight;r.replaceWith(nr);var dh=nr.offsetHeight-h0;
-        if(dh)pmShift(nr,dh);else pmMove(nr,0)});
+        if(dh)pmShift(nr,dh,0);
+        if((parseFloat(nr.style.top)||0)>=-0.5){if(cnt!==null)pmSetPx(nr,cnt);else pmMove(nr,dh)}});
       if(rows.length>1)pmCross(rows[0])})}
   /* מה השתנה בנתונים סביב יחידה (העמוד שלה ושניים סמוכים): לפני ואחרי פקודה */
   function pmSnap(uid){var L=pmLoc(D,uid),m={pis:[]};if(!L)return m;
@@ -704,7 +730,7 @@
         return true}
       return EX.apply(document,arguments)};
     var ev=new KeyboardEvent('keydown',{key:e.key,code:e.code,ctrlKey:e.ctrlKey,altKey:e.altKey,shiftKey:e.shiftKey,metaKey:e.metaKey,modifierAltGraph:!!(e.getModifierState&&e.getModifierState('AltGraph')),bubbles:true,cancelable:true});
-    try{try{window.focus();el.focus({preventScroll:true})}catch(x){}
+    try{
       var ok=false;
       if(xs){var na=pmAt(el,xs[0]),nf=pmAt(el,xs[2]),fa=pmAt(E.p,xs[0]),ff=pmAt(E.p,xs[2]);
         var same=function(x,y){return x&&y&&x.nodeType===y.nodeType&&(x.nodeType!==3||x.nodeValue===y.nodeValue)};
@@ -736,13 +762,14 @@
     return true}
 
   /* ---- ניווט בין השורות של העמוד (חיצים, PageUp/PageDown) ---- */
-  function pmTargets(){var doc=pmDoc();if(!doc)return [];return [].filter.call(doc.querySelectorAll(LINESEL),function(t){return pmVisible(t)&&!t.closest('.hatz')})}
+  function pmTargets(){var doc=pmDoc();if(!doc)return [];return [].filter.call(doc.querySelectorAll(LINESEL),function(t){var r=t.closest('.row');return r&&r.getAttribute('data-u')&&!t.closest('.hatz')&&!r.closest('.pmcpg')&&(parseFloat(r.style.top)||0)>=-0.5})}
   function pmCaretRect(doc){var s=doc.getSelection();if(!s||!s.rangeCount)return null;var r=s.getRangeAt(0).cloneRange();r.collapse(!(s.focusNode===r.endContainer&&s.focusOffset===r.endOffset));
     var rs=r.getClientRects();if(rs.length)return rs[0];var b=r.getBoundingClientRect();return b.height?b:null}
   function pmNav(e){
     var E=S.editing,doc=pmDoc();if(!E||!doc)return false;
     var k=e.key;if(e.ctrlKey||e.altKey||e.metaKey||e.shiftKey)return false;
-    var p=E.p,L=pmTargets(),i=L.indexOf(p);
+    if(!/^(ArrowUp|ArrowDown|ArrowLeft|ArrowRight|PageUp|PageDown)$/.test(k))return false;
+    var p=E.p,L=null,i=-1;var TG=function(){if(!L){L=pmTargets();i=L.indexOf(p)}return L};
     var go=function(t,end,x){if(!t)return true;
       var off=null;if(x!=null){var r=t.getClientRects(),rr=end?r[r.length-1]:r[0];if(rr){var cr=doc.caretRangeFromPoint&&doc.caretRangeFromPoint(Math.max(rr.left+1,Math.min(rr.right-1,x)),rr.top+rr.height/2);if(cr&&t.contains(cr.startContainer))off=pmOff(t,cr.startContainer,cr.startOffset)}}
       pmEdit(t,null,off==null?(end?1e9:0):off);if(S.editing)pmSetSel(S.editing.p,Math.min(off==null?(end?S.editing.p.textContent.length:0):off,S.editing.p.textContent.length));
@@ -750,18 +777,18 @@
     if(k==='ArrowDown'||k==='ArrowUp'){
       var c=pmCaretRect(doc),rs=p.getClientRects();if(!c||!rs.length)return false;
       var lastTop=rs[rs.length-1].top,firstTop=rs[0].top;
-      if(k==='ArrowDown'&&c.top>=lastTop-2){e.preventDefault();return go(L[i+1],false,c.left)}
-      if(k==='ArrowUp'&&c.top<=firstTop+2){e.preventDefault();return go(L[i-1],true,c.left)}
+      if(k==='ArrowDown'&&c.top>=lastTop-2){e.preventDefault();TG();return go(L[i+1],false,c.left)}
+      if(k==='ArrowUp'&&c.top<=firstTop+2){e.preventDefault();TG();return go(L[i-1],true,c.left)}
       return false}
     if(k==='ArrowLeft'||k==='ArrowRight'){
       var g=pmGetSel(p);if(!g||g[0]!==g[1])return false;var len=p.textContent.length;
       /* מימין לשמאל: שמאלה = קדימה בטקסט */
-      if(k==='ArrowLeft'&&g[1]>=len){e.preventDefault();return go(L[i+1],false,null)}
-      if(k==='ArrowRight'&&g[1]<=0){e.preventDefault();return go(L[i-1],true,null)}
+      if(k==='ArrowLeft'&&g[1]>=len){e.preventDefault();TG();return go(L[i+1],false,null)}
+      if(k==='ArrowRight'&&g[1]<=0){e.preventDefault();TG();return go(L[i-1],true,null)}
       return false}
     if(k==='PageDown'||k==='PageUp'){
       e.preventDefault();var pg=pmPageOf(p)+(k==='PageDown'?1:-1);if(pg<1||pg>S.pages.length)return true;
-      var t=L.find(function(x){return pmPageOf(x)===pg});pmGoPage(pg);return go(t,false,null)}
+      var t=TG().find(function(x){return pmPageOf(x)===pg});pmGoPage(pg);return go(t,false,null)}
     return false}
 
   /* ---- השלם עימוד (F9) ---- */
@@ -779,12 +806,15 @@
     if(C){var nc=S.report.pages.map(function(p){return p.cols.reduce(function(a,c){return a+c.lines},0)});
       msg='הפרק: '+(C.pages===n?n+' עמודים':C.pages+' → '+n+' עמודים');
       for(var i=0;i<Math.min(C.cols.length,nc.length);i++)if(C.cols[i]!==nc[i]){var d=nc[i]-C.cols[i];msg+=' · עמוד '+(i+1)+(d>0?' קיבל '+d:' מסר '+(-d))+' שורות';break}}
-    S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};S.mv={};
+    S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};S.mv={};S.base={};
     pmBar(msg);
     var R=S.resume;S.resume=null;
-    if(R){var t=pmFrameEl(pmDoc(),R.u,R.k);if(t){pmEdit(t,null,R.off);if(S.kbuf&&S.editing){try{pmDoc().execCommand('insertText',false,S.kbuf)}catch(e){}}}}
+    if(R){var t=pmFrameEl(pmDoc(),R.u,R.k);if(t){pmEdit(t,null,R.off);if(S.kbuf&&S.editing){pmInsert(S.editing.p,S.kbuf)}}}
     S.kbuf='';
     if(S.then){var f=S.then;S.then=null;setTimeout(f,50)}}
+  /* טקסט שהוקלד בזמן ההשלמה: נכנס במקום הסמן, כמו הקלדה */
+  function pmInsert(p,txt){var d=p.ownerDocument,s=d.getSelection();if(!s.rangeCount)pmSetSel(p,p.textContent.length);
+    var r=s.getRangeAt(0);r.deleteContents();var n=d.createTextNode(txt);r.insertNode(n);r.setStartAfter(n);r.collapse(true);s.removeAllRanges();s.addRange(r);pmOnInput()}
   /* השלמה לבד אחרי X שניות שקט (הגדרה, ברירת מחדל: כבוי) */
   function pmAutoArm(){clearTimeout(S.autoT);var x=+P.auto||0;if(!x||!S.pend)return;S.autoT=setTimeout(function(){if(S.open&&S.pend&&!S.busy)pmComplete()},x*1000)}
 
@@ -910,6 +940,7 @@
     try{if(typeof barH==='function')barH()}catch(e){}}
   document.addEventListener('keydown',function(e){
     if(e.key==='F8'&&!e.ctrlKey&&!e.altKey&&!e.metaKey){if(!pmAdm())return;e.preventDefault();S.open?pmClose():pmOpen();return}
+    if(S.open&&S.busy&&!S.proxying&&e.key.length===1&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&!(e.target&&e.target.closest&&e.target.closest('#pmbar input,#pmbar select'))){e.preventDefault();e.stopPropagation();S.kbuf=(S.kbuf||'')+e.key;return}
     if(S.open&&!(e.target&&e.target.closest&&e.target.closest('#pmbar input,#ovpop,#pmcal'))){
       if(document.getElementById('ovpop'))return;
       if(pmKeys(e))e.stopPropagation()}},true);

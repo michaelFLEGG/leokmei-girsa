@@ -753,6 +753,8 @@
     pmRender(ch);tp('render');
     var m=ek&&/^u(\d+)\.(\w+)$/.exec(ek);
     var t=m&&pmFrameEl(pmDoc(),+m[1],m[2]);
+    /* העורך לא השאיר סמן (למשל ביטול ב-Ctrl+ז): הסמן חוזר לשורה שבה עמדת */
+    if(!t){t=pmFrameEl(pmDoc(),E.u,E.k);g=null;if(t){pmEdit(t,null,Math.min(sel[1],t.textContent.length));t=null}}
     if(t){pmEdit(t,null,g?g[1]:0);if(g&&g[0]!==g[1])pmSetSel(t,g[0],g[1])}
     else{try{(pmDoc().body||{}).focus&&pmDoc().body.focus()}catch(x){}}
     /* מדד השורות של הפסקה שבה עמדת לפני הפקודה */

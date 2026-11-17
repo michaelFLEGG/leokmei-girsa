@@ -127,7 +127,8 @@
       '<div class="tzhd">'+
       '<button id="tzpv" title="הצד הקודם (Alt+חץ ימינה)" aria-label="הצד הקודם">»</button><b id="tztl"></b><button id="tznx" title="הצד הבא (Alt+חץ שמאלה)" aria-label="הצד הבא">«</button>'+
       '<span class="sp"></span>'+
-      '<button id="tzzo" title="הקטנה (-)" aria-label="הקטנה">−</button><button id="tzzi" title="הגדלה (+)" aria-label="הגדלה">+</button>'+
+      '<button id="tzzo" title="הקטנה (-)" aria-label="הקטנה">'+'<svg class="tic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20M7.5 10.5h6"/></svg>'+'</button>'+
+      '<button id="tzzi" title="הגדלה (+)" aria-label="הגדלה">'+'<svg class="tic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20M7.5 10.5h6M10.5 7.5v6"/></svg>'+'</button>'+
       '<button id="tzz1" title="התאמה לרוחב" aria-label="התאמה לרוחב">'+'<svg class="tic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5v14M20 5v14M7 12h10M10 9l-3 3 3 3M14 9l3 3-3 3"/></svg>'+'</button>'+
       '<span class="tzsep"></span>'+
       '<button id="tztr" title="מעקב: ההדגשה נעה עם השורה שבטקסט" aria-label="מעקב">'+'<svg class="tic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>'+'</button>'+
@@ -175,6 +176,10 @@
         var p=Math.max(28,Math.min(70,e2.clientX/innerWidth*100));tzSet('tz-w',p.toFixed(1));try{fitAnchors();squeezeRun()}catch(e){}tzDraw()};
       dr.addEventListener('pointermove',mv);dr.addEventListener('pointerup',up)})}
     TZ.open=true;TZ.ref=ref;
+    /* (17.11.2026, פרומפט 49) בטלפון הגוף גלול מעט (overflow:hidden עם transform), והחלונית הקבועה זזה איתו מעל קצה המסך
+       והסתירה את הכותרת. מאפסים את גלילת הגוף בפתיחה ובכל מעבר צד */
+    if(document.body.scrollTop)document.body.scrollTop=0;
+    if(!TZ.bodyGuard){TZ.bodyGuard=true;document.body.addEventListener('scroll',function(){if(TZ.open&&document.body.scrollTop)document.body.scrollTop=0},{passive:true})}
     tzShow(i,false);
     try{fitAnchors();squeezeRun()}catch(e){}}
   function tzClose(){var b=tzBox();if(b)b.remove();TZ.open=false;document.body.classList.remove('tzsplit');
@@ -184,7 +189,9 @@
     tzShow(i,true)}
   function tzShow(i,reset){
     TZ.i=i;TZ.data=null;TZ.img=null;TZ.imgKind='';
-    var t=document.getElementById('tztl');if(t)t.textContent=tzTitle(i);
+    if(document.body.scrollTop)document.body.scrollTop=0;
+    /* כותרת קצרה בשורה (שם המסכת ושם הדף, "ברכות ב."), והמלאה בריחוף */
+    var t=document.getElementById('tztl');if(t){t.textContent=(TZ_MAN.name?TZ_MAN.name+' ':'')+tzSides[i].k;t.title=tzTitle(i)}
     var bd=document.getElementById('tzbd');
     if(reset&&bd)bd.scrollTop=0;
     Promise.all([tzJson(i),tzImg(i,'v')]).then(function(r){

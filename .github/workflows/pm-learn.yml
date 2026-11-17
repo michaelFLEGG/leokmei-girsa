@@ -1,0 +1,44 @@
+name: מצב דפוס - משיכת הכרעות העימוד ללמידה
+# פרומפט 58 (17.11.2026, הכרעת מיכאל: "אני המנהל ואני מאשר לך"). שיחה בענן אינה מחזיקה את מפתח המנהל,
+# ולכן אינה יכולה לקרוא את רישום מצב הדפוס (bakara/dec, pm-<מסכת>). הפעולה הזו קוראת אותו בסוד שבגיטהאב
+# ושומרת ב-data/overflow/pm/<מסכת>.json - אותו קובץ שהשלב "למידה" ב-overflow.yml כבר כותב. המפתח עצמו לעולם
+# אינו נכתב לריפו. הפעלה: workflow_dispatch (גם מן הענן, בכלי GitHub), קלט slugs: מסכתות מופרדות ברווח, או all.
+on:
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: 'מסכתות מופרדות ברווח, או all'
+        required: false
+        default: 'berakhot'
+permissions:
+  contents: write
+concurrency:
+  group: pm-learn
+  cancel-in-progress: false
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: משיכה
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          IN="${{ github.event.inputs.slugs }}"
+          if [ "$IN" = "all" ]; then IN=$(python tools/overflow/plan.py --all | python -c "import json,sys;print(' '.join(json.load(sys.stdin)))"); fi
+          bad=0
+          for s in $IN; do python tools/overflow/pm_learn.py --slug $s || bad=1; done
+          if [ "$bad" = 1 ]; then echo "::error::המשיכה נכשלה לפחות במסכת אחת (ראה למעלה)"; fi
+          git config user.name "leokmei-pm"
+          git config user.email "pm@leokmei.com"
+          git add data/overflow/pm
+          if ! git diff --cached --quiet; then
+            git commit -qm "מצב דפוס: הכרעות העימוד ללמידה [skip ci]"
+            ok=0
+            for i in 1 2 3 4; do git pull --rebase -q -X theirs && git push -q && { ok=1; break; }; git rebase --abort 2>/dev/null || true; sleep $((i*5)); done
+            [ "$ok" = 1 ] || { echo "::error::הדחיפה נכשלה"; exit 1; }
+          fi
+          exit $bad

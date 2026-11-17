@@ -1,6 +1,6 @@
 {
  "slug": "berakhot",
- "made": "2026-11-17 17:42",
+ "made": "2026-11-17 17:55",
  "profile": "a4-large",
  "pages": {
   "a4": 64,
@@ -12,18 +12,16 @@
  },
  "count": 80,
  "firstTool": {
-  "3": 13,
+  "3": 15,
   "5": 21,
   "4": 8,
   "2": 3
  },
  "joinCands": 37,
- "mechSplitCands": 20,
+ "mechSplitCands": 21,
  "ctlMismatch": [],
  "rejected": 15,
- "stale": [
-  "u1566.1"
- ],
+ "stale": [],
  "unplaced": [],
  "heads": {
   "count": 2,
@@ -431,8 +429,25 @@
    "miss": 10,
    "long": false,
    "tail": false,
-   "sug": [],
-   "tool6": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "ת\"ח בביתו ומהנהו מנכסיו",
+     "replace": "ת\"ח ומהנהו",
+     "why": "המארח מובנו בביתו, ומהנהו מובנו מנכסיו",
+     "kind": "replace",
+     "html": "<i class=\"ps\">'עובר עלינו תמיד'</i> המארח ת\"ח ומהנהו כאילו מקריב <i class=\"kt\">תמידין</i>.",
+     "ok": {
+      "large": [
+       1
+      ],
+      "a4": [
+       1
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u788.1",
@@ -825,8 +840,47 @@
    "miss": 6,
    "long": false,
    "tail": false,
-   "sug": [],
-   "tool6": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "העוסקים בהספד",
+     "replace": "בהספד",
+     "why": "השמטת מילה, העניין ברור מן ההמשך",
+     "kind": "replace",
+     "html": "בהספד - כשהמת מוטל לפניהם, נשמטין אחד אחד וקורין,",
+     "ok": {
+      "large": [
+       1
+      ],
+      "a4": [
+       1
+      ]
+     }
+    },
+    {
+     "tool": 4,
+     "split_before": "נשמטין",
+     "side": "",
+     "kind": "split",
+     "parts": [
+      "העוסקים בהספד - כשהמת מוטל לפניהם,",
+      "נשמטין אחד אחד וקורין,"
+     ],
+     "why": "חיתוך אחרי סימן פיסוק",
+     "src": "mech",
+     "ok": {
+      "large": [
+       1,
+       1
+      ],
+      "a4": [
+       1,
+       1
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u1612.1",

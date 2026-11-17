@@ -2589,6 +2589,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .row.hatz{break-after:avoid-column}
   /* 7.11.2026: רווח בין שתי דעות באותה שורה (ראה lgLook), ואות מספור מודגשת בכותרת צד */
   .og{display:inline-block;width:1.3em;height:0}
+  /* פרומפט 60 ה: רשימה ממוספרת (ראה enlLook) - יישור לימין באותה נקודה, בלי מתיחת רווחים ובלי הרווח הקבוע */
+  .row.enl .main,.row.enl .main p{text-align:right!important;text-align-last:right!important}
+  .row.enl .og{display:none!important}
   .main p[data-e]{display:none}
   @media screen{body:not(.prn) .dupmark{outline:2px solid #d0342c;outline-offset:1px;background:rgba(208,52,44,.09)}}
   @media print{.dupmark{outline:0!important;background:none!important}}
@@ -3288,6 +3291,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      לשורה שנייה; ואם גם זה לא, הוא מוקטן. לעולם אינו נחתך ואין ellipsis.
      הקריאות והכתיבות מופרדות, כדי שלא תהיה פריסה מחדש לכל יחידה. */
   const ASCALE=[1,.88,.8,.72];
+  /* פרומפט 60 א: גבול ההקטנה של כותרת צד קצרה (עד שלוש מילים) לפני שבירה לשתי שורות. אותו ערך במנוע ההדפסה */
+  const LBL1=.62;
+  function lblWords(a){return (a.textContent||'').trim().split(/\s+/).filter(Boolean).length}
   /* חתימת מצב ההתאמה (גופנים שנטענו, רוחב, גודל): ההתאמה החוזרת שאחרי
      הגופנים מדלגת כשלא השתנתה. שלושה טריגרים הריצו התאמה מלאה כל אחד
      (1.5-2 שניות בטלפון איטי) גם כשדבר לא השתנה (11.10.2026). */
@@ -3400,10 +3406,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       /* בהדפסת PDF (14.10.2026) ציון הדף המועלה (dup) נחבט בכותרת הצד של השורה שמעליו: שם הוא מוקטן/נפרש במקום */
       if(o.hw&&o.dm&&!window.__PRN_ON){
         if(o.aw<=o.full+.5){ops.push(()=>o.rail.classList.add('dup'));continue}}
-      if(o.lines>=2&&!o.a.classList.contains('stk')){o.w2=true;ops.push(()=>o.a.classList.add('w2'));wrapped.push(o);continue}
-      const need=o.tw/o.aw;
+      /* פרומפט 60 א (17.11.2026): כותרת צד קצרה (עד שלוש מילים, כמו "מתקיף רנב"י:") לעולם אינה נשברת לשתי שורות
+         כשהקטנה מתונה (עד LBL1) מכניסה אותה בשורה אחת. רק כותרת ארוכה, או קצרה שגם בהקטנה אינה נכנסת - שתי שורות */
+      const need=o.tw/o.aw,short=lblWords(o.a)<=3;
+      if(o.lines>=2&&!o.a.classList.contains('stk')&&!(short&&need>=LBL1)){o.w2=true;ops.push(()=>o.a.classList.add('w2'));wrapped.push(o);continue}
       let sc=ASCALE[ASCALE.length-1];
       for(const c of ASCALE)if(c<=need){sc=c;break}
+      if(short&&need<sc&&need>=LBL1)sc=Math.floor(need*100)/100;
       ops.push(()=>{o.a.style.fontSize=sc.toFixed(3)+'em'});
     }
     if(!wrapped.length){commit();return}
@@ -3626,7 +3635,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const d=document.createElement('div');d.innerHTML=h;
     d.querySelectorAll('i.ns,i.mk').forEach(x=>x.remove());
     return !d.textContent.replace(/[\s‏‎]/g,'')}
-  function unitHTML(u,daf,pi){const h=LTX(unitHTML0(u,daf,pi));return EDIT?h:emptyLook(u.k==='u'?asymLook(lgLook(h)):h)}
+  function unitHTML(u,daf,pi){const h=LTX(unitHTML0(u,daf,pi));return EDIT?enlLook(u,h):emptyLook(u.k==='u'?asymLook(lgLook(enlLook(u,h))):h)}
+  /* פרומפט 60 ה (17.11.2026, מיכאל): רשימה ממוספרת חייבת להיות סימטרית. יחידה שיש בה שתי אותיות מספור או יותר (א. ב. ג.,
+     בסגנון אמוראים או עוד לא) היא רשימה: השורה מקבלת enl, וב-CSS - כל השורות מיושרות לימין באותה נקודה (בלי יישור לשני
+     הצדדים, שמותח רווחים), בלי הרווח הקבוע שלפני דעה שנייה (lgLook: כאן האות היא ההפרדה), וסימני ההפניה לתוס' באותו קו,
+     זה אחר זה. תצוגה בלבד: אינו נוגע בנתונים ובוורד. הרווח האחיד אחרי האות - בנתונים (tools/overflow/enum_am.py) */
+  const ENL_RX=/(?:<i class="am">|<p class="[^"]*">(?:\s|&nbsp;)*|,(?:\s|&nbsp;)?)(?:[אבגדהוזחטיכ]|י[אבגדזחט]|כ[א-ט]|טו|טז)\.(?=<\/i>|\s|&nbsp;|[א-ת])/g;
+  function enlCount(h){const k=h.indexOf('<div class="main"');if(k<0)return 0;const m=h.slice(k).match(ENL_RX);return m?m.length:0}
+  function enlLook(u,h){if(u.k!=='u'||enlCount(h)<2)return h;return h.replace('<div class="row u"','<div class="row u enl"')}
   /* 17.11.2026 (מיכאל): "לא להשאיר אף פעם סתם שתי שורות או שני מעברי פסקה בזה אחר זה". פסקה בלי שום אות (עריכה
      שרוקנה אותה, ועוד לא קופלה) אינה נראית ואינה תופסת שורה - בדף ובהדפסה. בעריכה היא נשארת, כדי שאפשר יהיה לכתוב
      בה או למחוק אותה. בבנייה ובקיפול היא נמחקת מן הנתונים ומן הספר (_drop_empty ב-build_site.py) */
@@ -3658,7 +3674,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const k=h.indexOf('<div class="main"');if(k<0)return h;
     let r=h.slice(0,k),m=h.slice(k);
     r=r.replace(/(<span class="anchor">(?:<i class="[a-z]+">)?)([א-ת]{1,2}\.)(?=[\s<&])/,'$1<b class="rlt">$2</b>');
-    m=m.replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,'$1<span class="bkx og" contenteditable="false"></span> ');
+    if(h.indexOf('class="row u enl"')<0)m=m.replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,'$1<span class="bkx og" contenteditable="false"></span> ');
     return lgAmWords(r)+lgAmWords(m)}
   function unitHTML0(u,daf,pi){
     const mk=daf!=null?dafMark(pi):'';

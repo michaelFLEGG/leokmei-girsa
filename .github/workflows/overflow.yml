@@ -111,6 +111,8 @@ jobs:
           python tools/overflow/auto.py pick --slug $s --site _work/mirror-$s --commit
           # פרומפט 56 ב4: מטבעות לשון - ספירה בכל מסכת, והחלה של שלושת הבטוחים בפתח שורה (לא בשבת)
           python tools/overflow/auto.py coin --slug $s --site _work/mirror-$s --commit || echo "::warning::מטבעות לשון נכשל ב-$s"
+          # פרומפט 60 ד: אות מספור (א. ב. ג.) בסגנון אמוראים, בכל המסכתות (שורה עם עריכה חיה או מסכת נעולה - בסבב הבא)
+          python tools/overflow/auto.py enum --slug $s --site _work/mirror-$s --commit || echo "::warning::אותיות מספור נכשל ב-$s"
           python tools/overflow/auto.py push --slug $s
           if [ "$LOCKBAD" != 1 ]; then python tools/overflow/plan.py --stamp $s --value "$STAMP"; fi
       - name: שמירה בריפו

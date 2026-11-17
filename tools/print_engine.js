@@ -22,9 +22,14 @@
   /* ב7 (5.11.2026): תווית ארוכה בעמודת השוליים אינה מתכווצת לגופן זעיר: מתחת ל-labelMinScale היא נשברת לשתי שורות
      בגודלה הרגיל; ואם גם בשתי שורות אינה נכנסת - הקטנה מתונה עד labelMinScale בלבד */
   var PROF=null;
+  /* פרומפט 60 א (17.11.2026): כותרת צד קצרה (עד שלוש מילים, "מתקיף רנב"י:") אינה נשברת: קודם הקטנה מתונה עד LBL1 בשורה
+     אחת, ורק אם גם זה אינו נכנס - שתי שורות. אותו כלל ב-fitAnchors (build_site.py), ולכן גם באתר, במצב דפוס ובהדפסה */
+  var LBL1=0.62;
+  function lblShort(w){return (w.textContent||'').trim().split(/\s+/).filter(Boolean).length<=3}
   function labelWrap(f){var LMIN=(PROF&&PROF.labelMinScale)||0.74;
     [].slice.call(f.querySelectorAll('.rail > .win')).forEach(function(w){
       var fs=parseFloat(w.style.fontSize);if(!fs||fs>=LMIN)return;
+      if(fs>=LBL1-0.001&&lblShort(w))return;
       w.style.fontSize='';w.classList.add('w2');
       var rail=w.parentElement,tw=rail.getBoundingClientRect().width;
       var sc=1;while(w.scrollWidth>tw+1&&sc>LMIN){sc=Math.max(LMIN,sc-0.06);w.style.fontSize=sc.toFixed(2)+'em'}})}
@@ -492,6 +497,8 @@
         'span.tmg{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;line-height:0;vertical-align:baseline;margin:0;padding:0}'+
         'sup.tm{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-family:'+(n.markFamily||n.family)+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0;padding:0;color:#7a7a7a}'+
         'span.tmg sup.tm{display:inline;width:auto;margin:0}span.tmg sup.tm+sup.tm{margin-left:.12em}'+
+        /* פרומפט 60 ה: ברשימה ממוספרת (row.enl) ההפניות תופסות את מקומן אחרי המילה, זו אחר זו באותו קו - לא ערימה ברוחב אפס שמרחפת מעל טקסט אחר */
+        '.row.enl span.tmg,.row.enl sup.tm{width:auto!important}.row.enl span.tmg sup.tm,.row.enl sup.tm{margin-right:.08em;top:-.3em!important}'+
         '.pg sup.tm,.pg sup.tm *{color:#7a7a7a!important}sup.tm a{text-decoration:none}'+
         '.pfn .fnum{font-size:'+n.numberScale+'em;line-height:0;position:relative;top:-'+n.numberRise+'em;vertical-align:baseline;margin-left:.18em;font-weight:'+n.numberWeight+';text-decoration:none}'+
         '.pfn .fnn{margin:'+n.betweenMm+'mm 0 0}.pfn .fnn:first-child{margin-top:0}'+
@@ -830,8 +837,10 @@
           rl.classList.remove('dup');
           var cs=parseFloat(w.style.fontSize)||1;
           /* ב7: קודם שבירה לשתי שורות בעמודה, ורק אחר כך הקטנה מתונה (לא פחות מ-labelMinScale) */
-          if(!w.classList.contains('w2')){w.classList.add('w2');w.style.fontSize='';if(!hit(RC(dm),RC(wa)))return}
           var LMIN=prof.labelMinScale||0.74;
+          /* פרומפט 60 א: כותרת קצרה - קודם הקטנה בשורה אחת עד LBL1, ורק אחר כך שתי שורות */
+          if(!w.classList.contains('w2')&&lblShort(w)){if([.9,.82,LMIN,.68,LBL1].some(function(sc){if(sc>=cs)return false;w.style.fontSize=sc+'em';return !hit(RC(dm),RC(wa))}))return;w.style.fontSize=cs===1?'':cs+'em'}
+          if(!w.classList.contains('w2')){w.classList.add('w2');w.style.fontSize='';if(!hit(RC(dm),RC(wa)))return}
           [.9,.82,LMIN].some(function(sc){if(sc>=cs||sc<LMIN)return false;w.style.fontSize=sc+'em';return !hit(RC(dm),RC(wa))});
           if(hit(RC(dm),RC(wa)))R.issues.push({type:'תווית מתנגשת בציון הדף',detail:wa.textContent.trim().slice(0,30)})})})();
       /* ד: משיכת ציון הדף אל הטקסט, לפי המרווח הפנוי בפועל במסילה (אחרי ההתאמה של כותרות הצד) */
@@ -876,9 +885,12 @@
           var top=Ybase+br.top-fr.top+pt+bt;
           var wc=n===1?(b.textContent.trim().split(/\s+/).filter(Boolean).length):99;   /* ב5: מילים בפסקה של שורה אחת */
           var lbl=!!(rail&&rail.textContent.trim()&&bi===0);
+          /* פרומפט 60 ב: פסקת כותרת בתוך יחידה רגילה (p.nose / p.dh, למשל "מחזקת ראשו ורובו ושולחנו" בסוכה ג.) היא כותרת
+             לכל דבר בעימוד: אינה נשארת בתחתית טור בלי שתי שורות מן התוכן שלה אחריה */
+          var hb=!HEADS[x.kind]&&b!==main&&/(^|\s)(nose|dh)(\s|$)/.test(b.className);
           for(var k=0;k<n;k++){
             L.push({ri:ri,kind:x.kind,block:bi,k:k,n:n,y0:top+k*lh,y1:top+(k+1)*lh,
-                    daf:x.daf,perek:x.perek,perekName:x.perekName,notes:[],first:false,last:false,wc:wc,lbl:lbl&&k===0})}});
+                    daf:x.daf,perek:x.perek,perekName:x.perekName,notes:[],first:false,last:false,wc:wc,lbl:lbl&&k===0,hb:hb})}});
         if(L.length>rowFirst){
           L[rowFirst].first=true;L[L.length-1].last=true;
           var lastL=L[L.length-1];
@@ -989,13 +1001,16 @@
     /* ה (14.10.2026): שורה בודדת שנותרה מקטע (עד הכותרת הבאה) אינה פותחת טור: קודם דחיסה זעירה בטור הקודם
        (עד 2 נקודות, בהזזה מדורגת של השורות - לא בכיווץ אותיות), ואם אינה מספיקה - שורה נוספת עוברת אל הטור הבא */
     var SQ=2*PT,SOFT=false;   /* SOFT: כללי ב5 החדשים מוותרים כשבלעדיהם נשאר חור (חור גרוע מהם) */
+    /* פרומפט 60 ב: כותרת = יחידת כותרת (HEADS) או פסקת כותרת בתוך יחידה (hb). isHS: השורה הראשונה של כותרת */
+    function isH(l){return !!(HEADS[l.kind]||l.hb)}
+    function isHS(l){return !!((l.first&&HEADS[l.kind])||(l.hb&&l.k===0))}
     function segLen(i){
       if(i>=L.length)return 0;
       /* פרומפט 16: כותרת שפותחת את הטור אינה "שורה בודדת". ד"ה של שורה אחת שאחריו מיד כותרת נושא נספר כאן כקטע של
          שורה אחת, והמנוע סירב לפתוח בו טור והחזיר את השבירה אל תוך תיבת המשנה: חור של שבע שורות (סוכה כו.) */
-      if(HFIX&&L[i].first&&HEADS[L[i].kind])return 2;
+      if(HFIX&&isHS(L[i]))return 2;
       var c=0;
-      for(var q=i;q<L.length;q++){if(q>i&&L[q].first&&HEADS[L[q].kind])break;c++;if(c>1)break}
+      for(var q=i;q<L.length;q++){if(q>i&&isHS(L[q]))break;c++;if(c>1)break}
       return c}
     function canBreak(i,noLone){
       if(i<=0||i>=L.length)return true;
@@ -1004,7 +1019,9 @@
       if(a.ri===b.ri&&a.block===b.block){                  /* בתוך פסקה: שתי שורות לפחות מכל צד */
         return b.k>=prof.widowOrphan&&(b.n-b.k)>=prof.widowOrphan}
       /* ב5: בין שתי פסקאות של אותה יחידה (תיבת משנה, ערימה) - שתי שורות לפחות מכל צד, כמו בתוך פסקה */
-      if(HFIX&&(!SOFT||b.kind==='m')&&a.ri===b.ri){var ca=0,cb=0,ja=i-1,jb=i;while(ja>=0&&L[ja].ri===b.ri){ca++;ja--}while(jb<L.length&&L[jb].ri===b.ri){cb++;jb++}
+      /* פרומפט 60 ג (17.11.2026): גם בכללים הרכים - שורה בודדת של יחידה לעולם אינה נשארת לבדה בראש טור או בסוף טור
+         (סוכה ז.: "ג. צריכה אף צורת הפתח" גלשה לבדה). עד כאן SOFT ויתר על הכלל כדי לסגור חור */
+      if(HFIX&&a.ri===b.ri){var ca=0,cb=0,ja=i-1,jb=i;while(ja>=0&&L[ja].ri===b.ri){ca++;ja--}while(jb<L.length&&L[jb].ri===b.ri){cb++;jb++}
         if(ca<prof.widowOrphan||cb<prof.widowOrphan)return false}
       if(b.kind==='hadran')return false;                    /* הדרן אינו נפתח טור */
       /* ב5 (5.11.2026): פסקה קצרה של שורה אחת (עד shortLineWords מילים, בלי תווית) שהיא המשך של הקטע אינה נשארת לבד
@@ -1012,8 +1029,8 @@
       if(HFIX&&!SOFT&&a.n===1&&!HEADS[a.kind]&&!HEADS[b.kind]&&a.wc<=(prof.shortLineWords||2)&&!b.lbl)return false;
       /* כותרת אינה נפרדת מן התוכן שאחריה: שתי שורות תוכן לפחות אחריה באותו טור */
       var c=0,j=i-1;
-      while(j>=0&&!HEADS[L[j].kind]){c++;j--;if(c>=prof.keepAfterHeading)break}
-      if(j>=0&&HEADS[L[j].kind]&&c<prof.keepAfterHeading)return false;
+      while(j>=0&&!isH(L[j])){c++;j--;if(c>=prof.keepAfterHeading)break}
+      if(j>=0&&isH(L[j])&&c<prof.keepAfterHeading)return false;
       /* בתוך תוכן: כבר בדקנו; בין יחידות מותר */
       return true}
 
@@ -1078,7 +1095,10 @@
         if(ts&&ts.e>best){best=ts.e;split=ts.split;R.splits=(R.splits||0)+1}}
       if(HFIX&&!sq&&!split&&best<L.length&&!isForce(best)&&A-colUsed(i,best,null)>HOLE){
         SOFT=true;var rs=fillCol(i,A,true);SOFT=false;
-        if(rs.best>best){best=rs.best;j=rs.j;R.softBreaks=(R.softBreaks||0)+1}}
+        if(rs.best>best){best=rs.best;j=rs.j;R.softBreaks=(R.softBreaks||0)+1}
+        /* פרומפט 60 ג: נשאר חור כי שורה בודדת אינה נשארת לבדה - דחיסת רווחים אנכיים עד 2 נקודות (כמו SQ) כדי שתיכנס */
+        else{var rq=fillCol(i,A+SQ,true);
+          if(rq.best>best&&colUsed(i,rq.best,null)<=A+SQ+0.5){best=rq.best;j=rq.j;sq=Math.max(0,Math.min(SQ,colUsed(i,best,null)-A));R.squeezed=(R.squeezed||0)+1;R.loneSq=(R.loneSq||0)+1}}}
       /* הסיבה לחור שנשאר (לבקרה): השורה הבאה אינה נכנסת בגלל ההערות שלה, או שכלל עימוד אוסר לשבור כאן */
       var why='';
       if(best<L.length&&!isForce(best)){
@@ -1181,7 +1201,10 @@
         if(Math.abs(hu1-hu2)>2*LH+0.5&&Math.min(hu1,hu2)<A-2*LH)iss('סוף פרק לא מאוזן',b,'הפרש '+(Math.abs(hu1-hu2)/LH).toFixed(1)+' שורות')}
       for(var hq=c.s+1;hq<c.e;hq++){var hl=L[hq],hp=L[hq-1];
         if(hl.first&&(hl.kind==='dh'||hl.kind==='nose')&&!HEADS[hp.kind]&&hp.kind!=='hatz'&&hl.y0-hp.y1<0.4*LH)iss('כותרת בלי רווח לפניה',hl)}
-      if(HEADS[b.kind]&&b.kind!=='hatz'&&c.e<L.length)iss('כותרת בתחתית טור',b);
+      /* פרומפט 60 ב: כלל ברזל - אחרי כותרת (גם פסקת כותרת בתוך יחידה) לפחות שתי שורות מן התוכן שלה באותו טור */
+      if(c.e<L.length){for(var hq2=c.e-1;hq2>=c.s&&hq2>=c.e-prof.keepAfterHeading-2;hq2--){var hl2=L[hq2];if(!isH(hl2)||hl2.kind==='hatz')continue;
+        var ac=0;for(var z2=hq2+1;z2<c.e;z2++)if(!isH(L[z2]))ac++;
+        if(ac<prof.keepAfterHeading)iss('כותרת בתחתית טור',hl2,ac?'שורה אחת בלבד אחריה':'');break}}
       if(c.s>0&&a.ri===L[c.s-1].ri&&a.block===L[c.s-1].block&&a.k<prof.widowOrphan)iss('שורה אלמנה בראש טור',a);
       if(c.e<L.length&&L[c.e].ri===b.ri&&L[c.e].block===b.block&&(b.n-b.k-1)<prof.widowOrphan)iss('שורה יתומה בסוף טור',b);
       /* ח2, ח3: הערה זהה פעמיים באותו עמוד, וסוגר שנפתח ולא נסגר - דיווח למנהל (לא תיקון שקט) */
@@ -1195,6 +1218,7 @@
       var inCol={};c.notes.forEach(function(n){inCol[n]=1});
       for(var i3=c.s;i3<c.e;i3++)L[i3].notes.forEach(function(n){if(!inCol[n])iss('הערה נפרדה מסימנה',L[i3],String(n))})});
     TM('paginate');
+    window.__PRNDBG={L:L,cols:cols,recs:recs.map(function(x){return {kind:x.kind,u:x.u&&x.u.id,daf:x.daf}})};   /* לבדיקות (tools/print/p60_check.py) */
     /* ---- בניית העמודים ---- */
     var out=document.createElement('div');out.id='prnout';
     var tpl=document.createElement('template');

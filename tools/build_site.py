@@ -3288,6 +3288,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      לשורה שנייה; ואם גם זה לא, הוא מוקטן. לעולם אינו נחתך ואין ellipsis.
      הקריאות והכתיבות מופרדות, כדי שלא תהיה פריסה מחדש לכל יחידה. */
   const ASCALE=[1,.88,.8,.72];
+  /* פרומפט 60 א: גבול ההקטנה של כותרת צד קצרה (עד שלוש מילים) לפני שבירה לשתי שורות. אותו ערך במנוע ההדפסה */
+  const LBL1=.62;
+  function lblWords(a){return (a.textContent||'').trim().split(/\s+/).filter(Boolean).length}
   /* חתימת מצב ההתאמה (גופנים שנטענו, רוחב, גודל): ההתאמה החוזרת שאחרי
      הגופנים מדלגת כשלא השתנתה. שלושה טריגרים הריצו התאמה מלאה כל אחד
      (1.5-2 שניות בטלפון איטי) גם כשדבר לא השתנה (11.10.2026). */
@@ -3400,10 +3403,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       /* בהדפסת PDF (14.10.2026) ציון הדף המועלה (dup) נחבט בכותרת הצד של השורה שמעליו: שם הוא מוקטן/נפרש במקום */
       if(o.hw&&o.dm&&!window.__PRN_ON){
         if(o.aw<=o.full+.5){ops.push(()=>o.rail.classList.add('dup'));continue}}
-      if(o.lines>=2&&!o.a.classList.contains('stk')){o.w2=true;ops.push(()=>o.a.classList.add('w2'));wrapped.push(o);continue}
-      const need=o.tw/o.aw;
+      /* פרומפט 60 א (17.11.2026): כותרת צד קצרה (עד שלוש מילים, כמו "מתקיף רנב"י:") לעולם אינה נשברת לשתי שורות
+         כשהקטנה מתונה (עד LBL1) מכניסה אותה בשורה אחת. רק כותרת ארוכה, או קצרה שגם בהקטנה אינה נכנסת - שתי שורות */
+      const need=o.tw/o.aw,short=lblWords(o.a)<=3;
+      if(o.lines>=2&&!o.a.classList.contains('stk')&&!(short&&need>=LBL1)){o.w2=true;ops.push(()=>o.a.classList.add('w2'));wrapped.push(o);continue}
       let sc=ASCALE[ASCALE.length-1];
       for(const c of ASCALE)if(c<=need){sc=c;break}
+      if(short&&need<sc&&need>=LBL1)sc=Math.floor(need*100)/100;
       ops.push(()=>{o.a.style.fontSize=sc.toFixed(3)+'em'});
     }
     if(!wrapped.length){commit();return}

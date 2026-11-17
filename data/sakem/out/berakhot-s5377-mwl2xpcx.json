@@ -241,7 +241,30 @@
   }
  ],
  "total": 39,
- "done": 0,
- "items": [],
- "t": 1794946343773
+ "done": 1,
+ "items": [
+  {
+   "iid": "s1",
+   "kind": "seg",
+   "seg": 0,
+   "sugya": 1,
+   "ids": [
+    5377,
+    5379
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 23,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 963,
+    "lenB": 963
+   }
+  }
+ ],
+ "t": 1794946376096
 }

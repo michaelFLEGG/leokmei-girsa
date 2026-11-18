@@ -1,15 +1,8 @@
 {
  "slug": "chullin",
- "made": "2026-11-18 10:14",
+ "made": "2026-11-18 10:40",
  "found": 1,
- "applied": 1,
- "liveSkipped": 0,
- "examples": [
-  {
-   "daf": "קלד:",
-   "key": "u5914.2",
-   "before": "ב. נתינה כתובה בתרומה",
-   "after": "<i class=\"am\">ב.</i> נתינה כתובה בתרומה"
-  }
- ]
+ "applied": 0,
+ "liveSkipped": 1,
+ "examples": []
 }

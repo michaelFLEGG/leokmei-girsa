@@ -62,7 +62,7 @@ with sync_playwright() as p:
                 res = pg.evaluate("()=>skpAuto.all()")
                 r['result'] = res
                 pg.wait_for_timeout(2500)
-                if a.force and res and res.get('skip'):
+                if a.force and pg.evaluate("()=>{const s=skpAuto.state();return s?s.open:0}"):
                     r['forced'] = pg.evaluate("()=>skpAuto.force()")
                     pg.wait_for_timeout(2500)
             pg.evaluate("async()=>{if(typeof pubPending==='function'&&pubPending())await pubNow(1)}")

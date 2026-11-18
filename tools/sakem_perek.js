@@ -162,7 +162,8 @@
       const B=window.skmBatchStart?skmBatchStart():null;const done=[];
       try{R.items.forEach((x,i)=>{if(R.dec[x.iid])return;
         try{const orig=x.kind==='seg'?skmInter(skmUnits(x.ids)):undefined;
-          let r;try{r=skpApplyOne(x,x.text,orig)}catch(e){if(/לחץ שוב/.test(String(e&&e.message)))r=skpApplyOne(x,x.text,orig);else throw e}
+          /* מיכאל אישר מראש (18.11.2026) גם שורה שננעלה בהדפסה - ההצעה האחרונה גוברת */
+          window.__SKMFORCE=1;try{skpApplyOne(x,x.text,orig)}finally{window.__SKMFORCE=0}
           done.push([x,i]);ok++}catch(e){bad.push(x.iid+': '+String(e&&e.message||e).slice(0,120))}})}
       finally{if(B)skmBatchEnd(B)}
       done.forEach(([x,i])=>{R.cnt.accept++;R.hist.push({i,iid:x.iid,act:'accept',undo:false});skpDec(x,'accept')});

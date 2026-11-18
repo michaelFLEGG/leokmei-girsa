@@ -554,7 +554,7 @@
        כך נדרסו ב-16.11 שתי הכרעות של מיכאל (ד:, ח.). עריכה טרייה של מיכאל עצמו - עוברת תמיד. */
     /* 17.11.2026 (מיכאל: "ברגע שראיתי ואישרתי - אתה צריך לאפשר לי להחיל"): לחיצה שנייה על "קבל" על אותה הצעה, תוך דקה
        מן ההתראה, מחילה בכל זאת. ההגנה נשארת מפני קבלה בלי לראות (קבלת הכל, לחיצה אחת), לא מפני החלטה שלו */
-    const force=p.__forceAt&&Date.now()-p.__forceAt<60000;if(force)delete p.__forceAt;
+    const force=(p.__forceAt&&Date.now()-p.__forceAt<60000)||window.__SKMFORCE===1;if(force)delete p.__forceAt;
     if(!force&&p.stale&&window.__OVLOCK&&window.__OVLOCK.size){
       const KN=s=>String(s||'').replace(/<sup[^>]*>.*?<\/sup>/g,'').replace(/\[[^\]]*\]/g,'').replace(/<[^>]+>/g,'').replace(/&[a-z#0-9]+;/gi,'')
         .replace(/\u2060\d+/g,'').replace(/[^א-ת]/g,'');

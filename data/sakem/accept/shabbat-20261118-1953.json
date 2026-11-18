@@ -1,0 +1,933 @@
+{
+ "slug": "shabbat",
+ "jobs": [
+  {
+   "jid": "shabbat-s1-mwkr9e5n",
+   "items": 52,
+   "open": 1,
+   "result": {
+    "ok": 0,
+    "skip": 1,
+    "skipped": [
+     "s52"
+    ],
+    "ms": 1
+   },
+   "forced": {
+    "ok": 0,
+    "bad": [
+     "s52: ההחלה לא תאמה להצעה ובוטלה כולה (שורה כפולה בדף: \"ב. הבוצר לגת, לשמאי: הוכשר,\"). שום דבר לא השתנה"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s1192-mwkr9f0d",
+   "items": 61,
+   "open": 56,
+   "result": {
+    "ok": 1,
+    "skip": 55,
+    "skipped": [
+     "s1",
+     "s2",
+     "s3",
+     "s6",
+     "s7",
+     "s8",
+     "s9",
+     "s10",
+     "s11",
+     "s12",
+     "s13",
+     "s14",
+     "s15",
+     "s16",
+     "s17",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s23",
+     "s24",
+     "s25",
+     "s26",
+     "s27",
+     "s28",
+     "s29",
+     "s30",
+     "s31",
+     "s32",
+     "s33",
+     "s34",
+     "s35",
+     "s36",
+     "s37",
+     "s38",
+     "s39",
+     "s40",
+     "s41",
+     "s42",
+     "s43",
+     "s45",
+     "s46",
+     "s48",
+     "s49",
+     "s50",
+     "s51",
+     "s52",
+     "s53",
+     "s54",
+     "s55",
+     "s56",
+     "s57",
+     "s59",
+     "s60",
+     "s61"
+    ],
+    "ms": 277
+   },
+   "forced": {
+    "ok": 52,
+    "bad": [
+     "s6: קטע שלם נעלם (לפני [קבוע:1305])",
+     "s32: נוספו שורות במקום שלא היו בו שורות",
+     "s36: ההחלה לא תאמה להצעה ובוטלה כולה (שורה כפולה בדף: \"בטומאה חלקו: לר\"א: קיפול אינו מועיל, ועו\"). שום דבר לא השתנה"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s2426-mwkr9fsp",
+   "items": 29,
+   "open": 22,
+   "result": {
+    "ok": 0,
+    "skip": 22,
+    "skipped": [
+     "s2",
+     "s6",
+     "s7",
+     "s8",
+     "s9",
+     "s10",
+     "s11",
+     "s12",
+     "s13",
+     "s14",
+     "s15",
+     "s16",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s22",
+     "s24",
+     "s25",
+     "s26",
+     "s27",
+     "s28"
+    ],
+    "ms": 17
+   },
+   "forced": {
+    "ok": 21,
+    "bad": [
+     "s28: נוספו שורות במקום שלא היו בו שורות"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s3082-mwkr9gjr",
+   "items": 20,
+   "open": 14,
+   "result": {
+    "ok": 0,
+    "skip": 14,
+    "skipped": [
+     "s1",
+     "s2",
+     "s3",
+     "s4",
+     "s6",
+     "s7",
+     "s8",
+     "s9",
+     "s10",
+     "s11",
+     "s13",
+     "s14",
+     "s18",
+     "s21"
+    ],
+    "ms": 8
+   },
+   "forced": {
+    "ok": 14,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s3269-mwkr9hbd",
+   "items": 26,
+   "open": 20,
+   "result": {
+    "ok": 1,
+    "skip": 19,
+    "skipped": [
+     "s1",
+     "s2",
+     "s3",
+     "s5",
+     "s8",
+     "s9",
+     "s10",
+     "s11",
+     "s13",
+     "s14",
+     "s15",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s22",
+     "s24",
+     "s25",
+     "s26"
+    ],
+    "ms": 325
+   },
+   "forced": {
+    "ok": 17,
+    "bad": [
+     "s8: ההחלה לא תאמה להצעה ובוטלה כולה (בדף: \"צד: רב יהודה:\", בהצעה: \"[כותרת-דה:רבי יוסי]\"). שום דבר לא השתנה",
+     "s24: קטע שלם נעלם (לפני [כותרת-נושא:לה\"ר על מפיבושת - האם קיבל דוד])"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s3559-mwkr9i0c",
+   "items": 41,
+   "open": 35,
+   "result": {
+    "ok": 1,
+    "skip": 34,
+    "skipped": [
+     "s1",
+     "s2",
+     "s4",
+     "s5",
+     "s8",
+     "s11",
+     "s12",
+     "s13",
+     "s14",
+     "s15",
+     "s17",
+     "s20",
+     "s21",
+     "s23",
+     "s24",
+     "s26",
+     "s28",
+     "s31",
+     "s32",
+     "s33",
+     "s34",
+     "s36",
+     "s37",
+     "s38",
+     "s40",
+     "s42",
+     "s44",
+     "s45",
+     "s47",
+     "s50",
+     "s51",
+     "s52",
+     "s53",
+     "s55"
+    ],
+    "ms": 278
+   },
+   "forced": {
+    "ok": 33,
+    "bad": [
+     "s40: קטע שלם נעלם (לפני [כותרת-נושא:מראית העין - בחדרי חדרים])"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s4064-mwkr9isa",
+   "items": 25,
+   "open": 20,
+   "result": {
+    "ok": 4,
+    "skip": 16,
+    "skipped": [
+     "s2",
+     "s3",
+     "s5",
+     "s6",
+     "s7",
+     "s10",
+     "s13",
+     "s14",
+     "s16",
+     "s17",
+     "s22",
+     "s23",
+     "s24",
+     "s25",
+     "s30",
+     "s32"
+    ],
+    "ms": 574
+   },
+   "forced": {
+    "ok": 16,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s4434-mwkr9jmz",
+   "items": 28,
+   "open": 25,
+   "result": {
+    "ok": 4,
+    "skip": 21,
+    "skipped": [
+     "s1",
+     "s2",
+     "s3",
+     "s5",
+     "s6",
+     "s8",
+     "s9",
+     "s14",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s22",
+     "s23",
+     "s25",
+     "s26",
+     "s28",
+     "s29",
+     "s31",
+     "s34",
+     "s35"
+    ],
+    "ms": 521
+   },
+   "forced": {
+    "ok": 21,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s4810-mwkr9kdg",
+   "items": 39,
+   "open": 28,
+   "result": {
+    "ok": 0,
+    "skip": 28,
+    "skipped": [
+     "s1",
+     "s4",
+     "s5",
+     "s7",
+     "s8",
+     "s11",
+     "s12",
+     "s13",
+     "s17",
+     "s20",
+     "s21",
+     "s22",
+     "s23",
+     "s26",
+     "s27",
+     "s28",
+     "s29",
+     "s31",
+     "s32",
+     "s33",
+     "s34",
+     "s35",
+     "s36",
+     "s38",
+     "s39",
+     "s43",
+     "s44",
+     "s45"
+    ],
+    "ms": 18
+   },
+   "forced": {
+    "ok": 28,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s5239-mwkr9l5h",
+   "items": 21,
+   "open": 16,
+   "result": {
+    "ok": 2,
+    "skip": 14,
+    "skipped": [
+     "s4",
+     "s5",
+     "s6",
+     "s8",
+     "s9",
+     "s11",
+     "s12",
+     "s13",
+     "s15",
+     "s17",
+     "s20",
+     "s22",
+     "s27",
+     "s30"
+    ],
+    "ms": 372
+   },
+   "forced": {
+    "ok": 14,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s5520-mwkr9m55",
+   "items": 26,
+   "open": 20,
+   "result": {
+    "ok": 1,
+    "skip": 19,
+    "skipped": [
+     "s2",
+     "s4",
+     "s6",
+     "s8",
+     "s9",
+     "s10",
+     "s15",
+     "s18",
+     "s19",
+     "s20",
+     "s22",
+     "s23",
+     "s24",
+     "s26",
+     "s27",
+     "s30",
+     "s31",
+     "s32",
+     "s33"
+    ],
+    "ms": 285
+   },
+   "forced": {
+    "ok": 19,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s5863-mwkr9mvm",
+   "items": 14,
+   "open": 7,
+   "result": {
+    "ok": 1,
+    "skip": 6,
+    "skipped": [
+     "s1",
+     "s2",
+     "s3",
+     "s4",
+     "s7",
+     "s12"
+    ],
+    "ms": 280
+   },
+   "forced": {
+    "ok": 6,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s6036-mwkr9nhz",
+   "items": 21,
+   "open": 11,
+   "result": {
+    "ok": 0,
+    "skip": 11,
+    "skipped": [
+     "s1",
+     "s3",
+     "s4",
+     "s7",
+     "s8",
+     "s10",
+     "s13",
+     "s14",
+     "s15",
+     "s17",
+     "s19"
+    ],
+    "ms": 7
+   },
+   "forced": {
+    "ok": 11,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s6189-mwkr9o5s",
+   "items": 24,
+   "open": 12,
+   "result": {
+    "ok": 1,
+    "skip": 11,
+    "skipped": [
+     "s3",
+     "s6",
+     "s10",
+     "s15",
+     "s16",
+     "s17",
+     "s19",
+     "s21",
+     "s23",
+     "s27",
+     "s29"
+    ],
+    "ms": 245
+   },
+   "forced": {
+    "ok": 11,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s6464-mwkr9owt",
+   "items": 23,
+   "open": 15,
+   "result": {
+    "ok": 0,
+    "skip": 15,
+    "skipped": [
+     "s1",
+     "s2",
+     "s5",
+     "s6",
+     "s7",
+     "s8",
+     "s9",
+     "s13",
+     "s14",
+     "s17",
+     "s19",
+     "s21",
+     "s22",
+     "s24",
+     "s29"
+    ],
+    "ms": 9
+   },
+   "forced": {
+    "ok": 15,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p16",
+   "items": 46,
+   "open": 25,
+   "result": {
+    "ok": 0,
+    "skip": 25,
+    "skipped": [
+     "s2",
+     "s5",
+     "s7",
+     "s12",
+     "s17",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s22",
+     "s23",
+     "s25",
+     "s26",
+     "s28",
+     "s30",
+     "s31",
+     "s34",
+     "s37",
+     "s38",
+     "s39",
+     "s40",
+     "s41",
+     "s42",
+     "s43",
+     "s44"
+    ],
+    "ms": 15
+   },
+   "forced": {
+    "ok": 19,
+    "bad": [
+     "s38: נוספו שורות במקום שלא היו בו שורות",
+     "s39: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s40: האלמנטים הנעולים אינם במקומם (הסדר השתנה)",
+     "s41: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s42: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s43: הקטע השתנה מאז ההצעה. בקש הצעה חדשה"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p17",
+   "items": 26,
+   "open": 13,
+   "result": {
+    "ok": 0,
+    "skip": 13,
+    "skipped": [
+     "s1",
+     "s6",
+     "s7",
+     "s9",
+     "s10",
+     "s11",
+     "s12",
+     "s13",
+     "s19",
+     "s20",
+     "s21",
+     "s22",
+     "s23"
+    ],
+    "ms": 8
+   },
+   "forced": {
+    "ok": 7,
+    "bad": [
+     "s10: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s11: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s12: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s19: נוספו שורות במקום שלא היו בו שורות",
+     "s21: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s22: הקטע השתנה מאז ההצעה. בקש הצעה חדשה"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p18",
+   "items": 28,
+   "open": 13,
+   "result": {
+    "ok": 0,
+    "skip": 13,
+    "skipped": [
+     "s4",
+     "s7",
+     "s8",
+     "s12",
+     "s14",
+     "s16",
+     "s20",
+     "s22",
+     "s23",
+     "s25",
+     "s26",
+     "s28",
+     "s29"
+    ],
+    "ms": 8
+   },
+   "forced": {
+    "ok": 13,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p19",
+   "items": 39,
+   "open": 19,
+   "result": {
+    "ok": 0,
+    "skip": 19,
+    "skipped": [
+     "s1",
+     "s2",
+     "s6",
+     "s7",
+     "s16",
+     "s19",
+     "s21",
+     "s22",
+     "s23",
+     "s24",
+     "s25",
+     "s26",
+     "s27",
+     "s29",
+     "s35",
+     "s36",
+     "s37",
+     "s38",
+     "s39"
+    ],
+    "ms": 11
+   },
+   "forced": {
+    "ok": 13,
+    "bad": [
+     "s22: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s23: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s24: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s25: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s26: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s36: הקטע השתנה מאז ההצעה. בקש הצעה חדשה"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p21",
+   "items": 8,
+   "open": 2,
+   "result": {
+    "ok": 0,
+    "skip": 2,
+    "skipped": [
+     "s1",
+     "s7"
+    ],
+    "ms": 2
+   },
+   "forced": {
+    "ok": 2,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p22",
+   "items": 29,
+   "open": 22,
+   "result": {
+    "ok": 0,
+    "skip": 22,
+    "skipped": [
+     "s1",
+     "s4",
+     "s5",
+     "s6",
+     "s7",
+     "s8",
+     "s9",
+     "s10",
+     "m10-1",
+     "s11",
+     "s12",
+     "s13",
+     "s14",
+     "s15",
+     "s16",
+     "s17",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s23",
+     "s25"
+    ],
+    "ms": 16
+   },
+   "forced": {
+    "ok": 6,
+    "bad": [
+     "s4: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s5: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s7: נוספו שורות במקום שלא היו בו שורות",
+     "s8: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s10: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "m10-1: המקום לא נמצא",
+     "s11: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s12: נוספו שורות במקום שלא היו בו שורות",
+     "s13: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s14: נוספו שורות במקום שלא היו בו שורות",
+     "s15: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s16: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s17: נוספו שורות במקום שלא היו בו שורות",
+     "s18: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s19: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s20: נוספו שורות במקום שלא היו בו שורות"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p23",
+   "items": 32,
+   "open": 21,
+   "result": {
+    "ok": 0,
+    "skip": 21,
+    "skipped": [
+     "s7",
+     "s11",
+     "s12",
+     "s13",
+     "s14",
+     "s15",
+     "s16",
+     "s17",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s22",
+     "s24",
+     "s25",
+     "s26",
+     "s27",
+     "s28",
+     "s29",
+     "s30",
+     "s31"
+    ],
+    "ms": 13
+   },
+   "forced": {
+    "ok": 15,
+    "bad": [
+     "s12: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s13: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s14: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s15: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s17: הקטע השתנה מאז ההצעה. בקש הצעה חדשה",
+     "s18: נוספו שורות במקום שלא היו בו שורות"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p24",
+   "items": 25,
+   "open": 5,
+   "result": {
+    "ok": 0,
+    "skip": 5,
+    "skipped": [
+     "s17",
+     "s19",
+     "s22",
+     "s23",
+     "s24"
+    ],
+    "ms": 4
+   },
+   "forced": {
+    "ok": 4,
+    "bad": [
+     "s17: נוספו שורות במקום שלא היו בו שורות"
+    ]
+   },
+   "pending_after": 0
+  }
+ ],
+ "started": "2026-11-18 17:40",
+ "diag": {
+  "admin": true,
+  "key": true,
+  "jobs": 113,
+  "status": 200,
+  "all": 188,
+  "slug": [
+   "shabbat-p2:done",
+   "shabbat-p4:done",
+   "shabbat-p5:done",
+   "shabbat-s1-mwev8jkj:done",
+   "shabbat-s2222-mwhl72w1:done",
+   "shabbat-p1:done",
+   "shabbat-p6:done",
+   "shabbat-p7:done",
+   "shabbat-p8:done",
+   "shabbat-p9:done",
+   "shabbat-p10:done",
+   "shabbat-p11:done",
+   "shabbat-p12:done",
+   "shabbat-p13:done",
+   "shabbat-p14:done",
+   "shabbat-p15:done",
+   "shabbat-s1-mwkr9e5n:ready",
+   "shabbat-s1192-mwkr9f0d:ready",
+   "shabbat-s2426-mwkr9fsp:ready",
+   "shabbat-s3082-mwkr9gjr:ready",
+   "shabbat-s3269-mwkr9hbd:ready",
+   "shabbat-s3559-mwkr9i0c:ready",
+   "shabbat-s4064-mwkr9isa:ready",
+   "shabbat-s4434-mwkr9jmz:ready",
+   "shabbat-s4810-mwkr9kdg:ready",
+   "shabbat-s5239-mwkr9l5h:ready",
+   "shabbat-s5520-mwkr9m55:ready",
+   "shabbat-s5863-mwkr9mvm:ready",
+   "shabbat-s6036-mwkr9nhz:ready",
+   "shabbat-s6189-mwkr9o5s:ready",
+   "shabbat-s6464-mwkr9owt:ready",
+   "shabbat-p16:ready",
+   "shabbat-p17:ready",
+   "shabbat-p18:ready",
+   "shabbat-p19:ready",
+   "shabbat-p21:ready",
+   "shabbat-p22:ready",
+   "shabbat-p23:ready",
+   "shabbat-p24:ready",
+   "shabbat-s3571-mwmd3x90:work",
+   "shabbat-s3634-mwmd3y4n:sent",
+   "shabbat-s4818-mwmd45uz:sent",
+   "shabbat-s4937-mwmd47e5:sent",
+   "shabbat-s4994-mwmd48w7:sent",
+   "shabbat-s5182-mwmd4ah4:sent",
+   "shabbat-s5377-mwmd4bol:sent",
+   "shabbat-s5441-mwmd4ci2:sent",
+   "shabbat-s5480-mwmd4dfv:sent",
+   "shabbat-s5520-mwmd4etu:sent",
+   "shabbat-s5553-mwmd4fog:sent",
+   "shabbat-s5677-mwmd4hc4:sent",
+   "shabbat-s5750-mwmd4ij1:sent",
+   "shabbat-s5821-mwmd4jbg:sent",
+   "shabbat-s5854-mwmd4k7w:sent",
+   "shabbat-s5863-mwmd4lgu:sent",
+   "shabbat-s5936-mwmd4mur:sent",
+   "shabbat-s6024-mwmd4oac:sent",
+   "shabbat-s700050-mwmd4pig:sent",
+   "shabbat-s6090-mwmd4qcc:sent",
+   "shabbat-s6102-mwmd4r8f:sent"
+  ]
+ },
+ "errors": []
+}

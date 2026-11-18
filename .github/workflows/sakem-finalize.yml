@@ -1,0 +1,38 @@
+name: סכם - אימות וסגירת התור
+# 18.11.2026: כל הצעה פתוחה נבדקת מול הנוסח החי; מה שכבר בנוסח נסגר בהכרעת accept (אחת אחת). dry=1 - רק בדיקה
+on:
+  workflow_dispatch:
+    inputs:
+      slug: { description: 'מסכת', required: true, default: shabbat }
+      dry: { description: '1 = רק בדיקה', required: false, default: '' }
+permissions:
+  contents: write
+concurrency:
+  group: sakem-accept
+  cancel-in-progress: false
+jobs:
+  fin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: אימות
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          D=""; if [ "${{ github.event.inputs.dry }}" = "1" ]; then D="--dry"; fi
+          python tools/sakem/finalize.py --slug "${{ github.event.inputs.slug }}" $D --out _fin.json
+      - name: הדוח בריפו
+        if: always()
+        run: |
+          [ -f _fin.json ] || exit 0
+          mkdir -p data/sakem/accept
+          cp _fin.json "data/sakem/accept/${{ github.event.inputs.slug }}-final-$(TZ=Asia/Jerusalem date +%Y%m%d-%H%M).json"
+          git config user.name "leokmei-sakem"; git config user.email "sakem@leokmei.com"
+          git add data/sakem/accept
+          git commit -qm "סכם: דוח אימות התור [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done

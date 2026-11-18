@@ -156,6 +156,25 @@
       const packet=await skpPacket(kind||'seg',os);
       return api('/sakem/job',{method:'POST',body:JSON.stringify({slug:SLUG,kind:kind||'seg',perek:si+1,title:title||skpTitle(si),packet})})},
     title:si=>skpTitle(si),
+    /* 18.11.2026: אימות שההצעה כבר יושבת בנוסח החי (אותיות בלבד, לפי שורות), ורישום ההכרעה בשרת אחת אחת עם המתנה
+       וניסיון חוזר (קודם נשלחו מאות הכרעות בבת אחת, וחלקן נפלו על 429 - והתור חזר להמתין) */
+    verify:()=>{const R=SKP.rev;if(!R)return null;
+      const L=t=>String(t||'').replace(/\{\+:/g,'').replace(/[^א-ת\n]/g,'');
+      const page=L(flatU().map(o=>{try{return skmInter([o])}catch(e){return ''}}).join('\n')).replace(/\n/g,'');
+      const out=[];R.items.forEach(x=>{if(R.dec[x.iid])return;
+        const ls=L(x.text).split('\n').filter(l=>l.length>=8);let f=0;ls.forEach(l=>{if(page.indexOf(l)>-1)f++});
+        out.push({iid:x.iid,kind:x.kind,lines:ls.length,found:f,in:ls.length?f/ls.length>=0.8:true})});
+      return out},
+    close:async(iids)=>{const R=SKP.rev;if(!R)return null;let ok=0;const bad=[];
+      for(const iid of iids){const it=R.items.find(x=>x.iid===iid);if(!it)continue;let done=false;
+        for(let k=0;k<6&&!done;k++){try{await api('/sakem/dec',{method:'POST',body:JSON.stringify({slug:SLUG,jid:R.jid,iid,act:'accept',
+            layers:it.kind==='missing'?['השלמה']:(it.layers||[]),orig:it.orig||'',prop:it.text||'',gem:it.gem||(it.adds||[]).map(a=>a.gem).join(' | ')})});
+          R.dec[iid]={act:'accept'};done=true;ok++}catch(e){await new Promise(r=>setTimeout(r,1500*(k+1)))}}
+        if(!done)bad.push(iid);await new Promise(r=>setTimeout(r,120))}
+      return {ok,bad}},
+    dups:()=>{const fu=flatU().filter(o=>o.u.k==='u'||o.u.k==='m');const L=t=>String(t||'').replace(/[^א-ת]/g,'');const T=fu.map(o=>{try{return L(skmInter([o]))}catch(e){return ''}});
+      const out=[];for(let i=0;i<T.length;i++)for(let j=i+1;j<Math.min(T.length,i+4);j++)if(T[i].length>20&&T[i]===T[j])out.push({a:fu[i].u.id,b:fu[j].u.id,daf:D.pages[fu[i].pi].daf||'',t:T[i].slice(0,40)});
+      return out},
     /* 18.11.2026 (מיכאל: "היכן שיש בעיה קבל כפי ההצעה האחרונה"): הצעה שנשארה אחרי "קבל הכל" כי הקטע השתנה מאז -
        מוחלת על הנוסח החי כפי שהיא (כמו "החלף בהצעה"), בהכרעת accept. נעשה רק אחרי all(), ולפי סדר העבודות (האחרונה גוברת) */
     force:()=>{const R=SKP.rev;if(!R)return null;let ok=0;const bad=[];

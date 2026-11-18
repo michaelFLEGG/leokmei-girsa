@@ -163,7 +163,7 @@
       const page=L(flatU().map(o=>{try{return skmInter([o])}catch(e){return ''}}).join('\n')).replace(/\n/g,'');
       const out=[];R.items.forEach(x=>{if(R.dec[x.iid])return;
         const ls=L(x.text).split('\n').filter(l=>l.length>=8);let f=0;ls.forEach(l=>{if(page.indexOf(l)>-1)f++});
-        out.push({iid:x.iid,kind:x.kind,lines:ls.length,found:f,in:ls.length?f/ls.length>=0.8:true})});
+        out.push({iid:x.iid,kind:x.kind,lines:ls.length,found:f,in:ls.length?f/ls.length>=0.6:true})});
       return out},
     close:async(iids)=>{const R=SKP.rev;if(!R)return null;let ok=0;const bad=[];
       for(const iid of iids){const it=R.items.find(x=>x.iid===iid);if(!it)continue;let done=false;
@@ -171,6 +171,14 @@
             layers:it.kind==='missing'?['השלמה']:(it.layers||[]),orig:it.orig||'',prop:it.text||'',gem:it.gem||(it.adds||[]).map(a=>a.gem).join(' | ')})});
           R.dec[iid]={act:'accept'};done=true;ok++}catch(e){await new Promise(r=>setTimeout(r,1500*(k+1)))}}
         if(!done)bad.push(iid);await new Promise(r=>setTimeout(r,120))}
+      return {ok,bad}},
+    /* שורה כפולה (זהה לגמרי ליחידה סמוכה) נמחקת - "ודאי טעות" (מיכאל, 15.11.2026). נמחקת השנייה, החדשה */
+    dedup:pairs=>{let ok=0;const bad=[];const B=window.skmBatchStart?skmBatchStart():null;
+      try{pairs.forEach(d=>{try{const fu=flatU(),i=fu.findIndex(o=>o.u.id===d.a),j=fu.findIndex(o=>o.u.id===d.b);
+          if(i<0||j<0||j<=i)throw new Error('לא נמצא');const rng=fu.slice(i,j+1),keep=rng.filter(o=>o.u.id!==d.b);
+          window.__SKMFORCE=1;try{skmApply({id:'dedup:'+d.b,ids:rng.map(o=>o.u.id),orig:skmInter(rng)},skmInter(keep))}finally{window.__SKMFORCE=0}
+          ok++}catch(e){bad.push(d.b+': '+String(e&&e.message||e).slice(0,100))}})}
+      finally{if(B)skmBatchEnd(B)}
       return {ok,bad}},
     dups:()=>{const fu=flatU().filter(o=>o.u.k==='u'||o.u.k==='m');const L=t=>String(t||'').replace(/[^א-ת]/g,'');const T=fu.map(o=>{try{return L(skmInter([o]))}catch(e){return ''}});
       const out=[];for(let i=0;i<T.length;i++)for(let j=i+1;j<Math.min(T.length,i+4);j++)if(T[i].length>20&&T[i]===T[j])out.push({a:fu[i].u.id,b:fu[j].u.id,daf:D.pages[fu[i].pi].daf||'',t:T[i].slice(0,40)});

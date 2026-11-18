@@ -31,6 +31,14 @@ with sync_playwright() as p:
     rep['dups'] = pg.evaluate("()=>skpAuto.dups()")
     print('כפולות:', json.dumps(rep['dups'], ensure_ascii=False))
     jobs = [j['jid'] for j in pg.evaluate("()=>skpAuto.jobs()") if j['st'] == 'ready']
+    if rep['dups'] and not a.dry:
+        rep['dedup'] = pg.evaluate("p=>skpAuto.dedup(p)", rep['dups'])
+        pg.wait_for_timeout(2000)
+        pg.evaluate("async()=>{if(typeof pubPending==='function'&&pubPending())await pubNow(1)}")
+        pg.wait_for_timeout(3000)
+        rep['dups_after'] = pg.evaluate("()=>skpAuto.dups()")
+        rep['pending'] = pg.evaluate("()=>typeof pubPending==='function'?pubPending():-1")
+        print('ניקוי כפולות:', json.dumps(rep['dedup'], ensure_ascii=False), 'נשארו:', len(rep['dups_after']), 'ממתין לפרסום:', rep['pending'])
     print('עבודות:', jobs)
     tot_in = tot_out = 0
     for jid in jobs:

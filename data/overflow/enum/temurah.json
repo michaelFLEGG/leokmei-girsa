@@ -1,8 +1,15 @@
 {
  "slug": "temurah",
- "made": "2026-11-18 10:58",
- "found": 6,
- "applied": 0,
- "liveSkipped": 6,
- "examples": []
+ "made": "2026-11-18 17:12",
+ "found": 1,
+ "applied": 1,
+ "liveSkipped": 0,
+ "examples": [
+  {
+   "daf": "ו:",
+   "key": "u374.3",
+   "before": "ב. אלא אמר רב יוסף: הא מני <i class=\"am\">ר&quot;ש</i> היא דתניא: מת אחד מהן <i class=\"am\">לר&quot;ש</i>: מביא חבירו בלא הגרלה ",
+   "after": "<i class=\"am\">ב.</i> אלא אמר רב יוסף: הא מני <i class=\"am\">ר\"ש</i> היא דתניא: מת אחד מהן <i class=\"am\">לר\"ש</i>: מביא חבירו בלא הגרלה "
+  }
+ ]
 }

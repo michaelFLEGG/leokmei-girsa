@@ -1,14 +1,14 @@
 {
  "slug": "chullin",
- "made": "2026-11-18 06:15",
+ "made": "2026-11-18 07:56",
  "profile": "a4-large",
  "pages": {
-  "a4": 95,
-  "a4-large": 101
+  "a4": 100,
+  "a4-large": 109
  },
  "sq25": {
   "a4": 187,
-  "a4-large": 262
+  "a4-large": 261
  },
  "count": 308,
  "firstTool": {
@@ -7962,11 +7962,11 @@
    "html": "• א&quot;ל רב פפא לאביי: וסבר <i class=\"am\">ר&quot;ש</i> חולין בעזרה דאורייתא היא? א&quot;ל: אין, ",
    "ph": "• א&quot;ל רב פפא לאביי: וסבר <i class=\"am\">ר&quot;ש</i> חולין בעזרה דאורייתא היא? א&quot;ל: אין, ",
    "text": "• א\"ל רב פפא לאביי: וסבר ר\"ש חולין בעזרה דאורייתא היא? א\"ל: אין,",
-   "over": "א\"ל: אין,",
+   "over": "היא? א\"ל: אין,",
    "nA4": 1,
    "nLarge": 2,
    "missPx": 45.2,
-   "miss": 8,
+   "miss": 9,
    "long": false,
    "tail": false,
    "sug": [
@@ -8382,7 +8382,7 @@
    "nA4": 3,
    "nLarge": 4,
    "missPx": 98.9,
-   "miss": 17,
+   "miss": 18,
    "long": true,
    "tail": false,
    "sug": [],
@@ -8705,7 +8705,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 40.4,
-   "miss": 10,
+   "miss": 11,
    "long": false,
    "tail": false,
    "sug": [],
@@ -8843,7 +8843,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 46.4,
-   "miss": 8,
+   "miss": 9,
    "long": false,
    "tail": false,
    "sug": [],
@@ -8885,7 +8885,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 29.0,
-   "miss": 7,
+   "miss": 8,
    "long": false,
    "tail": false,
    "sug": [
@@ -10253,7 +10253,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 32.0,
-   "miss": 5,
+   "miss": 6,
    "long": false,
    "tail": false,
    "sug": [
@@ -11063,7 +11063,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 40.5,
-   "miss": 7,
+   "miss": 8,
    "long": false,
    "tail": false,
    "sug": [

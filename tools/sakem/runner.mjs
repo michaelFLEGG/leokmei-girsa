@@ -277,6 +277,9 @@ if (cmd === 'status') {
   /* פרומפט 61 (18.11.2026): "סכם מלא" על ערכין - ההנחיה המיוחדת (מסכת דלה: הסבר וגמרא חסרה, לצד קיצור וסגנונות) */
   if (/סכם מלא/.test(pk.title || '')) { const F = path.join(ROOT, 'docs', 'פרומפט-61', 'הנחיה.md');
     if (fs.existsSync(F)) console.log('\n######## פרומפט 61 - הנחיה (גוברת על כלל כללי)\n' + fs.readFileSync(F, 'utf8')); }
+  /* פרומפט 62 המשך (18.11.2026): "סבב כללים חדשים" - קטעים קטנים שבהם מחילים רק את הכללים שנלמדו מעריכות מיכאל בערכין */
+  if (/סבב כללים חדשים/.test(pk.title || '')) { const F = path.join(ROOT, 'docs', 'פרומפט-62', 'סבב-כללים.md');
+    if (fs.existsSync(F)) console.log('\n######## פרומפט 62 - סבב כללים חדשים (גובר על כלל כללי)\n' + fs.readFileSync(F, 'utf8')); }
   console.log('יחידות:', pk.units.length, '· דפים:', (pk.pages || []).map((p) => p.daf).join(' '));
   console.log('לקריאה:', path.relative(ROOT, dir) + '/{gemara.md, leokmei.md' + (hv ? ', chavruta.md' : '') + '}');
   if (o) console.log('המשך מהרצה קודמת: ' + o.done + ' מתוך ' + o.total + ' קטעים כבר נכתבו. הקטע הבא: ' + (o.plan.findIndex((s, i) => !o.items.some((x) => x.seg === i)) + 1));

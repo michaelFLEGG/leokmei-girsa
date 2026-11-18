@@ -60,16 +60,26 @@
   "sukkah-s1632-mwkv87v3@1794937310322",
   "sukkah-s1-mwkv8576@1794930417150",
   "sukkah-s1989-mwkv88qv@1794939153022",
-  "sukkah-s576-mwkv860g@1794930418244"
+  "sukkah-s576-mwkv860g@1794930418244",
+  "berakhot-s1413-mwl2xjnl@1794943360141",
+  "shabbat-p14@1794855483223"
  ],
- "learnT": 1794948503053,
+ "learnT": 1795020556423,
  "post": {
   "bava-batra": 1831,
   "bekhorot": 7910,
   "berakhot": 15414,
   "ketubot": 4839,
-  "kiddushin": 9,
+  "kiddushin": 22,
   "shabbat": 13709,
-  "sukkah": 5682
+  "sukkah": 5682,
+  "bava-kamma": 17,
+  "beitzah": 5,
+  "chagigah": 6,
+  "chullin": 4,
+  "keritot": 11,
+  "megillah": 3,
+  "temurah": 2,
+  "yoma": 19
  }
 }

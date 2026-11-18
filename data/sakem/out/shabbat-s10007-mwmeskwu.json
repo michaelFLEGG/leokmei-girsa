@@ -3,7 +3,7 @@
  "jid": "shabbat-s10007-mwmeskwu",
  "slug": "shabbat",
  "title": "שבת פרק אחד ועשרים - נוטל · סבב על הנוסח החי (s8)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 10007,
@@ -78,6 +78,14 @@
     "nose": 0,
     "lenA": 111,
     "lenB": 111
+   },
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -104,6 +112,14 @@
     "nose": 0,
     "lenA": 417,
     "lenB": 417
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -130,6 +146,14 @@
     "nose": 0,
     "lenA": 158,
     "lenB": 158
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -156,6 +180,14 @@
     "nose": 0,
     "lenA": 264,
     "lenB": 264
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -188,6 +220,14 @@
     "nose": 0,
     "lenA": 429,
     "lenB": 429
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 9,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -219,6 +259,14 @@
     "nose": 0,
     "lenA": 698,
     "lenB": 698
+   },
+   "abs": {
+    "bold": 5,
+    "space": 1,
+    "dash": 1,
+    "side": 8,
+    "nose": 3,
+    "widow": 0
    }
   },
   {
@@ -252,6 +300,14 @@
     "nose": 0,
     "lenA": 650,
     "lenB": 650
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 12,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -285,8 +341,70 @@
     "nose": 0,
     "lenA": 792,
     "lenB": 792
+   },
+   "abs": {
+    "bold": 9,
+    "space": 0,
+    "dash": 1,
+    "side": 9,
+    "nose": 2,
+    "widow": 0
    }
   }
  ],
- "t": 1795044877763
+ "t": 1795044887767,
+ "summary": "בפרק: 19 הדגשות במשנה, 1 רווחים, 6 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 19,
+  "space": 1,
+  "dash": 6,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 8,
+  "perSeg": {
+   "bold": 2.38,
+   "space": 0.13,
+   "dash": 0.75,
+   "side": 6.38,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 19,
+  "space": 1,
+  "dash": 6,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 0,
+  "block": 0,
+  "lenPct": 0,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 0
+  }
+ },
+ "counts": {
+  "shown": 0,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

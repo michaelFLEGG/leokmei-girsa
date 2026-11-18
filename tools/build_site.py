@@ -2169,6 +2169,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   def top(cnt):
       return cnt.most_common(1)[0][0] if cnt else ''
   sty={'c':[[c,lab,top(cs_cnt[c])] for c,lab in CSLAB if cs_cnt[c]]+
+           # 18.11.2026: "רקע והסבר" (Ctrl+4) מוצע תמיד, גם בקובץ שלא השתמש בו (ערכין). הקיפול מוסיף את הסגנון
+           # לספר כשהוא חסר (word_apply._copy_cstyle), בשמו הקנוני "הסבר"
+           ([] if cs_cnt['hs'] else [['hs','רקע והסבר','הסבר']])+
            [['mf','מפרשים',''],['b','מודגש','']],          # הדגשה ישירה, אינה סגנון בוורד
        'p':[[c,lab,top(ps_cnt[c])] for c,lab in PSLAB if ps_cnt[c]],
        # סגנונות התו שבתוך משנה: הכתיבה לוורד מחליפה אליהם (word_apply)
@@ -4956,7 +4959,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   let PCAN=undefined;
   function selAnchor(){const s=getSelection();return s&&s.rangeCount?s.anchorNode:null}
   /* כמה עמודים יחד: ההכנה וההתאמה (postRows) נעשות פעם אחת על כל השורות, ולא פריסה מחדש לכל עמוד (18.11.2026) */
-  function patchPages(list,keepCaret){const acc=[];if(keepCaret)PCAN=selAnchor();
+  function patchPages(list,keepCaret){if(list instanceof Map)list=[...list.values()];list=[...(list||[])].filter(x=>x&&D.pages[x.pi]);const acc=[];if(keepCaret)PCAN=selAnchor();
     try{for(const s of list||[])patchPage(s,keepCaret,acc)}finally{PCAN=undefined}
     postRows(acc);return acc}
   function patchPage(snap,keepCaret,acc){PBUSY++;try{return patchPage0(snap,keepCaret,acc)}finally{PBUSY--}}

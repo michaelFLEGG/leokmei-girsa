@@ -2433,6 +2433,40 @@ def sync_plan(blocks, lo, hi, target):
     return have, hk, tk, sm.get_opcodes()
 
 
+from copy import deepcopy as deepcopy_
+_CS_REF = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'input', 'docx', 'ברכות בר מצוה יהודה.docx')
+
+
+def _copy_cstyle(styles_xml, name):
+    """מעתיק את הגדרת סגנון התו name מקובץ ברכות אל styles_xml. מחזיר xml חדש, או None אם לא נמצא."""
+    try:
+        zr = zipfile.ZipFile(_CS_REF)
+        ref = etree.fromstring(zr.read('word/styles.xml'))
+        zr.close()
+    except Exception:
+        return None
+    src = None
+    for st in ref.findall('w:style', ns):
+        nm = st.find('w:name', ns)
+        if st.get(W + 'type') == 'character' and nm is not None and nm.get(W + 'val') == name:
+            src = deepcopy_(st)
+            break
+    if src is None:
+        return None
+    root = etree.fromstring(styles_xml)
+    ids = {st.get(W + 'styleId') for st in root.findall('w:style', ns)}
+    sid = src.get(W + 'styleId') or 'HesberCS'
+    while sid in ids:
+        sid += '1'
+    src.set(W + 'styleId', sid)
+    for tag in ('basedOn', 'link', 'next'):
+        for el in src.findall('w:' + tag, ns):
+            if el.get(W + 'val') not in ids:
+                src.remove(el)
+    root.append(src)
+    return etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True)
+
+
 def sync_to_target(path, masechet, ranges, log=print, dry=False):
     """ranges: [(lo, hi, target)] - טווחי פסקאות בהמרה (lo כולל, hi לא כולל) ונוסח היעד של כל טווח.
     מחזיר דוח. כישלון בשער: הקובץ אינו נוגע (Refused)."""
@@ -2446,6 +2480,16 @@ def sync_to_target(path, masechet, ranges, log=print, dry=False):
     styles_xml = z.read('word/styles.xml')
     z.close()
     sids = _style_ids(styles_xml)
+    # 18.11.2026: סגנון התו "רקע והסבר" (Ctrl+4) חסר בחלק מקובצי המסכתות (ערכין: לא שימש מעולם; תענית, יומא ועוד: אינו
+    # מוגדר כלל). בלעדיו כתיבת הסגנון לספר נפלה בשקט. הוא מועתק כמות שהוא מקובץ ברכות, שבו הוא מוגדר ושגור.
+    styles_new = None
+    hsn = _SYNC_CS.get('hs')
+    if hsn and hsn not in sids:
+        styles_new = _copy_cstyle(styles_xml, hsn)
+        if styles_new is not None:
+            styles_xml = styles_new
+            sids = _style_ids(styles_xml)
+            log('נוסף לקובץ סגנון התו "%s"' % hsn)
     ps_all = doc.find('w:body', ns).findall('w:p', ns)
     pof = lambda i: ps_all[pmapd[i]]
 
@@ -2585,7 +2629,10 @@ def sync_to_target(path, masechet, ranges, log=print, dry=False):
         return rep
     bk = backup(path, masechet)
     tmp = tmp_path(path)
-    _rezip(path, tmp, {'word/document.xml': etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True)})
+    parts = {'word/document.xml': etree.tostring(doc, xml_declaration=True, encoding='UTF-8', standalone=True)}
+    if styles_new is not None:
+        parts['word/styles.xml'] = styles_new
+    _rezip(path, tmp, parts)
     # השער: כל טווח נותן בדיוק את היעד, ושאר הקובץ לא זז
     import difflib
     after = convert(tmp)

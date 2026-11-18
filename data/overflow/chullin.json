@@ -1,24 +1,28 @@
 {
  "slug": "chullin",
- "made": "2026-11-17 15:23",
+ "made": "2026-11-18 04:50",
  "profile": "a4-large",
  "pages": {
-  "a4": 85,
-  "a4-large": 88
+  "a4": 95,
+  "a4-large": 101
  },
  "sq25": {
   "a4": 187,
-  "a4-large": 264
+  "a4-large": 263
  },
- "count": 309,
+ "count": 311,
  "firstTool": {
-  "5": 213,
+  "5": 214,
+  "4": 20,
   "2": 2,
-  "4": 19
+  "3": 4
  },
- "joinCands": 473,
- "mechSplitCands": 81,
- "ctlMismatch": [],
+ "joinCands": 474,
+ "mechSplitCands": 85,
+ "ctlMismatch": [
+  "u484.1",
+  "u507.1"
+ ],
  "rejected": 196,
  "stale": [],
  "unplaced": [],
@@ -450,6 +454,127 @@
    "tool6": true
   },
   {
+   "key": "u484.1",
+   "id": "61cb82ec3de95002",
+   "u": 484,
+   "li": 1,
+   "daf": "ח:",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "<i class=\"am\">א.</i><i class=\"b\"> שחתך בה עצים לע&quot;ז, </i><i class=\"am\">ב.</i><i class=\"b\"> בישנה שליבנה באור </i><i class=\"hs\">ונשרפה שמנוניתה.</i>",
+   "ph": "<i class=\"am\">א.</i><i class=\"b\"> שחתך בה עצים לע&quot;ז, </i><i class=\"am\">ב.</i><i class=\"b\"> בישנה שליבנה באור </i><i class=\"hs\">ונשרפה שמנוניתה.</i>",
+   "text": "א. שחתך בה עצים לע\"ז, ב. בישנה שליבנה באור ונשרפה שמנוניתה.",
+   "over": "שמנוניתה.",
+   "nA4": 1,
+   "nLarge": 2,
+   "missPx": 4.9,
+   "miss": 1,
+   "long": false,
+   "tail": false,
+   "sug": [
+    {
+     "tool": 4,
+     "split_before": "ב. ביש",
+     "side": "",
+     "kind": "split",
+     "parts": [
+      "<i class=\"am\">א.</i><i class=\"b\"> שחתך בה עצים לע&quot;ז, </i>",
+      "<i class=\"am\">ב.</i><i class=\"b\"> בישנה שליבנה באור </i><i class=\"hs\">ונשרפה שמנוניתה.</i>"
+     ],
+     "why": "חיתוך אחרי סימן פיסוק",
+     "src": "mech",
+     "ok": {
+      "large": [
+       1,
+       1
+      ],
+      "a4": [
+       1,
+       1
+      ]
+     }
+    }
+   ],
+   "ctlMismatch": {
+    "a4-large": [
+     1
+    ],
+    "a4": [
+     1
+    ]
+   },
+   "tool6": false
+  },
+  {
+   "key": "u507.1",
+   "id": "a61c2737ea0f86c1",
+   "u": 507,
+   "li": 1,
+   "daf": "ח:",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "הטבח צריך שני כלים של מים: <i class=\"am\">א.</i> שמדיח בו בשר, <i class=\"am\">ב.</i> שמדיח בו חלבים.",
+   "ph": "הטבח צריך שני כלים של מים: <i class=\"am\">א.</i> שמדיח בו בשר, <i class=\"am\">ב.</i> שמדיח בו חלבים.",
+   "text": "הטבח צריך שני כלים של מים: א. שמדיח בו בשר, ב. שמדיח בו חלבים.",
+   "over": "בו חלבים.",
+   "nA4": 1,
+   "nLarge": 2,
+   "missPx": 46.0,
+   "miss": 8,
+   "long": false,
+   "tail": false,
+   "sug": [
+    {
+     "tool": 5,
+     "kind": "join",
+     "target": "next",
+     "html": "הטבח צריך שני כלים של מים: <i class=\"am\">א.</i> שמדיח בו בשר, <i class=\"am\">ב.</i> שמדיח בו חלבים. ולא סגי בחדא, וידיח בו בשר ואח&quot;כ חלבים? - גזירה שמא ידיח חלבים ואח&quot;כ בשר.",
+     "targetOrig": "ולא סגי בחדא, וידיח בו בשר ואח&quot;כ חלבים? - גזירה שמא ידיח חלבים ואח&quot;כ בשר.",
+     "targetLines": 2,
+     "why": "איחוי עם השורה הבאה",
+     "ok": {
+      "large": [
+       3
+      ],
+      "a4": [
+       3
+      ]
+     }
+    },
+    {
+     "tool": 4,
+     "split_before": "שמדיח בו ב",
+     "side": "",
+     "kind": "split",
+     "parts": [
+      "הטבח צריך שני כלים של מים: <i class=\"am\">א.</i>",
+      "שמדיח בו בשר, <i class=\"am\">ב.</i> שמדיח בו חלבים."
+     ],
+     "why": "חיתוך אחרי סימן פיסוק",
+     "src": "mech",
+     "ok": {
+      "large": [
+       1,
+       1
+      ],
+      "a4": [
+       1,
+       1
+      ]
+     }
+    }
+   ],
+   "ctlMismatch": {
+    "a4-large": [
+     2
+    ],
+    "a4": [
+     2
+    ]
+   },
+   "tool6": false
+  },
+  {
    "key": "u532.1",
    "id": "87aec6e7c6633b8b",
    "u": 532,
@@ -663,7 +788,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 35.6,
-   "miss": 7,
+   "miss": 8,
    "long": false,
    "tail": false,
    "sug": [
@@ -899,12 +1024,28 @@
    "nA4": 2,
    "nLarge": 3,
    "missPx": 23.5,
-   "miss": 4,
+   "miss": 5,
    "long": true,
    "tail": false,
-   "sug": [],
-   "tool6": true,
-   "leave": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "הא רבי מאיר שרי",
+     "replace": "הא ר\"מ שרי",
+     "why": "ראשי תיבות לשם השני כשהראשון מלא (כלל 4ד), לבדיקה",
+     "kind": "replace",
+     "html": "והא מתני&#x27; דשוחט הוא <i class=\"am\">ואר&quot;ה</i>: דרש חב\"ר מדרב: אסורה באכילה ליומא, ונסבין חבריא למימר רבי יהודה היא, הא ר\"מ שרי!",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u746.5",
@@ -1120,8 +1261,8 @@
    "over": "שנינו: לעולם שוחטין.",
    "nA4": 5,
    "nLarge": 6,
-   "missPx": 47.5,
-   "miss": 8,
+   "missPx": 47.6,
+   "miss": 9,
    "long": true,
    "tail": false,
    "sug": [
@@ -1426,7 +1567,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 42.1,
-   "miss": 7,
+   "miss": 8,
    "long": false,
    "tail": false,
    "sug": [
@@ -1787,7 +1928,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 49.5,
-   "miss": 9,
+   "miss": 10,
    "long": false,
    "tail": false,
    "sug": [],
@@ -2941,9 +3082,25 @@
    "miss": 5,
    "long": true,
    "tail": false,
-   "sug": [],
-   "tool6": true,
-   "leave": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "דבעי רבי זירא:",
+     "replace": "דבעי:",
+     "why": "ר\"ז כבר נזכר בתחילת השורה, כפל",
+     "kind": "replace",
+     "html": "והדר בה <i class=\"am\">ר&quot;ז</i> דבעי: ניקבו בני מעיים בין סימן לסימן, מהו? מי מצטרף סימן ראשון לסימן שני לטהרה מידי נבלה או לא?",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u1523.7",
@@ -2999,7 +3156,7 @@
    "nA4": 3,
    "nLarge": 4,
    "missPx": 66.6,
-   "miss": 11,
+   "miss": 12,
    "long": true,
    "tail": false,
    "sug": [],
@@ -3103,7 +3260,7 @@
    "over": "יהושע להדדי?",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 33.5,
+   "missPx": 33.6,
    "miss": 7,
    "long": false,
    "tail": false,
@@ -3217,7 +3374,7 @@
    "html": "<i class=\"am\">תדר&quot;יש</i>: ודם חללים ישתה - פרט לדם קילוח שאינו מכשיר את הזרעים.",
    "ph": "<i class=\"am\">תדר&quot;יש</i>: ודם חללים ישתה - פרט לדם קילוח שאינו מכשיר את הזרעים.",
    "text": "תדר\"יש: ודם חללים ישתה - פרט לדם קילוח שאינו מכשיר את הזרעים.",
-   "over": "את הזרעים.",
+   "over": "מכשיר את הזרעים.",
    "nA4": 1,
    "nLarge": 2,
    "missPx": 38.1,
@@ -3366,8 +3523,25 @@
    "miss": 4,
    "long": false,
    "tail": false,
-   "sug": [],
-   "tool6": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "ואזדו לטעמייהו",
+     "replace": "ולשיטתם",
+     "why": "לשון הקודש קצרה באותו מובן",
+     "kind": "replace",
+     "html": "ולשיטתם, דאתמר: שחטה לשמה לזרוק דמה שלא לשמה -",
+     "ok": {
+      "large": [
+       1
+      ],
+      "a4": [
+       1
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u1743.9",
@@ -3540,7 +3714,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 30.2,
-   "miss": 5,
+   "miss": 6,
    "long": false,
    "tail": false,
    "sug": [
@@ -3912,7 +4086,7 @@
    "html": "- ואב&quot;א אף לאחר בת קול ורבי יהושע היא דאין משגיחין בבת קול.",
    "ph": "- ואב&quot;א אף לאחר בת קול ורבי יהושע היא דאין משגיחין בבת קול.",
    "text": "- ואב\"א אף לאחר בת קול ורבי יהושע היא דאין משגיחין בבת קול.",
-   "over": "בבת קול.",
+   "over": "משגיחין בבת קול.",
    "nA4": 1,
    "nLarge": 2,
    "missPx": 28.5,
@@ -4596,7 +4770,7 @@
    "over": "[תלתן] ,",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 37.8,
+   "missPx": 37.9,
    "miss": 7,
    "long": false,
    "tail": false,
@@ -5362,7 +5536,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 36.4,
-   "miss": 7,
+   "miss": 8,
    "long": false,
    "tail": false,
    "sug": [
@@ -5905,7 +6079,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 36.7,
-   "miss": 7,
+   "miss": 9,
    "long": false,
    "tail": false,
    "sug": [
@@ -7257,7 +7431,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 40.7,
-   "miss": 7,
+   "miss": 8,
    "long": false,
    "tail": false,
    "sug": [
@@ -7560,9 +7734,25 @@
    "miss": 7,
    "long": true,
    "tail": false,
-   "sug": [],
-   "tool6": true,
-   "leave": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "וכל היכא דאיכא",
+     "replace": "וכשיש",
+     "why": "לשון הקודש קצרה באותו מובן",
+     "kind": "replace",
+     "html": "ראשון סופג דכל היכא דליכא לאו דאותו ואת בנו חשיב לאוי נוכראי, וכשיש לאו דאותו ואת בנו - לא חשיב לאוי נוכראי.",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u3692.1",

@@ -533,7 +533,8 @@
   function skmBatchEnd(B){
     window.SKMB=null;if(!B)return;
     SLOTS=null;if(B.n)saveED();
-    patchPages(B.befores);
+    /* 18.11.2026: B.befores היא Map - patchPages מקבל רשימת צילומים (בלי זה "קבל את כל הנותרים" נפל על units) */
+    patchPages([...B.befores.values()]);
     if(B.n){drawEd();pubSoon();syncSoon();if($('#edn'))$('#edn').textContent=ED.length}}
   function skmBatchUndo(B){
     if(!B||!B.undo.length)return false;

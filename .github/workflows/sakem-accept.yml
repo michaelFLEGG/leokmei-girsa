@@ -20,6 +20,10 @@ on:
         description: 'הזמנה רק לפרקים האלה (למשל 20), בלי קבלה'
         required: false
         default: ''
+      force:
+        description: '1 = הצעה שהקטע שלה השתנה מאז - להחיל כפי שהיא (ההצעה האחרונה גוברת)'
+        required: false
+        default: ''
       round:
         description: 'פרומפט 56 ד2: למשל 1-15 = אחרי הקבלה, סבב שני לפרקים 1-15 וסכם מלא לפרקים שאחריהם'
         required: false
@@ -42,7 +46,7 @@ jobs:
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
         run: |
-          D=""; if [ "${{ github.event.inputs.dry }}" = "1" ]; then D="--dry"; fi
+          D=""; if [ "${{ github.event.inputs.dry }}" = "1" ]; then D="--dry"; fi; if [ "${{ github.event.inputs.force }}" = "1" ]; then D="$D --force"; fi
           python tools/sakem/accept_all.py --slug "${{ github.event.inputs.slug }}" --jobs "${{ github.event.inputs.jobs }}" $D --round "${{ github.event.inputs.round }}" --only "${{ github.event.inputs.only }}" --out _accept.json
       - name: הדוח בריפו
         if: always()

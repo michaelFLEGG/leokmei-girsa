@@ -17,6 +17,7 @@ ap.add_argument('--slug', default='shabbat')
 ap.add_argument('--jobs', default='', help='רשימה מופרדת בפסיקים. ריק = כל העבודות המוכנות של המסכת')
 ap.add_argument('--dry', action='store_true', help='רק פתיחה וספירה, בלי קבלה')
 ap.add_argument('--out', default='accept-report.json')
+ap.add_argument('--force', action='store_true', help='18.11.2026: הצעה שהקטע שלה השתנה מאז - מוחלת כפי שהיא (ההצעה האחרונה גוברת)')
 ap.add_argument('--only', default='', help='הזמנה רק לפרקים האלה (מספרים מופרדים בפסיקים), למשל אחרי 429')
 ap.add_argument('--round', default='', help='פרומפט 56 ד2: "1-15" - אחרי הקבלה, עבודת "סבב שני" לכל פרק בטווח, ועבודת סכם מלאה לפרקים שאחריו')
 a = ap.parse_args()
@@ -61,6 +62,9 @@ with sync_playwright() as p:
                 res = pg.evaluate("()=>skpAuto.all()")
                 r['result'] = res
                 pg.wait_for_timeout(2500)
+                if a.force and res and res.get('skip'):
+                    r['forced'] = pg.evaluate("()=>skpAuto.force()")
+                    pg.wait_for_timeout(2500)
             pg.evaluate("async()=>{if(typeof pubPending==='function'&&pubPending())await pubNow(1)}")
             pg.wait_for_timeout(2000)
             r['pending_after'] = pg.evaluate("()=>typeof pubPending==='function'?pubPending():-1")

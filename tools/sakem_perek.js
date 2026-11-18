@@ -155,7 +155,18 @@
     enqueue:async(si,title,kind)=>{const S=SEC[si];const os=flatU().filter(o=>o.pi>=S.from&&o.pi<=S.to);if(!os.length)return null;
       const packet=await skpPacket(kind||'seg',os);
       return api('/sakem/job',{method:'POST',body:JSON.stringify({slug:SLUG,kind:kind||'seg',perek:si+1,title:title||skpTitle(si),packet})})},
-    title:si=>skpTitle(si)};
+    title:si=>skpTitle(si),
+    /* 18.11.2026 (מיכאל: "היכן שיש בעיה קבל כפי ההצעה האחרונה"): הצעה שנשארה אחרי "קבל הכל" כי הקטע השתנה מאז -
+       מוחלת על הנוסח החי כפי שהיא (כמו "החלף בהצעה"), בהכרעת accept. נעשה רק אחרי all(), ולפי סדר העבודות (האחרונה גוברת) */
+    force:()=>{const R=SKP.rev;if(!R)return null;let ok=0;const bad=[];
+      const B=window.skmBatchStart?skmBatchStart():null;const done=[];
+      try{R.items.forEach((x,i)=>{if(R.dec[x.iid])return;
+        try{const orig=x.kind==='seg'?skmInter(skmUnits(x.ids)):undefined;
+          let r;try{r=skpApplyOne(x,x.text,orig)}catch(e){if(/לחץ שוב/.test(String(e&&e.message)))r=skpApplyOne(x,x.text,orig);else throw e}
+          done.push([x,i]);ok++}catch(e){bad.push(x.iid+': '+String(e&&e.message||e).slice(0,120))}})}
+      finally{if(B)skmBatchEnd(B)}
+      done.forEach(([x,i])=>{R.cnt.accept++;R.hist.push({i,iid:x.iid,act:'accept',undo:false});skpDec(x,'accept')});
+      return {ok,bad}}};
 
   /* =================== הסקירה =================== */
   async function skpOpen(jid){

@@ -1,0 +1,205 @@
+{
+ "slug": "shabbat",
+ "jobs": [
+  {
+   "jid": "shabbat-s1-mwkr9e5n",
+   "open": 1,
+   "in": 1,
+   "not_in": [],
+   "open_after": 1
+  },
+  {
+   "jid": "shabbat-s1192-mwkr9f0d",
+   "open": 53,
+   "in": 53,
+   "not_in": [],
+   "open_after": 53
+  },
+  {
+   "jid": "shabbat-s2426-mwkr9fsp",
+   "open": 21,
+   "in": 21,
+   "not_in": [],
+   "open_after": 21
+  },
+  {
+   "jid": "shabbat-s3082-mwkr9gjr",
+   "open": 13,
+   "in": 13,
+   "not_in": [],
+   "open_after": 13
+  },
+  {
+   "jid": "shabbat-s3269-mwkr9hbd",
+   "open": 18,
+   "in": 18,
+   "not_in": [],
+   "open_after": 18
+  },
+  {
+   "jid": "shabbat-s3559-mwkr9i0c",
+   "open": 33,
+   "in": 32,
+   "not_in": [
+    {
+     "iid": "s52",
+     "kind": "seg",
+     "lines": 3,
+     "found": 2,
+     "in": false
+    }
+   ],
+   "open_after": 33
+  },
+  {
+   "jid": "shabbat-s4064-mwkr9isa",
+   "open": 18,
+   "in": 18,
+   "not_in": [],
+   "open_after": 18
+  },
+  {
+   "jid": "shabbat-s4434-mwkr9jmz",
+   "open": 23,
+   "in": 23,
+   "not_in": [],
+   "open_after": 23
+  },
+  {
+   "jid": "shabbat-s4810-mwkr9kdg",
+   "open": 27,
+   "in": 27,
+   "not_in": [],
+   "open_after": 27
+  },
+  {
+   "jid": "shabbat-s5239-mwkr9l5h",
+   "open": 14,
+   "in": 14,
+   "not_in": [],
+   "open_after": 14
+  },
+  {
+   "jid": "shabbat-s5520-mwkr9m55",
+   "open": 18,
+   "in": 18,
+   "not_in": [],
+   "open_after": 18
+  },
+  {
+   "jid": "shabbat-s5863-mwkr9mvm",
+   "open": 5,
+   "in": 5,
+   "not_in": [],
+   "open_after": 5
+  },
+  {
+   "jid": "shabbat-s6036-mwkr9nhz",
+   "open": 10,
+   "in": 10,
+   "not_in": [],
+   "open_after": 10
+  },
+  {
+   "jid": "shabbat-s6189-mwkr9o5s",
+   "open": 10,
+   "in": 10,
+   "not_in": [],
+   "open_after": 10
+  },
+  {
+   "jid": "shabbat-s6464-mwkr9owt",
+   "open": 14,
+   "in": 14,
+   "not_in": [],
+   "open_after": 14
+  },
+  {
+   "jid": "shabbat-p16",
+   "open": 24,
+   "in": 24,
+   "not_in": [],
+   "open_after": 24
+  },
+  {
+   "jid": "shabbat-p17",
+   "open": 14,
+   "in": 13,
+   "not_in": [
+    {
+     "iid": "s16",
+     "kind": "seg",
+     "lines": 4,
+     "found": 3,
+     "in": false
+    }
+   ],
+   "open_after": 14
+  },
+  {
+   "jid": "shabbat-p18",
+   "open": 12,
+   "in": 12,
+   "not_in": [],
+   "open_after": 12
+  },
+  {
+   "jid": "shabbat-p19",
+   "open": 16,
+   "in": 16,
+   "not_in": [],
+   "open_after": 16
+  },
+  {
+   "jid": "shabbat-p21",
+   "open": 1,
+   "in": 0,
+   "not_in": [
+    {
+     "iid": "s1",
+     "kind": "seg",
+     "lines": 3,
+     "found": 2,
+     "in": false
+    }
+   ],
+   "open_after": 1
+  },
+  {
+   "jid": "shabbat-p22",
+   "open": 21,
+   "in": 21,
+   "not_in": [],
+   "open_after": 21
+  },
+  {
+   "jid": "shabbat-p23",
+   "open": 16,
+   "in": 16,
+   "not_in": [],
+   "open_after": 16
+  },
+  {
+   "jid": "shabbat-p24",
+   "open": 4,
+   "in": 4,
+   "not_in": [],
+   "open_after": 4
+  }
+ ],
+ "started": "2026-11-18 18:05",
+ "dups": [
+  {
+   "a": 8546,
+   "b": 1795022477280,
+   "daf": "קיט.",
+   "t": "צדריבלאףיחידהמתפללבערבשבתצריךלומרויכלו"
+  },
+  {
+   "a": 10521,
+   "b": 1795022912930,
+   "daf": "קנ.",
+   "t": "מקורצדויקשהוכידיבוראסורוהרי"
+  }
+ ]
+}

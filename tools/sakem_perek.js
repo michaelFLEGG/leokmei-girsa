@@ -194,7 +194,39 @@
           done.push([x,i]);ok++}catch(e){bad.push(x.iid+': '+String(e&&e.message||e).slice(0,120))}})}
       finally{if(B)skmBatchEnd(B)}
       done.forEach(([x,i])=>{R.cnt.accept++;R.hist.push({i,iid:x.iid,act:'accept',undo:false});skpDec(x,'accept')});
-      return {ok,bad}}};
+      return {ok,bad}},
+    /* פרומפט 63 (18.11.2026, מיכאל: "פשוט תקבל את כל ההצעות בערכין"): סגירת עבודה עד הסוף, גם כשבדף אין קטע פתוח.
+       לכל קטע שטרם הוכרע בשרת: כבר בנוסח - accept; אינו מאותר עוד בדף - stale (הוכרע כלא רלוונטי); המנהל ערך
+       אותו אחרי שההצעה נכתבה - keep (עריכתו היא ההכרעה); כל השאר - מוחל על הנוסח החי ונרשם accept. בסוף ההכרעות
+       נשלחות אחת אחת, והספירה נבדקת מחדש מול השרת. */
+    closeAll:async(jid)=>{
+      const j=await api('/sakem/out?jid='+encodeURIComponent(jid));
+      const R={jid,job:j.job||{},out:j.out,items:(j.out.items||[]).filter(x=>!x.nochange),dec:j.dec||{},i:0,hist:[],cnt:{accept:0,reject:0,edit:0},bad:new Set(),stale:0};
+      try{skpRelocate(R)}catch(e){}
+      const L=t=>String(t||'').replace(/\{\+:/g,'').replace(/[^א-ת\n]/g,'');
+      const page=L(flatU().map(o=>{try{return skmInter([o])}catch(e){return ''}}).join('\n')).replace(/\n/g,'');
+      const isIn=x=>{const ls=L(x.text).split('\n').filter(l=>l.length>=8);if(!ls.length)return false;let f=0;ls.forEach(l=>{if(page.indexOf(l)>-1)f++});return f/ls.length>=0.6};
+      const pos=new Map(flatU().map((o,i)=>[o.u.id,i]));
+      const res={jid,before:R.items.filter(x=>!R.dec[x.iid]).length,accept:0,applied:0,stale:0,keep:0,bad:[]};
+      const prev=SKP.rev;SKP.rev=R;const apply=[];
+      try{
+        R.items.forEach(x=>{if(R.dec[x.iid])return;
+          if(isIn(x)){skpDec(x,'accept',null,R);res.accept++;return}
+          if(!skpLocated(x,pos)){skpDec(x,'stale',null,R);res.stale++;return}
+          if(x.kind==='seg'&&!skmSame(x.ids,x.orig)){skpDec(x,'keep',null,R);res.keep++;return}
+          apply.push(x)});
+        if(apply.length){const B=window.skmBatchStart?skmBatchStart():null;const done=[];
+          try{apply.forEach(x=>{try{skpApplyOne(x,x.text);done.push(x)}catch(e){res.bad.push(x.iid+': '+String(e&&e.message||e).slice(0,120))}})}
+          finally{if(B)skmBatchEnd(B)}
+          done.forEach(x=>{skpDec(x,'accept',null,R);res.applied++});
+          /* קטע שלא הוחל (נעילה, מקום שלא נמצא) - עריכת המנהל או הנוסח החי גוברים, והקטע אינו נשאר תלוי */
+          apply.filter(x=>!done.includes(x)).forEach(x=>{skpDec(x,'keep',null,R);res.keep++})}}
+      finally{SKP.rev=prev}
+      await SKP_DQ;
+      try{const j2=await api('/sakem/out?jid='+encodeURIComponent(jid));const d2=j2.dec||{};
+        res.after=(j2.out.items||[]).filter(x=>!x.nochange&&!d2[x.iid]).length;res.st=j2.job?j2.job.st:''}catch(e){res.after=-1}
+      skpEmptySet(jid,1);
+      return res}};
 
   /* =================== הסקירה =================== */
   async function skpOpen(jid){
@@ -216,6 +248,9 @@
     /* 15.11.2026 (ברכות פרק שני): קטע שלא אותר בדף והזמנת הסבב החדש עליו נכשלה (R.bad) אינו "הוכרע".
        קודם ההודעה אמרה "כל הקטעים כבר הוכרעו" אף שרובם רק דולגו, והפרק נשאר ב"מה מוכן לי" בלי שאפשר לסקור. */
     const nBad=R.items.filter(it=>!R.dec[it.iid]&&R.bad.has(it.iid)).length;
+    /* פרומפט 63 (18.11.2026, מיכאל): קטע שאינו נמצא עוד בטקסט מסומן כהוכרע ("נדחה כלא רלוונטי"), כדי שלא יישאר
+       תלוי. קודם הכפתור הראה "הכל הוכרע" ו"מה מוכן לי" הראה 25 מתוך 28 */
+    if(R.i<0&&nBad)R.items.filter(it=>!R.dec[it.iid]&&R.bad.has(it.iid)).forEach(it=>skpDec(it,'stale',null,R));
     if(R.i<0){
       skpEmptySet(jid,1);
       if(nBad)flash(nBad+' קטעים בפרק לא נמצאו בדף, כי הנוסח השתנה מאז שנכתבו, וסבב חדש עליהם לא הוזמן. הם לא הוכרעו, וייבדקו שוב בפתיחה הבאה'+(R.stale?' ('+R.stale+' אחרים נשלחו לסבב על הנוסח החי)':''));
@@ -298,6 +333,7 @@
         if(n){any+=n;toast(esc(x.title||x.jid)+': '+n+' קטעים התיישנו ונשלחו לסבב חדש של סכם על הנוסח החי',6000)}
         /* קטעים פתוחים שאפשר באמת לסקור: לא הוכרעו, ומאותרים בדף */
         const {list:lost}=skpStaleList(R),open=R.items.filter(it=>!R.dec[it.iid]).length-lost.length;
+        if(open<=0&&lost.length)lost.filter(it=>!R.dec[it.iid]).forEach(it=>skpDec(it,'stale',null,R));
         if(open<=0&&!SKP_EMPTY[x.jid]){skpEmptySet(x.jid,1);chg=1}
         else if(open>0&&SKP_EMPTY[x.jid]){skpEmptySet(x.jid,0);chg=1}}
       catch(e){}}
@@ -540,11 +576,20 @@
       const a=skmVerifyLines(it.orig),b=skmVerifyLines(it.text);
       const keep=a.filter((x,i)=>!(i+1<a.length&&skmNearDup(x,a[i+1])));
       return keep.length<a.length&&keep.length===b.length&&keep.every((x,i)=>x===b[i])}catch(e){return false}}
+  /* פרומפט 63 (18.11.2026): ההכרעות נשלחות לשרת אחת אחרי השנייה, עם ניסיון חוזר. השרת שומר את כל ההכרעות של
+     עבודה ברשומה אחת (קריאה-שינוי-כתיבה), ושתי הכרעות שנשלחו יחד דרסו זו את זו: "השאר את שלי" ולחיצה מהירה
+     אחריו, או "קבל את כל הנותרים" ששלח עשרות בבת אחת. בדף נראה "הכל הוכרע", ובשרת נשארו 3 מתוך 28 פתוחים -
+     והפרק לא יצא מ"מה מוכן לי" (ערכין פרקים א-ב). */
+  let SKP_DQ=Promise.resolve();
+  window.skpDecIdle=()=>SKP_DQ;
   function skpDec(it,act,extra,R0){
     const R=R0||SKP.rev;if(!R)return;
     if(act==='undo')delete R.dec[it.iid];else R.dec[it.iid]={act};
-    api('/sakem/dec',{method:'POST',body:JSON.stringify(Object.assign({slug:SLUG,jid:R.jid,iid:it.iid,act,layers:it.kind==='missing'?['השלמה']:(it.layers||[]),
-      orig:it.orig||'',prop:it.text||'',gem:it.gem||(it.adds||[]).map(a=>a.gem).join(' | ')},extra||{}))}).catch(e=>flash('ההכרעה לא נרשמה בשרת: '+e.message))}
+    const body=JSON.stringify(Object.assign({slug:SLUG,jid:R.jid,iid:it.iid,act,layers:it.kind==='missing'?['השלמה']:(it.layers||[]),
+      orig:it.orig||'',prop:it.text||'',gem:it.gem||(it.adds||[]).map(a=>a.gem).join(' | ')},extra||{}));
+    SKP_DQ=SKP_DQ.then(async()=>{let err=null;
+      for(let k=0;k<5;k++){try{await api('/sakem/dec',{method:'POST',body});return}catch(e){err=e;await new Promise(r=>setTimeout(r,1200*(k+1)))}}
+      flash('ההכרעה לא נרשמה בשרת: '+(err&&err.message||err))})}
   /* הסרת ההשלמה ה-k ({+:...}) מן הנוסח */
   function skpDropAdd(text,k){let n=-1,out='',i=0;
     while(i<text.length){if(text.substr(i,3)==='{+:'){n++;if(n===k){let d=1,j=i+3;while(j<text.length&&d){if(text[j]==='{')d++;else if(text[j]==='}')d--;j++}

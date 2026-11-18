@@ -27,7 +27,20 @@ jobs:
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
         run: python tools/sakem/sync.py
+      # פרומפט 63 (18.11.2026): מסכתות שמיכאל ביקש לקבל בהן הכל (data/sakem/auto-accept.json) - כל הצעה שעלתה נסגרת מיד,
+      # ואינה מגיעה ל"מוכן לסקירה". נכשל - הסנכרון עצמו כבר עבר, והכישלון רועש בשלב הזה בלבד
+      - name: קבלה אוטומטית
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          S=$(python3 -c "import json;print(' '.join(json.load(open('data/sakem/auto-accept.json'))))" 2>/dev/null || true)
+          [ -n "$S" ] || exit 0
+          pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
+          mkdir -p data/sakem/accept; rc=0
+          for s in $S; do python tools/sakem/close_slug.py --slug "$s" --out "data/sakem/accept/$s-auto-$(TZ=Asia/Jerusalem date +%Y%m%d-%H%M).json" || rc=1; done
+          exit $rc
       - name: שמירה בריפו
+        if: always()
         run: |
           git config user.name "leokmei-sakem"
           git config user.email "sakem@leokmei.com"

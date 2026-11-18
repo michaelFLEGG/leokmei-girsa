@@ -1,0 +1,39 @@
+name: סכם - סגירת כל ההצעות במסכת
+# פרומפט 63 (18.11.2026): כל הצעה פתוחה נסגרת - כבר בנוסח: accept, אינה מאותרת: stale, המנהל ערך: keep, השאר מוחלת.
+# הפעלה ידנית. מסכתות שב-data/sakem/auto-accept.json נסגרות כך גם בכל סנכרון (sakem-sync.yml)
+on:
+  workflow_dispatch:
+    inputs:
+      slug: { description: 'מסכת', required: true, default: arakhin }
+      dry: { description: '1 = רק ספירה', required: false, default: '' }
+permissions:
+  contents: write
+concurrency:
+  group: sakem-accept
+  cancel-in-progress: false
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: סגירה
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          D=""; if [ "${{ github.event.inputs.dry }}" = "1" ]; then D="--dry"; fi
+          python tools/sakem/close_slug.py --slug "${{ github.event.inputs.slug }}" $D --out _close.json
+      - name: הדוח בריפו
+        if: always()
+        run: |
+          [ -f _close.json ] || exit 0
+          mkdir -p data/sakem/accept
+          cp _close.json "data/sakem/accept/${{ github.event.inputs.slug }}-close-$(TZ=Asia/Jerusalem date +%Y%m%d-%H%M).json"
+          git config user.name "leokmei-sakem"; git config user.email "sakem@leokmei.com"
+          git add data/sakem/accept
+          git commit -qm "סכם: דוח סגירת ההצעות [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done

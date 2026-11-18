@@ -3,7 +3,7 @@
  "jid": "shabbat-s10094-mwmesqf3",
  "slug": "shabbat",
  "title": "שבת פרק שנים ועשרים - חבית · סבב על הנוסח החי (s26, s27)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 10094,
@@ -199,6 +199,14 @@
     "nose": 0,
     "lenA": 296,
     "lenB": 296
+   },
+   "abs": {
+    "bold": 7,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -222,6 +230,14 @@
     "nose": 0,
     "lenA": 113,
     "lenB": 113
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -251,6 +267,14 @@
     "nose": 0,
     "lenA": 444,
     "lenB": 444
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -281,6 +305,14 @@
     "nose": 0,
     "lenA": 791,
     "lenB": 791
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 1,
+    "side": 10,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -314,6 +346,14 @@
     "nose": 0,
     "lenA": 708,
     "lenB": 708
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 2,
+    "side": 12,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -340,6 +380,14 @@
     "nose": 0,
     "lenA": 229,
     "lenB": 229
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -368,6 +416,14 @@
     "nose": 0,
     "lenA": 478,
     "lenB": 478
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -395,6 +451,14 @@
     "nose": 0,
     "lenA": 384,
     "lenB": 384
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -423,6 +487,14 @@
     "nose": 0,
     "lenA": 478,
     "lenB": 478
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 8,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -453,6 +525,14 @@
     "nose": 0,
     "lenA": 459,
     "lenB": 459
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -482,6 +562,14 @@
     "nose": 0,
     "lenA": 466,
     "lenB": 466
+   },
+   "abs": {
+    "bold": 7,
+    "space": 1,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -514,6 +602,14 @@
     "nose": 0,
     "lenA": 934,
     "lenB": 934
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 11,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -538,6 +634,14 @@
     "nose": 0,
     "lenA": 263,
     "lenB": 263
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -565,6 +669,14 @@
     "nose": 0,
     "lenA": 498,
     "lenB": 498
+   },
+   "abs": {
+    "bold": 8,
+    "space": 0,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -606,7 +718,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (53 תווים, עד 52): שאלו את רב ששת: לפתח מתכוין ואסור, או לע"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 3,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s16",
@@ -629,6 +749,14 @@
     "nose": 0,
     "lenA": 137,
     "lenB": 137
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -656,6 +784,14 @@
     "nose": 0,
     "lenA": 347,
     "lenB": 347
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -681,6 +817,14 @@
     "nose": 0,
     "lenA": 307,
     "lenB": 307
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -709,6 +853,14 @@
     "nose": 0,
     "lenA": 337,
     "lenB": 337
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -751,7 +903,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 11,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s21",
@@ -778,6 +938,14 @@
     "nose": 0,
     "lenA": 409,
     "lenB": 409
+   },
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -804,6 +972,14 @@
     "nose": 0,
     "lenA": 342,
     "lenB": 342
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -837,6 +1013,14 @@
     "nose": 0,
     "lenA": 730,
     "lenB": 730
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 12,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -875,6 +1059,14 @@
     "nose": 0,
     "lenA": 994,
     "lenB": 994
+   },
+   "abs": {
+    "bold": 9,
+    "space": 0,
+    "dash": 1,
+    "side": 12,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -902,6 +1094,14 @@
     "nose": 0,
     "lenA": 289,
     "lenB": 289
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -932,6 +1132,14 @@
     "nose": 0,
     "lenA": 585,
     "lenB": 585
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -960,6 +1168,14 @@
     "nose": 0,
     "lenA": 391,
     "lenB": 391
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -990,8 +1206,70 @@
     "nose": 0,
     "lenA": 479,
     "lenB": 479
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 1,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795046192081
+ "t": 1795046199447,
+ "summary": "בפרק: 35 הדגשות במשנה, 18 רווחים, 19 מקפי תירוץ, 1 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 35,
+  "space": 18,
+  "dash": 19,
+  "side": 1,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 28,
+  "perSeg": {
+   "bold": 1.25,
+   "space": 0.64,
+   "dash": 0.68,
+   "side": 6.57,
+   "nose": 1.04,
+   "widow": 0
+  },
+  "bold": 35,
+  "space": 18,
+  "dash": 19,
+  "side": 1,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 1,
+  "block": 0,
+  "lenPct": 0.1,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 4
+  }
+ },
+ "counts": {
+  "shown": 2,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

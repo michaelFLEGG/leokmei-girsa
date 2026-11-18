@@ -1,0 +1,37 @@
+{
+ "slug": "arakhin",
+ "jobs": [],
+ "started": "2026-11-18 18:15",
+ "diag": {
+  "admin": true,
+  "key": true,
+  "jobs": 22,
+  "status": 200,
+  "all": 200,
+  "slug": [
+   "arakhin-p1:ready",
+   "arakhin-p2:ready",
+   "arakhin-p3:done",
+   "arakhin-p4:done",
+   "arakhin-p5:done",
+   "arakhin-p6:sent",
+   "arakhin-p7:done",
+   "arakhin-p8:ready",
+   "arakhin-p9:ready",
+   "arakhin-s666-mwmely1n:wait",
+   "arakhin-s717-mwmelyxg:wait",
+   "arakhin-s762-mwmelzs3:wait",
+   "arakhin-s666-mwmemjeg:wait",
+   "arakhin-s717-mwmemk1f:wait",
+   "arakhin-s762-mwmemksk:wait",
+   "arakhin-s762-mwmeq97d:wait",
+   "arakhin-s1384-mwmeqayj:wait",
+   "arakhin-s1395-mwmeqbko:wait",
+   "arakhin-s1409-mwmeqeeh:wait",
+   "arakhin-s1498-mwmeqm9o:wait",
+   "arakhin-s1552-mwmeqn6o:wait",
+   "arakhin-s1498-mwmf7e34:wait"
+  ]
+ },
+ "errors": []
+}

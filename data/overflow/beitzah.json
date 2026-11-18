@@ -1,6 +1,6 @@
 {
  "slug": "beitzah",
- "made": "2026-11-17 14:23",
+ "made": "2026-11-18 03:44",
  "profile": "a4-large",
  "pages": {
   "a4": 23,
@@ -8,15 +8,18 @@
  },
  "sq25": {
   "a4": 21,
-  "a4-large": 94
+  "a4-large": 93
  },
- "count": 16,
+ "count": 17,
  "firstTool": {
-  "5": 7
+  "5": 8,
+  "3": 3
  },
- "joinCands": 11,
+ "joinCands": 12,
  "mechSplitCands": 0,
- "ctlMismatch": [],
+ "ctlMismatch": [
+  "u573.3"
+ ],
  "rejected": 3,
  "stale": [],
  "unplaced": [],
@@ -160,9 +163,72 @@
    "miss": 10,
    "long": true,
    "tail": false,
-   "sug": [],
-   "tool6": true,
-   "leave": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "משום שראוי להשען עליו, אבל כאן יאמר שהתירו רבנן רק כדי שלא יסריח",
+     "replace": "שראוי להשען עליו, אבל כאן יאמרו שהתירו רק שלא יסריח",
+     "why": "השמטת 'משום', 'רבנן' ו'כדי', המשמעות בעינה",
+     "kind": "replace",
+     "html": "ובעור שלפני הדורסן לא מוכח, שראוי להשען עליו, אבל כאן יאמרו שהתירו רק שלא יסריח, ומ\"ל שחיטה ומ\"ל מליחה.",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "tool6": false
+  },
+  {
+   "key": "u573.3",
+   "id": "da4182fbdab1fdf9",
+   "u": 573,
+   "li": 3,
+   "daf": "יא:",
+   "cls": "b0 a0",
+   "mc": "main",
+   "html": "<i class=\"am\">ר&quot;י:</i> אף הפותח חביתו ומתחיל בעיסתו ע&quot;ג הרגל, <i class=\"am\">וכר&quot;י </i>דיגמור.",
+   "ph": "<i class=\"am\">ר&quot;י:</i> אף הפותח חביתו ומתחיל בעיסתו ע&quot;ג הרגל, <i class=\"am\">וכר&quot;י </i>דיגמור.",
+   "text": "ר\"י: אף הפותח חביתו ומתחיל בעיסתו ע\"ג הרגל, וכר\"י דיגמור.",
+   "over": "דיגמור.",
+   "nA4": 1,
+   "nLarge": 2,
+   "missPx": 1.0,
+   "miss": 1,
+   "long": false,
+   "tail": false,
+   "sug": [
+    {
+     "tool": 5,
+     "kind": "join",
+     "target": "prev",
+     "html": "<i class=\"am\">ר&quot;י:</i> אף הפותח חביתו ומתחיל בעיסתו ע&quot;ג הרגל, <i class=\"am\">וכר&quot;י </i>דיגמור. <i class=\"am\">ר&quot;י:</i> אף הפותח חביתו ומתחיל בעיסתו ע&quot;ג הרגל, <i class=\"am\">וכר&quot;י </i>דיגמור.",
+     "targetOrig": "<i class=\"am\">ר&quot;י:</i> אף הפותח חביתו ומתחיל בעיסתו ע&quot;ג הרגל, <i class=\"am\">וכר&quot;י </i>דיגמור.",
+     "targetLines": 1,
+     "why": "איחוי עם השורה הקודמת",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "ctlMismatch": {
+    "a4-large": [
+     1
+    ],
+    "a4": [
+     1
+    ]
+   },
+   "tool6": false
   },
   {
    "key": "u633.2",
@@ -485,9 +551,25 @@
    "miss": 5,
    "long": true,
    "tail": false,
-   "sug": [],
-   "tool6": true,
-   "leave": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "ותלה בה פירות שונים",
+     "replace": "ותלה בה פירות",
+     "why": "'שונים' אינו מוסיף לדין",
+     "kind": "replace",
+     "html": "דסככה כהלכתה ועטרה בקרמים וסדינין ותלה בה פירות, אסור להסתפק מהן עד מוציו\"ט האחרון של חג. ואם התנה מותר.",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u2205.1",
@@ -507,9 +589,25 @@
    "miss": 7,
    "long": true,
    "tail": false,
-   "sug": [],
-   "tool6": true,
-   "leave": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "כיוון דטלטול צורך הוצאה הוא",
+     "replace": "דטלטול לצורך הוצאה",
+     "why": "אותו נימוק בקיצור",
+     "kind": "replace",
+     "html": "<i class=\"am\">ר&quot;פ:</i> <i class=\"am\">הא ב&quot;ש </i>דאין מוציאין קטן, לולב, וס&quot;ת <i class=\"am\">לרה&quot;ר</i>, <i class=\"am\">והא כב&quot;ה </i>דמתירין ואין לחלק בין טלטול להוצאה, דטלטול לצורך הוצאה.",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "h1111",

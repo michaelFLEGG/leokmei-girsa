@@ -1,0 +1,242 @@
+{
+ "slug": "niddah",
+ "perakim": {
+  "1": {
+   "status": "published",
+   "published": "2026-11-18T18:39:56Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p01-u01",
+    "niddah-p01-u02",
+    "niddah-p01-u03",
+    "niddah-p01-u04",
+    "niddah-p01-u05"
+   ],
+   "result": {
+    "generated": 120,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 93
+   }
+  },
+  "2": {
+   "status": "published",
+   "published": "2026-11-18T18:39:56Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p02-u01",
+    "niddah-p02-u02",
+    "niddah-p02-u03",
+    "niddah-p02-u04"
+   ],
+   "result": {
+    "generated": 92,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 82
+   }
+  },
+  "3": {
+   "status": "published",
+   "published": "2026-11-18T18:39:56Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p03-u01",
+    "niddah-p03-u02",
+    "niddah-p03-u03",
+    "niddah-p03-u04"
+   ],
+   "result": {
+    "generated": 102,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 70
+   }
+  },
+  "4": {
+   "status": "published",
+   "published": "2026-11-18T18:39:57Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p04-u01",
+    "niddah-p04-u02",
+    "niddah-p04-u03"
+   ],
+   "result": {
+    "generated": 71,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 61
+   }
+  },
+  "5": {
+   "status": "published",
+   "published": "2026-11-18T18:39:57Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p05-u01",
+    "niddah-p05-u02",
+    "niddah-p05-u03",
+    "niddah-p05-u04"
+   ],
+   "result": {
+    "generated": 84,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 70
+   }
+  },
+  "6": {
+   "status": "published",
+   "published": "2026-11-18T18:39:58Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p06-u01",
+    "niddah-p06-u02",
+    "niddah-p06-u03"
+   ],
+   "result": {
+    "generated": 52,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 50
+   }
+  },
+  "7": {
+   "status": "published",
+   "published": "2026-11-18T18:39:58Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p07-u01",
+    "niddah-p07-u02"
+   ],
+   "result": {
+    "generated": 38,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 27
+   }
+  },
+  "8": {
+   "status": "published",
+   "published": "2026-11-18T18:39:59Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p08-u01"
+   ],
+   "result": {
+    "generated": 19,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 18
+   }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-11-18T18:39:59Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p09-u01",
+    "niddah-p09-u02",
+    "niddah-p09-u03"
+   ],
+   "result": {
+    "generated": 57,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 53
+   }
+  },
+  "10": {
+   "status": "published",
+   "published": "2026-11-18T18:40:00Z",
+   "unc_done": true,
+   "handoff_units": [
+    "niddah-p10-u01",
+    "niddah-p10-u02",
+    "niddah-p10-u03"
+   ],
+   "result": {
+    "generated": 72,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 69
+   }
+  }
+ },
+ "created": "2026-11-18T18:39:55Z",
+ "calibration": [
+  {
+   "perek": 1,
+   "mean": 0.455,
+   "n": 9,
+   "at": "2026-11-18T18:39:55Z"
+  },
+  {
+   "perek": 2,
+   "mean": 0.315,
+   "n": 7,
+   "at": "2026-11-18T18:39:56Z"
+  },
+  {
+   "perek": 3,
+   "mean": 0.479,
+   "n": 8,
+   "at": "2026-11-18T18:39:56Z"
+  },
+  {
+   "perek": 4,
+   "mean": 0.315,
+   "n": 6,
+   "at": "2026-11-18T18:39:56Z"
+  },
+  {
+   "perek": 5,
+   "mean": 0.523,
+   "n": 7,
+   "at": "2026-11-18T18:39:57Z"
+  },
+  {
+   "perek": 6,
+   "mean": 0.532,
+   "n": 5,
+   "at": "2026-11-18T18:39:57Z"
+  },
+  {
+   "perek": 7,
+   "mean": 0.371,
+   "n": 3,
+   "at": "2026-11-18T18:39:58Z"
+  },
+  {
+   "perek": 8,
+   "mean": 0.852,
+   "n": 2,
+   "at": "2026-11-18T18:39:58Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.329,
+   "n": 5,
+   "at": "2026-11-18T18:39:59Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.546,
+   "n": 6,
+   "at": "2026-11-18T18:39:59Z"
+  }
+ ],
+ "updated": "2026-11-18T18:40:00Z",
+ "done": "2026-11-18T18:40:00Z"
+}

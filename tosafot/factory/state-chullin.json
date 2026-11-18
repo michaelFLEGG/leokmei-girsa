@@ -158,6 +158,73 @@
     "flagged": 3,
     "questions": 111
    }
+  },
+  "9": {
+   "status": "published",
+   "published": "2026-11-18T18:39:53Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chullin-p09-u01",
+    "chullin-p09-u02",
+    "chullin-p09-u03",
+    "chullin-p09-u04",
+    "chullin-p09-u05",
+    "chullin-p09-u06"
+   ],
+   "result": {
+    "generated": 130,
+    "decided": 0,
+    "unchecked": 1,
+    "flagged": 1,
+    "questions": 91
+   }
+  },
+  "10": {
+   "status": "published",
+   "published": "2026-11-18T18:39:54Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chullin-p10-u01",
+    "chullin-p10-u02"
+   ],
+   "result": {
+    "generated": 44,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 25
+   }
+  },
+  "11": {
+   "status": "published",
+   "published": "2026-11-18T18:39:54Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chullin-p11-u01",
+    "chullin-p11-u02"
+   ],
+   "result": {
+    "generated": 26,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 16
+   }
+  },
+  "12": {
+   "status": "published",
+   "published": "2026-11-18T18:39:55Z",
+   "unc_done": true,
+   "handoff_units": [
+    "chullin-p12-u01"
+   ],
+   "result": {
+    "generated": 21,
+    "decided": 0,
+    "unchecked": 0,
+    "flagged": 0,
+    "questions": 12
+   }
   }
  },
  "created": "2026-11-17T18:40:29Z",
@@ -209,7 +276,32 @@
    "mean": 0.464,
    "n": 11,
    "at": "2026-11-18T06:39:30Z"
+  },
+  {
+   "perek": 9,
+   "mean": 0.502,
+   "n": 11,
+   "at": "2026-11-18T18:39:52Z"
+  },
+  {
+   "perek": 10,
+   "mean": 0.387,
+   "n": 4,
+   "at": "2026-11-18T18:39:53Z"
+  },
+  {
+   "perek": 11,
+   "mean": 0.243,
+   "n": 3,
+   "at": "2026-11-18T18:39:54Z"
+  },
+  {
+   "perek": 12,
+   "mean": 0.223,
+   "n": 2,
+   "at": "2026-11-18T18:39:54Z"
   }
  ],
- "updated": "2026-11-18T06:39:31Z"
+ "updated": "2026-11-18T18:39:55Z",
+ "done": "2026-11-18T18:39:55Z"
 }

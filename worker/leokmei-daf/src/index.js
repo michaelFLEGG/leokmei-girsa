@@ -22,7 +22,7 @@ const SITE = 'https://leokmei.com';
 const DAYS_AHEAD = 10;
 const SEND_HM = '06:00';
 const SEND_UNTIL_H = 12;           // אחרי 12:00 לא שולחים הודעה של הבוקר
-const APPROVE_FIRST = 3;           // שלושת הימים הראשונים - רק באישור
+const APPROVE_FIRST = 0;           // 18.11.2026 בעל הפרויקט: לא מחכים לאישור - בלי אישור יוצא נוסח ברירת המחדל (היה 3)
 const LEARN_MAX = 400;
 
 const CORS = {

@@ -1,0 +1,33 @@
+# הדף היומי בווטסאפ - אישור מראש של ימים (18.11.2026, בקשת בעל הפרויקט:
+# "לא לחכות לאישור שלי - אם לא אישרתי, ישלח את ברירת המחדל").
+# השרת (worker/leokmei-daf) דורש אישור לשלוש ההודעות הראשונות (APPROVE_FIRST). עד שהשינוי ל-0 ייפרס,
+# הפעולה הזו מאשרת את הימים הקרובים בנוסח ברירת המחדל, דרך /approve עם מפתח המנהל שבסודות המאגר.
+# הפעלה ידנית בלבד. אינה שולחת שום הודעה.
+name: daf-approve
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'ימים לאישור, מופרדים ברווח (YYYY-MM-DD)'
+        required: true
+permissions:
+  contents: read
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: אישור הימים
+        env:
+          K: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+          DAYS: ${{ github.event.inputs.days }}
+        run: |
+          set -e
+          for d in $DAYS; do
+            echo "$d" | grep -Eq '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' || { echo "יום לא תקין: $d"; exit 1; }
+            r=$(curl -s --max-time 20 -X POST https://leokmei-daf.m7654301.workers.dev/approve \
+              -H "x-admin-key: $K" -H 'content-type: application/json' \
+              --data "{\"d\":\"$d\",\"text\":\"אישור מראש - ברירת המחדל\"}")
+            echo "$d: $r"
+            echo "$r" | grep -q '"ok":true' || exit 1
+          done

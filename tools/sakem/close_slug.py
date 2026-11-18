@@ -48,9 +48,10 @@ with sync_playwright() as p:
                   return (o.out.items||[]).filter(x=>!x.nochange&&!d[x.iid]).length}""", jid)
             else:
                 r.update(pg.evaluate("j=>skpAuto.closeAll(j)", jid))
-                pg.evaluate("async()=>{if(typeof pubPending==='function'&&pubPending())await pubNow(1)}")
-                pg.wait_for_timeout(1500)
-                r['pending_after'] = pg.evaluate("()=>typeof pubPending==='function'?pubPending():-1")
+                # פרסום לשכבה החיה, והמתנה עד שהתור ריק (פרסום שכבר רץ ברקע - ממתינים לו; נמדד 18.11: 293 עריכות, כחצי דקה)
+                r['pending_after'] = pg.evaluate("""async()=>{if(typeof pubPending!=='function')return -1;
+                  for(let k=0;k<40&&pubPending();k++){try{await pubNow(1)}catch(e){}if(pubPending())await new Promise(r=>setTimeout(r,3000))}
+                  return pubPending()}""")
         except Exception as e:
             r['error'] = str(e)[:300]
         print(json.dumps(r, ensure_ascii=False))

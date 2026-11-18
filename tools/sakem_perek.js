@@ -223,8 +223,16 @@
           apply.filter(x=>!done.includes(x)).forEach(x=>{skpDec(x,'keep',null,R);res.keep++})}}
       finally{SKP.rev=prev}
       await SKP_DQ;
-      try{const j2=await api('/sakem/out?jid='+encodeURIComponent(jid));const d2=j2.dec||{};
-        res.after=(j2.out.items||[]).filter(x=>!x.nochange&&!d2[x.iid]).length;res.st=j2.job?j2.job.st:''}catch(e){res.after=-1}
+      try{let j2=await api('/sakem/out?jid='+encodeURIComponent(jid));let d2=j2.dec||{};
+        res.after=(j2.out.items||[]).filter(x=>!x.nochange&&!d2[x.iid]).length;res.st=j2.job?j2.job.st:'';
+        /* מונה העבודה בתור (dec) נשמר ברשומה נפרדת, וגם בה הכרעות שנשלחו יחד דרסו זו את זו: ההכרעות כולן בשרת,
+           והמונה מראה 26 מתוך 28 (ערכין פרק ב), 0 מתוך 30 (פרק ט) - והפרק נשאר "מוכן לסקירה". הכרעה קיימת
+           נשלחת שוב כפי שהיא, והשרת סופר מחדש */
+        if(!res.after&&j2.job&&(+j2.job.dec||0)<(+j2.job.shown||0)){
+          const it=R.items.filter(x=>d2[x.iid]&&d2[x.iid].act!=='edit').pop()||R.items.filter(x=>d2[x.iid]).pop();
+          if(it){const b={slug:SLUG,jid,iid:it.iid,act:d2[it.iid].act,layers:d2[it.iid].layers||[],orig:it.orig||'',prop:it.text||'',gem:''};
+            const r=await api('/sakem/dec',{method:'POST',body:JSON.stringify(b)});res.recount=1;res.st=r&&r.job?r.job.st:res.st}}}
+      catch(e){res.after=-1}
       skpEmptySet(jid,1);
       return res}};
 

@@ -3,7 +3,7 @@
  "jid": "arakhin-s2296-mwmkiivp",
  "slug": "arakhin",
  "title": "ערכין פרק תשיעי - המוכר שדהו · סבב כללים חדשים (פרומפט 62) - דף ל.",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 2296,
@@ -59,7 +59,15 @@
    "keep": [
     "אינו מחשב אלא - לשון המשנה, 'שנאמר' נשאר לפי הנחיית הסבב",
     "ומכר הראשון לשני - לשון המשנה, 'שנאמר' נשאר לפי הנחיית הסבב"
-   ]
+   ],
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -109,8 +117,70 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (104 תווים, עד 52): מכרה לראשון במאתים ומכר הראשון לשני במנה"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795035337188
+ "t": 1795035343836,
+ "summary": "בפרק: 4 הדגשות במשנה, 0 רווחים, 1 מקפי תירוץ, 1 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 4,
+  "space": 0,
+  "dash": 1,
+  "side": 1,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 2,
+  "perSeg": {
+   "bold": 2,
+   "space": 0,
+   "dash": 0.5,
+   "side": 3.5,
+   "nose": 0.5,
+   "widow": 0
+  },
+  "bold": 4,
+  "space": 0,
+  "dash": 1,
+  "side": 1,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 4,
+  "block": 0,
+  "lenPct": -1.6,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 2,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 13
+  }
+ },
+ "counts": {
+  "shown": 2,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

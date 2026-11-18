@@ -3,7 +3,7 @@
  "jid": "arakhin-s717-mwmelyxg",
  "slug": "arakhin",
  "title": "ערכין פרק שני - אין נערכין · סבב על הנוסח החי (s21, s22)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 717,
@@ -46,6 +46,14 @@
     "nose": 0,
     "lenA": 395,
     "lenB": 395
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -89,8 +97,70 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"אם נקבע ראש חודש\", \"נקבע ראש חודש בזמנו\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795034015464
+ "t": 1795034022567,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 4 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 4,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 2,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 2,
+   "side": 7,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 4,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 1,
+  "block": 0,
+  "lenPct": 0,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 7
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

@@ -1,6 +1,6 @@
 {
  "slug": "arakhin",
- "made": "2026-11-18 10:01",
+ "made": "2026-11-18 10:47",
  "profile": "a4-large",
  "pages": {
   "a4": 36,
@@ -13,16 +13,14 @@
  "count": 52,
  "firstTool": {
   "5": 21,
-  "3": 6,
+  "3": 7,
   "4": 3
  },
  "joinCands": 40,
  "mechSplitCands": 3,
  "ctlMismatch": [],
  "rejected": 21,
- "stale": [
-  "u1882.1"
- ],
+ "stale": [],
  "unplaced": [],
  "heads": {
   "count": 17,
@@ -1147,9 +1145,25 @@
    "miss": 9,
    "long": true,
    "tail": false,
-   "sug": [],
-   "tool6": true,
-   "leave": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "שנים אתה מחשב, ואי אתה מחשב חדשים,",
+     "replace": "שנים ולא חדשים,",
+     "why": "אותו דין בקיצור",
+     "kind": "replace",
+     "html": "מנין שאין מחשבין חדשים עם ההקדש? ת\"ל: <i class=\"ps\">'וחשב לו הכהן את הכסף על פי </i><i class=\"ps\">השנים</i><i class=\"ps\"> הנותרות</i>', שנים ולא חדשים,",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u1910.1",

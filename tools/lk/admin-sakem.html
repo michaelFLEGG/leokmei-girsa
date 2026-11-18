@@ -113,7 +113,9 @@ a.go.soft { background:transparent; color:var(--velvet); border-color:var(--line
     .then(function (r) { return r.json(); })
     .then(function (j) {
       if (!j.ok) throw new Error(j.error || 'שגיאה');
-      ALL = j.items || [];
+      /* פרומפט 63 (18.11.2026): עבודה שהצעותיה עלו וכל קטעיה "ללא שינוי" (0 מתוך 0) אין בה מה לסקור - נספרת "נסקר".
+         השרת משאיר אותה "מוכן" (הוא סוגר רק כשיש הכרעות), והיא ישבה ב"מוכן לסקירה" (ערכין, s1409) */
+      ALL = (j.items || []).map(function (x) { return (x.st === 'ready' && !(+x.shown)) ? Object.assign({}, x, { st: 'done' }) : x; });
       var sl = {}; ALL.forEach(function (x) { sl[x.slug] = mname(x); });
       Object.keys(sl).sort(function (a, b) { return ORDER.indexOf(a) - ORDER.indexOf(b); }).forEach(function (s) {
         var o = document.createElement('option'); o.value = s; o.textContent = sl[s]; sel.appendChild(o); });

@@ -1,15 +1,8 @@
 {
  "slug": "shevuot",
- "made": "2026-11-18 09:59",
+ "made": "2026-11-18 10:23",
  "found": 1,
- "applied": 1,
- "liveSkipped": 0,
- "examples": [
-  {
-   "daf": "מה:",
-   "key": "u2586.5",
-   "before": "א. דאין עובר בבל תלין ב. דאין שכיר משהא שכרו ",
-   "after": "<i class=\"am\">א.</i> דאין עובר בבל תלין <i class=\"am\">ב.</i> דאין שכיר משהא שכרו "
-  }
- ]
+ "applied": 0,
+ "liveSkipped": 1,
+ "examples": []
 }

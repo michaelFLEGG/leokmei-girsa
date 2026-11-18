@@ -3,7 +3,7 @@
  "jid": "arakhin-s1498-mwmf7e34",
  "slug": "arakhin",
  "title": "ערכין פרק חמישי - האומר משקלי עלי · סבב על הנוסח החי (s15)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 1498,
@@ -69,6 +69,14 @@
     "nose": 0,
     "lenA": 179,
     "lenB": 179
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -94,6 +102,14 @@
     "nose": 0,
     "lenA": 147,
     "lenB": 147
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -135,7 +151,15 @@
    "keep": [
     "וחכא לא אמר - צלע שנייה במחלוקת, כנגד {אם:ר\"מ אומר:} שבגוף השורה שלמעלה; מימרא קצרה מאוד",
     "רבא חלה ונכנסו - פתיחת מעשה (רבא חלה), ולא רבא כדובר שאומר"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -160,6 +184,14 @@
     "nose": 0,
     "lenA": 174,
     "lenB": 174
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -206,7 +238,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"שור זה עלי עולה\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s6",
@@ -233,8 +273,70 @@
     "nose": 0,
     "lenA": 307,
     "lenB": 307
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795032864570
+ "t": 1795032869587,
+ "summary": "בפרק: 4 הדגשות במשנה, 2 רווחים, 5 מקפי תירוץ, 1 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 4,
+  "space": 2,
+  "dash": 5,
+  "side": 1,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 6,
+  "perSeg": {
+   "bold": 0.67,
+   "space": 0.33,
+   "dash": 0.83,
+   "side": 3.83,
+   "nose": 0.33,
+   "widow": 0
+  },
+  "bold": 4,
+  "space": 2,
+  "dash": 5,
+  "side": 1,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 4,
+  "block": 0,
+  "lenPct": -1.7,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 7
+  }
+ },
+ "counts": {
+  "shown": 2,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

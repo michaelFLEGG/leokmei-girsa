@@ -2479,11 +2479,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      (dup), כך שכותרת הצד ומרקמה עם הטקסט אינם נפגעים לעולם. */
   .rail.hw{grid-template-columns:calc(var(--dafw,2.9em) + .4em) minmax(0,1fr)}
   .rail.hw .dafmark{grid-column:1;justify-self:start}
-  .rail.hw .win{grid-column:2;justify-self:end}
+  .rail.hw .win{grid-column:var(--hwc,2);justify-self:end}
   .rail.hw.dup{grid-template-columns:0 minmax(0,1fr)}
   .rail.hw.dup .dafmark{transform:translateY(-.95em);white-space:nowrap}
-  .rail.hw:not(:has(.dafmark)){grid-template-columns:minmax(0,1fr) 0}
-  .rail.hw:not(:has(.dafmark)) .win{grid-column:1}
+  /* 18.11.2026 (מהירות): הטור של החלון נמסר במשתנה ולא בבורר ":has() .win" - הבורר ההוא חייב את הדפדפן לחשב מחדש את כל
+     חלונות המסכת בכל הקשה. התוצאה זהה. */
+  .rail.hw:not(:has(.dafmark)){grid-template-columns:minmax(0,1fr) 0;--hwc:1}
   /* ההתאמה של החלונות רצה אחרי הציור הראשון (fitSoon); עד אז הם מוסתרים כדי שלא יקפצו */
   .flow.fitting .rail .win{visibility:hidden}
   /* זנב הפרק שטרם נפרס (revealTail): בדף, בלי פריסה וציור. display:none ולא
@@ -2610,7 +2611,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     body:not(.prn) .main.mishna:has(>p.a2:last-child){margin-bottom:var(--lhpx)}
     body:not(.prn) .main.mishna:has(>p.a3:last-child){margin-bottom:calc(var(--lhpx) * 1.5)}
     body:not(.prn) .main.mishna:has(>p.a4:last-child){margin-bottom:calc(var(--lhpx) * 2)}
-    body:not(.prn) .flow:not(.book) .row:not(:has(>.main.mishna)):not(.perek-start):not(.perek-num):not(.perek-name):not(.perek-range)+.row:has(>.main.mishna>p.b0:first-child)>.main.mishna{margin-top:calc(var(--lhpx) * .5)}}
+    body:not(.prn) .flow:not(.book) .row:not(:has(>.main.mishna)):not(.perek-start):not(.perek-num):not(.perek-name):not(.perek-range)+.row>.main.mishna:has(>p.b0:first-child){margin-top:calc(var(--lhpx) * .5)}}
   /* י (7.11.2026): ציון הדף של וילנא (ב. ג: ...) מרוחק מעט יותר מן הטקסט */
   .rail:not(.hw) .dafmark{margin-left:.45em}
   .main.mishna p.hatz{font-size:calc(1.1em * var(--mr))}
@@ -4285,8 +4286,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      המקום כבר נערך בעבר, נקודת המוצא היא הנוסח המקורי שנשמר
      בעריכה - ולא הנוסח המתוקן שעל המסך. בלעדי זה היה "הנוסח שהיה"
      שנשלח לוורד מתאר טקסט שאינו קיים בו. */
-  function edBase(el){
-    const e=ED.find(x=>x.k===el.dataset.ek);
+  function edBase(el,byk){
+    /* byk: מפה ממפתח לעריכה, נבנית פעם אחת בכניסה למצב עריכה (18.11.2026: עד כאן נסרקה כל רשימת העריכות לכל פסקה) */
+    const e=byk?byk.get(el.dataset.ek):ED.find(x=>x.k===el.dataset.ek);
     el.__was=e?e.was:txtOf(el);
     el.__wasH=e?(e.wasH!==undefined?e.wasH:htmlOf(el)):htmlOf(el);
     el.__wasP=(e&&e.wasP!==undefined)?e.wasP:pcls(el)}
@@ -4443,13 +4445,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     D.pages.forEach((p,pi)=>p.units.forEach(u=>{if(u.k==='u'||u.k==='m')out.push({u,pi,daf:p.daf})}));
     return out}
   /* מאתר רצף פסקאות סמוכות ביחידה אחת שנוסחן הוא texts. דורש ייחוד. */
+  /* 18.11.2026 (מהירות): הנוסח המנורמל של כל פסקה נשמר, במקום ביטוי רגולרי על כל פסקאות המסכת לכל עריכה */
+  const WNM=new Map();
+  function WNC(x){let r=WNM.get(x);if(r===undefined){r=WN(x);if(WNM.size>80000)WNM.clear();WNM.set(x,r)}return r}
   function findRun(texts,daf){
-    const hits=[];
+    const hits=[],tn=texts.map(WN);
     for(const o of unitsAll()){
       const L=o.u.l;
       for(let i=0;i+texts.length<=L.length;i++){
         let ok=true;
-        for(let j=0;j<texts.length;j++)if(!weq(plain(L[i+j][1]),texts[j])){ok=false;break}
+        for(let j=0;j<texts.length;j++){const x=plain(L[i+j][1]);if(x!==texts[j]&&WNC(x)!==tn[j]){ok=false;break}}
         if(ok)hits.push({u:o.u,i,daf:o.daf,pi:o.pi});
       }
     }
@@ -4934,17 +4939,28 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      כבר מצביע על פסקה אחרת. לכידה כזאת היתה כותבת את נוסחו על הפסקה החדשה
      (נמדד: פסקה ריקה שנפתחה ב-Enter קיבלה את נוסח הפסקה שלפניה). */
   let PBUSY=0;
-  function patchPage(snap,keepCaret){PBUSY++;try{return patchPage0(snap,keepCaret)}finally{PBUSY--}}
-  function patchPage0(snap,keepCaret){
-    const f=$('#flow'),pi=snap.pi,pg=D.pages[pi],us=pg.units,rows=[];
+  /* קריאת הבחירה מאלצת פריסה כשהדף השתנה; בסנכרון של כל המסכת היא נקראת פעם אחת לפני כל ההחלפות (PCAN) */
+  let PCAN=undefined;
+  function selAnchor(){const s=getSelection();return s&&s.rangeCount?s.anchorNode:null}
+  /* כמה עמודים יחד: ההכנה וההתאמה (postRows) נעשות פעם אחת על כל השורות, ולא פריסה מחדש לכל עמוד (18.11.2026) */
+  function patchPages(list,keepCaret){const acc=[];if(keepCaret)PCAN=selAnchor();
+    try{for(const s of list||[])patchPage(s,keepCaret,acc)}finally{PCAN=undefined}
+    postRows(acc);return acc}
+  function patchPage(snap,keepCaret,acc){PBUSY++;try{return patchPage0(snap,keepCaret,acc)}finally{PBUSY--}}
+  function patchPage0(snap,keepCaret,acc){
+    /* 18.11.2026 (מהירות): מקום הסמן נקרא פעם אחת לפני ההחלפות. קריאה לכל שורה אחרי החלפה אילצה פריסה מחדש של כל המסכת
+       בכל שורה (כ-3 שניות בברכות בכל סנכרון) */
+    const CAN=keepCaret?(PCAN!==undefined?PCAN:selAnchor()):null;
+    const f=$('#flow'),pi=snap.pi,pg=D.pages[pi],us=pg.units,rows=[];let APK0=null;
     const nowJ={};us.forEach((u,i)=>nowJ[u.id]=JSON.stringify([u,i===0]));
     for(const id of snap.ids)if(!(id in nowJ)){const r=f.querySelector('#u'+id);if(r)r.remove()}
     us.forEach((u,i)=>{
       if(snap.js[u.id]===nowJ[u.id])return;
       const old=f.querySelector('#u'+u.id);
-      if(old&&keepCaret&&caretIn(old))return;
+      if(old&&CAN&&old.contains(CAN))return;
       const nr=rowFromHTML(unitHTML(u,i===0?pg.daf:null,i===0?pi:null));
       if(!nr)return;
+      prepRow(nr,APK0||(APK0=apkSet()));
       if(old)old.replaceWith(nr);
       else{
         let prev=null;for(let j=i-1;j>=0&&!prev;j--)prev=f.querySelector('#u'+us[j].id);
@@ -4953,23 +4969,30 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           if(nx)nx.before(nr);else return}
       }
       rows.push(nr)});
-    postRows(rows);
+    if(acc)acc.push(...rows);else postRows(rows);
     return rows}
   /* הכנת שורות חדשות: מפתחות עיגון, סימון עריכות, מצב עריכה, התאמת
      חלונות ואיחוי שורות - הכול רק עליהן */
+  /* 18.11.2026 (מהירות): הכנת שורה (מפתחות, סימון עריכה, contenteditable) נעשית לפני שהיא נכנסת לדף.
+     contenteditable שנקבע על שורה שכבר בדף, כשהסמן בדף והפריסה מלוכלכת, אילץ פריסה מלאה של כל המסכת
+     לכל אלמנט - כחצי שנייה בכל Enter או מחיקה בסוף שורה. */
+  function apkSet(){const APK=new Set();for(const e of ED)if(e.op!=='struct'&&e._ap&&!e.lost)APK.add(e.k);return APK}
+  function prepRow(r,APK){
+    if(r.__prep)return;r.__prep=1;
+    const a=r.querySelector('.anchor');
+    if(a)a.dataset.ek=r.id+(r.classList.contains('u')?'.0':'.w');
+    const m=r.querySelector('.main');
+    if(m){const ps=m.querySelectorAll('p');
+      if(ps.length)ps.forEach((x,i)=>{if(!x.classList.contains('hatz'))x.dataset.ek=r.id+'.'+(i+1)});
+      else if(m.classList.contains('dh')||m.classList.contains('nose'))m.dataset.ek=r.id+'.0'}
+    r.querySelectorAll('.srcb,.mlabel,.bkx').forEach(x=>x.setAttribute('contenteditable','false'));
+    r.querySelectorAll('[data-ek]').forEach(el=>{
+      if(APK.has(el.dataset.ek))el.dataset.edited='1';
+      if(EDIT){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');edBase(el)}})}
   function postRows(rows){
     if(!rows.length)return;
-    for(const r of rows){
-      const a=r.querySelector('.anchor');
-      if(a)a.dataset.ek=r.id+(r.classList.contains('u')?'.0':'.w');
-      const m=r.querySelector('.main');
-      if(m){const ps=m.querySelectorAll('p');
-        if(ps.length)ps.forEach((x,i)=>{if(!x.classList.contains('hatz'))x.dataset.ek=r.id+'.'+(i+1)});
-        else if(m.classList.contains('dh')||m.classList.contains('nose'))m.dataset.ek=r.id+'.0'}
-      r.querySelectorAll('.srcb,.mlabel,.bkx').forEach(x=>x.setAttribute('contenteditable','false'));
-      r.querySelectorAll('[data-ek]').forEach(el=>{
-        if(ED.some(e=>e.op!=='struct'&&e._ap&&!e.lost&&e.k===el.dataset.ek))el.dataset.edited='1';
-        if(EDIT){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');edBase(el)}})}
+    let APK=null;
+    for(const r of rows)if(!r.__prep)prepRow(r,APK||(APK=apkSet()));
     fitAnchors(rows);
     squeezeRows(rows)}
   /* מחזיר את הסמן לפסקה לפי מפתח ולאחר מכן מוודא שהוא בשטח הנראה */
@@ -4992,7 +5015,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     }catch(e){}}
   /* אחרי פיצול או איחוי: עדכון השורות שנגעו בהן, והחזרת הסמן */
   function reflow(key,off,snaps){
-    for(const s of snaps||[])patchPage(s);
+    patchPages(snaps);
     placeCaret(key,off);
     drawEd();pubSoon()}
   function flash(msg){
@@ -5142,7 +5165,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
        מזהה היחידה, ומחיקתה כבר נרשמה כמצבה בשרת, ולכן אינה חוזרת. */
     if(x.fn2){REDO.push({x,nowSnaps,t:Date.now()});if(REDO.length>40)REDO.shift()}
     SLOTS=null;saveED();
-    befores.forEach(b=>patchPage(b));
+    patchPages(befores);
     if(x.key)placeCaret(x.key,0);
     drawEd();pubSoon();syncSoon();
     flash('בוטל');return true}
@@ -5158,7 +5181,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(x.fn2)x.fn2();
     UNDO.push(x);x.t=Date.now();
     SLOTS=null;saveED();
-    befores.forEach(b=>patchPage(b));
+    patchPages(befores);
     drawEd();pubSoon();syncSoon();
     flash('הפעולה הוחזרה');return true}
   function sideAsk(el,info){
@@ -5392,8 +5415,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
        הוורד. הבנייה מחדש נעשית לפני סימון המקומות הניתנים לעריכה. */
     if(was!==on&&typeof NK!=='undefined'&&NK&&D.nk&&D.nk.voc)render(cur);
     const f=$('#flow');
+    const EBK=new Map();if(on)for(const x of ED)if(!EBK.has(x.k))EBK.set(x.k,x);
     f.querySelectorAll('[data-ek]').forEach(el=>{
-      if(on){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');edBase(el)}
+      if(on){el.setAttribute('contenteditable','true');el.setAttribute('spellcheck','false');edBase(el,EBK)}
       else {el.removeAttribute('contenteditable');delete el.__was;delete el.__wasH;delete el.__wasP}});
     /* הסטטוס והפרסום יושבים בסרגל העליון (#edstat), לא ברצועה תחתונה */
     const eb=$('#edpushbtn');
@@ -5980,7 +6004,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!isAdmin()||PUBBUSY||!pubPending())return;
     const k=admKey();if(!k)return;
     try{
-      const body=JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty});
+      const body=JSON.stringify({slug:SLUG,edits:edOut(1),sty:D.sty});
       if(new Blob([body]).size>60000)return;
       fetch(SUGGEST_API+'/edits',{method:'PUT',keepalive:true,
         headers:{'content-type':'application/json; charset=utf-8','x-admin-key':k},body});
@@ -6031,7 +6055,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!admKey()&&!ADMASKED&&typeof askAdminWord==='function'){ADMASKED=true;try{await askAdminWord()}catch(e){}}
     if(admKey()){
       try{
-        const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:edOut(),sty:D.sty})});
+        const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:edOut(1),sty:D.sty})});
         markPub();PUBLAST=sig;PUBMSG='';PUBAT=Date.now();PUBFAIL=0;
         PUBBUSY=false;
         if(mergeIn(j.doc&&j.doc.edits))applyIncoming();
@@ -6527,29 +6551,37 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function tomb(k){TOMB.push({k,del:1,t:Date.now()});TOMB=TOMB.slice(-300);if(PRNRO)return;try{localStorage.setItem(TKEY2,JSON.stringify(TOMB))}catch(e){}}
   /* שינוי מבנה (פיצול/איחוי) אין לו מפתח מקום, ומפתחו לסנכרון נגזר מזמנו */
   function edKeys(){ED.forEach(e=>{if(e.op==='struct'&&!e.k)e.k='s'+e.t})}
-  function edOut(){edKeys();return ED.filter(e=>!e.lost).map(e=>e.op==='struct'
+  /* 18.11.2026 (מהירות): pend - רק מה שטרם פורסם (והמצבות). השרת מאחד לפי מפתח וזמן, ולכן אין צורך לשלוח
+     בכל פרסום את כל עריכות המסכת: בשבת זה היה כ-2.7MB בכל טעינה ובכל פרסום, דרך קו ההעלאה החלש. */
+  function edOut(pend){edKeys();return ED.filter(e=>!e.lost&&!(pend&&e.pub)).map(e=>e.op==='struct'
       ? {k:e.k,op:'struct',kind:e.kind,texts:e.texts,res:e.res,resT:e.resT,psw:e.psw,cl:e.cl,daf:e.daf,t:e.t,by:e.by,ins:e.ins,where:e.where}
       : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
          ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t,by:e.by,sg:e.sg}).concat(TOMB)}
-  function mergeIn(list){edKeys();let changed=false;const by={};ED.forEach(e=>by[e.k]=e);const dd=edDone().s;
+  function mergeIn(list){edKeys();let changed=false;const by={};ED.forEach(e=>by[e.k]=e);const dd=edDone().s;const gone=new Set();let pos=null;
     const have=new Set(ED.filter(e=>!e.del).map(edCSig));
     for(const e of edDedup(list)){const o=by[e.k];
       if(!o&&!e.del&&dd.has(edSig(e)))continue;      /* כבר בבסיס */
       if(!o&&!e.del&&have.has(edCSig(e)))continue;   /* אותה עריכה, תחת מפתח אחר (13.11.2026) */
-      if(e.del){if(o&&(o.t||0)<=(e.t||0)){ED=ED.filter(x=>x!==o);delete by[e.k];changed=true}continue}
+      if(e.del){if(o&&(o.t||0)<=(e.t||0)){gone.add(o);delete by[e.k];changed=true}continue}
       if(!o||(o.t||0)<(e.t||0)){const n=Object.assign({pub:o?o.pub:1},e);n._sig=String(e.k)+'|'+(e.t||0);
         if(o&&o._ap&&o.op!=='struct')n._cur=o.now;    /* הנתונים כבר נושאים את הנוסח הישן שלה */
         if(o&&o._ap&&o.op==='struct')n._ap=1;           /* מבנה שכבר הוחל - אינו מוחל פעמיים */
-        if(o)ED[ED.indexOf(o)]=n;else ED.push(n);by[e.k]=n;changed=true}
+        if(o){if(!pos)pos=new Map(ED.map((x,i)=>[x,i]));const ix=pos.get(o);ED[ix]=n;pos.set(n,ix)}else ED.push(n);by[e.k]=n;changed=true}
       else if(e.ing&&!o.ing){o.ing=e.ing}}
+    if(gone.size)ED=ED.filter(x=>!gone.has(x));
     if(changed)saveED();return changed}
   /* הסנכרון בין מכשירים הוא חלק מאותו פרסום מרוכז (pubNow כותב את אותה
      רשימה לאותה נקודת קליטה), ולכן אינו נשלח בנפרד על כל תיקון */
   function syncSoon(){queuePub()}
   async function syncNow(){
     if(!isAdmin()||!admKey()||SYNCBUSY)return;SYNCBUSY=true;
-    try{const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:PRNRO?[]:edOut(),sty:D.sty})});
-      if(mergeIn(j.doc&&j.doc.edits))applyIncoming()}
+    try{const j=await api('/edits',{method:'PUT',body:JSON.stringify({slug:SLUG,edits:PRNRO?[]:edOut(1),sty:D.sty})});
+      const srv=(j.doc&&j.doc.edits)||[];
+      /* ריפוי: עריכה שסומנה כמפורסמת ואינה בשרת (שחזור, מחיקה בשרת) נשלחת שוב בפרסום הבא - כמו בשליחה המלאה שהייתה כאן */
+      if(!PRNRO&&j.doc){const sk=new Set(srv.map(e=>e.k));let lost=0;
+        for(const e of ED)if(e.pub&&!e.lost&&e.op!=='struct'&&!sk.has(e.k)&&!edDone().s.has(edSig(e))){e.pub=0;lost++}
+        if(lost)queuePub()}
+      if(mergeIn(srv))applyIncoming()}
     catch(e){if(/אין הרשאה/.test(e.message||''))devRevoked()}
     SYNCBUSY=false}
   /* עריכות שהגיעו ממכשיר אחר: מוחלות על הנתונים, ועל המסך רק בשורות
@@ -6557,7 +6589,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function applyIncoming(){
     const snaps=D.pages.map((p,i)=>snapOf(i));
     applyStruct();
-    snaps.forEach(s=>patchPage(s,true));
+    patchPages(snaps,true);
     applyEdits();drawEd()}
   /* המכשיר הזה כבר אינו מוכר (בוטל מרשימת המכשירים) */
   function devRevoked(){
@@ -6604,7 +6636,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
             applyStructAsync().then(()=>{
               /* הלומד עבר פרק בינתיים: מציירים את הפרק החדש מן הנתונים המתוקנים */
               if(c0!==cur||a0!==ALL||BOOK||PRINTING){render(cur);return}
-              snaps.forEach(sn=>patchPage(sn,true));
+              patchPages(snaps,true);
               applyEdits()})}
         }else render(cur)}}
     catch(e){}}

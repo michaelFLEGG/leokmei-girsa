@@ -533,7 +533,7 @@
   function skmBatchEnd(B){
     window.SKMB=null;if(!B)return;
     SLOTS=null;if(B.n)saveED();
-    B.befores.forEach(b=>patchPage(b));
+    patchPages(B.befores);
     if(B.n){drawEd();pubSoon();syncSoon();if($('#edn'))$('#edn').textContent=ED.length}}
   function skmBatchUndo(B){
     if(!B||!B.undo.length)return false;
@@ -541,7 +541,7 @@
     B.undo.slice().reverse().forEach(x=>{try{if(x&&x.fn)x.fn()}catch(e){}});
     B.pre.forEach((snap,pi)=>{D.pages[pi].units=JSON.parse(snap)});
     UNDO.length=0;SLOTS=null;saveED();
-    befores.forEach(b=>patchPage(b));
+    patchPages(befores);
     drawEd();pubSoon();syncSoon();if($('#edn'))$('#edn').textContent=ED.length;
     return true}
   window.skmBatchStart=skmBatchStart;window.skmBatchEnd=skmBatchEnd;window.skmBatchUndo=skmBatchUndo;
@@ -585,7 +585,7 @@
     /* פרומפט 27: עיטור ליד כותרת שההצעה מוחקת ([מחק-עיטור:<מזהה>], ראה SKC.hatzDel). רק יחידת עיטור
        (k=hatz), ובאותה רשומה בדיוק שהעורך כותב ב"מחק עיטור" (hdel) - כך המחיקה עוברת לאתר ולוורד */
     const undoAll=()=>{pre.forEach(z=>{D.pages[z.pi].units=JSON.parse(z.snap)});
-      RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});SLOTS=null;if(!B)befores.forEach(b=>patchPage(b))};
+      RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});SLOTS=null;if(!B)patchPages(befores)};
     if(p.hdel&&p.hdel.length){
       try{p.hdel.forEach(id=>{
           const o=os.find(x=>x.u.id===id)||hdOut.find(x=>x.u.id===id);
@@ -796,7 +796,7 @@
       pre.forEach(z=>{D.pages[z.pi].units=JSON.parse(z.snap)});
       RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});
       OLDS.reverse().forEach(([o,j])=>{Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,JSON.parse(j))});
-      SLOTS=null;befores.forEach(b=>patchPage(b));
+      SLOTS=null;patchPages(befores);
       throw err}
     /* פרומפט 43 (15.11.2026): הבדיקה שאחרי "קבל". מה שבדף בין היחידה שלפני הקטע ובין היחידה שאחריו חייב להיות
        בדיוק ההצעה שאושרה: כל שורה וכל כותרת צד, בלי שארית (כותרת צד ישנה שנשארה לבד, "והך:" יתום) ובלי חוסר.
@@ -806,7 +806,7 @@
       pre.forEach(z=>{D.pages[z.pi].units=JSON.parse(z.snap)});
       RECS.forEach(e=>{const i=ED.indexOf(e);if(i>-1)ED.splice(i,1)});
       OLDS.reverse().forEach(([o,j])=>{Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,JSON.parse(j))});
-      SLOTS=null;if(!B)befores.forEach(b=>patchPage(b));
+      SLOTS=null;if(!B)patchPages(befores);
       throw err}
     const n=RECS.length+OLDS.length;
     if(!n)return {n:0};
@@ -816,7 +816,7 @@
       OLDS.slice().reverse().forEach(([o,j])=>{Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,JSON.parse(j))})}});
     if(B){SLOTS=null;B.undo.push(UNDO[UNDO.length-1]);B.n+=n;return {n,recs:RECS}}
     SLOTS=null;saveED();
-    befores.forEach(b=>patchPage(b));
+    patchPages(befores);
     const first=skmUnits(p.ids).find(o=>o.u.l&&o.u.l.length)||flatU().find(o=>o.u.l&&o.u.l.length&&pis.indexOf(o.pi)>-1);
     if(first)placeCaret('u'+first.u.id+'.1',0);
     drawEd();pubSoon();syncSoon();

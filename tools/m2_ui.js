@@ -297,7 +297,7 @@
     else{const nu=D.pages[h.pi].units.find(u=>u.id===t);if(nu)nu.hph={texts:[prev,next],head,daf}}
     UNDO.length=0;UNDO.push({e:kind==='hdel'?se:null,snaps:[{pi:h.pi,snap:usnap}],key:kind==='hdel'?'':'u'+t+'.0',t:Date.now()});
     SLOTS=null;saveED();decoHide();
-    snp.forEach(s=>patchPage(s));
+    patchPages(snp);
     if(kind==='hrep')setTimeout(()=>placeCaret('u'+t+'.0',0),30);
     drawEd();pubSoon();syncSoon();
     flash(kind==='hdel'?'העיטור נמחק (Ctrl+ז מבטל)':'העיטור הוחלף בשורה ריקה: כתוב את הכותרת');

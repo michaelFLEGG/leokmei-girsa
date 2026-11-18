@@ -1,0 +1,673 @@
+{
+ "slug": "shabbat",
+ "jobs": [
+  {
+   "jid": "shabbat-s1-mwkr9e5n",
+   "items": 52,
+   "open": 1,
+   "result": {
+    "ok": 0,
+    "skip": 1,
+    "skipped": [
+     "s52"
+    ],
+    "ms": 1
+   },
+   "forced": {
+    "ok": 0,
+    "bad": [
+     "s52: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (אחר החורבן שעל ו'). ראית ואתה מאשר? לחץ שוב \"קבל\" - והיא "
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s1192-mwkr9f0d",
+   "items": 61,
+   "open": 60,
+   "result": {
+    "ok": 5,
+    "skip": 55,
+    "skipped": [
+     "s1",
+     "s2",
+     "s3",
+     "s5",
+     "s6",
+     "s7",
+     "s8",
+     "s9",
+     "s10",
+     "s11",
+     "s12",
+     "s13",
+     "s14",
+     "s15",
+     "s16",
+     "s17",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s22",
+     "s23",
+     "s24",
+     "s25",
+     "s26",
+     "s28",
+     "s29",
+     "s30",
+     "s31",
+     "s32",
+     "s33",
+     "s34",
+     "s35",
+     "s36",
+     "s37",
+     "s38",
+     "s39",
+     "s40",
+     "s41",
+     "s42",
+     "s43",
+     "s45",
+     "s46",
+     "s47",
+     "s48",
+     "s49",
+     "s51",
+     "s52",
+     "s54",
+     "s55",
+     "s56",
+     "s57",
+     "s59",
+     "s60",
+     "s61"
+    ],
+    "ms": 524
+   },
+   "forced": {
+    "ok": 48,
+    "bad": [
+     "s6: קטע שלם נעלם (לפני [קבוע:1305])",
+     "s8: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (אבל להקפות - מותר, | דרשב\"ג: של בית אבא). ראית ואתה מאשר?",
+     "s30: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (אף כל - להביא | שבמפורש כתוב 'לֹא תִלְבַּשׁ). ראית ואתה מ",
+     "s32: נוספו שורות במקום שלא היו בו שורות",
+     "s36: ההחלה לא תאמה להצעה ובוטלה כולה (שורה כפולה בדף: \"בטומאה חלקו: לר\"א: קיפול אינו מועיל, ועו\"). שום דבר לא השתנה",
+     "s42: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (עתידה א\"י שתוציא גלוסקאות). ראית ואתה מאשר? לחץ שוב \"קבל\"",
+     "s45: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (שאם כר\"ש - גם). ראית ואתה מאשר? לחץ שוב \"קבל\" - והיא תוחל"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s2426-mwkr9fsp",
+   "items": 29,
+   "open": 24,
+   "result": {
+    "ok": 1,
+    "skip": 23,
+    "skipped": [
+     "s2",
+     "s6",
+     "s7",
+     "s8",
+     "s9",
+     "s10",
+     "s11",
+     "s12",
+     "s13",
+     "s14",
+     "s15",
+     "s16",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s22",
+     "s23",
+     "s24",
+     "s25",
+     "s26",
+     "s27",
+     "s28"
+    ],
+    "ms": 266
+   },
+   "forced": {
+    "ok": 18,
+    "bad": [
+     "s8: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (עפר תיחוח - לרבה | שעמוק הוא ואין לגזור). ראית ואתה מאשר?",
+     "s9: ההחלה לא תאמה להצעה ובוטלה כולה (בדף: \"צד: מיתיבי\", בהצעה: \"צד: ורבי יוסי\"). שום דבר לא השתנה",
+     "s13: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (א. שמן יש בו | כלי שני אינו מבשל,). ראית ואתה מאשר? לחץ ש",
+     "s14: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (ופשיטא שלא נגע, | שאר\"א: האוחז באמה ומשתין). ראית ואתה מא",
+     "s28: נוספו שורות במקום שלא היו בו שורות"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s3082-mwkr9gjr",
+   "items": 20,
+   "open": 15,
+   "result": {
+    "ok": 0,
+    "skip": 15,
+    "skipped": [
+     "s1",
+     "s2",
+     "s3",
+     "s4",
+     "s6",
+     "s7",
+     "s8",
+     "s9",
+     "s10",
+     "s11",
+     "s13",
+     "s14",
+     "s15",
+     "s18",
+     "s21"
+    ],
+    "ms": 8
+   },
+   "forced": {
+    "ok": 15,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s3269-mwkr9hbd",
+   "items": 26,
+   "open": 22,
+   "result": {
+    "ok": 3,
+    "skip": 19,
+    "skipped": [
+     "s1",
+     "s2",
+     "s3",
+     "s5",
+     "s9",
+     "s10",
+     "s11",
+     "s13",
+     "s14",
+     "s15",
+     "s18",
+     "s19",
+     "s20",
+     "s21",
+     "s22",
+     "s23",
+     "s24",
+     "s25",
+     "s26"
+    ],
+    "ms": 354
+   },
+   "forced": {
+    "ok": 15,
+    "bad": [
+     "s13: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (כרבו סבר, שאמר רב: | כמה צנועה אשה זו.). ראית ואתה מאשר? ",
+     "s18: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (ד'וַיִּטּוּ אַחֲרֵי הַבָּצַע' -). ראית ואתה מאשר? לחץ שוב",
+     "s21: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (רב: מימות הושע בן). ראית ואתה מאשר? לחץ שוב \"קבל\" - והיא ",
+     "s24: קטע שלם נעלם (לפני [כותרת-נושא:לה\"ר על מפיבושת - האם קיבל דוד])"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s3559-mwkr9i0c",
+   "items": 41,
+   "open": 38,
+   "result": {
+    "ok": 15,
+    "skip": 23,
+    "skipped": [
+     "s1",
+     "s2",
+     "s3",
+     "s4",
+     "s11",
+     "s12",
+     "s14",
+     "s15",
+     "s20",
+     "s21",
+     "s23",
+     "s24",
+     "s26",
+     "s28",
+     "s31",
+     "s32",
+     "s33",
+     "s34",
+     "s35",
+     "s36",
+     "s40",
+     "s42",
+     "s47"
+    ],
+    "ms": 1052
+   },
+   "forced": {
+    "ok": 21,
+    "bad": [
+     "s31: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה ('צלח רכב' - ועולין). ראית ואתה מאשר? לחץ שוב \"קבל\" - והיא",
+     "s33: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (בירית - באחת, וכבלים). ראית ואתה מאשר? לחץ שוב \"קבל\" - וה"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s4064-mwkr9isa",
+   "items": 25,
+   "open": 22,
+   "result": {
+    "ok": 12,
+    "skip": 10,
+    "skipped": [
+     "s2",
+     "s3",
+     "s5",
+     "s6",
+     "s7",
+     "s10",
+     "s21",
+     "s23",
+     "s24",
+     "s29"
+    ],
+    "ms": 884
+   },
+   "forced": {
+    "ok": 9,
+    "bad": [
+     "s10: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה ('הנה' - אבות, 'מהנה'). ראית ואתה מאשר? לחץ שוב \"קבל\" - וה"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s4434-mwkr9jmz",
+   "items": 28,
+   "open": 27,
+   "result": {
+    "ok": 16,
+    "skip": 11,
+    "skipped": [
+     "s1",
+     "s8",
+     "s18",
+     "s19",
+     "s21",
+     "s22",
+     "s23",
+     "s25",
+     "s26",
+     "s27",
+     "s35"
+    ],
+    "ms": 1150
+   },
+   "forced": {
+    "ok": 10,
+    "bad": [
+     "s26: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (זכוכית - כדי לגרור | צרור או אבן -). ראית ואתה מאשר? לחץ "
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s4810-mwkr9kdg",
+   "items": 39,
+   "open": 32,
+   "result": {
+    "ok": 24,
+    "skip": 8,
+    "skipped": [
+     "s8",
+     "s26",
+     "s30",
+     "s32",
+     "s35",
+     "s39",
+     "s43",
+     "s44"
+    ],
+    "ms": 1615
+   },
+   "forced": {
+    "ok": 8,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s5239-mwkr9l5h",
+   "items": 21,
+   "open": 18,
+   "result": {
+    "ok": 11,
+    "skip": 7,
+    "skipped": [
+     "s1",
+     "s4",
+     "s11",
+     "s12",
+     "s15",
+     "s17",
+     "s25"
+    ],
+    "ms": 863
+   },
+   "forced": {
+    "ok": 7,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s5520-mwkr9m55",
+   "items": 26,
+   "open": 21,
+   "result": {
+    "ok": 20,
+    "skip": 1,
+    "skipped": [
+     "s26"
+    ],
+    "ms": 1533
+   },
+   "forced": {
+    "ok": 1,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s5863-mwkr9mvm",
+   "items": 14,
+   "open": 9,
+   "result": {
+    "ok": 3,
+    "skip": 6,
+    "skipped": [
+     "s1",
+     "s3",
+     "s4",
+     "s7",
+     "s12",
+     "s16"
+    ],
+    "ms": 396
+   },
+   "forced": {
+    "ok": 5,
+    "bad": [
+     "s3: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (משום מכה בפטיש. |  משום מכה בפטיש.). ראית ואתה מאשר? לחץ "
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s6036-mwkr9nhz",
+   "items": 21,
+   "open": 15,
+   "result": {
+    "ok": 12,
+    "skip": 3,
+    "skipped": [
+     "s1",
+     "s13",
+     "s18"
+    ],
+    "ms": 956
+   },
+   "forced": {
+    "ok": 3,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s6189-mwkr9o5s",
+   "items": 24,
+   "open": 14,
+   "result": {
+    "ok": 11,
+    "skip": 3,
+    "skipped": [
+     "s12",
+     "s19",
+     "s23"
+    ],
+    "ms": 858
+   },
+   "forced": {
+    "ok": 3,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s6464-mwkr9owt",
+   "items": 23,
+   "open": 17,
+   "result": {
+    "ok": 13,
+    "skip": 4,
+    "skipped": [
+     "s2",
+     "s5",
+     "s8",
+     "s25"
+    ],
+    "ms": 1050
+   },
+   "forced": {
+    "ok": 4,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p16",
+   "items": 46,
+   "open": 46,
+   "result": {
+    "ok": 46,
+    "skip": 0,
+    "skipped": [],
+    "ms": 4248
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p17",
+   "items": 26,
+   "open": 26,
+   "result": {
+    "ok": 25,
+    "skip": 1,
+    "skipped": [
+     "s13"
+    ],
+    "ms": 2469
+   },
+   "forced": {
+    "ok": 0,
+    "bad": [
+     "s13: ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה (כשם שמסיקין בכלים כך). ראית ואתה מאשר? לחץ שוב \"קבל\" - וה"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p18",
+   "items": 28,
+   "open": 28,
+   "result": {
+    "ok": 27,
+    "skip": 1,
+    "skipped": [
+     "s2"
+    ],
+    "ms": 2544
+   },
+   "forced": {
+    "ok": 1,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p19",
+   "items": 39,
+   "open": 39,
+   "result": {
+    "ok": 39,
+    "skip": 0,
+    "skipped": [],
+    "ms": 4075
+   },
+   "pending_after": 2
+  },
+  {
+   "jid": "shabbat-p21",
+   "items": 8,
+   "open": 8,
+   "result": {
+    "ok": 8,
+    "skip": 0,
+    "skipped": [],
+    "ms": 1165
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p22",
+   "items": 29,
+   "open": 29,
+   "result": {
+    "ok": 29,
+    "skip": 0,
+    "skipped": [],
+    "ms": 3512
+   },
+   "pending_after": 2
+  },
+  {
+   "jid": "shabbat-p23",
+   "items": 32,
+   "open": 32,
+   "result": {
+    "ok": 30,
+    "skip": 2,
+    "skipped": [
+     "s5",
+     "s7"
+    ],
+    "ms": 3733
+   },
+   "forced": {
+    "ok": 2,
+    "bad": []
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-p24",
+   "items": 25,
+   "open": 12,
+   "result": {
+    "ok": 11,
+    "skip": 1,
+    "skipped": [
+     "s24"
+    ],
+    "ms": 1666
+   },
+   "forced": {
+    "ok": 1,
+    "bad": []
+   },
+   "pending_after": 0
+  }
+ ],
+ "started": "2026-11-18 17:13",
+ "diag": {
+  "admin": true,
+  "key": true,
+  "jobs": 79,
+  "status": 200,
+  "all": 148,
+  "slug": [
+   "shabbat-p2:done",
+   "shabbat-p4:done",
+   "shabbat-p5:done",
+   "shabbat-s1-mwev8jkj:done",
+   "shabbat-s2222-mwhl72w1:done",
+   "shabbat-p1:done",
+   "shabbat-p6:done",
+   "shabbat-p7:done",
+   "shabbat-p8:done",
+   "shabbat-p9:done",
+   "shabbat-p10:done",
+   "shabbat-p11:done",
+   "shabbat-p12:done",
+   "shabbat-p13:done",
+   "shabbat-p14:done",
+   "shabbat-p15:done",
+   "shabbat-s1-mwkr9e5n:ready",
+   "shabbat-s1192-mwkr9f0d:ready",
+   "shabbat-s2426-mwkr9fsp:ready",
+   "shabbat-s3082-mwkr9gjr:ready",
+   "shabbat-s3269-mwkr9hbd:ready",
+   "shabbat-s3559-mwkr9i0c:ready",
+   "shabbat-s4064-mwkr9isa:ready",
+   "shabbat-s4434-mwkr9jmz:ready",
+   "shabbat-s4810-mwkr9kdg:ready",
+   "shabbat-s5239-mwkr9l5h:ready",
+   "shabbat-s5520-mwkr9m55:ready",
+   "shabbat-s5863-mwkr9mvm:ready",
+   "shabbat-s6036-mwkr9nhz:ready",
+   "shabbat-s6189-mwkr9o5s:ready",
+   "shabbat-s6464-mwkr9owt:ready",
+   "shabbat-p16:ready",
+   "shabbat-p17:ready",
+   "shabbat-p18:ready",
+   "shabbat-p19:ready",
+   "shabbat-p21:ready",
+   "shabbat-p22:ready",
+   "shabbat-p23:ready",
+   "shabbat-p24:ready",
+   "shabbat-s3571-mwmd3x90:wait",
+   "shabbat-s3634-mwmd3y4n:wait",
+   "shabbat-s4818-mwmd45uz:wait",
+   "shabbat-s4937-mwmd47e5:wait",
+   "shabbat-s4994-mwmd48w7:wait",
+   "shabbat-s5182-mwmd4ah4:wait",
+   "shabbat-s5377-mwmd4bol:wait",
+   "shabbat-s5441-mwmd4ci2:wait",
+   "shabbat-s5480-mwmd4dfv:wait",
+   "shabbat-s5520-mwmd4etu:wait",
+   "shabbat-s5553-mwmd4fog:wait",
+   "shabbat-s5677-mwmd4hc4:wait",
+   "shabbat-s5750-mwmd4ij1:wait",
+   "shabbat-s5821-mwmd4jbg:wait",
+   "shabbat-s5854-mwmd4k7w:wait",
+   "shabbat-s5863-mwmd4lgu:wait",
+   "shabbat-s5936-mwmd4mur:wait",
+   "shabbat-s6024-mwmd4oac:wait",
+   "shabbat-s700050-mwmd4pig:wait",
+   "shabbat-s6090-mwmd4qcc:wait",
+   "shabbat-s6102-mwmd4r8f:wait"
+  ]
+ },
+ "errors": []
+}

@@ -483,13 +483,30 @@ def fold_one(slug, dry=False, log=print, srv=None):
             revert_pages(docx, work, newb)
             reverted |= set(newb)
         rdaf = {A[n]['daf'] for n in reverted}
+        gdiff = []
         if diff and len(V) == len(A):
             for n in [n for n in range(len(A)) if not same_page(V[n], A[n])][:6]:
                 a_, b_ = json.loads(page_sig(A[n])), json.loads(page_sig(V[n]))
                 for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, [json.dumps(x, ensure_ascii=False) for x in a_], [json.dumps(x, ensure_ascii=False) for x in b_], autojunk=False).get_opcodes():
                     if op != 'equal':
                         log('   %s %s | המנהל רואה: %s | הספר נותן: %s' % (A[n]['daf'], op, json.dumps(a_[i1:i2][:2], ensure_ascii=False)[:300], json.dumps(b_[j1:j2][:2], ensure_ascii=False)[:300]))
+                        gdiff.append({'daf': A[n]['daf'], 'op': op, 'admin': a_[i1:i2][:3], 'book': b_[j1:j2][:3]})
                         break
+        # הכרעת מיכאל 18.11.2026: עמוד שנשאר שונה אחרי שהוא ושכניו חזרו לנוסחם (הספר שם כמו אתמול, וההבדל בא
+        # מהחלה חוזרת של השכבה) אינו עוצר את כל המסכת. עד 3 עמודים כאלה - מקפלים, והם נרשמים לעיונו
+        # ב-data/fold/gate-diff/<מסכת>.json. מספר עמודים שונה, או עמוד שלא חזר - נכשל כמו קודם.
+        badn_all = [n for n in range(len(A)) if len(V) == len(A) and not same_page(V[n], A[n])]
+        if diff and len(V) == len(A) and len(badn_all) <= 3 and all(n in reverted for n in badn_all):
+            rec['gate_diff'] = diff[:]
+            if not dry:
+                gp = os.path.join(FOLD, 'gate-diff', slug + '.json')
+                old = C.rjson(gp) or {'v': 1, 'slug': slug, 'masechet': m, 'items': []}
+                for g in gdiff:
+                    old['items'].append(dict(g, when=now_iso()))
+                os.makedirs(os.path.dirname(gp), exist_ok=True)
+                C.wjson(gp, old)
+            log('%s: %d עמודים נשארו שונים (%s) - נרשמו לעיון, והקיפול ממשיך' % (m, len(diff), ', '.join(diff)))
+            diff = []
         if diff:
             rec.update(result='נכשל', why='השער: %d עמודים שונים ממה שהמנהל רואה (%s)' % (len(diff), ', '.join(diff[:12])))
             log('%s: %s' % (m, rec['why']))

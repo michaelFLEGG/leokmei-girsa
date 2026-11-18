@@ -336,6 +336,34 @@ def log_rec(rec):
 
 # ---------------------------------------------------------------- קיפול מסכת אחת
 
+
+def dup_pages_new(before, after):
+    """מספרי העמודים (לפי ציוני הדף) שבהם יש ב-after זוג פסקאות צמודות כפולות שאינו ב-before."""
+    import bisect, collections
+    import ingest_repo as IR
+    def pairs(path):
+        b = convert(path)
+        dix = markers(b)
+        out = []
+        for k in range(len(b) - 1):
+            x, y = b[k], b[k + 1]
+            v1, v2 = WA._nw(x['text']), WA._nw(y['text'])
+            hit = bool(v1) and v1 == v2
+            if not hit and x.get('style') == y.get('style') and not (x.get('style') or '').startswith('דף'):
+                hit = bool(IR.near_dup_kind(x.get('text'), y.get('text')))
+            if hit:
+                out.append((bisect.bisect_right(dix, k) - 1, v1 + '|' + v2))
+        return out
+    have = collections.Counter(sig for _, sig in pairs(before))
+    pages = set()
+    for n, sig in pairs(after):
+        if have[sig] > 0:
+            have[sig] -= 1
+        elif n >= 0:
+            pages.add(n)
+    return sorted(pages)
+
+
 def fold_one(slug, dry=False, log=print, srv=None):
     import time
     t0 = time.time()
@@ -407,67 +435,79 @@ def fold_one(slug, dry=False, log=print, srv=None):
     # השכבה שנשארת: העריכות שנעשו בעמודים שחזרו לנוסחם הקודם. עמוד שהשער מוצא שונה ממה שהמנהל רואה
     # חוזר גם הוא, יחד עם שכניו (העיגון בטקסט מחפש עמוד לכל צד), ושוב - עד שהשער עובר, או שישה סבבים.
     # (נבדק 16.11: החלת כל השכבה על הספר החדש מכפילה עריכות מבנה, ולכן לא.)
-    baked = set(ast.get('b') or [])
-    lost = [e for e in raw['edits'] if e.get('t') not in baked and not e.get('del')]
-    lost_t = {e.get('t') for e in lost}
-    diff, remain = [], []
-    for _round in range(9):
-        rdaf = {A[n]['daf'] for n in reverted}
-        remain0 = [e for e in raw['edits'] if e.get('daf') in rdaf and e.get('t') not in lost_t]
-        # מספרי היחידות זזים בספר החדש. בעמודים שחזרו הנוסח זהה, ולכן היחידות מתאימות לפי מקומן בעמוד:
-        # מפתח העריכה עובר למספר החדש, כדי שתמצא את מקומה בדיוק כמו קודם (ולא בחיפוש לפי טקסט).
-        W1, _ = view(work, slug, m, None)
-        idmap = {}
-        for n in reverted:
-            ua, ub = W0[n]['units'], W1[n]['units']
-            if len(ua) == len(ub) and all(x.get('k') == y.get('k') for x, y in zip(ua, ub)):
-                for x, y in zip(ua, ub):
-                    if x.get('id') is not None and y.get('id') is not None:
-                        idmap[str(x['id'])] = str(y['id'])
-            else:
-                log('%s: בעמוד %s שחזר היחידות אינן מתאימות (%d מול %d) - העריכות שבו נשארות במפתח הישן' % (m, A[n]['daf'], len(ua), len(ub)))
-        remain, rekeyed = [], []
-        for e in remain0:
-            mm = re.match(r'^u(\d+)(\..*)$', e.get('k') or '')
-            if mm and idmap.get(mm.group(1)) and idmap[mm.group(1)] != mm.group(1):
-                ne = dict(e, k='u' + idmap[mm.group(1)] + mm.group(2))
-                remain.append(ne); rekeyed.append((e, ne))
-            else:
-                remain.append(e)
-        V, _ = view(work, slug, m, dict(raw, edits=remain))
-        if len(V) != len(A):
-            diff = ['מספר העמודים']; break
-        badn = [n for n in range(len(A)) if not same_page(V[n], A[n])]
-        diff = [A[n]['daf'] for n in badn]
-        if not badn:
-            break
-        newb = []
-        for rad in (1,):
-            newb = sorted({j for n in badn for j in range(n - rad, n + rad + 1) if 0 <= j < len(A)} - reverted)
-            if newb:
+    for _outer in range(4):
+        baked = set(ast.get('b') or [])
+        lost = [e for e in raw['edits'] if e.get('t') not in baked and not e.get('del')]
+        lost_t = {e.get('t') for e in lost}
+        diff, remain = [], []
+        for _round in range(9):
+            rdaf = {A[n]['daf'] for n in reverted}
+            remain0 = [e for e in raw['edits'] if e.get('daf') in rdaf and e.get('t') not in lost_t]
+            # מספרי היחידות זזים בספר החדש. בעמודים שחזרו הנוסח זהה, ולכן היחידות מתאימות לפי מקומן בעמוד:
+            # מפתח העריכה עובר למספר החדש, כדי שתמצא את מקומה בדיוק כמו קודם (ולא בחיפוש לפי טקסט).
+            W1, _ = view(work, slug, m, None)
+            idmap = {}
+            for n in reverted:
+                ua, ub = W0[n]['units'], W1[n]['units']
+                if len(ua) == len(ub) and all(x.get('k') == y.get('k') for x, y in zip(ua, ub)):
+                    for x, y in zip(ua, ub):
+                        if x.get('id') is not None and y.get('id') is not None:
+                            idmap[str(x['id'])] = str(y['id'])
+                else:
+                    log('%s: בעמוד %s שחזר היחידות אינן מתאימות (%d מול %d) - העריכות שבו נשארות במפתח הישן' % (m, A[n]['daf'], len(ua), len(ub)))
+            remain, rekeyed = [], []
+            for e in remain0:
+                mm = re.match(r'^u(\d+)(\..*)$', e.get('k') or '')
+                if mm and idmap.get(mm.group(1)) and idmap[mm.group(1)] != mm.group(1):
+                    ne = dict(e, k='u' + idmap[mm.group(1)] + mm.group(2))
+                    remain.append(ne); rekeyed.append((e, ne))
+                else:
+                    remain.append(e)
+            V, _ = view(work, slug, m, dict(raw, edits=remain))
+            if len(V) != len(A):
+                diff = ['מספר העמודים']; break
+            badn = [n for n in range(len(A)) if not same_page(V[n], A[n])]
+            diff = [A[n]['daf'] for n in badn]
+            if not badn:
                 break
-        log('%s: השער מצא %d עמודים שונים (%s)%s' % (m, len(badn), ', '.join(diff[:12]), ', חוזרים עם שכניהם' if newb else ''))
-        if not newb:
-            break
-        revert_pages(docx, work, newb)
-        reverted |= set(newb)
-    rdaf = {A[n]['daf'] for n in reverted}
-    if diff and len(V) == len(A):
-        for n in [n for n in range(len(A)) if not same_page(V[n], A[n])][:6]:
-            a_, b_ = json.loads(page_sig(A[n])), json.loads(page_sig(V[n]))
-            for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, [json.dumps(x, ensure_ascii=False) for x in a_], [json.dumps(x, ensure_ascii=False) for x in b_], autojunk=False).get_opcodes():
-                if op != 'equal':
-                    log('   %s %s | המנהל רואה: %s | הספר נותן: %s' % (A[n]['daf'], op, json.dumps(a_[i1:i2][:2], ensure_ascii=False)[:300], json.dumps(b_[j1:j2][:2], ensure_ascii=False)[:300]))
+            newb = []
+            # 18.11.2026: אם השכנים הקרובים כבר חזרו והעמוד עדיין שונה, מרחיבים לשכנים רחוקים יותר (עריכת מבנה
+            # שנרשמה על עמוד סמוך). עד כאן נעצר כאן כל הקיפול בגלל עמוד אחד (ברכות ז:, 18.11)
+            for rad in (1, 2, 3):
+                newb = sorted({j for n in badn for j in range(n - rad, n + rad + 1) if 0 <= j < len(A)} - reverted)
+                if newb:
                     break
-    if diff:
-        rec.update(result='נכשל', why='השער: %d עמודים שונים ממה שהמנהל רואה (%s)' % (len(diff), ', '.join(diff[:12])))
-        log('%s: %s' % (m, rec['why']))
-        return rec
-    d0, d1 = C.adjacent_dups(docx), C.adjacent_dups(work)
-    if d1 > d0:
-        rec.update(result='נכשל', why='פסקאות צמודות כפולות: %d לפני, %d אחרי' % (d0, d1))
-        log('%s: %s' % (m, rec['why']))
-        return rec
+            log('%s: השער מצא %d עמודים שונים (%s)%s' % (m, len(badn), ', '.join(diff[:12]), ', חוזרים עם שכניהם' if newb else ''))
+            if not newb:
+                break
+            revert_pages(docx, work, newb)
+            reverted |= set(newb)
+        rdaf = {A[n]['daf'] for n in reverted}
+        if diff and len(V) == len(A):
+            for n in [n for n in range(len(A)) if not same_page(V[n], A[n])][:6]:
+                a_, b_ = json.loads(page_sig(A[n])), json.loads(page_sig(V[n]))
+                for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, [json.dumps(x, ensure_ascii=False) for x in a_], [json.dumps(x, ensure_ascii=False) for x in b_], autojunk=False).get_opcodes():
+                    if op != 'equal':
+                        log('   %s %s | המנהל רואה: %s | הספר נותן: %s' % (A[n]['daf'], op, json.dumps(a_[i1:i2][:2], ensure_ascii=False)[:300], json.dumps(b_[j1:j2][:2], ensure_ascii=False)[:300]))
+                        break
+        if diff:
+            rec.update(result='נכשל', why='השער: %d עמודים שונים ממה שהמנהל רואה (%s)' % (len(diff), ', '.join(diff[:12])))
+            log('%s: %s' % (m, rec['why']))
+            return rec
+        d0, d1 = C.adjacent_dups(docx), C.adjacent_dups(work)
+        if d1 > d0:
+            # 18.11.2026: העמודים שבהם נוספו כפולות חוזרים לנוסחם (עם שכניהם), והעריכות שבהם נשארות בשכבה.
+            # עד כאן נכשל כל הקיפול של המסכת (שבת: 2 לפני, 5 אחרי), ואלפי עריכות נשארו בשכבה ונטענו בכל כניסה.
+            newd = sorted({j for n in dup_pages_new(docx, work) for j in (n - 1, n, n + 1) if 0 <= j < len(A)} - reverted)
+            if newd and _outer < 3:
+                log('%s: פסקאות צמודות כפולות %d לפני, %d אחרי - חוזרים: %s' % (m, d0, d1, ', '.join(A[n]['daf'] for n in newd[:20])))
+                revert_pages(docx, work, newd)
+                reverted |= set(newd)
+                continue
+            rec.update(result='נכשל', why='פסקאות צמודות כפולות: %d לפני, %d אחרי' % (d0, d1))
+            log('%s: %s' % (m, rec['why']))
+            return rec
+        break
     keep_k = {(C.ekey(e), e.get('t')) for e in remain}
     # עריכה שמפתחה הוחלף יוצאת במפתח הישן (מצבה), ונכתבת לשרת במפתח החדש (--tombstones)
     retired = [e for e in raw['edits'] if (C.ekey(e), e.get('t')) not in keep_k]

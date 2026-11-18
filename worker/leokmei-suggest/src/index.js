@@ -790,7 +790,10 @@ async function mergeEdits(env, slug, edits, sty) {
       if (!old || (e.t || 0) > (old.t || 0)) fresh.push(e);
     }
   }
-  doc.edits = Object.values(by).sort((a, b) => (a.t || 0) - (b.t || 0));
+  /* 18.11.2026 (מהירות): מצבה (del) נשמרת 14 יום - די לכל מכשיר להתעדכן. עד כאן נשמרו כל המצבות לעולם
+     (בברכות 12,203 מצבות מול 867 עריכות חיות), והמסמך כולו נקרא, נשלח ונכתב בכל פרסום. */
+  const TOMB_KEEP = 14 * 24 * 3600 * 1000, now0 = Date.now();
+  doc.edits = Object.values(by).filter((e) => !e.del || now0 - (e.t || 0) < TOMB_KEEP).sort((a, b) => (a.t || 0) - (b.t || 0));
   if (sty) doc.sty = sty;
   doc.t = Date.now();
   /* 7.11.2026: העריכות נשמרות קודם, והיומן אחריהן ובתקרה. קודם נכתב היומן

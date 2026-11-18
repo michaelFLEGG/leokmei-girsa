@@ -3,7 +3,7 @@
  "jid": "arakhin-s2327-mwmkmeqr",
  "slug": "arakhin",
  "title": "ערכין פרק תשיעי - המוכר שדהו · סבב כללים חדשים (פרומפט 62) - דף ל:",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 2327,
@@ -62,8 +62,70 @@
    "read": [],
    "keep": [
     "לא באת לידו - התירוץ על 'ולמה' כבר בשורה שלפניה (כר\"ה), ושורה זו המשך דברי ר' יוסי בר\"ח"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 0,
+    "widow": 1
+   }
   }
  ],
- "t": 1795036409655
+ "t": 1795036412440,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 1 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 1,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 1,
+   "side": 7,
+   "nose": 0,
+   "widow": 1
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 1,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 5,
+  "block": 0,
+  "lenPct": 0,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 14
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

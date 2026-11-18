@@ -1,0 +1,114 @@
+{
+ "slug": "shabbat",
+ "jobs": [
+  {
+   "jid": "shabbat-s3571-mwmd3x90",
+   "items": 6,
+   "open": 1,
+   "result": {
+    "ok": 0,
+    "skip": 1,
+    "skipped": [
+     "s5"
+    ],
+    "ms": 1
+   },
+   "forced": {
+    "ok": 0,
+    "bad": [
+     "s5: נוספו שורות במקום שלא היו בו שורות"
+    ]
+   },
+   "pending_after": 0
+  },
+  {
+   "jid": "shabbat-s3634-mwmd3y4n",
+   "items": 13,
+   "open": 2,
+   "result": {
+    "ok": 1,
+    "skip": 1,
+    "skipped": [
+     "s9"
+    ],
+    "ms": 345
+   },
+   "forced": {
+    "ok": 1,
+    "bad": []
+   },
+   "pending_after": 0
+  }
+ ],
+ "started": "2026-11-18 18:49",
+ "diag": {
+  "admin": true,
+  "key": true,
+  "jobs": 142,
+  "status": 200,
+  "all": 200,
+  "slug": [
+   "shabbat-p1:done",
+   "shabbat-p6:done",
+   "shabbat-p7:done",
+   "shabbat-p8:done",
+   "shabbat-p9:done",
+   "shabbat-p10:done",
+   "shabbat-p11:done",
+   "shabbat-p12:done",
+   "shabbat-p13:done",
+   "shabbat-p14:done",
+   "shabbat-p15:done",
+   "shabbat-s1-mwkr9e5n:done",
+   "shabbat-s1192-mwkr9f0d:done",
+   "shabbat-s2426-mwkr9fsp:done",
+   "shabbat-s3082-mwkr9gjr:done",
+   "shabbat-s3269-mwkr9hbd:done",
+   "shabbat-s3559-mwkr9i0c:ready",
+   "shabbat-s4064-mwkr9isa:ready",
+   "shabbat-s4434-mwkr9jmz:ready",
+   "shabbat-s4810-mwkr9kdg:done",
+   "shabbat-s5239-mwkr9l5h:done",
+   "shabbat-s5520-mwkr9m55:done",
+   "shabbat-s5863-mwkr9mvm:done",
+   "shabbat-s6036-mwkr9nhz:done",
+   "shabbat-s6189-mwkr9o5s:done",
+   "shabbat-s6464-mwkr9owt:done",
+   "shabbat-p16:ready",
+   "shabbat-p17:done",
+   "shabbat-p18:done",
+   "shabbat-p19:ready",
+   "shabbat-p21:done",
+   "shabbat-p22:ready",
+   "shabbat-p23:ready",
+   "shabbat-p24:done",
+   "shabbat-s3571-mwmd3x90:ready",
+   "shabbat-s3634-mwmd3y4n:ready",
+   "shabbat-s4818-mwmd45uz:sent",
+   "shabbat-s4937-mwmd47e5:sent",
+   "shabbat-s4994-mwmd48w7:sent",
+   "shabbat-s5182-mwmd4ah4:sent",
+   "shabbat-s5377-mwmd4bol:sent",
+   "shabbat-s5441-mwmd4ci2:sent",
+   "shabbat-s5480-mwmd4dfv:sent",
+   "shabbat-s5520-mwmd4etu:sent",
+   "shabbat-s5553-mwmd4fog:sent",
+   "shabbat-s5677-mwmd4hc4:sent",
+   "shabbat-s5750-mwmd4ij1:sent",
+   "shabbat-s5821-mwmd4jbg:sent",
+   "shabbat-s5854-mwmd4k7w:sent",
+   "shabbat-s5863-mwmd4lgu:sent",
+   "shabbat-s5936-mwmd4mur:sent",
+   "shabbat-s6024-mwmd4oac:sent",
+   "shabbat-s700050-mwmd4pig:sent",
+   "shabbat-s6090-mwmd4qcc:sent",
+   "shabbat-s6102-mwmd4r8f:sent",
+   "shabbat-s700051-mwmd4s14:sent",
+   "shabbat-s6170-mwmd4sv6:sent",
+   "shabbat-s6196-mwmd4u4m:sent",
+   "shabbat-s6210-mwmd4uwz:sent",
+   "shabbat-s6228-mwmd4vt5:sent"
+  ]
+ },
+ "errors": []
+}

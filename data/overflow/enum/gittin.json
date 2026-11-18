@@ -1,15 +1,8 @@
 {
  "slug": "gittin",
- "made": "2026-11-18 06:45",
+ "made": "2026-11-18 06:53",
  "found": 1,
- "applied": 1,
- "liveSkipped": 0,
- "examples": [
-  {
-   "daf": "עב:",
-   "key": "u5182.1",
-   "before": "אם מתי שתי לשונות משמע, א. מעכשיו ב. כלאחר מיתה",
-   "after": "אם מתי שתי לשונות משמע, <i class=\"am\">א.</i> מעכשיו <i class=\"am\">ב.</i> כלאחר מיתה"
-  }
- ]
+ "applied": 0,
+ "liveSkipped": 1,
+ "examples": []
 }

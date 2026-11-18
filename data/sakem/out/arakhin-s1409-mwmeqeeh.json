@@ -3,7 +3,7 @@
  "jid": "arakhin-s1409-mwmeqeeh",
  "slug": "arakhin",
  "title": "ערכין פרק חמישי - האומר משקלי עלי · סבב על הנוסח החי (s6, s7, s8, s9, s10)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 1409,
@@ -60,6 +60,14 @@
     "nose": 0,
     "lenA": 318,
     "lenB": 318
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -84,6 +92,14 @@
     "nose": 0,
     "lenA": 242,
     "lenB": 242
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -112,6 +128,14 @@
     "nose": 0,
     "lenA": 335,
     "lenB": 335
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -140,6 +164,14 @@
     "nose": 0,
     "lenA": 347,
     "lenB": 347
+   },
+   "abs": {
+    "bold": 3,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -168,8 +200,70 @@
     "nose": 0,
     "lenA": 587,
     "lenB": 587
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795029195200
+ "t": 1795029230410,
+ "summary": "בפרק: 3 הדגשות במשנה, 1 רווחים, 3 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 3,
+  "space": 1,
+  "dash": 3,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 5,
+  "perSeg": {
+   "bold": 0.6,
+   "space": 0.2,
+   "dash": 0.6,
+   "side": 4.6,
+   "nose": 0.6,
+   "widow": 0
+  },
+  "bold": 3,
+  "space": 1,
+  "dash": 3,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 0,
+  "block": 0,
+  "lenPct": 0,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 0
+  }
+ },
+ "counts": {
+  "shown": 0,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

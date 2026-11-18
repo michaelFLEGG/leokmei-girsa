@@ -300,9 +300,13 @@
      קטע שלא נמצא כלשונו (נערך באמת) מוזז באותו היסט של הקטע שלפניו, ומוצג כעריכה שלך. */
   const skpNorm=t=>String(t||'').split('\n').filter(s=>!/^\[(דף|משנה|גמרא|קבוע|מקור)(:[^\]]*)?\]$/.test(s.trim()))
     .join(' ').replace(/\[(מס|תוס'):[^\]]*\]/g,' ').replace(/[^א-ת]/g,'');
+  /* 18.11.2026 (מהירות): חתימות כל יחידות המסכת נשמרות לפי גרסת הנתונים (DV). עד כאן חושבו מחדש לכל עבודה -
+     בשבת 30 עבודות בכל טעינה, כ-2 שניות במחשב מהיר ופי כמה במחשב של המנהל */
+  let SKPSIG=null;
   function skpRelocate(R){
-    const fu=flatU(),pos=new Map(fu.map((o,i)=>[o.u.id,i]));
-    const sig=fu.map(o=>{try{return skpNorm(skmInter([o]))}catch(e){return '\u0000'}});
+    if(!SKPSIG||SKPSIG.dv!==DV){const fu0=flatU();
+      SKPSIG={dv:DV,fu:fu0,pos:new Map(fu0.map((o,i)=>[o.u.id,i])),sig:fu0.map(o=>{try{return skpNorm(skmInter([o]))}catch(e){return '\u0000'}})}}
+    const fu=SKPSIG.fu,pos=SKPSIG.pos,sig=SKPSIG.sig;
     let delta=0,exp=-1;
     const shift=ids=>{const ix=ids.map(id=>pos.get(id+delta));return ix.every((x,k)=>x!==undefined&&(!k||x===ix[k-1]+1))?ids.map(id=>id+delta):null};
     R.items.forEach(it=>{

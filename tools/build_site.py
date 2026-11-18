@@ -4012,12 +4012,18 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     f.querySelectorAll('.dupmark').forEach(x=>{x.classList.remove('dupmark');x.removeAttribute('title')});
     const els=[...f.querySelectorAll('.row .anchor, .row .main p')];
     let pv=null,pt='',n=0;
-    for(const el of els){const t=dupNorm(el.textContent);if(!t)continue;
-      if(pv&&t.length>=6&&pt.length>=6&&dupSim(pt,t)>=.86){pv.classList.add('dupmark');pv.title='שורה כפולה: מחק את השורה המסומנת';n++}
+    /* 18.11.2026 (מהירות): הנרמול והדמיון נשמרים במטמון לפי הנוסח - הסריקה רצה אחרי כל שינוי בדף, ועד כאן חישבה
+       מחדש את כל פסקאות המסכת בכל פעם (יותר משנייה בשבת) */
+    if(DUPN.size>60000)DUPN.clear();if(DUPS.size>60000)DUPS.clear();
+    for(const el of els){const raw=el.textContent;let t=DUPN.get(raw);if(t===undefined){t=dupNorm(raw);DUPN.set(raw,t)}if(!t)continue;
+      let sim=0;if(pv&&t.length>=6&&pt.length>=6){const kk=pt+'\u0001'+t;sim=DUPS.get(kk);if(sim===undefined){sim=dupSim(pt,t);DUPS.set(kk,sim)}}
+      if(sim>=.86){pv.classList.add('dupmark');pv.title='שורה כפולה: מחק את השורה המסומנת';n++}
       pv=el;pt=t}
     window.__DUPS=n}
+  const DUPN=new Map(),DUPS=new Map();
   function dupSoon(){clearTimeout(DUPT);DUPT=setTimeout(dupMark,700)}
-  try{new MutationObserver(m=>{if(!EDIT)dupSoon()}).observe(document.documentElement,{childList:true,subtree:true})}catch(e){}
+  /* 18.11.2026: רק שינוי בתוך הטקסט (#flow) מפעיל את הסריקה, ולא כל שינוי בסרגל, בהודעות או בשעון */
+  try{new MutationObserver(m=>{if(EDIT)return;for(const r of m){const t=r.target;if(t&&t.closest&&t.closest('#flow')||(t&&t.id==='flow')){dupSoon();return}}}).observe(document.documentElement,{childList:true,subtree:true})}catch(e){}
   function ghTok(){try{return localStorage.getItem(TKEY)||''}catch(e){return ''}}
   /* אצל לומד שאינו מנהל ED הוא שכבת התיקונים שהתקבלו (מנקודת הקליטה),
      והיא אינה נשמרת במכשיר */

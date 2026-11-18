@@ -234,7 +234,30 @@
             const r=await api('/sakem/dec',{method:'POST',body:JSON.stringify(b)});res.recount=1;res.st=r&&r.job?r.job.st:res.st}}}
       catch(e){res.after=-1}
       skpEmptySet(jid,1);
-      return res}};
+      return res},
+    /* פרומפט 63 (18.11.2026, מיכאל: "היכן שחסר קטע לשיטתך מהגמרא - פשוט תוסיף"): השלמת קטעי גמרא חסרים, כל אחד
+       אחרי יחידה קיימת (after), באותו מסלול של השלמה ('missing') שמתקבלת בסקירה. הוספה שכבר בדף - מדולגת (הרצה
+       חוזרת אינה כופלת). היחידה מאותרת לפי מזהה, ואם תוכנה אינו התוכן שנרשם (anchor) - לפי התוכן; לא נמצאה - נרשם, לא מוחל */
+    insert:adds=>{const L=t=>String(t||'').replace(/[^א-ת]/g,'');const out=[];
+      const page=()=>L(flatU().map(o=>{try{return skmInter([o])}catch(e){return ''}}).join(''));
+      let P=page();
+      /* כל הוספה במנה משלה: שתי הוספות אחרי אותה יחידה - השנייה נבנית על הדף אחרי הראשונה */
+      adds.forEach(a=>{const r={id:a.id};out.push(r);const B=window.skmBatchStart?skmBatchStart():null;
+        try{const lines=String(a.text||'').split('\n').map(L).filter(x=>x.length>=10);
+          if(lines.length&&lines.every(x=>P.indexOf(x)>-1)){r.st='already';return}
+          let at=skmUnits([a.after])[0];
+          const an=L(a.anchor||'');
+          const okAt=o=>o&&(o.u.k==='u'||o.u.k==='m')&&o.u.l&&o.u.l.length;
+          if(an&&(!okAt(at)||L(skmInter([at])).indexOf(an.slice(-40))<0)){
+            at=flatU().find(o=>okAt(o)&&L(skmInter([o])).indexOf(an.slice(-40))>-1)||null;r.moved=1}
+          if(!okAt(at)){r.st='bad';r.why='היחידה לא נמצאה';return}
+          const o=skmInter([at]);
+          skmApply({id:'p63:'+a.id,ids:[at.u.id],orig:o},o+'\n'+a.text);
+          r.st='ok';r.unit=at.u.id}
+        catch(e){r.st='bad';r.why=String(e&&e.message||e).slice(0,160)}
+        finally{if(B)skmBatchEnd(B)}
+        if(r.st==='ok')P=page()});
+      return out}};
 
   /* =================== הסקירה =================== */
   async function skpOpen(jid){

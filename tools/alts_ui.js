@@ -7,7 +7,7 @@
      ההשוואה היא של "סכם פרק" (skpDiff, שנשען על skpWords ו-skpLcs), ואין כאן מנוע השוואה משלו.
      ליד הפסקה, בשוליים: קבל · השאר · ערוך, המונה, ותווית הנוסח החלופי. בטלפון הפס צף בתחתית.
      כניסה: הכפתור "בחר נוסח" בסרגל, או המקש N (ובמקלדת עברית נ: במקלדת עברית המקש N הוא מ, של הגמרא).
-     Enter קבל · Delete השאר · E ערוך (Enter מסיים ומקבל) · חצים הבא/הקודם · Tab החלופה הבאה · Ctrl+ז ביטול · Esc יציאה.
+     Enter קבל · ' (גרשיים) השאר · E ערוך (Enter מסיים ומקבל) · חצים הבא/הקודם · Tab החלופה הבאה · Ctrl+ז ביטול · Esc יציאה.
 
      השמירה לא השתנתה: קבלה = עריכת מנהל רגילה (applyText: רשומת ED, pubSoon, syncSoon), מתפרסמת בפרסום
      המרוכז ונכתבת לוורד בקליטה הבאה; כל הכרעה נרשמת ביומן ההכרעות בנקודת הקליטה (logDec, /alt), ממנו לומד המנוע. */
@@ -302,7 +302,7 @@
       h='<div class="ab"><button type="button" class="go" data-a="editok" title="סיים וקבל (Enter)">סיים וקבל</button><button type="button" data-a="editno" title="בטל את העריכה (Esc)">ביטול</button></div>';
     }else{
       h='<div class="ab"><button type="button" class="go" data-a="ok" title="קבל את הנוסח החלופי (Enter)">קבל</button>'+
-        '<button type="button" data-a="keep" title="השאר את הנוסח שפורסם (Delete)">השאר</button>'+
+        '<button type="button" data-a="keep" title="השאר את הנוסח שפורסם (\')">השאר</button>'+
         '<button type="button" data-a="edit" title="ערוך בתוך הפסקה (E), Enter מסיים ומקבל">ערוך</button></div>'}
     h+='<div class="am2"><span>'+(it.ix+1)+' מתוך '+AL.items.length+'</span>'+
        '<span><button type="button" class="x" data-a="prev" title="הקודם (חץ למעלה)">‹</button><button type="button" class="x" data-a="next" title="הבא (חץ למטה)">›</button>'+
@@ -442,7 +442,7 @@
     if(e.ctrlKey&&!e.altKey&&e.code==='KeyZ'){stop();undo();return}
     if(e.ctrlKey||e.altKey||e.metaKey)return;
     if(k==='Enter'){stop();accept()}
-    else if(k==='Delete'){stop();keep()}
+    else if(e.code==='Quote'){stop();keep()}   /* 18.11.2026: Delete שמור לעריכה; דחייה בגרשיים שליד האנטר */
     else if(e.code==='KeyE'){stop();editOn()}
     else if(k==='ArrowDown'||k==='ArrowLeft'){stop();move(1)}
     else if(k==='ArrowUp'||k==='ArrowRight'){stop();move(-1)}

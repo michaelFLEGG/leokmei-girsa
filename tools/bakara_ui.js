@@ -393,7 +393,7 @@
       skNextBtnHtml()+
       '<button onclick="bkNext(-1)" title="להערה הקודמת">↑</button>'+
       '<button onclick="bkPanel()">רשימה</button><button onclick="bkToggle()">סיום</button>'+
-      '<span class="kk" style="font-size:11px;opacity:.7" title="Enter קבל · Delete דחה · E ערוך בשורה · 1/2/3 נוסח · S דלג · ? למה · ←/→ הבאה/קודמת · Ctrl+ז ביטול">Enter · Del · E · 1-3 · S · ?</span>';
+      '<span class="kk" style="font-size:11px;opacity:.7" title="Enter קבל · \' דחה · E ערוך בשורה · 1/2/3 נוסח · S דלג · ? למה · ←/→ הבאה/קודמת · Ctrl+ז ביטול">Enter · \' · E · 1-3 · S · ?</span>';
     if(window.skBarExtra)skBarExtra(m);if(window.skBarEnd)skBarEnd(m);
     {const l=bkSides().lo+12+'px';if(m.style.left!==l)m.style.left=l}}
   function bkDafNow(){return (($('#curdaf')||{}).textContent||'').trim()}
@@ -453,7 +453,7 @@
     if(pend){
       const nop=!BKEXEC[op.t]&&op.t!=='q';
       h+='<div class="bt">'+B('ok','bkAcceptClick(\''+f.id+'\')',nop?'החזר להפקה':'קבל','Enter',BKACT[bkAction(f)])+
-        B('no','bkRejectNow(\''+f.id+'\')','דחה','Del')+
+        B('no','bkRejectNow(\''+f.id+'\')','דחה','\'')+
         B('','bkDecide(\''+f.id+'\',\'edit\')','ערוך','E','עריכה בתוך השורה עצמה; Alt+Enter מאשר')+
         B('','skSkip(\''+f.id+'\')','דלג','S')+
         B('why','bkWhy()','למה?','?')+'</div>'}

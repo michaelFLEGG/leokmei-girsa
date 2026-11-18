@@ -114,7 +114,7 @@
       (SK.split?'<button onclick="skSplit(\'off\')" title="סגירת המסך המפוצל">×</button>':'')+'</span>'+
       '<button onclick="skTab(\'req\')" title="בקשת סקירה לטווח: הבדיקות המהירות מוכנות מיד">סקור עכשיו</button>')};
 
-  /* ---- מקלדת: Enter קבל, Delete דחה, חצים, E ערוך, C שוחח, Ctrl+ז ביטול ---- */
+  /* ---- מקלדת: Enter קבל, ' (גרשיים) דחה, חצים, E ערוך, C שוחח, Ctrl+ז ביטול ---- */
   function skTyping(t){return t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))}
   document.addEventListener('keydown',e=>{
     if(!BK.ON||e.ctrlKey||e.metaKey||e.altKey||e.defaultPrevented)return;
@@ -131,7 +131,8 @@
       e.preventDefault();e.stopPropagation();bkKbDecide(f,'ok');return}
     /* (26.10.2026) Delete דוחה מיד ועובר להבאה; הסיבה אינה חובה (רצועה קטנה אחרי המעבר).
        1/2/3 בוחר נוסח ומחיל. ? פותח את הנימוק. Shift+Delete: חלונית הסיבות כמו קודם */
-    if(c==='Delete'||c==='Backspace'){e.preventDefault();e.stopPropagation();if(e.shiftKey&&!SK.mode)skRejectOpen(f.id);else bkRejectNow(f.id);return}
+    /* 18.11.2026 (מיכאל): Delete ו-Backspace שמורים לעריכה; הדחייה במקש הגרשיים שליד האנטר, Shift+' לחלונית הסיבות */
+    if(c==='Quote'){e.preventDefault();e.stopPropagation();if(e.shiftKey&&!SK.mode)skRejectOpen(f.id);else bkRejectNow(f.id);return}
     if(/^(Digit|Numpad)[123]$/.test(c)){e.preventDefault();e.stopPropagation();bkAltPick(f.id,+c.slice(-1)-1,1);return}
     if(e.key==='?'||c==='Slash'){e.preventDefault();e.stopPropagation();bkWhy();return}
     if(c==='KeyE'){e.preventDefault();e.stopPropagation();bkDecide(f.id,'edit');return}

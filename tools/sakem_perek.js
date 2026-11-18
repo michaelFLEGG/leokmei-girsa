@@ -7,7 +7,7 @@
      הסקירה נפתחת בתוך הדף: הקטע הנוכחי מודגש, הנוסח החדש במקום הישן, ושלושה סימונים -
      ליטוש (מילים שנוספו ברקע עדין, מה שנמחק בקו חוצה אפור), קיצור מרחבי (סמליל, ובריחוף "דולג: ..."),
      והשלמה מהגמרא (צבע נפרד, ובריחוף לשון הגמרא; לחיצה מבטלת רק אותה). חסר גדול הוא פריט משלו.
-     Enter קבל · Delete דחה · E ערוך (Enter מסיים ומקבל) · חצים הבא/קודם · Ctrl+ז ביטול ההכרעה האחרונה.
+     Enter קבל · ' (גרשיים, ליד האנטר) דחה · E ערוך (Enter מסיים ומקבל) · חצים הבא/קודם · Ctrl+ז ביטול ההכרעה האחרונה.
      הקבלה עוברת ב-skmApply - אותן רשומות שהעורך כותב, ומשם לפרסום ולוורד כמו כל עריכה. */
   const SKP={jobs:[],all:[],rev:null,tm:null};
   /* 17.11.2026 (מיכאל, ברכות): "סקור סכם" הופיע כל הזמן, ובלחיצה - "אין מה לסקור". עבודה "מוכנה" שאין בה אף קטע
@@ -472,8 +472,8 @@
     g.dataset.iid=it.iid;
     /* סמלילים בצד הקטע; הכיתוב רק בריחוף */
     const side=document.createElement('div');side.className='skpside';side.contentEditable='false';
-    side.innerHTML=(conflict?'<button data-a="keep" title="השאר את העריכה שלי (Delete)">✋</button><button data-a="force" title="החלף בהצעה (Enter)">⇄</button>':
-      '<button data-a="ok" title="קבל ועבור לבא (Enter)">✓</button><button data-a="no" title="דחה - השאר את המקור (Delete)">✗</button>')+
+    side.innerHTML=(conflict?'<button data-a="keep" title="השאר את העריכה שלי (\')">✋</button><button data-a="force" title="החלף בהצעה (Enter)">⇄</button>':
+      '<button data-a="ok" title="קבל ועבור לבא (Enter)">✓</button><button data-a="no" title="דחה - השאר את המקור (\')">✗</button>')+
       (it.kind==='seg'?'<button data-a="edit" title="ערוך במקום (E), Enter מסיים ומקבל">✎</button><button data-a="src" title="הצג מקור">⟲</button>':'')+
       '<button data-a="prev" title="הקודם (חץ למעלה)">↑</button><button data-a="next" title="הבא (חץ למטה)">↓</button>';
     g.appendChild(side);
@@ -528,7 +528,7 @@
       /* פרומפט 36: הפעולות גלויות תמיד (גם במחשב), ופועלות בלי תלות במיקוד */
       '<div class="skpnav"><button data-a="prev" title="הקטע הקודם (חץ למעלה)">הקודם</button>'+
       '<button data-a="'+(R.conflict?'force':'ok')+'" class="ok" title="'+(R.conflict?'קבל את ההצעה במקום העריכה שלך':'קבל ועבור לבא')+' (Enter)">'+(R.conflict?'קבל את ההצעה':'קבל')+'</button>'+
-      '<button data-a="'+(R.conflict?'keep':'no')+'" class="no" title="'+(R.conflict?'השאר את העריכה שלך':'דחה - השאר את המקור')+' (Delete)">'+(R.conflict?'השאר את שלי':'דחה')+'</button>'+
+      '<button data-a="'+(R.conflict?'keep':'no')+'" class="no" title="'+(R.conflict?'השאר את העריכה שלך':'דחה - השאר את המקור')+' (\')">'+(R.conflict?'השאר את שלי':'דחה')+'</button>'+
       (it&&it.kind==='seg'?'<button data-a="edit" title="ערוך במקום (E)">ערוך</button>':'')+
       '<button data-a="next" title="דלג לקטע הבא בלי להכריע (חץ למטה)">דלג לבא</button></div>';
     /* פרומפט 36: גובה הסרגל משתנה (שורת סיכום, כרטיס ציון). כפתור העיפרון הצף ותחתית הדף זזים מעליו, כדי שלא יסתירו כפתור */
@@ -693,7 +693,8 @@
     if(e.ctrlKey&&!e.altKey&&(e.code==='KeyZ')){stop();skpUndo();return}
     if(e.ctrlKey||e.altKey||e.metaKey)return;
     if(k==='Enter'){stop();skpAccept(R.conflict)}
-    else if(k==='Delete'){stop();skpReject()}
+    /* 18.11.2026 (מיכאל): Delete שמור לעריכה השוטפת ואינו נוגע בסקירה; הדחייה - במקש הגרשיים שליד האנטר (event.code Quote, גם בפריסה עברית) */
+    else if(e.code==='Quote'){stop();skpReject()}
     else if(e.code==='KeyE'){stop();skpEditOn()}
     else if(k==='ArrowDown'){stop();skpMove(1)}
     else if(k==='ArrowUp'){stop();skpMove(-1)}

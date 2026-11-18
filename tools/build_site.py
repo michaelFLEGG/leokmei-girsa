@@ -4036,12 +4036,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function plain(h){
     if(h===null)return '';
     if(typeof h!=='string')h=String(h);
-    if(!/[<&\r\0]/.test(h))return h;
+    /* 18.11.2026: גם מחרוזת בלי תגיות נשמרת במטמון - בדיקת הביטוי על כל פסקאות המסכת בכל בניית מקומות עלתה שנייה בשבת */
     let r=PLC.get(h);
+    if(r!==undefined)return r;
+    if(!/[<&\r\0]/.test(h)){if(PLC.size>250000)PLC.clear();PLC.set(h,h);return h}
     if(r===undefined){
       if(!PLD)PLD=document.createElement('div');
       PLD.innerHTML=h;r=PLD.textContent;
-      if(PLC.size>40000)PLC.clear();
+      if(PLC.size>250000)PLC.clear();
       PLC.set(h,r)}
     return r}
 
@@ -4118,6 +4120,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(const c of t.replace(/[.:"'׳״]/g,''))n+=V[c]||0;return n?n*2+am:null}
 
   /* מאתר את המקום של עריכה. מחזיר מפתח, או null אם היא תלושה. */
+  /* 18.11.2026 (מהירות): חלון המקומות של דף ושכניו נשלף ממפתח לפי דף, ולא בסינון כל מקומות המסכת לכל עריכה.
+     התוצאה זהה (אותם מקומות, באותו סדר). */
+  let SWIN=null;
+  function slotWin(daf){
+    if(!SLOTS)SLOTS=slots();
+    const k0=dafKey(daf);if(k0===null)return SLOTS;
+    if(!SWIN||SWIN.src!==SLOTS){const m=new Map(),nul=[];
+      SLOTS.forEach((s,i)=>{const k=dafKey(s.daf);if(k===null)nul.push(i);else{let a=m.get(k);if(!a)m.set(k,a=[]);a.push(i)}});
+      SWIN={src:SLOTS,m,nul}}
+    const ix=SWIN.nul.concat(SWIN.m.get(k0-1)||[],SWIN.m.get(k0)||[],SWIN.m.get(k0+1)||[]).sort((a,b)=>a-b);
+    return ix.map(i=>SLOTS[i])}
   function locate(e){
     if(!SLOTS)SLOTS=slots();
     const wants=[e.was,e.now].concat(e._cur!==undefined?[e._cur]:[]);
@@ -4127,8 +4140,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const bk=String(e.k||'').split('~')[0];
     const byKey=slotIdx().get(e.k)||(bk!==e.k?slotIdx().get(bk):null);
     if(byKey&&wants.indexOf(byKey.t)>-1)return byKey.k;
-    const k0=dafKey(e.daf);
-    const win=SLOTS.filter(s=>{const k=dafKey(s.daf);return k0===null||k===null?true:Math.abs(k-k0)<=1});
+    const win=slotWin(e.daf);
     for(const want of wants){
       let hits=win.filter(s=>s.t===want);
       /* כמה מקומות באותו נוסח: ההקשר (השורה שלפני ושאחרי) מכריע, אם נרשם */
@@ -4139,15 +4151,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     }
     /* אותו נוסח בלי הבדלי רווחים (ראה WN) - רק כשיש התאמה אחת */
     for(const want of wants){const w=WN(want);if(!w)continue;
-      const hits=win.filter(s=>WN(s.t)===w);if(hits.length===1)return hits[0].k}
+      const hits=win.filter(s=>WNC(s.t)===w);if(hits.length===1)return hits[0].k}
     return null}
 
   function spliceLocate(e){
     const w=WN(e.was);if(!w||w.length<8||e.now===undefined)return null;
     if(!SLOTS)SLOTS=slots();
-    const k0=dafKey(e.daf);
-    const win=SLOTS.filter(s=>{const k=dafKey(s.daf);return k0===null||k===null?true:Math.abs(k-k0)<=1});
-    const hits=[];for(const s of win){const t=WN(s.t);if(t===w||t.length<=w.length)continue;
+    const win=slotWin(e.daf);
+    const hits=[];for(const s of win){const t=WNC(s.t);if(t===w||t.length<=w.length)continue;
       if(t.startsWith(w))hits.push([s,1]);else if(t.endsWith(w))hits.push([s,0])}
     if(hits.length!==1)return null;
     const [s,pre]=hits[0],d=document.createElement('div');d.innerHTML=dataHtml(s.k);
@@ -4263,11 +4274,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function applyEdits(root){
     if(!ED.length)return;
     const f=root||$('#flow');
-    let lost=0;
+    let lost=0,EM=null;
     for(const e of ED){
       if(e.lost)lost++;
       if(e.op==='struct'||e.lost||!e._ap)continue;
-      const el=f.querySelector('[data-ek="'+e.k+'"]');
+      /* 18.11.2026: מפה אחת של כל המקומות במקום חיפוש בכל הדף לכל עריכה (2.6 שניות בשבת) */
+      if(!EM){EM=new Map();for(const x of f.querySelectorAll('[data-ek]'))if(!EM.has(x.dataset.ek))EM.set(x.dataset.ek,x)}
+      const el=EM.get(String(e.k));
       if(!el)continue;
       if(e.ps!==undefined&&isHeadEl(el))headTo(el,[]);
       el.dataset.edited='1'}

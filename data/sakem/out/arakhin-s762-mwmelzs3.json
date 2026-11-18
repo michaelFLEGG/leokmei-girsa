@@ -3,7 +3,7 @@
  "jid": "arakhin-s762-mwmelzs3",
  "slug": "arakhin",
  "title": "ערכין פרק שני - אין נערכין · סבב על הנוסח החי (s24, s25, s26)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 762,
@@ -52,6 +52,14 @@
     "nose": 0,
     "lenA": 429,
     "lenB": 429
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -97,7 +105,15 @@
     "שורה אלמנה (כ\"ו!) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -145,8 +161,70 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"ונמצא שחרב במוצאי שביעית\", \"שבע שכיבשו ושבע שחילקו\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 10,
+    "nose": 2,
+    "widow": 0
+   }
   }
  ],
- "t": 1795043683084
+ "t": 1795043689189,
+ "summary": "בפרק: 0 הדגשות במשנה, 1 רווחים, 5 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 1,
+  "dash": 5,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 3,
+  "perSeg": {
+   "bold": 0,
+   "space": 0.33,
+   "dash": 1.67,
+   "side": 8.67,
+   "nose": 1.33,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 1,
+  "dash": 5,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 4,
+  "block": 0,
+  "lenPct": 0.5,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 20
+  }
+ },
+ "counts": {
+  "shown": 2,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

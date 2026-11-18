@@ -192,7 +192,8 @@ const saveRun = (jid, s) => wr(runF(jid), s);
 const RUNS = path.join(D, 'runs.jsonl');
 /* סימון ההרצה (מקומי): על איזו עבודה ההרצה הזאת עובדת. כל הרצה של המשימה היא שכפול חדש, ולכן אין סימון.
    במחשב המקומי _work נשמר - סימון בן יותר משלוש שעות אינו נחשב, ו-next --new-run מאפס אותו */
-const MARK = path.join(WORK, '.run.json');
+/* פרומפט 61: כמה עובדים במקביל באותו מחשב - כל אחד בסימון משלו (SAKEM_MARK) */
+const MARK = process.env.SAKEM_MARK ? path.resolve(process.env.SAKEM_MARK) : path.join(WORK, '.run.json');
 const runMark = () => { try { const m = rd(MARK); return Date.now() - (m.t || 0) < 3 * 3600e3 ? m : null; } catch (e) { return null; } };
 /* שורה ביומן ההרצות: פרק, חלק, קטעים, יחידות, אורך המקור, התחלה וסיום - להערכת העלות לפרק */
 function logRun(jid, pk, o, how) {
@@ -222,7 +223,9 @@ if (cmd === 'status') {
   const p51Locked = (j) => { try { const s = pkOf(j).slug; return !!s && fs.existsSync(path.join(ROOT, '.locks', 'p51-' + s + '.lock')); } catch (e) { return false; } };
   /* פרומפט 59 (17.11.2026): עבודות "סבב מבני" נעשות בשיחה ייעודית (.locks/p59-<slug>.lock) - next בלי מזהה מדלג עליהן כל עוד הנעילה קיימת */
   const p59Mine = (j) => { try { const k = pkOf(j); return /סבב מבני/.test(k.title || '') && fs.existsSync(path.join(ROOT, '.locks', 'p59-' + k.slug + '.lock')); } catch (e) { return false; } };
-  const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || !p59Mine(j)); });
+  /* פרומפט 61 (18.11.2026): "סכם מלא" על מסכת שלמה (ערכין) נעשה בשיחה ייעודית (.locks/p61-<slug>.lock) - next בלי מזהה מדלג */
+  const p61Mine = (j) => { try { const k = pkOf(j); return /סכם מלא/.test(k.title || '') && fs.existsSync(path.join(ROOT, '.locks', 'p61-' + k.slug + '.lock')); } catch (e) { return false; } };
+  const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j))); });
   if (!jid) die('התור ריק.', 3);
   /* פרומפט 29: פרק אחד בכל הרצה, בהקשר נקי */
   if (process.argv.includes('--new-run')) { try { fs.unlinkSync(MARK); } catch (e) {} }
@@ -271,6 +274,9 @@ if (cmd === 'status') {
   /* פרומפט 59 (17.11.2026): "סבב מבני" לפי עריכות מיכאל בברכות פרק א - ההנחיה והדוגמאות */
   if (/סבב מבני/.test(pk.title || '')) ['הנחיה.md', 'דוגמאות.md'].forEach((n) => { const F = path.join(ROOT, 'docs', 'פרומפט-59', n);
     if (fs.existsSync(F)) console.log('\n######## פרומפט 59 - ' + n + ' (גובר על כלל כללי)\n' + fs.readFileSync(F, 'utf8')); });
+  /* פרומפט 61 (18.11.2026): "סכם מלא" על ערכין - ההנחיה המיוחדת (מסכת דלה: הסבר וגמרא חסרה, לצד קיצור וסגנונות) */
+  if (/סכם מלא/.test(pk.title || '')) { const F = path.join(ROOT, 'docs', 'פרומפט-61', 'הנחיה.md');
+    if (fs.existsSync(F)) console.log('\n######## פרומפט 61 - הנחיה (גוברת על כלל כללי)\n' + fs.readFileSync(F, 'utf8')); }
   console.log('יחידות:', pk.units.length, '· דפים:', (pk.pages || []).map((p) => p.daf).join(' '));
   console.log('לקריאה:', path.relative(ROOT, dir) + '/{gemara.md, leokmei.md' + (hv ? ', chavruta.md' : '') + '}');
   if (o) console.log('המשך מהרצה קודמת: ' + o.done + ' מתוך ' + o.total + ' קטעים כבר נכתבו. הקטע הבא: ' + (o.plan.findIndex((s, i) => !o.items.some((x) => x.seg === i)) + 1));

@@ -258,10 +258,18 @@
           if(skpInPage(x,page)){r.st='in';return}
           const late=(x.ids||[]).filter(id=>(lastEd.get(id)||0)>(+x.t||0)+120000);
           if(late.length){r.st='manual';r.ids=late;return}
-          if(x.kind==='seg'&&!skmSame(x.ids,x.orig)){r.st='changed';return}
+          let orig;
+          if(x.kind==='seg'&&!skmSame(x.ids,x.orig)){
+            /* הקטע בדף אינו כלשון הנוסח שעליו נכתבה ההצעה. אם האותיות זהות (רק חלוקת היחידות או הסימון השתנו, למשל בקיפול) -
+               מוחל על הנוסח שבדף, כמו "החלף בהצעה". אם הנוסח עצמו השתנה - לא נוגעים */
+            let cur='';try{cur=skmInter(skmUnits(x.ids))}catch(e){}
+            const A=skpLet(cur).replace(/\n/g,''),O=skpLet(x.orig).replace(/\n/g,'');
+            if(!A||A!==O){r.st='changed';return}
+            orig=cur;r.relaid=1}
           if(dry){r.st='would';return}
           SKP.rev={jid:x.jid,items:[x],i:0,dec:{},cnt:{accept:0,reject:0,edit:0},hist:[],bad:new Set()};
-          skpApplyOne(x,x.text);r.st='applied'}
+          window.__SKMFORCE=orig?1:0;try{skpApplyOne(x,x.text,orig)}finally{window.__SKMFORCE=0}
+          r.st='applied'}
         catch(e){r.st='bad';r.why=String(e&&e.message||e).slice(0,160)}})}
       finally{SKP.rev=prev;if(B)skmBatchEnd(B)}
       return out},

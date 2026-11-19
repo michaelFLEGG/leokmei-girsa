@@ -3,7 +3,7 @@
  "jid": "shabbat-s4818-mwmd45uz",
  "slug": "shabbat",
  "title": "שבת פרק תשיעי - אמר רבי עקיבא · סבב על הנוסח החי (s3, s4, s5, s6)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 4818,
@@ -82,7 +82,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 11,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -134,7 +142,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 11,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -175,7 +191,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: בהיפך, תיקו"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -218,7 +242,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: לקולא"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -264,8 +296,70 @@
    "keep": [
     "ולחנניה טמאה שדין - צלע שנייה במחלוקת, אחרי הצלע של 'בלב ים' באותה צורה",
     "ולחנניה טמאה שמיטלטלת - צלע שנייה במחלוקת, אחרי הצלע של 'בלב ים' באותה צורה"
-   ]
+   ],
+   "abs": {
+    "bold": 1,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795078950158
+ "t": 1795078959017,
+ "summary": "בפרק: 1 הדגשות במשנה, 0 רווחים, 5 מקפי תירוץ, 31 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 1,
+  "space": 0,
+  "dash": 5,
+  "side": 31,
+  "hatz": 0
+ },
+ "learnedNew": 3,
+ "score": {
+  "segs": 5,
+  "perSeg": {
+   "bold": 0.2,
+   "space": 0,
+   "dash": 1,
+   "side": 7,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 1,
+  "space": 0,
+  "dash": 5,
+  "side": 31,
+  "nose": 1,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 13,
+  "block": 0,
+  "lenPct": 5.8,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 1,
+   "coins": 1,
+   "overLeft": 17
+  }
+ },
+ "counts": {
+  "shown": 5,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

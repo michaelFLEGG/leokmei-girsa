@@ -93,7 +93,7 @@ for (const b of B) {
   for (const r of (RU.line || {})[b.iid] || []) {
     const i = L.findIndex((l) => l.startsWith(r.from));
     if (i < 0) { miss(b.iid, 'לא נמצאה שורה להחלפה: ' + r.from); continue; }
-    L.splice(i, 1, ...r.to); if (!r.note || /מקף/.test(r.note)) tot.dash++; if (/והך/.test(r.note || '')) tot.vehach++; ch.push(r.note || ('הוחזר מקף התירוץ: ' + SKC.plainI(r.to[0])));
+    L.splice(i, 1, ...r.to); if (!r.note || /מקף/.test(r.note)) tot.dash++; if (/שם תנא/.test(r.note || '')) tot.tanna++; if (/והך/.test(r.note || '')) tot.vehach++; ch.push(r.note || ('הוחזר מקף התירוץ: ' + SKC.plainI(r.to[0])));
     for (let k = 0; k < idx.length; k++) { if (idx[k] === i) idx[k] = -1; else if (idx[k] > i) idx[k] += r.to.length - 1; }
   }
   const ref = L.join(NL);

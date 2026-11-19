@@ -20,6 +20,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import * as COST from './cost.mjs';
 
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -225,6 +226,14 @@ function logRun(jid, pk, o, how, extra) {
   const rec = { jid, slug: pk.slug, perek: +((pk.job && pk.job.perek) || pk.perek || 0) || null, title: pk.title || '', part: rs.part ? rs.part + '/' + (rb ? rb.length - 1 : 2) : 'כולו',
     segs: o.total, segsThisRun: o.done - (rs.done0 || 0), units, origLen, start: rs.t0 ? new Date(rs.t0).toISOString() : null, end: new Date().toISOString(), how, ...(extra || {}) };
   if (rs.t0) rec.minutes = Math.round((Date.now() - rs.t0) / 6000) / 10;
+  /* פרומפט 70: עלות אמיתית מתמלול השיחה (כל השיחה, כולל lessons וסוכני-משנה; אם כבר נרשמה שורה באותה שיחה - מאז אותה שורה).
+     אין תמלול - "לא נמדד" עם הסיבה, בלי מספר */
+  rec.station = STATION; rec.round = COST.roundOf(pk.title, jid); if (LEAN) rec.lean = 1;
+  { const m0 = runMark(); const since = (m0 && m0.costAt) || 0;
+    const ms = COST.measure(ROOT, since);
+    if (ms.kind === 'מדידה') { rec.tokens = ms.tokens; rec.tokTotal = ms.total; rec.usd = ms.usd; rec.model = ms.model; rec.session = ms.session; rec.cost = 'מדידה'; }
+    else { rec.cost = 'לא נמדד'; rec.costWhy = ms.why; }
+    if (m0) { m0.costAt = Date.now(); wr(MARK, m0); } }
   fs.mkdirSync(D, { recursive: true });
   fs.appendFileSync(RUNS, JSON.stringify(rec) + '\n');
   rs.logged = 1; saveRun(jid, rs);
@@ -234,6 +243,8 @@ function logRun(jid, pk, o, how, extra) {
 }
 
 const cmd = process.argv[2], A = process.argv.slice(3).filter((x) => !/^--/.test(x)), PUSH = process.argv.includes('--push'), DRY = process.argv.includes('--dry');
+/* פרומפט 70: הצינור החסכוני (--lean או SAKEM_LEAN=1) - מאחורי דגל עד שעבר את מבחן האיכות */
+const LEAN = process.argv.includes('--lean') || process.env.SAKEM_LEAN === '1';
 
 /* פרומפט 69 (19.11.2026): נעילה לכל עבודה - שני עובדים (החשבון הראשון והשני) בלי התנגשות.
    לפני עבודה: .locks/sakem-<jid>.lock (שם העמדה, השעה, אסימון ההרצה) ודחיפה מיד. הנעילה כבר קיימת או שהדחיפה

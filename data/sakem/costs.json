@@ -1,0 +1,6812 @@
+{
+ "v": 1,
+ "generated": "2026-11-19T21:55Z",
+ "calib": {
+  "tokPerMin": 1000000,
+  "usdPerMin": 0.4,
+  "basedOn": 0,
+  "note": "טרם נמדדה הרצה - נקודת הפתיחה של פרומפט 70"
+ },
+ "perek": [
+  {
+   "slug": "arakhin",
+   "perek": 1,
+   "title": "ערכין פרק הכל מעריכין",
+   "runs": 1,
+   "minutes": 0,
+   "tokens": 0,
+   "usd": 0.0,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 0.0,
+     "tokens": 0
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 0,
+     "usd": 0.0
+    }
+   },
+   "before": {
+    "usd": 0.0,
+    "runs": 1
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "arakhin",
+   "perek": 2,
+   "title": "ערכין פרק אין נערכין",
+   "runs": 8,
+   "minutes": 22.9,
+   "tokens": 22900000,
+   "usd": 9.16,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 5.04,
+     "tokens": 12600000
+    },
+    "נוסח חי": {
+     "runs": 7,
+     "usd": 4.12,
+     "tokens": 10300000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 22900000,
+     "usd": 9.16
+    }
+   },
+   "before": {
+    "usd": 9.16,
+    "runs": 8
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "arakhin",
+   "perek": 3,
+   "title": "ערכין פרק יש בערכין",
+   "runs": 1,
+   "minutes": 15.8,
+   "tokens": 15800000,
+   "usd": 6.32,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 6.32,
+     "tokens": 15800000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 15800000,
+     "usd": 6.32
+    }
+   },
+   "before": {
+    "usd": 6.32,
+    "runs": 1
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "arakhin",
+   "perek": 4,
+   "title": "ערכין פרק השג יד",
+   "runs": 2,
+   "minutes": 82.9,
+   "tokens": 82900000,
+   "usd": 33.16,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 33.16,
+     "tokens": 82900000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 82900000,
+     "usd": 33.16
+    }
+   },
+   "before": {
+    "usd": 33.16,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "arakhin",
+   "perek": 5,
+   "title": "ערכין פרק האומר משקלי עלי",
+   "runs": 7,
+   "minutes": 26.1,
+   "tokens": 26099998,
+   "usd": 10.44,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 3.28,
+     "tokens": 8199999
+    },
+    "נוסח חי": {
+     "runs": 6,
+     "usd": 7.16,
+     "tokens": 17899999
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 26099998,
+     "usd": 10.44
+    }
+   },
+   "before": {
+    "usd": 10.44,
+    "runs": 7
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "arakhin",
+   "perek": 6,
+   "title": "ערכין פרק שום היתומים",
+   "runs": 1,
+   "minutes": 36.5,
+   "tokens": 36500000,
+   "usd": 14.6,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 14.6,
+     "tokens": 36500000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 36500000,
+     "usd": 14.6
+    }
+   },
+   "before": {
+    "usd": 14.6,
+    "runs": 1
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "arakhin",
+   "perek": 7,
+   "title": "ערכין פרק אין מקדישין",
+   "runs": 1,
+   "minutes": 43.5,
+   "tokens": 43500000,
+   "usd": 17.4,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 17.4,
+     "tokens": 43500000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 43500000,
+     "usd": 17.4
+    }
+   },
+   "before": {
+    "usd": 17.4,
+    "runs": 1
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "arakhin",
+   "perek": 8,
+   "title": "ערכין פרק המקדיש שדהו",
+   "runs": 1,
+   "minutes": 41.5,
+   "tokens": 41500000,
+   "usd": 16.6,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 16.6,
+     "tokens": 41500000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 41500000,
+     "usd": 16.6
+    }
+   },
+   "before": {
+    "usd": 16.6,
+    "runs": 1
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "arakhin",
+   "perek": 9,
+   "title": "ערכין פרק המוכר שדהו",
+   "runs": 7,
+   "minutes": 30.2,
+   "tokens": 30200000,
+   "usd": 12.08,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 6.28,
+     "tokens": 15700000
+    },
+    "כללים אחרונים": {
+     "runs": 6,
+     "usd": 5.8,
+     "tokens": 14500000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 30200000,
+     "usd": 12.08
+    }
+   },
+   "before": {
+    "usd": 12.08,
+    "runs": 7
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "bekhorot",
+   "perek": 9,
+   "title": "בכורות פרק תשיעי",
+   "runs": 1,
+   "minutes": 6,
+   "tokens": 6000000,
+   "usd": 2.4,
+   "measured": 0,
+   "byRound": {
+    "נוסח חי": {
+     "runs": 1,
+     "usd": 2.4,
+     "tokens": 6000000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 6000000,
+     "usd": 2.4
+    }
+   },
+   "before": {
+    "usd": 2.4,
+    "runs": 1
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "berakhot",
+   "perek": 1,
+   "title": "ברכות פרק ראשון",
+   "runs": 4,
+   "minutes": 59.5,
+   "tokens": 59500000,
+   "usd": 23.8,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 4,
+     "usd": 23.8,
+     "tokens": 59500000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 59500000,
+     "usd": 23.8
+    }
+   },
+   "before": {
+    "usd": 23.8,
+    "runs": 4
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "berakhot",
+   "perek": 2,
+   "title": "ברכות פרק שני",
+   "runs": 5,
+   "minutes": 64.0,
+   "tokens": 64000000,
+   "usd": 25.6,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 10.72,
+     "tokens": 26800000
+    },
+    "נוסח חי": {
+     "runs": 2,
+     "usd": 5.52,
+     "tokens": 13800000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 9.36,
+     "tokens": 23400000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 64000000,
+     "usd": 25.6
+    }
+   },
+   "before": {
+    "usd": 25.6,
+    "runs": 5
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "berakhot",
+   "perek": 3,
+   "title": "ברכות פרק שלישי",
+   "runs": 3,
+   "minutes": 76.4,
+   "tokens": 76400000,
+   "usd": 30.56,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 16.72,
+     "tokens": 41800000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 13.84,
+     "tokens": 34600000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 76400000,
+     "usd": 30.56
+    }
+   },
+   "before": {
+    "usd": 30.56,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "berakhot",
+   "perek": 4,
+   "title": "ברכות פרק רביעי",
+   "runs": 6,
+   "minutes": 58.6,
+   "tokens": 58600000,
+   "usd": 23.44,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 10.12,
+     "tokens": 25300000
+    },
+    "כללים מעודכנים": {
+     "runs": 4,
+     "usd": 13.32,
+     "tokens": 33300000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 58600000,
+     "usd": 23.44
+    }
+   },
+   "before": {
+    "usd": 23.44,
+    "runs": 6
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "berakhot",
+   "perek": 5,
+   "title": "ברכות פרק חמישי",
+   "runs": 3,
+   "minutes": 60.6,
+   "tokens": 60599999,
+   "usd": 24.24,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 12.92,
+     "tokens": 32299999
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 11.32,
+     "tokens": 28300000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 60599999,
+     "usd": 24.24
+    }
+   },
+   "before": {
+    "usd": 24.24,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "berakhot",
+   "perek": 6,
+   "title": "ברכות פרק שישי",
+   "runs": 5,
+   "minutes": 50.2,
+   "tokens": 50200000,
+   "usd": 20.08,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 7.6,
+     "tokens": 19000000
+    },
+    "כללים מעודכנים": {
+     "runs": 3,
+     "usd": 12.48,
+     "tokens": 31200000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 50200000,
+     "usd": 20.08
+    }
+   },
+   "before": {
+    "usd": 20.08,
+    "runs": 5
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי",
+   "runs": 11,
+   "minutes": 45.2,
+   "tokens": 45200000,
+   "usd": 18.08,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 10.4,
+     "tokens": 26000000
+    },
+    "כללים מעודכנים": {
+     "runs": 9,
+     "usd": 7.68,
+     "tokens": 19200000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 45200000,
+     "usd": 18.08
+    }
+   },
+   "before": {
+    "usd": 18.08,
+    "runs": 11
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "berakhot",
+   "perek": 8,
+   "title": "ברכות פרק שמיני",
+   "runs": 3,
+   "minutes": 47.1,
+   "tokens": 47100000,
+   "usd": 18.84,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 9.6,
+     "tokens": 24000000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 9.24,
+     "tokens": 23100000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 47100000,
+     "usd": 18.84
+    }
+   },
+   "before": {
+    "usd": 18.84,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "berakhot",
+   "perek": 9,
+   "title": "ברכות פרק תשיעי",
+   "runs": 6,
+   "minutes": 101.8,
+   "tokens": 101800000,
+   "usd": 40.72,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 18.28,
+     "tokens": 45700000
+    },
+    "כללים מעודכנים": {
+     "runs": 4,
+     "usd": 22.44,
+     "tokens": 56100000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 101800000,
+     "usd": 40.72
+    }
+   },
+   "before": {
+    "usd": 40.72,
+    "runs": 6
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "ketubot",
+   "perek": 1,
+   "title": "כתובות פרק ראשון",
+   "runs": 2,
+   "minutes": 50.3,
+   "tokens": 50300000,
+   "usd": 20.12,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 20.12,
+     "tokens": 50300000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 50300000,
+     "usd": 20.12
+    }
+   },
+   "before": {
+    "usd": 20.12,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "ketubot",
+   "perek": 3,
+   "title": "כתובות פרק שלישי",
+   "runs": 2,
+   "minutes": 50.3,
+   "tokens": 50300000,
+   "usd": 20.12,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 20.12,
+     "tokens": 50300000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 50300000,
+     "usd": 20.12
+    }
+   },
+   "before": {
+    "usd": 20.12,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "kiddushin",
+   "perek": 1,
+   "title": "קידושין פרק ראשון",
+   "runs": 5,
+   "minutes": 109.9,
+   "tokens": 109900000,
+   "usd": 43.96,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 5,
+     "usd": 43.96,
+     "tokens": 109900000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 109900000,
+     "usd": 43.96
+    }
+   },
+   "before": {
+    "usd": 43.96,
+    "runs": 5
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "kiddushin",
+   "perek": 2,
+   "title": "קידושין פרק שני",
+   "runs": 3,
+   "minutes": 74.7,
+   "tokens": 74700000,
+   "usd": 29.88,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 3,
+     "usd": 29.88,
+     "tokens": 74700000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 74700000,
+     "usd": 29.88
+    }
+   },
+   "before": {
+    "usd": 29.88,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "kiddushin",
+   "perek": 3,
+   "title": "קידושין פרק שלישי",
+   "runs": 2,
+   "minutes": 45.3,
+   "tokens": 45300000,
+   "usd": 18.12,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 18.12,
+     "tokens": 45300000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 45300000,
+     "usd": 18.12
+    }
+   },
+   "before": {
+    "usd": 18.12,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "kiddushin",
+   "perek": 4,
+   "title": "קידושין פרק רביעי",
+   "runs": 3,
+   "minutes": 58.2,
+   "tokens": 58200000,
+   "usd": 23.28,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 3,
+     "usd": 23.28,
+     "tokens": 58200000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 58200000,
+     "usd": 23.28
+    }
+   },
+   "before": {
+    "usd": 23.28,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק ראשון",
+   "runs": 10,
+   "minutes": 132.6,
+   "tokens": 132600000,
+   "usd": 53.04,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 5,
+     "usd": 28.6,
+     "tokens": 71500000
+    },
+    "נוסח חי": {
+     "runs": 2,
+     "usd": 15.48,
+     "tokens": 38700000
+    },
+    "כללים מעודכנים": {
+     "runs": 3,
+     "usd": 8.96,
+     "tokens": 22400000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 132600000,
+     "usd": 53.04
+    }
+   },
+   "before": {
+    "usd": 53.04,
+    "runs": 10
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני",
+   "runs": 21,
+   "minutes": 249.8,
+   "tokens": 249800000,
+   "usd": 99.92,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 17,
+     "usd": 81.52,
+     "tokens": 203800000
+    },
+    "כללים מעודכנים": {
+     "runs": 2,
+     "usd": 16.84,
+     "tokens": 42100000
+    },
+    "נוסח חי": {
+     "runs": 2,
+     "usd": 1.56,
+     "tokens": 3900000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 249800000,
+     "usd": 99.92
+    }
+   },
+   "before": {
+    "usd": 99.92,
+    "runs": 21
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 3,
+   "title": "שבת פרק שלישי",
+   "runs": 6,
+   "minutes": 88.6,
+   "tokens": 88599999,
+   "usd": 35.44,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 4,
+     "usd": 17.28,
+     "tokens": 43199999
+    },
+    "כללים מעודכנים": {
+     "runs": 2,
+     "usd": 18.16,
+     "tokens": 45400000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 88599999,
+     "usd": 35.44
+    }
+   },
+   "before": {
+    "usd": 35.44,
+    "runs": 6
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק רביעי",
+   "runs": 8,
+   "minutes": 190.1,
+   "tokens": 190100000,
+   "usd": 76.04,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 54.68,
+     "tokens": 136700000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 9.32,
+     "tokens": 23300000
+    },
+    "נוסח חי": {
+     "runs": 5,
+     "usd": 12.04,
+     "tokens": 30100000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 190100000,
+     "usd": 76.04
+    }
+   },
+   "before": {
+    "usd": 76.04,
+    "runs": 8
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 5,
+   "title": "שבת פרק חמישי",
+   "runs": 5,
+   "minutes": 45.5,
+   "tokens": 45500000,
+   "usd": 18.2,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 6.52,
+     "tokens": 16300000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 7.92,
+     "tokens": 19800000
+    },
+    "נוסח חי": {
+     "runs": 3,
+     "usd": 3.76,
+     "tokens": 9400000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 45500000,
+     "usd": 18.2
+    }
+   },
+   "before": {
+    "usd": 18.2,
+    "runs": 5
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי",
+   "runs": 14,
+   "minutes": 150.4,
+   "tokens": 150399999,
+   "usd": 60.16,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 16.28,
+     "tokens": 40700000
+    },
+    "כללים מעודכנים": {
+     "runs": 2,
+     "usd": 11.84,
+     "tokens": 29600000
+    },
+    "נוסח חי": {
+     "runs": 10,
+     "usd": 32.04,
+     "tokens": 80099999
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 150399999,
+     "usd": 60.16
+    }
+   },
+   "before": {
+    "usd": 60.16,
+    "runs": 14
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק שביעי",
+   "runs": 8,
+   "minutes": 77.1,
+   "tokens": 77100000,
+   "usd": 30.84,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 10.52,
+     "tokens": 26300000
+    },
+    "כללים מעודכנים": {
+     "runs": 2,
+     "usd": 8.92,
+     "tokens": 22300000
+    },
+    "נוסח חי": {
+     "runs": 4,
+     "usd": 11.4,
+     "tokens": 28500000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 77100000,
+     "usd": 30.84
+    }
+   },
+   "before": {
+    "usd": 30.84,
+    "runs": 8
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 8,
+   "title": "שבת פרק שמיני",
+   "runs": 5,
+   "minutes": 65.2,
+   "tokens": 65200000,
+   "usd": 26.08,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 12.08,
+     "tokens": 30200000
+    },
+    "כללים מעודכנים": {
+     "runs": 2,
+     "usd": 8.56,
+     "tokens": 21400000
+    },
+    "נוסח חי": {
+     "runs": 1,
+     "usd": 5.44,
+     "tokens": 13600000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 65200000,
+     "usd": 26.08
+    }
+   },
+   "before": {
+    "usd": 26.08,
+    "runs": 5
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 9,
+   "title": "שבת פרק תשיעי",
+   "runs": 8,
+   "minutes": 99.4,
+   "tokens": 99400000,
+   "usd": 39.76,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 13.52,
+     "tokens": 33800000
+    },
+    "כללים מעודכנים": {
+     "runs": 2,
+     "usd": 10.8,
+     "tokens": 27000000
+    },
+    "נוסח חי": {
+     "runs": 4,
+     "usd": 15.44,
+     "tokens": 38600000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 99400000,
+     "usd": 39.76
+    }
+   },
+   "before": {
+    "usd": 39.76,
+    "runs": 8
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 10,
+   "title": "שבת פרק עשירי",
+   "runs": 4,
+   "minutes": 45.6,
+   "tokens": 45600000,
+   "usd": 18.24,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 6.16,
+     "tokens": 15400000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 7.64,
+     "tokens": 19100000
+    },
+    "נוסח חי": {
+     "runs": 2,
+     "usd": 4.44,
+     "tokens": 11100000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 45600000,
+     "usd": 18.24
+    }
+   },
+   "before": {
+    "usd": 18.24,
+    "runs": 4
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 11,
+   "title": "שבת פרק אחד עשר",
+   "runs": 3,
+   "minutes": 43.4,
+   "tokens": 43400000,
+   "usd": 17.36,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 8.0,
+     "tokens": 20000000
+    },
+    "כללים מעודכנים": {
+     "runs": 2,
+     "usd": 9.36,
+     "tokens": 23400000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 43400000,
+     "usd": 17.36
+    }
+   },
+   "before": {
+    "usd": 17.36,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 12,
+   "title": "שבת פרק שנים עשר",
+   "runs": 2,
+   "minutes": 24.5,
+   "tokens": 24500000,
+   "usd": 9.8,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 5.32,
+     "tokens": 13300000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 4.48,
+     "tokens": 11200000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 24500000,
+     "usd": 9.8
+    }
+   },
+   "before": {
+    "usd": 9.8,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 13,
+   "title": "שבת פרק שלשה עשר",
+   "runs": 2,
+   "minutes": 30.0,
+   "tokens": 30000000,
+   "usd": 12.0,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 6.44,
+     "tokens": 16100000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 5.56,
+     "tokens": 13900000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 30000000,
+     "usd": 12.0
+    }
+   },
+   "before": {
+    "usd": 12.0,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 14,
+   "title": "שבת פרק ארבעה עשר",
+   "runs": 2,
+   "minutes": 37.4,
+   "tokens": 37400000,
+   "usd": 14.96,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 8.04,
+     "tokens": 20100000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 6.92,
+     "tokens": 17300000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 37400000,
+     "usd": 14.96
+    }
+   },
+   "before": {
+    "usd": 14.96,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 15,
+   "title": "שבת פרק חמשה עשר",
+   "runs": 2,
+   "minutes": 38.3,
+   "tokens": 38300000,
+   "usd": 15.32,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 7.08,
+     "tokens": 17700000
+    },
+    "כללים מעודכנים": {
+     "runs": 1,
+     "usd": 8.24,
+     "tokens": 20600000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 38300000,
+     "usd": 15.32
+    }
+   },
+   "before": {
+    "usd": 15.32,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 16,
+   "title": "שבת פרק ששה עשר",
+   "runs": 2,
+   "minutes": 31.8,
+   "tokens": 31799999,
+   "usd": 12.72,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 12.72,
+     "tokens": 31799999
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 31799999,
+     "usd": 12.72
+    }
+   },
+   "before": {
+    "usd": 12.72,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 17,
+   "title": "שבת פרק שבעה עשר",
+   "runs": 1,
+   "minutes": 19.7,
+   "tokens": 19700000,
+   "usd": 7.88,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 7.88,
+     "tokens": 19700000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 19700000,
+     "usd": 7.88
+    }
+   },
+   "before": {
+    "usd": 7.88,
+    "runs": 1
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 18,
+   "title": "שבת פרק שמונה עשר",
+   "runs": 1,
+   "minutes": 20.8,
+   "tokens": 20800000,
+   "usd": 8.32,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 8.32,
+     "tokens": 20800000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 20800000,
+     "usd": 8.32
+    }
+   },
+   "before": {
+    "usd": 8.32,
+    "runs": 1
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 19,
+   "title": "שבת פרק תשעה עשר",
+   "runs": 3,
+   "minutes": 45.0,
+   "tokens": 45000000,
+   "usd": 18.0,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 15.8,
+     "tokens": 39500000
+    },
+    "נוסח חי": {
+     "runs": 1,
+     "usd": 2.2,
+     "tokens": 5500000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 45000000,
+     "usd": 18.0
+    }
+   },
+   "before": {
+    "usd": 18.0,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 21,
+   "title": "שבת פרק אחד ועשרים",
+   "runs": 2,
+   "minutes": 18.1,
+   "tokens": 18100000,
+   "usd": 7.24,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 5.56,
+     "tokens": 13900000
+    },
+    "נוסח חי": {
+     "runs": 1,
+     "usd": 1.68,
+     "tokens": 4200000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 18100000,
+     "usd": 7.24
+    }
+   },
+   "before": {
+    "usd": 7.24,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים",
+   "runs": 8,
+   "minutes": 103.6,
+   "tokens": 103600000,
+   "usd": 41.44,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 9.88,
+     "tokens": 24700000
+    },
+    "נוסח חי": {
+     "runs": 7,
+     "usd": 31.56,
+     "tokens": 78900000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 103600000,
+     "usd": 41.44
+    }
+   },
+   "before": {
+    "usd": 41.44,
+    "runs": 8
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים",
+   "runs": 15,
+   "minutes": 128.8,
+   "tokens": 128800000,
+   "usd": 51.52,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 10.28,
+     "tokens": 25700000
+    },
+    "נוסח חי": {
+     "runs": 13,
+     "usd": 41.24,
+     "tokens": 103100000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 128800000,
+     "usd": 51.52
+    }
+   },
+   "before": {
+    "usd": 51.52,
+    "runs": 15
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "shabbat",
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים",
+   "runs": 8,
+   "minutes": 74.6,
+   "tokens": 74599998,
+   "usd": 29.84,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 9.6,
+     "tokens": 24000000
+    },
+    "נוסח חי": {
+     "runs": 7,
+     "usd": 20.24,
+     "tokens": 50599998
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 74599998,
+     "usd": 29.84
+    }
+   },
+   "before": {
+    "usd": 29.84,
+    "runs": 8
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "sukkah",
+   "perek": 1,
+   "title": "סוכה פרק ראשון",
+   "runs": 3,
+   "minutes": 76.5,
+   "tokens": 76500000,
+   "usd": 30.6,
+   "measured": 0,
+   "byRound": {
+    "כללים מעודכנים": {
+     "runs": 3,
+     "usd": 30.6,
+     "tokens": 76500000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 76500000,
+     "usd": 30.6
+    }
+   },
+   "before": {
+    "usd": 30.6,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "sukkah",
+   "perek": 2,
+   "title": "סוכה פרק שני הישן",
+   "runs": 2,
+   "minutes": 54.4,
+   "tokens": 54399999,
+   "usd": 21.76,
+   "measured": 0,
+   "byRound": {
+    "כללים מעודכנים": {
+     "runs": 2,
+     "usd": 21.76,
+     "tokens": 54399999
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 54399999,
+     "usd": 21.76
+    }
+   },
+   "before": {
+    "usd": 21.76,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "sukkah",
+   "perek": 3,
+   "title": "סוכה פרק שלישי",
+   "runs": 3,
+   "minutes": 70.1,
+   "tokens": 70100000,
+   "usd": 28.04,
+   "measured": 0,
+   "byRound": {
+    "כללים מעודכנים": {
+     "runs": 3,
+     "usd": 28.04,
+     "tokens": 70100000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 70100000,
+     "usd": 28.04
+    }
+   },
+   "before": {
+    "usd": 28.04,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "sukkah",
+   "perek": 4,
+   "title": "סוכה פרק רביעי",
+   "runs": 3,
+   "minutes": 12.2,
+   "tokens": 12199999,
+   "usd": 4.88,
+   "measured": 0,
+   "byRound": {
+    "כללים מעודכנים": {
+     "runs": 3,
+     "usd": 4.88,
+     "tokens": 12199999
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 12199999,
+     "usd": 4.88
+    }
+   },
+   "before": {
+    "usd": 4.88,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "sukkah",
+   "perek": 5,
+   "title": "סוכה פרק חמישי",
+   "runs": 2,
+   "minutes": 46.0,
+   "tokens": 46000000,
+   "usd": 18.4,
+   "measured": 0,
+   "byRound": {
+    "כללים מעודכנים": {
+     "runs": 2,
+     "usd": 18.4,
+     "tokens": 46000000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 46000000,
+     "usd": 18.4
+    }
+   },
+   "before": {
+    "usd": 18.4,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "taanit",
+   "perek": 1,
+   "title": "תענית פרק ראשון",
+   "runs": 3,
+   "minutes": 68.1,
+   "tokens": 68100000,
+   "usd": 27.24,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 3,
+     "usd": 27.24,
+     "tokens": 68100000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 68100000,
+     "usd": 27.24
+    }
+   },
+   "before": {
+    "usd": 27.24,
+    "runs": 3
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "taanit",
+   "perek": 2,
+   "title": "תענית פרק שני",
+   "runs": 2,
+   "minutes": 81.3,
+   "tokens": 81300000,
+   "usd": 32.52,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 32.52,
+     "tokens": 81300000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 81300000,
+     "usd": 32.52
+    }
+   },
+   "before": {
+    "usd": 32.52,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "taanit",
+   "perek": 3,
+   "title": "תענית פרק שלישי",
+   "runs": 1,
+   "minutes": 73.3,
+   "tokens": 73300000,
+   "usd": 29.32,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 1,
+     "usd": 29.32,
+     "tokens": 73300000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 73300000,
+     "usd": 29.32
+    }
+   },
+   "before": {
+    "usd": 29.32,
+    "runs": 1
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  },
+  {
+   "slug": "taanit",
+   "perek": 4,
+   "title": "תענית פרק רביעי",
+   "runs": 2,
+   "minutes": 59,
+   "tokens": 59000000,
+   "usd": 23.6,
+   "measured": 0,
+   "byRound": {
+    "ראשון": {
+     "runs": 2,
+     "usd": 23.6,
+     "tokens": 59000000
+    }
+   },
+   "byModel": {
+    "opus": {
+     "tokens": 59000000,
+     "usd": 23.6
+    }
+   },
+   "before": {
+    "usd": 23.6,
+    "runs": 2
+   },
+   "after": {
+    "usd": 0,
+    "runs": 0
+   }
+  }
+ ],
+ "runs": [
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-09T18:43:25.822Z",
+   "minutes": 25.6,
+   "segs": 42,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 25600000,
+   "usd": 10.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p3",
+   "slug": "shabbat",
+   "perek": 3,
+   "title": "שבת פרק שלישי - כירה",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-09T19:00:06.314Z",
+   "minutes": 11.6,
+   "segs": 23,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 11600000,
+   "usd": 4.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p3",
+   "slug": "shabbat",
+   "perek": 3,
+   "title": "שבת פרק שלישי - כירה",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-09T20:01:56.820Z",
+   "minutes": 13.3,
+   "segs": 22,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13300000,
+   "usd": 5.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-09T20:57:10.729Z",
+   "minutes": 9.2,
+   "segs": 31,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 9200000,
+   "usd": 3.68,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-09T21:52:24.949Z",
+   "minutes": 3.6,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3600000,
+   "usd": 1.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-09T22:50:19.760Z",
+   "minutes": 1.9,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1900000,
+   "usd": 0.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-09T23:50:39.377Z",
+   "minutes": 2.2,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2200000,
+   "usd": 0.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T00:29:38.616Z",
+   "minutes": 124.1,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 124100000,
+   "usd": 49.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-10T00:46:14.305Z",
+   "minutes": 16.5,
+   "segs": 31,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16500000,
+   "usd": 6.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T00:50:44.065Z",
+   "minutes": 2.1,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2100000,
+   "usd": 0.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T01:50:46.827Z",
+   "minutes": 2.2,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2200000,
+   "usd": 0.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T03:51:09.686Z",
+   "minutes": 3,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3000000,
+   "usd": 1.2,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T04:51:35.108Z",
+   "minutes": 1.8,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1800000,
+   "usd": 0.72,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T05:50:21.780Z",
+   "minutes": 2.1,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2100000,
+   "usd": 0.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T07:49:46.503Z",
+   "minutes": 1.3,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1300000,
+   "usd": 0.52,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T08:50:29.479Z",
+   "minutes": 2.3,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2300000,
+   "usd": 0.92,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T09:50:24.072Z",
+   "minutes": 2.4,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2400000,
+   "usd": 0.96,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T10:49:48.623Z",
+   "minutes": 1.5,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1500000,
+   "usd": 0.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p2",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "1/2",
+   "end": "2026-11-10T11:50:27.957Z",
+   "minutes": 2,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2000000,
+   "usd": 0.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p3",
+   "slug": "shabbat",
+   "perek": 3,
+   "title": "שבת פרק שלישי - כירה",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-10T16:41:53.528Z",
+   "minutes": 10.1,
+   "segs": 18,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 10100000,
+   "usd": 4.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p3",
+   "slug": "shabbat",
+   "perek": 3,
+   "title": "שבת פרק שלישי - כירה",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-10T17:56:57.378Z",
+   "minutes": 8.2,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8199999,
+   "usd": 3.28,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p1",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק ראשון - יציאות השבת",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-11T18:06:03.456Z",
+   "minutes": 17.7,
+   "segs": 31,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17700000,
+   "usd": 7.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p1",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק ראשון - יציאות השבת",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-11T19:08:55.830Z",
+   "minutes": 15.7,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15700000,
+   "usd": 6.28,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p4",
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק רביעי - במה טומנין",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-11T19:57:06.948Z",
+   "minutes": 9.3,
+   "segs": 18,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 9300000,
+   "usd": 3.72,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p4",
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק רביעי - במה טומנין",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-12T14:32:31.625Z",
+   "minutes": 127.4,
+   "segs": 22,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 127400000,
+   "usd": 50.96,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p5",
+   "slug": "shabbat",
+   "perek": 5,
+   "title": "שבת פרק חמישי - במה בהמה",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-12T16:34:15.123Z",
+   "minutes": 16.3,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16300000,
+   "usd": 6.52,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p6",
+   "slug": "berakhot",
+   "perek": 6,
+   "title": "ברכות פרק שישי - כיצד מברכין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-12T16:57:07.754Z",
+   "minutes": 9.1,
+   "segs": 21,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 9100000,
+   "usd": 3.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p6",
+   "slug": "berakhot",
+   "perek": 6,
+   "title": "ברכות פרק שישי - כיצד מברכין",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-12T17:58:17.111Z",
+   "minutes": 9.9,
+   "segs": 21,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 9900000,
+   "usd": 3.96,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p7",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - שלשה שאכלו",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-12T19:00:14.673Z",
+   "minutes": 10.7,
+   "segs": 21,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 10700000,
+   "usd": 4.28,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p7",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - שלשה שאכלו",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-12T20:04:09.934Z",
+   "minutes": 15.3,
+   "segs": 21,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15300000,
+   "usd": 6.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "ketubot-p3",
+   "slug": "ketubot",
+   "perek": 3,
+   "title": "כתובות פרק שלישי - אלו נערות",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-13T10:10:28.031Z",
+   "minutes": 14.2,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 14200000,
+   "usd": 5.68,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "ketubot-p1",
+   "slug": "ketubot",
+   "perek": 1,
+   "title": "כתובות פרק ראשון - בתולה נשאת",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-13T10:13:45.732Z",
+   "minutes": 16.9,
+   "segs": 23,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16900000,
+   "usd": 6.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "ketubot-p1",
+   "slug": "ketubot",
+   "perek": 1,
+   "title": "כתובות פרק ראשון - בתולה נשאת",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-13T10:48:55.423Z",
+   "minutes": 33.4,
+   "segs": 22,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 33400000,
+   "usd": 13.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "ketubot-p3",
+   "slug": "ketubot",
+   "perek": 3,
+   "title": "כתובות פרק שלישי - אלו נערות",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-13T10:51:12.473Z",
+   "minutes": 36.1,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 36100000,
+   "usd": 14.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s1-mwev8jkj",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק ראשון - יציאות השבת (סבב שני, על הנוסח החי 13.11.2026)",
+   "round": "נוסח חי",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-13T12:05:49.998Z",
+   "minutes": 16.2,
+   "segs": 25,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16200000,
+   "usd": 6.48,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s1-mwev8jkj",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק ראשון - יציאות השבת (סבב שני, על הנוסח החי 13.11.2026)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-13T13:13:02.830Z",
+   "minutes": 22.5,
+   "segs": 24,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 22500000,
+   "usd": 9.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p1",
+   "slug": "berakhot",
+   "perek": 1,
+   "title": "ברכות פרק ראשון - מאמתי",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-15T10:05:07.828Z",
+   "minutes": 17,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17000000,
+   "usd": 6.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p2",
+   "slug": "berakhot",
+   "perek": 2,
+   "title": "ברכות פרק שני - היה קורא",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-15T10:24:35.475Z",
+   "minutes": 13.4,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13400000,
+   "usd": 5.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p1",
+   "slug": "berakhot",
+   "perek": 1,
+   "title": "ברכות פרק ראשון - מאמתי",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-15T10:52:07.467Z",
+   "minutes": 21.6,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 21600000,
+   "usd": 8.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p3",
+   "slug": "berakhot",
+   "perek": 3,
+   "title": "ברכות פרק שלישי - מי שמתו.",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-15T11:10:31.692Z",
+   "minutes": 20.3,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 20300000,
+   "usd": 8.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p4",
+   "slug": "berakhot",
+   "perek": 4,
+   "title": "ברכות פרק רביעי - תפלת השחר",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-15T11:24:36.150Z",
+   "minutes": 14,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 14000000,
+   "usd": 5.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p2",
+   "slug": "berakhot",
+   "perek": 2,
+   "title": "ברכות פרק שני - היה קורא",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-15T11:44:05.631Z",
+   "minutes": 13.4,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13400000,
+   "usd": 5.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p3",
+   "slug": "berakhot",
+   "perek": 3,
+   "title": "ברכות פרק שלישי - מי שמתו.",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-15T12:32:41.229Z",
+   "minutes": 21.5,
+   "segs": 29,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 21500000,
+   "usd": 8.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p4",
+   "slug": "berakhot",
+   "perek": 4,
+   "title": "ברכות פרק רביעי - תפלת השחר",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-15T12:41:37.799Z",
+   "minutes": 11.3,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 11300000,
+   "usd": 4.52,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p5",
+   "slug": "berakhot",
+   "perek": 5,
+   "title": "ברכות פרק חמישי - אין עומדין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-15T13:46:30.989Z",
+   "minutes": 16.4,
+   "segs": 20,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16399999,
+   "usd": 6.56,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p8",
+   "slug": "berakhot",
+   "perek": 8,
+   "title": "ברכות פרק שמיני - אלו דברים",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-15T14:26:14.908Z",
+   "minutes": 15.9,
+   "segs": 26,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15900000,
+   "usd": 6.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p9",
+   "slug": "berakhot",
+   "perek": 9,
+   "title": "ברכות פרק תשיעי - הרואה מקום",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-15T14:50:22.067Z",
+   "minutes": 20.3,
+   "segs": 20,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 20300000,
+   "usd": 8.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "bekhorot-s4185-mwi1ixta",
+   "slug": "bekhorot",
+   "perek": 9,
+   "title": "בכורות פרק תשיעי - מעשר בהמה · סבב על הנוסח החי (s36)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-15T16:35:58.446Z",
+   "minutes": 6,
+   "segs": 7,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 6000000,
+   "usd": 2.4,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p9",
+   "slug": "berakhot",
+   "perek": 9,
+   "title": "ברכות פרק תשיעי - הרואה מקום",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-15T16:51:36.725Z",
+   "minutes": 25.4,
+   "segs": 19,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 25400000,
+   "usd": 10.16,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p5",
+   "slug": "berakhot",
+   "perek": 5,
+   "title": "ברכות פרק חמישי - אין עומדין",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-15T17:16:28.884Z",
+   "minutes": 15.9,
+   "segs": 19,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15900000,
+   "usd": 6.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p8",
+   "slug": "berakhot",
+   "perek": 8,
+   "title": "ברכות פרק שמיני - אלו דברים",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-15T17:18:37.974Z",
+   "minutes": 8.1,
+   "segs": 26,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8100000,
+   "usd": 3.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s2222-mwhl72w1",
+   "slug": "shabbat",
+   "perek": 3,
+   "title": "שבת פרק שלישי - כירה (סבב מחודש על הנוסח העדכני)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-15T17:46:33.026Z",
+   "minutes": 21.9,
+   "segs": 29,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 21900000,
+   "usd": 8.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s900-mwi84ti2",
+   "slug": "berakhot",
+   "perek": 2,
+   "title": "ברכות פרק שני - היה קורא (סבב מחודש על הנוסח החי 15.11.2026)",
+   "round": "נוסח חי",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-15T19:37:08.893Z",
+   "minutes": 6.8,
+   "segs": 18,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 6800000,
+   "usd": 2.72,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p1",
+   "slug": "berakhot",
+   "perek": 1,
+   "title": "ברכות פרק ראשון - מאמתי",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-15T20:23:13.058Z",
+   "minutes": 12.4,
+   "segs": 25,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12400000,
+   "usd": 4.96,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s900-mwi84ti2",
+   "slug": "berakhot",
+   "perek": 2,
+   "title": "ברכות פרק שני - היה קורא (סבב מחודש על הנוסח החי 15.11.2026)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-15T20:36:42.983Z",
+   "minutes": 7,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 7000000,
+   "usd": 2.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-p1",
+   "slug": "berakhot",
+   "perek": 1,
+   "title": "ברכות פרק ראשון - מאמתי",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-15T21:18:58.999Z",
+   "minutes": 8.5,
+   "segs": 24,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8500000,
+   "usd": 3.4,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p10",
+   "slug": "shabbat",
+   "perek": 10,
+   "title": "שבת פרק עשירי - המצניע",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-16T19:44:58.068Z",
+   "minutes": 15.4,
+   "segs": 27,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15400000,
+   "usd": 6.16,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p1",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק ראשון - יציאות השבת",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-16T20:17:53.851Z",
+   "minutes": 6.9,
+   "segs": 6,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 6900000,
+   "usd": 2.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p11",
+   "slug": "shabbat",
+   "perek": 11,
+   "title": "שבת פרק אחד עשר - הזורק",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-16T20:50:16.967Z",
+   "minutes": 20,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 20000000,
+   "usd": 8.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p1",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק ראשון - יציאות השבת",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-16T21:26:31.554Z",
+   "minutes": 16.5,
+   "segs": 19,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16500000,
+   "usd": 6.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p12",
+   "slug": "shabbat",
+   "perek": 12,
+   "title": "שבת פרק שנים עשר - הבונה",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-16T21:43:28.210Z",
+   "minutes": 13.3,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13300000,
+   "usd": 5.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p1",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק ראשון - יציאות השבת",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-16T22:25:26.482Z",
+   "minutes": 14.7,
+   "segs": 25,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 14700000,
+   "usd": 5.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p13",
+   "slug": "shabbat",
+   "perek": 13,
+   "title": "שבת פרק שלשה עשר - האורג",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-16T22:43:26.955Z",
+   "minutes": 16.1,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16100000,
+   "usd": 6.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p14",
+   "slug": "shabbat",
+   "perek": 14,
+   "title": "שבת פרק ארבעה עשר - שמונה שרצים",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-16T22:50:18.521Z",
+   "minutes": 20.1,
+   "segs": 21,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 20100000,
+   "usd": 8.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p15",
+   "slug": "shabbat",
+   "perek": 15,
+   "title": "שבת פרק חמשה עשר - ואלו קשרים",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-16T23:28:41.037Z",
+   "minutes": 17.7,
+   "segs": 22,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17700000,
+   "usd": 7.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p6",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-16T23:54:13.535Z",
+   "minutes": 23.6,
+   "segs": 27,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 23600000,
+   "usd": 9.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p7",
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק שביעי - כלל גדול",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T00:24:39.104Z",
+   "minutes": 14.4,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 14400000,
+   "usd": 5.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p6",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T00:47:16.190Z",
+   "minutes": 17.1,
+   "segs": 26,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17100000,
+   "usd": 6.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p7",
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק שביעי - כלל גדול",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T01:22:35.569Z",
+   "minutes": 11.9,
+   "segs": 15,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 11900000,
+   "usd": 4.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p8",
+   "slug": "shabbat",
+   "perek": 8,
+   "title": "שבת פרק שמיני - המוציא יין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T01:41:55.199Z",
+   "minutes": 12,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12000000,
+   "usd": 4.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p8",
+   "slug": "shabbat",
+   "perek": 8,
+   "title": "שבת פרק שמיני - המוציא יין",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T02:28:48.086Z",
+   "minutes": 18.2,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 18200000,
+   "usd": 7.28,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p9",
+   "slug": "shabbat",
+   "perek": 9,
+   "title": "שבת פרק תשיעי - אמר רבי עקיבא",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T02:47:04.674Z",
+   "minutes": 17.1,
+   "segs": 23,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17100000,
+   "usd": 6.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p9",
+   "slug": "shabbat",
+   "perek": 9,
+   "title": "שבת פרק תשיעי - אמר רבי עקיבא",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T03:46:39.353Z",
+   "minutes": 16.7,
+   "segs": 22,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16700000,
+   "usd": 6.68,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s1-mwkr9e5n",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק 1 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T14:43:04.721Z",
+   "minutes": 13,
+   "segs": 32,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13000000,
+   "usd": 5.2,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p16",
+   "slug": "shabbat",
+   "perek": 16,
+   "title": "שבת פרק ששה עשר - כל כתבי",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T15:28:06.661Z",
+   "minutes": 15.4,
+   "segs": 23,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15400000,
+   "usd": 6.16,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p17",
+   "slug": "shabbat",
+   "perek": 17,
+   "title": "שבת פרק שבעה עשר - כל הכלים",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T15:49:34.586Z",
+   "minutes": 19.7,
+   "segs": 26,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 19700000,
+   "usd": 7.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1-mwkv8576",
+   "slug": "sukkah",
+   "perek": 1,
+   "title": "סוכה פרק ראשון - סוכה שהיא גבוהה - סבב כללים 21-25 והגדרות ברכות א (פרומפט 58)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T16:31:03.057Z",
+   "minutes": 42.2,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 42200000,
+   "usd": 16.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p18",
+   "slug": "shabbat",
+   "perek": 18,
+   "title": "שבת פרק שמונה עשר - מפנין",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T16:33:14.425Z",
+   "minutes": 20.8,
+   "segs": 29,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 20800000,
+   "usd": 8.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p19",
+   "slug": "shabbat",
+   "perek": 19,
+   "title": "שבת פרק תשעה עשר - ר\"א דמילה",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T16:47:06.214Z",
+   "minutes": 16.5,
+   "segs": 20,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16500000,
+   "usd": 6.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s1-mwkr9e5n",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק 1 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T16:57:20.965Z",
+   "minutes": 6.3,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 6300000,
+   "usd": 2.52,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s1-mwkr9e5n",
+   "slug": "shabbat",
+   "perek": 1,
+   "title": "שבת פרק 1 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T17:00:32.789Z",
+   "minutes": 3.1,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3100000,
+   "usd": 1.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s576-mwkv860g",
+   "slug": "sukkah",
+   "perek": 2,
+   "title": "סוכה פרק שני הישן - סבב כללים 21-25 והגדרות ברכות א (פרומפט 58)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T17:03:46.944Z",
+   "minutes": 32.3,
+   "segs": 29,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 32299999,
+   "usd": 12.92,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p21",
+   "slug": "shabbat",
+   "perek": 21,
+   "title": "שבת פרק אחד ועשרים - נוטל",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T17:25:11.346Z",
+   "minutes": 13.9,
+   "segs": 8,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13900000,
+   "usd": 5.56,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1154-mwkv86y9",
+   "slug": "sukkah",
+   "perek": 3,
+   "title": "סוכה פרק שלישי - לולב הגזול - סבב כללים 21-25 והגדרות ברכות א (פרומפט 58)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T17:38:42.303Z",
+   "minutes": 34.7,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 34700000,
+   "usd": 13.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p19",
+   "slug": "shabbat",
+   "perek": 19,
+   "title": "שבת פרק תשעה עשר - ר\"א דמילה",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T17:53:18.585Z",
+   "minutes": 23,
+   "segs": 19,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 23000000,
+   "usd": 9.2,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1632-mwkv87v3",
+   "slug": "sukkah",
+   "perek": 4,
+   "title": "סוכה פרק רביעי - לולב וערבה - סבב כללים 21-25 והגדרות ברכות א (פרומפט 58)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T18:05:45.658Z",
+   "minutes": 0.6,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 600000,
+   "usd": 0.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1989-mwkv88qv",
+   "slug": "sukkah",
+   "perek": 5,
+   "title": "סוכה פרק חמישי - החליל - סבב כללים 21-25 והגדרות ברכות א (פרומפט 58)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T18:34:29.197Z",
+   "minutes": 28.3,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 28300000,
+   "usd": 11.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p22",
+   "slug": "shabbat",
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים - חבית",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T18:36:58.783Z",
+   "minutes": 24.7,
+   "segs": 28,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 24700000,
+   "usd": 9.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p23",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T18:48:17.164Z",
+   "minutes": 13.6,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13600000,
+   "usd": 5.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p23",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T19:29:39.728Z",
+   "minutes": 12.1,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12100000,
+   "usd": 4.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s2288-mwl2xkwn",
+   "slug": "berakhot",
+   "perek": 4,
+   "title": "ברכות פרק רביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T19:40:00.637Z",
+   "minutes": 9.5,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 9500000,
+   "usd": 3.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s922-mwl2xior",
+   "slug": "berakhot",
+   "perek": 2,
+   "title": "ברכות פרק שני - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T19:47:51.735Z",
+   "minutes": 23.4,
+   "segs": 29,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 23400000,
+   "usd": 9.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s2288-mwl2xkwn",
+   "slug": "berakhot",
+   "perek": 4,
+   "title": "ברכות פרק רביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-17T19:59:43.166Z",
+   "minutes": 15.9,
+   "segs": 15,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15900000,
+   "usd": 6.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s1413-mwl2xjnl",
+   "slug": "berakhot",
+   "perek": 3,
+   "title": "ברכות פרק שלישי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T20:00:20.418Z",
+   "minutes": 34.6,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 34600000,
+   "usd": 13.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s2288-mwl2xkwn",
+   "slug": "berakhot",
+   "perek": 4,
+   "title": "ברכות פרק רביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T20:03:31.508Z",
+   "minutes": 3.7,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3700000,
+   "usd": 1.48,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s3505-mwl2xmnf",
+   "slug": "berakhot",
+   "perek": 6,
+   "title": "ברכות פרק שישי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T20:03:44.389Z",
+   "minutes": 10,
+   "segs": 19,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 10000000,
+   "usd": 4.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s2288-mwl2xkwn",
+   "slug": "berakhot",
+   "perek": 4,
+   "title": "ברכות פרק רביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "1/2",
+   "end": "2026-11-17T20:04:03.068Z",
+   "minutes": 4.2,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4200000,
+   "usd": 1.68,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s4403-mwl2xnmp",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T20:11:23.085Z",
+   "minutes": 10.4,
+   "segs": 20,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 10400000,
+   "usd": 4.16,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s4403-mwl2xnmp",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-17T20:16:16.898Z",
+   "minutes": 4.8,
+   "segs": 19,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4800000,
+   "usd": 1.92,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s2775-mwl2xlq1",
+   "slug": "berakhot",
+   "perek": 5,
+   "title": "ברכות פרק חמישי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T20:16:40.435Z",
+   "minutes": 28.3,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 28300000,
+   "usd": 11.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s4403-mwl2xnmp",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T20:17:07.406Z",
+   "minutes": 0.3,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 300000,
+   "usd": 0.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s4403-mwl2xnmp",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-17T20:17:20.277Z",
+   "minutes": 0.2,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 200000,
+   "usd": 0.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s3505-mwl2xmnf",
+   "slug": "berakhot",
+   "perek": 6,
+   "title": "ברכות פרק שישי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-17T20:21:14.878Z",
+   "minutes": 17.4,
+   "segs": 18,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17400000,
+   "usd": 6.96,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s4403-mwl2xnmp",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T20:22:28.457Z",
+   "minutes": 0.8,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 800000,
+   "usd": 0.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s5377-mwl2xpcx",
+   "slug": "berakhot",
+   "perek": 9,
+   "title": "ברכות פרק תשיעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T20:23:20.732Z",
+   "minutes": 10.9,
+   "segs": 20,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 10900000,
+   "usd": 4.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s4403-mwl2xnmp",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-17T20:23:34.673Z",
+   "minutes": 0.9,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 900000,
+   "usd": 0.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s3505-mwl2xmnf",
+   "slug": "berakhot",
+   "perek": 6,
+   "title": "ברכות פרק שישי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "1/2",
+   "end": "2026-11-17T20:25:07.161Z",
+   "minutes": 3.8,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3800000,
+   "usd": 1.52,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s5093-mwl2xoid",
+   "slug": "berakhot",
+   "perek": 8,
+   "title": "ברכות פרק שמיני - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T20:27:33.571Z",
+   "minutes": 23.1,
+   "segs": 26,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 23100000,
+   "usd": 9.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s4403-mwl2xnmp",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T20:28:13.606Z",
+   "minutes": 0.5,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 500000,
+   "usd": 0.2,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s4403-mwl2xnmp",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-17T20:28:42.005Z",
+   "minutes": 0.4,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 400000,
+   "usd": 0.16,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s4403-mwl2xnmp",
+   "slug": "berakhot",
+   "perek": 7,
+   "title": "ברכות פרק שביעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T20:29:11.307Z",
+   "minutes": 0.9,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 900000,
+   "usd": 0.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p16",
+   "slug": "shabbat",
+   "perek": 16,
+   "title": "שבת פרק ששה עשר - כל כתבי",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T20:46:38.291Z",
+   "minutes": 16.4,
+   "segs": 7,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16399999,
+   "usd": 6.56,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s5377-mwl2xpcx",
+   "slug": "berakhot",
+   "perek": 9,
+   "title": "ברכות פרק תשיעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-17T20:54:02.753Z",
+   "minutes": 30.6,
+   "segs": 19,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 30600000,
+   "usd": 12.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s5377-mwl2xpcx",
+   "slug": "berakhot",
+   "perek": 9,
+   "title": "ברכות פרק תשיעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T21:01:03.226Z",
+   "minutes": 6.9,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 6900000,
+   "usd": 2.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1632-mwl4yeyt",
+   "slug": "sukkah",
+   "perek": 4,
+   "title": "סוכה פרק רביעי - סבב מבני (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T21:01:09.855Z",
+   "minutes": 7.5,
+   "segs": 24,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 7500000,
+   "usd": 3.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "berakhot-s5377-mwl2xpcx",
+   "slug": "berakhot",
+   "perek": 9,
+   "title": "ברכות פרק תשיעי - סבב מבני לפי עריכות פרק א (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "1/2",
+   "end": "2026-11-17T21:01:48.975Z",
+   "minutes": 7.7,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 7700000,
+   "usd": 3.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1154-mwl4ydv8",
+   "slug": "sukkah",
+   "perek": 3,
+   "title": "סוכה פרק שלישי - סבב מבני (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T21:04:17.361Z",
+   "minutes": 10.6,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 10600000,
+   "usd": 4.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1-mwl4ybk6",
+   "slug": "sukkah",
+   "perek": 1,
+   "title": "סוכה פרק ראשון - סבב מבני (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T21:06:36.733Z",
+   "minutes": 13,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13000000,
+   "usd": 5.2,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1989-mwl4yg3y",
+   "slug": "sukkah",
+   "perek": 5,
+   "title": "סוכה פרק חמישי - סבב מבני (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T21:12:46.624Z",
+   "minutes": 17.7,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17700000,
+   "usd": 7.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s576-mwl4ycnd",
+   "slug": "sukkah",
+   "perek": 2,
+   "title": "סוכה פרק שני - סבב מבני (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T21:17:02.064Z",
+   "minutes": 22.1,
+   "segs": 29,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 22100000,
+   "usd": 8.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-p24",
+   "slug": "shabbat",
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים - מי שהחשיך",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T21:35:06.552Z",
+   "minutes": 24,
+   "segs": 25,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 24000000,
+   "usd": 9.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s2426-mwkr9fsp",
+   "slug": "shabbat",
+   "perek": 3,
+   "title": "שבת פרק 3 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T21:53:55.924Z",
+   "minutes": 23.5,
+   "segs": 28,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 23500000,
+   "usd": 9.4,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s1192-mwkr9f0d",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק 2 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-17T22:29:17.339Z",
+   "minutes": 18.5,
+   "segs": 31,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 18500000,
+   "usd": 7.4,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3082-mwkr9gjr",
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק 4 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T22:53:22.859Z",
+   "minutes": 23.3,
+   "segs": 21,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 23300000,
+   "usd": 9.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s1192-mwkr9f0d",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק 2 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-17T23:34:13.021Z",
+   "minutes": 23.6,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 23600000,
+   "usd": 9.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3269-mwkr9hbd",
+   "slug": "shabbat",
+   "perek": 5,
+   "title": "שבת פרק 5 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-17T23:54:26.743Z",
+   "minutes": 19.8,
+   "segs": 26,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 19800000,
+   "usd": 7.92,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3559-mwkr9i0c",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק 6 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-18T00:24:21.322Z",
+   "minutes": 12.7,
+   "segs": 28,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12700000,
+   "usd": 5.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4064-mwkr9isa",
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק 7 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-18T00:38:27.568Z",
+   "minutes": 8.6,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8600000,
+   "usd": 3.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3559-mwkr9i0c",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק 6 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-18T01:27:53.559Z",
+   "minutes": 16.9,
+   "segs": 28,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16900000,
+   "usd": 6.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4064-mwkr9isa",
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק 7 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-18T01:43:31.200Z",
+   "minutes": 13.7,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13700000,
+   "usd": 5.48,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4810-mwkr9kdg",
+   "slug": "shabbat",
+   "perek": 9,
+   "title": "שבת פרק 9 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-18T02:22:57.064Z",
+   "minutes": 12,
+   "segs": 23,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12000000,
+   "usd": 4.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4434-mwkr9jmz",
+   "slug": "shabbat",
+   "perek": 8,
+   "title": "שבת פרק 8 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-18T02:38:36.406Z",
+   "minutes": 12.9,
+   "segs": 18,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12900000,
+   "usd": 5.16,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4434-mwkr9jmz",
+   "slug": "shabbat",
+   "perek": 8,
+   "title": "שבת פרק 8 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-18T02:47:10.814Z",
+   "minutes": 8.5,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8500000,
+   "usd": 3.4,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s5239-mwkr9l5h",
+   "slug": "shabbat",
+   "perek": 10,
+   "title": "שבת פרק 10 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T02:52:05.006Z",
+   "minutes": 19.1,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 19100000,
+   "usd": 7.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4810-mwkr9kdg",
+   "slug": "shabbat",
+   "perek": 9,
+   "title": "שבת פרק 9 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-18T03:26:09.490Z",
+   "minutes": 15,
+   "segs": 23,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15000000,
+   "usd": 6.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s5520-mwkr9m55",
+   "slug": "shabbat",
+   "perek": 11,
+   "title": "שבת פרק 11 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-18T03:39:45.685Z",
+   "minutes": 9.4,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 9400000,
+   "usd": 3.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s5520-mwkr9m55",
+   "slug": "shabbat",
+   "perek": 11,
+   "title": "שבת פרק 11 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-18T04:24:33.483Z",
+   "minutes": 14,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 14000000,
+   "usd": 5.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s5863-mwkr9mvm",
+   "slug": "shabbat",
+   "perek": 12,
+   "title": "שבת פרק 12 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T04:41:17.700Z",
+   "minutes": 11.2,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 11200000,
+   "usd": 4.48,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s6189-mwkr9o5s",
+   "slug": "shabbat",
+   "perek": 14,
+   "title": "שבת פרק 14 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T05:28:11.050Z",
+   "minutes": 17.3,
+   "segs": 29,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17300000,
+   "usd": 6.92,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s6036-mwkr9nhz",
+   "slug": "shabbat",
+   "perek": 13,
+   "title": "שבת פרק 13 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T05:41:25.490Z",
+   "minutes": 13.9,
+   "segs": 21,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13900000,
+   "usd": 5.56,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s6464-mwkr9owt",
+   "slug": "shabbat",
+   "perek": 15,
+   "title": "שבת פרק 15 - סבב שני (פרומפט 56)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T05:51:01.070Z",
+   "minutes": 20.6,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 20600000,
+   "usd": 8.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1-mwl50h9z",
+   "slug": "sukkah",
+   "perek": 1,
+   "title": "סוכה פרק ראשון - סבב מבני (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T07:34:04.735Z",
+   "minutes": 21.3,
+   "segs": 28,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 21300000,
+   "usd": 8.52,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1154-mwl50jg8",
+   "slug": "sukkah",
+   "perek": 3,
+   "title": "סוכה פרק שלישי - סבב מבני (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T07:54:55.453Z",
+   "minutes": 24.8,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 24800000,
+   "usd": 9.92,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "sukkah-s1632-mwl50kdw",
+   "slug": "sukkah",
+   "perek": 4,
+   "title": "סוכה פרק רביעי - סבב מבני (פרומפט 59)",
+   "round": "כללים מעודכנים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T08:15:59.933Z",
+   "minutes": 4.1,
+   "segs": 24,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4099999,
+   "usd": 1.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p4",
+   "slug": "arakhin",
+   "perek": 4,
+   "title": "ערכין פרק השג יד - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T08:15:48.409Z",
+   "minutes": 27.9,
+   "segs": 21,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 27900000,
+   "usd": 11.16,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p4",
+   "slug": "arakhin",
+   "perek": 4,
+   "title": "ערכין פרק השג יד - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T09:53:52.644Z",
+   "minutes": 55,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 55000000,
+   "usd": 22.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p1",
+   "slug": "arakhin",
+   "perek": 1,
+   "title": "ערכין פרק הכל מעריכין - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T10:01:22.384Z",
+   "minutes": 0,
+   "segs": 28,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 0,
+   "usd": 0.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p3",
+   "slug": "arakhin",
+   "perek": 3,
+   "title": "ערכין פרק יש בערכין - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T10:26:48.293Z",
+   "minutes": 15.8,
+   "segs": 9,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15800000,
+   "usd": 6.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p2",
+   "slug": "arakhin",
+   "perek": 2,
+   "title": "ערכין פרק אין נערכין - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T16:43:12.091Z",
+   "minutes": 12.6,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12600000,
+   "usd": 5.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p5",
+   "slug": "arakhin",
+   "perek": 5,
+   "title": "ערכין פרק האומר משקלי עלי - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T17:20:14.348Z",
+   "minutes": 8.2,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8199999,
+   "usd": 3.28,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p9",
+   "slug": "arakhin",
+   "perek": 9,
+   "title": "ערכין פרק המוכר שדהו - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T16:51:12.675Z",
+   "minutes": 15.7,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15700000,
+   "usd": 6.28,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p8",
+   "slug": "arakhin",
+   "perek": 8,
+   "title": "ערכין פרק המקדיש שדהו - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T17:16:42.291Z",
+   "minutes": 41.5,
+   "segs": 25,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 41500000,
+   "usd": 16.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p7",
+   "slug": "arakhin",
+   "perek": 7,
+   "title": "ערכין פרק אין מקדישין - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T17:18:01.048Z",
+   "minutes": 43.5,
+   "segs": 20,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 43500000,
+   "usd": 17.4,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3571-mwmd3x90",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s2, s3, s4, s5, s7)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T17:41:23.820Z",
+   "minutes": 10.1,
+   "segs": 6,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 10100000,
+   "usd": 4.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-p6",
+   "slug": "arakhin",
+   "perek": 6,
+   "title": "ערכין פרק שום היתומים - סכם מלא (18.11.2026)",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T17:58:01.478Z",
+   "minutes": 36.5,
+   "segs": 20,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 36500000,
+   "usd": 14.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s666-mwmely1n",
+   "slug": "arakhin",
+   "perek": 2,
+   "title": "ערכין פרק שני - אין נערכין · סבב על הנוסח החי (s18, s19)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T18:33:16.586Z",
+   "minutes": 2.6,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2600000,
+   "usd": 1.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s666-mwmemjeg",
+   "slug": "arakhin",
+   "perek": 2,
+   "title": "ערכין פרק שני - אין נערכין · סבב על הנוסח החי (s18)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T18:33:57.811Z",
+   "minutes": 0.1,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 100000,
+   "usd": 0.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3634-mwmd3y4n",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s11, s12, s13, s14, s15, s16, s17, s20)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T18:34:08.438Z",
+   "minutes": 22.8,
+   "segs": 12,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 22800000,
+   "usd": 9.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s1384-mwmeqayj",
+   "slug": "arakhin",
+   "perek": 5,
+   "title": "ערכין פרק חמישי - האומר משקלי עלי · סבב על הנוסח החי (s2)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T18:37:41.381Z",
+   "minutes": 1.3,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1300000,
+   "usd": 0.52,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s1395-mwmeqbko",
+   "slug": "arakhin",
+   "perek": 5,
+   "title": "ערכין פרק חמישי - האומר משקלי עלי · סבב על הנוסח החי (s4)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T18:53:40.304Z",
+   "minutes": 3.2,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3200000,
+   "usd": 1.28,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s1409-mwmeqeeh",
+   "slug": "arakhin",
+   "perek": 5,
+   "title": "ערכין פרק חמישי - האומר משקלי עלי · סבב על הנוסח החי (s6, s7, s8, s9, s10)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T19:13:50.416Z",
+   "minutes": 2.8,
+   "segs": 5,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2800000,
+   "usd": 1.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s1498-mwmeqm9o",
+   "slug": "arakhin",
+   "perek": 5,
+   "title": "ערכין פרק חמישי - האומר משקלי עלי · סבב על הנוסח החי (s15, s16, s17, s18, s19, s20)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T19:35:10.853Z",
+   "minutes": 4.1,
+   "segs": 6,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4099999,
+   "usd": 1.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s1552-mwmeqn6o",
+   "slug": "arakhin",
+   "perek": 5,
+   "title": "ערכין פרק חמישי - האומר משקלי עלי · סבב על הנוסח החי (s22, s23)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T19:54:54.723Z",
+   "minutes": 3.4,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3400000,
+   "usd": 1.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s1498-mwmf7e34",
+   "slug": "arakhin",
+   "perek": 5,
+   "title": "ערכין פרק חמישי - האומר משקלי עלי · סבב על הנוסח החי (s15)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T20:14:29.597Z",
+   "minutes": 3.1,
+   "segs": 6,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3100000,
+   "usd": 1.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s717-mwmelyxg",
+   "slug": "arakhin",
+   "perek": 2,
+   "title": "ערכין פרק שני - אין נערכין · סבב על הנוסח החי (s21, s22)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T20:33:42.573Z",
+   "minutes": 2.7,
+   "segs": 2,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2700000,
+   "usd": 1.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s2296-mwmkiivp",
+   "slug": "arakhin",
+   "perek": 9,
+   "title": "ערכין פרק תשיעי - המוכר שדהו · סבב כללים חדשים (פרומפט 62) - דף ל.",
+   "round": "כללים אחרונים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T20:55:43.845Z",
+   "minutes": 4.4,
+   "segs": 2,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4400000,
+   "usd": 1.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s2327-mwmkmeqr",
+   "slug": "arakhin",
+   "perek": 9,
+   "title": "ערכין פרק תשיעי - המוכר שדהו · סבב כללים חדשים (פרומפט 62) - דף ל:",
+   "round": "כללים אחרונים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T21:13:32.446Z",
+   "minutes": 2.2,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2200000,
+   "usd": 0.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s2483-mwmkmfk6",
+   "slug": "arakhin",
+   "perek": 9,
+   "title": "ערכין פרק תשיעי - המוכר שדהו · סבב כללים חדשים (פרומפט 62) - דף לב.",
+   "round": "כללים אחרונים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T21:33:31.514Z",
+   "minutes": 2.2,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2200000,
+   "usd": 0.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s2557-mwmkig63",
+   "slug": "arakhin",
+   "perek": 9,
+   "title": "ערכין פרק תשיעי - המוכר שדהו · סבב כללים חדשים (פרומפט 62) - דף לב:",
+   "round": "כללים אחרונים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T21:53:17.009Z",
+   "minutes": 3.3,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3300000,
+   "usd": 1.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s2630-mwmkih2x",
+   "slug": "arakhin",
+   "perek": 9,
+   "title": "ערכין פרק תשיעי - המוכר שדהו · סבב כללים חדשים (פרומפט 62) - דף לג:",
+   "round": "כללים אחרונים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T22:12:01.945Z",
+   "minutes": 0.9,
+   "segs": 2,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 900000,
+   "usd": 0.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s717-mwmemk1f",
+   "slug": "arakhin",
+   "perek": 2,
+   "title": "ערכין פרק שני - אין נערכין · סבב על הנוסח החי (s21)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T22:32:27.578Z",
+   "minutes": 1.4,
+   "segs": 2,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1400000,
+   "usd": 0.56,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s2665-mwmkihyw",
+   "slug": "arakhin",
+   "perek": 9,
+   "title": "ערכין פרק תשיעי - המוכר שדהו · סבב כללים חדשים (פרומפט 62) - דף לד.",
+   "round": "כללים אחרונים",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T22:51:48.256Z",
+   "minutes": 1.5,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1500000,
+   "usd": 0.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s762-mwmelzs3",
+   "slug": "arakhin",
+   "perek": 2,
+   "title": "ערכין פרק שני - אין נערכין · סבב על הנוסח החי (s24, s25, s26)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T23:14:49.195Z",
+   "minutes": 3.3,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3300000,
+   "usd": 1.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s762-mwmemksk",
+   "slug": "arakhin",
+   "perek": 2,
+   "title": "ערכין פרק שני - אין נערכין · סבב על הנוסח החי (s24, s25)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T23:15:25.907Z",
+   "minutes": 0.1,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 100000,
+   "usd": 0.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "arakhin-s762-mwmeq97d",
+   "slug": "arakhin",
+   "perek": 2,
+   "title": "ערכין פרק שני - אין נערכין · סבב על הנוסח החי (s24)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T23:15:34.951Z",
+   "minutes": 0.1,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 100000,
+   "usd": 0.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10007-mwmeskwu",
+   "slug": "shabbat",
+   "perek": 21,
+   "title": "שבת פרק אחד ועשרים - נוטל · סבב על הנוסח החי (s8)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T23:34:47.891Z",
+   "minutes": 4.2,
+   "segs": 8,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4200000,
+   "usd": 1.68,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10094-mwmesqf3",
+   "slug": "shabbat",
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים - חבית · סבב על הנוסח החי (s26, s27)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-18T23:56:39.460Z",
+   "minutes": 5.6,
+   "segs": 28,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 5600000,
+   "usd": 2.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10094-mwmfhnfe",
+   "slug": "shabbat",
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים - חבית · סבב על הנוסח החי (s26)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T00:21:00.266Z",
+   "minutes": 8.8,
+   "segs": 28,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8800000,
+   "usd": 3.52,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10323-mwmesonp",
+   "slug": "shabbat",
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים - חבית · סבב על הנוסח החי (s22)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T00:31:50.784Z",
+   "minutes": 1.6,
+   "segs": 2,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1600000,
+   "usd": 0.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10404-mwmfifpt",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s12, s13, s14, s15)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T00:57:05.511Z",
+   "minutes": 7.2,
+   "segs": 15,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 7200000,
+   "usd": 2.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10404-mwmfmvh4",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s12, s13, s15)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T01:12:12.879Z",
+   "minutes": 1.4,
+   "segs": 15,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1400000,
+   "usd": 0.56,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10404-mwmgqbcj",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s12, s13)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T01:12:55.953Z",
+   "minutes": 0.6,
+   "segs": 15,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 600000,
+   "usd": 0.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10510-mwmessou",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s10)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T01:34:44.933Z",
+   "minutes": 4.4,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4400000,
+   "usd": 1.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10727-mwmesuvc",
+   "slug": "shabbat",
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s18)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T01:55:12.694Z",
+   "minutes": 5.2,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 5200000,
+   "usd": 2.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10957-mwmeswh8",
+   "slug": "shabbat",
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s21)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T02:14:49.137Z",
+   "minutes": 4,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4000000,
+   "usd": 1.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s11009-mwmesya4",
+   "slug": "shabbat",
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s25)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T02:34:51.754Z",
+   "minutes": 4.1,
+   "segs": 2,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4099999,
+   "usd": 1.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s1267-mwmdr111",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין · סבב על הנוסח החי (s4)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T02:51:59.060Z",
+   "minutes": 2.4,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2400000,
+   "usd": 0.96,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s1734-mwmfcrk9",
+   "slug": "shabbat",
+   "perek": 2,
+   "title": "שבת פרק שני - במה מדליקין · סבב על הנוסח החי (s30)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T03:12:03.409Z",
+   "minutes": 1.5,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1500000,
+   "usd": 0.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3173-mwmdswe2",
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק רביעי - במה טומנין · סבב על הנוסח החי (s5)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T03:35:46.196Z",
+   "minutes": 4.5,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4500000,
+   "usd": 1.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3231-mwmdr2qx",
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק רביעי - במה טומנין · סבב על הנוסח החי (s12)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T03:54:58.222Z",
+   "minutes": 5.3,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 5300000,
+   "usd": 2.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3267-mwmdr3i1",
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק רביעי - במה טומנין · סבב על הנוסח החי (s16, s17)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T04:16:34.802Z",
+   "minutes": 5.4,
+   "segs": 2,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 5400000,
+   "usd": 2.16,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3295-mwmdsx6w",
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק רביעי - במה טומנין · סבב על הנוסח החי (s19)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T04:33:00.136Z",
+   "minutes": 2.8,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2800000,
+   "usd": 1.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3352-mwmdr4kv",
+   "slug": "shabbat",
+   "perek": 5,
+   "title": "שבת פרק חמישי - במה בהמה · סבב על הנוסח החי (s4)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T04:52:30.618Z",
+   "minutes": 2.8,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2800000,
+   "usd": 1.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3370-mwmdr59a",
+   "slug": "shabbat",
+   "perek": 5,
+   "title": "שבת פרק חמישי - במה בהמה · סבב על הנוסח החי (s6)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T05:14:31.298Z",
+   "minutes": 4,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4000000,
+   "usd": 1.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3425-mwmdtdt3",
+   "slug": "shabbat",
+   "perek": 5,
+   "title": "שבת פרק חמישי - במה בהמה · סבב על הנוסח החי (s12)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T05:33:05.805Z",
+   "minutes": 2.6,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2600000,
+   "usd": 1.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3774-mwmgpccv",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s2, s3, s4)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T05:53:42.778Z",
+   "minutes": 3.6,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3600000,
+   "usd": 1.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3774-mwmgqfg3",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s2, s3)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T05:54:13.244Z",
+   "minutes": 0.1,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 100000,
+   "usd": 0.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3849-mwmgpd5c",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s6, s7, s8)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T06:18:58.820Z",
+   "minutes": 7.9,
+   "segs": 6,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 7900000,
+   "usd": 3.16,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3889-mwmd5slt",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s39)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T06:35:32.593Z",
+   "minutes": 4.9,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4900000,
+   "usd": 1.96,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3920-mwmgpdxl",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s10)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T06:54:37.356Z",
+   "minutes": 2.4,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 2400000,
+   "usd": 0.96,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3944-mwmgpf44",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s12)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T07:22:51.412Z",
+   "minutes": 11.4,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 11400000,
+   "usd": 4.56,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4268-mwmd5vyh",
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק שביעי - כלל גדול · סבב על הנוסח החי (s18)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T07:35:04.061Z",
+   "minutes": 4.6,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4600000,
+   "usd": 1.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4339-mwmd5wp6",
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק שביעי - כלל גדול · סבב על הנוסח החי (s24, s25, s26)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T07:57:52.780Z",
+   "minutes": 5.5,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 5500000,
+   "usd": 2.2,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4385-mwmd5xii",
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק שביעי - כלל גדול · סבב על הנוסח החי (s28)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T08:15:46.893Z",
+   "minutes": 3.3,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3300000,
+   "usd": 1.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4458-mwmd60l9",
+   "slug": "shabbat",
+   "perek": 8,
+   "title": "שבת פרק שמיני - המוציא יין · סבב על הנוסח החי (s3, s5, s6, s7, s8, s9, s10, s12)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T08:43:15.053Z",
+   "minutes": 13.6,
+   "segs": 10,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13600000,
+   "usd": 5.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4818-mwmd45uz",
+   "slug": "shabbat",
+   "perek": 9,
+   "title": "שבת פרק תשיעי - אמר רבי עקיבא · סבב על הנוסח החי (s3, s4, s5, s6)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T09:02:39.019Z",
+   "minutes": 11.1,
+   "segs": 5,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 11100000,
+   "usd": 4.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4937-mwmd47e5",
+   "slug": "shabbat",
+   "perek": 9,
+   "title": "שבת פרק תשיעי - אמר רבי עקיבא · סבב על הנוסח החי (s14, s15)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T09:19:47.476Z",
+   "minutes": 8.4,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8400000,
+   "usd": 3.36,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4994-mwmd48w7",
+   "slug": "shabbat",
+   "perek": 9,
+   "title": "שבת פרק תשיעי - אמר רבי עקיבא · סבב על הנוסח החי (s21, s22, s23, s24)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T09:45:01.818Z",
+   "minutes": 14.4,
+   "segs": 4,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 14400000,
+   "usd": 5.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s5182-mwmd4ah4",
+   "slug": "shabbat",
+   "perek": 9,
+   "title": "שבת פרק תשיעי - אמר רבי עקיבא · סבב על הנוסח החי (s40)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T09:55:44.876Z",
+   "minutes": 4.7,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4700000,
+   "usd": 1.88,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s5377-mwmd4bol",
+   "slug": "shabbat",
+   "perek": 10,
+   "title": "שבת פרק עשירי - המצניע · סבב על הנוסח החי (s15, s16, s17, s18)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T10:20:49.707Z",
+   "minutes": 9.5,
+   "segs": 6,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 9500000,
+   "usd": 3.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s5441-mwmd4ci2",
+   "slug": "shabbat",
+   "perek": 10,
+   "title": "שבת פרק עשירי - המצניע · סבב על הנוסח החי (s21)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T10:31:50.209Z",
+   "minutes": 1.6,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 1600000,
+   "usd": 0.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4372-mwner6ux",
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק שביעי - כלל גדול · סבב על הנוסח החי (s1, s2, s3)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T11:07:44.629Z",
+   "minutes": 15.1,
+   "segs": 28,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 15100000,
+   "usd": 6.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10249-mwnf45w9",
+   "slug": "shabbat",
+   "perek": 19,
+   "title": "שבת פרק תשעה עשר - ר\"א דמילה · סבב על הנוסח החי (s30, s31, s32)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T11:22:08.569Z",
+   "minutes": 5.5,
+   "segs": 9,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 5500000,
+   "usd": 2.2,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10094-mwnerefk",
+   "slug": "shabbat",
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים - חבית · סבב על הנוסח החי (s15, s20)",
+   "round": "נוסח חי",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-19T11:43:58.330Z",
+   "minutes": 13.5,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 13500000,
+   "usd": 5.4,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "taanit-p2",
+   "slug": "taanit",
+   "perek": 2,
+   "title": "תענית פרק שני - סדר תעניות",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T12:03:28.206Z",
+   "minutes": 16.5,
+   "segs": 14,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 16500000,
+   "usd": 6.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "taanit-p1",
+   "slug": "taanit",
+   "perek": 1,
+   "title": "תענית פרק ראשון - מאימתי",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-19T12:15:00.614Z",
+   "minutes": 21.8,
+   "segs": 25,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 21800000,
+   "usd": 8.72,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p1",
+   "slug": "kiddushin",
+   "perek": 1,
+   "title": "קידושין פרק ראשון - האשה נקנית",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-19T12:19:52.239Z",
+   "minutes": 6.3,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 6300000,
+   "usd": 2.52,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10404-mwnerf5q",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s1)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T12:20:43.462Z",
+   "minutes": 29.5,
+   "segs": 29,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 29500000,
+   "usd": 11.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "taanit-p2",
+   "slug": "taanit",
+   "perek": 2,
+   "title": "תענית פרק שני - סדר תעניות",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T12:51:46.871Z",
+   "minutes": 64.8,
+   "segs": 14,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 64800000,
+   "usd": 25.92,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "taanit-p4",
+   "slug": "taanit",
+   "perek": 4,
+   "title": "תענית פרק רביעי - בשלושה פרקים",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T12:52:18.514Z",
+   "minutes": 59,
+   "segs": 27,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 59000000,
+   "usd": 23.6,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p2",
+   "slug": "kiddushin",
+   "perek": 2,
+   "title": "קידושין פרק שני - האיש מקדש",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-19T12:57:46.337Z",
+   "minutes": 26.6,
+   "segs": 29,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 26600000,
+   "usd": 10.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "taanit-p3",
+   "slug": "taanit",
+   "perek": 3,
+   "title": "תענית פרק שלישי - סדר תעניות",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T13:06:08.325Z",
+   "minutes": 73.3,
+   "segs": 30,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 73300000,
+   "usd": 29.32,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p3",
+   "slug": "kiddushin",
+   "perek": 3,
+   "title": "קידושין פרק שלישי - האומר",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-19T13:09:58.221Z",
+   "minutes": 17.5,
+   "segs": 27,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17500000,
+   "usd": 7.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "taanit-p1",
+   "slug": "taanit",
+   "perek": 1,
+   "title": "תענית פרק ראשון - מאימתי",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-19T13:24:25.763Z",
+   "minutes": 37.7,
+   "segs": 25,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 37700000,
+   "usd": 15.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "taanit-p1",
+   "slug": "taanit",
+   "perek": 1,
+   "title": "תענית פרק ראשון - מאימתי",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "1/2",
+   "end": "2026-11-19T13:33:36.092Z",
+   "minutes": 8.6,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8600000,
+   "usd": 3.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p4",
+   "slug": "kiddushin",
+   "perek": 4,
+   "title": "קידושין פרק רביעי - עשרה יוחסין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-19T13:37:45.143Z",
+   "minutes": 23.6,
+   "segs": 23,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 23600000,
+   "usd": 9.44,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10404-mwnerl53",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s2, s3, s10)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T13:43:27.885Z",
+   "minutes": 12.6,
+   "segs": 10,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12600000,
+   "usd": 5.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "taanit-p4",
+   "slug": "taanit",
+   "perek": 4,
+   "title": "תענית פרק רביעי - בשלושה פרקים",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T14:07:36.530Z",
+   "minutes": 0,
+   "segs": 27,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 0,
+   "usd": 0.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p1",
+   "slug": "kiddushin",
+   "perek": 1,
+   "title": "קידושין פרק ראשון - האשה נקנית",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-19T14:11:05.813Z",
+   "minutes": 19.4,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 19400000,
+   "usd": 7.76,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p3",
+   "slug": "kiddushin",
+   "perek": 3,
+   "title": "קידושין פרק שלישי - האומר",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "2/2",
+   "end": "2026-11-19T14:20:03.425Z",
+   "minutes": 27.8,
+   "segs": 27,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 27800000,
+   "usd": 11.12,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10531-mwnerljs",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s14)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T14:30:08.459Z",
+   "minutes": 17,
+   "segs": 20,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 17000000,
+   "usd": 6.8,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p2",
+   "slug": "kiddushin",
+   "perek": 2,
+   "title": "קידושין פרק שני - האיש מקדש",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "3/4",
+   "end": "2026-11-19T14:48:47.116Z",
+   "minutes": 18.1,
+   "segs": 14,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 18100000,
+   "usd": 7.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10727-mwnerg44",
+   "slug": "shabbat",
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s1)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T15:16:09.862Z",
+   "minutes": 25.2,
+   "segs": 21,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 25200000,
+   "usd": 10.08,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s11360-mwnj4hsc",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s8, s9)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T15:16:53.384Z",
+   "minutes": 4.6,
+   "segs": 12,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4600000,
+   "usd": 1.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s11505-mwnj4i4j",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s11)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T15:16:59.650Z",
+   "minutes": 4.2,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4200000,
+   "usd": 1.68,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s11505-mwnn4eyf",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s10)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T15:39:26.766Z",
+   "minutes": 8.7,
+   "segs": 25,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8700000,
+   "usd": 3.48,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p2",
+   "slug": "kiddushin",
+   "perek": 2,
+   "title": "קידושין פרק שני - האיש מקדש",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "4/4",
+   "end": "2026-11-19T16:21:12.091Z",
+   "minutes": 30,
+   "segs": 14,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 30000000,
+   "usd": 12.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p4",
+   "slug": "kiddushin",
+   "perek": 4,
+   "title": "קידושין פרק רביעי - עשרה יוחסין",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "2/3",
+   "end": "2026-11-19T16:25:42.401Z",
+   "minutes": 12.1,
+   "segs": 8,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12100000,
+   "usd": 4.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s11546-mwnj4ig6",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s13, s14, s15, s16)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T16:33:37.821Z",
+   "minutes": 3.5,
+   "segs": 9,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3500000,
+   "usd": 1.4,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10094-mwnerefk",
+   "slug": "shabbat",
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים - חבית · סבב על הנוסח החי (s15, s20)",
+   "round": "נוסח חי",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-19T17:10:19.926Z",
+   "minutes": 19.6,
+   "segs": 15,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 19600000,
+   "usd": 7.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s11792-mwnj4iu1",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s29)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T17:34:37.217Z",
+   "minutes": 4.3,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4300000,
+   "usd": 1.72,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p4",
+   "slug": "kiddushin",
+   "perek": 4,
+   "title": "קידושין פרק רביעי - עשרה יוחסין",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "3/3",
+   "end": "2026-11-19T17:35:00.514Z",
+   "minutes": 22.5,
+   "segs": 15,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 22500000,
+   "usd": 9.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10094-mwnerefk",
+   "slug": "shabbat",
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים - חבית · סבב על הנוסח החי (s15, s20)",
+   "round": "נוסח חי",
+   "how": "pause",
+   "part": "2/2",
+   "end": "2026-11-19T18:03:22.281Z",
+   "minutes": 11.7,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 11700000,
+   "usd": 4.68,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s11792-mwnpfac7",
+   "slug": "shabbat",
+   "perek": 23,
+   "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s20)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T18:36:11.771Z",
+   "minutes": 5.1,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 5100000,
+   "usd": 2.04,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p1",
+   "slug": "kiddushin",
+   "perek": 1,
+   "title": "קידושין פרק ראשון - האשה נקנית",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "2/4",
+   "end": "2026-11-19T18:42:26.045Z",
+   "minutes": 28,
+   "segs": 12,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 28000000,
+   "usd": 11.2,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s11851-mwnpf70e",
+   "slug": "shabbat",
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s4, s5)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T18:54:23.509Z",
+   "minutes": 3.7,
+   "segs": 3,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 3700000,
+   "usd": 1.48,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s11993-mwnpf8bl",
+   "slug": "shabbat",
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s13, s14, s15, s16)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T19:34:50.614Z",
+   "minutes": 4.1,
+   "segs": 6,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4099999,
+   "usd": 1.64,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p1",
+   "slug": "kiddushin",
+   "perek": 1,
+   "title": "קידושין פרק ראשון - האשה נקנית",
+   "round": "ראשון",
+   "how": "pause",
+   "part": "3/4",
+   "end": "2026-11-19T19:36:26.928Z",
+   "minutes": 25,
+   "segs": 16,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 25000000,
+   "usd": 10.0,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s12113-mwnpf8ww",
+   "slug": "shabbat",
+   "perek": 24,
+   "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s18)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T19:55:08.198Z",
+   "minutes": 4.3,
+   "segs": 1,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 4300000,
+   "usd": 1.72,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3129-mwnerc9e",
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק רביעי - במה טומנין · סבב על הנוסח החי (s1)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T20:42:34.654Z",
+   "minutes": 12.1,
+   "segs": 17,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 12100000,
+   "usd": 4.84,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "kiddushin-p1",
+   "slug": "kiddushin",
+   "perek": 1,
+   "title": "קידושין פרק ראשון - האשה נקנית",
+   "round": "ראשון",
+   "how": "finish",
+   "part": "4/4",
+   "end": "2026-11-19T20:42:52.923Z",
+   "minutes": 31.2,
+   "segs": 15,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 31200000,
+   "usd": 12.48,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3670-mwnf4fjk",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s1)",
+   "round": "נוסח חי",
+   "how": "pause",
+   "part": "1/2",
+   "end": "2026-11-19T20:58:55.687Z",
+   "minutes": 8.2,
+   "segs": 15,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8199999,
+   "usd": 3.28,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s10094-mwnerefk",
+   "slug": "shabbat",
+   "perek": 22,
+   "title": "שבת פרק שנים ועשרים - חבית · סבב על הנוסח החי (s15, s20)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "1/2",
+   "end": "2026-11-19T21:29:31.627Z",
+   "minutes": 18.1,
+   "segs": 0,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 18100000,
+   "usd": 7.24,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s3670-mwnf4fjk",
+   "slug": "shabbat",
+   "perek": 6,
+   "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s1)",
+   "round": "נוסח חי",
+   "how": "pause",
+   "part": "2/3",
+   "end": "2026-11-19T21:42:10.034Z",
+   "minutes": 8.7,
+   "segs": 14,
+   "station": "",
+   "lean": false,
+   "kind": "הערכה",
+   "tokens": 8700000,
+   "usd": 3.48,
+   "model": "אופוס (משוער)",
+   "why": "לא נרשם בזמנו"
+  }
+ ]
+}

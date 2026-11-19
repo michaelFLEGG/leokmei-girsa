@@ -118,5 +118,1988 @@
    "kind": "נמדד",
    "note": "כה.-כט: (5 דפים; פרקים 3-4). 44 פסקאות (5 סומנו + 39 מדגם), 3 הערות"
   }
- ]
+ ],
+ "sakem": {
+  "calib": {
+   "tokPerMin": 1000000,
+   "usdPerMin": 0.4,
+   "basedOn": 0,
+   "note": "טרם נמדדה הרצה - נקודת הפתיחה של פרומפט 70"
+  },
+  "perek": [
+   {
+    "slug": "arakhin",
+    "perek": 1,
+    "title": "ערכין פרק הכל מעריכין",
+    "runs": 1,
+    "minutes": 0,
+    "tokens": 0,
+    "usd": 0.0,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 0.0,
+      "tokens": 0
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 0,
+      "usd": 0.0
+     }
+    },
+    "before": {
+     "usd": 0.0,
+     "runs": 1
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "arakhin",
+    "perek": 2,
+    "title": "ערכין פרק אין נערכין",
+    "runs": 8,
+    "minutes": 22.9,
+    "tokens": 22900000,
+    "usd": 9.16,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 5.04,
+      "tokens": 12600000
+     },
+     "נוסח חי": {
+      "runs": 7,
+      "usd": 4.12,
+      "tokens": 10300000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 22900000,
+      "usd": 9.16
+     }
+    },
+    "before": {
+     "usd": 9.16,
+     "runs": 8
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "arakhin",
+    "perek": 3,
+    "title": "ערכין פרק יש בערכין",
+    "runs": 1,
+    "minutes": 15.8,
+    "tokens": 15800000,
+    "usd": 6.32,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 6.32,
+      "tokens": 15800000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 15800000,
+      "usd": 6.32
+     }
+    },
+    "before": {
+     "usd": 6.32,
+     "runs": 1
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "arakhin",
+    "perek": 4,
+    "title": "ערכין פרק השג יד",
+    "runs": 2,
+    "minutes": 82.9,
+    "tokens": 82900000,
+    "usd": 33.16,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 33.16,
+      "tokens": 82900000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 82900000,
+      "usd": 33.16
+     }
+    },
+    "before": {
+     "usd": 33.16,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "arakhin",
+    "perek": 5,
+    "title": "ערכין פרק האומר משקלי עלי",
+    "runs": 7,
+    "minutes": 26.1,
+    "tokens": 26099998,
+    "usd": 10.44,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 3.28,
+      "tokens": 8199999
+     },
+     "נוסח חי": {
+      "runs": 6,
+      "usd": 7.16,
+      "tokens": 17899999
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 26099998,
+      "usd": 10.44
+     }
+    },
+    "before": {
+     "usd": 10.44,
+     "runs": 7
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "arakhin",
+    "perek": 6,
+    "title": "ערכין פרק שום היתומים",
+    "runs": 1,
+    "minutes": 36.5,
+    "tokens": 36500000,
+    "usd": 14.6,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 14.6,
+      "tokens": 36500000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 36500000,
+      "usd": 14.6
+     }
+    },
+    "before": {
+     "usd": 14.6,
+     "runs": 1
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "arakhin",
+    "perek": 7,
+    "title": "ערכין פרק אין מקדישין",
+    "runs": 1,
+    "minutes": 43.5,
+    "tokens": 43500000,
+    "usd": 17.4,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 17.4,
+      "tokens": 43500000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 43500000,
+      "usd": 17.4
+     }
+    },
+    "before": {
+     "usd": 17.4,
+     "runs": 1
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "arakhin",
+    "perek": 8,
+    "title": "ערכין פרק המקדיש שדהו",
+    "runs": 1,
+    "minutes": 41.5,
+    "tokens": 41500000,
+    "usd": 16.6,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 16.6,
+      "tokens": 41500000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 41500000,
+      "usd": 16.6
+     }
+    },
+    "before": {
+     "usd": 16.6,
+     "runs": 1
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "arakhin",
+    "perek": 9,
+    "title": "ערכין פרק המוכר שדהו",
+    "runs": 7,
+    "minutes": 30.2,
+    "tokens": 30200000,
+    "usd": 12.08,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 6.28,
+      "tokens": 15700000
+     },
+     "כללים אחרונים": {
+      "runs": 6,
+      "usd": 5.8,
+      "tokens": 14500000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 30200000,
+      "usd": 12.08
+     }
+    },
+    "before": {
+     "usd": 12.08,
+     "runs": 7
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "bekhorot",
+    "perek": 9,
+    "title": "בכורות פרק תשיעי",
+    "runs": 1,
+    "minutes": 6,
+    "tokens": 6000000,
+    "usd": 2.4,
+    "measured": 0,
+    "byRound": {
+     "נוסח חי": {
+      "runs": 1,
+      "usd": 2.4,
+      "tokens": 6000000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 6000000,
+      "usd": 2.4
+     }
+    },
+    "before": {
+     "usd": 2.4,
+     "runs": 1
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "berakhot",
+    "perek": 1,
+    "title": "ברכות פרק ראשון",
+    "runs": 4,
+    "minutes": 59.5,
+    "tokens": 59500000,
+    "usd": 23.8,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 4,
+      "usd": 23.8,
+      "tokens": 59500000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 59500000,
+      "usd": 23.8
+     }
+    },
+    "before": {
+     "usd": 23.8,
+     "runs": 4
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "berakhot",
+    "perek": 2,
+    "title": "ברכות פרק שני",
+    "runs": 5,
+    "minutes": 64.0,
+    "tokens": 64000000,
+    "usd": 25.6,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 10.72,
+      "tokens": 26800000
+     },
+     "נוסח חי": {
+      "runs": 2,
+      "usd": 5.52,
+      "tokens": 13800000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 9.36,
+      "tokens": 23400000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 64000000,
+      "usd": 25.6
+     }
+    },
+    "before": {
+     "usd": 25.6,
+     "runs": 5
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "berakhot",
+    "perek": 3,
+    "title": "ברכות פרק שלישי",
+    "runs": 3,
+    "minutes": 76.4,
+    "tokens": 76400000,
+    "usd": 30.56,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 16.72,
+      "tokens": 41800000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 13.84,
+      "tokens": 34600000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 76400000,
+      "usd": 30.56
+     }
+    },
+    "before": {
+     "usd": 30.56,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "berakhot",
+    "perek": 4,
+    "title": "ברכות פרק רביעי",
+    "runs": 6,
+    "minutes": 58.6,
+    "tokens": 58600000,
+    "usd": 23.44,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 10.12,
+      "tokens": 25300000
+     },
+     "כללים מעודכנים": {
+      "runs": 4,
+      "usd": 13.32,
+      "tokens": 33300000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 58600000,
+      "usd": 23.44
+     }
+    },
+    "before": {
+     "usd": 23.44,
+     "runs": 6
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "berakhot",
+    "perek": 5,
+    "title": "ברכות פרק חמישי",
+    "runs": 3,
+    "minutes": 60.6,
+    "tokens": 60599999,
+    "usd": 24.24,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 12.92,
+      "tokens": 32299999
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 11.32,
+      "tokens": 28300000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 60599999,
+      "usd": 24.24
+     }
+    },
+    "before": {
+     "usd": 24.24,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "berakhot",
+    "perek": 6,
+    "title": "ברכות פרק שישי",
+    "runs": 5,
+    "minutes": 50.2,
+    "tokens": 50200000,
+    "usd": 20.08,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 7.6,
+      "tokens": 19000000
+     },
+     "כללים מעודכנים": {
+      "runs": 3,
+      "usd": 12.48,
+      "tokens": 31200000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 50200000,
+      "usd": 20.08
+     }
+    },
+    "before": {
+     "usd": 20.08,
+     "runs": 5
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "berakhot",
+    "perek": 7,
+    "title": "ברכות פרק שביעי",
+    "runs": 11,
+    "minutes": 45.2,
+    "tokens": 45200000,
+    "usd": 18.08,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 10.4,
+      "tokens": 26000000
+     },
+     "כללים מעודכנים": {
+      "runs": 9,
+      "usd": 7.68,
+      "tokens": 19200000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 45200000,
+      "usd": 18.08
+     }
+    },
+    "before": {
+     "usd": 18.08,
+     "runs": 11
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "berakhot",
+    "perek": 8,
+    "title": "ברכות פרק שמיני",
+    "runs": 3,
+    "minutes": 47.1,
+    "tokens": 47100000,
+    "usd": 18.84,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 9.6,
+      "tokens": 24000000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 9.24,
+      "tokens": 23100000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 47100000,
+      "usd": 18.84
+     }
+    },
+    "before": {
+     "usd": 18.84,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "berakhot",
+    "perek": 9,
+    "title": "ברכות פרק תשיעי",
+    "runs": 6,
+    "minutes": 101.8,
+    "tokens": 101800000,
+    "usd": 40.72,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 18.28,
+      "tokens": 45700000
+     },
+     "כללים מעודכנים": {
+      "runs": 4,
+      "usd": 22.44,
+      "tokens": 56100000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 101800000,
+      "usd": 40.72
+     }
+    },
+    "before": {
+     "usd": 40.72,
+     "runs": 6
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "ketubot",
+    "perek": 1,
+    "title": "כתובות פרק ראשון",
+    "runs": 2,
+    "minutes": 50.3,
+    "tokens": 50300000,
+    "usd": 20.12,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 20.12,
+      "tokens": 50300000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 50300000,
+      "usd": 20.12
+     }
+    },
+    "before": {
+     "usd": 20.12,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "ketubot",
+    "perek": 3,
+    "title": "כתובות פרק שלישי",
+    "runs": 2,
+    "minutes": 50.3,
+    "tokens": 50300000,
+    "usd": 20.12,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 20.12,
+      "tokens": 50300000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 50300000,
+      "usd": 20.12
+     }
+    },
+    "before": {
+     "usd": 20.12,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "kiddushin",
+    "perek": 1,
+    "title": "קידושין פרק ראשון",
+    "runs": 5,
+    "minutes": 109.9,
+    "tokens": 109900000,
+    "usd": 43.96,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 5,
+      "usd": 43.96,
+      "tokens": 109900000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 109900000,
+      "usd": 43.96
+     }
+    },
+    "before": {
+     "usd": 43.96,
+     "runs": 5
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "kiddushin",
+    "perek": 2,
+    "title": "קידושין פרק שני",
+    "runs": 3,
+    "minutes": 74.7,
+    "tokens": 74700000,
+    "usd": 29.88,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 3,
+      "usd": 29.88,
+      "tokens": 74700000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 74700000,
+      "usd": 29.88
+     }
+    },
+    "before": {
+     "usd": 29.88,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "kiddushin",
+    "perek": 3,
+    "title": "קידושין פרק שלישי",
+    "runs": 2,
+    "minutes": 45.3,
+    "tokens": 45300000,
+    "usd": 18.12,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 18.12,
+      "tokens": 45300000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 45300000,
+      "usd": 18.12
+     }
+    },
+    "before": {
+     "usd": 18.12,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "kiddushin",
+    "perek": 4,
+    "title": "קידושין פרק רביעי",
+    "runs": 3,
+    "minutes": 58.2,
+    "tokens": 58200000,
+    "usd": 23.28,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 3,
+      "usd": 23.28,
+      "tokens": 58200000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 58200000,
+      "usd": 23.28
+     }
+    },
+    "before": {
+     "usd": 23.28,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 1,
+    "title": "שבת פרק ראשון",
+    "runs": 10,
+    "minutes": 132.6,
+    "tokens": 132600000,
+    "usd": 53.04,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 5,
+      "usd": 28.6,
+      "tokens": 71500000
+     },
+     "נוסח חי": {
+      "runs": 2,
+      "usd": 15.48,
+      "tokens": 38700000
+     },
+     "כללים מעודכנים": {
+      "runs": 3,
+      "usd": 8.96,
+      "tokens": 22400000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 132600000,
+      "usd": 53.04
+     }
+    },
+    "before": {
+     "usd": 53.04,
+     "runs": 10
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 2,
+    "title": "שבת פרק שני",
+    "runs": 21,
+    "minutes": 249.8,
+    "tokens": 249800000,
+    "usd": 99.92,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 17,
+      "usd": 81.52,
+      "tokens": 203800000
+     },
+     "כללים מעודכנים": {
+      "runs": 2,
+      "usd": 16.84,
+      "tokens": 42100000
+     },
+     "נוסח חי": {
+      "runs": 2,
+      "usd": 1.56,
+      "tokens": 3900000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 249800000,
+      "usd": 99.92
+     }
+    },
+    "before": {
+     "usd": 99.92,
+     "runs": 21
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 3,
+    "title": "שבת פרק שלישי",
+    "runs": 6,
+    "minutes": 88.6,
+    "tokens": 88599999,
+    "usd": 35.44,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 4,
+      "usd": 17.28,
+      "tokens": 43199999
+     },
+     "כללים מעודכנים": {
+      "runs": 2,
+      "usd": 18.16,
+      "tokens": 45400000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 88599999,
+      "usd": 35.44
+     }
+    },
+    "before": {
+     "usd": 35.44,
+     "runs": 6
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 4,
+    "title": "שבת פרק רביעי",
+    "runs": 8,
+    "minutes": 190.1,
+    "tokens": 190100000,
+    "usd": 76.04,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 54.68,
+      "tokens": 136700000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 9.32,
+      "tokens": 23300000
+     },
+     "נוסח חי": {
+      "runs": 5,
+      "usd": 12.04,
+      "tokens": 30100000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 190100000,
+      "usd": 76.04
+     }
+    },
+    "before": {
+     "usd": 76.04,
+     "runs": 8
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 5,
+    "title": "שבת פרק חמישי",
+    "runs": 5,
+    "minutes": 45.5,
+    "tokens": 45500000,
+    "usd": 18.2,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 6.52,
+      "tokens": 16300000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 7.92,
+      "tokens": 19800000
+     },
+     "נוסח חי": {
+      "runs": 3,
+      "usd": 3.76,
+      "tokens": 9400000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 45500000,
+      "usd": 18.2
+     }
+    },
+    "before": {
+     "usd": 18.2,
+     "runs": 5
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 6,
+    "title": "שבת פרק שישי",
+    "runs": 14,
+    "minutes": 150.4,
+    "tokens": 150399999,
+    "usd": 60.16,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 16.28,
+      "tokens": 40700000
+     },
+     "כללים מעודכנים": {
+      "runs": 2,
+      "usd": 11.84,
+      "tokens": 29600000
+     },
+     "נוסח חי": {
+      "runs": 10,
+      "usd": 32.04,
+      "tokens": 80099999
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 150399999,
+      "usd": 60.16
+     }
+    },
+    "before": {
+     "usd": 60.16,
+     "runs": 14
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 7,
+    "title": "שבת פרק שביעי",
+    "runs": 8,
+    "minutes": 77.1,
+    "tokens": 77100000,
+    "usd": 30.84,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 10.52,
+      "tokens": 26300000
+     },
+     "כללים מעודכנים": {
+      "runs": 2,
+      "usd": 8.92,
+      "tokens": 22300000
+     },
+     "נוסח חי": {
+      "runs": 4,
+      "usd": 11.4,
+      "tokens": 28500000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 77100000,
+      "usd": 30.84
+     }
+    },
+    "before": {
+     "usd": 30.84,
+     "runs": 8
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 8,
+    "title": "שבת פרק שמיני",
+    "runs": 5,
+    "minutes": 65.2,
+    "tokens": 65200000,
+    "usd": 26.08,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 12.08,
+      "tokens": 30200000
+     },
+     "כללים מעודכנים": {
+      "runs": 2,
+      "usd": 8.56,
+      "tokens": 21400000
+     },
+     "נוסח חי": {
+      "runs": 1,
+      "usd": 5.44,
+      "tokens": 13600000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 65200000,
+      "usd": 26.08
+     }
+    },
+    "before": {
+     "usd": 26.08,
+     "runs": 5
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 9,
+    "title": "שבת פרק תשיעי",
+    "runs": 8,
+    "minutes": 99.4,
+    "tokens": 99400000,
+    "usd": 39.76,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 13.52,
+      "tokens": 33800000
+     },
+     "כללים מעודכנים": {
+      "runs": 2,
+      "usd": 10.8,
+      "tokens": 27000000
+     },
+     "נוסח חי": {
+      "runs": 4,
+      "usd": 15.44,
+      "tokens": 38600000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 99400000,
+      "usd": 39.76
+     }
+    },
+    "before": {
+     "usd": 39.76,
+     "runs": 8
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 10,
+    "title": "שבת פרק עשירי",
+    "runs": 4,
+    "minutes": 45.6,
+    "tokens": 45600000,
+    "usd": 18.24,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 6.16,
+      "tokens": 15400000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 7.64,
+      "tokens": 19100000
+     },
+     "נוסח חי": {
+      "runs": 2,
+      "usd": 4.44,
+      "tokens": 11100000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 45600000,
+      "usd": 18.24
+     }
+    },
+    "before": {
+     "usd": 18.24,
+     "runs": 4
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 11,
+    "title": "שבת פרק אחד עשר",
+    "runs": 3,
+    "minutes": 43.4,
+    "tokens": 43400000,
+    "usd": 17.36,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 8.0,
+      "tokens": 20000000
+     },
+     "כללים מעודכנים": {
+      "runs": 2,
+      "usd": 9.36,
+      "tokens": 23400000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 43400000,
+      "usd": 17.36
+     }
+    },
+    "before": {
+     "usd": 17.36,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 12,
+    "title": "שבת פרק שנים עשר",
+    "runs": 2,
+    "minutes": 24.5,
+    "tokens": 24500000,
+    "usd": 9.8,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 5.32,
+      "tokens": 13300000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 4.48,
+      "tokens": 11200000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 24500000,
+      "usd": 9.8
+     }
+    },
+    "before": {
+     "usd": 9.8,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 13,
+    "title": "שבת פרק שלשה עשר",
+    "runs": 2,
+    "minutes": 30.0,
+    "tokens": 30000000,
+    "usd": 12.0,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 6.44,
+      "tokens": 16100000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 5.56,
+      "tokens": 13900000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 30000000,
+      "usd": 12.0
+     }
+    },
+    "before": {
+     "usd": 12.0,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 14,
+    "title": "שבת פרק ארבעה עשר",
+    "runs": 2,
+    "minutes": 37.4,
+    "tokens": 37400000,
+    "usd": 14.96,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 8.04,
+      "tokens": 20100000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 6.92,
+      "tokens": 17300000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 37400000,
+      "usd": 14.96
+     }
+    },
+    "before": {
+     "usd": 14.96,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 15,
+    "title": "שבת פרק חמשה עשר",
+    "runs": 2,
+    "minutes": 38.3,
+    "tokens": 38300000,
+    "usd": 15.32,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 7.08,
+      "tokens": 17700000
+     },
+     "כללים מעודכנים": {
+      "runs": 1,
+      "usd": 8.24,
+      "tokens": 20600000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 38300000,
+      "usd": 15.32
+     }
+    },
+    "before": {
+     "usd": 15.32,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 16,
+    "title": "שבת פרק ששה עשר",
+    "runs": 2,
+    "minutes": 31.8,
+    "tokens": 31799999,
+    "usd": 12.72,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 12.72,
+      "tokens": 31799999
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 31799999,
+      "usd": 12.72
+     }
+    },
+    "before": {
+     "usd": 12.72,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 17,
+    "title": "שבת פרק שבעה עשר",
+    "runs": 1,
+    "minutes": 19.7,
+    "tokens": 19700000,
+    "usd": 7.88,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 7.88,
+      "tokens": 19700000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 19700000,
+      "usd": 7.88
+     }
+    },
+    "before": {
+     "usd": 7.88,
+     "runs": 1
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 18,
+    "title": "שבת פרק שמונה עשר",
+    "runs": 1,
+    "minutes": 20.8,
+    "tokens": 20800000,
+    "usd": 8.32,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 8.32,
+      "tokens": 20800000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 20800000,
+      "usd": 8.32
+     }
+    },
+    "before": {
+     "usd": 8.32,
+     "runs": 1
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 19,
+    "title": "שבת פרק תשעה עשר",
+    "runs": 3,
+    "minutes": 45.0,
+    "tokens": 45000000,
+    "usd": 18.0,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 15.8,
+      "tokens": 39500000
+     },
+     "נוסח חי": {
+      "runs": 1,
+      "usd": 2.2,
+      "tokens": 5500000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 45000000,
+      "usd": 18.0
+     }
+    },
+    "before": {
+     "usd": 18.0,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 21,
+    "title": "שבת פרק אחד ועשרים",
+    "runs": 2,
+    "minutes": 18.1,
+    "tokens": 18100000,
+    "usd": 7.24,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 5.56,
+      "tokens": 13900000
+     },
+     "נוסח חי": {
+      "runs": 1,
+      "usd": 1.68,
+      "tokens": 4200000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 18100000,
+      "usd": 7.24
+     }
+    },
+    "before": {
+     "usd": 7.24,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 22,
+    "title": "שבת פרק שנים ועשרים",
+    "runs": 8,
+    "minutes": 103.6,
+    "tokens": 103600000,
+    "usd": 41.44,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 9.88,
+      "tokens": 24700000
+     },
+     "נוסח חי": {
+      "runs": 7,
+      "usd": 31.56,
+      "tokens": 78900000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 103600000,
+      "usd": 41.44
+     }
+    },
+    "before": {
+     "usd": 41.44,
+     "runs": 8
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 23,
+    "title": "שבת פרק שלוש ועשרים",
+    "runs": 15,
+    "minutes": 128.8,
+    "tokens": 128800000,
+    "usd": 51.52,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 10.28,
+      "tokens": 25700000
+     },
+     "נוסח חי": {
+      "runs": 13,
+      "usd": 41.24,
+      "tokens": 103100000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 128800000,
+      "usd": 51.52
+     }
+    },
+    "before": {
+     "usd": 51.52,
+     "runs": 15
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "shabbat",
+    "perek": 24,
+    "title": "שבת פרק ארבעה ועשרים",
+    "runs": 8,
+    "minutes": 74.6,
+    "tokens": 74599998,
+    "usd": 29.84,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 9.6,
+      "tokens": 24000000
+     },
+     "נוסח חי": {
+      "runs": 7,
+      "usd": 20.24,
+      "tokens": 50599998
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 74599998,
+      "usd": 29.84
+     }
+    },
+    "before": {
+     "usd": 29.84,
+     "runs": 8
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "sukkah",
+    "perek": 1,
+    "title": "סוכה פרק ראשון",
+    "runs": 3,
+    "minutes": 76.5,
+    "tokens": 76500000,
+    "usd": 30.6,
+    "measured": 0,
+    "byRound": {
+     "כללים מעודכנים": {
+      "runs": 3,
+      "usd": 30.6,
+      "tokens": 76500000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 76500000,
+      "usd": 30.6
+     }
+    },
+    "before": {
+     "usd": 30.6,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "sukkah",
+    "perek": 2,
+    "title": "סוכה פרק שני הישן",
+    "runs": 2,
+    "minutes": 54.4,
+    "tokens": 54399999,
+    "usd": 21.76,
+    "measured": 0,
+    "byRound": {
+     "כללים מעודכנים": {
+      "runs": 2,
+      "usd": 21.76,
+      "tokens": 54399999
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 54399999,
+      "usd": 21.76
+     }
+    },
+    "before": {
+     "usd": 21.76,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "sukkah",
+    "perek": 3,
+    "title": "סוכה פרק שלישי",
+    "runs": 3,
+    "minutes": 70.1,
+    "tokens": 70100000,
+    "usd": 28.04,
+    "measured": 0,
+    "byRound": {
+     "כללים מעודכנים": {
+      "runs": 3,
+      "usd": 28.04,
+      "tokens": 70100000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 70100000,
+      "usd": 28.04
+     }
+    },
+    "before": {
+     "usd": 28.04,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "sukkah",
+    "perek": 4,
+    "title": "סוכה פרק רביעי",
+    "runs": 3,
+    "minutes": 12.2,
+    "tokens": 12199999,
+    "usd": 4.88,
+    "measured": 0,
+    "byRound": {
+     "כללים מעודכנים": {
+      "runs": 3,
+      "usd": 4.88,
+      "tokens": 12199999
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 12199999,
+      "usd": 4.88
+     }
+    },
+    "before": {
+     "usd": 4.88,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "sukkah",
+    "perek": 5,
+    "title": "סוכה פרק חמישי",
+    "runs": 2,
+    "minutes": 46.0,
+    "tokens": 46000000,
+    "usd": 18.4,
+    "measured": 0,
+    "byRound": {
+     "כללים מעודכנים": {
+      "runs": 2,
+      "usd": 18.4,
+      "tokens": 46000000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 46000000,
+      "usd": 18.4
+     }
+    },
+    "before": {
+     "usd": 18.4,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "taanit",
+    "perek": 1,
+    "title": "תענית פרק ראשון",
+    "runs": 3,
+    "minutes": 68.1,
+    "tokens": 68100000,
+    "usd": 27.24,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 3,
+      "usd": 27.24,
+      "tokens": 68100000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 68100000,
+      "usd": 27.24
+     }
+    },
+    "before": {
+     "usd": 27.24,
+     "runs": 3
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "taanit",
+    "perek": 2,
+    "title": "תענית פרק שני",
+    "runs": 2,
+    "minutes": 81.3,
+    "tokens": 81300000,
+    "usd": 32.52,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 32.52,
+      "tokens": 81300000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 81300000,
+      "usd": 32.52
+     }
+    },
+    "before": {
+     "usd": 32.52,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "taanit",
+    "perek": 3,
+    "title": "תענית פרק שלישי",
+    "runs": 1,
+    "minutes": 73.3,
+    "tokens": 73300000,
+    "usd": 29.32,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 1,
+      "usd": 29.32,
+      "tokens": 73300000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 73300000,
+      "usd": 29.32
+     }
+    },
+    "before": {
+     "usd": 29.32,
+     "runs": 1
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   },
+   {
+    "slug": "taanit",
+    "perek": 4,
+    "title": "תענית פרק רביעי",
+    "runs": 2,
+    "minutes": 59,
+    "tokens": 59000000,
+    "usd": 23.6,
+    "measured": 0,
+    "byRound": {
+     "ראשון": {
+      "runs": 2,
+      "usd": 23.6,
+      "tokens": 59000000
+     }
+    },
+    "byModel": {
+     "opus": {
+      "tokens": 59000000,
+      "usd": 23.6
+     }
+    },
+    "before": {
+     "usd": 23.6,
+     "runs": 2
+    },
+    "after": {
+     "usd": 0,
+     "runs": 0
+    }
+   }
+  ],
+  "generated": "2026-11-19T21:55Z"
+ }
 }

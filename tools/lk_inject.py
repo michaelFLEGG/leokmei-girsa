@@ -54,6 +54,13 @@ def build_assets(site):
     _write(os.path.join(site, 'admin-sakem-cmp.html'), _read(os.path.join(LK, 'admin-sakem-cmp.html')))
     _write(os.path.join(site, 'admin-sakem-learn.html'), _read(os.path.join(LK, 'admin-sakem-learn.html')))
     _write(os.path.join(site, 'admin-sakem.html'), _read(os.path.join(LK, 'admin-sakem.html')))   # פרומפט 36: "מה מוכן לי"
+    _write(os.path.join(site, 'admin-sakem-costs.html'), _read(os.path.join(LK, 'admin-sakem-costs.html')))   # פרומפט 70: "עלות לכל פרק"
+    try:   # הנתונים מחושבים מחדש מיומן ההרצות בכל בנייה (אינם כותבים לריפו)
+        sys.path.insert(0, os.path.join(HERE, 'bakara'))
+        import report as _rep
+        _write(os.path.join(site, 'sakem-costs.json'), json.dumps(_rep.sakem_costs(write=False), ensure_ascii=False))
+    except Exception as _e:
+        print('אזהרה: עלות לכל פרק לא נבנתה:', _e)
     reg = os.path.join(LK, 'texts-registry.json')
     if os.path.exists(reg):
         shutil.copy(reg, os.path.join(site, 'lk-texts.json'))

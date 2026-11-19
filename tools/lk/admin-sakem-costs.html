@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>עלות לכל פרק · לאוקמי גירסא</title>
+<!-- דף למנהל בלבד (פרומפט 70, 19.11.2026): עלות סכם לכל מסכת ופרק - טוקנים, שווי בדולרים, דקות, הרצות,
+     פירוק לפי סבב ולפי מודל, וסמן "לפני החיסכון / אחרי החיסכון". הנתונים: /sakem-costs.json, שנכתב בכל בנייה
+     מ-data/sakem/costs.json (tools/bakara/report.py sakem). בלי סקריפטים או גופנים חיצוניים. -->
+<style>
+:root { --paper:#faf7ef; --card:#fff; --ink:#232323; --ink2:#6b675c; --line:#e4e1d8; --est:#8a6d1d; --meas:#1d6b2f; --save:#1d6b2f; --btn:#1f3a63; }
+@media (prefers-color-scheme: dark) {
+  :root { --paper:#14161c; --card:#1c1f27; --ink:#e8e5dc; --ink2:#9a968a; --line:#2b3140; --est:#e2c675; --meas:#9bd8a6; --save:#9bd8a6; --btn:#9fbbe6; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:"Segoe UI", system-ui, sans-serif; }
+.wrap { max-width: 1000px; margin: 0 auto; padding: 20px 16px 60px; }
+h1 { font-size: 1.4rem; margin: 10px 0 4px; }
+h2 { font-size: 1.1rem; margin: 22px 0 6px; }
+.sub { color: var(--ink2); font-size: .9rem; margin-bottom: 14px; line-height:1.6; }
+.tot { display:flex; gap:10px; flex-wrap:wrap; margin: 8px 0 14px; }
+.tot div { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 12px; }
+.tot b { display:block; font-size:1.2rem; }
+.tw { overflow-x:auto; background:var(--card); border:1px solid var(--line); border-radius:10px; }
+table { border-collapse:collapse; width:100%; font-size:.88rem; }
+th, td { padding:6px 8px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; vertical-align:top; }
+th { color:var(--ink2); font-weight:600; position:sticky; top:0; background:var(--card); }
+tr.sum td { font-weight:700; background:rgba(127,127,127,.07); }
+tr.p { cursor:pointer; }
+tr.det td { white-space:normal; color:var(--ink2); font-size:.82rem; }
+.k { font-size:.75rem; border:1px solid currentColor; border-radius:999px; padding:0 6px; }
+.k.m { color:var(--meas); } .k.e { color:var(--est); }
+.save { color:var(--save); font-weight:700; }
+.err { color:#b3261e; }
+select { font:inherit; padding:2px 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>עלות לכל פרק</h1>
+  <div class="sub" id="sub">טוען...</div>
+  <div class="tot" id="tot"></div>
+  <div>מסכת: <select id="f"><option value="">הכל</option></select></div>
+  <h2>לפי פרק</h2>
+  <div class="tw"><table id="t"></table></div>
+  <h2>ההרצות האחרונות</h2>
+  <div class="tw"><table id="r"></table></div>
+</div>
+<script>
+(function () {
+  function key() { try { return localStorage.getItem('lg-adm') || ''; } catch (e) { return ''; } }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var HE = { berakhot:'ברכות', shabbat:'שבת', sukkah:'סוכה', taanit:'תענית', kiddushin:'קידושין', ketubot:'כתובות', arakhin:'ערכין', bekhorot:'בכורות', 'bava-batra':'בבא בתרא', 'bava-kamma':'בבא קמא' };
+  var MOD = { opus:'אופוס', sonnet:'סונט', haiku:'הייקו', other:'אחר' };
+  function heS(s) { return HE[s] || s; }
+  function usd(x) { return '$' + (+x || 0).toFixed(2); }
+  function mt(x) { x = +x || 0; return x >= 1e6 ? (x / 1e6).toFixed(1) + ' מיליון' : x >= 1e3 ? Math.round(x / 1e3) + ' אלף' : String(x); }
+  var sub = document.getElementById('sub'), D = null;
+  function draw() {
+    var f = document.getElementById('f').value;
+    var P = D.perek.filter(function (p) { return !f || p.slug === f; });
+    var R = D.runs.filter(function (r) { return !f || r.slug === f; });
+    var sU = 0, sT = 0, sM = 0, sN = 0, bU = 0, bN = 0, aU = 0, aN = 0, meas = 0;
+    P.forEach(function (p) { sU += p.usd; sT += p.tokens; sM += p.minutes; sN += p.runs; meas += p.measured; bU += p.before.usd; bN += p.before.runs; aU += p.after.usd; aN += p.after.runs; });
+    var bAvg = bN ? bU / bN : 0, aAvg = aN ? aU / aN : 0;
+    document.getElementById('tot').innerHTML =
+      '<div>שווי כולל<b>' + usd(sU) + '</b></div><div>טוקנים<b>' + mt(sT) + '</b></div><div>דקות<b>' + Math.round(sM) + '</b></div>' +
+      '<div>הרצות<b>' + sN + '</b>' + meas + ' נמדדו</div>' +
+      '<div>לפני החיסכון, להרצה<b>' + usd(bAvg) + '</b>' + bN + ' הרצות</div>' +
+      '<div>אחרי החיסכון, להרצה<b>' + (aN ? usd(aAvg) : '-') + '</b>' + (aN ? aN + ' הרצות' + (bAvg ? ' · <span class="save">חיסכון ' + Math.round((1 - aAvg / bAvg) * 100) + '%</span>' : '') : 'טרם הופעל') + '</div>';
+    var h = '<tr><th>מסכת</th><th>פרק</th><th>הרצות</th><th>דקות</th><th>טוקנים</th><th>שווי</th><th>מקור המספר</th><th>לפני החיסכון</th><th>אחרי החיסכון</th></tr>';
+    var bySlug = {};
+    P.forEach(function (p, i) {
+      var b = bySlug[p.slug] || (bySlug[p.slug] = { runs: 0, minutes: 0, tokens: 0, usd: 0, measured: 0, bu: 0, au: 0, an: 0 });
+      b.runs += p.runs; b.minutes += p.minutes; b.tokens += p.tokens; b.usd += p.usd; b.measured += p.measured; b.bu += p.before.usd; b.au += p.after.usd; b.an += p.after.runs;
+      var src = p.measured === p.runs ? '<span class="k m">מדידה</span>' : p.measured ? '<span class="k m">' + p.measured + ' נמדדו</span> <span class="k e">השאר הערכה</span>' : '<span class="k e">הערכה</span>';
+      h += '<tr class="p" data-i="' + i + '"><td>' + esc(heS(p.slug)) + '</td><td>' + esc(p.title || p.perek) + '</td><td>' + p.runs + '</td><td>' + Math.round(p.minutes) + '</td><td>' + mt(p.tokens) + '</td><td>' + usd(p.usd) + '</td><td>' + src + '</td><td>' + usd(p.before.usd) + '</td><td>' + (p.after.runs ? usd(p.after.usd) : '-') + '</td></tr>';
+      var rr = Object.keys(p.byRound).map(function (k) { var x = p.byRound[k]; return esc(k) + ': ' + x.runs + ' הרצות, ' + usd(x.usd); }).join(' · ');
+      var mm = Object.keys(p.byModel).map(function (k) { var x = p.byModel[k]; return esc(MOD[k] || k) + ': ' + mt(x.tokens) + ', ' + usd(x.usd); }).join(' · ');
+      h += '<tr class="det" id="d' + i + '" hidden><td colspan="9">לפי סבב - ' + rr + '<br>לפי מודל - ' + mm + '</td></tr>';
+    });
+    Object.keys(bySlug).forEach(function (s) { var b = bySlug[s];
+      h += '<tr class="sum"><td>' + esc(heS(s)) + '</td><td>סיכום המסכת</td><td>' + b.runs + '</td><td>' + Math.round(b.minutes) + '</td><td>' + mt(b.tokens) + '</td><td>' + usd(b.usd) + '</td><td>' + b.measured + ' נמדדו</td><td>' + usd(b.bu) + '</td><td>' + (b.an ? usd(b.au) : '-') + '</td></tr>'; });
+    var t = document.getElementById('t'); t.innerHTML = h;
+    Array.prototype.forEach.call(t.querySelectorAll('tr.p'), function (tr) { tr.onclick = function () { var d = document.getElementById('d' + tr.getAttribute('data-i')); d.hidden = !d.hidden; }; });
+    var rh = '<tr><th>סיום</th><th>מסכת</th><th>עבודה</th><th>סבב</th><th>קטעים</th><th>דקות</th><th>טוקנים</th><th>שווי</th><th>מקור</th><th>עמדה</th></tr>';
+    R.slice(-80).reverse().forEach(function (r) {
+      rh += '<tr><td>' + esc((r.end || '').slice(0, 16).replace('T', ' ')) + '</td><td>' + esc(heS(r.slug)) + '</td><td>' + esc((r.title || r.jid || '').slice(0, 60)) + (r.part && r.part !== 'כולו' ? ' (' + esc(r.part) + ')' : '') + '</td><td>' + esc(r.round) + (r.lean ? ' · חסכוני' : '') + '</td><td>' + (r.segs == null ? '' : r.segs) + '</td><td>' + (r.minutes || '') + '</td><td>' + mt(r.tokens) + '</td><td>' + usd(r.usd) + '</td><td>' + (r.kind === 'מדידה' ? '<span class="k m">מדידה</span>' : '<span class="k e" title="' + esc(r.why || '') + '">הערכה</span>') + '</td><td>' + esc(r.station || '') + '</td></tr>';
+    });
+    document.getElementById('r').innerHTML = rh;
+  }
+  if (!key()) { sub.innerHTML = '<span class="err">הדף למנהל בלבד. היכנס קודם כמנהל באתר.</span>'; return; }
+  fetch('/sakem-costs.json', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('אין עדיין נתונים'); return r.json(); }).then(function (j) {
+    D = j;
+    var c = j.calib || {};
+    sub.innerHTML = '"מדידה" - נקרא מיומן השיחה של ההרצה (כל הודעה של המודל, כולל סוכני-משנה). "הערכה" - הרצה ישנה, לפי הדקות: ' +
+      mt(c.tokPerMin) + ' טוקנים ו-' + usd(c.usdPerMin) + ' לדקה (' + esc(c.note || '') + '). השווי לפי מחירון ה-API של אופוס 5.5; בפועל העבודה רצה במנוי. עודכן ' + esc(j.generated || '') + '. לחיצה על שורה - פירוק לפי סבב ומודל.';
+    var sl = {}; j.perek.forEach(function (p) { sl[p.slug] = 1; });
+    document.getElementById('f').innerHTML = '<option value="">הכל</option>' + Object.keys(sl).map(function (s) { return '<option value="' + esc(s) + '">' + esc(heS(s)) + '</option>'; }).join('');
+    document.getElementById('f').onchange = draw;
+    draw();
+  }).catch(function (e) { sub.innerHTML = '<span class="err">לא נטען: ' + esc(e.message) + '</span>'; });
+})();
+</script>
+</body>
+</html>

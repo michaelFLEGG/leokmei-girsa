@@ -311,6 +311,7 @@
       '<button type="button" data-a="hidden">טקסטים נסתרים בדף זה</button>' +
       '<a href="/admin-texts.html">טקסטים ששיניתי</a>' +
       '<a href="/admin-sakem-learn.html">מה סכם למד</a>' +
+      '<a href="/admin-sakem-costs.html">עלות לכל פרק</a>' +
       '<button type="button" data-a="stats">נתוני גלישה</button>';
     D.documentElement.appendChild(menu);
     menu.onclick = function (e) {

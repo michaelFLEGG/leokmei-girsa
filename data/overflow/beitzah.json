@@ -1,25 +1,23 @@
 {
  "slug": "beitzah",
- "made": "2026-11-19 23:12",
+ "made": "2026-11-19 23:29",
  "profile": "a4-large",
  "pages": {
-  "a4": 23,
-  "a4-large": 24
+  "a4": 24,
+  "a4-large": 25
  },
  "sq25": {
   "a4": 21,
   "a4-large": 92
  },
- "count": 17,
+ "count": 16,
  "firstTool": {
-  "5": 8,
+  "5": 7,
   "3": 6
  },
- "joinCands": 13,
+ "joinCands": 11,
  "mechSplitCands": 0,
- "ctlMismatch": [
-  "u575.3"
- ],
+ "ctlMismatch": [],
  "rejected": 3,
  "stale": [],
  "unplaced": [],
@@ -166,53 +164,6 @@
    "sug": [],
    "tool6": true,
    "leave": true
-  },
-  {
-   "key": "u575.3",
-   "id": "08c2b88fabfc6784",
-   "u": 575,
-   "li": 3,
-   "daf": "יא:",
-   "cls": "b0 a0",
-   "mc": "main",
-   "html": "<i class=\"am\">ר&quot;י:</i> אף הפותח חביתו ומתחיל בעיסתו ע&quot;ג הרגל, <i class=\"am\">וכר&quot;י </i>דיגמור.",
-   "ph": "<i class=\"am\">ר&quot;י:</i> אף הפותח חביתו ומתחיל בעיסתו ע&quot;ג הרגל, <i class=\"am\">וכר&quot;י </i>דיגמור.",
-   "text": "ר\"י: אף הפותח חביתו ומתחיל בעיסתו ע\"ג הרגל, וכר\"י דיגמור.",
-   "over": "דיגמור.",
-   "nA4": 1,
-   "nLarge": 2,
-   "missPx": 1.0,
-   "miss": 1,
-   "long": false,
-   "tail": false,
-   "sug": [
-    {
-     "tool": 5,
-     "kind": "join",
-     "target": "prev",
-     "html": "תריסי חנויות, <i class=\"am\">ג.</i> חזרת רטיה במקדש. <i class=\"am\">ר&quot;י:</i> אף הפותח חביתו ומתחיל בעיסתו ע&quot;ג הרגל, <i class=\"am\">וכר&quot;י </i>דיגמור.",
-     "targetOrig": "תריסי חנויות, <i class=\"am\">ג.</i> חזרת רטיה במקדש.",
-     "targetLines": 1,
-     "why": "איחוי עם השורה הקודמת",
-     "ok": {
-      "large": [
-       2
-      ],
-      "a4": [
-       2
-      ]
-     }
-    }
-   ],
-   "ctlMismatch": {
-    "a4-large": [
-     1
-    ],
-    "a4": [
-     1
-    ]
-   },
-   "tool6": false
   },
   {
    "key": "u635.2",

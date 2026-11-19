@@ -198,13 +198,15 @@ def items_of_page(pg):
 # ---------------------------------------------------------------- בנייה ונרמול
 
 
-def view(docx, slug, masechet, doc):
-    """הבנייה כמו באתר: (עמודים גולמיים, סיכום ההחלה). doc=None - הספר לבדו."""
+def view(docx, slug, masechet, doc, blocks=None):
+    """הבנייה כמו באתר: (עמודים גולמיים, סיכום ההחלה). doc=None - הספר לבדו. blocks - בלוקים מוכנים
+    (מסכת מכמה קבצים או מקובץ משותף, כמו בבנייה)."""
     import build_site as B
     T = tempfile.mkdtemp(prefix='lg-fold-', dir=C.WORK)
     if doc is not None:
         C.wjson(os.path.join(T, slug + '.json'), doc)
-    blocks = convert(docx)
+    if blocks is None:
+        blocks = convert(docx)
     bj = os.path.join(T, slug + '_blocks.json')
     json.dump(blocks, io.open(bj, 'w', encoding='utf-8'), ensure_ascii=False)
     cap = {}
@@ -276,17 +278,25 @@ def _page_plain(pg):
     return ' \n '.join(out)
 
 
+PAD = {'on': False}
+
+
 def markers(blocks):
-    return [k for k, x in enumerate(blocks) if x['style'] == 'דף בצד' and x['text'].strip()]
+    # פרומפט 64: קובץ שעמודו הראשון אין לו ציון דף משלו (ע"ז: דף ב. מתחיל בראש הקובץ) - ציון מדומה לפני
+    # הפסקה הראשונה (-1), כדי שעמוד n יתאים לציון n כמו בשאר המסכתות
+    mk = [k for k, x in enumerate(blocks) if x['style'] == 'דף בצד' and x['text'].strip()]
+    # ציון דף שנכתב פעמיים ברצף (סנהדרין לג.) - הבנייה רואה בו עמוד אחד, וכך גם כאן
+    mk = [k for j, k in enumerate(mk) if not (j and mk[j - 1] == k - 1 and blocks[k]['text'].strip() == blocks[k - 1]['text'].strip())]
+    return ([-1] + mk) if PAD['on'] else mk
 
 
 def revert_pages(src, dst, pages):
     """העמודים שנמסרו חוזרים בספר החדש (dst) לנוסח שלהם בספר הקודם (src), פסקה בפסקה."""
     if not pages:
         return
-    bs = convert(src); pms = dict(convert.last.get('pmap') or {})
+    bs = convert(src); pms = dict(convert.last.get('pmap') or {}); pms[-1] = -1
     ms = [pms[i] for i in markers(bs)]
-    bd = convert(dst); pmd = dict(convert.last.get('pmap') or {})
+    bd = convert(dst); pmd = dict(convert.last.get('pmap') or {}); pmd[-1] = -1
     md = [pmd[i] for i in markers(bd)]
     if len(ms) != len(md):
         raise RuntimeError('מספר ציוני הדף שונה בין הספר הקודם לחדש')
@@ -298,11 +308,12 @@ def revert_pages(src, dst, pages):
         pd = body.findall(W + 'p')
         s_lo, s_hi = ms[n] + 1, (ms[n + 1] if n + 1 < len(ms) else len(ps))
         d_lo, d_hi = md[n] + 1, (md[n + 1] if n + 1 < len(md) else len(pd))
-        anchor = pd[d_lo - 1]
+        anchor = pd[d_lo - 1] if d_lo > 0 else None
         for p in pd[d_lo:d_hi]:
             body.remove(p)
         for p in reversed(ps[s_lo:s_hi]):
-            anchor.addnext(copy.deepcopy(p))
+            if anchor is None: body.insert(0, copy.deepcopy(p))
+            else: anchor.addnext(copy.deepcopy(p))
     tmp = dst + '.rev'
     zin = zipfile.ZipFile(dst); zout = zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED)
     for it in zin.infolist():
@@ -364,24 +375,197 @@ def dup_pages_new(before, after):
     return sorted(pages)
 
 
-def fold_one(slug, dry=False, log=print, srv=None):
+# ---------------------------------------------------------------- פרומפט 64 (19.11.2026): מוצמדות, כמה קבצים, קובץ משותף
+WPIN = os.path.join(HERE, 'data', 'word-pin')
+
+
+def pin_of(slug, m):
+    """מסכת שנבנית מצילום מוצמד: (שם הקובץ החי, נתיב הצילום) או None. הצילום הוא מה שהמנהל רואה היום,
+    ולכן הוא נקודת המוצא של הקיפול. בשמירה הוא (עם העריכות) נכתב אל הקובץ הקנוני, וההצמדה יורדת."""
+    import build_all
+    pins = C.rjson(os.path.join(WPIN, 'pins.json'), {}) or {}
+    for f, rel in pins.items():
+        if build_all.masechet_of(f) == m and not build_all.split_of(f):
+            p = os.path.join(HERE, rel)
+            if os.path.exists(p):
+                return f, p
+    return None
+
+
+def pin_adjust(slug, docx, raw, log=print):
+    """הבנייה בתוך הקיפול (view) אינה קוראת את data/word-pin. כדי שהקיפול יראה בדיוק מה שהאתר בונה:
+    א. recovered-<slug>.json (פעיל כל עוד ההצמדה לאותו צילום): העריכות נכנסות לשכבה שמקפלים.
+    ב. absorbed-<slug>.json (פעיל כשהוורד הוא אותו נוסח): העריכות כבר בוורד, ואינן מוחלות שוב. הן יוצאות
+       מן החישוב, ובסוף יוצאות מן השכבה (מצבה), כי אחרי הקיפול הרשימה אינה פעילה עוד.
+    מחזיר (raw מתוקן, העריכות שנקלטו)."""
+    import build_site as B
+    edits = list(raw['edits'])
+    absorbed = []
+    ap = os.path.join(WPIN, 'absorbed-' + slug + '.json')
+    if os.path.exists(ap):
+        ad = C.rjson(ap) or {}
+        sha = B.blocks_sha(convert(docx))
+        if ad.get('text_sha') and ad.get('text_sha') == sha:
+            ts = set(ad.get('t') or [])
+            absorbed = [e for e in edits if e.get('t') in ts]
+            edits = [e for e in edits if e.get('t') not in ts]
+            log('%s: %d עריכות כבר בוורד המוצמד (absorbed) - אינן מוחלות שוב, ויוצאות מן השכבה' % (slug, len(absorbed)))
+    rp = os.path.join(WPIN, 'recovered-' + slug + '.json')
+    pins = C.rjson(os.path.join(WPIN, 'pins.json'), {}) or {}
+    if os.path.exists(rp):
+        rd = C.rjson(rp) or {}
+        if rd.get('pin') in pins.values():
+            have = {(e.get('k'), e.get('t')) for e in edits}
+            ts = {e.get('t') for e in absorbed}
+            add = [dict(x) for x in rd.get('edits') or [] if (x.get('k'), x.get('t')) not in have
+                   and not x.get('del') and x.get('t') not in ts]
+            edits += add
+            log('%s: %d עריכות משוחזרות (recovered) נכנסות לשכבה שמקפלים' % (slug, len(add)))
+    edits.sort(key=lambda e: e.get('t') or 0)
+    return dict(raw, edits=edits), absorbed
+
+
+def _body_paras(dx):
+    return [c for c in dx.find(W + 'body') if c.tag == W + 'p']
+
+
+def _read_doc(path):
+    z = zipfile.ZipFile(path); d = etree.fromstring(z.read('word/document.xml')); z.close()
+    return d
+
+
+def _write_doc(src, dst, d):
+    tmp = dst + '.tmp'
+    zin = zipfile.ZipFile(src); zout = zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED)
+    for it in zin.infolist():
+        data = zin.read(it.filename)
+        if it.filename == 'word/document.xml':
+            data = etree.tostring(d, xml_declaration=True, encoding='UTF-8', standalone=True)
+        zout.writestr(it, data)
+    zin.close(); zout.close()
+    os.replace(tmp, dst)
+
+
+def part_ranges(path, spec):
+    """טווח הפסקאות (בגוף המסמך) שהחלק הזה של המסכת תופס בקובץ, בדיוק כמו שהבנייה בוחרת
+    (build_all.merge_masechet לכמה קבצים, build_all.split_file לקובץ משותף). (lo, hi) של אינדקסי w:p."""
+    import build_all
+    from build_all import daf_key
+    blocks = convert(path); pmap = dict(convert.last.get('pmap') or {})
+    if 'cut' in spec:
+        sp = build_all.split_file(path, spec['split'])
+        if not sp:
+            raise RuntimeError('לא נמצאה נקודת חיתוך בקובץ %s' % os.path.basename(path))
+        n0 = sum(len(b) for _, b in sp[:spec['cut']])
+        n1 = n0 + len(sp[spec['cut']][1])
+        sel = list(range(n0, n1))
+    else:
+        lo, hi = spec.get('lo'), spec.get('hi')
+        sel, pending, started, last = [], [], False, None
+        for b in blocks:
+            k = daf_key(b['daf'])
+            if k is not None: last = k
+            k = k if k is not None else last
+            keep = spec.get('first', False) if k is None else ((lo is None or k >= lo) and (hi is None or k <= hi))
+            if not keep:
+                if b['style'] in ('פרק', 'פתיחת פרק'): pending = [b['i']]
+                elif b['style'] == 'פרק שם': pending.append(b['i'])
+                continue
+            if not started:
+                started = True; sel += pending; pending = []
+            sel.append(b['i'])
+    ps = sorted(pmap[i] for i in sel if i in pmap)
+    if not ps:
+        raise RuntimeError('החלק ריק')
+    plo, phi = ps[0], ps[-1] + 1
+    return plo, phi
+
+
+def extract_part(path, plo, phi, out):
+    d = _read_doc(path)
+    body = d.find(W + 'body')
+    ps = _body_paras(d)
+    for k, p in enumerate(ps):
+        if k < plo or k >= phi:
+            body.remove(p)
+    # סימניות ברמת הגוף (bookmarkEnd) אינן תוכן: יוצאות מן הקובץ הזמני ונשארות במקומן בקובץ השלם.
+    # טבלה וכד' - אין דרך בטוחה להחזיר, ולכן עוצרים
+    for c in list(body):
+        if c.tag in (W + 'bookmarkStart', W + 'bookmarkEnd'):
+            body.remove(c)
+    if any(c.tag not in (W + 'p', W + 'sectPr') for c in body):
+        raise RuntimeError('בטווח יש רכיבים שאינם פסקאות')
+    _write_doc(path, out, d)
+
+
+def splice_part(path, plo, phi, part_docx, out):
+    """הפסקאות של החלק המקופל נכנסות לקובץ השלם במקום הטווח (plo, phi)."""
+    d = _read_doc(path)
+    body = d.find(W + 'body')
+    ps = _body_paras(d)
+    new = _body_paras(_read_doc(part_docx))
+    anchor = ps[plo - 1] if plo > 0 else None
+    for p in ps[plo:phi]:
+        body.remove(p)
+    if anchor is None:
+        for p in reversed(new): body.insert(0, copy.deepcopy(p))
+    else:
+        for p in reversed(new): anchor.addnext(copy.deepcopy(p))
+    _write_doc(path, out, d)
+
+
+def edit_in(e, spec, m):
+    """העריכה שייכת לחלק הזה (לפי ציון הדף שלה)."""
+    if 'cut' in spec:
+        return True
+    from build_all import daf_key
+    k = daf_key(e.get('daf') or '')
+    if k is None:
+        return bool(spec.get('first'))
+    lo, hi = spec.get('lo'), spec.get('hi')
+    return (lo is None or k >= lo) and (hi is None or k <= hi)
+
+
+def fold_one(slug, dry=False, log=print, srv=None, docx=None, efilter=None, tag=''):
     import time
     t0 = time.time()
+    PAD['on'] = False
     m = C.masechet_of_slug(slug)
     set_slug_styles(slug)
-    docx = C.docx_of(m)
+    pin = None
+    if docx is None:
+        pin = pin_of(slug, m)
+        docx = pin[1] if pin else C.docx_of(m)
     if srv is None:
         srv = live_doc(slug)
     rep, doc, gone, raw = C.layer(slug, m, srv)
-    rec = {'when': now_iso(), 'slug': slug, 'file': os.path.basename(docx), 'layer': len(raw['edits'])}
+    raw, absorbed = pin_adjust(slug, docx, raw, log=log)
+    outside = []
+    if efilter is not None:
+        outside = [e for e in raw['edits'] if not efilter(e)]
+        raw = dict(raw, edits=[e for e in raw['edits'] if efilter(e)])
+    rec = {'when': now_iso(), 'slug': slug, 'file': os.path.basename(docx) + tag, 'layer': len(raw['edits'])}
+    rec['_art'] = {'rep': rep, 'raw': raw, 'absorbed': absorbed, 'outside': outside, 'pin': pin, 'docx': docx, 'm': m}
+    if absorbed: rec['absorbed'] = len(absorbed)
     if not raw['edits']:
         log('%s: השכבה ריקה, אין מה לקפל' % m)
         rec['result'] = 'ריק'
+        if pin or absorbed:
+            # אין מה לקפל, אבל הצילום המוצמד נעשה לספר (וההצמדה יורדת), והנקלטות יוצאות מן השכבה
+            rec['_art'].update(work=docx, remain=[], retired=list(absorbed), lost=[], rekeyed=[])
+            rec['result'] = 'עבר'
+            if not dry:
+                save_one(slug, rec)
         return rec
     A, ast = view(docx, slug, m, raw)
     W0, _ = view(docx, slug, m, None)
     b0 = convert(docx)
+    PAD['on'] = False
     mk = markers(b0)
+    if len(A) == len(W0) == len(mk) + 1 and mk and W0[0].get('daf') != b0[mk[0]]['text'].strip():
+        PAD['on'] = True
+        mk = markers(b0)
+        log('%s: לעמוד הראשון (%s) אין ציון דף בקובץ - מתחיל בראש הקובץ' % (m, W0[0].get('daf')))
     if len(A) != len(W0) or len(A) != len(mk):
         rec.update(result='נכשל', why='מספר העמודים שונה (מה שהמנהל רואה %d, הספר %d, ציוני דף %d)' % (len(A), len(W0), len(mk)))
         log('%s: %s' % (m, rec['why']))
@@ -533,11 +717,37 @@ def fold_one(slug, dry=False, log=print, srv=None):
                dups=[d0, d1], secs=int(time.time() - t0))
     log('%s: השער עבר. %d עמודים נכנסו לספר, %d חזרו, %d עריכות יצאו מן השכבה, %d נשארו, %d תלושות לעיון'
         % (m, len(changed) - len(reverted), len(reverted), len(retired), len(remain), len(lost)))
+    retired = retired + list(absorbed)
+    rec['retired'] = len(retired)
+    rec['_art'].update(work=work, remain=remain, retired=retired, lost=lost, rekeyed=rekeyed)
     if dry:
         rec['dry'] = True
         return rec
-    # שמירה
-    shutil.copyfile(work, docx)
+    if efilter is None:
+        save_one(slug, rec)
+    return rec
+
+
+def save_one(slug, rec, write_book=True):
+    """שמירת קיפול שעבר: הספר, השכבה שנשארה, הארכיון (למצבות), מפתחות חדשים ותלושות.
+    write_book=False: הספר נכתב בידי הקורא (חלק של קובץ משותף או של כמה קבצים)."""
+    a = rec['_art']
+    m, docx, work, raw, rep = a['m'], a['docx'], a['work'], a['raw'], a['rep']
+    remain, retired, lost, rekeyed = a['remain'], a['retired'], a['lost'], a['rekeyed']
+    if write_book:
+        dst = docx
+        if a.get('pin'):
+            # הצילום המוצמד (עם העריכות שנקלטו בו עכשיו) הוא הספר: הוא נכתב אל הקובץ הקנוני, וההצמדה יורדת.
+            # הקובץ הקודם נשמר בהיסטוריה של המאגר.
+            dst = os.path.join(HERE, 'input', 'docx', a['pin'][0])
+            pp = os.path.join(WPIN, 'pins.json')
+            pins = C.rjson(pp, {}) or {}
+            pins.pop(a['pin'][0], None)
+            C.wjson(pp, pins)
+            rec['unpinned'] = a['pin'][0]
+        if os.path.abspath(work) != os.path.abspath(dst):
+            shutil.copyfile(work, dst)
+    remain = remain + list(a.get('outside') or [])
     C.wjson(os.path.join(C.EDITS, slug + '.json'),
             dict(rep, edits=sorted(remain, key=lambda e: e.get('t') or 0), when=now_iso()))
     ap = os.path.join(C.ARCH, slug + '.json')
@@ -563,6 +773,116 @@ def fold_one(slug, dry=False, log=print, srv=None):
     return rec
 
 
+def whole_blocks(slug, m, specs, override):
+    """הבלוקים של המסכת השלמה כמו בבנייה (build_all), מן הקבצים שבמאגר או מן הקבצים שב-override."""
+    import build_all
+    ddir = os.path.join(HERE, 'input', 'docx')
+    pth = lambda f: override.get(f) or os.path.join(ddir, f)
+    if 'cut' in specs[0]:
+        sp = build_all.split_file(pth(specs[0]['file']), specs[0]['split'])
+        return sp[specs[0]['cut']][1]
+    T = tempfile.mkdtemp(prefix='lg-whole-', dir=C.WORK)
+    for spec in specs:
+        shutil.copyfile(pth(spec['file']), os.path.join(T, spec['file']))
+    blocks, _ = build_all.merge_masechet(m, [spec['file'] for spec in specs], T)
+    shutil.rmtree(T, ignore_errors=True)
+    return blocks
+
+
+def fold_parts(slugs, parts, dry=False, log=print):
+    """מסכת מכמה קבצים (סנהדרין) וקובץ אחד לכמה מסכתות (ע"ז והוריות). כל חלק מקופל לבדו: הטווח שלו
+    בקובץ (בדיוק כמו בבנייה) נחתך לקובץ זמני, השכבה של החלק (לפי ציון הדף) מקופלת עליו באותו שער,
+    והחלק שעבר חוזר אל הקובץ במקומו. מבנה הקבצים אינו משתנה. מחזיר רשימת רשומות לכל מסכת."""
+    ddir = os.path.join(HERE, 'input', 'docx')
+    byfile = {}
+    for s in slugs:
+        for spec in parts.get(s) or []:
+            byfile.setdefault(spec['file'], []).append((s, spec))
+    srvs, done, spliced = {}, {}, {}
+    for f, items in byfile.items():
+        path = os.path.join(ddir, f)
+        rngs = []
+        for s, spec in items:
+            try:
+                plo, phi = part_ranges(path, spec)
+            except Exception as e:
+                done.setdefault(s, []).append({'when': now_iso(), 'slug': s, 'file': f, 'result': 'שגיאה', 'why': str(e)[:300]})
+                continue
+            rngs.append((plo, phi, s, spec))
+        passed = []
+        for plo, phi, s, spec in rngs:
+            if s not in srvs:
+                srvs[s] = live_doc(s)
+            tmp = os.path.join(C.WORK, 'part-%s-%d.docx' % (s, plo))
+            extract_part(path, plo, phi, tmp)
+            m = C.masechet_of_slug(s)
+            try:
+                rec = fold_one(s, dry=True, log=log, srv=srvs[s], docx=tmp,
+                               efilter=(lambda e, spec=spec, m=m: edit_in(e, spec, m)), tag=' [%d-%d]' % (plo, phi))
+            except Exception as e:
+                import traceback; traceback.print_exc()
+                rec = {'when': now_iso(), 'slug': s, 'file': f, 'result': 'שגיאה', 'why': str(e)[:300]}
+            rec['range'] = [plo, phi]
+            done.setdefault(s, []).append(rec)
+            if rec.get('result') == 'עבר' and rec.get('_art', {}).get('work'):
+                passed.append((plo, phi, rec))
+        if passed:
+            cur = os.path.join(C.WORK, 'whole-' + re.sub(r'[^\w]', '_', f) + '.docx')
+            shutil.copyfile(path, cur)
+            for plo, phi, rec in sorted(passed, key=lambda x: -x[0]):
+                splice_part(cur, plo, phi, rec['_art']['work'], cur)
+            spliced[f] = (path, cur, passed)
+    # בדיקת המסכת השלמה, כמו שהאתר בונה אותה (איחוד הקבצים / חיתוך הקובץ המשותף): הספר החדש עם מה
+    # שנשאר בשכבה זהה בכל עמוד לספר הקודם עם כל השכבה. נכשל - הקבצים של המסכת אינם נכתבים.
+    bad_files = set()
+    for s, recs in done.items():
+        ok = [r for r in recs if r.get('result') == 'עבר' and r.get('_art', {}).get('work')]
+        if not ok:
+            continue
+        a0 = ok[0]['_art']
+        allx = list(a0['raw']['edits']) + list(a0['outside'])
+        taken = {(C.ekey(e), e.get('t')) for r in ok for e in r['_art']['raw']['edits']}
+        rem = [e for r in ok for e in r['_art']['remain']] + [e for e in allx if (C.ekey(e), e.get('t')) not in taken]
+        m = a0['m']
+        files = sorted({spec['file'] for spec in parts[s]})
+        A, _ = view(None, s, m, dict(a0['raw'], edits=sorted(allx, key=lambda e: e.get('t') or 0)), blocks=whole_blocks(s, m, parts[s], {}))
+        V, _ = view(None, s, m, dict(a0['raw'], edits=sorted(rem, key=lambda e: e.get('t') or 0)),
+                    blocks=whole_blocks(s, m, parts[s], {f: spliced[f][1] for f in files if f in spliced}))
+        diff = ['מספר העמודים'] if len(A) != len(V) else [A[n]['daf'] for n in range(len(A)) if not same_page(A[n], V[n])]
+        log('%s: בדיקת המסכת השלמה: %s' % (m, ('%d עמודים שונים (%s)' % (len(diff), ', '.join(diff[:12]))) if diff else 'זהה בכל %d העמודים' % len(A)))
+        if diff:
+            for r in ok:
+                r['result'] = 'נכשל'; r['why'] = 'בדיקת המסכת השלמה: %s' % ', '.join(diff[:12])
+            bad_files |= set(files)
+    if not dry:
+        for f, (path, cur, passed) in spliced.items():
+            if f not in bad_files:
+                shutil.copyfile(cur, path)
+    out = []
+    for s, recs in done.items():
+        ok = [r for r in recs if r.get('result') == 'עבר' and r.get('_art', {}).get('work')]
+        bad = [r for r in recs if r not in ok]
+        summ = {'when': now_iso(), 'slug': s, 'parts': [{k: v for k, v in r.items() if k != '_art'} for r in recs]}
+        summ['result'] = 'עבר' if ok and not bad else ('חלקי' if ok else (recs[0].get('result') or 'נכשל'))
+        if ok:
+            a0 = ok[0]['_art']
+            allx = list(a0['raw']['edits']) + list(a0['outside'])
+            taken = {(C.ekey(e), e.get('t')) for r in ok for e in r['_art']['raw']['edits']}
+            art = dict(a0, work=None,
+                       remain=[e for r in ok for e in r['_art']['remain']],
+                       retired=[e for r in ok for e in r['_art']['retired']],
+                       lost=[e for r in ok for e in r['_art']['lost']],
+                       rekeyed=[x for r in ok for x in r['_art']['rekeyed']],
+                       outside=[e for e in allx if (C.ekey(e), e.get('t')) not in taken])
+            summ.update(remain=len(art['remain']) + len(art['outside']), retired=len(art['retired']), tlushot=len(art['lost']))
+            if not dry:
+                save_one(s, {'_art': art}, write_book=False)
+            else:
+                summ['dry'] = True
+        out.append(summ)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--only', default='')
@@ -586,12 +906,20 @@ def main():
                     slugs = [x for x in slugs if x != s_]
         return C.tombstones(slugs) or bad
     bad = 0
-    for s in slugs:
+    parts = cfg.get('parts') or {}
+    for rec in fold_parts([s for s in slugs if s in parts], parts, dry=a.dry):
+        if not a.dry:
+            log_rec(rec)
+        print(json.dumps(rec, ensure_ascii=False))
+        if rec.get('result') not in ('עבר', 'ריק'):
+            bad += 1
+    for s in [s for s in slugs if s not in parts]:
         try:
             rec = fold_one(s, dry=a.dry)
         except Exception as e:
             import traceback; traceback.print_exc()
             rec = {'when': now_iso(), 'slug': s, 'result': 'שגיאה', 'why': str(e)[:300]}
+        rec.pop('_art', None)
         if not a.dry:
             log_rec(rec)
         print(json.dumps(rec, ensure_ascii=False))

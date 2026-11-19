@@ -41,7 +41,7 @@ jobs:
         id: save
         run: |
           git config user.name "leokmei-fold"; git config user.email "fold@users.noreply.github.com"
-          git add -A input/docx data/edits data/word-cloud/ingested data/fold
+          git add -A input/docx data/edits data/word-cloud/ingested data/fold data/word-pin
           git diff --cached --quiet && { echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; }
           git commit -q -m "הקיפול הלילי: העריכות נכנסו לספר [skip ci]"
           # קבצים נגזרים שהבנייה כתבה בדרך (data/mbox ועוד) אינם חלק מן הקיפול

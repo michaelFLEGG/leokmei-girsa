@@ -28,7 +28,47 @@
   "temurah",
   "keritot",
   "meilah",
-  "niddah"
+  "niddah",
+  "bekhorot",
+  "bava-batra",
+  "sukkah",
+  "ketubot",
+  "sanhedrin",
+  "avodah-zarah",
+  "horayot"
  ],
- "note": "פרומפט 51: מסכתות שהספר שלהן (input/docx) נכתב רק בקיפול הלילי. נוספה מסכת רק אחרי הרצה יבשה עוברת (tools/fold.py --dry). חסרות עדיין: bava-batra, bekhorot (השער), sukkah, ketubot (מוצמדות לצילום), sanhedrin, avodah-zarah, horayot, shekalim, tamid (כמה קבצים / קובץ משותף)."
+ "note": "פרומפט 51: מסכתות שהספר שלהן (input/docx) נכתב רק בקיפול הלילי. נוספה מסכת רק אחרי הרצה יבשה עוברת (tools/fold.py --dry). פרומפט 64 (19.11.2026): נוספו בכורות, בבא בתרא, סוכה וכתובות (הצילום המוצמד נעשה לספר בקיפול הראשון וההצמדה יורדת), סנהדרין (שני קבצים) וע\"ז-הוריות (קובץ אחד) - parts: כל חלק מקופל בטווח שלו בקובץ, כמו בבנייה. חסרות: shekalim, tamid (אין קובץ).",
+ "parts": {
+  "sanhedrin": [
+   {
+    "file": "שיננא סנהדרין חלק א' [עד בן סורר].docx",
+    "hi": 136,
+    "first": true
+   },
+   {
+    "file": "שיננא סנהדרין חלק ב [עז. עד הסוף].docx",
+    "lo": 137
+   }
+  ],
+  "avodah-zarah": [
+   {
+    "file": "שיננא ע''ז הוריות.docx",
+    "split": [
+     "עבודה זרה",
+     "הוריות"
+    ],
+    "cut": 0
+   }
+  ],
+  "horayot": [
+   {
+    "file": "שיננא ע''ז הוריות.docx",
+    "split": [
+     "עבודה זרה",
+     "הוריות"
+    ],
+    "cut": 1
+   }
+  ]
+ }
 }

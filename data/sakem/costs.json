@@ -1,11 +1,11 @@
 {
  "v": 1,
- "generated": "2026-11-19T21:55Z",
+ "generated": "2026-11-19T22:22Z",
  "calib": {
-  "tokPerMin": 1000000,
-  "usdPerMin": 0.4,
-  "basedOn": 0,
-  "note": "טרם נמדדה הרצה - נקודת הפתיחה של פרומפט 70"
+  "tokPerMin": 1986074,
+  "usdPerMin": 0.655,
+  "basedOn": 2,
+  "note": "מכויל מול 2 הרצות שנמדדו (חציון)"
  },
  "perek": [
   {
@@ -45,29 +45,29 @@
    "title": "ערכין פרק אין נערכין",
    "runs": 8,
    "minutes": 22.9,
-   "tokens": 22900000,
-   "usd": 9.16,
+   "tokens": 45481086,
+   "usd": 15.01,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 5.04,
-     "tokens": 12600000
+     "usd": 8.25,
+     "tokens": 25024529
     },
     "נוסח חי": {
      "runs": 7,
-     "usd": 4.12,
-     "tokens": 10300000
+     "usd": 6.76,
+     "tokens": 20456557
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 22900000,
-     "usd": 9.16
+     "tokens": 45481086,
+     "usd": 15.01
     }
    },
    "before": {
-    "usd": 9.16,
+    "usd": 15.01,
     "runs": 8
    },
    "after": {
@@ -81,24 +81,24 @@
    "title": "ערכין פרק יש בערכין",
    "runs": 1,
    "minutes": 15.8,
-   "tokens": 15800000,
-   "usd": 6.32,
+   "tokens": 31379965,
+   "usd": 10.35,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 6.32,
-     "tokens": 15800000
+     "usd": 10.35,
+     "tokens": 31379965
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 15800000,
-     "usd": 6.32
+     "tokens": 31379965,
+     "usd": 10.35
     }
    },
    "before": {
-    "usd": 6.32,
+    "usd": 10.35,
     "runs": 1
    },
    "after": {
@@ -112,24 +112,24 @@
    "title": "ערכין פרק השג יד",
    "runs": 2,
    "minutes": 82.9,
-   "tokens": 82900000,
-   "usd": 33.16,
+   "tokens": 164645513,
+   "usd": 54.29,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 33.16,
-     "tokens": 82900000
+     "usd": 54.29,
+     "tokens": 164645513
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 82900000,
-     "usd": 33.16
+     "tokens": 164645513,
+     "usd": 54.29
     }
    },
    "before": {
-    "usd": 33.16,
+    "usd": 54.29,
     "runs": 2
    },
    "after": {
@@ -143,29 +143,29 @@
    "title": "ערכין פרק האומר משקלי עלי",
    "runs": 7,
    "minutes": 26.1,
-   "tokens": 26099998,
-   "usd": 10.44,
+   "tokens": 51836521,
+   "usd": 17.1,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 3.28,
-     "tokens": 8199999
+     "usd": 5.37,
+     "tokens": 16285804
     },
     "נוסח חי": {
      "runs": 6,
-     "usd": 7.16,
-     "tokens": 17899999
+     "usd": 11.73,
+     "tokens": 35550717
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 26099998,
-     "usd": 10.44
+     "tokens": 51836521,
+     "usd": 17.1
     }
    },
    "before": {
-    "usd": 10.44,
+    "usd": 17.1,
     "runs": 7
    },
    "after": {
@@ -179,24 +179,24 @@
    "title": "ערכין פרק שום היתומים",
    "runs": 1,
    "minutes": 36.5,
-   "tokens": 36500000,
-   "usd": 14.6,
+   "tokens": 72491692,
+   "usd": 23.91,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 14.6,
-     "tokens": 36500000
+     "usd": 23.91,
+     "tokens": 72491692
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 36500000,
-     "usd": 14.6
+     "tokens": 72491692,
+     "usd": 23.91
     }
    },
    "before": {
-    "usd": 14.6,
+    "usd": 23.91,
     "runs": 1
    },
    "after": {
@@ -210,24 +210,24 @@
    "title": "ערכין פרק אין מקדישין",
    "runs": 1,
    "minutes": 43.5,
-   "tokens": 43500000,
-   "usd": 17.4,
+   "tokens": 86394208,
+   "usd": 28.49,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 17.4,
-     "tokens": 43500000
+     "usd": 28.49,
+     "tokens": 86394208
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 43500000,
-     "usd": 17.4
+     "tokens": 86394208,
+     "usd": 28.49
     }
    },
    "before": {
-    "usd": 17.4,
+    "usd": 28.49,
     "runs": 1
    },
    "after": {
@@ -241,24 +241,24 @@
    "title": "ערכין פרק המקדיש שדהו",
    "runs": 1,
    "minutes": 41.5,
-   "tokens": 41500000,
-   "usd": 16.6,
+   "tokens": 82422060,
+   "usd": 27.18,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 16.6,
-     "tokens": 41500000
+     "usd": 27.18,
+     "tokens": 82422060
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 41500000,
-     "usd": 16.6
+     "tokens": 82422060,
+     "usd": 27.18
     }
    },
    "before": {
-    "usd": 16.6,
+    "usd": 27.18,
     "runs": 1
    },
    "after": {
@@ -272,29 +272,29 @@
    "title": "ערכין פרק המוכר שדהו",
    "runs": 7,
    "minutes": 30.2,
-   "tokens": 30200000,
-   "usd": 12.08,
+   "tokens": 59979424,
+   "usd": 19.77,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 6.28,
-     "tokens": 15700000
+     "usd": 10.28,
+     "tokens": 31181357
     },
     "כללים אחרונים": {
      "runs": 6,
-     "usd": 5.8,
-     "tokens": 14500000
+     "usd": 9.49,
+     "tokens": 28798067
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 30200000,
-     "usd": 12.08
+     "tokens": 59979424,
+     "usd": 19.77
     }
    },
    "before": {
-    "usd": 12.08,
+    "usd": 19.77,
     "runs": 7
    },
    "after": {
@@ -308,24 +308,24 @@
    "title": "בכורות פרק תשיעי",
    "runs": 1,
    "minutes": 6,
-   "tokens": 6000000,
-   "usd": 2.4,
+   "tokens": 11916442,
+   "usd": 3.93,
    "measured": 0,
    "byRound": {
     "נוסח חי": {
      "runs": 1,
-     "usd": 2.4,
-     "tokens": 6000000
+     "usd": 3.93,
+     "tokens": 11916442
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 6000000,
-     "usd": 2.4
+     "tokens": 11916442,
+     "usd": 3.93
     }
    },
    "before": {
-    "usd": 2.4,
+    "usd": 3.93,
     "runs": 1
    },
    "after": {
@@ -339,24 +339,24 @@
    "title": "ברכות פרק ראשון",
    "runs": 4,
    "minutes": 59.5,
-   "tokens": 59500000,
-   "usd": 23.8,
+   "tokens": 118171386,
+   "usd": 38.97,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 4,
-     "usd": 23.8,
-     "tokens": 59500000
+     "usd": 38.97,
+     "tokens": 118171386
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 59500000,
-     "usd": 23.8
+     "tokens": 118171386,
+     "usd": 38.97
     }
    },
    "before": {
-    "usd": 23.8,
+    "usd": 38.97,
     "runs": 4
    },
    "after": {
@@ -370,34 +370,34 @@
    "title": "ברכות פרק שני",
    "runs": 5,
    "minutes": 64.0,
-   "tokens": 64000000,
-   "usd": 25.6,
+   "tokens": 127108718,
+   "usd": 41.92,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 10.72,
-     "tokens": 26800000
+     "usd": 17.56,
+     "tokens": 53226776
     },
     "נוסח חי": {
      "runs": 2,
-     "usd": 5.52,
-     "tokens": 13800000
+     "usd": 9.03,
+     "tokens": 27407817
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 9.36,
-     "tokens": 23400000
+     "usd": 15.33,
+     "tokens": 46474125
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 64000000,
-     "usd": 25.6
+     "tokens": 127108718,
+     "usd": 41.92
     }
    },
    "before": {
-    "usd": 25.6,
+    "usd": 41.92,
     "runs": 5
    },
    "after": {
@@ -411,29 +411,29 @@
    "title": "ברכות פרק שלישי",
    "runs": 3,
    "minutes": 76.4,
-   "tokens": 76400000,
-   "usd": 30.56,
+   "tokens": 151736034,
+   "usd": 50.04,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 16.72,
-     "tokens": 41800000
+     "usd": 27.38,
+     "tokens": 83017882
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 13.84,
-     "tokens": 34600000
+     "usd": 22.66,
+     "tokens": 68718152
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 76400000,
-     "usd": 30.56
+     "tokens": 151736034,
+     "usd": 50.04
     }
    },
    "before": {
-    "usd": 30.56,
+    "usd": 50.04,
     "runs": 3
    },
    "after": {
@@ -447,29 +447,29 @@
    "title": "ברכות פרק רביעי",
    "runs": 6,
    "minutes": 58.6,
-   "tokens": 58600000,
-   "usd": 23.44,
+   "tokens": 116383918,
+   "usd": 38.37,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 10.12,
-     "tokens": 25300000
+     "usd": 16.57,
+     "tokens": 50247665
     },
     "כללים מעודכנים": {
      "runs": 4,
-     "usd": 13.32,
-     "tokens": 33300000
+     "usd": 21.8,
+     "tokens": 66136253
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 58600000,
-     "usd": 23.44
+     "tokens": 116383918,
+     "usd": 38.37
     }
    },
    "before": {
-    "usd": 23.44,
+    "usd": 38.37,
     "runs": 6
    },
    "after": {
@@ -483,29 +483,29 @@
    "title": "ברכות פרק חמישי",
    "runs": 3,
    "minutes": 60.6,
-   "tokens": 60599999,
-   "usd": 24.24,
+   "tokens": 120356068,
+   "usd": 39.69,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 12.92,
-     "tokens": 32299999
+     "usd": 21.15,
+     "tokens": 64150181
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 11.32,
-     "tokens": 28300000
+     "usd": 18.54,
+     "tokens": 56205887
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 60599999,
-     "usd": 24.24
+     "tokens": 120356068,
+     "usd": 39.69
     }
    },
    "before": {
-    "usd": 24.24,
+    "usd": 39.69,
     "runs": 3
    },
    "after": {
@@ -519,29 +519,29 @@
    "title": "ברכות פרק שישי",
    "runs": 5,
    "minutes": 50.2,
-   "tokens": 50200000,
-   "usd": 20.08,
+   "tokens": 99700901,
+   "usd": 32.88,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 7.6,
-     "tokens": 19000000
+     "usd": 12.44,
+     "tokens": 37735401
     },
     "כללים מעודכנים": {
      "runs": 3,
-     "usd": 12.48,
-     "tokens": 31200000
+     "usd": 20.44,
+     "tokens": 61965500
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 50200000,
-     "usd": 20.08
+     "tokens": 99700901,
+     "usd": 32.88
     }
    },
    "before": {
-    "usd": 20.08,
+    "usd": 32.88,
     "runs": 5
    },
    "after": {
@@ -555,29 +555,29 @@
    "title": "ברכות פרק שביעי",
    "runs": 11,
    "minutes": 45.2,
-   "tokens": 45200000,
-   "usd": 18.08,
+   "tokens": 89770530,
+   "usd": 29.6,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 10.4,
-     "tokens": 26000000
+     "usd": 17.03,
+     "tokens": 51637917
     },
     "כללים מעודכנים": {
      "runs": 9,
-     "usd": 7.68,
-     "tokens": 19200000
+     "usd": 12.57,
+     "tokens": 38132613
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 45200000,
-     "usd": 18.08
+     "tokens": 89770530,
+     "usd": 29.6
     }
    },
    "before": {
-    "usd": 18.08,
+    "usd": 29.6,
     "runs": 11
    },
    "after": {
@@ -591,29 +591,29 @@
    "title": "ברכות פרק שמיני",
    "runs": 3,
    "minutes": 47.1,
-   "tokens": 47100000,
-   "usd": 18.84,
+   "tokens": 93544072,
+   "usd": 30.85,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 9.6,
-     "tokens": 24000000
+     "usd": 15.72,
+     "tokens": 47665769
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 9.24,
-     "tokens": 23100000
+     "usd": 15.13,
+     "tokens": 45878303
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 47100000,
-     "usd": 18.84
+     "tokens": 93544072,
+     "usd": 30.85
     }
    },
    "before": {
-    "usd": 18.84,
+    "usd": 30.85,
     "runs": 3
    },
    "after": {
@@ -627,29 +627,29 @@
    "title": "ברכות פרק תשיעי",
    "runs": 6,
    "minutes": 101.8,
-   "tokens": 101800000,
-   "usd": 40.72,
+   "tokens": 202182304,
+   "usd": 66.68,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 18.28,
-     "tokens": 45700000
+     "usd": 29.94,
+     "tokens": 90763570
     },
     "כללים מעודכנים": {
      "runs": 4,
-     "usd": 22.44,
-     "tokens": 56100000
+     "usd": 36.74,
+     "tokens": 111418734
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 101800000,
-     "usd": 40.72
+     "tokens": 202182304,
+     "usd": 66.68
     }
    },
    "before": {
-    "usd": 40.72,
+    "usd": 66.68,
     "runs": 6
    },
    "after": {
@@ -663,24 +663,24 @@
    "title": "כתובות פרק ראשון",
    "runs": 2,
    "minutes": 50.3,
-   "tokens": 50300000,
-   "usd": 20.12,
+   "tokens": 99899509,
+   "usd": 32.95,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 20.12,
-     "tokens": 50300000
+     "usd": 32.95,
+     "tokens": 99899509
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 50300000,
-     "usd": 20.12
+     "tokens": 99899509,
+     "usd": 32.95
     }
    },
    "before": {
-    "usd": 20.12,
+    "usd": 32.95,
     "runs": 2
    },
    "after": {
@@ -694,24 +694,24 @@
    "title": "כתובות פרק שלישי",
    "runs": 2,
    "minutes": 50.3,
-   "tokens": 50300000,
-   "usd": 20.12,
+   "tokens": 99899509,
+   "usd": 32.95,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 20.12,
-     "tokens": 50300000
+     "usd": 32.95,
+     "tokens": 99899509
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 50300000,
-     "usd": 20.12
+     "tokens": 99899509,
+     "usd": 32.95
     }
    },
    "before": {
-    "usd": 20.12,
+    "usd": 32.95,
     "runs": 2
    },
    "after": {
@@ -725,24 +725,24 @@
    "title": "קידושין פרק ראשון",
    "runs": 5,
    "minutes": 109.9,
-   "tokens": 109900000,
-   "usd": 43.96,
+   "tokens": 218269503,
+   "usd": 72.0,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 5,
-     "usd": 43.96,
-     "tokens": 109900000
+     "usd": 72.0,
+     "tokens": 218269503
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 109900000,
-     "usd": 43.96
+     "tokens": 218269503,
+     "usd": 72.0
     }
    },
    "before": {
-    "usd": 43.96,
+    "usd": 72.0,
     "runs": 5
    },
    "after": {
@@ -756,24 +756,24 @@
    "title": "קידושין פרק שני",
    "runs": 3,
    "minutes": 74.7,
-   "tokens": 74700000,
-   "usd": 29.88,
+   "tokens": 148359708,
+   "usd": 48.93,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 3,
-     "usd": 29.88,
-     "tokens": 74700000
+     "usd": 48.93,
+     "tokens": 148359708
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 74700000,
-     "usd": 29.88
+     "tokens": 148359708,
+     "usd": 48.93
     }
    },
    "before": {
-    "usd": 29.88,
+    "usd": 48.93,
     "runs": 3
    },
    "after": {
@@ -787,24 +787,24 @@
    "title": "קידושין פרק שלישי",
    "runs": 2,
    "minutes": 45.3,
-   "tokens": 45300000,
-   "usd": 18.12,
+   "tokens": 89969140,
+   "usd": 29.67,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 18.12,
-     "tokens": 45300000
+     "usd": 29.67,
+     "tokens": 89969140
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 45300000,
-     "usd": 18.12
+     "tokens": 89969140,
+     "usd": 29.67
     }
    },
    "before": {
-    "usd": 18.12,
+    "usd": 29.67,
     "runs": 2
    },
    "after": {
@@ -818,24 +818,24 @@
    "title": "קידושין פרק רביעי",
    "runs": 3,
    "minutes": 58.2,
-   "tokens": 58200000,
-   "usd": 23.28,
+   "tokens": 115589491,
+   "usd": 38.13,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 3,
-     "usd": 23.28,
-     "tokens": 58200000
+     "usd": 38.13,
+     "tokens": 115589491
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 58200000,
-     "usd": 23.28
+     "tokens": 115589491,
+     "usd": 38.13
     }
    },
    "before": {
-    "usd": 23.28,
+    "usd": 38.13,
     "runs": 3
    },
    "after": {
@@ -849,34 +849,34 @@
    "title": "שבת פרק ראשון",
    "runs": 10,
    "minutes": 132.6,
-   "tokens": 132600000,
-   "usd": 53.04,
+   "tokens": 263353374,
+   "usd": 86.86,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 5,
-     "usd": 28.6,
-     "tokens": 71500000
+     "usd": 46.83,
+     "tokens": 142004271
     },
     "נוסח חי": {
      "runs": 2,
-     "usd": 15.48,
-     "tokens": 38700000
+     "usd": 25.35,
+     "tokens": 76861053
     },
     "כללים מעודכנים": {
      "runs": 3,
-     "usd": 8.96,
-     "tokens": 22400000
+     "usd": 14.68,
+     "tokens": 44488050
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 132600000,
-     "usd": 53.04
+     "tokens": 263353374,
+     "usd": 86.86
     }
    },
    "before": {
-    "usd": 53.04,
+    "usd": 86.86,
     "runs": 10
    },
    "after": {
@@ -890,34 +890,34 @@
    "title": "שבת פרק שני",
    "runs": 21,
    "minutes": 249.8,
-   "tokens": 249800000,
-   "usd": 99.92,
+   "tokens": 496121215,
+   "usd": 163.64,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 17,
-     "usd": 81.52,
-     "tokens": 203800000
+     "usd": 133.51,
+     "tokens": 404761824
     },
     "כללים מעודכנים": {
      "runs": 2,
-     "usd": 16.84,
-     "tokens": 42100000
+     "usd": 27.58,
+     "tokens": 83613704
     },
     "נוסח חי": {
      "runs": 2,
-     "usd": 1.56,
-     "tokens": 3900000
+     "usd": 2.55,
+     "tokens": 7745687
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 249800000,
-     "usd": 99.92
+     "tokens": 496121215,
+     "usd": 163.64
     }
    },
    "before": {
-    "usd": 99.92,
+    "usd": 163.64,
     "runs": 21
    },
    "after": {
@@ -931,29 +931,29 @@
    "title": "שבת פרק שלישי",
    "runs": 6,
    "minutes": 88.6,
-   "tokens": 88599999,
-   "usd": 35.44,
+   "tokens": 175966131,
+   "usd": 58.03,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 4,
-     "usd": 17.28,
-     "tokens": 43199999
+     "usd": 28.3,
+     "tokens": 85798383
     },
     "כללים מעודכנים": {
      "runs": 2,
-     "usd": 18.16,
-     "tokens": 45400000
+     "usd": 29.73,
+     "tokens": 90167748
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 88599999,
-     "usd": 35.44
+     "tokens": 175966131,
+     "usd": 58.03
     }
    },
    "before": {
-    "usd": 35.44,
+    "usd": 58.03,
     "runs": 6
    },
    "after": {
@@ -965,37 +965,41 @@
    "slug": "shabbat",
    "perek": 4,
    "title": "שבת פרק רביעי",
-   "runs": 8,
-   "minutes": 190.1,
-   "tokens": 190100000,
-   "usd": 76.04,
-   "measured": 0,
+   "runs": 9,
+   "minutes": 200.1,
+   "tokens": 393753552,
+   "usd": 131.07,
+   "measured": 1,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 54.68,
-     "tokens": 136700000
+     "usd": 89.54,
+     "tokens": 271496281
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 9.32,
-     "tokens": 23300000
+     "usd": 15.26,
+     "tokens": 46275518
     },
     "נוסח חי": {
-     "runs": 5,
-     "usd": 12.04,
-     "tokens": 30100000
+     "runs": 6,
+     "usd": 26.27,
+     "tokens": 75981753
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 190100000,
-     "usd": 76.04
+     "tokens": 392099258,
+     "usd": 129.85
+    },
+    "sonnet": {
+     "tokens": 1654294,
+     "usd": 1.22
     }
    },
    "before": {
-    "usd": 76.04,
-    "runs": 8
+    "usd": 131.07,
+    "runs": 9
    },
    "after": {
     "usd": 0,
@@ -1008,34 +1012,34 @@
    "title": "שבת פרק חמישי",
    "runs": 5,
    "minutes": 45.5,
-   "tokens": 45500000,
-   "usd": 18.2,
+   "tokens": 90366354,
+   "usd": 29.8,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 6.52,
-     "tokens": 16300000
+     "usd": 10.68,
+     "tokens": 32373002
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 7.92,
-     "tokens": 19800000
+     "usd": 12.97,
+     "tokens": 39324260
     },
     "נוסח חי": {
      "runs": 3,
-     "usd": 3.76,
-     "tokens": 9400000
+     "usd": 6.15,
+     "tokens": 18669092
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 45500000,
-     "usd": 18.2
+     "tokens": 90366354,
+     "usd": 29.8
     }
    },
    "before": {
-    "usd": 18.2,
+    "usd": 29.8,
     "runs": 5
    },
    "after": {
@@ -1049,34 +1053,34 @@
    "title": "שבת פרק שישי",
    "runs": 14,
    "minutes": 150.4,
-   "tokens": 150399999,
-   "usd": 60.16,
+   "tokens": 298705485,
+   "usd": 98.52,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 16.28,
-     "tokens": 40700000
+     "usd": 26.66,
+     "tokens": 80833201
     },
     "כללים מעודכנים": {
      "runs": 2,
-     "usd": 11.84,
-     "tokens": 29600000
+     "usd": 19.39,
+     "tokens": 58787782
     },
     "נוסח חי": {
      "runs": 10,
-     "usd": 32.04,
-     "tokens": 80099999
+     "usd": 52.47,
+     "tokens": 159084502
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 150399999,
-     "usd": 60.16
+     "tokens": 298705485,
+     "usd": 98.52
     }
    },
    "before": {
-    "usd": 60.16,
+    "usd": 98.52,
     "runs": 14
    },
    "after": {
@@ -1088,37 +1092,37 @@
    "slug": "shabbat",
    "perek": 7,
    "title": "שבת פרק שביעי",
-   "runs": 8,
-   "minutes": 77.1,
-   "tokens": 77100000,
-   "usd": 30.84,
-   "measured": 0,
+   "runs": 9,
+   "minutes": 93.6,
+   "tokens": 185896500,
+   "usd": 60.95,
+   "measured": 1,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 10.52,
-     "tokens": 26300000
+     "usd": 17.22,
+     "tokens": 52233739
     },
     "כללים מעודכנים": {
      "runs": 2,
-     "usd": 8.92,
-     "tokens": 22300000
+     "usd": 14.6,
+     "tokens": 44289444
     },
     "נוסח חי": {
-     "runs": 4,
-     "usd": 11.4,
-     "tokens": 28500000
+     "runs": 5,
+     "usd": 29.13,
+     "tokens": 89373317
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 77100000,
-     "usd": 30.84
+     "tokens": 185896500,
+     "usd": 60.95
     }
    },
    "before": {
-    "usd": 30.84,
-    "runs": 8
+    "usd": 60.95,
+    "runs": 9
    },
    "after": {
     "usd": 0,
@@ -1131,34 +1135,34 @@
    "title": "שבת פרק שמיני",
    "runs": 5,
    "minutes": 65.2,
-   "tokens": 65200000,
-   "usd": 26.08,
+   "tokens": 129492007,
+   "usd": 42.71,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 12.08,
-     "tokens": 30200000
+     "usd": 19.78,
+     "tokens": 59979427
     },
     "כללים מעודכנים": {
      "runs": 2,
-     "usd": 8.56,
-     "tokens": 21400000
+     "usd": 14.02,
+     "tokens": 42501977
     },
     "נוסח חי": {
      "runs": 1,
-     "usd": 5.44,
-     "tokens": 13600000
+     "usd": 8.91,
+     "tokens": 27010603
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 65200000,
-     "usd": 26.08
+     "tokens": 129492007,
+     "usd": 42.71
     }
    },
    "before": {
-    "usd": 26.08,
+    "usd": 42.71,
     "runs": 5
    },
    "after": {
@@ -1172,34 +1176,34 @@
    "title": "שבת פרק תשיעי",
    "runs": 8,
    "minutes": 99.4,
-   "tokens": 99400000,
-   "usd": 39.76,
+   "tokens": 197415728,
+   "usd": 65.11,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 13.52,
-     "tokens": 33800000
+     "usd": 22.14,
+     "tokens": 67129292
     },
     "כללים מעודכנים": {
      "runs": 2,
-     "usd": 10.8,
-     "tokens": 27000000
+     "usd": 17.69,
+     "tokens": 53623991
     },
     "נוסח חי": {
      "runs": 4,
-     "usd": 15.44,
-     "tokens": 38600000
+     "usd": 25.28,
+     "tokens": 76662445
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 99400000,
-     "usd": 39.76
+     "tokens": 197415728,
+     "usd": 65.11
     }
    },
    "before": {
-    "usd": 39.76,
+    "usd": 65.11,
     "runs": 8
    },
    "after": {
@@ -1213,34 +1217,34 @@
    "title": "שבת פרק עשירי",
    "runs": 4,
    "minutes": 45.6,
-   "tokens": 45600000,
-   "usd": 18.24,
+   "tokens": 90564961,
+   "usd": 29.87,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 6.16,
-     "tokens": 15400000
+     "usd": 10.09,
+     "tokens": 30585535
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 7.64,
-     "tokens": 19100000
+     "usd": 12.51,
+     "tokens": 37934008
     },
     "נוסח חי": {
      "runs": 2,
-     "usd": 4.44,
-     "tokens": 11100000
+     "usd": 7.27,
+     "tokens": 22045418
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 45600000,
-     "usd": 18.24
+     "tokens": 90564961,
+     "usd": 29.87
     }
    },
    "before": {
-    "usd": 18.24,
+    "usd": 29.87,
     "runs": 4
    },
    "after": {
@@ -1254,29 +1258,29 @@
    "title": "שבת פרק אחד עשר",
    "runs": 3,
    "minutes": 43.4,
-   "tokens": 43400000,
-   "usd": 17.36,
+   "tokens": 86195600,
+   "usd": 28.43,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 8.0,
-     "tokens": 20000000
+     "usd": 13.1,
+     "tokens": 39721475
     },
     "כללים מעודכנים": {
      "runs": 2,
-     "usd": 9.36,
-     "tokens": 23400000
+     "usd": 15.33,
+     "tokens": 46474125
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 43400000,
-     "usd": 17.36
+     "tokens": 86195600,
+     "usd": 28.43
     }
    },
    "before": {
-    "usd": 17.36,
+    "usd": 28.43,
     "runs": 3
    },
    "after": {
@@ -1290,29 +1294,29 @@
    "title": "שבת פרק שנים עשר",
    "runs": 2,
    "minutes": 24.5,
-   "tokens": 24500000,
-   "usd": 9.8,
+   "tokens": 48658806,
+   "usd": 16.05,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 5.32,
-     "tokens": 13300000
+     "usd": 8.71,
+     "tokens": 26414780
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 4.48,
-     "tokens": 11200000
+     "usd": 7.34,
+     "tokens": 22244026
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 24500000,
-     "usd": 9.8
+     "tokens": 48658806,
+     "usd": 16.05
     }
    },
    "before": {
-    "usd": 9.8,
+    "usd": 16.05,
     "runs": 2
    },
    "after": {
@@ -1326,29 +1330,29 @@
    "title": "שבת פרק שלשה עשר",
    "runs": 2,
    "minutes": 30.0,
-   "tokens": 30000000,
-   "usd": 12.0,
+   "tokens": 59582212,
+   "usd": 19.65,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 6.44,
-     "tokens": 16100000
+     "usd": 10.55,
+     "tokens": 31975787
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 5.56,
-     "tokens": 13900000
+     "usd": 9.1,
+     "tokens": 27606425
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 30000000,
-     "usd": 12.0
+     "tokens": 59582212,
+     "usd": 19.65
     }
    },
    "before": {
-    "usd": 12.0,
+    "usd": 19.65,
     "runs": 2
    },
    "after": {
@@ -1362,29 +1366,29 @@
    "title": "שבת פרק ארבעה עשר",
    "runs": 2,
    "minutes": 37.4,
-   "tokens": 37400000,
-   "usd": 14.96,
+   "tokens": 74279158,
+   "usd": 24.5,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 8.04,
-     "tokens": 20100000
+     "usd": 13.17,
+     "tokens": 39920082
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 6.92,
-     "tokens": 17300000
+     "usd": 11.33,
+     "tokens": 34359076
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 37400000,
-     "usd": 14.96
+     "tokens": 74279158,
+     "usd": 24.5
     }
    },
    "before": {
-    "usd": 14.96,
+    "usd": 24.5,
     "runs": 2
    },
    "after": {
@@ -1398,29 +1402,29 @@
    "title": "שבת פרק חמשה עשר",
    "runs": 2,
    "minutes": 38.3,
-   "tokens": 38300000,
-   "usd": 15.32,
+   "tokens": 76066624,
+   "usd": 25.08,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 7.08,
-     "tokens": 17700000
+     "usd": 11.59,
+     "tokens": 35153505
     },
     "כללים מעודכנים": {
      "runs": 1,
-     "usd": 8.24,
-     "tokens": 20600000
+     "usd": 13.49,
+     "tokens": 40913119
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 38300000,
-     "usd": 15.32
+     "tokens": 76066624,
+     "usd": 25.08
     }
    },
    "before": {
-    "usd": 15.32,
+    "usd": 25.08,
     "runs": 2
    },
    "after": {
@@ -1434,24 +1438,24 @@
    "title": "שבת פרק ששה עשר",
    "runs": 2,
    "minutes": 31.8,
-   "tokens": 31799999,
-   "usd": 12.72,
+   "tokens": 63157144,
+   "usd": 20.83,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 12.72,
-     "tokens": 31799999
+     "usd": 20.83,
+     "tokens": 63157144
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 31799999,
-     "usd": 12.72
+     "tokens": 63157144,
+     "usd": 20.83
     }
    },
    "before": {
-    "usd": 12.72,
+    "usd": 20.83,
     "runs": 2
    },
    "after": {
@@ -1465,24 +1469,24 @@
    "title": "שבת פרק שבעה עשר",
    "runs": 1,
    "minutes": 19.7,
-   "tokens": 19700000,
-   "usd": 7.88,
+   "tokens": 39125653,
+   "usd": 12.9,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 7.88,
-     "tokens": 19700000
+     "usd": 12.9,
+     "tokens": 39125653
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 19700000,
-     "usd": 7.88
+     "tokens": 39125653,
+     "usd": 12.9
     }
    },
    "before": {
-    "usd": 7.88,
+    "usd": 12.9,
     "runs": 1
    },
    "after": {
@@ -1496,24 +1500,24 @@
    "title": "שבת פרק שמונה עשר",
    "runs": 1,
    "minutes": 20.8,
-   "tokens": 20800000,
-   "usd": 8.32,
+   "tokens": 41310334,
+   "usd": 13.62,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 8.32,
-     "tokens": 20800000
+     "usd": 13.62,
+     "tokens": 41310334
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 20800000,
-     "usd": 8.32
+     "tokens": 41310334,
+     "usd": 13.62
     }
    },
    "before": {
-    "usd": 8.32,
+    "usd": 13.62,
     "runs": 1
    },
    "after": {
@@ -1527,29 +1531,29 @@
    "title": "שבת פרק תשעה עשר",
    "runs": 3,
    "minutes": 45.0,
-   "tokens": 45000000,
-   "usd": 18.0,
+   "tokens": 89373318,
+   "usd": 29.48,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 15.8,
-     "tokens": 39500000
+     "usd": 25.88,
+     "tokens": 78449913
     },
     "נוסח חי": {
      "runs": 1,
-     "usd": 2.2,
-     "tokens": 5500000
+     "usd": 3.6,
+     "tokens": 10923405
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 45000000,
-     "usd": 18.0
+     "tokens": 89373318,
+     "usd": 29.48
     }
    },
    "before": {
-    "usd": 18.0,
+    "usd": 29.48,
     "runs": 3
    },
    "after": {
@@ -1563,29 +1567,29 @@
    "title": "שבת פרק אחד ועשרים",
    "runs": 2,
    "minutes": 18.1,
-   "tokens": 18100000,
-   "usd": 7.24,
+   "tokens": 35947934,
+   "usd": 11.85,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 5.56,
-     "tokens": 13900000
+     "usd": 9.1,
+     "tokens": 27606425
     },
     "נוסח חי": {
      "runs": 1,
-     "usd": 1.68,
-     "tokens": 4200000
+     "usd": 2.75,
+     "tokens": 8341509
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 18100000,
-     "usd": 7.24
+     "tokens": 35947934,
+     "usd": 11.85
     }
    },
    "before": {
-    "usd": 7.24,
+    "usd": 11.85,
     "runs": 2
    },
    "after": {
@@ -1599,29 +1603,29 @@
    "title": "שבת פרק שנים ועשרים",
    "runs": 8,
    "minutes": 103.6,
-   "tokens": 103600000,
-   "usd": 41.44,
+   "tokens": 205757238,
+   "usd": 67.86,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 9.88,
-     "tokens": 24700000
+     "usd": 16.18,
+     "tokens": 49056021
     },
     "נוסח חי": {
      "runs": 7,
-     "usd": 31.56,
-     "tokens": 78900000
+     "usd": 51.68,
+     "tokens": 156701217
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 103600000,
-     "usd": 41.44
+     "tokens": 205757238,
+     "usd": 67.86
     }
    },
    "before": {
-    "usd": 41.44,
+    "usd": 67.86,
     "runs": 8
    },
    "after": {
@@ -1635,29 +1639,29 @@
    "title": "שבת פרק שלוש ועשרים",
    "runs": 15,
    "minutes": 128.8,
-   "tokens": 128800000,
-   "usd": 51.52,
+   "tokens": 255806294,
+   "usd": 84.36,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 10.28,
-     "tokens": 25700000
+     "usd": 16.84,
+     "tokens": 51042095
     },
     "נוסח חי": {
      "runs": 13,
-     "usd": 41.24,
-     "tokens": 103100000
+     "usd": 67.52,
+     "tokens": 204764199
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 128800000,
-     "usd": 51.52
+     "tokens": 255806294,
+     "usd": 84.36
     }
    },
    "before": {
-    "usd": 51.52,
+    "usd": 84.36,
     "runs": 15
    },
    "after": {
@@ -1671,29 +1675,29 @@
    "title": "שבת פרק ארבעה ועשרים",
    "runs": 8,
    "minutes": 74.6,
-   "tokens": 74599998,
-   "usd": 29.84,
+   "tokens": 148161099,
+   "usd": 48.88,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 9.6,
-     "tokens": 24000000
+     "usd": 15.72,
+     "tokens": 47665770
     },
     "נוסח חי": {
      "runs": 7,
-     "usd": 20.24,
-     "tokens": 50599998
+     "usd": 33.16,
+     "tokens": 100495329
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 74599998,
-     "usd": 29.84
+     "tokens": 148161099,
+     "usd": 48.88
     }
    },
    "before": {
-    "usd": 29.84,
+    "usd": 48.88,
     "runs": 8
    },
    "after": {
@@ -1707,24 +1711,24 @@
    "title": "סוכה פרק ראשון",
    "runs": 3,
    "minutes": 76.5,
-   "tokens": 76500000,
-   "usd": 30.6,
+   "tokens": 151934641,
+   "usd": 50.11,
    "measured": 0,
    "byRound": {
     "כללים מעודכנים": {
      "runs": 3,
-     "usd": 30.6,
-     "tokens": 76500000
+     "usd": 50.11,
+     "tokens": 151934641
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 76500000,
-     "usd": 30.6
+     "tokens": 151934641,
+     "usd": 50.11
     }
    },
    "before": {
-    "usd": 30.6,
+    "usd": 50.11,
     "runs": 3
    },
    "after": {
@@ -1738,24 +1742,24 @@
    "title": "סוכה פרק שני הישן",
    "runs": 2,
    "minutes": 54.4,
-   "tokens": 54399999,
-   "usd": 21.76,
+   "tokens": 108042412,
+   "usd": 35.64,
    "measured": 0,
    "byRound": {
     "כללים מעודכנים": {
      "runs": 2,
-     "usd": 21.76,
-     "tokens": 54399999
+     "usd": 35.64,
+     "tokens": 108042412
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 54399999,
-     "usd": 21.76
+     "tokens": 108042412,
+     "usd": 35.64
     }
    },
    "before": {
-    "usd": 21.76,
+    "usd": 35.64,
     "runs": 2
    },
    "after": {
@@ -1769,24 +1773,24 @@
    "title": "סוכה פרק שלישי",
    "runs": 3,
    "minutes": 70.1,
-   "tokens": 70100000,
-   "usd": 28.04,
+   "tokens": 139223769,
+   "usd": 45.91,
    "measured": 0,
    "byRound": {
     "כללים מעודכנים": {
      "runs": 3,
-     "usd": 28.04,
-     "tokens": 70100000
+     "usd": 45.91,
+     "tokens": 139223769
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 70100000,
-     "usd": 28.04
+     "tokens": 139223769,
+     "usd": 45.91
     }
    },
    "before": {
-    "usd": 28.04,
+    "usd": 45.91,
     "runs": 3
    },
    "after": {
@@ -1800,24 +1804,24 @@
    "title": "סוכה פרק רביעי",
    "runs": 3,
    "minutes": 12.2,
-   "tokens": 12199999,
-   "usd": 4.88,
+   "tokens": 24230099,
+   "usd": 7.99,
    "measured": 0,
    "byRound": {
     "כללים מעודכנים": {
      "runs": 3,
-     "usd": 4.88,
-     "tokens": 12199999
+     "usd": 7.99,
+     "tokens": 24230099
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 12199999,
-     "usd": 4.88
+     "tokens": 24230099,
+     "usd": 7.99
     }
    },
    "before": {
-    "usd": 4.88,
+    "usd": 7.99,
     "runs": 3
    },
    "after": {
@@ -1831,24 +1835,24 @@
    "title": "סוכה פרק חמישי",
    "runs": 2,
    "minutes": 46.0,
-   "tokens": 46000000,
-   "usd": 18.4,
+   "tokens": 91359392,
+   "usd": 30.13,
    "measured": 0,
    "byRound": {
     "כללים מעודכנים": {
      "runs": 2,
-     "usd": 18.4,
-     "tokens": 46000000
+     "usd": 30.13,
+     "tokens": 91359392
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 46000000,
-     "usd": 18.4
+     "tokens": 91359392,
+     "usd": 30.13
     }
    },
    "before": {
-    "usd": 18.4,
+    "usd": 30.13,
     "runs": 2
    },
    "after": {
@@ -1862,24 +1866,24 @@
    "title": "תענית פרק ראשון",
    "runs": 3,
    "minutes": 68.1,
-   "tokens": 68100000,
-   "usd": 27.24,
+   "tokens": 135251621,
+   "usd": 44.6,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 3,
-     "usd": 27.24,
-     "tokens": 68100000
+     "usd": 44.6,
+     "tokens": 135251621
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 68100000,
-     "usd": 27.24
+     "tokens": 135251621,
+     "usd": 44.6
     }
    },
    "before": {
-    "usd": 27.24,
+    "usd": 44.6,
     "runs": 3
    },
    "after": {
@@ -1893,24 +1897,24 @@
    "title": "תענית פרק שני",
    "runs": 2,
    "minutes": 81.3,
-   "tokens": 81300000,
-   "usd": 32.52,
+   "tokens": 161467796,
+   "usd": 53.25,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 32.52,
-     "tokens": 81300000
+     "usd": 53.25,
+     "tokens": 161467796
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 81300000,
-     "usd": 32.52
+     "tokens": 161467796,
+     "usd": 53.25
     }
    },
    "before": {
-    "usd": 32.52,
+    "usd": 53.25,
     "runs": 2
    },
    "after": {
@@ -1924,24 +1928,24 @@
    "title": "תענית פרק שלישי",
    "runs": 1,
    "minutes": 73.3,
-   "tokens": 73300000,
-   "usd": 29.32,
+   "tokens": 145579206,
+   "usd": 48.01,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 1,
-     "usd": 29.32,
-     "tokens": 73300000
+     "usd": 48.01,
+     "tokens": 145579206
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 73300000,
-     "usd": 29.32
+     "tokens": 145579206,
+     "usd": 48.01
     }
    },
    "before": {
-    "usd": 29.32,
+    "usd": 48.01,
     "runs": 1
    },
    "after": {
@@ -1955,24 +1959,24 @@
    "title": "תענית פרק רביעי",
    "runs": 2,
    "minutes": 59,
-   "tokens": 59000000,
-   "usd": 23.6,
+   "tokens": 117178351,
+   "usd": 38.65,
    "measured": 0,
    "byRound": {
     "ראשון": {
      "runs": 2,
-     "usd": 23.6,
-     "tokens": 59000000
+     "usd": 38.65,
+     "tokens": 117178351
     }
    },
    "byModel": {
     "opus": {
-     "tokens": 59000000,
-     "usd": 23.6
+     "tokens": 117178351,
+     "usd": 38.65
     }
    },
    "before": {
-    "usd": 23.6,
+    "usd": 38.65,
     "runs": 2
    },
    "after": {
@@ -1996,8 +2000,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 25600000,
-   "usd": 10.24,
+   "tokens": 50843488,
+   "usd": 16.77,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2015,8 +2019,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 11600000,
-   "usd": 4.64,
+   "tokens": 23038455,
+   "usd": 7.6,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2034,8 +2038,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13300000,
-   "usd": 5.32,
+   "tokens": 26414780,
+   "usd": 8.71,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2053,8 +2057,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 9200000,
-   "usd": 3.68,
+   "tokens": 18271878,
+   "usd": 6.03,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2072,8 +2076,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3600000,
-   "usd": 1.44,
+   "tokens": 7149865,
+   "usd": 2.36,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2091,8 +2095,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1900000,
-   "usd": 0.76,
+   "tokens": 3773540,
+   "usd": 1.24,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2110,8 +2114,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2200000,
-   "usd": 0.88,
+   "tokens": 4369362,
+   "usd": 1.44,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2129,8 +2133,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 124100000,
-   "usd": 49.64,
+   "tokens": 246471753,
+   "usd": 81.29,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2148,8 +2152,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16500000,
-   "usd": 6.6,
+   "tokens": 32770217,
+   "usd": 10.81,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2167,8 +2171,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2100000,
-   "usd": 0.84,
+   "tokens": 4170754,
+   "usd": 1.38,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2186,8 +2190,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2200000,
-   "usd": 0.88,
+   "tokens": 4369362,
+   "usd": 1.44,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2205,8 +2209,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3000000,
-   "usd": 1.2,
+   "tokens": 5958221,
+   "usd": 1.97,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2224,8 +2228,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1800000,
-   "usd": 0.72,
+   "tokens": 3574932,
+   "usd": 1.18,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2243,8 +2247,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2100000,
-   "usd": 0.84,
+   "tokens": 4170754,
+   "usd": 1.38,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2262,8 +2266,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1300000,
-   "usd": 0.52,
+   "tokens": 2581895,
+   "usd": 0.85,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2281,8 +2285,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2300000,
-   "usd": 0.92,
+   "tokens": 4567969,
+   "usd": 1.51,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2300,8 +2304,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2400000,
-   "usd": 0.96,
+   "tokens": 4766577,
+   "usd": 1.57,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2319,8 +2323,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1500000,
-   "usd": 0.6,
+   "tokens": 2979110,
+   "usd": 0.98,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2338,8 +2342,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2000000,
-   "usd": 0.8,
+   "tokens": 3972147,
+   "usd": 1.31,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2357,8 +2361,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 10100000,
-   "usd": 4.04,
+   "tokens": 20059344,
+   "usd": 6.62,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2376,8 +2380,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8199999,
-   "usd": 3.28,
+   "tokens": 16285804,
+   "usd": 5.37,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2395,8 +2399,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17700000,
-   "usd": 7.08,
+   "tokens": 35153505,
+   "usd": 11.59,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2414,8 +2418,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15700000,
-   "usd": 6.28,
+   "tokens": 31181357,
+   "usd": 10.28,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2433,8 +2437,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 9300000,
-   "usd": 3.72,
+   "tokens": 18470485,
+   "usd": 6.09,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2452,8 +2456,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 127400000,
-   "usd": 50.96,
+   "tokens": 253025796,
+   "usd": 83.45,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2471,8 +2475,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16300000,
-   "usd": 6.52,
+   "tokens": 32373002,
+   "usd": 10.68,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2490,8 +2494,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 9100000,
-   "usd": 3.64,
+   "tokens": 18073271,
+   "usd": 5.96,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2509,8 +2513,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 9900000,
-   "usd": 3.96,
+   "tokens": 19662130,
+   "usd": 6.48,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2528,8 +2532,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 10700000,
-   "usd": 4.28,
+   "tokens": 21250989,
+   "usd": 7.01,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2547,8 +2551,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15300000,
-   "usd": 6.12,
+   "tokens": 30386928,
+   "usd": 10.02,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2566,8 +2570,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 14200000,
-   "usd": 5.68,
+   "tokens": 28202247,
+   "usd": 9.3,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2585,8 +2589,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16900000,
-   "usd": 6.76,
+   "tokens": 33564646,
+   "usd": 11.07,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2604,8 +2608,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 33400000,
-   "usd": 13.36,
+   "tokens": 66334863,
+   "usd": 21.88,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2623,8 +2627,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 36100000,
-   "usd": 14.44,
+   "tokens": 71697262,
+   "usd": 23.65,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2642,8 +2646,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16200000,
-   "usd": 6.48,
+   "tokens": 32174394,
+   "usd": 10.61,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2661,8 +2665,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 22500000,
-   "usd": 9.0,
+   "tokens": 44686659,
+   "usd": 14.74,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2680,8 +2684,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17000000,
-   "usd": 6.8,
+   "tokens": 33763253,
+   "usd": 11.13,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2699,8 +2703,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13400000,
-   "usd": 5.36,
+   "tokens": 26613388,
+   "usd": 8.78,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2718,8 +2722,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 21600000,
-   "usd": 8.64,
+   "tokens": 42899193,
+   "usd": 14.15,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2737,8 +2741,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 20300000,
-   "usd": 8.12,
+   "tokens": 40317297,
+   "usd": 13.3,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2756,8 +2760,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 14000000,
-   "usd": 5.6,
+   "tokens": 27805032,
+   "usd": 9.17,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2775,8 +2779,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13400000,
-   "usd": 5.36,
+   "tokens": 26613388,
+   "usd": 8.78,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2794,8 +2798,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 21500000,
-   "usd": 8.6,
+   "tokens": 42700585,
+   "usd": 14.08,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2813,8 +2817,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 11300000,
-   "usd": 4.52,
+   "tokens": 22442633,
+   "usd": 7.4,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2832,8 +2836,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16399999,
-   "usd": 6.56,
+   "tokens": 32571609,
+   "usd": 10.74,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2851,8 +2855,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15900000,
-   "usd": 6.36,
+   "tokens": 31578572,
+   "usd": 10.41,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2870,8 +2874,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 20300000,
-   "usd": 8.12,
+   "tokens": 40317297,
+   "usd": 13.3,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2889,8 +2893,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 6000000,
-   "usd": 2.4,
+   "tokens": 11916442,
+   "usd": 3.93,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2908,8 +2912,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 25400000,
-   "usd": 10.16,
+   "tokens": 50446273,
+   "usd": 16.64,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2927,8 +2931,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15900000,
-   "usd": 6.36,
+   "tokens": 31578572,
+   "usd": 10.41,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2946,8 +2950,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8100000,
-   "usd": 3.24,
+   "tokens": 16087197,
+   "usd": 5.31,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2965,8 +2969,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 21900000,
-   "usd": 8.76,
+   "tokens": 43495015,
+   "usd": 14.34,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -2984,8 +2988,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 6800000,
-   "usd": 2.72,
+   "tokens": 13505301,
+   "usd": 4.45,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3003,8 +3007,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12400000,
-   "usd": 4.96,
+   "tokens": 24627314,
+   "usd": 8.12,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3022,8 +3026,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 7000000,
-   "usd": 2.8,
+   "tokens": 13902516,
+   "usd": 4.58,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3041,8 +3045,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8500000,
-   "usd": 3.4,
+   "tokens": 16881626,
+   "usd": 5.57,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3060,8 +3064,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15400000,
-   "usd": 6.16,
+   "tokens": 30585535,
+   "usd": 10.09,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3079,8 +3083,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 6900000,
-   "usd": 2.76,
+   "tokens": 13703908,
+   "usd": 4.52,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3098,8 +3102,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 20000000,
-   "usd": 8.0,
+   "tokens": 39721475,
+   "usd": 13.1,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3117,8 +3121,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16500000,
-   "usd": 6.6,
+   "tokens": 32770217,
+   "usd": 10.81,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3136,8 +3140,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13300000,
-   "usd": 5.32,
+   "tokens": 26414780,
+   "usd": 8.71,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3155,8 +3159,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 14700000,
-   "usd": 5.88,
+   "tokens": 29195284,
+   "usd": 9.63,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3174,8 +3178,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16100000,
-   "usd": 6.44,
+   "tokens": 31975787,
+   "usd": 10.55,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3193,8 +3197,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 20100000,
-   "usd": 8.04,
+   "tokens": 39920082,
+   "usd": 13.17,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3212,8 +3216,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17700000,
-   "usd": 7.08,
+   "tokens": 35153505,
+   "usd": 11.59,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3231,8 +3235,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 23600000,
-   "usd": 9.44,
+   "tokens": 46871340,
+   "usd": 15.46,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3250,8 +3254,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 14400000,
-   "usd": 5.76,
+   "tokens": 28599462,
+   "usd": 9.43,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3269,8 +3273,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17100000,
-   "usd": 6.84,
+   "tokens": 33961861,
+   "usd": 11.2,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3288,8 +3292,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 11900000,
-   "usd": 4.76,
+   "tokens": 23634277,
+   "usd": 7.79,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3307,8 +3311,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12000000,
-   "usd": 4.8,
+   "tokens": 23832885,
+   "usd": 7.86,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3326,8 +3330,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 18200000,
-   "usd": 7.28,
+   "tokens": 36146542,
+   "usd": 11.92,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3345,8 +3349,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17100000,
-   "usd": 6.84,
+   "tokens": 33961861,
+   "usd": 11.2,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3364,8 +3368,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16700000,
-   "usd": 6.68,
+   "tokens": 33167431,
+   "usd": 10.94,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3383,8 +3387,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13000000,
-   "usd": 5.2,
+   "tokens": 25818958,
+   "usd": 8.52,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3402,8 +3406,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15400000,
-   "usd": 6.16,
+   "tokens": 30585535,
+   "usd": 10.09,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3421,8 +3425,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 19700000,
-   "usd": 7.88,
+   "tokens": 39125653,
+   "usd": 12.9,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3440,8 +3444,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 42200000,
-   "usd": 16.88,
+   "tokens": 83812312,
+   "usd": 27.64,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3459,8 +3463,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 20800000,
-   "usd": 8.32,
+   "tokens": 41310334,
+   "usd": 13.62,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3478,8 +3482,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16500000,
-   "usd": 6.6,
+   "tokens": 32770217,
+   "usd": 10.81,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3497,8 +3501,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 6300000,
-   "usd": 2.52,
+   "tokens": 12512264,
+   "usd": 4.13,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3516,8 +3520,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3100000,
-   "usd": 1.24,
+   "tokens": 6156828,
+   "usd": 2.03,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3535,8 +3539,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 32299999,
-   "usd": 12.92,
+   "tokens": 64150182,
+   "usd": 21.16,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3554,8 +3558,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13900000,
-   "usd": 5.56,
+   "tokens": 27606425,
+   "usd": 9.1,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3573,8 +3577,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 34700000,
-   "usd": 13.88,
+   "tokens": 68916759,
+   "usd": 22.73,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3592,8 +3596,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 23000000,
-   "usd": 9.2,
+   "tokens": 45679696,
+   "usd": 15.07,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3611,8 +3615,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 600000,
-   "usd": 0.24,
+   "tokens": 1191644,
+   "usd": 0.39,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3630,8 +3634,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 28300000,
-   "usd": 11.32,
+   "tokens": 56205887,
+   "usd": 18.54,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3649,8 +3653,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 24700000,
-   "usd": 9.88,
+   "tokens": 49056021,
+   "usd": 16.18,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3668,8 +3672,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13600000,
-   "usd": 5.44,
+   "tokens": 27010603,
+   "usd": 8.91,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3687,8 +3691,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12100000,
-   "usd": 4.84,
+   "tokens": 24031492,
+   "usd": 7.93,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3706,8 +3710,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 9500000,
-   "usd": 3.8,
+   "tokens": 18867700,
+   "usd": 6.22,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3725,8 +3729,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 23400000,
-   "usd": 9.36,
+   "tokens": 46474125,
+   "usd": 15.33,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3744,8 +3748,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15900000,
-   "usd": 6.36,
+   "tokens": 31578572,
+   "usd": 10.41,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3763,8 +3767,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 34600000,
-   "usd": 13.84,
+   "tokens": 68718152,
+   "usd": 22.66,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3782,8 +3786,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3700000,
-   "usd": 1.48,
+   "tokens": 7348472,
+   "usd": 2.42,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3801,8 +3805,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 10000000,
-   "usd": 4.0,
+   "tokens": 19860737,
+   "usd": 6.55,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3820,8 +3824,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4200000,
-   "usd": 1.68,
+   "tokens": 8341509,
+   "usd": 2.75,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3839,8 +3843,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 10400000,
-   "usd": 4.16,
+   "tokens": 20655167,
+   "usd": 6.81,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3858,8 +3862,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4800000,
-   "usd": 1.92,
+   "tokens": 9533154,
+   "usd": 3.14,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3877,8 +3881,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 28300000,
-   "usd": 11.32,
+   "tokens": 56205887,
+   "usd": 18.54,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3896,8 +3900,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 300000,
-   "usd": 0.12,
+   "tokens": 595822,
+   "usd": 0.2,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3915,8 +3919,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 200000,
-   "usd": 0.08,
+   "tokens": 397214,
+   "usd": 0.13,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3934,8 +3938,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17400000,
-   "usd": 6.96,
+   "tokens": 34557683,
+   "usd": 11.4,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3953,8 +3957,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 800000,
-   "usd": 0.32,
+   "tokens": 1588859,
+   "usd": 0.52,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3972,8 +3976,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 10900000,
-   "usd": 4.36,
+   "tokens": 21648203,
+   "usd": 7.14,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -3991,8 +3995,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 900000,
-   "usd": 0.36,
+   "tokens": 1787466,
+   "usd": 0.59,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4010,8 +4014,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3800000,
-   "usd": 1.52,
+   "tokens": 7547080,
+   "usd": 2.49,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4029,8 +4033,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 23100000,
-   "usd": 9.24,
+   "tokens": 45878303,
+   "usd": 15.13,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4048,8 +4052,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 500000,
-   "usd": 0.2,
+   "tokens": 993036,
+   "usd": 0.33,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4067,8 +4071,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 400000,
-   "usd": 0.16,
+   "tokens": 794429,
+   "usd": 0.26,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4086,8 +4090,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 900000,
-   "usd": 0.36,
+   "tokens": 1787466,
+   "usd": 0.59,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4105,8 +4109,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16399999,
-   "usd": 6.56,
+   "tokens": 32571609,
+   "usd": 10.74,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4124,8 +4128,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 30600000,
-   "usd": 12.24,
+   "tokens": 60773856,
+   "usd": 20.04,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4143,8 +4147,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 6900000,
-   "usd": 2.76,
+   "tokens": 13703908,
+   "usd": 4.52,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4162,8 +4166,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 7500000,
-   "usd": 3.0,
+   "tokens": 14895553,
+   "usd": 4.91,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4181,8 +4185,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 7700000,
-   "usd": 3.08,
+   "tokens": 15292767,
+   "usd": 5.04,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4200,8 +4204,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 10600000,
-   "usd": 4.24,
+   "tokens": 21052381,
+   "usd": 6.94,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4219,8 +4223,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13000000,
-   "usd": 5.2,
+   "tokens": 25818958,
+   "usd": 8.52,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4238,8 +4242,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17700000,
-   "usd": 7.08,
+   "tokens": 35153505,
+   "usd": 11.59,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4257,8 +4261,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 22100000,
-   "usd": 8.84,
+   "tokens": 43892230,
+   "usd": 14.48,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4276,8 +4280,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 24000000,
-   "usd": 9.6,
+   "tokens": 47665770,
+   "usd": 15.72,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4295,8 +4299,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 23500000,
-   "usd": 9.4,
+   "tokens": 46672733,
+   "usd": 15.39,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4314,8 +4318,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 18500000,
-   "usd": 7.4,
+   "tokens": 36742364,
+   "usd": 12.12,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4333,8 +4337,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 23300000,
-   "usd": 9.32,
+   "tokens": 46275518,
+   "usd": 15.26,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4352,8 +4356,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 23600000,
-   "usd": 9.44,
+   "tokens": 46871340,
+   "usd": 15.46,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4371,8 +4375,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 19800000,
-   "usd": 7.92,
+   "tokens": 39324260,
+   "usd": 12.97,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4390,8 +4394,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12700000,
-   "usd": 5.08,
+   "tokens": 25223136,
+   "usd": 8.32,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4409,8 +4413,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8600000,
-   "usd": 3.44,
+   "tokens": 17080234,
+   "usd": 5.63,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4428,8 +4432,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16900000,
-   "usd": 6.76,
+   "tokens": 33564646,
+   "usd": 11.07,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4447,8 +4451,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13700000,
-   "usd": 5.48,
+   "tokens": 27209210,
+   "usd": 8.97,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4466,8 +4470,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12000000,
-   "usd": 4.8,
+   "tokens": 23832885,
+   "usd": 7.86,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4485,8 +4489,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12900000,
-   "usd": 5.16,
+   "tokens": 25620351,
+   "usd": 8.45,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4504,8 +4508,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8500000,
-   "usd": 3.4,
+   "tokens": 16881626,
+   "usd": 5.57,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4523,8 +4527,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 19100000,
-   "usd": 7.64,
+   "tokens": 37934008,
+   "usd": 12.51,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4542,8 +4546,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15000000,
-   "usd": 6.0,
+   "tokens": 29791106,
+   "usd": 9.83,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4561,8 +4565,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 9400000,
-   "usd": 3.76,
+   "tokens": 18669093,
+   "usd": 6.16,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4580,8 +4584,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 14000000,
-   "usd": 5.6,
+   "tokens": 27805032,
+   "usd": 9.17,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4599,8 +4603,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 11200000,
-   "usd": 4.48,
+   "tokens": 22244026,
+   "usd": 7.34,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4618,8 +4622,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17300000,
-   "usd": 6.92,
+   "tokens": 34359076,
+   "usd": 11.33,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4637,8 +4641,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13900000,
-   "usd": 5.56,
+   "tokens": 27606425,
+   "usd": 9.1,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4656,8 +4660,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 20600000,
-   "usd": 8.24,
+   "tokens": 40913119,
+   "usd": 13.49,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4675,8 +4679,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 21300000,
-   "usd": 8.52,
+   "tokens": 42303371,
+   "usd": 13.95,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4694,8 +4698,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 24800000,
-   "usd": 9.92,
+   "tokens": 49254629,
+   "usd": 16.24,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4713,8 +4717,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4099999,
-   "usd": 1.64,
+   "tokens": 8142902,
+   "usd": 2.69,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4732,8 +4736,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 27900000,
-   "usd": 11.16,
+   "tokens": 55411457,
+   "usd": 18.27,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4751,8 +4755,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 55000000,
-   "usd": 22.0,
+   "tokens": 109234056,
+   "usd": 36.02,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4789,8 +4793,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15800000,
-   "usd": 6.32,
+   "tokens": 31379965,
+   "usd": 10.35,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4808,8 +4812,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12600000,
-   "usd": 5.04,
+   "tokens": 25024529,
+   "usd": 8.25,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4827,8 +4831,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8199999,
-   "usd": 3.28,
+   "tokens": 16285804,
+   "usd": 5.37,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4846,8 +4850,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15700000,
-   "usd": 6.28,
+   "tokens": 31181357,
+   "usd": 10.28,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4865,8 +4869,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 41500000,
-   "usd": 16.6,
+   "tokens": 82422060,
+   "usd": 27.18,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4884,8 +4888,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 43500000,
-   "usd": 17.4,
+   "tokens": 86394208,
+   "usd": 28.49,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4903,8 +4907,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 10100000,
-   "usd": 4.04,
+   "tokens": 20059344,
+   "usd": 6.62,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4922,8 +4926,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 36500000,
-   "usd": 14.6,
+   "tokens": 72491692,
+   "usd": 23.91,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4941,8 +4945,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2600000,
-   "usd": 1.04,
+   "tokens": 5163791,
+   "usd": 1.7,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4960,8 +4964,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 100000,
-   "usd": 0.04,
+   "tokens": 198607,
+   "usd": 0.07,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4979,8 +4983,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 22800000,
-   "usd": 9.12,
+   "tokens": 45282481,
+   "usd": 14.93,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -4998,8 +5002,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1300000,
-   "usd": 0.52,
+   "tokens": 2581895,
+   "usd": 0.85,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5017,8 +5021,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3200000,
-   "usd": 1.28,
+   "tokens": 6355436,
+   "usd": 2.1,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5036,8 +5040,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2800000,
-   "usd": 1.12,
+   "tokens": 5561006,
+   "usd": 1.83,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5055,8 +5059,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4099999,
-   "usd": 1.64,
+   "tokens": 8142902,
+   "usd": 2.69,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5074,8 +5078,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3400000,
-   "usd": 1.36,
+   "tokens": 6752650,
+   "usd": 2.23,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5093,8 +5097,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3100000,
-   "usd": 1.24,
+   "tokens": 6156828,
+   "usd": 2.03,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5112,8 +5116,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2700000,
-   "usd": 1.08,
+   "tokens": 5362399,
+   "usd": 1.77,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5131,8 +5135,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4400000,
-   "usd": 1.76,
+   "tokens": 8738724,
+   "usd": 2.88,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5150,8 +5154,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2200000,
-   "usd": 0.88,
+   "tokens": 4369362,
+   "usd": 1.44,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5169,8 +5173,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2200000,
-   "usd": 0.88,
+   "tokens": 4369362,
+   "usd": 1.44,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5188,8 +5192,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3300000,
-   "usd": 1.32,
+   "tokens": 6554043,
+   "usd": 2.16,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5207,8 +5211,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 900000,
-   "usd": 0.36,
+   "tokens": 1787466,
+   "usd": 0.59,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5226,8 +5230,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1400000,
-   "usd": 0.56,
+   "tokens": 2780503,
+   "usd": 0.92,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5245,8 +5249,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1500000,
-   "usd": 0.6,
+   "tokens": 2979110,
+   "usd": 0.98,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5264,8 +5268,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3300000,
-   "usd": 1.32,
+   "tokens": 6554043,
+   "usd": 2.16,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5283,8 +5287,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 100000,
-   "usd": 0.04,
+   "tokens": 198607,
+   "usd": 0.07,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5302,8 +5306,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 100000,
-   "usd": 0.04,
+   "tokens": 198607,
+   "usd": 0.07,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5321,8 +5325,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4200000,
-   "usd": 1.68,
+   "tokens": 8341509,
+   "usd": 2.75,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5340,8 +5344,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 5600000,
-   "usd": 2.24,
+   "tokens": 11122013,
+   "usd": 3.67,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5359,8 +5363,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8800000,
-   "usd": 3.52,
+   "tokens": 17477449,
+   "usd": 5.76,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5378,8 +5382,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1600000,
-   "usd": 0.64,
+   "tokens": 3177718,
+   "usd": 1.05,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5397,8 +5401,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 7200000,
-   "usd": 2.88,
+   "tokens": 14299731,
+   "usd": 4.72,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5416,8 +5420,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1400000,
-   "usd": 0.56,
+   "tokens": 2780503,
+   "usd": 0.92,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5435,8 +5439,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 600000,
-   "usd": 0.24,
+   "tokens": 1191644,
+   "usd": 0.39,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5454,8 +5458,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4400000,
-   "usd": 1.76,
+   "tokens": 8738724,
+   "usd": 2.88,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5473,8 +5477,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 5200000,
-   "usd": 2.08,
+   "tokens": 10327583,
+   "usd": 3.41,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5492,8 +5496,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4000000,
-   "usd": 1.6,
+   "tokens": 7944295,
+   "usd": 2.62,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5511,8 +5515,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4099999,
-   "usd": 1.64,
+   "tokens": 8142902,
+   "usd": 2.69,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5530,8 +5534,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2400000,
-   "usd": 0.96,
+   "tokens": 4766577,
+   "usd": 1.57,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5549,8 +5553,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1500000,
-   "usd": 0.6,
+   "tokens": 2979110,
+   "usd": 0.98,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5568,8 +5572,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4500000,
-   "usd": 1.8,
+   "tokens": 8937331,
+   "usd": 2.95,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5587,8 +5591,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 5300000,
-   "usd": 2.12,
+   "tokens": 10526190,
+   "usd": 3.47,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5606,8 +5610,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 5400000,
-   "usd": 2.16,
+   "tokens": 10724798,
+   "usd": 3.54,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5625,8 +5629,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2800000,
-   "usd": 1.12,
+   "tokens": 5561006,
+   "usd": 1.83,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5644,8 +5648,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2800000,
-   "usd": 1.12,
+   "tokens": 5561006,
+   "usd": 1.83,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5663,8 +5667,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4000000,
-   "usd": 1.6,
+   "tokens": 7944295,
+   "usd": 2.62,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5682,8 +5686,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2600000,
-   "usd": 1.04,
+   "tokens": 5163791,
+   "usd": 1.7,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5701,8 +5705,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3600000,
-   "usd": 1.44,
+   "tokens": 7149865,
+   "usd": 2.36,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5720,8 +5724,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 100000,
-   "usd": 0.04,
+   "tokens": 198607,
+   "usd": 0.07,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5739,8 +5743,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 7900000,
-   "usd": 3.16,
+   "tokens": 15689982,
+   "usd": 5.17,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5758,8 +5762,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4900000,
-   "usd": 1.96,
+   "tokens": 9731761,
+   "usd": 3.21,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5777,8 +5781,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 2400000,
-   "usd": 0.96,
+   "tokens": 4766577,
+   "usd": 1.57,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5796,8 +5800,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 11400000,
-   "usd": 4.56,
+   "tokens": 22641240,
+   "usd": 7.47,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5815,8 +5819,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4600000,
-   "usd": 1.84,
+   "tokens": 9135939,
+   "usd": 3.01,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5834,8 +5838,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 5500000,
-   "usd": 2.2,
+   "tokens": 10923405,
+   "usd": 3.6,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5853,8 +5857,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3300000,
-   "usd": 1.32,
+   "tokens": 6554043,
+   "usd": 2.16,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5872,8 +5876,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13600000,
-   "usd": 5.44,
+   "tokens": 27010603,
+   "usd": 8.91,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5891,8 +5895,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 11100000,
-   "usd": 4.44,
+   "tokens": 22045418,
+   "usd": 7.27,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5910,8 +5914,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8400000,
-   "usd": 3.36,
+   "tokens": 16683019,
+   "usd": 5.5,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5929,8 +5933,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 14400000,
-   "usd": 5.76,
+   "tokens": 28599462,
+   "usd": 9.43,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5948,8 +5952,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4700000,
-   "usd": 1.88,
+   "tokens": 9334546,
+   "usd": 3.08,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5967,8 +5971,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 9500000,
-   "usd": 3.8,
+   "tokens": 18867700,
+   "usd": 6.22,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -5986,8 +5990,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 1600000,
-   "usd": 0.64,
+   "tokens": 3177718,
+   "usd": 1.05,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6005,8 +6009,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 15100000,
-   "usd": 6.04,
+   "tokens": 29989713,
+   "usd": 9.89,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6024,8 +6028,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 5500000,
-   "usd": 2.2,
+   "tokens": 10923405,
+   "usd": 3.6,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6043,8 +6047,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 13500000,
-   "usd": 5.4,
+   "tokens": 26811995,
+   "usd": 8.84,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6062,8 +6066,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 16500000,
-   "usd": 6.6,
+   "tokens": 32770217,
+   "usd": 10.81,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6081,8 +6085,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 21800000,
-   "usd": 8.72,
+   "tokens": 43296407,
+   "usd": 14.28,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6100,8 +6104,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 6300000,
-   "usd": 2.52,
+   "tokens": 12512264,
+   "usd": 4.13,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6119,8 +6123,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 29500000,
-   "usd": 11.8,
+   "tokens": 58589175,
+   "usd": 19.32,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6138,8 +6142,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 64800000,
-   "usd": 25.92,
+   "tokens": 128697579,
+   "usd": 42.44,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6157,8 +6161,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 59000000,
-   "usd": 23.6,
+   "tokens": 117178351,
+   "usd": 38.65,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6176,8 +6180,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 26600000,
-   "usd": 10.64,
+   "tokens": 52829561,
+   "usd": 17.42,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6195,8 +6199,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 73300000,
-   "usd": 29.32,
+   "tokens": 145579206,
+   "usd": 48.01,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6214,8 +6218,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17500000,
-   "usd": 7.0,
+   "tokens": 34756290,
+   "usd": 11.46,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6233,8 +6237,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 37700000,
-   "usd": 15.08,
+   "tokens": 74874980,
+   "usd": 24.69,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6252,8 +6256,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8600000,
-   "usd": 3.44,
+   "tokens": 17080234,
+   "usd": 5.63,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6271,8 +6275,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 23600000,
-   "usd": 9.44,
+   "tokens": 46871340,
+   "usd": 15.46,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6290,8 +6294,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12600000,
-   "usd": 5.04,
+   "tokens": 25024529,
+   "usd": 8.25,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6328,8 +6332,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 19400000,
-   "usd": 7.76,
+   "tokens": 38529830,
+   "usd": 12.71,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6347,8 +6351,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 27800000,
-   "usd": 11.12,
+   "tokens": 55212850,
+   "usd": 18.21,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6366,8 +6370,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 17000000,
-   "usd": 6.8,
+   "tokens": 33763253,
+   "usd": 11.13,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6385,8 +6389,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 18100000,
-   "usd": 7.24,
+   "tokens": 35947935,
+   "usd": 11.86,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6404,8 +6408,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 25200000,
-   "usd": 10.08,
+   "tokens": 50049058,
+   "usd": 16.51,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6423,8 +6427,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4600000,
-   "usd": 1.84,
+   "tokens": 9135939,
+   "usd": 3.01,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6442,8 +6446,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4200000,
-   "usd": 1.68,
+   "tokens": 8341509,
+   "usd": 2.75,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6461,8 +6465,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8700000,
-   "usd": 3.48,
+   "tokens": 17278841,
+   "usd": 5.7,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6480,8 +6484,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 30000000,
-   "usd": 12.0,
+   "tokens": 59582212,
+   "usd": 19.65,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6499,8 +6503,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12100000,
-   "usd": 4.84,
+   "tokens": 24031492,
+   "usd": 7.93,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6518,8 +6522,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3500000,
-   "usd": 1.4,
+   "tokens": 6951258,
+   "usd": 2.29,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6537,8 +6541,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 19600000,
-   "usd": 7.84,
+   "tokens": 38927045,
+   "usd": 12.84,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6556,8 +6560,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4300000,
-   "usd": 1.72,
+   "tokens": 8540117,
+   "usd": 2.82,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6575,8 +6579,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 22500000,
-   "usd": 9.0,
+   "tokens": 44686659,
+   "usd": 14.74,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6594,8 +6598,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 11700000,
-   "usd": 4.68,
+   "tokens": 23237062,
+   "usd": 7.66,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6613,8 +6617,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 5100000,
-   "usd": 2.04,
+   "tokens": 10128976,
+   "usd": 3.34,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6632,8 +6636,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 28000000,
-   "usd": 11.2,
+   "tokens": 55610065,
+   "usd": 18.34,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6651,8 +6655,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 3700000,
-   "usd": 1.48,
+   "tokens": 7348472,
+   "usd": 2.42,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6670,8 +6674,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4099999,
-   "usd": 1.64,
+   "tokens": 8142902,
+   "usd": 2.69,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6689,8 +6693,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 25000000,
-   "usd": 10.0,
+   "tokens": 49651843,
+   "usd": 16.38,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6708,8 +6712,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 4300000,
-   "usd": 1.72,
+   "tokens": 8540117,
+   "usd": 2.82,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6727,8 +6731,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 12100000,
-   "usd": 4.84,
+   "tokens": 24031492,
+   "usd": 7.93,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6746,8 +6750,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 31200000,
-   "usd": 12.48,
+   "tokens": 61965501,
+   "usd": 20.44,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6765,8 +6769,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8199999,
-   "usd": 3.28,
+   "tokens": 16285804,
+   "usd": 5.37,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6784,8 +6788,8 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 18100000,
-   "usd": 7.24,
+   "tokens": 35947935,
+   "usd": 11.86,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
   },
@@ -6803,10 +6807,62 @@
    "station": "",
    "lean": false,
    "kind": "הערכה",
-   "tokens": 8700000,
-   "usd": 3.48,
+   "tokens": 17278841,
+   "usd": 5.7,
    "model": "אופוס (משוער)",
    "why": "לא נרשם בזמנו"
+  },
+  {
+   "jid": "shabbat-s4473-mwnf4gl5",
+   "slug": "shabbat",
+   "perek": 7,
+   "title": "שבת פרק שביעי - כלל גדול · סבב על הנוסח החי (s1)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T22:07:34.780Z",
+   "minutes": 16.5,
+   "segs": 30,
+   "station": "עובד ראשי א",
+   "lean": false,
+   "kind": "מדידה",
+   "tokens": 32770217,
+   "usd": 10.47,
+   "model": "אופוס",
+   "byModel": {
+    "opus": {
+     "tokens": 32770217,
+     "usd": 10.47
+    }
+   }
+  },
+  {
+   "jid": "shabbat-s3129-mwnercw6",
+   "slug": "shabbat",
+   "perek": 4,
+   "title": "שבת פרק רביעי - במה טומנין · סבב על הנוסח החי (s1)",
+   "round": "נוסח חי",
+   "how": "finish",
+   "part": "כולו",
+   "end": "2026-11-19T22:22:20.618Z",
+   "minutes": 10,
+   "segs": 14,
+   "station": "עובד ב",
+   "lean": false,
+   "kind": "מדידה",
+   "tokens": 16200936,
+   "usd": 6.55,
+   "model": "אופוס",
+   "byModel": {
+    "opus": {
+     "tokens": 14546642,
+     "usd": 5.33
+    },
+    "sonnet": {
+     "tokens": 1654294,
+     "usd": 1.22
+    }
+   }
   }
  ]
 }

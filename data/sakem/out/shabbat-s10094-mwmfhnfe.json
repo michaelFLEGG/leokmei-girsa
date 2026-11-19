@@ -3,7 +3,7 @@
  "jid": "shabbat-s10094-mwmfhnfe",
  "slug": "shabbat",
  "title": "שבת פרק שנים ועשרים - חבית · סבב על הנוסח החי (s26)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 10094,
@@ -199,6 +199,14 @@
     "nose": 0,
     "lenA": 296,
     "lenB": 296
+   },
+   "abs": {
+    "bold": 7,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -222,6 +230,14 @@
     "nose": 0,
     "lenA": 113,
     "lenB": 113
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -251,6 +267,14 @@
     "nose": 0,
     "lenA": 444,
     "lenB": 444
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -281,6 +305,14 @@
     "nose": 0,
     "lenA": 791,
     "lenB": 791
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 1,
+    "side": 10,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -314,6 +346,14 @@
     "nose": 0,
     "lenA": 708,
     "lenB": 708
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 2,
+    "side": 12,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -354,7 +394,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (70 תווים, עד 52): הקשה רמי בר חמא: זב שחולב את העז - החלב "
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s7",
@@ -382,6 +430,14 @@
     "nose": 0,
     "lenA": 478,
     "lenB": 478
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -427,7 +483,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"לגופן מותר ולמימיהן פטור\", \"מותר ולמימיהן פטור אבל\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s9",
@@ -454,6 +518,14 @@
     "nose": 0,
     "lenA": 463,
     "lenB": 463
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -484,6 +556,14 @@
     "nose": 0,
     "lenA": 459,
     "lenB": 459
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -513,6 +593,14 @@
     "nose": 0,
     "lenA": 466,
     "lenB": 466
+   },
+   "abs": {
+    "bold": 7,
+    "space": 1,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -563,7 +651,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"אין לך כל רגל\", \"לך כל רגל ורגל\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 11,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s13",
@@ -587,6 +683,14 @@
     "nose": 0,
     "lenA": 263,
     "lenB": 263
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -614,6 +718,14 @@
     "nose": 0,
     "lenA": 498,
     "lenB": 498
+   },
+   "abs": {
+    "bold": 8,
+    "space": 0,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -655,7 +767,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (53 תווים, עד 52): שאלו את רב ששת: לפתח מתכוין ואסור, או לע"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 3,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s16",
@@ -678,6 +798,14 @@
     "nose": 0,
     "lenA": 137,
     "lenB": 137
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -705,6 +833,14 @@
     "nose": 0,
     "lenA": 347,
     "lenB": 347
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -730,6 +866,14 @@
     "nose": 0,
     "lenA": 307,
     "lenB": 307
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -758,6 +902,14 @@
     "nose": 0,
     "lenA": 337,
     "lenB": 337
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -800,7 +952,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 11,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s21",
@@ -827,6 +987,14 @@
     "nose": 0,
     "lenA": 409,
     "lenB": 409
+   },
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -853,6 +1021,14 @@
     "nose": 0,
     "lenA": 342,
     "lenB": 342
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -886,6 +1062,14 @@
     "nose": 0,
     "lenA": 730,
     "lenB": 730
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 12,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -939,7 +1123,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"ומביאה בידו לתוך ביתו\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 9,
+    "space": 0,
+    "dash": 1,
+    "side": 12,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s25",
@@ -966,6 +1158,14 @@
     "nose": 0,
     "lenA": 289,
     "lenB": 289
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1010,7 +1210,15 @@
     "דובר לכותרת צד? (ר' נהוראי אומר: בשורה של 101 תווים, שורה מודפסת 57)"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s27",
@@ -1038,6 +1246,14 @@
     "nose": 0,
     "lenA": 391,
     "lenB": 391
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1083,8 +1299,70 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"אין מחזירין את השבר\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 1,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795047653461
+ "t": 1795047660258,
+ "summary": "בפרק: 35 הדגשות במשנה, 19 רווחים, 19 מקפי תירוץ, 2 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 35,
+  "space": 19,
+  "dash": 19,
+  "side": 2,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 28,
+  "perSeg": {
+   "bold": 1.25,
+   "space": 0.68,
+   "dash": 0.68,
+   "side": 6.57,
+   "nose": 1.04,
+   "widow": 0
+  },
+  "bold": 35,
+  "space": 19,
+  "dash": 19,
+  "side": 2,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 15,
+  "block": 0,
+  "lenPct": -1.2,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 5,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 38
+  }
+ },
+ "counts": {
+  "shown": 8,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

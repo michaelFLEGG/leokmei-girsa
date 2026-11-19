@@ -242,6 +242,26 @@
       catch(e){res.after=-1}
       skpEmptySet(jid,1);
       return res},
+    /* פרומפט 65 (19.11.2026): החלה מחדש של קבלות שנרשמו "התקבל" ואינן בנוסח החי (tools/sakem/reapply.py).
+       לכל פריט {jid,iid,act,t,kind,ids,orig,text}: כבר בנוסח (כל שורה שההצעה שינתה נמצאת בשורה בדף) - מדולג;
+       המנהל ערך את אחת היחידות שלו אחרי ההכרעה (עריכה בשכבה מאוחרת בשתי דקות ומעלה) - עריכתו גוברת, מדולג;
+       הקטע בדף אינו הנוסח שעליו נכתבה ההצעה - לא מוחל (בלי כפייה), נרשם; אחרת - מוחל, באותו מסלול של "קבל".
+       dry - רק מיון. ההכרעה בשרת כבר "התקבל", ולכן אין שליחת הכרעה. */
+    reapply:(list,dry)=>{const out=[];const page=skpPageLines();
+      const lastEd=new Map();(typeof ED!=='undefined'?ED:[]).forEach(e=>{const m=/^u(\d+)\./.exec(e.k||'');if(m){const id=+m[1];lastEd.set(id,Math.max(lastEd.get(id)||0,e.t||0))}});
+      const prev=SKP.rev;const B=!dry&&window.skmBatchStart?skmBatchStart():null;
+      try{list.forEach(x=>{const r={jid:x.jid,iid:x.iid};out.push(r);
+        try{
+          if(skpInPage(x,page)){r.st='in';return}
+          const late=(x.ids||[]).filter(id=>(lastEd.get(id)||0)>(+x.t||0)+120000);
+          if(late.length){r.st='manual';r.ids=late;return}
+          if(x.kind==='seg'&&!skmSame(x.ids,x.orig)){r.st='changed';return}
+          if(dry){r.st='would';return}
+          SKP.rev={jid:x.jid,items:[x],i:0,dec:{},cnt:{accept:0,reject:0,edit:0},hist:[],bad:new Set()};
+          skpApplyOne(x,x.text);r.st='applied'}
+        catch(e){r.st='bad';r.why=String(e&&e.message||e).slice(0,160)}})}
+      finally{SKP.rev=prev;if(B)skmBatchEnd(B)}
+      return out},
     /* פרומפט 63 (18.11.2026, מיכאל: "היכן שחסר קטע לשיטתך מהגמרא - פשוט תוסיף"): השלמת קטעי גמרא חסרים, כל אחד
        אחרי יחידה קיימת (after), באותו מסלול של השלמה ('missing') שמתקבלת בסקירה. הוספה שכבר בדף - מדולגת (הרצה
        חוזרת אינה כופלת). היחידה מאותרת לפי מזהה, ואם תוכנה אינו התוכן שנרשם (anchor) - לפי התוכן; לא נמצאה - נרשם, לא מוחל */

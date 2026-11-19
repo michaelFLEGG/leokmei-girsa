@@ -1,0 +1,50 @@
+name: סכם - החלה מחדש של קבלות שאבדו
+# פרומפט 65 (19.11.2026): קבלות שנרשמו "התקבל" ואינן בנוסח החי - מוחלות מחדש מתוך רשומות הקבלה, באותו מסלול של "קבל".
+# הכרעה מאוחרת יותר או עריכת המנהל אחרי ההכרעה - גוברות. dry=1 - רק מיון ודוח. הפעלה ידנית בלבד.
+on:
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: 'מסכתות מופרדות ברווח'
+        required: true
+        default: sukkah
+      dry:
+        description: '1 = רק מיון ודוח, בלי החלה'
+        required: false
+        default: '1'
+      since:
+        description: 'רק הכרעות מן התאריך הזה'
+        required: false
+        default: '2026-11-01'
+permissions:
+  contents: write
+concurrency:
+  group: sakem-accept
+  cancel-in-progress: false
+jobs:
+  reapply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: החלה
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: |
+          mkdir -p data/sakem/reapply
+          D=""; if [ "${{ github.event.inputs.dry }}" = "1" ]; then D="--dry"; fi
+          rc=0
+          for s in ${{ github.event.inputs.slugs }}; do
+            python tools/sakem/reapply.py --slug "$s" $D --since "${{ github.event.inputs.since }}" --out "data/sakem/reapply/$s-$(TZ=Asia/Jerusalem date +%Y%m%d-%H%M)${D:+-dry}.json" || rc=1
+          done
+          exit $rc
+      - name: הדוח בריפו
+        if: always()
+        run: |
+          git config user.name "leokmei-sakem"; git config user.email "sakem@leokmei.com"
+          git add data/sakem/reapply || true
+          git commit -qm "סכם: דוח החלה מחדש (פרומפט 65) [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done

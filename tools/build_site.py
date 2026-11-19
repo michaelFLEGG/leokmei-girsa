@@ -6020,6 +6020,22 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     e.textContent=t+(GOK===false&&!ghTok()&&!admKey()?' · מפרסם כשהמחשב הראשי יידלק':'');
     e.className='edpub'+(PUBMSG.indexOf('לא פורסם')===0?' bad':'')}
   function pubSoon(){queuePub()}
+  /* פרומפט 65 (19.11.2026): ריפוי עריכה שנדרסה בשרת. השרת שומר את כל העריכות של מסכת ברשומה אחת (קריאה-שינוי-כתיבה),
+     ומאגר הרשומות מתעדכן בעולם בתוך עד דקה: פרסום אחר (מכשיר שני, כלי אוטומטי) שקרא את הרשומה הישנה דורס עריכות שנשמרו
+     זה עתה. המכשיר כבר סימן אותן "פורסמו" ולא שלח אותן שוב (סוכה, 19.11.2026: הכרעות "התקבל" בלי נוסח).
+     כעבור 75 שניות מכל פרסום הדף קורא את הרשומה מן השרת: עריכה של המכשיר (גם מבנה) מן הימים האחרונים שאינה שם,
+     ואין עליה מצבה - חוזרת לתור ונשלחת שוב. */
+  let PUBHEAL=null;
+  function pubHealSoon(){clearTimeout(PUBHEAL);PUBHEAL=setTimeout(pubHeal,75000)}
+  async function pubHeal(){
+    if(PRNRO||SUGM||!isAdmin()||!admKey())return;
+    try{const j=await api('/edits?slug='+SLUG);const srv=(j.doc&&j.doc.edits)||[];if(!j.doc)return;
+      const at=new Map();srv.forEach(e=>{const o=at.get(e.k);if(!o||(e.t||0)>(o.t||0))at.set(e.k,e)});
+      const lim=Date.now()-3*24*3600*1000;let lost=0;
+      for(const e of ED){if(!e.pub||e.lost||(e.t||0)<lim||!e.k)continue;
+        const o=at.get(e.k);if(!o||(o.t||0)<(e.t||0)){e.pub=0;lost++}}
+      if(lost){saveED();try{console.warn('ריפוי: '+lost+' עריכות לא נמצאו בשרת ונשלחות שוב')}catch(e){}queuePub()}}
+    catch(e){}}
   /* יציאה מהדף (סגירה, מעבר מסכת, רענון): מה שבתור נשלח מיד. הבקשה נושאת
      keepalive, שהדפדפן משלים גם אחרי שהדף נסגר. אם התור גדול מדי לכך, או
      שאין מפתח במכשיר - הוא נשאר שמור ויישלח בכניסה הבאה. */
@@ -6029,8 +6045,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!isAdmin()||PUBBUSY||!pubPending())return;
     const k=admKey();if(!k)return;
     try{
-      const body=JSON.stringify({slug:SLUG,edits:edOut(1),sty:D.sty});
-      if(new Blob([body]).size>60000)return;
+      /* פרומפט 65 (19.11.2026): מעל 60 ק"ב הדפדפן אינו שולח בקשת keepalive, ועד כאן התור פשוט לא נשלח (בשקט).
+         מעתה: הבקשה הראשונה נושאת את העריכות האחרונות (החדשות קודם) עד התקרה, והשאר שמור ויישלח בכניסה הבאה */
+      const all=edOut(1);let list=all;
+      for(let n=0;n<12&&list.length&&new Blob([JSON.stringify({slug:SLUG,edits:list,sty:D.sty})]).size>60000;n++)
+        list=list.slice(Math.floor(list.length/2));
+      if(!list.length)return;
+      const body=JSON.stringify({slug:SLUG,edits:list,sty:D.sty});
       fetch(SUGGEST_API+'/edits',{method:'PUT',keepalive:true,
         headers:{'content-type':'application/json; charset=utf-8','x-admin-key':k},body});
     }catch(e){}}
@@ -6084,6 +6105,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         markPub();PUBLAST=sig;PUBMSG='';PUBAT=Date.now();PUBFAIL=0;
         PUBBUSY=false;
         if(mergeIn(j.doc&&j.doc.edits))applyIncoming();
+        pubHealSoon();
         pubDraw();drawEd();return}
       catch(err){
         if(/אין הרשאה/.test(err.message||'')){PUBBUSY=false;PUBMSG='';PUBDIRTY=true;devRevoked();return}

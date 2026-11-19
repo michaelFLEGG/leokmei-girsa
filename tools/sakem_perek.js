@@ -145,6 +145,15 @@
         '<b>סכם על קטע מסומן:</b> '+(st.capped?'הגעת לתקרת החודש':'אין מפתח')+' - קטע נכנס לתור הזה. '+
         '<label>מפתח: <input id="skpkey" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-..." style="width:40%"></label> <button id="skpkeyb">שמור</button>'}).catch(()=>{const d=$('#skpnow');if(d)d.textContent=''})}
   window.skpPanel=skpPanel;
+  /* פרומפט 65 (19.11.2026): "ההצעה כבר בנוסח" - בדיקה מחמירה. קודם: 60% משורות ההצעה נמצאו בדף, והדף כולו חובר
+     למחרוזת אחת בלי גבולות שורה. כך כל הצעה מבנית (איחוד שורות - האותיות זהות) וכל הצעה ששינתה שורה אחת מתוך עשר
+     ("אפי'" -> "אף") נרשמה "התקבל" בלי שהוחלה. מעתה: כל שורה שההצעה שינתה (אינה בנוסח המקורי) חייבת להימצא בשורה
+     אחת של הדף, כפי שהיא. הצעה שלא שינתה שום שורה - כבר בנוסח. */
+  const skpLet=t=>String(t||'').replace(/\{\+:/g,'').replace(/\[תוס'[^\]]*\]/g,'').replace(/[^א-ת\n]/g,'');
+  function skpPageLines(){return '\n'+skpLet(flatU().map(o=>{try{return skmInter([o])}catch(e){return ''}}).join('\n')).split('\n').filter(Boolean).join('\n')+'\n'}
+  function skpChanged(x){const o=new Set(skpLet(x.orig).split('\n'));return skpLet(x.text).split('\n').filter(l=>l.length>=8&&!o.has(l))}
+  function skpInPage(x,page){return skpChanged(x).every(l=>page.indexOf(l)>-1)}   /* page מופרד בשורות: אין התאמה על פני שתי שורות */
+  window.skpInPageTest={skpLet,skpChanged,skpInPage};
   /* פרומפט 56 ד1: לפעולת "קבל הכל בשבת" (sakem-accept.yml) - אותו מסלול בדיוק של הכפתור, דרך הדף עצמו, למנהל בלבד */
   window.skpAuto={open:jid=>skpOpen(jid),all:()=>{if(!SKP.rev)return null;skpAll('per');return SKP.lastAll||null},
     state:()=>SKP.rev?{jid:SKP.rev.jid,items:SKP.rev.items.length,open:SKP.rev.items.filter(x=>!SKP.rev.dec[x.iid]).length}:null,
@@ -159,11 +168,10 @@
     /* 18.11.2026: אימות שההצעה כבר יושבת בנוסח החי (אותיות בלבד, לפי שורות), ורישום ההכרעה בשרת אחת אחת עם המתנה
        וניסיון חוזר (קודם נשלחו מאות הכרעות בבת אחת, וחלקן נפלו על 429 - והתור חזר להמתין) */
     verify:()=>{const R=SKP.rev;if(!R)return null;
-      const L=t=>String(t||'').replace(/\{\+:/g,'').replace(/[^א-ת\n]/g,'');
-      const page=L(flatU().map(o=>{try{return skmInter([o])}catch(e){return ''}}).join('\n')).replace(/\n/g,'');
+      const page=skpPageLines();
       const out=[];R.items.forEach(x=>{if(R.dec[x.iid])return;
-        const ls=L(x.text).split('\n').filter(l=>l.length>=8);let f=0;ls.forEach(l=>{if(page.indexOf(l)>-1)f++});
-        out.push({iid:x.iid,kind:x.kind,lines:ls.length,found:f,in:ls.length?f/ls.length>=0.6:true})});
+        const ch=skpChanged(x);const f=ch.filter(l=>skpInPage({orig:'',text:l},page)).length;
+        out.push({iid:x.iid,kind:x.kind,lines:ch.length,found:f,in:f===ch.length})});
       return out},
     close:async(iids)=>{const R=SKP.rev;if(!R)return null;let ok=0;const bad=[];
       for(const iid of iids){const it=R.items.find(x=>x.iid===iid);if(!it)continue;let done=false;
@@ -203,9 +211,8 @@
       const j=await api('/sakem/out?jid='+encodeURIComponent(jid));
       const R={jid,job:j.job||{},out:j.out,items:(j.out.items||[]).filter(x=>!x.nochange),dec:j.dec||{},i:0,hist:[],cnt:{accept:0,reject:0,edit:0},bad:new Set(),stale:0};
       try{skpRelocate(R)}catch(e){}
-      const L=t=>String(t||'').replace(/\{\+:/g,'').replace(/[^א-ת\n]/g,'');
-      const page=L(flatU().map(o=>{try{return skmInter([o])}catch(e){return ''}}).join('\n')).replace(/\n/g,'');
-      const isIn=x=>{const ls=L(x.text).split('\n').filter(l=>l.length>=8);if(!ls.length)return false;let f=0;ls.forEach(l=>{if(page.indexOf(l)>-1)f++});return f/ls.length>=0.6};
+      const page=skpPageLines();
+      const isIn=x=>skpInPage(x,page);
       const pos=new Map(flatU().map((o,i)=>[o.u.id,i]));
       const res={jid,before:R.items.filter(x=>!R.dec[x.iid]).length,accept:0,applied:0,stale:0,keep:0,bad:[]};
       const prev=SKP.rev;SKP.rev=R;const apply=[];

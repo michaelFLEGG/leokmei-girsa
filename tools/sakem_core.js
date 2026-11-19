@@ -1182,6 +1182,10 @@
         var words=plainI(b).replace(NIK,'').replace(/'[^'\n]{2,}'/g,' ').replace(/״/g,'"').replace(/''/g,'"').split(/[\s,.:!?;()\[\]{}]+/);
         var hit=[];words.forEach(function(w){w=w.replace(/^[-–]+|[-–]+$/g,'').replace(/'$/,'');if(!w)return;var q=w.replace(/'+$/,'');
           if(OBEY_ARAM[q]&&hit.indexOf(q)<0)hit.push(q)});
+        /* פרומפט 65 (19.11.2026): "והך" ו"והך דתניא" בכותרת צד - מותרים (כללים 21-29 והגדרות 30-47 דורשים אותם בכותרת צד של
+           קושיה; הכרעת מיכאל: ההנחיה גוברת). רק בכותרת צד, ורק בצורות האלה. בגוף השורה השומר כמו שהיה */
+        /* גם "והך ד<מקור>" (דתנן, דר"י, דאביי) - אותה צורה בדיוק, שהצעות פרומפט 59 כתבו לפי כלל 21 */
+        if(k.t==='title'&&/^והך(?:\s+ד[^\s:]+(?:\s+[^\s:]+)?)?:?$/.test(p.replace(NIK,'').replace(/\s+/g,' ').trim()))hit=hit.filter(function(w){return w!=='והך'});
         if(hit.length&&!ok(v))out.push('ארמית שהמנהל כבר החליף: '+hit.map(function(w){return w+' - '+OBEY_ARAM[w]}).join(', ')+' בשורה "'+pk+'". אם זו לשון הגמרא המובאת - {כב:...}, או נימוק ב-keep שפותח במילים "'+key(v)+'"');
         /* 14. מילת מהלך שפותחת שורה בלי כותרת צד מעליה (שבת ד: 9 תיקונים של המנהל אחרי סכם, 12.11.2026) */
         if(k.t==='line'&&!prevTitle&&k.sty!=='nose'&&k.sty!=='dh'){var fw=plainI(v).replace(NIK,'').trim().replace(/^\(?(?:רווח|תשובה)\)\s*/,'');

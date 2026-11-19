@@ -535,7 +535,10 @@
     SLOTS=null;if(B.n)saveED();
     /* 18.11.2026: B.befores היא Map - patchPages מקבל רשימת צילומים (בלי זה "קבל את כל הנותרים" נפל על units) */
     patchPages([...B.befores.values()]);
-    if(B.n){drawEd();pubSoon();syncSoon();if($('#edn'))$('#edn').textContent=ED.length}}
+    /* פרומפט 65 (19.11.2026): אחרי קבלה מרוכזת - פרסום מיד, לא בעוד 10 שניות. מנה גדולה (מעל 60 ק"ב) אינה יכולה לצאת
+       ביציאה מן הדף (pubFlush), ולכן מי שעבר לדף אחר בתוך החלון השאיר את כל המנה רק במכשיר, בזמן שההכרעות כבר נרשמו
+       בשרת כ"התקבל" (סוכה פרקים א, ג, ד, 19.11.2026 13:00) */
+    if(B.n){drawEd();if(typeof pubNow==='function'&&!SUGM)pubNow(0);else pubSoon();syncSoon();if($('#edn'))$('#edn').textContent=ED.length}}
   function skmBatchUndo(B){
     if(!B||!B.undo.length)return false;
     const befores=[...B.pre.keys()].map(pi=>snapOf(pi));

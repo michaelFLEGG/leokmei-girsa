@@ -4,6 +4,7 @@
 
    node tools/sakem/runner.mjs status                    התור ומצב כל עבודה
    node tools/sakem/runner.mjs next [jid]                העבודה הבאה (או עבודה מסוימת) (או "התור ריק", קוד יציאה 3) והכנת חומר הקריאה
+                                                         נועל .locks/sakem-<jid>.lock ודוחף (פרומפט 69); --station=<שם>, --no-lock
    node tools/sakem/runner.mjs rules                     כללי הניסוח, הדוגמאות והלקחים - לקרוא לפני הכתיבה
    node tools/sakem/runner.mjs orig  <jid> <from> <to>   נוסח הביניים של טווח יחידות (כפי שהדף יראה אותו)
    node tools/sakem/runner.mjs plan  <jid> <plan.json>   חלוקת הפרק לקטעים טבעיים (אחרי קריאת כל הסוגיה)
@@ -125,7 +126,7 @@ async function privateCtx(pk) {
 
 function push(msg, files) {
   try {
-    execFileSync('git', ['add', ...files], { cwd: ROOT, stdio: 'inherit' });
+    execFileSync('git', ['add', '-A', '--', ...files], { cwd: ROOT, stdio: 'inherit' });
     execFileSync('git', ['commit', '-q', '-m', msg], { cwd: ROOT, stdio: 'inherit' });
   } catch (e) { console.log('(אין מה לשמור)'); return; }
   for (let i = 0; i < 4; i++) {
@@ -212,6 +213,56 @@ function logRun(jid, pk, o, how) {
 
 const cmd = process.argv[2], A = process.argv.slice(3).filter((x) => !/^--/.test(x)), PUSH = process.argv.includes('--push'), DRY = process.argv.includes('--dry');
 
+/* פרומפט 69 (19.11.2026): נעילה לכל עבודה - שני עובדים (החשבון הראשון והשני) בלי התנגשות.
+   לפני עבודה: .locks/sakem-<jid>.lock (שם העמדה, השעה, אסימון ההרצה) ודחיפה מיד. הנעילה כבר קיימת או שהדחיפה
+   נדחתה - העבודה של עובד אחר, לוקחים את הבאה. נעילה בת יותר משלוש שעות - מתה. finish/pause משחררים ודוחפים.
+   שם העמדה: SAKEM_STATION או --station=<שם>. --no-lock (במחשב, בלי רשת) - בלי נעילה. */
+const LOCKS = path.join(ROOT, '.locks');
+const lockF = (jid) => path.join(LOCKS, 'sakem-' + jid + '.lock');
+const STATION = ((process.argv.find((x) => /^--station=/.test(x)) || '').slice(10)) || process.env.SAKEM_STATION || 'עובד סכם';
+const NOLOCK = process.argv.includes('--no-lock');
+function lockInfo(jid) {
+  const f = lockF(jid);
+  if (!fs.existsSync(f)) return null;
+  const txt = fs.readFileSync(f, 'utf8');
+  const m = txt.match(/\d{4}-\d\d-\d\dT[\d:.]+Z/), tok = (txt.match(/^token=(\S+)/m) || [])[1] || '';
+  let t = m ? Date.parse(m[0]) : NaN;
+  if (isNaN(t)) { try { t = 1000 * +execFileSync('git', ['log', '-1', '--format=%ct', '--', f], { cwd: ROOT, encoding: 'utf8' }).trim(); } catch (e) { t = 0; } }
+  return { t: t || 0, tok, dead: Date.now() - (t || 0) > 3 * 3600e3, txt: txt.trim() };
+}
+const lockMine = (jid, tok) => { const l = lockInfo(jid); return !!(l && tok && l.tok === tok); };
+const lockBusy = (jid, tok) => { const l = lockInfo(jid); return !!(l && !l.dead && !(tok && l.tok === tok)); };
+const gitQ = (args) => execFileSync('git', args, { cwd: ROOT, stdio: ['ignore', 'ignore', 'ignore'], timeout: 180000 });
+/* תפיסת עבודה: pull, בדיקה, כתיבה, דחיפה אחת. true - שלנו; false - של עובד אחר */
+function gitPull() { try { gitQ(['pull', '--rebase', '--autostash', '-q', 'origin', 'main']); } catch (e) { try { gitQ(['rebase', '--abort']); } catch (_) {} } }
+function lockTake(jid, tok) {
+  for (let i = 0; i < 3; i++) {
+    if (i) gitPull();
+    if (lockBusy(jid, tok)) return false;
+    fs.mkdirSync(LOCKS, { recursive: true });
+    fs.writeFileSync(lockF(jid), STATION + ' · ' + new Date().toISOString() + '\ntoken=' + tok + '\n');
+    try { gitQ(['add', '--', lockF(jid)]); gitQ(['commit', '-q', '-m', 'סכם: נעילה ' + jid + ' (' + STATION + ')']); }
+    catch (e) { return lockMine(jid, tok); }
+    try { gitQ(['push', '-q', 'origin', 'HEAD:main']); return true; }
+    catch (e) {
+      /* הדחיפה נדחתה - מבטלים את הנעילה המקומית, מושכים, ובודקים שוב: עובד אחר נעל - הלאה; דחיפה אחרת (סנכרון) - ניסיון חוזר */
+      try { gitQ(['reset', '-q', '--soft', 'HEAD~1']); gitQ(['rm', '-q', '--cached', '--', lockF(jid)]); } catch (_) {}
+      try { fs.unlinkSync(lockF(jid)); } catch (_) {}
+    }
+  }
+  return false;
+}
+/* שחרור: מוחקים את הנעילה (רק אם היא שלנו, או מתה) ומחזירים את הנתיב לדחיפה */
+function lockFree(jid) {
+  if (NOLOCK) return [];
+  const l = lockInfo(jid);
+  if (!l) return [];
+  const m = runMark();
+  if (!l.dead && l.tok && !(m && m.tok === l.tok)) { console.log('הנעילה של ' + jid + ' אינה של ההרצה הזאת (' + l.txt.split('\n')[0] + ') - לא משוחררת.'); return []; }
+  fs.unlinkSync(lockF(jid));
+  return [lockF(jid)];
+}
+
 if (cmd === 'status') {
   const js = ls(Q);
   if (!js.length) die('התור ריק.', 0);
@@ -225,13 +276,28 @@ if (cmd === 'status') {
   const p59Mine = (j) => { try { const k = pkOf(j); return /סבב מבני/.test(k.title || '') && fs.existsSync(path.join(ROOT, '.locks', 'p59-' + k.slug + '.lock')); } catch (e) { return false; } };
   /* פרומפט 61 (18.11.2026): "סכם מלא" על מסכת שלמה (ערכין) נעשה בשיחה ייעודית (.locks/p61-<slug>.lock) - next בלי מזהה מדלג */
   const p61Mine = (j) => { try { const k = pkOf(j); return /סכם מלא/.test(k.title || '') && fs.existsSync(path.join(ROOT, '.locks', 'p61-' + k.slug + '.lock')); } catch (e) { return false; } };
-  const jid = ls(Q).map((f) => f.slice(0, -5)).find((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j))); });
-  if (!jid) die('התור ריק.', 3);
   /* פרומפט 29: פרק אחד בכל הרצה, בהקשר נקי */
   if (process.argv.includes('--new-run')) { try { fs.unlinkSync(MARK); } catch (e) {} }
-  { const m = runMark();
-    if (m && (m.stopped || m.jid !== jid)) die('התור ריק להרצה הזאת: כבר עובד בה ' + m.jid + (m.stopped ? ' (הסתיים או נעצר בסוף חצי)' : '') + '. פרק אחד בכל הרצה - צא; ההמשך בהרצה הבאה, בשיחה חדשה.', 3);
-    if (!m) { wr(MARK, { jid, t: Date.now() }); try { fs.unlinkSync(runF(jid)); } catch (e) {} } }
+  const m0 = runMark();
+  if (m0 && m0.stopped) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + ' (הסתיים או נעצר בסוף חצי). פרק אחד בכל הרצה - צא; ההמשך בהרצה הבאה, בשיחה חדשה.', 3);
+  const tok = (m0 && m0.tok) || (Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+  if (!NOLOCK) gitPull(); /* פרומפט 69: הנעילות והתור כפי שהם עכשיו ב-main */
+  const cands = ls(Q).map((f) => f.slice(0, -5)).filter((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j))); });
+  /* ההרצה כבר עובדת על עבודה - ממשיכים בה (גם אם לפניה בתור התפנתה עבודה אחרת) */
+  if (m0 && !A[0]) { if (!cands.includes(m0.jid)) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא.', 3); cands.splice(0, cands.length, m0.jid); }
+  if (m0 && A[0] && m0.jid !== A[0]) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא; ההמשך בהרצה הבאה, בשיחה חדשה.', 3);
+  /* פרומפט 69: נעילה לכל עבודה (.locks/sakem-<jid>.lock) */
+  let jid = null, skipped = [];
+  for (const j of cands) {
+    if (NOLOCK || lockMine(j, tok)) { jid = j; break; }
+    if (lockBusy(j, tok)) { skipped.push(j); continue; }
+    if (lockTake(j, tok)) { jid = j; break; }
+    skipped.push(j);
+  }
+  if (skipped.length) console.log('נעולות בידי עובד אחר (דולגו): ' + skipped.join(' '));
+  if (!jid) die(cands.length ? 'התור ריק לעובד הזה: כל העבודות שנותרו נעולות בידי עובד אחר.' : 'התור ריק.', 3);
+  if (!m0) { wr(MARK, { jid, t: Date.now(), tok }); try { fs.unlinkSync(runF(jid)); } catch (e) {} }
+  if (!NOLOCK) console.log('נעילה: .locks/sakem-' + jid + '.lock (' + STATION + ') - finish/pause --push משחררים אותה.');
   const pk = pkOf(jid), o = outOf(jid);
   const dir = path.join(WORK, jid);
   fs.mkdirSync(dir, { recursive: true });
@@ -463,7 +529,7 @@ if (cmd === 'status') {
   if (!o) die('אין הצעות.');
   const rec = logRun(jid, pk, o, 'pause');
   console.log('נרשם ביומן ההרצות: ' + rec.segsThisRun + ' קטעים בהרצה הזאת, ' + o.done + ' מתוך ' + o.total + ' בסך הכול.');
-  if (PUSH) push('סכם: ' + (pk.title || jid) + ' - סוף הרצה (' + o.done + ' מתוך ' + o.total + ')', [outF(jid), RUNS]);
+  if (PUSH) push('סכם: ' + (pk.title || jid) + ' - סוף הרצה (' + o.done + ' מתוך ' + o.total + ')', [outF(jid), RUNS, ...lockFree(jid)]);
 } else if (cmd === 'finish') {
   const [jid] = A;
   const pk = pkOf(jid), o = outOf(jid);
@@ -522,7 +588,7 @@ if (cmd === 'status') {
   const rec = logRun(jid, pk, o, 'finish');
   console.log('נרשם ביומן ההרצות (data/sakem/runs.jsonl): ' + JSON.stringify(rec));
   console.log('פרק אחד בהרצה: צא עכשיו. הפרק הבא - בהרצה הבאה, בשיחה חדשה.');
-  if (PUSH) push('סכם: ' + (pk.title || jid) + ' - מוכן לסקירה', [outF(jid), RUNS].concat(fs.existsSync(path.join(D, 'learn', 'rules.json')) ? [path.join(D, 'learn', 'rules.json')] : []));
+  if (PUSH) push('סכם: ' + (pk.title || jid) + ' - מוכן לסקירה', [outF(jid), RUNS].concat(fs.existsSync(path.join(D, 'learn', 'rules.json')) ? [path.join(D, 'learn', 'rules.json')] : []).concat(lockFree(jid)));
   /* פרומפט 56 ד6: כשהעבודה האחרונה של שבת בסבב השני מגיעה ל"מוכן לסקירה" - התראה אחת למיכאל (ווטסאפ לעצמו, מייל, דחיפה).
      ווטסאפ: notify-me.sh של zohar-nikud (תור ההתראות). המייל והדחיפה - בידי העובד, לפי ההודעה שמודפסת כאן */
   if (/סבב שני/.test(pk.title || '') && pk.slug === 'shabbat') {

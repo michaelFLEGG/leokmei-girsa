@@ -332,7 +332,12 @@ if (cmd === 'status') {
      ("עובד סכם", 11:51-15:25, אף קטע). לכן בודקים זאת לפני הנעילה, ועצירה אחרי נעילה משחררת אותה */
   if (!CHAV && !adminKey() && !process.argv.includes('--allow-missing')) die('אין גישה לריפו הפרטי (leokmei-chavruta לא שוכפל ליד הריפו הזה) ואין מפתח מנהל - לא נלקחה שום עבודה ולא נעלתי דבר.\nשכפל: git clone --filter=blob:none --no-checkout <כתובת leokmei-chavruta> ../leokmei-chavruta (בלי --depth ובלי --single-branch), והרץ שוב.', 4);
   let jid = null, skipped = [];
+  /* פרומפט 71: עמדה שנעילותיה על עבודה מתו פעמיים בלי שום דחיפה (שורות takeover ביומן, שש השעות האחרונות) - אינה לוקחת אותה שוב,
+     כדי שלא תחסום אותה 40 דקות בכל שעה (19.11: "עובד סכם" נעל את קידושין פרק א שש פעמים ולא כתב אף קטע) */
+  const failed = (j) => { if (A[0]) return false; try { return fs.readFileSync(RUNS, 'utf8').split('\n').filter((x) => x.includes('"takeover"') && x.includes('"jid":"' + j + '"')).map((x) => JSON.parse(x))
+    .filter((r) => String(r.from || '').startsWith(STATION + ' ·') && Date.now() - Date.parse(r.at) < 6 * 3600e3).length >= 2; } catch (e) { return false; } };
   for (const j of cands) {
+    if (failed(j)) { console.log('דילוג על ' + j + ': הנעילות של ' + STATION + ' עליה מתו פעמיים בלי כתיבה - עובד אחר ייקח אותה.'); continue; }
     if (NOLOCK || lockMine(j, tok)) { jid = j; break; }
     if (lockBusy(j, tok)) { skipped.push(j); continue; }
     if (lockTake(j, tok)) { jid = j; break; }

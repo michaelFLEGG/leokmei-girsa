@@ -496,14 +496,16 @@ if (cmd === 'status') {
     const LT = await import('./lean.mjs');
     const lt = LT.leanText(pkL);
     if (lt) { console.log('\n=== לקחים מהכרעות המנהל - ליבה ונושאים (הצינור החסכוני, פרומפט 70; גוברים על הכללים שלמעלה) ===\nנושאים שנטענו: ' + lt.topics.join(', ') + (lt.fresh ? ' · לקחים חדשים שטרם זוקקו: ' + lt.fresh : '') + '\n\n' + lt.text);
-      process.exit(0); }
-    console.log('(הצינור החסכוני: docs/sakem-lean טרם נבנה - מדפיס את הכללים המלאים)');
+      }
+    else console.log('(הצינור החסכוני: docs/sakem-lean טרם נבנה - מדפיס את הכללים המלאים)');
   }
+  /* בלי process.exit: יציאה מיידית קוטעת פלט גדול שנקרא דרך צינור (נמצא במבחן האיכות של פרומפט 70) */
+  const leanDone = LEAN && fs.existsSync(path.join(ROOT, 'docs', 'sakem-lean', 'map.json'));
   const L = path.join(ROOT, 'docs', 'sakem-lessons.md');
-  if (fs.existsSync(L)) console.log('\n=== לקחים מהכרעות המנהל (גוברים על הכללים שלמעלה) ===\n' + fs.readFileSync(L, 'utf8'));
+  if (!leanDone && fs.existsSync(L)) console.log('\n=== לקחים מהכרעות המנהל (גוברים על הכללים שלמעלה) ===\n' + fs.readFileSync(L, 'utf8'));
   /* המקליט (פרומפט 28): כללים שנלמדו מעריכות המנהל ומהערותיו; כלל שבוטל ב"מה סכם למד" אינו מוצג */
   const LR = path.join(D, 'learn', 'rules.json');
-  if (fs.existsSync(LR)) { const on = (rd(LR).rules || []).filter((x) => !x.off);
+  if (!leanDone && fs.existsSync(LR)) { const on = (rd(LR).rules || []).filter((x) => !x.off);
     if (on.length) console.log('\n=== מה סכם למד מעריכות המנהל (' + on.length + ' כללים פעילים) ===\n' + on.map((x) => '- ' + x.text + (x.was && x.kind !== 'החלפת מילה' ? '\n  לפני: ' + x.was + '\n  אחרי: ' + x.now : '')).join('\n')); }
 } else if (cmd === 'orig') {
   /* פרומפט 70: כמה טווחים בבת אחת (orig <jid> <from> <to> <from> <to> ...) או קטעי חלוקה (--segs=3-6), כל אחד בכותרת */
@@ -617,11 +619,7 @@ if (cmd === 'status') {
     const LEN = /קצר מהמקור|ארוך מהמקור/;
     ck.warns = (ck.warns || []).concat(ck.errs.filter((e) => LEN.test(e)));
     ck.errs = ck.errs.filter((e) => !LEN.test(e));
-    /* פרומפט 70 (--lean): החלפות המילה שמיכאל עושה (rules.json, זוקקו לרשימה אחת) - אזהרה כשהניסוח החדש מוסיף את הצורה שהוא מחליף.
-       אזהרה בלבד: חלק מן הזוגות תלויי הקשר, ונוסח המקור שלא נגעו בו אינו משתנה */
-    if (LEAN) { try { const DL = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'sakem-lean', 'distilled.json'), 'utf8'));
-      const cnt = (t, w) => (SKC.plainI(t).match(new RegExp('(^|[\\s,.:("\'\\-])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=$|[\\s,.:)!?"\'\\-])', 'g')) || []).length;
-      DL.filter((x) => x.pairs).forEach((x) => x.pairs.forEach(([a, b]) => { if (a && a.length > 1 && cnt(tT, a) > cnt(rT, a)) ck.warns.push('החלפת מילה: "' + a + '" נוסף בניסוח החדש - מיכאל מחליף אותו ב"' + b + '"'); })); } catch (e) {} }
+    /* פרומפט 70: אזהרת החלפות המילה בשומר הוסרה במבחן האיכות - הזוגות תלויי הקשר וחלקם נסתרו בכללים הקבועים (א"ד, ויקשה) */
     if (ck.errs.length) die('השומר דחה: ' + ck.errs.join(' · ') + '\nתקן והרץ שוב.');
     /* פרומפט 26 (8.11.2026): הידוק יתר - קורא נפרד. שורה שקוצצה ביותר מחצי (או קטע שירד מתחת ל-65%) נשלחת
        לקורא שאינו רואה את המקור ולא את הגמרא (סוכן-משנה נפרד בהקשר נקי), והוא כותב במשפט מה השורה אומרת.

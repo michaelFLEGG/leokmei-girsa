@@ -130,7 +130,10 @@ export function leanText(pk, opts) {
   want.forEach((k) => { const f = path.join(LD, 'topic-' + k + '.md'); if (fs.existsSync(f)) { parts.push(fs.readFileSync(f, 'utf8')); got.push(k); } });
   /* נאכף בקוד - שם הכלל בלבד */
   try { const code = JSON.parse(fs.readFileSync(path.join(LD, 'distilled.json'), 'utf8')).filter((r) => r.code);
-    if (code.length) parts.push('# נאכף אוטומטית (השומר בודק ומזהיר או עוצר; אין צורך לזכור את הפירוט)\n' + code.map((r) => '- ' + r.text.split(/[.:]/)[0].slice(0, 90) + (r.pairs ? ' (' + r.pairs.map((p) => p[0] + '->' + p[1]).join(', ') + ')' : '')).join('\n')); } catch (e) {}
+    const chk = code.filter((r) => !r.pairs), prs = code.filter((r) => r.pairs && r.pairs.length);
+    if (chk.length) parts.push('# נאכף אוטומטית (השומר בודק ומזהיר או עוצר; אין צורך לזכור את הפירוט)\n' + chk.map((r) => '- ' + r.text.split(/[.:]/)[0].slice(0, 90)).join('\n'));
+    /* החלפות המילה: רק בניסוח חדש, לא בנוסח מקור שלא נגעו בו, ותלויות הקשר. זוגות שנסתרו בכללים הקבועים הוצאו (cancelledPairs) */
+    if (prs.length) parts.push('# החלפות מילה שמיכאל עושה - רק בניסוח חדש שלך; נוסח מקור שלא נגעת בו אינו משתנה, וכללי בעל הפרויקט הקבועים (26-29, 21) גוברים\n' + prs.map((r) => r.pairs.map((p) => p[0] + '->' + p[1]).join(', ')).join(', ')); } catch (e) {}
   const { units: U } = units();
   const fresh = U.filter((u) => !M.map[u.id]);
   if (fresh.length) parts.push('# לקחים חדשים שטרם זוקקו (' + fresh.length + ') - כלשונם, גוברים על מה שלמעלה\n' + fresh.map((u) => u.text).join('\n'));

@@ -1,15 +1,8 @@
 {
  "slug": "ketubot",
- "made": "2026-11-19 23:35",
+ "made": "2026-11-19 23:47",
  "found": 1,
- "applied": 1,
- "liveSkipped": 0,
- "examples": [
-  {
-   "daf": "ס:",
-   "key": "u2950.8",
-   "before": "<i class=\"am\">א. דר&quot;מ</i> <i class=\"am\">ור&quot;י</i> הלכה<i class=\"am\"> כר&quot;י</i>, ב. ב&quot;ש וב&quot;ה הלכה כב&quot;ה, ג. מדעולא ד. דמ&quot;ע",
-   "after": "<i class=\"am\">א. דר\"מ</i> <i class=\"am\">ור\"י</i> הלכה<i class=\"am\"> כר\"י</i>, <i class=\"am\">ב.</i> ב\"ש וב\"ה הלכה כב\"ה, <i class=\"am\">ג.</i> מדעולא <i class=\"am\">ד.</i> דמ\"ע"
-  }
- ]
+ "applied": 0,
+ "liveSkipped": 1,
+ "examples": []
 }

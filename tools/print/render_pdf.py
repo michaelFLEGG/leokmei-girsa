@@ -206,7 +206,8 @@ def main():
         print('  חריגה: עמוד %s (%s): %s - %s' % (o['page'], o['daf'], o['el'], o['why']))
     hm = rep.get('headMulti') or {}
     print('כותרות_ביותר_משורה: לפני=%s  אחרי=%s  (הוצרו=%s, נשברו_במקום_הנכון=%s)' % (hm.get('before', 0), hm.get('after', 0), hm.get('squeezed', 0), hm.get('broken', 0)))
-    ce = [x for x in rep.get('issues') or [] if x.get('type') == 'סוף פרק לא מאוזן']
+    # פרומפט 72: גם "הדרן בתוך טור" (ההדרן לא יצא לרצועה שמתחת לשני הטורים) עוצר את המסירה
+    ce = [x for x in rep.get('issues') or [] if x.get('type') in ('סוף פרק לא מאוזן', 'הדרן בתוך טור')]
     print('סופי_פרק_מאוזנים=%s  סוף_פרק_לא_מאוזן=%d' % (rep.get('perekBalanced', 0), len(ce)))
     for o in ce[:20]:
         print('  סוף פרק לא מאוזן: עמוד %s (%s): %s' % (o.get('page'), o.get('daf'), o.get('detail')))

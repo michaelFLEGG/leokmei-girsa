@@ -3,7 +3,7 @@
  "jid": "shabbat-s10249-mwnf45w9",
  "slug": "shabbat",
  "title": "שבת פרק תשעה עשר - ר\"א דמילה · סבב על הנוסח החי (s30, s31, s32)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 10249,
@@ -91,6 +91,14 @@
     "nose": 0,
     "lenA": 489,
     "lenB": 489
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -140,7 +148,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"יליד בית שנימול לשמונה\", \"יליד בית שנימול לאחד\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -180,7 +196,15 @@
     "שורה אלמנה (להכנתם, וכר\"א.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -205,6 +229,14 @@
     "nose": 0,
     "lenA": 283,
     "lenB": 283
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -243,7 +275,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s6",
@@ -268,6 +308,14 @@
     "nose": 0,
     "lenA": 161,
     "lenB": 161
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -311,7 +359,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s8",
@@ -333,6 +389,14 @@
     "nose": 0,
     "lenA": 179,
     "lenB": 179
+   },
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -367,8 +431,70 @@
     "nose": 0,
     "lenA": 518,
     "lenB": 518
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795087322596
+ "t": 1795087328560,
+ "summary": "בפרק: 5 הדגשות במשנה, 1 רווחים, 10 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 5,
+  "space": 1,
+  "dash": 10,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 9,
+  "perSeg": {
+   "bold": 0.56,
+   "space": 0.11,
+   "dash": 1.11,
+   "side": 5.67,
+   "nose": 0.78,
+   "widow": 0
+  },
+  "bold": 5,
+  "space": 1,
+  "dash": 10,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 5,
+  "block": 0,
+  "lenPct": 1.1,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 18
+  }
+ },
+ "counts": {
+  "shown": 4,
+  "spatial": 0,
+  "adds": 1,
+  "missing": 0
+ }
 }

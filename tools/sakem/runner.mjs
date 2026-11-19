@@ -224,7 +224,7 @@ function logRun(jid, pk, o, how, extra) {
   const units = pk.units.length, origLen = SKC.plainI(SKC.toInter(pk.units).text).replace(/\s+/g, '').length;
   const rb = rs.part ? runBounds(rs, o) : null;
   const rec = { jid, slug: pk.slug, perek: +((pk.job && pk.job.perek) || pk.perek || 0) || null, title: pk.title || '', part: rs.part ? rs.part + '/' + (rb ? rb.length - 1 : 2) : 'כולו',
-    segs: o.total, segsThisRun: o.done - (rs.done0 || 0), units, origLen, start: rs.t0 ? new Date(rs.t0).toISOString() : null, end: new Date().toISOString(), how, ...(extra || {}) };
+    segs: o.total, segsThisRun: o.done - (rs.done0 || 0), putsThisRun: rs.puts || 0, units, origLen, start: rs.t0 ? new Date(rs.t0).toISOString() : null, end: new Date().toISOString(), how, ...(extra || {}) };
   if (rs.t0) rec.minutes = Math.round((Date.now() - rs.t0) / 6000) / 10;
   /* פרומפט 70: עלות אמיתית מתמלול השיחה (כל השיחה, כולל lessons וסוכני-משנה; אם כבר נרשמה שורה באותה שיחה - מאז אותה שורה).
      אין תמלול - "לא נמדד" עם הסיבה, בלי מספר */
@@ -452,6 +452,9 @@ if (cmd === 'status') {
   /* פרומפט 71: פרק ענק שטרם חולק - ההרצה הזאת כותבת את החלוקה בלבד, ועוצרת */
   if (!o && pk.units.length > 600) console.log('פרק ענק (' + pk.units.length + ' יחידות): בהרצה הזאת רק החלוקה (plan --push), לפי leokmei.md (קרא בחלקים) והגמרא לפי הצורך. אחריה: pause ' + jid + ' --reason=סוף-חלק --push, וצא. הכתיבה - בחלקים, בהרצות הבאות.');
   if (o) console.log('המשך מהרצה קודמת: ' + o.done + ' מתוך ' + o.total + ' קטעים כבר נכתבו. הקטע הבא: ' + (o.plan.findIndex((s, i) => !o.items.some((x) => x.seg === i)) + 1));
+  /* פרומפט 70: כל הקטעים כבר נכתבו (ההרצה הקודמת נעצרה לפני finish) - finish מיד, לפני rules וקריאת החומר.
+     רק אם finish מצא קטעים חוסמים - rules, וקריאת החומר של הקטעים האלה בלבד (orig --segs). כך לא נקראים כל הכללים לחינם */
+  if (o && o.done === o.total) console.log('######## כל ' + o.total + ' הקטעים כבר נכתבו: הרץ מיד node tools/sakem/runner.mjs finish ' + jid + ' --push - לפני rules ולפני קריאת החומר. רק אם finish מצא קטעים חוסמים: rules, ואז orig --segs=<מספר> לקטעים האלה בלבד, put, ו-finish שוב.');
   else console.log('טרם נכתבה חלוקה (plan).');
   /* פרומפט 29: פרק אחד בכל הרצה; פרק מעל 30 קטעים - חצי בכל הרצה */
   if (!fs.existsSync(runF(jid))) saveRun(jid, rsN);
@@ -476,6 +479,16 @@ if (cmd === 'status') {
   (ex.pairs || []).forEach((p, i) => console.log('\n-- דוגמה ' + (i + 1) + ' (' + (p.kind || '') + ')\nלפני:\n' + p.before + '\nאחרי:\n' + p.after + (p.bad ? '\nפסול:\n' + p.bad : '') + '\nמה שיניתי: ' + (p.changes || []).join(' · ')));
   console.log('\n=== רשימת הבדיקה העצמית (פרומפט 33) - לכל קטע, לפני put, ולאשר בשדה check ===\n' + SKC.SELF_CHECK.map((x) => '- ' + x[0] + ': ' + x[1]).join('\n'));
   console.log('\n=== נבדק בקוד ועוצר את put (פרומפט 33) ===\n- סוגריים מרובעים בגוף השורה בלי {הס:}, גם בתיבת המשנה (פטור לציון מקור / לשון הגמרא - נימוק ב-keep)\n- שם תנא בתיבת המשנה בלי {אם:} (פרומפט 69; ספק - אזהרה)\n- תבליט "•" / "·" והדגשה יתומה {ב:.}\n- ארמית מרשימת ההחלפות שהמנהל כבר עשה: ' + Object.keys(SKC.OBEY_ARAM).map((k) => k + ' - ' + SKC.OBEY_ARAM[k]).join(', ') + '\n- "אם / הא / כש... <מקרה> <דין>" בלי מקף לפני הדין\n- עיטור צמוד לכותרת שלא נמחק (מפרומפט 29)');
+  /* פרומפט 70: הצינור החסכוני - ליבה קומפקטית + קבצי הנושא שהעבודה צריכה, במקום כל הלקחים וכל rules.json.
+     אף לקח אינו אובד: כל לקח מקורי ממופה (docs/sakem-lean/map.json), ולקח חדש שטרם זוקק מודפס כלשונו */
+  if (LEAN) {
+    let pkL = null; try { const jj = A[0] || ((runMark() || {}).jid); if (jj) pkL = pkOf(jj); } catch (e) {}
+    const LT = await import('./lean.mjs');
+    const lt = LT.leanText(pkL);
+    if (lt) { console.log('\n=== לקחים מהכרעות המנהל - ליבה ונושאים (הצינור החסכוני, פרומפט 70; גוברים על הכללים שלמעלה) ===\nנושאים שנטענו: ' + lt.topics.join(', ') + (lt.fresh ? ' · לקחים חדשים שטרם זוקקו: ' + lt.fresh : '') + '\n\n' + lt.text);
+      process.exit(0); }
+    console.log('(הצינור החסכוני: docs/sakem-lean טרם נבנה - מדפיס את הכללים המלאים)');
+  }
   const L = path.join(ROOT, 'docs', 'sakem-lessons.md');
   if (fs.existsSync(L)) console.log('\n=== לקחים מהכרעות המנהל (גוברים על הכללים שלמעלה) ===\n' + fs.readFileSync(L, 'utf8'));
   /* המקליט (פרומפט 28): כללים שנלמדו מעריכות המנהל ומהערותיו; כלל שבוטל ב"מה סכם למד" אינו מוצג */
@@ -483,8 +496,12 @@ if (cmd === 'status') {
   if (fs.existsSync(LR)) { const on = (rd(LR).rules || []).filter((x) => !x.off);
     if (on.length) console.log('\n=== מה סכם למד מעריכות המנהל (' + on.length + ' כללים פעילים) ===\n' + on.map((x) => '- ' + x.text + (x.was && x.kind !== 'החלפת מילה' ? '\n  לפני: ' + x.was + '\n  אחרי: ' + x.now : '')).join('\n')); }
 } else if (cmd === 'orig') {
-  const [jid, from, to] = A;
-  console.log(origOf(pkOf(jid), from, to).text);
+  /* פרומפט 70: כמה טווחים בבת אחת (orig <jid> <from> <to> <from> <to> ...) או קטעי חלוקה (--segs=3-6), כל אחד בכותרת */
+  const jid = A[0], pk = pkOf(jid), sg = (process.argv.find((x) => /^--segs=/.test(x)) || '').slice(7);
+  if (sg) { const o = outOf(jid); if (!o) die('קודם plan.'); const [a, b] = sg.split('-').map((x) => +x); 
+    for (let i = a; i <= (b || a); i++) { const p = o.plan[i - 1]; if (!p) break; console.log('=== קטע ' + i + ' (⟦' + p.from + '⟧-⟦' + p.to + '⟧) ' + p.title + ' ===\n' + origOf(pk, p.from, p.to).text + '\n'); } }
+  else if (A.length > 3) { for (let k = 1; k + 1 < A.length; k += 2) console.log('=== ⟦' + A[k] + '⟧-⟦' + A[k + 1] + '⟧ ===\n' + origOf(pk, A[k], A[k + 1]).text + '\n'); }
+  else console.log(origOf(pk, A[1], A[2]).text);
 } else if (cmd === 'plan') {
   const [jid, f] = A;
   const pk = pkOf(jid), plan = rd(f);
@@ -503,6 +520,23 @@ if (cmd === 'status') {
   wr(outF(jid), { v: 1, jid, slug: pk.slug, title: pk.title || '', status: 'work', plan: segs, total: segs.length, done: 0, items: [], t: Date.now() });
   console.log('החלוקה נשמרה:', segs.length, 'קטעים.');
   if (PUSH) push('סכם: חלוקת ' + (pk.title || jid) + ' לקטעים', [outF(jid)]);
+} else if (cmd === 'put' && Array.isArray(rd(A[1]))) {
+  /* פרומפט 70: put לכמה קטעים בבת אחת (מערך של seg.json) - הכותב כותב רצף ושולח פעם אחת. כל קטע נבדק בשומר כרגיל
+     (בתהליך נפרד, בדיוק כמו put יחיד), הקטעים שעברו נשמרים, והליקויים של כל השאר מוחזרים יחד. דחיפה אחת בסוף. */
+  const [jid, f] = A, arr = rd(f);
+  const flags = process.argv.slice(3).filter((x) => /^--/.test(x) && x !== '--push');
+  const ok = [], bad = [];
+  arr.forEach((one, k) => {
+    const tf = path.join(WORK, jid, 'batch-' + process.pid + '-' + k + '.json');
+    fs.mkdirSync(path.dirname(tf), { recursive: true }); fs.writeFileSync(tf, JSON.stringify(one));
+    try { const out = execFileSync(process.execPath, [fileURLToPath(import.meta.url), 'put', jid, tf, ...flags], { cwd: ROOT, encoding: 'utf8', env: process.env });
+      ok.push(one.seg); console.log('--- קטע ' + one.seg + ' ---\n' + out.trim()); }
+    catch (e) { bad.push(one.seg); console.log('--- קטע ' + one.seg + ' (לא נשמר) ---\n' + String(e.stdout || e.message).trim()); }
+    try { fs.unlinkSync(tf); } catch (_) {}
+  });
+  console.log('\nבסך הכול: ' + ok.length + ' נשמרו' + (ok.length ? ' (' + ok.join(', ') + ')' : '') + (bad.length ? ', ' + bad.length + ' נדחו (' + bad.join(', ') + ') - תקן רק אותם ושלח שוב.' : '.'));
+  if (PUSH && ok.length && !DRY) { const pk = pkOf(jid), o = outOf(jid); push('סכם: ' + (pk.title || jid) + ' - קטעים ' + ok.join(', ') + ' (' + o.done + ' מתוך ' + o.total + ')', [outF(jid)]); }
+  if (bad.length) process.exit(1);
 } else if (cmd === 'put') {
   const [jid, f] = A;
   const pk = pkOf(jid), o = outOf(jid), s = rd(f);
@@ -629,6 +663,7 @@ if (cmd === 'status') {
   o.done = new Set(o.items.map((x) => x.seg)).size;
   o.t = Date.now();
   wr(outF(jid), o);
+  rs.puts = (rs.puts || 0) + 1; saveRun(jid, rs); /* פרומפט 70: גם put חוזר (תיקון) נספר - "0 קטעים" ביומן אינו בהכרח הרצה ריקה */
   const it = o.items.find((x) => x.seg === si && x.kind === 'seg');
   console.log('קטע ' + (si + 1) + ' נשמר' + (it.nochange ? ' (ללא שינוי)' : ' · ' + it.layers.join(', ') + (it.warn.length ? ' · אזהרות: ' + it.warn.join(' · ') : '')) + ' · ' + o.done + ' מתוך ' + o.total);
   if (PUSH) push('סכם: ' + (pk.title || jid) + ' - קטע ' + (si + 1) + ' מתוך ' + o.total, [outF(jid)]);

@@ -1253,7 +1253,9 @@
       /* פרומפט 72: שורת "הדרן עלך" שנשארה בתוך טור (לא ברצועה שמתחת לשני הטורים) - תקלה */
       for(var hq0=c.s;hq0<c.e;hq0++)if(L[hq0].kind==='hadran'&&L[hq0].first){iss('הדרן בתוך טור',L[hq0]);break}
       for(var hq=c.s+1;hq<c.e;hq++){var hl=L[hq],hp=L[hq-1];
-        if(hl.first&&(hl.kind==='dh'||hl.kind==='nose')&&!HEADS[hp.kind]&&hp.kind!=='hatz'&&hl.y0-hp.y1<0.4*LH)iss('כותרת בלי רווח לפניה',hl)}
+        if(hl.first&&(hl.kind==='dh'||hl.kind==='nose')&&!HEADS[hp.kind]&&hp.kind!=='hatz'&&hl.y0-hp.y1<0.4*LH)iss('כותרת בלי רווח לפניה',hl);
+        /* פרומפט 72 (סעיף ב של 67): גם פסקת כותרת בתוך יחידה (p.nose / p.dh) שאינה ראשונה ביחידה ואין לפניה כותרת */
+        else if(hl.hb&&hl.k===0&&hl.ri===hp.ri&&hl.block!==hp.block&&!hp.hb&&!HEADS[hp.kind]&&hl.y0-hp.y1<0.4*LH)iss('כותרת בלי רווח לפניה',hl,'כותרת פנימית')}
       /* פרומפט 60 ב: כלל ברזל - אחרי כותרת (גם פסקת כותרת בתוך יחידה) לפחות שתי שורות מן התוכן שלה באותו טור */
       if(c.e<L.length){for(var hq2=c.e-1;hq2>=c.s&&hq2>=c.e-prof.keepAfterHeading-2;hq2--){var hl2=L[hq2];if(!isH(hl2)||hl2.kind==='hatz')continue;
         var ac=0;for(var z2=hq2+1;z2<c.e;z2++)if(!isH(L[z2]))ac++;

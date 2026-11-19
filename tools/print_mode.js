@@ -1040,7 +1040,7 @@
   /* פרומפט 72 (סעיף ד של 67): השורות של פסקה נמדדות מתוך Range על התוכן ומקובצות לפי גובה. p.getClientRects() על פסקה
      שהיא block מחזיר מלבן אחד לכל הפסקה (לא שורות), ולכן חץ למטה מן השורה הראשונה דילג על השנייה וחץ למעלה נתקע.
      רק שורות שנראות בתוך חלון החיתוך של הטור (.ptx) נספרות. */
-  function pmLines(el){var doc=el.ownerDocument,rg=doc.createRange();rg.selectNodeContents(el);
+  function pmLineRects(el){var doc=el.ownerDocument,rg=doc.createRange();rg.selectNodeContents(el);
     var cx=el.closest('.ptx'),cr=cx?cx.getBoundingClientRect():null,out=[];
     [].forEach.call(rg.getClientRects(),function(r){if(r.width<1||r.height<1)return;
       if(cr&&(r.bottom<cr.top+1||r.top>cr.bottom-1))return;
@@ -1064,13 +1064,13 @@
     if(!/^(ArrowUp|ArrowDown|ArrowLeft|ArrowRight|PageUp|PageDown)$/.test(k))return false;
     var p=E.p,L=null,i=-1;var TG=function(){if(!L){L=pmTargets();i=L.indexOf(p)}return L};
     var go=function(t,end,x){if(!t)return true;
-      var off=null;if(x!=null){var ls=pmLines(t),rr=end?ls[ls.length-1]:ls[0];if(rr){var cr=doc.caretRangeFromPoint&&doc.caretRangeFromPoint(Math.max(rr.left+1,Math.min(rr.right-1,x)),rr.mid);if(cr&&t.contains(cr.startContainer))off=pmOff(t,cr.startContainer,cr.startOffset)}}
+      var off=null;if(x!=null){var ls=pmLineRects(t),rr=end?ls[ls.length-1]:ls[0];if(rr){var cr=doc.caretRangeFromPoint&&doc.caretRangeFromPoint(Math.max(rr.left+1,Math.min(rr.right-1,x)),rr.mid);if(cr&&t.contains(cr.startContainer))off=pmOff(t,cr.startContainer,cr.startOffset)}}
       pmEdit(t,null,off==null?(end?1e9:0):off);if(S.editing)pmSetSel(S.editing.p,Math.min(off==null?(end?S.editing.p.textContent.length:0):off,S.editing.p.textContent.length));
       var pe=S.editing&&S.editing.p.getBoundingClientRect();if(pe&&(pe.bottom>(S.fr.clientHeight||600)-20||pe.top<20))pmScrollTo(S.editing.p,'center');return true};
     /* למעלה/למטה: בעמודת הטקסט בלבד (בלי תוויות הצד), ושומרים את המיקום האופקי. מתווית - לתווית הבאה/הקודמת */
     var step=function(dir){TG();var rail=pmIsRail(p);for(var j=i+dir;j>=0&&j<L.length;j+=dir)if(pmIsRail(L[j])===rail)return L[j];return null};
     if(k==='ArrowDown'||k==='ArrowUp'){
-      var c=pmCaretRect(doc),ls=pmLines(p);if(!c||!ls.length)return false;
+      var c=pmCaretRect(doc),ls=pmLineRects(p);if(!c||!ls.length)return false;
       var cm=(c.top+c.bottom)/2,tol=ls[0].height/2;
       if(k==='ArrowDown'&&cm>=ls[ls.length-1].mid-tol){e.preventDefault();return go(step(1),false,c.left)}
       if(k==='ArrowUp'&&cm<=ls[0].mid+tol){e.preventDefault();return go(step(-1),true,c.left)}

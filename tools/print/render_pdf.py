@@ -16,6 +16,8 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 ENGINE = os.path.join(ROOT, 'tools', 'print_engine.js')
 PROFILES = os.path.join(HERE, 'profiles')
 HOST = 'print.local'
+import re
+_COLOPHON = re.compile(r'^\s*(הדרן|סליקו\s+תוספ|סליקא?\s+מסכת|סליק\s+מסכת|תם\s+ונשלם)')
 MIME = {'.html': 'text/html; charset=utf-8', '.js': 'application/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
         '.json': 'application/json; charset=utf-8', '.woff2': 'font/woff2', '.otf': 'font/otf', '.ttf': 'font/ttf',
         '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.ico': 'image/x-icon'}
@@ -51,8 +53,9 @@ def patched_tail(site, slug, tos_dir):
     js = read_retry(fp).decode('utf-8') if os.path.exists(fp) else ''
     items = []
     for lf in sorted(glob.glob(os.path.join(tos_dir, slug, 'live-*.json'))):
-        # כמו הבנייה (build_site.py): "הדרן עלך" אינו הערת תוס'
-        items += [x for x in json.load(open(lf, encoding='utf-8')).get('items', []) if not str(x.get('dh', '')).strip().startswith('הדרן')]
+        # כמו הבנייה (build_site.py, is_tos_colophon): קולופון ("הדרן עלך", "סליקו תוספות", "סליק מסכת", "תם ונשלם") אינו הערת תוס'
+        # (פרומפט 72: עד כאן כאן סונן רק "הדרן", ו"סליקו תוספות דמסכת ברכות" נכנס להדפסה מן העץ)
+        items += [x for x in json.load(open(lf, encoding='utf-8')).get('items', []) if not _COLOPHON.match(str(x.get('dh', '')).strip())]
     j = js.find('window.__TOS=')
     if items and j >= 0:
         _, e = json.JSONDecoder().raw_decode(js[j + len('window.__TOS='):])

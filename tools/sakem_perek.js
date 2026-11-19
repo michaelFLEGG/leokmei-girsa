@@ -258,8 +258,10 @@
           if(skpInPage(x,page)){r.st='in';return}
           const late=(x.ids||[]).filter(id=>(lastEd.get(id)||0)>(+x.t||0)+120000);
           if(late.length){r.st='manual';r.ids=late;return}
+          /* השלמה (קטע גמרא חסר) אינה מוחלת מחדש כאן: אחרי קיפול אין בשכבה עדות אם המנהל מחק אותה מאז. נרשמת לעיון */
+          if(x.kind!=='seg'){r.st='nonseg';return}
           let orig;
-          if(x.kind==='seg'&&!skmSame(x.ids,x.orig)){
+          if(!skmSame(x.ids,x.orig)){
             /* הקטע בדף אינו כלשון הנוסח שעליו נכתבה ההצעה. אם האותיות זהות (רק חלוקת היחידות או הסימון השתנו, למשל בקיפול) -
                מוחל על הנוסח שבדף, כמו "החלף בהצעה". אם הנוסח עצמו השתנה - לא נוגעים */
             let cur='';try{cur=skmInter(skmUnits(x.ids))}catch(e){}

@@ -1,6 +1,6 @@
 {
  "slug": "yoma",
- "made": "2026-11-19 23:14",
+ "made": "2026-11-19 23:31",
  "profile": "a4-large",
  "pages": {
   "a4": 36,
@@ -10,16 +10,14 @@
   "a4": 50,
   "a4-large": 82
  },
- "count": 59,
+ "count": 58,
  "firstTool": {
   "5": 39,
   "3": 2
  },
  "joinCands": 73,
  "mechSplitCands": 0,
- "ctlMismatch": [
-  "u1402.1"
- ],
+ "ctlMismatch": [],
  "rejected": 22,
  "stale": [],
  "unplaced": [],
@@ -1769,36 +1767,6 @@
     }
    ],
    "tool6": false
-  },
-  {
-   "key": "u1402.1",
-   "id": "150e60fd280269d2",
-   "u": 1402,
-   "li": 1,
-   "daf": "עד:",
-   "cls": "b0 a0",
-   "mc": "main",
-   "html": "<i class=\"ps\">תענו</i> כמלאכת עינוי נפש בשוא&quot;ת, ושרי מחמה לצל דלא חלקת, ",
-   "ph": "<i class=\"ps\">תענו</i> כמלאכת עינוי נפש בשוא&quot;ת, ושרי מחמה לצל דלא חלקת, ",
-   "text": "תענו כמלאכת עינוי נפש בשוא\"ת, ושרי מחמה לצל דלא חלקת,",
-   "over": "חלקת,",
-   "nA4": 2,
-   "nLarge": 2,
-   "missPx": 24.5,
-   "miss": 5,
-   "long": true,
-   "tail": true,
-   "sug": [],
-   "ctlMismatch": {
-    "a4-large": [
-     1
-    ],
-    "a4": [
-     1
-    ]
-   },
-   "tool6": true,
-   "leave": true
   },
   {
    "key": "u1475.32",

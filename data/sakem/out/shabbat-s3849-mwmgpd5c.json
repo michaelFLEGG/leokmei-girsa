@@ -3,7 +3,7 @@
  "jid": "shabbat-s3849-mwmgpd5c",
  "slug": "shabbat",
  "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s6, s7, s8)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 3849,
@@ -81,7 +81,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -120,7 +128,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -162,7 +178,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"מכאן ואחת בתרסיותיו כר\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -198,7 +222,15 @@
     "שורה אלמנה (ינעלנו.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "m4-1",
@@ -238,6 +270,14 @@
     "nose": 0,
     "lenA": 257,
     "lenB": 257
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 6,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -274,8 +314,70 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
+   }
   }
  ],
- "t": 1795069132647
+ "t": 1795069138810,
+ "summary": "בפרק: 0 הדגשות במשנה, 2 רווחים, 4 מקפי תירוץ, 1 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 2,
+  "dash": 4,
+  "side": 1,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 6,
+  "perSeg": {
+   "bold": 0,
+   "space": 0.33,
+   "dash": 0.67,
+   "side": 4.5,
+   "nose": 0.67,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 2,
+  "dash": 4,
+  "side": 1,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 2,
+  "block": 0,
+  "lenPct": -1.3,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 2,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 12
+  }
+ },
+ "counts": {
+  "shown": 6,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 1
+ }
 }

@@ -157,7 +157,7 @@
   }
  ],
  "total": 25,
- "done": 5,
+ "done": 7,
  "items": [
   {
    "iid": "s1",
@@ -309,7 +309,59 @@
     "lenA": 221,
     "lenB": 221
    }
+  },
+  {
+   "iid": "s6",
+   "kind": "seg",
+   "seg": 5,
+   "sugya": 6,
+   "ids": [
+    11558,
+    11559,
+    11561,
+    11563,
+    11565,
+    11567,
+    11569
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 308,
+    "lenB": 308
+   }
+  },
+  {
+   "iid": "s7",
+   "kind": "seg",
+   "seg": 6,
+   "sugya": 7,
+   "ids": [
+    11571,
+    11572,
+    11574,
+    11576,
+    11578
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 213,
+    "lenB": 213
+   }
   }
  ],
- "t": 1795102457574
+ "t": 1795102471997
 }

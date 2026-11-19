@@ -3,7 +3,7 @@
  "jid": "shabbat-s3267-mwmdr3i1",
  "slug": "shabbat",
  "title": "שבת פרק רביעי - במה טומנין · סבב על הנוסח החי (s16, s17)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 3267,
@@ -65,7 +65,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "m1-1",
@@ -121,8 +129,70 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: סליקותא"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 2,
+    "widow": 0
+   }
   }
  ],
- "t": 1795061792713
+ "t": 1795061794800,
+ "summary": "בפרק: 0 הדגשות במשנה, 1 רווחים, 1 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 1,
+  "dash": 1,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 2,
+  "perSeg": {
+   "bold": 0,
+   "space": 0.5,
+   "dash": 0.5,
+   "side": 4,
+   "nose": 1.5,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 1,
+  "dash": 1,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 1,
+  "block": 0,
+  "lenPct": 2.8,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 12
+  }
+ },
+ "counts": {
+  "shown": 3,
+  "spatial": 0,
+  "adds": 1,
+  "missing": 1
+ }
 }

@@ -597,6 +597,24 @@ def tombstones(slugs, log=print):
             s = live.get(ekey(a))
             if s is not None and not s.get('del') and (s.get('t') or 0) <= (a.get('t') or 0):
                 out.append({'k': ekey(a), 'del': 1, 't': (a.get('t') or 0) + 1})
+        # פרומפט 64 (19.11.2026): אותה עריכה (אותו רגע ואותו תוכן) שחיה בשרת במפתח אחר (נמדד בכתובות: 465
+        # עריכות שכבר בספר, במפתח u17.6~<זמן> במקום u26.1~<זמן>) - גם היא יוצאת. לא נוגעים בעריכה שנשארה
+        # בשכבה (data/edits) או שנכתבה במפתח חדש בקיפול (data/fold/rekey).
+        keep = {(ekey(e), e.get('t')) for e in (rjson(os.path.join(EDITS, slug + '.json')) or {}).get('edits') or []}
+        keep |= {(ekey(e), e.get('t')) for e in (rjson(os.path.join(HERE, 'data', 'fold', 'rekey', slug + '.json')) or {}).get('edits') or []}
+        keepk = {k for k, _ in keep}
+        asig = {esig(a) for a in arch['edits'] if not a.get('dup')}
+        have = {x['k'] for x in out}
+        tomb = {}
+        for e in srv.get('edits') or []:
+            if e.get('del'):
+                tomb[ekey(e)] = max(tomb.get(ekey(e), 0), e.get('t') or 0)
+        for e in srv.get('edits') or []:
+            k = ekey(e)
+            if (not k or e.get('del') or k in have or k in keepk or (e.get('t') or 0) <= tomb.get(k, -1)
+                    or esig(e) not in asig):
+                continue
+            out.append({'k': k, 'del': 1, 't': (e.get('t') or 0) + 1}); have.add(k)
         if not out:
             continue
         try:

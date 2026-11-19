@@ -12,6 +12,10 @@ on:
         description: 'מסכת אחת (slug). ריק = כל המסכתות שבספר'
         required: false
         default: ''
+      tombstones_only:
+        description: 'מצבות בלבד (בלי קיפול): כתיבת המצבות בשרת ובנייה. פרומפט 64'
+        required: false
+        default: ''
 permissions:
   contents: write
   actions: write
@@ -29,6 +33,7 @@ jobs:
       - run: pip install lxml fonttools brotli pillow
       - name: קיפול
         id: fold
+        if: github.event.inputs.tombstones_only == ''
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
           PYTHONUNBUFFERED: '1'
@@ -39,6 +44,7 @@ jobs:
           exit 0
       - name: שמירה ודחיפה
         id: save
+        if: github.event.inputs.tombstones_only == ''
         run: |
           git config user.name "leokmei-fold"; git config user.email "fold@users.noreply.github.com"
           git add -A input/docx data/edits data/word-cloud/ingested data/fold data/word-pin
@@ -55,18 +61,19 @@ jobs:
           echo "::error::הקיפול לא נדחף"; exit 1
       # רק אחרי שהספר שנושא את העריכות נשמר במאגר: מצבה בשרת לכל עריכה שיצאה מן השכבה.
       - name: מצבות בשרת
-        if: steps.save.outputs.pushed == '1'
+        if: steps.save.outputs.pushed == '1' || github.event.inputs.tombstones_only != ''
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
-        run: python tools/fold.py --tombstones
+        run: |
+          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/fold.py --tombstones --only "${{ github.event.inputs.only }}"; else python tools/fold.py --tombstones; fi
       # בנייה אחת של האתר מן הספר החדש (דחיפה בטוקן של הפעולה אינה מפעילה את השומר מעצמה)
       - name: בניית האתר
-        if: steps.save.outputs.pushed == '1'
+        if: steps.save.outputs.pushed == '1' || github.event.inputs.tombstones_only != ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run watch.yml --ref main
       - name: תוצאה
-        if: steps.fold.outputs.code != '0'
+        if: github.event.inputs.tombstones_only == '' && steps.fold.outputs.code != '0'
         run: |
           echo "::error::לפחות מסכת אחת לא קופלה (השער נכשל). השכבה שלה נשארה כמות שהיא. פרטים ב-data/fold/log.jsonl"
           exit 1

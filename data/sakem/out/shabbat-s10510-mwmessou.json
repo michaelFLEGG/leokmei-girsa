@@ -3,7 +3,7 @@
  "jid": "shabbat-s10510-mwmessou",
  "slug": "shabbat",
  "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s10)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 10510,
@@ -63,8 +63,70 @@
     "שורה אלמנה (עליו.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 2,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
+   }
   }
  ],
- "t": 1795052072693
+ "t": 1795052084926,
+ "summary": "בפרק: 4 הדגשות במשנה, 0 רווחים, 2 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 4,
+  "space": 0,
+  "dash": 2,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 4,
+   "space": 0,
+   "dash": 2,
+   "side": 6,
+   "nose": 2,
+   "widow": 0
+  },
+  "bold": 4,
+  "space": 0,
+  "dash": 2,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 1,
+  "warnLeft": 2,
+  "block": 0,
+  "lenPct": 3.8,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 6
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

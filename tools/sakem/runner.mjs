@@ -35,6 +35,12 @@ const ls = (d) => (fs.existsSync(d) ? fs.readdirSync(d).filter((f) => f.endsWith
 const pkOf = (jid) => { const f = path.join(Q, jid + '.json'); if (!fs.existsSync(f)) die('אין עבודה כזאת בתור: ' + jid); return rd(f); };
 const outF = (jid) => path.join(O, jid + '.json');
 const outOf = (jid) => (fs.existsSync(outF(jid)) ? rd(outF(jid)) : null);
+/* סדר מסכתות (בקשת מיכאל 19.11.2026): data/sakem/hold.json = {"<מסכת ממתינה>": "<מסכת שקודמת לה>"}.
+   עבודות של מסכת ממתינה אינן מוצגות ב-status ואינן נלקחות ב-next (בלי מזהה), כל עוד יש במסכת הקודמת עבודה שאינה "מוכן לסקירה". */
+const HOLD = (() => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'sakem', 'hold.json'), 'utf8')); } catch (e) { return {}; } })();
+const slugOfFile = (f) => { try { return (rd(path.join(Q, f)).slug) || f.replace(/-(p|s)\d.*$/, ''); } catch (e) { return f.replace(/-(p|s)\d.*$/, ''); } };
+const heldSlugs = (() => { const files = ls(Q); const open = new Set(); files.forEach((f) => { const o = outOf(f.slice(0, -5)); if (!o || o.status !== 'ready') open.add(slugOfFile(f)); }); return new Set(Object.keys(HOLD).filter((w) => open.has(HOLD[w]))); })();
+const qFiles = () => ls(Q).filter((f) => !heldSlugs.has(slugOfFile(f)));
 const TEXTK = (u) => u.k === 'u' || u.k === 'm';
 
 /* פרומפט 17: פירוש הגמרא וחברותא אינם בחבילה שבריפו הציבורי. הכלי מושך אותם בשעת העבודה אל _work/sakem,
@@ -303,7 +309,8 @@ function dieFree(jid, m, c = 1) {
   die(m, c);
 }
 if (cmd === 'status') {
-  const js = ls(Q);
+  const js = qFiles();
+  if (heldSlugs.size) console.log('ממתינות לפי סדר (data/sakem/hold.json): ' + [...heldSlugs].join(' '));
   if (!js.length) die('התור ריק.', 0);
   js.forEach((f) => { const jid = f.slice(0, -5), pk = rd(path.join(Q, f)), o = outOf(jid);
     console.log(jid, '·', pk.title || '', '·', o ? (o.status === 'ready' ? 'מוכן לסקירה' : 'בעבודה ' + o.done + '/' + o.total) : 'ממתין'); });
@@ -323,7 +330,7 @@ if (cmd === 'status') {
   if (!NOLOCK) gitPull(); /* פרומפט 69: הנעילות והתור כפי שהם עכשיו ב-main */
   /* פרומפט 69 (19.11.2026): מסכת שלמה בשיחה ייעודית (.locks/p69-<slug>.lock) - next בלי מזהה מדלג על כל עבודותיה */
   const p69Mine = (j) => { try { const s = pkOf(j).slug; return !!s && fs.existsSync(path.join(ROOT, '.locks', 'p69-' + s + '.lock')); } catch (e) { return false; } };
-  const cands = ls(Q).map((f) => f.slice(0, -5)).filter((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j) && !p69Mine(j))); });
+  const cands = (A[0] ? ls(Q) : qFiles()).map((f) => f.slice(0, -5)).filter((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j) && !p69Mine(j))); });
   /* ההרצה כבר עובדת על עבודה - ממשיכים בה (גם אם לפניה בתור התפנתה עבודה אחרת) */
   if (m0 && !A[0]) { if (!cands.includes(m0.jid)) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא.', 3); cands.splice(0, cands.length, m0.jid); }
   if (m0 && A[0] && m0.jid !== A[0]) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא; ההמשך בהרצה הבאה, בשיחה חדשה.', 3);

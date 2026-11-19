@@ -47,8 +47,8 @@
   {
    "long": "אמר לו",
    "short": "א\"ל",
-   "nLong": 441,
-   "nShort": 3870,
+   "nLong": 438,
+   "nShort": 3873,
    "kind": "abbr"
   },
   {
@@ -223,7 +223,7 @@
    "long": "עבודה זרה",
    "short": "ע\"ז",
    "nLong": 33,
-   "nShort": 280,
+   "nShort": 279,
    "kind": "abbr"
   },
   {
@@ -243,8 +243,8 @@
   {
    "long": "בני אדם",
    "short": "בנ\"א",
-   "nLong": 171,
-   "nShort": 48,
+   "nLong": 170,
+   "nShort": 49,
    "kind": "abbr"
   },
   {
@@ -292,8 +292,8 @@
   {
    "long": "שם שמים",
    "short": "ש\"ש",
-   "nLong": 26,
-   "nShort": 29,
+   "nLong": 25,
+   "nShort": 30,
    "kind": "abbr"
   },
   {
@@ -306,8 +306,8 @@
   {
    "long": "דבר אחר",
    "short": "ד\"א",
-   "nLong": 127,
-   "nShort": 111,
+   "nLong": 126,
+   "nShort": 112,
    "kind": "abbr"
   },
   {
@@ -327,8 +327,8 @@
   {
    "long": "תלמוד תורה",
    "short": "ת\"ת",
-   "nLong": 9,
-   "nShort": 9,
+   "nLong": 8,
+   "nShort": 10,
    "kind": "abbr"
   },
   {
@@ -341,43 +341,43 @@
   {
    "long": "שתי",
    "short": "ב'",
-   "nLong": 963,
-   "nShort": 791,
+   "nLong": 962,
+   "nShort": 792,
    "kind": "num"
   },
   {
    "long": "שלש",
    "short": "ג'",
-   "nLong": 525,
-   "nShort": 949,
+   "nLong": 524,
+   "nShort": 951,
    "kind": "num"
   },
   {
    "long": "שלשה",
    "short": "ג'",
-   "nLong": 671,
-   "nShort": 949,
+   "nLong": 670,
+   "nShort": 951,
    "kind": "num"
   },
   {
    "long": "שלושה",
    "short": "ג'",
    "nLong": 137,
-   "nShort": 949,
+   "nShort": 951,
    "kind": "num"
   },
   {
    "long": "ארבע",
    "short": "ד'",
-   "nLong": 450,
-   "nShort": 596,
+   "nLong": 449,
+   "nShort": 597,
    "kind": "num"
   },
   {
    "long": "ארבעה",
    "short": "ד'",
    "nLong": 363,
-   "nShort": 596,
+   "nShort": 597,
    "kind": "num"
   },
   {
@@ -397,8 +397,8 @@
   {
    "long": "ששה",
    "short": "ו'",
-   "nLong": 215,
-   "nShort": 94,
+   "nLong": 214,
+   "nShort": 95,
    "kind": "num"
   },
   {

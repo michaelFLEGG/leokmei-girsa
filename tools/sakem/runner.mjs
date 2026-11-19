@@ -462,10 +462,10 @@ if (cmd === 'status') {
   /* פרומפט 71: פרק ענק שטרם חולק - ההרצה הזאת כותבת את החלוקה בלבד, ועוצרת */
   if (!o && pk.units.length > 600) console.log('פרק ענק (' + pk.units.length + ' יחידות): בהרצה הזאת רק החלוקה (plan --push), לפי leokmei.md (קרא בחלקים) והגמרא לפי הצורך. אחריה: pause ' + jid + ' --reason=סוף-חלק --push, וצא. הכתיבה - בחלקים, בהרצות הבאות.');
   if (o) console.log('המשך מהרצה קודמת: ' + o.done + ' מתוך ' + o.total + ' קטעים כבר נכתבו. הקטע הבא: ' + (o.plan.findIndex((s, i) => !o.items.some((x) => x.seg === i)) + 1));
+  else console.log('טרם נכתבה חלוקה (plan).');
   /* פרומפט 70: כל הקטעים כבר נכתבו (ההרצה הקודמת נעצרה לפני finish) - finish מיד, לפני rules וקריאת החומר.
      רק אם finish מצא קטעים חוסמים - rules, וקריאת החומר של הקטעים האלה בלבד (orig --segs). כך לא נקראים כל הכללים לחינם */
   if (o && o.done === o.total) console.log('######## כל ' + o.total + ' הקטעים כבר נכתבו: הרץ מיד node tools/sakem/runner.mjs finish ' + jid + ' --push - לפני rules ולפני קריאת החומר. רק אם finish מצא קטעים חוסמים: rules, ואז orig --segs=<מספר> לקטעים האלה בלבד, put, ו-finish שוב.');
-  else console.log('טרם נכתבה חלוקה (plan).');
   /* פרומפט 29: פרק אחד בכל הרצה; פרק מעל 30 קטעים - חצי בכל הרצה */
   if (!fs.existsSync(runF(jid))) saveRun(jid, rsN);
   if (part) console.log('פרק ארוך (' + o.total + ' קטעים, ' + part.n + ' חלקים): בהרצה הזאת רק החלק ' + (part.p + 1) + ' - קטעים ' + (part.s0 + 1) + ' עד ' + (part.s1 + 1) + '. החומר לקריאה הוא של החלק בלבד (והסוגיה השלמה בקצוות), ו-context.md נותן את מהלך הפרק כולו. בסוף החלק: pause --reason=סוף-חלק --push, וצא.');

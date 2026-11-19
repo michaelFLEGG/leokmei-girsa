@@ -37,6 +37,7 @@
     const hasHL=typeof CSS!=='undefined'&&CSS.highlights&&typeof Highlight!=='undefined';
     const L=hasHL?new Highlight():null,R=hasHL?new Highlight():null;
     OVS.byP=new WeakMap();let n=0;
+    OVS.items.forEach(it=>{it._p=null});   /* 20.11.2026: פסקה שנערכה ואינה תואמת עוד - אינה נשארת ברשימה */
     OVS.items.forEach(it=>{
       if(ovDone(it))return;
       const p=ovPara(it);if(!p)return;
@@ -67,12 +68,42 @@
     b.setAttribute('aria-label','שורה שהתארכה - הבאה, נותרו '+n);
     b.title=n?'שורה שהתארכה - הבאה · '+n+' שורות שגולשות בהדפסה המוגדלת וטרם הוכרעו. לחיצה קופצת לבאה':'שורה שהתארכה: הכל הוכרע';
     try{if(typeof barH==='function')barH()}catch(e){}}
+  /* 20.11.2026 (מיכאל: "כל פעם צריך ללחוץ מחדש... לא ממשיך להבא בתור אוטומטית ומהר"):
+     רצף אחד - אחרי קבל / השאר / ערוך החלונית עוברת מיד לשורה הבאה בסדר הדף, בלי המתנה מלאכותית.
+     "ערוך" עורך בדף עצמו; F4 (או לחצן ↵) ממשיך לשורה שאחרי זו שנערכה, ולא לפי מקום הגלילה. */
+  function ovFollow(it){
+    const list=OVS.items.filter(x=>x!==it&&!ovDone(x)&&x._p&&x._p.isConnected);
+    if(!list.length)return null;
+    const ref=it?((it._p&&it._p.isConnected)?it._p:document.getElementById('u'+it.u)):null;
+    if(!ref)return null;
+    const ix=OVS.items.indexOf(it);
+    return list.find(x=>x._p===ref?OVS.items.indexOf(x)>ix:(ref.contains(x._p)?OVS.items.indexOf(x)>ix:!!(ref.compareDocumentPosition(x._p)&Node.DOCUMENT_POSITION_FOLLOWING)))||list[0]}
+  function ovGo(nx){
+    ovClose();
+    if(!nx){ovBar();flash('שורה שהתארכה: הכל הוכרע');return}
+    nx._p.scrollIntoView({block:'center'});ovOpen(nx)}
   function ovNext(){
+    if(OVS.editing)ovEditDone();
+    ovMark();ovBar();
     const list=OVS.items.filter(it=>!ovDone(it)&&it._p&&it._p.isConnected);
     if(!list.length){flash('שורה שהתארכה: אין שורות שטרם הוכרעו');return}
+    const last=OVS.last,lr=last&&document.getElementById('u'+last.u);
+    if(lr){const t=lr.getBoundingClientRect().top;if(t>-2*innerHeight&&t<3*innerHeight){ovGo(ovFollow(last));return}}
     const y=innerHeight*0.35;
-    let nx=list.find(it=>it._p.getBoundingClientRect().top>y+4)||list[0];
-    nx._p.scrollIntoView({block:'center'});setTimeout(()=>ovOpen(nx),250)}
+    ovGo(list.find(it=>it._p.getBoundingClientRect().top>y+4)||list[0])}
+  /* עריכה בדף: השורה נשארת פתוחה לעריכה, החלונית לא קופצת עליה שוב בלחיצה, ו-F4 ממשיך */
+  function ovEditInPlace(it){
+    ovClose();OVS.editing=it;OVS.editTxt=ovNorm(ovPText(it._p));
+    try{if(typeof EDIT!=='undefined'&&!EDIT&&typeof setEdit==='function')setEdit(true)}catch(e){}
+    const p=it._p;p.scrollIntoView({block:'center'});
+    try{const w=document.createTreeWalker(p,NodeFilter.SHOW_TEXT);let x,lastN=null;while((x=w.nextNode()))lastN=x;
+      const host=p.closest('[contenteditable="true"]')||p;host.focus&&host.focus({preventScroll:true});
+      if(lastN){const r=document.createRange();r.setStart(lastN,lastN.nodeValue.length);r.collapse(true);const sel=getSelection();sel.removeAllRanges();sel.addRange(r)}}catch(e){}
+    flash('עריכה בדף · F4 לשורה הבאה')}
+  function ovEditDone(){
+    const it=OVS.editing;OVS.editing=null;if(!it)return;
+    const p=it._p&&it._p.isConnected?it._p:null;const now=p?ovNorm(ovPText(p)):'';
+    if(p&&now!==OVS.editTxt){OVS.alt=0;ovSend(it,'edit',{now:now.slice(0,1000),rs:'inplace'})}}
   /* ---- החלונית ---- */
   function ovWords(s){return ovPlain(s).replace(/\s+/g,' ').trim().split(' ').filter(Boolean)}
   /* הבדל במילים: מה שנמחק בקו חוצה, מה שנוסף מודגש (כמו בסכם) */
@@ -109,9 +140,10 @@
     let nx;
     if(dir>0)nx=list.find(after)||list[0];
     else{const bef=list.filter(x=>!after(x));nx=bef.length?bef[bef.length-1]:list[list.length-1]}
-    ovClose();nx._p.scrollIntoView({block:'center'});setTimeout(()=>ovOpen(nx),200)}
+    ovGo(nx)}
   function ovOpen(it){
-    ovClose();OVS.cur=it;OVS.alt=0;window.ovSkipFn=null;
+    if(OVS.editing){if(OVS.editing===it)return;ovEditDone()}
+    ovClose();OVS.cur=it;OVS.last=it;OVS.alt=0;window.ovSkipFn=null;
     const d=document.createElement('div');d.id='ovpop';d.className='ovpop';d.setAttribute('role','dialog');d.setAttribute('dir','rtl');d.tabIndex=-1;d.style.outline='none';
     document.body.appendChild(d);OVS.pop=d;ovDraw();
     const r=it._p.getBoundingClientRect();
@@ -126,10 +158,10 @@
     d.innerHTML='<div class="ovhd">'+(it.head?'כותרת בשתי שורות · ':'')+'חסרות '+it.miss+' אותיות'+(it.long?' · פסקה ארוכה':'')+'<span class="ovdaf">'+ge(it.daf||'')+'</span></div>'+
       '<div class="ovbody">'+ovSugHtml(it,s)+'</div>'+
       '<div class="ovbtns">'+
-      (s?'<button data-a="ok" class="ovp">קבל</button>':'')+'<button data-a="edit">ערוך</button>'+
+      (s?'<button data-a="ok" class="ovp">קבל</button>':'')+'<button data-a="edit" title="עריכה בדף עצמו; F4 ממשיך לשורה הבאה">ערוך בדף</button><button data-a="editbox" title="עריכה בתיבה (שורה חדשה = חיתוך)">ערוך בתיבה</button>'+
       (more?'<button data-a="alt">הצעה אחרת</button>':'')+'<button data-a="leave">השאר</button><button data-a="prev" title="השורה הקודמת (Shift+Tab)">‹ הקודם</button><button data-a="skip" class="ovskip" title="דלג על השורה הזו בלי להכריע - לשורה הבאה (Tab)">הבא ›</button><button data-a="x">בטל</button>'+
       (type&&nType>1?'<button data-a="all" class="ovall">קבל את כל ההצעות מהסוג הזה במסכת ('+nType+')</button>':'')+'</div>'+
-      '<div class="ovkeys">Enter קבל · Tab הבא · Shift+Tab הקודם · Esc בטל</div>';
+      '<div class="ovkeys">Enter קבל (וממשיך לבאה) · Tab הבא · Shift+Tab הקודם · E ערוך בדף · L השאר · Esc סגור · F4 חוזר לרצף</div>';
     d.querySelectorAll('button').forEach(b=>{b.addEventListener('mousedown',e=>e.preventDefault());b.onclick=()=>ovAct(b.dataset.a)})}
   function ovClose(){if(OVS.pop){OVS.pop.remove();OVS.pop=null}OVS.cur=null}
   function ovSend(it,d,extra){
@@ -144,10 +176,11 @@
     if(a==='skip'){ovSkip(1);return}
     if(a==='prev'){ovSkip(-1);return}
     if(a==='alt'){ovSend(it,'todo',{rs:'other'});OVS.alt=(OVS.alt+1)%it.sug.length;ovDraw();return}
-    if(a==='leave'){ovSend(it,'no');ovClose();ovAfter();flash('הושאר כמות שהוא');return}
-    if(a==='edit'){ovEditBox(it);return}
+    if(a==='leave'){ovSend(it,'no');ovMark();ovGo(ovFollow(it));return}
+    if(a==='edit'){ovEditInPlace(it);return}
+    if(a==='editbox'){ovEditBox(it);return}
     if(a==='ok'){const s=it.sug[OVS.alt];if(!s)return;
-      try{const n=ovApply(it,s);ovSend(it,'ok',{now:ovNow(s)});ovClose();ovAfter();flash('הוחל: '+n+' שינויים, ויפורסמו עם שאר העריכות (Ctrl+ז מבטל)')}
+      try{const n=ovApply(it,s);ovSend(it,'ok',{now:ovNow(s)});ovMark();ovGo(ovFollow(it));flash('הוחל ('+n+') · Ctrl+ז מבטל')}
       catch(e){flash('לא הוחל: '+(e.message||e))}return}
     if(a==='all'){const s=it.sug[OVS.alt],type=s.type;
       const list=OVS.items.filter(x=>!ovDone(x)&&x._p&&x._p.isConnected&&x.sug.some(z=>z.type===type));
@@ -168,7 +201,7 @@
       if(!lines.length){flash('אין טקסט');return}
       if(it.head&&lines.length>1){flash('כותרת נשארת בשורה אחת. קצר את הנוסח');return}
       const z=lines.length>1?{tool:s?s.tool:0,kind:'split',parts:lines.map(ge),side:''}:{tool:s?s.tool:0,kind:'replace',html:ovKeepTags(it.html,lines[0])};
-      try{const n=ovApply(it,z);ovSend(it,'edit',{now:ovNow(z)});ovClose();ovAfter();flash('הוחל: '+n+' שינויים (Ctrl+ז מבטל)')}
+      try{const n=ovApply(it,z);ovSend(it,'edit',{now:ovNow(z)});ovMark();ovGo(ovFollow(it));flash('הוחל ('+n+') · Ctrl+ז מבטל')}
       catch(e){flash('לא הוחל: '+(e.message||e))}};
     ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();go()}else if(e.key==='Escape'){e.preventDefault();ovClose()}});
     d.querySelectorAll('.ovbtns button').forEach(b=>{b.addEventListener('mousedown',e=>e.preventDefault());b.onclick=()=>b.dataset.a==='okedit'?go():ovClose()})}
@@ -245,7 +278,12 @@
     if(!OVS.pop||e.target.closest&&e.target.closest('.ovta'))return;
     if(e.key==='Escape'){e.preventDefault();e.stopPropagation();ovClose()}
     else if(e.key==='Tab'){e.preventDefault();e.stopPropagation();ovSkip(e.shiftKey?-1:1)}
+    else if((e.key==='e'||e.key==='ק')&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&!(e.target.isContentEditable)){e.preventDefault();e.stopPropagation();ovAct('edit')}
+    else if((e.key==='l'||e.key==='ך')&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&!(e.target.isContentEditable)){e.preventDefault();e.stopPropagation();ovAct('leave')}
     else if(e.key==='Enter'&&!e.ctrlKey&&!e.shiftKey){const it=OVS.cur;if(it&&it.sug[OVS.alt]){e.preventDefault();e.stopPropagation();ovAct('ok')}}},true);
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='F4'||OVS.pop||!ovOK()||!OVS.items.length||document.body.classList.contains('pmopen'))return;
+    e.preventDefault();e.stopPropagation();ovNext()},true);
   (function(){const s=document.createElement('style');s.textContent=
     '::highlight(ovline){text-decoration:underline wavy #c62828;text-decoration-thickness:1px;text-underline-offset:3px}'+
     '::highlight(ovword){color:#c62828}'+

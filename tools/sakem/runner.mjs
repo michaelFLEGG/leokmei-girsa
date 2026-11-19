@@ -238,7 +238,12 @@ function logRun(jid, pk, o, how, extra) {
   fs.appendFileSync(RUNS, JSON.stringify(rec) + '\n');
   rs.logged = 1; saveRun(jid, rs);
   /* ההרצה הסתיימה (פרק אחד, או חצי) - next הבא באותה הרצה אומר "התור ריק" */
-  const m = runMark(); if (m) { m.stopped = Date.now(); wr(MARK, m); }
+  const m = runMark();
+  /* פרומפט 70 (--lean): סבבי "נוסח חי" של אותו פרק מאוגדים להרצה אחת - finish של אחד אינו סוגר את ההרצה כשיש עוד
+     עבודת נוסח חי ממתינה באותה מסכת ובאותו פרק. הכללים כבר נקראו; next הבא לוקח אותה (נעילה משלה, שורה משלה ביומן) */
+  const chainable = LEAN && how === 'finish' && rec.round === 'נוסח חי' && ls(Q).some((f) => { const j = f.slice(0, -5); if (j === jid) return false;
+    try { const k = rd(path.join(Q, f)), oo = outOf(j); return k.slug === pk.slug && +((k.job && k.job.perek) || k.perek || 0) === rec.perek && /נוסח החי/.test(k.title || '') && (!oo || oo.status !== 'ready') && !lockBusy(j, m && m.tok); } catch (e) { return false; } });
+  if (m) { if (chainable) { m.chain = { slug: pk.slug, perek: rec.perek, from: jid }; console.log('######## יש עוד סבב נוסח חי ממתין באותו פרק: הרץ שוב next ' + (LEAN ? '--lean ' : '') + '(בלי rules - הכללים כבר נקראו), ועבוד עליו באותה הרצה.'); } else m.stopped = Date.now(); wr(MARK, m); }
   return rec;
 }
 
@@ -343,7 +348,11 @@ if (cmd === 'status') {
   const p69Mine = (j) => { try { const s = pkOf(j).slug; return !!s && fs.existsSync(path.join(ROOT, '.locks', 'p69-' + s + '.lock')); } catch (e) { return false; } };
   const cands = (A[0] ? ls(Q) : qFiles()).map((f) => f.slice(0, -5)).filter((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j) && !p69Mine(j))); });
   /* ההרצה כבר עובדת על עבודה - ממשיכים בה (גם אם לפניה בתור התפנתה עבודה אחרת) */
-  if (m0 && !A[0]) { if (!cands.includes(m0.jid)) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא.', 3); cands.splice(0, cands.length, m0.jid); }
+  /* פרומפט 70: שרשרת נוסח חי - העבודה הקודמת הסתיימה, וההרצה לוקחת עבודת נוסח חי נוספת באותו פרק */
+  if (m0 && m0.chain && !A[0]) { const ch = m0.chain; const nx = cands.filter((j) => { try { const k = pkOf(j); return j !== m0.jid && k.slug === ch.slug && +((k.job && k.job.perek) || k.perek || 0) === ch.perek && /נוסח החי/.test(k.title || ''); } catch (e) { return false; } });
+    if (!nx.length) { m0.stopped = Date.now(); wr(MARK, m0); die('התור ריק להרצה הזאת: אין עוד סבב נוסח חי באותו פרק. צא.', 3); }
+    m0.jid = nx[0]; delete m0.chain; wr(MARK, m0); cands.splice(0, cands.length, ...nx); }
+  else if (m0 && !A[0]) { if (!cands.includes(m0.jid)) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא.', 3); cands.splice(0, cands.length, m0.jid); }
   if (m0 && A[0] && m0.jid !== A[0]) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא; ההמשך בהרצה הבאה, בשיחה חדשה.', 3);
   /* פרומפט 69: נעילה לכל עבודה (.locks/sakem-<jid>.lock) */
   /* פרומפט 71: עובד בלי הריפו הפרטי (ובלי מפתח) נעל עבודה, נעצר בבדיקת החומר והשאיר את הנעילה - חמש פעמים ב-19.11
@@ -364,6 +373,7 @@ if (cmd === 'status') {
   if (skipped.length) console.log('נעולות בידי עובד אחר (דולגו): ' + skipped.join(' '));
   if (!jid) die(cands.length ? 'התור ריק לעובד הזה: כל העבודות שנותרו נעולות בידי עובד אחר.' : 'התור ריק.', 3);
   if (!m0) { wr(MARK, { jid, t: Date.now(), tok }); try { fs.unlinkSync(runF(jid)); } catch (e) {} }
+  else if (m0.jid !== jid) { m0.jid = jid; wr(MARK, m0); try { fs.unlinkSync(runF(jid)); } catch (e) {} }
   if (!NOLOCK) console.log('נעילה: .locks/sakem-' + jid + '.lock (' + STATION + ') - finish/pause --push משחררים אותה.');
   const pk = pkOf(jid), o = outOf(jid);
   const dir = path.join(WORK, jid);

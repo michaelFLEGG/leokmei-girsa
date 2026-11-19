@@ -296,6 +296,12 @@ function lockFree(jid) {
   return [lockF(jid)];
 }
 
+/* פרומפט 71: עצירה אחרי שנלקחה נעילה - משחררים אותה ודוחפים, כדי שהעבודה לא תיחסם עד שהנעילה תמות */
+function dieFree(jid, m, c = 1) {
+  const f = NOLOCK ? [] : lockFree(jid);
+  if (f.length) { console.log('הנעילה של ' + jid + ' שוחררה (העבודה לא התחילה).'); push('סכם: שחרור נעילה ' + jid + ' - העובד נעצר לפני הכתיבה (' + STATION + ')', f); }
+  die(m, c);
+}
 if (cmd === 'status') {
   const js = ls(Q);
   if (!js.length) die('התור ריק.', 0);
@@ -322,6 +328,9 @@ if (cmd === 'status') {
   if (m0 && !A[0]) { if (!cands.includes(m0.jid)) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא.', 3); cands.splice(0, cands.length, m0.jid); }
   if (m0 && A[0] && m0.jid !== A[0]) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא; ההמשך בהרצה הבאה, בשיחה חדשה.', 3);
   /* פרומפט 69: נעילה לכל עבודה (.locks/sakem-<jid>.lock) */
+  /* פרומפט 71: עובד בלי הריפו הפרטי (ובלי מפתח) נעל עבודה, נעצר בבדיקת החומר והשאיר את הנעילה - חמש פעמים ב-19.11
+     ("עובד סכם", 11:51-15:25, אף קטע). לכן בודקים זאת לפני הנעילה, ועצירה אחרי נעילה משחררת אותה */
+  if (!CHAV && !adminKey() && !process.argv.includes('--allow-missing')) die('אין גישה לריפו הפרטי (leokmei-chavruta לא שוכפל ליד הריפו הזה) ואין מפתח מנהל - לא נלקחה שום עבודה ולא נעלתי דבר.\nשכפל: git clone --filter=blob:none --no-checkout <כתובת leokmei-chavruta> ../leokmei-chavruta (בלי --depth ובלי --single-branch), והרץ שוב.', 4);
   let jid = null, skipped = [];
   for (const j of cands) {
     if (NOLOCK || lockMine(j, tok)) { jid = j; break; }
@@ -371,7 +380,7 @@ if (cmd === 'status') {
       /* 15.11.2026: כשהריפו הפרטי נגיש ורק דפים בודדים חסרים בו - לומר זאת במפורש, כדי שהעובד לא יחשוב שאין גישה */
       const allP = (pk.pages || []).length;
       if (CHAV && !prv.warn && noPer.length < allP && noHv.length < allP) msg += '\nהריפו הפרטי נגיש (' + CHAV + ') ושני הענפים נמשכו. הדפים שלמעלה פשוט אינם קיימים בו - זה המקרה של --allow-missing.';
-      if (!process.argv.includes('--allow-missing')) die(msg + '\nאין לכתוב בלי פירוש וחברותא. שכפל את leokmei-chavruta ליד הריפו הזה (git clone --filter=blob:none --no-checkout, בלי --depth ובלי --single-branch) והרץ שוב. רק כשהדף באמת אינו קיים במאגר הפרטי - הוסף --allow-missing וכתוב זאת בסיכום.', 4);
+      if (!process.argv.includes('--allow-missing')) dieFree(jid, msg + '\nאין לכתוב בלי פירוש וחברותא. שכפל את leokmei-chavruta ליד הריפו הזה (git clone --filter=blob:none --no-checkout, בלי --depth ובלי --single-branch) והרץ שוב. רק כשהדף באמת אינו קיים במאגר הפרטי - הוסף --allow-missing וכתוב זאת בסיכום.', 4);
       console.log('אזהרה חמורה: ' + msg + ' (--allow-missing) - לכתוב זאת בסיכום ההרצה.');
     } }
   let g = '# ' + (pk.title || jid) + ' - לשון הגמרא ופירוש הגמרא\n\n' + (prv.warn ? '(' + prv.warn + ')\n\n' : '');

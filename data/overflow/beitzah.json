@@ -1,6 +1,6 @@
 {
  "slug": "beitzah",
- "made": "2026-11-19 00:38",
+ "made": "2026-11-19 00:53",
  "profile": "a4-large",
  "pages": {
   "a4": 23,
@@ -13,7 +13,7 @@
  "count": 17,
  "firstTool": {
   "5": 8,
-  "3": 1
+  "3": 2
  },
  "joinCands": 13,
  "mechSplitCands": 0,
@@ -573,9 +573,25 @@
    "miss": 7,
    "long": true,
    "tail": false,
-   "sug": [],
-   "tool6": true,
-   "leave": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "כיוון דטלטול צורך הוצאה הוא.",
+     "replace": "דטלטול צורך הוצאה.",
+     "why": "\"כיוון\" ו\"הוא\" מיותרים, הד' מנמקת",
+     "kind": "replace",
+     "html": "<i class=\"am\">ר&quot;פ:</i> <i class=\"am\">הא ב&quot;ש </i>דאין מוציאין קטן, לולב, וס&quot;ת <i class=\"am\">לרה&quot;ר</i>, <i class=\"am\">והא כב&quot;ה </i>דמתירין ואין לחלק בין טלטול להוצאה, דטלטול צורך הוצאה.",
+     "ok": {
+      "large": [
+       2
+      ],
+      "a4": [
+       2
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "h1113",

@@ -428,6 +428,12 @@
    "nLong": 594,
    "nShort": 178,
    "kind": "num"
+  },
+  {
+   "long": "ר' אליעזר",
+   "short": "ר\"א",
+   "kind": "approved",
+   "nShort": 0
   }
  ]
 }

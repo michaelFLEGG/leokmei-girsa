@@ -111,17 +111,22 @@
   "arakhin-s762-mwmelzs3@1795023441991",
   "arakhin-s762-mwmemksk@1795023469205",
   "arakhin-s762-mwmeq97d@1795023640811",
-  "bekhorot-p8@1794986997022"
+  "bekhorot-p8@1794986997022",
+  "shabbat-s10510-mwmessou@1795023760206",
+  "shabbat-s10727-mwmesuvc@1795023763065",
+  "shabbat-s10957-mwmeswh8@1795023765048",
+  "shabbat-s11009-mwmesya4@1795023767456",
+  "shabbat-s1734-mwmfcrk9@1795024691056"
  ],
- "learnT": 1795081839980,
+ "learnT": 1795085513430,
  "post": {
-  "bava-batra": 1831,
-  "bekhorot": 7910,
+  "bava-batra": 2055,
+  "bekhorot": 8446,
   "berakhot": 15966,
-  "ketubot": 4839,
+  "ketubot": 4843,
   "kiddushin": 22,
   "shabbat": 15648,
-  "sukkah": 5682,
+  "sukkah": 6331,
   "bava-kamma": 18,
   "beitzah": 5,
   "chagigah": 6,
@@ -130,6 +135,7 @@
   "megillah": 3,
   "temurah": 4,
   "yoma": 21,
-  "arakhin": 38
+  "arakhin": 38,
+  "avodah-zarah": 1
  }
 }

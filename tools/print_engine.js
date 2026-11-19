@@ -603,7 +603,20 @@
         var mn=row.querySelector(':scope > .main');if(!mn)continue;
         var t=mn.querySelector(':scope > p:first-child')||mn;
         if(/\bb[1-4]\b/.test(t.className)||/\bb[1-4]\b/.test(mn.className))continue;
-        t.style.marginTop='calc('+prof.body.linePt+'pt * .5)';x.html=row.outerHTML;R.headSpace++}})();
+        t.style.marginTop='calc('+prof.body.linePt+'pt * .5)';x.html=row.outerHTML;R.headSpace++}
+      /* פרומפט 67 ב (19.11.2026): גם כותרת שהיא פסקה בתוך יחידה (p.nose / p.dh שאינה ראשונה ב-.main) מקבלת חצי שורה לפניה.
+         לא מכפילים: אם הפסקה שלפניה כותרת, או שכבר יש רווח (b1-b4). בראש טור הרווח נחתך כרגיל */
+      R.innerHeadSpace=0;
+      for(var r2=0;r2<recs.length;r2++){var y=recs[r2];if(y.html.indexOf('nose')<0&&y.html.indexOf('dh')<0)continue;
+        tp.innerHTML=y.html;var row2=tp.content.firstElementChild;if(!row2)continue;
+        var mn2=row2.querySelector(':scope > .main');if(!mn2)continue;var ch=0;
+        Array.prototype.forEach.call(mn2.querySelectorAll(':scope > p.nose, :scope > p.dh'),function(q){
+          var prv=q.previousElementSibling;if(!prv)return;
+          if(/\b(nose|dh|hatz)\b/.test(prv.className))return;
+          if(/\bb[1-4]\b/.test(q.className))return;
+          if(q.style.marginTop)return;
+          q.style.marginTop='calc('+prof.body.linePt+'pt * .5)';ch++});
+        if(ch){y.html=row2.outerHTML;R.innerHeadSpace+=ch}}})();
     TM('units');
     /* פתיחת הטווח באמצע פרק: שורה קטנה "המשך פרק", כדי שהדף לא ייפתח יתום */
     /* 13.11.2026: הדפסת פרק שלם נפתחת תמיד בראש הפרק - לעולם לא "המשך פרק" */
@@ -930,12 +943,12 @@
       while((m=NAMES.exec(t))){o+=paren(t.slice(last,m.index))+'<span class="fnm">'+ge(m[1])+'</span>';last=m.index+m[0].length}
       return o+paren(t.slice(last))}
     /* פרומפט 16 (29.10.2026): הערה ארוכה מתפצלת כמו בגמרות וילנא. pt.t = רק t המילים הראשונות (בטור של השורה המפנה);
-       pt.f = מן המילה f ועד הסוף (בראש אזור ההערות של הטור הבא, עם "המשך" קטן). המספר אינו משתנה */
+       pt.f = מן המילה f ועד הסוף (בראש אזור ההערות של הטור הבא; פרומפט 67: בלי מספר ובלי "המשך", כמו בוילנא). המספר אינו משתנה */
     function noteHTML(n,pt){
       var it=byN[n];var t=PUBN[n]||it.sum||'';
       var num=prof.notes.numbering==='digits'?String(it.dn||it.n):tosHeb(it);
       if(pt&&pt.f!==undefined)
-        return '<div class="fnn fcont" id="fn-'+it.n+'-c"><a class="fnl" href="#tm-'+it.n+'"><span class="fnum">'+ge(num)+'</span></a> <span class="fcn">המשך</span> '+noteText(noteWords(n).w.slice(pt.f).join(' '))+'</div>';
+        return '<div class="fnn fcont" id="fn-'+it.n+'-c"><a class="fnl" href="#tm-'+it.n+'" aria-label="המשך"></a>'+noteText(noteWords(n).w.slice(pt.f).join(' '))+'</div>';
       if(pt&&pt.t!==undefined)t=noteWords(n).w.slice(0,pt.t).join(' ');
       return '<div class="fnn" id="fn-'+it.n+'"><a class="fnl" href="#tm-'+it.n+'"><span class="fnum">'+ge(num)+'</span></a> <span class="fdh">'+noteText(it.dhs||it.dh)+'</span> - '+noteText(t)+'</div>'}
     /* מילות ההערה, ובאילו מהן מותר לפצל (רק מחוץ לסוגריים) */

@@ -30,6 +30,14 @@ EDITS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file_
                          'data', 'edits')
 
 
+
+# פרומפט 67 א (19.11.2026): קולופון של ספריא אינו דיבור תוס' ואינו נכנס כפריט: "הדרן עלך...", "סליקו תוספות...",
+# "סליק/סליקא מסכת...", "תם ונשלם". "סליקו נפשייכו" (גיטין) הוא דיבור אמיתי ואינו נוגע כאן.
+import re as _re_col
+_TOS_COLOPHON=_re_col.compile(r'^\s*(הדרן\b|הדרן|סליקו\s+תוספ|סליקא?\s+מסכת|סליק\s+מסכת|תם\s+ונשלם)')
+def is_tos_colophon(dh):
+  return bool(_TOS_COLOPHON.match(str(dh or '').strip()))
+
 def _slots(pages):
     """כל המקומות הניתנים לעריכה, באותו סדר ובאותם מפתחות שבדפדפן."""
     out = []
@@ -7586,7 +7594,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   for _lf in sorted(_glob.glob(os.path.join(_root,'tosafot',slug,'live-*.json'))):
     _ld=json.load(io.open(_lf,encoding='utf-8'))
     # "הדרן עלך" אינו דיבור של פירוש - לא מוצג כהערת תוס' (5.11.2026)
-    tos_items+=[_x for _x in _ld.get('items',[]) if not str(_x.get('dh','')).strip().startswith('הדרן')]
+    tos_items+=[_x for _x in _ld.get('items',[]) if not is_tos_colophon(_x.get('dh',''))]
   # פנים התוספות וקישור ספריא מחוץ לדף (13.10.2026): כשמסכת שלמה נכנסת, הם היו מוסיפים מאות קילובייט לזנב הדף.
   # הם נשמרים ב-tos-face-<מסכת>.json ונטענים בעצלתיים בלחיצה על "פנים". לא נכנס לשום קובץ אחר.
   tos_face={}

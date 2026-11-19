@@ -557,7 +557,7 @@
        כך נדרסו ב-16.11 שתי הכרעות של מיכאל (ד:, ח.). עריכה טרייה של מיכאל עצמו - עוברת תמיד. */
     /* 17.11.2026 (מיכאל: "ברגע שראיתי ואישרתי - אתה צריך לאפשר לי להחיל"): לחיצה שנייה על "קבל" על אותה הצעה, תוך דקה
        מן ההתראה, מחילה בכל זאת. ההגנה נשארת מפני קבלה בלי לראות (קבלת הכל, לחיצה אחת), לא מפני החלטה שלו */
-    const force=(p.__forceAt&&Date.now()-p.__forceAt<60000)||window.__SKMFORCE===1;if(force)delete p.__forceAt;
+    const _FA=window.__SKMFORCEAT||(window.__SKMFORCEAT={});const _fk=String(p.id||p.iid||'');const force=(_FA[_fk]&&Date.now()-_FA[_fk]<60000)||window.__SKMFORCE===1;if(force)delete _FA[_fk];/* פרומפט 67 ח: הדגל נשמר לפי מזהה, כי p נבנה מחדש בכל לחיצה */
     if(!force&&p.stale&&window.__OVLOCK&&window.__OVLOCK.size){
       const KN=s=>String(s||'').replace(/<sup[^>]*>.*?<\/sup>/g,'').replace(/\[[^\]]*\]/g,'').replace(/<[^>]+>/g,'').replace(/&[a-z#0-9]+;/gi,'')
         .replace(/\u2060\d+/g,'').replace(/[^א-ת]/g,'');
@@ -569,7 +569,7 @@
         S.add(KN(b));if(side)S.add(KN(side+' '+b));side=''});return S};
       const nb=RB(newText),ob=RB(p.stale),hit=[];
       os.forEach(o=>(o.u.l||[]).forEach(x=>{const k=KN(x&&x[1]);if(k&&window.__OVLOCK.has(k)&&!nb.has(k)&&!ob.has(k))hit.push(plain(x[1]).split(' ').slice(0,4).join(' '))}));
-      if(hit.length){p.__forceAt=Date.now();throw new Error('ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה ('+hit.join(' | ')+'). ראית ואתה מאשר? לחץ שוב "קבל" - והיא תוחל')}}
+      if(hit.length){(window.__SKMFORCEAT||(window.__SKMFORCEAT={}))[String(p.id||p.iid||'')]=Date.now();throw new Error('ההצעה נכתבה על נוסח ישן, ושורה שננעלה בהדפסה (שורה אחת) תשתנה ('+hit.join(' | ')+'). ראית ואתה מאשר? לחץ שוב "קבל" - והיא תוחל')}}
     /* פרומפט 43 (15.11.2026): גבולות הקטע בדף - היחידה שלפניו והיחידה שאחריו - לבדיקה שאחרי ההחלה */
     const FU0=flatU(),i0=FU0.findIndex(o=>o.u===os[0].u),i1=FU0.findIndex(o=>o.u===os[os.length-1].u);
     /* היחידות הסמוכות נכללות בהשוואה: כותרת צד שנמחקה מצרפת את שורתה ליחידה שלפניה (כמו בעורך) */

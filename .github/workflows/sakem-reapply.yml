@@ -29,7 +29,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
-      - run: pip install playwright && python -m playwright install --with-deps chromium
+      - name: דפדפן
+        run: |
+          pip install playwright
+          # התקנת התלויות מן המאגר של אובונטו נפלה פעמיים (19.11.2026): גיבוי - הכרום שכבר מותקן במכונה
+          python -m playwright install --with-deps chromium || python -m playwright install chromium || true
+          if ! python -c "from playwright.sync_api import sync_playwright as s; p=s().start(); p.chromium.launch().close()"; then echo "PRINT_CHROMIUM=$(which google-chrome || which chromium)" >> $GITHUB_ENV; fi
       - name: החלה
         env:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}

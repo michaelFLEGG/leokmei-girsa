@@ -80,12 +80,16 @@ function build(files) {
     const src = (x.src || []).map((o) => put(o, x.code ? { to: 'code', topic: topicKey(x.topic) } : { to: tk === 'core' ? 'core' : 'topic:' + tk })).filter(Boolean);
     rules.push({ text: String(x.text || '').trim(), src, topic: x.topic || 'ליבה', key: tk, code: !!x.code, pairs: x.pairs || undefined });
   });
-  const missing = U.filter((u) => !map[u.id]);
+  /* חסר = לקח שהיה לפני הזיקוק ולא מופה (עצירה). לקח שנוסף אחרי צילום הזיקוק - "חדש", מודפס כלשונו עד הדחיסה הבאה */
+  const base = snap || U, inSnap = new Set(base.map((u) => u.id));
+  const missing = base.filter((u) => !map[u.id]);
+  const fresh = U.filter((u) => !inSnap.has(u.id) && !map[u.id]);
+  if (fresh.length) console.log('לקחים שנוספו אחרי צילום הזיקוק (' + fresh.length + ') - יודפסו כלשונם ב-rules --lean עד הדחיסה הבאה.');
   fs.mkdirSync(path.join(LD, 'archive'), { recursive: true });
   const stamp = new Date().toISOString().slice(0, 10);
   fs.copyFileSync(LESS, path.join(LD, 'archive', 'sakem-lessons-' + stamp + '.md'));
   fs.copyFileSync(LRULES, path.join(LD, 'archive', 'learn-rules-' + stamp + '.json'));
-  fs.writeFileSync(path.join(LD, 'units-snapshot.json'), JSON.stringify(U.map((u) => ({ id: u.id, line: u.line, ri: u.ri, sec: u.sec, text: u.text })), null, 0));
+  if (!snap) fs.writeFileSync(path.join(LD, 'units-snapshot.json'), JSON.stringify(U.map((u) => ({ id: u.id, line: u.line, ri: u.ri, sec: u.sec, text: u.text })), null, 0));
   fs.writeFileSync(path.join(LD, 'distilled.json'), JSON.stringify(rules, null, 1));
   fs.writeFileSync(path.join(LD, 'map.json'), JSON.stringify({ v: 1, built: new Date().toISOString(), units: U.length, map }, null, 0));
   /* הקבצים לקריאה */
@@ -108,7 +112,7 @@ function build(files) {
   if (unknown.length) console.log('מזהים שאינם קיימים במקור (התעלמתי): ' + unknown.join(' '));
   if (dup.length) console.log('מזהים שמופו פעמיים (נשאר האחרון): ' + dup.join(' '));
   if (missing.length) { console.log('עצירה: ' + missing.length + ' לקחים לא מופו: ' + missing.map((u) => (u.line ? 'L' + u.line : 'R' + u.ri) + ' ' + u.text.slice(0, 60).replace(/\n/g, ' ')).join(' | ')); process.exit(2); }
-  console.log('אפס אובדן: כל ' + U.length + ' הלקחים ממופים.');
+  console.log('אפס אובדן: כל ' + base.length + ' הלקחים שזוקקו ממופים.');
 }
 
 /* פלט rules --lean: ליבה + קבצי הנושא שהעבודה צריכה + לקחים חדשים שטרם זוקקו (כלשונם) */

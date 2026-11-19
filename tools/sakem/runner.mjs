@@ -607,6 +607,11 @@ if (cmd === 'status') {
     const LEN = /קצר מהמקור|ארוך מהמקור/;
     ck.warns = (ck.warns || []).concat(ck.errs.filter((e) => LEN.test(e)));
     ck.errs = ck.errs.filter((e) => !LEN.test(e));
+    /* פרומפט 70 (--lean): החלפות המילה שמיכאל עושה (rules.json, זוקקו לרשימה אחת) - אזהרה כשהניסוח החדש מוסיף את הצורה שהוא מחליף.
+       אזהרה בלבד: חלק מן הזוגות תלויי הקשר, ונוסח המקור שלא נגעו בו אינו משתנה */
+    if (LEAN) { try { const DL = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'sakem-lean', 'distilled.json'), 'utf8'));
+      const cnt = (t, w) => (SKC.plainI(t).match(new RegExp('(^|[\\s,.:("\'\\-])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=$|[\\s,.:)!?"\'\\-])', 'g')) || []).length;
+      DL.filter((x) => x.pairs).forEach((x) => x.pairs.forEach(([a, b]) => { if (a && a.length > 1 && cnt(tT, a) > cnt(rT, a)) ck.warns.push('החלפת מילה: "' + a + '" נוסף בניסוח החדש - מיכאל מחליף אותו ב"' + b + '"'); })); } catch (e) {} }
     if (ck.errs.length) die('השומר דחה: ' + ck.errs.join(' · ') + '\nתקן והרץ שוב.');
     /* פרומפט 26 (8.11.2026): הידוק יתר - קורא נפרד. שורה שקוצצה ביותר מחצי (או קטע שירד מתחת ל-65%) נשלחת
        לקורא שאינו רואה את המקור ולא את הגמרא (סוכן-משנה נפרד בהקשר נקי), והוא כותב במשפט מה השורה אומרת.

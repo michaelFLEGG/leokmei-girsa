@@ -282,7 +282,9 @@ if (cmd === 'status') {
   if (m0 && m0.stopped) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + ' (הסתיים או נעצר בסוף חצי). פרק אחד בכל הרצה - צא; ההמשך בהרצה הבאה, בשיחה חדשה.', 3);
   const tok = (m0 && m0.tok) || (Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
   if (!NOLOCK) gitPull(); /* פרומפט 69: הנעילות והתור כפי שהם עכשיו ב-main */
-  const cands = ls(Q).map((f) => f.slice(0, -5)).filter((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j))); });
+  /* פרומפט 69 (19.11.2026): מסכת שלמה בשיחה ייעודית (.locks/p69-<slug>.lock) - next בלי מזהה מדלג על כל עבודותיה */
+  const p69Mine = (j) => { try { const s = pkOf(j).slug; return !!s && fs.existsSync(path.join(ROOT, '.locks', 'p69-' + s + '.lock')); } catch (e) { return false; } };
+  const cands = ls(Q).map((f) => f.slice(0, -5)).filter((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j) && !p69Mine(j))); });
   /* ההרצה כבר עובדת על עבודה - ממשיכים בה (גם אם לפניה בתור התפנתה עבודה אחרת) */
   if (m0 && !A[0]) { if (!cands.includes(m0.jid)) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא.', 3); cands.splice(0, cands.length, m0.jid); }
   if (m0 && A[0] && m0.jid !== A[0]) die('התור ריק להרצה הזאת: כבר עובד בה ' + m0.jid + '. פרק אחד בכל הרצה - צא; ההמשך בהרצה הבאה, בשיחה חדשה.', 3);

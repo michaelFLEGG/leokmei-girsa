@@ -3,7 +3,7 @@
  "jid": "shabbat-s12113-mwnpf8ww",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s18)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 12113,
@@ -53,8 +53,70 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"אל מצוה עשית ודרש\", \"לא ממיתה משונה אלא\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 0,
+    "widow": 0
+   }
   }
  ],
- "t": 1795118007078
+ "t": 1795118108192,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 0 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 0,
+   "side": 6,
+   "nose": 0,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 1,
+  "block": 0,
+  "lenPct": 0,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 5
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

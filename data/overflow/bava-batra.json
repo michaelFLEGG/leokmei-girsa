@@ -1,16 +1,16 @@
 {
  "slug": "bava-batra",
- "made": "2026-11-19 23:20",
+ "made": "2026-11-19 23:38",
  "profile": "a4-large",
  "pages": {
-  "a4": 96,
+  "a4": 98,
   "a4-large": 106
  },
  "sq25": {
   "a4": 157,
-  "a4-large": 532
+  "a4-large": 533
  },
- "count": 182,
+ "count": 181,
  "firstTool": {
   "5": 46,
   "3": 33,
@@ -18,9 +18,7 @@
  },
  "joinCands": 91,
  "mechSplitCands": 0,
- "ctlMismatch": [
-  "u1410.1"
- ],
+ "ctlMismatch": [],
  "rejected": 45,
  "stale": [
   "u7177.3"
@@ -1235,36 +1233,6 @@
     }
    ],
    "tool6": false
-  },
-  {
-   "key": "u1410.1",
-   "id": "60bb0f0d613de598",
-   "u": 1410,
-   "li": 1,
-   "daf": "יט:",
-   "cls": "b0 a0",
-   "mc": "main",
-   "html": "<i class=\"am\">א.</i> פיה לבפנים <i class=\"hs\">[שאם היא לבחוץ תיחוץ דכלי חרש אינו מטמא מגבו]</i>",
-   "ph": "<i class=\"am\">א.</i> פיה לבפנים <i class=\"hs\">[שאם היא לבחוץ תיחוץ דכלי חרש אינו מטמא מגבו]</i>",
-   "text": "א. פיה לבפנים [שאם היא לבחוץ תיחוץ דכלי חרש אינו מטמא מגבו]",
-   "over": "מגבו 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60]",
-   "nA4": 2,
-   "nLarge": 2,
-   "missPx": 135.2,
-   "miss": 33,
-   "long": true,
-   "tail": true,
-   "sug": [],
-   "ctlMismatch": {
-    "a4-large": [
-     1
-    ],
-    "a4": [
-     1
-    ]
-   },
-   "tool6": true,
-   "leave": true
   },
   {
    "key": "u1413.1",

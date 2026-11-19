@@ -79,8 +79,12 @@ with sync_playwright() as p:
     res = pg.evaluate("([l,d])=>skpAuto.reapply(l,d)", [cand, a.dry])
     if not a.dry:
         pg.wait_for_timeout(3000)
-        pg.evaluate("async()=>{if(typeof pubPending==='function'&&pubPending())await pubNow(1)}")
-        pg.wait_for_timeout(3000)
+        # הפרסום שהקבלה המרוכזת מפעילה (pubNow) עשוי עוד לרוץ: מחכים עד שאין ממתינים (עד דקה וחצי)
+        for _ in range(30):
+            pg.evaluate("async()=>{if(typeof pubPending==='function'&&pubPending()&&!PUBBUSY)await pubNow(1)}")
+            pg.wait_for_timeout(3000)
+            if pg.evaluate("()=>typeof pubPending==='function'?pubPending():-1") == 0:
+                break
         rep['pending_after'] = pg.evaluate("()=>typeof pubPending==='function'?pubPending():-1")
     by = {(x['jid'], x['iid']): x for x in cand}
     for r in res:

@@ -3,7 +3,7 @@
  "jid": "shabbat-s4937-mwmd47e5",
  "slug": "shabbat",
  "title": "שבת פרק תשיעי - אמר רבי עקיבא · סבב על הנוסח החי (s14, s15)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 4937,
@@ -62,7 +62,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -105,7 +113,15 @@
    "read": [],
    "keep": [
     "לרב ששת בא - צלע במחלוקת בשורה אחת (כלל 22), שתי הדעות קצרות"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -155,8 +171,70 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795079977595
+ "t": 1795079987471,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 3 מקפי תירוץ, 14 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 3,
+  "side": 14,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 3,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 1,
+   "side": 5,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 3,
+  "side": 14,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 3,
+  "warnLeft": 2,
+  "block": 0,
+  "lenPct": 10.9,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 6
+  }
+ },
+ "counts": {
+  "shown": 3,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

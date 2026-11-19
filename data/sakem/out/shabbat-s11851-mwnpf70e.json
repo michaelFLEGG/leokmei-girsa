@@ -3,7 +3,7 @@
  "jid": "shabbat-s11851-mwnpf70e",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s4, s5)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 11851,
@@ -74,7 +74,15 @@
    "read": [],
    "keep": [
     "אד לחרש נותן - צלע במחלוקת בשורה אחת (כלל 22): שתי הלשונות קצרות ונכנסות יחד בשורה"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -97,6 +105,14 @@
     "nose": 0,
     "lenA": 302,
     "lenB": 302
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -123,8 +139,70 @@
     "nose": 0,
     "lenA": 320,
     "lenB": 320
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 2,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
    }
   }
  ],
- "t": 1795114457230
+ "t": 1795114463508,
+ "summary": "בפרק: 0 הדגשות במשנה, 3 רווחים, 2 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 3,
+  "dash": 2,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 3,
+  "perSeg": {
+   "bold": 0,
+   "space": 1,
+   "dash": 0.67,
+   "side": 3.67,
+   "nose": 0.33,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 3,
+  "dash": 2,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 0,
+  "block": 0,
+  "lenPct": 2,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 3
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 2,
+  "missing": 0
+ }
 }

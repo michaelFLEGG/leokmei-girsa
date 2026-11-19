@@ -3,7 +3,7 @@
  "jid": "shabbat-s4473-mwnf4gl5",
  "slug": "shabbat",
  "title": "שבת פרק שביעי - כלל גדול · סבב על הנוסח החי (s1)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 4473,
@@ -210,6 +210,14 @@
     "nose": 0,
     "lenA": 234,
     "lenB": 234
+   },
+   "abs": {
+    "bold": 9,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -251,7 +259,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -293,7 +309,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -321,6 +345,14 @@
     "nose": 0,
     "lenA": 320,
     "lenB": 320
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -347,6 +379,14 @@
     "nose": 0,
     "lenA": 411,
     "lenB": 411
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -390,7 +430,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"עד שישגוג בלאו שבה\", \"מיתה במקום כרת עומדת\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s7",
@@ -438,7 +486,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"משמר יום אחד ומונה\", \"יום אחד ומונה ששה\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s8",
@@ -465,6 +521,14 @@
     "nose": 0,
     "lenA": 354,
     "lenB": 354
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -493,6 +557,14 @@
     "nose": 0,
     "lenA": 648,
     "lenB": 648
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -539,7 +611,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"הרי העלם שבת בידו\", \"הרי העלם מלאכות בידו\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s11",
@@ -568,6 +648,14 @@
     "nose": 0,
     "lenA": 726,
     "lenB": 726
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -620,7 +708,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (81 תווים, עד 52): ופירש ר\"ל: 'ממין אחד חייב' - שאכלו בשני "
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 1,
+    "widow": 1
+   }
   },
   {
    "iid": "s13",
@@ -648,6 +744,14 @@
     "nose": 0,
     "lenA": 638,
     "lenB": 638
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -676,6 +780,14 @@
     "nose": 0,
     "lenA": 580,
     "lenB": 580
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -702,6 +814,14 @@
     "nose": 0,
     "lenA": 176,
     "lenB": 176
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -732,6 +852,14 @@
     "nose": 0,
     "lenA": 562,
     "lenB": 562
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -760,6 +888,14 @@
     "nose": 0,
     "lenA": 315,
     "lenB": 315
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -785,6 +921,14 @@
     "nose": 0,
     "lenA": 302,
     "lenB": 302
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -810,6 +954,14 @@
     "nose": 0,
     "lenA": 550,
     "lenB": 550
+   },
+   "abs": {
+    "bold": 7,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -851,7 +1003,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"חייב שתים משום קוצר\", \"שתים משום קוצר ומשום\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s21",
@@ -900,7 +1060,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"בבית משום בונה בשדה\", \"משום בונה בשדה משום\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 1,
+    "side": 10,
+    "nose": 3,
+    "widow": 0
+   }
   },
   {
    "iid": "s22",
@@ -945,7 +1113,15 @@
    "read": [],
    "keep": [
     "השליך לפני ר - \"לא ידע אם משום שסבר... או משום עין יפה\" הוא ספק בטעם המעשה, לא מקרה ודין"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s23",
@@ -998,7 +1174,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s24",
@@ -1025,6 +1209,14 @@
     "nose": 0,
     "lenA": 243,
     "lenB": 243
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1052,6 +1244,14 @@
     "nose": 0,
     "lenA": 301,
     "lenB": 301
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1078,6 +1278,14 @@
     "nose": 0,
     "lenA": 443,
     "lenB": 443
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1121,7 +1329,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s28",
@@ -1165,7 +1381,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"בשבת חייב משום ממחק\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s29",
@@ -1193,6 +1417,14 @@
     "nose": 0,
     "lenA": 451,
     "lenB": 451
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -1218,8 +1450,70 @@
     "nose": 0,
     "lenA": 458,
     "lenB": 458
+   },
+   "abs": {
+    "bold": 2,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795126049028
+ "t": 1795126054773,
+ "summary": "בפרק: 18 הדגשות במשנה, 6 רווחים, 17 מקפי תירוץ, 2 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 18,
+  "space": 6,
+  "dash": 17,
+  "side": 2,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 30,
+  "perSeg": {
+   "bold": 0.6,
+   "space": 0.2,
+   "dash": 0.57,
+   "side": 6,
+   "nose": 1.13,
+   "widow": 0.03
+  },
+  "bold": 18,
+  "space": 6,
+  "dash": 17,
+  "side": 2,
+  "nose": 1,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 14,
+  "block": 0,
+  "lenPct": -1.7,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 5,
+   "newTitles": 1,
+   "coins": 0,
+   "overLeft": 40
+  }
+ },
+ "counts": {
+  "shown": 12,
+  "spatial": 0,
+  "adds": 1,
+  "missing": 0
+ }
 }

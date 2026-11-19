@@ -1037,22 +1037,43 @@
     if(!pmProxy(fake)){fake.key=fake.code='Delete';pmProxy(fake)}}
   /* ---- ניווט בין השורות של העמוד (חיצים, PageUp/PageDown) ---- */
   function pmTargets(){var doc=pmDoc();if(!doc)return [];return [].filter.call(doc.querySelectorAll(LINESEL),function(t){var r=t.closest('.row');return r&&r.getAttribute('data-u')&&!t.closest('.hatz')&&!r.closest('.pmcpg')&&(parseFloat(r.style.top)||0)>=-0.5})}
+  /* פרומפט 72 (סעיף ד של 67): השורות של פסקה נמדדות מתוך Range על התוכן ומקובצות לפי גובה. p.getClientRects() על פסקה
+     שהיא block מחזיר מלבן אחד לכל הפסקה (לא שורות), ולכן חץ למטה מן השורה הראשונה דילג על השנייה וחץ למעלה נתקע.
+     רק שורות שנראות בתוך חלון החיתוך של הטור (.ptx) נספרות. */
+  function pmLines(el){var doc=el.ownerDocument,rg=doc.createRange();rg.selectNodeContents(el);
+    var cx=el.closest('.ptx'),cr=cx?cx.getBoundingClientRect():null,out=[];
+    [].forEach.call(rg.getClientRects(),function(r){if(r.width<1||r.height<1)return;
+      if(cr&&(r.bottom<cr.top+1||r.top>cr.bottom-1))return;
+      var mid=(r.top+r.bottom)/2,hit=null;
+      for(var i=0;i<out.length;i++)if(Math.abs(out[i].mid-mid)<Math.max(2,r.height/2)){hit=out[i];break}
+      if(hit){hit.left=Math.min(hit.left,r.left);hit.right=Math.max(hit.right,r.right);hit.top=Math.min(hit.top,r.top);hit.bottom=Math.max(hit.bottom,r.bottom)}
+      else out.push({mid:mid,top:r.top,bottom:r.bottom,left:r.left,right:r.right,height:r.bottom-r.top})});
+    out.sort(function(a,b){return a.mid-b.mid});return out}
   function pmCaretRect(doc){var s=doc.getSelection();if(!s||!s.rangeCount)return null;var r=s.getRangeAt(0).cloneRange();r.collapse(!(s.focusNode===r.endContainer&&s.focusOffset===r.endOffset));
-    var rs=r.getClientRects();if(rs.length)return rs[0];var b=r.getBoundingClientRect();return b.height?b:null}
+    var rs=r.getClientRects();if(rs.length)return rs[0];var b=r.getBoundingClientRect();if(b.height)return b;
+    /* הסמן בתחילת אלמנט (אין לו מלבן): מלבן התו שאחריו, ואם אין - התו שלפניו */
+    try{var n=r.startContainer,o=r.startOffset;
+      if(n.nodeType!==3){var w=doc.createTreeWalker(n.childNodes[o]||n,4);n=w.nextNode()||n;o=0}
+      if(n.nodeType===3&&n.length){var q=doc.createRange();if(o<n.length){q.setStart(n,o);q.setEnd(n,o+1)}else{q.setStart(n,o-1);q.setEnd(n,o)}
+        var qr=q.getClientRects();if(qr.length)return qr[0]}}catch(e){}
+    return null}
+  function pmIsRail(t){return !!(t&&t.closest&&t.closest('.rail'))}
   function pmNav(e){
     var E=S.editing,doc=pmDoc();if(!E||!doc)return false;
     var k=e.key;if(e.ctrlKey||e.altKey||e.metaKey||e.shiftKey)return false;
     if(!/^(ArrowUp|ArrowDown|ArrowLeft|ArrowRight|PageUp|PageDown)$/.test(k))return false;
     var p=E.p,L=null,i=-1;var TG=function(){if(!L){L=pmTargets();i=L.indexOf(p)}return L};
     var go=function(t,end,x){if(!t)return true;
-      var off=null;if(x!=null){var r=t.getClientRects(),rr=end?r[r.length-1]:r[0];if(rr){var cr=doc.caretRangeFromPoint&&doc.caretRangeFromPoint(Math.max(rr.left+1,Math.min(rr.right-1,x)),rr.top+rr.height/2);if(cr&&t.contains(cr.startContainer))off=pmOff(t,cr.startContainer,cr.startOffset)}}
+      var off=null;if(x!=null){var ls=pmLines(t),rr=end?ls[ls.length-1]:ls[0];if(rr){var cr=doc.caretRangeFromPoint&&doc.caretRangeFromPoint(Math.max(rr.left+1,Math.min(rr.right-1,x)),rr.mid);if(cr&&t.contains(cr.startContainer))off=pmOff(t,cr.startContainer,cr.startOffset)}}
       pmEdit(t,null,off==null?(end?1e9:0):off);if(S.editing)pmSetSel(S.editing.p,Math.min(off==null?(end?S.editing.p.textContent.length:0):off,S.editing.p.textContent.length));
       var pe=S.editing&&S.editing.p.getBoundingClientRect();if(pe&&(pe.bottom>(S.fr.clientHeight||600)-20||pe.top<20))pmScrollTo(S.editing.p,'center');return true};
+    /* למעלה/למטה: בעמודת הטקסט בלבד (בלי תוויות הצד), ושומרים את המיקום האופקי. מתווית - לתווית הבאה/הקודמת */
+    var step=function(dir){TG();var rail=pmIsRail(p);for(var j=i+dir;j>=0&&j<L.length;j+=dir)if(pmIsRail(L[j])===rail)return L[j];return null};
     if(k==='ArrowDown'||k==='ArrowUp'){
-      var c=pmCaretRect(doc),rs=p.getClientRects();if(!c||!rs.length)return false;
-      var lastTop=rs[rs.length-1].top,firstTop=rs[0].top;
-      if(k==='ArrowDown'&&c.top>=lastTop-2){e.preventDefault();TG();return go(L[i+1],false,c.left)}
-      if(k==='ArrowUp'&&c.top<=firstTop+2){e.preventDefault();TG();return go(L[i-1],true,c.left)}
+      var c=pmCaretRect(doc),ls=pmLines(p);if(!c||!ls.length)return false;
+      var cm=(c.top+c.bottom)/2,tol=ls[0].height/2;
+      if(k==='ArrowDown'&&cm>=ls[ls.length-1].mid-tol){e.preventDefault();return go(step(1),false,c.left)}
+      if(k==='ArrowUp'&&cm<=ls[0].mid+tol){e.preventDefault();return go(step(-1),true,c.left)}
       return false}
     if(k==='ArrowLeft'||k==='ArrowRight'){
       var g=pmGetSel(p);if(!g||g[0]!==g[1])return false;var len=p.textContent.length;

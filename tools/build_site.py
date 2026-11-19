@@ -2605,7 +2605,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* 7.11.2026: רווח בין שתי דעות באותה שורה (ראה lgLook), ואות מספור מודגשת בכותרת צד */
   .og{display:inline-block;width:1.3em;height:0}
   /* פרומפט 60 ה: רשימה ממוספרת (ראה enlLook) - יישור לימין באותה נקודה, בלי מתיחת רווחים ובלי הרווח הקבוע */
-  .row.enl .main,.row.enl .main p{text-align:right!important;text-align-last:right!important}
+  .row.enl .main p.enp{text-align:right!important;text-align-last:right!important}
   .row.enl .og{display:none!important}
   .main p[data-e]{display:none}
   @media screen{body:not(.prn) .dupmark{outline:2px solid #d0342c;outline-offset:1px;background:rgba(208,52,44,.09)}}
@@ -3655,9 +3655,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      בסגנון אמוראים או עוד לא) היא רשימה: השורה מקבלת enl, וב-CSS - כל השורות מיושרות לימין באותה נקודה (בלי יישור לשני
      הצדדים, שמותח רווחים), בלי הרווח הקבוע שלפני דעה שנייה (lgLook: כאן האות היא ההפרדה), וסימני ההפניה לתוס' באותו קו,
      זה אחר זה. תצוגה בלבד: אינו נוגע בנתונים ובוורד. הרווח האחיד אחרי האות - בנתונים (tools/overflow/enum_am.py) */
-  const ENL_RX=/(?:<i class="am">|<p class="[^"]*">(?:\s|&nbsp;)*|,(?:\s|&nbsp;)?)(?:[אבגדהוזחטיכ]|י[אבגדזחט]|כ[א-ט]|טו|טז)\.(?=<\/i>|\s|&nbsp;|[א-ת])/g;
-  function enlCount(h){const k=h.indexOf('<div class="main"');if(k<0)return 0;const m=h.slice(k).match(ENL_RX);return m?m.length:0}
-  function enlLook(u,h){if(u.k!=='u'||enlCount(h)<2)return h;return h.replace('<div class="row u"','<div class="row u enl"')}
+  /* פרומפט 72 (סעיף ט של 67, 20.11.2026): רשימה רק כשאות המספור פותחת פסקה (פריט בשורה משלו). א. ב. ג. באמצע משפט
+     ("'עץ חיים...', ב. ..., ג. ...", תענית ז.) אינם רשימה. והיישור לימין חל רק על פסקאות הרשימה עצמן (p.enp), לא על
+     כל היחידה: כל פסקה רגילה מיושרת לשני הצדדים תמיד. */
+  const ENL_P=/^<p class="[^"]*">(?:\s|&nbsp;)*(?:<i class="am">(?:\s|&nbsp;)*)?(?:[אבגדהוזחטיכ]|י[אבגדזחט]|כ[א-ט]|טו|טז)\.(?=<\/i>|\s|&nbsp;|[א-ת])/;
+  function enlCount(h){const k=h.indexOf('<div class="main"');if(k<0)return 0;let n=0;
+    h.slice(k).replace(/<p class="[^"]*">[^]*?(?=<\/p>)/g,function(x){if(ENL_P.test(x))n++;return x});return n}
+  function enlLook(u,h){if(u.k!=='u'||enlCount(h)<2)return h;
+    const k=h.indexOf('<div class="main"');
+    const body=h.slice(k).replace(/<p class="([^"]*)">([^]*?)(?=<\/p>)/g,function(x,c,t){return ENL_P.test(x)?'<p class="'+c+' enp">'+t:x});
+    return h.slice(0,k).replace('<div class="row u"','<div class="row u enl"')+body}
   /* 17.11.2026 (מיכאל): "לא להשאיר אף פעם סתם שתי שורות או שני מעברי פסקה בזה אחר זה". פסקה בלי שום אות (עריכה
      שרוקנה אותה, ועוד לא קופלה) אינה נראית ואינה תופסת שורה - בדף ובהדפסה. בעריכה היא נשארת, כדי שאפשר יהיה לכתוב
      בה או למחוק אותה. בבנייה ובקיפול היא נמחקת מן הנתונים ומן הספר (_drop_empty ב-build_site.py) */

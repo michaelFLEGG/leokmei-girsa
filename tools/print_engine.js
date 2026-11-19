@@ -498,7 +498,8 @@
         'sup.tm{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-family:'+(n.markFamily||n.family)+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0;padding:0;color:#7a7a7a}'+
         'span.tmg sup.tm{display:inline;width:auto;margin:0}span.tmg sup.tm+sup.tm{margin-left:.12em}'+
         /* פרומפט 60 ה: ברשימה ממוספרת (row.enl) ההפניות תופסות את מקומן אחרי המילה, זו אחר זו באותו קו - לא ערימה ברוחב אפס שמרחפת מעל טקסט אחר */
-        '.row.enl span.tmg,.row.enl sup.tm{width:auto!important}.row.enl span.tmg sup.tm,.row.enl sup.tm{margin-right:.08em;top:-.3em!important}'+
+        /* פרומפט 72 (סעיף ט של 67): בוטל - גם ברשימה ההפניה ברוחב אפס ומעל השורה (הכלל של 6.11.2026). ההפניה שתפסה 9px
+           דחקה את "הריגה" לשורה נפרדת (תענית ז.). שתי הפניות צמודות כבר נערמות זו לצד זו בצירוף span.tmg */
         '.pg sup.tm,.pg sup.tm *{color:#7a7a7a!important}sup.tm a{text-decoration:none}'+
         '.pfn .fnum{font-size:'+n.numberScale+'em;line-height:0;position:relative;top:-'+n.numberRise+'em;vertical-align:baseline;margin-left:.18em;font-weight:'+n.numberWeight+';text-decoration:none}'+
         '.pfn .fnn{margin:'+n.betweenMm+'mm 0 0}.pfn .fnn:first-child{margin-top:0}'+
@@ -1124,33 +1125,83 @@
       i=best;
       /* 16.11.2026 (פרומפט 48, תיקון 2): סוף כל פרק מאוזן, כמו סוף הטווח: שני הטורים של העמוד האחרון של הפרק בגובה
          קרוב ככל האפשר, והפרק הבא נפתח בעמוד חדש בטור הימני */
-      if(prof.cols===2&&i<L.length&&isForce(i)&&!split)balanceTo(i)}
+      /* פרומפט 72 (20.11.2026): גם כשהטור האחרון פיצל הערה - האיזון מחשב מחדש בהערות שלמות, ואם הצליח אין המשך */
+      if(prof.cols===2&&i<L.length&&isForce(i)){if(balanceTo(i))carry=null}}
+    /* פרומפט 72 (20.11.2026, תענית סוף פרק א): סוף פרק מאוזן לפי הטקסט בלבד. עד כאן האיזון השווה טקסט והערות יחד,
+       וההערות ישבו בתחתית העמוד: טור עם הרבה תוס' נגמר גבוה, השני נמוך, ומתחת חלל לבן עד ההערות. עכשיו:
+       א. שני טורי הטקסט בגובה קרוב ככל האפשר (טקסט בלבד).
+       ב. שורת "הדרן עלך" יוצאת מן הטור לרצועה ברוחב שני הטורים, ממורכזת, מתחת לטקסט.
+       ג. אזור ההערות של שני הטורים צמוד מתחת לרצועה (רווח קבוע GAP), לא בתחתית העמוד.
+       ד. אם אין חלוקה שנכנסת בעמוד - מעבירים את סוף הפרק לעמוד הבא (הטור השמאלי בעמוד הנוכחי מתקצר), ורק אם גם זה נכשל - תקלה גלויה.
+       כל ויתור נרשם ב-R.issues ועוצר את המסירה (לא רק R.balDbg). */
+    function hadStart(end){var h=end;while(h>0&&L[h-1].kind==='hadran')h--;return h}
+    /* tight: כשחסר עד כשורה - הרווח מעל הרצועה ומעל ההערות מצטמצם (0.2 שורה, חצי GAP) כדי שסוף הפרק ייכנס בעמוד */
+    function hadGap(tight){return (tight?0.2:0.5)*LH}
+    function fnGap(tight){return tight?GAP*0.5:GAP}
+    function hadH(hs,end,tight){return hs<end?(L[end-1].y1-L[hs].y0)+hadGap(tight):0}
+    function pairFit(s0,a1,hs,end,cr0,tight){
+      var t1=L[a1-1].y1-L[s0].y0,t2=L[hs-1].y1-L[a1].y0;
+      var sp1=specOf(noteIds(s0,a1),cr0,null),sp2=specOf(noteIds(a1,hs),null,null);
+      var n1=sp1.length?fnSpec(sp1).h:0,n2=sp2.length?fnSpec(sp2).h:0,nm=Math.max(n1,n2);
+      var tot=Math.max(t1,t2)+hadH(hs,end,tight)+(nm?fnGap(tight)+nm:0);
+      return {t1:t1,t2:t2,n1:n1,n2:n2,tot:tot,ok:tot<=A+0.5,gap:Math.abs(t1-t2)}}
+    /* החלוקה הטובה ביותר של s0..hs לשני טורים: קודם בכללים המלאים, ואם ההפרש מעל שתי שורות - גם בכללים הרכים */
+    function bestPair(s0,hs,end,cr0,tight){
+      var best=null;
+      for(var pass=0;pass<2;pass++){if(pass===1){if(best&&best.gap<=2*LH)break;SOFT=true}
+        for(var a1=s0+1;a1<hs;a1++){
+          if(isForce(a1)||!canBreak(a1,true))continue;
+          var m=pairFit(s0,a1,hs,end,cr0,tight);if(!m.ok)continue;m.tight=!!tight;
+          /* ההפרש קובע; בשוויון (עד חצי שורה) - הטור הימני הגבוה, כמו בוילנא */
+          var sc=m.gap+(m.t1<m.t2?0.5*LH:0);
+          if(!best||sc<best.sc-0.5){m.a1=a1;m.sc=sc;best=m}}
+        SOFT=false}
+      return best}
+    /* פריסה על שני עמודים מ-P: העמוד הראשון מלא (הטור השמאלי מתקצר עד maxShort), והשני מאוזן ובו minLines שורות לפחות */
+    function twoPage(P,crP,hs,end,maxShort,minLines){
+      for(var capR=A;capR>=A-maxShort-0.5;capR-=LH/2){
+        carry=crP;var r1=fillCol(P,capR,true).best;carry=null;
+        if(r1<=P||r1>=hs)continue;
+        for(var capL=A;capL>=A-maxShort-0.5;capL-=LH/2){
+          var r2=fillCol(r1,capL,true).best;
+          if(r2<=r1||r2>=hs||hs-r2<minLines)continue;
+          var bq=bestPair(r2,hs,end,null);
+          if(bq&&bq.gap<=2*LH){carry=null;return {r1:r1,r2:r2,bp:bq}}}}
+      carry=null;return null}
     function balanceTo(end){
       var k=cols.length-1,k0=k%2===0?k:k-1,c0=cols[k0];
-      /* פרומפט 48 סבב ב (16.11.2026): טור שנדחס (sq) או שפיצל הערה לטור שאחריו באותו עמוד אינו פוסל איזון -
-         החלוקה מחושבת מחדש לשני הטורים יחד, בהערות שלמות. רק פיצול שממשיך לעמוד הבא (בטור השמאלי) פוסל */
       R.balDbg=R.balDbg||[];
-      if(!c0||(k0<k&&cols[k].split)||(k0===k&&c0.split)){R.balDbg.push({daf:L[end-1].daf,why:'split-out',sq:c0&&c0.sq});return}
-      var s0=c0.s,cr0=c0.carry,got=null,bestH=1e9,bestGap=1e9;
-      /* קודם בכללי השבירה המלאים; אם נשאר הפרש של יותר משתי שורות - גם בכללים הרכים (כללי ב5 מוותרים, כמו כשנשאר חור) */
-      for(var pass=0;pass<2;pass++){if(pass===1){if(got!==null&&bestH<1e9&&bestGap<=2*LH)break;SOFT=true}
-      for(var cap=NLH*2;cap<=A+0.5;cap+=NLH/3){
-        carry=cr0;var a1=fillCol(s0,cap,true).best;
-        if(a1<=s0||a1>=end)continue;
-        carry=null;var a2=fillCol(a1,A,true);
-        if(a2.best!==end)continue;
-        carry=cr0;var u1=colUsed(s0,a1,null);carry=null;var u2=colUsed(a1,end,null),h=Math.max(u1,u2)+Math.abs(u1-u2)*0.01,gp=Math.abs(u1-u2);
-        /* פרומפט 48 סבב ב: חלוקה שהפרשה עד שתי שורות גוברת על חלוקה נמוכה יותר שהפרשה גדול (סוף פרק לא מאוזן עוצר את המסירה) */
-        var okN=gp<=2*LH,okB=bestGap<=2*LH;
-        if((okN&&!okB)||(okN===okB&&h<bestH-0.5)){bestH=h;got=a1;bestGap=gp}}
-      SOFT=false}
-      carry=null;
-      if(got!==null&&bestGap>2*LH){R.balDbg.push({daf:L[end-1].daf,why:'gap',gap:+(bestGap/LH).toFixed(1),h:+(bestH/LH).toFixed(1),A:+(A/LH).toFixed(1),s0:s0,end:end,got:got,sq:c0.sq,k0:k0,k:k})}
-      if(got===null){R.balDbg.push({daf:L[end-1].daf,why:'nofit',k0:k0,k:k,sq:c0.sq,split:!!c0.split});if(k0===k)R.issues.push({type:'סוף פרק לא מאוזן',daf:L[end-1].daf,detail:'לא נמצאה חלוקה לשני טורים; הפרק הבא אינו בעמוד חדש'});return}
-      cols.length=k0;
-      cols.push({s:s0,e:got,notes:noteIds(s0,got),sq:0,carry:cr0,split:null,why:'',bal:1});
-      cols.push({s:got,e:end,notes:noteIds(got,end),sq:0,carry:null,split:null,why:'',bal:1});
-      R.perekBalanced=(R.perekBalanced||0)+1}
+      if(!c0)return false;
+      var s0=c0.s,cr0=c0.carry,hs=hadStart(end),daf=L[end-1].daf,had=hs<end?{s:hs,e:end}:null;
+      function put2(at,s,cr,bp){cols.length=at;
+        cols.push({s:s,e:bp.a1,notes:noteIds(s,bp.a1),sq:0,carry:cr,split:null,why:'',bal:1,had:had,tight:bp.tight});
+        cols.push({s:bp.a1,e:hs,notes:noteIds(bp.a1,hs),sq:0,carry:null,split:null,why:'',bal:1,tight:bp.tight})}
+      function put4(at,s,cr,t){cols.length=at;
+        cols.push({s:s,e:t.r1,notes:noteIds(s,t.r1),sq:0,carry:cr,split:null,why:''});
+        cols.push({s:t.r1,e:t.r2,notes:noteIds(t.r1,t.r2),sq:0,carry:null,split:null,why:'סוף הפרק עבר לעמוד הבא כדי להתאזן',pre:1});
+        put2(at+2,t.r2,null,t.bp)}
+      /* א. העמוד הנוכחי */
+      var bp=hs>s0+1?bestPair(s0,hs,end,cr0):null;
+      if(!bp&&hs>s0+1){bp=bestPair(s0,hs,end,cr0,true);if(bp)R.balDbg.push({daf:daf,why:'tight'})}
+      if(bp&&bp.gap<=2*LH){put2(k0,s0,cr0,bp);R.perekBalanced=(R.perekBalanced||0)+1;return true}
+      /* ב. העמוד הקודם: כל סוף הפרק נכנס בעמוד אחד מאוזן (מושכים אחורה), או פריסה על שני עמודים שבה העמוד האחרון אינו
+         שורות בודדות. רק כשהעמוד הקודם אינו מפצל הערה לעמוד הזה ואינו נדחס */
+      var pp=k0>=2?cols[k0-2]:null,okP=pp&&!pp.split&&!cols[k0-1].split&&!cols[k0-1].sq&&!pp.sq;
+      if(okP){for(var q=pp.s+1;q<=s0;q++)if(isForce(q)){okP=false;break}}
+      if(okP){var bb=bestPair(pp.s,hs,end,pp.carry);
+        if(bb&&bb.gap<=2*LH){put2(k0-2,pp.s,pp.carry,bb);R.balDbg.push({daf:daf,why:'pulled'});R.perekBalanced=(R.perekBalanced||0)+1;R.perekPulled=(R.perekPulled||0)+1;return true}}
+      /* ג. שני עמודים: קודם בקיצור של עד שלוש שורות (המתיחה ממלאת אותו), ורק אחר כך קיצור גדול יותר (נרשם כחור) */
+      var lim=[3*LH,0.4*A];
+      for(var li=0;li<lim.length;li++){
+        var t=hs-s0>=6?twoPage(s0,cr0,hs,end,lim[li],6):null;
+        if(t){put4(k0,s0,cr0,t);R.balDbg.push({daf:daf,why:'moved',short:li});R.perekBalanced=(R.perekBalanced||0)+1;R.perekMoved=(R.perekMoved||0)+1;return true}
+        if(okP){t=twoPage(pp.s,pp.carry,hs,end,lim[li],6);
+          if(t){put4(k0-2,pp.s,pp.carry,t);R.balDbg.push({daf:daf,why:'moved-prev',short:li});R.perekBalanced=(R.perekBalanced||0)+1;R.perekMoved=(R.perekMoved||0)+1;return true}}}
+      /* ד. אין טוב מזה: החלוקה הטובה ביותר בעמוד הנוכחי, גם אם ההפרש גדול (הבודק מסמן ועוצר את המסירה) */
+      if(bp){put2(k0,s0,cr0,bp);R.balDbg.push({daf:daf,why:'gap',gap:+(bp.gap/LH).toFixed(1)});R.perekBalanced=(R.perekBalanced||0)+1;return true}
+      R.balDbg.push({daf:daf,why:'nofit',k0:k0,k:k});
+      R.issues.push({type:'סוף פרק לא מאוזן',daf:daf,detail:'לא נמצאה חלוקה לשני טורים, גם לא בהעברה בין העמודים'});
+      return false}
     /* 16.11.2026 (פרומפט 48): עמוד אחרון שיש בו רק שורות בודדות (למשל שורה אחת וההדרן, B5 מוגדל של ברכות) - מורידים אליו
        שורות מן הטור הקודם, כדי שיהיו בו לפחות שש שורות לאיזון לשני טורים. הטור הקודם מתקצר בכמה שורות בלבד */
     (function(){
@@ -1167,27 +1218,9 @@
       cols.push({s:cp.s,e:got,notes:noteIds(cp.s,got),sq:0,carry:cp.carry,split:null,why:'',bal:1});
       cols.push({s:got,e:L.length,notes:noteIds(got,L.length),sq:0,carry:null,split:null,why:'',bal:1});
       R.lastPagePulled=1})();
-    /* 5.11.2026: סוף הטווח - שני הטורים של העמוד האחרון מאוזנים ככל האפשר (ולא טור מלא ושארית קטנה בשני).
-       מחפשים את הגובה הקטן ביותר לטור הימני שבו כל היתרה נכנסת בטור השמאלי */
-    (function(){
-      if(prof.cols!==2||!cols.length)return;
-      var k0=cols.length-(cols.length%2===0?2:1),c0=cols[k0];
-      if(!c0||c0.sq||c0.split||(k0+1<cols.length&&cols[k0+1].split))return;
-      var s0=c0.s,cr0=c0.carry,keepCarry=carry,got=null,bestH=1e9;
-      for(var cap=A*0.3;cap<=A+0.5;cap+=NLH/3){
-        carry=cr0;var a1=fillCol(s0,cap,true).best;
-        if(a1<=s0||a1>=L.length)continue;
-        var u1=colUsed(s0,a1,null);
-        carry=null;var a2=fillCol(a1,A,true);
-        if(a2.best<L.length)continue;
-        var u2=colUsed(a1,L.length,null),h=Math.max(u1,u2)+Math.abs(u1-u2)*0.01;
-        if(h<bestH-0.5){bestH=h;got=a1}}
-      carry=keepCarry;
-      if(got===null)return;
-      cols.length=k0;
-      cols.push({s:s0,e:got,notes:noteIds(s0,got),sq:0,carry:cr0,split:null,why:'',bal:1});
-      cols.push({s:got,e:L.length,notes:noteIds(got,L.length),sq:0,carry:null,split:null,why:'',bal:1});
-      R.balanced=1})();
+    /* 5.11.2026: סוף הטווח - שני הטורים של העמוד האחרון מאוזנים ככל האפשר. פרומפט 72: באותו מנגנון כמו סוף פרק
+       (טקסט בלבד, הדרן ברצועה, הערות צמודות) */
+    if(prof.cols===2&&cols.length){if(balanceTo(L.length)){carry=null;R.balanced=1}}
 
     /* ---- בדיקות אחרי העימוד (לוח התקלות): כותרת מנותקת, שורה יתומה או אלמנה, הערה שנפרדה מסימנה ---- */
     /* פרומפט 48 סבב ג (תיקון 3): בודק קבוע - העמוד הראשון פותח במשהו מחוץ לטווח = תקלה שעוצרת את המסירה.
@@ -1205,13 +1238,20 @@
       /* 16.11.2026 (פרומפט 48): בודקים קבועים - עמוד סוף פרק שהפרש הגובה בין טוריו מעל שתי שורות (כשהעמוד אינו מלא; טקסט והערות יחד); כותרת בלי רווח לפניה */
       if(prof.cols===2&&ci%2===1&&(ci+1>=cols.length||isForce(cols[ci+1].s))){
         var kc=carry;carry=cols[ci-1].carry;var hu1=colUsed(cols[ci-1].s,cols[ci-1].e,cols[ci-1].split);carry=c.carry;var hu2=colUsed(c.s,c.e,c.split);carry=kc;
+        /* פרומפט 72: בעמוד סוף פרק מאוזן ההערות צמודות מתחת לטקסט, ולכן האיזון נמדד בטקסט בלבד */
+        var balPair=c.bal&&cols[ci-1].bal;
+        if(balPair){hu1=L[cols[ci-1].e-1].y1-L[cols[ci-1].s].y0;hu2=L[c.e-1].y1-L[c.s].y0}
         /* פרומפט 48 סבב ב (16.11.2026): כשאין נקודת שבירה שמאזנת עד שתי שורות, הטור הקצר של סוף הפרק נמתח בגבולות הפסקאות
            (עד stretch.maxPtPerGap לכל גבול, כמו מתיחת חור), כך שתחתית שני הטורים מתקרבת. הבודק מודד אחרי המתיחה */
         if(HFIX&&c.bal&&cols[ci-1].bal&&Math.abs(hu1-hu2)>2*LH+0.5){
           var sc=hu1<hu2?cols[ci-1]:c,nbS=nbBrk(L[sc.s].ri,L[sc.e-1].ri);
           if(nbS>0){sc.balPer=Math.min(STRETCH,Math.abs(hu1-hu2)/nbS);R.perekStretched=(R.perekStretched||0)+1;
             if(hu1<hu2)hu1+=sc.balPer*nbS;else hu2+=sc.balPer*nbS}}
-        if(Math.abs(hu1-hu2)>2*LH+0.5&&Math.min(hu1,hu2)<A-2*LH)iss('סוף פרק לא מאוזן',b,'הפרש '+(Math.abs(hu1-hu2)/LH).toFixed(1)+' שורות')}
+        if(Math.abs(hu1-hu2)>2*LH+0.5&&(balPair||Math.min(hu1,hu2)<A-2*LH))iss('סוף פרק לא מאוזן',b,'הפרש '+(Math.abs(hu1-hu2)/LH).toFixed(1)+' שורות');
+        /* פרומפט 72: סוף פרק שלא אוזן כלל (לא עבר את balanceTo) - תקלה גלויה, גם כשהעמוד מלא */
+        if(!balPair&&ci+1<cols.length)iss('סוף פרק לא מאוזן',b,'העמוד לא עבר איזון')}
+      /* פרומפט 72: שורת "הדרן עלך" שנשארה בתוך טור (לא ברצועה שמתחת לשני הטורים) - תקלה */
+      for(var hq0=c.s;hq0<c.e;hq0++)if(L[hq0].kind==='hadran'&&L[hq0].first){iss('הדרן בתוך טור',L[hq0]);break}
       for(var hq=c.s+1;hq<c.e;hq++){var hl=L[hq],hp=L[hq-1];
         if(hl.first&&(hl.kind==='dh'||hl.kind==='nose')&&!HEADS[hp.kind]&&hp.kind!=='hatz'&&hl.y0-hp.y1<0.4*LH)iss('כותרת בלי רווח לפניה',hl)}
       /* פרומפט 60 ב: כלל ברזל - אחרי כותרת (גם פסקת כותרת בתוך יחידה) לפחות שתי שורות מן התוכן שלה באותו טור */
@@ -1255,7 +1295,9 @@
         var hd='<div class="phd" style="left:'+(MG.left+dx)+'mm;right:'+(MG.right-dx+prof.rail)+'mm;top:'+prof.header.topMm+'mm">'+
         '<span>'+ge(pn)+'</span><span>'+ge(pe)+'</span><span>'+ge(mname)+'</span><span>'+ge(dafSpan(firstLine.daf,lastLine.daf))+'</span></div>';
       var body='';
-      cs2.forEach(function(c,ci){
+      /* פרומפט 72: עמוד סוף פרק מאוזן - גובה הטקסט הגבוה מבין השניים, ומתחתיו רצועת ההדרן ואזור ההערות */
+      var pgBal=cs2.length===2&&cs2[0].bal&&cs2[1].bal,pgT=0,pgHad=pgBal&&cs2[0].had?cs2[0].had:null,pgHadH=pgHad?hadH(pgHad.s,pgHad.e,cs2[0].tight):0,pgFG=pgBal&&cs2[0].tight?fnGap(true):GAP;
+      function colGeom(c,dry){
         var ln=L[c.s],le=L[c.e-1];
         var yS=ln.y0-1,yE=le.y1,sqz=c.sq||0,spanY=Math.max(1,le.y1-ln.y0);
         var spc=specOf(c.notes,c.carry,c.split),fb=spc.length?fnSpec(spc):null;
@@ -1263,8 +1305,14 @@
            לכל גבול. טור שמסיים פרק (או את הטווח) נשאר כמות שהוא. ג: ריק גדול מזה נרשם בבקרה */
         var endCol=c.bal||c.e>=L.length||isForce(c.e);
         var gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0),nb=nbBrk(ln.ri,le.ri),per=0;
-        if(HFIX&&!endCol&&!sqz&&gapPx>0.5&&gapPx<=STRMAX&&nb>0){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;R.stretched=(R.stretched||0)+1}
+        if(HFIX&&!endCol&&!sqz&&gapPx>0.5&&gapPx<=STRMAX&&nb>0){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;if(!dry)R.stretched=(R.stretched||0)+1}
         else if(c.balPer&&nb>0&&!sqz){per=Math.min(c.balPer,Math.max(0,gapPx)/nb);gapPx-=per*nb}
+        return {ln:ln,le:le,yS:yS,yE:yE,sqz:sqz,spanY:spanY,spc:spc,fb:fb,endCol:endCol,gapPx:gapPx,nb:nb,per:per}}
+      if(pgBal)cs2.forEach(function(c){var g=colGeom(c,true);pgT=Math.max(pgT,g.yE-g.yS-g.sqz+g.per*g.nb)});
+      cs2.forEach(function(c,ci){
+        var G=colGeom(c,false),ln=G.ln,le=G.le,yS=G.yS,yE=G.yE,sqz=G.sqz,spanY=G.spanY,spc=G.spc,fb=G.fb,endCol=G.endCol,gapPx=G.gapPx,nb=G.nb,per=G.per;
+        var fnTop=pgBal&&fb?pgT+pgHadH+pgFG:null;
+        if(pgBal){gapPx=A-pgT-pgHadH-(fb?fb.h+pgFG:0);if(gapPx<-0.5)W('עמוד סוף פרק גבוה מגובה הנטו: עמוד '+(pgi+1)+', '+ln.daf+': '+(-gapPx).toFixed(1)+'px')}
         /* שמירה (פרומפט 41): הטור לעולם אינו גבוה מגובה הנטו. מתיחה שהייתה מוציאה אותו מן השוליים מוקטנת, וחריגה שנשארת נרשמת */
         if(per&&(yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)>A+0.25){per=Math.max(0,(A-(yE-yS-sqz)-(fb?fb.h+GAP:0))/nb);R.stretchCut=(R.stretchCut||0)+1}
         if((yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)>A+0.5)W('טור גבוה מגובה הנטו: עמוד '+(pgi+1)+', '+ln.daf+': '+((yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)-A).toFixed(2)+'px (טקסט '+(yE-yS).toFixed(1)+', דחיסה '+sqz.toFixed(1)+', מתיחה '+(per*nb).toFixed(1)+')');
@@ -1293,10 +1341,16 @@
           rowsHtml+=cl.outerHTML}
         body+='<div class="pcol" style="left:'+boxLeft+'mm;top:'+MG.top+'mm;width:'+(prof.rail+prof.measure)+'mm;height:'+A_mm+'mm">'+
           '<div class="ptx flow" style="height:'+(yE-yS-sqz+per*nb)+'px;overflow:visible;clip-path:inset(-'+MARKROOM+'pt 0 0 0)">'+rowsHtml+'</div>'+
-          (fb?'<div class="pfnw" style="width:'+prof.measure+'mm"><div class="pfn'+(fb.one?' one':'')+'">'+fb.html+'</div></div>':'')+'</div>';
+          (fb?'<div class="pfnw" style="width:'+prof.measure+'mm'+(fnTop!==null?';top:'+fnTop.toFixed(1)+'px;bottom:auto':'')+'"><div class="pfn'+(fb.one?' one':'')+'">'+fb.html+'</div></div>':'')+'</div>';
         c.notes.forEach(function(n){pageInfo.notes.push(n)});
         pageInfo.cols.push({lines:c.e-c.s,textMm:+((yE-yS)/MM).toFixed(1),notes:c.notes.length,noteMm:fb?+(fb.h/MM).toFixed(1):0,
           gapMm:+(gapPx/MM).toFixed(1),stretchPt:+(per/PT).toFixed(2),split:c.split?c.split.n:0,carry:c.carry?c.carry.n:0})});
+      /* פרומפט 72 (סעיף ז של 67): רצועת "הדרן עלך" ברוחב שני הטורים, ממורכזת על שדה הטקסט של שניהם (בלי מסילת הטור הימני, כמו הכותרת הרצה), חצי שורה מתחת לטקסט ומעל ההערות */
+      if(pgHad){var hh='';
+        for(var hr=L[pgHad.s].ri;hr<=L[pgHad.e-1].ri;hr++){tpl.innerHTML=recs[hr].html2;var hc=tpl.content.firstElementChild;if(hc)hh+=hc.outerHTML}
+        body+='<div class="pcol phadw" style="left:'+(MG.left+dx)+'mm;top:calc('+MG.top+'mm + '+(pgT+hadGap(cs2[0].tight)).toFixed(1)+'px);width:'+(PG.w-MG.left-MG.right-prof.rail)+'mm">'+
+          '<div class="ptx flow" style="overflow:visible">'+hh+'</div></div>';
+        R.hadranStrips=(R.hadranStrips||0)+1}
       var foot='<div class="pnum" style="bottom:'+prof.footer.numberFromBottomMm+'mm">'+(pgi+1)+'</div>'+
         '<div class="psite" style="left:'+(MG.left+dx)+'mm">'+(prof.footer.pageQr?'<span class="qr"></span>':'')+'<span class="st" dir="rtl">'+siteLine()+'</span></div>';
       pgEl.innerHTML=hd+body+foot;
@@ -1483,6 +1537,9 @@
       '.pcol{position:absolute;direction:rtl}'+
       '.ptx{position:relative;overflow:hidden;width:100%}'+
       '.pfnw{position:absolute;left:0;bottom:0}'+
+      /* פרומפט 72: רצועת ההדרן - שורה אחת ממורכזת על פני שני הטורים */
+      '.phadw .ptx .row{display:block!important;position:static!important;margin:0!important}.phadw .ptx .row>.rail{display:none!important}'+
+      '.phadw .ptx .row>.main{text-align:center!important;text-align-last:center!important;width:auto!important;margin:0!important}'+
       '#prnmeas{position:absolute;left:0;top:0;visibility:hidden}'+
       /* ג (6.11.2026): הערה עוברת באמצעה מטור ההערות הימני לשמאלי שתחת אותו טור, כמו בוילנא - בלי "המשך"; שתי שורות לפחות בכל צד, והטורים מתאזנים */
       '.pfn .fnn{break-inside:auto;orphans:2;widows:2;margin:0}'+

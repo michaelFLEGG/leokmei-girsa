@@ -3,7 +3,7 @@
  "jid": "shabbat-s3670-mwnf4fjk",
  "slug": "shabbat",
  "title": "שבת פרק שישי - במה אשה · סבב על הנוסח החי (s1)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 3670,
@@ -349,7 +349,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 12,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -386,7 +394,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -431,7 +447,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -470,7 +494,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -513,7 +545,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (54 תווים, עד 52): כבול - איני יודע: חותם העבד שנינו, וכיפה"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s6",
@@ -560,7 +600,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"יוצא העבד בחותם שבצוארו\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 3,
+    "side": 11,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s7",
@@ -585,6 +633,14 @@
     "nose": 0,
     "lenA": 567,
     "lenB": 567
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 1,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -614,6 +670,14 @@
     "nose": 0,
     "lenA": 551,
     "lenB": 551
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -658,7 +722,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 9,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s10",
@@ -684,6 +756,14 @@
     "nose": 0,
     "lenA": 190,
     "lenB": 190
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -731,7 +811,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 2,
+    "side": 10,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s12",
@@ -773,7 +861,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s13",
@@ -801,6 +897,14 @@
     "nose": 0,
     "lenA": 449,
     "lenB": 449
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -838,7 +942,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s15",
@@ -877,7 +989,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s16",
@@ -921,7 +1041,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"מכאן ואחת בתרסיותיו כר\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s17",
@@ -967,7 +1095,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (56 תווים, עד 52): רובן - כשנגממו [שרישומן ניכר], וארבעה או"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 3,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s18",
@@ -1005,7 +1141,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s19",
@@ -1033,6 +1177,14 @@
     "nose": 0,
     "lenA": 363,
     "lenB": 363
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1064,6 +1216,14 @@
     "nose": 0,
     "lenA": 706,
     "lenB": 706
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 9,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -1091,6 +1251,14 @@
     "nose": 0,
     "lenA": 356,
     "lenB": 356
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1124,6 +1292,14 @@
     "nose": 0,
     "lenA": 491,
     "lenB": 491
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 9,
+    "nose": 2,
+    "widow": 1
    }
   },
   {
@@ -1153,6 +1329,14 @@
     "nose": 0,
     "lenA": 500,
     "lenB": 500
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -1197,7 +1381,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 9,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s25",
@@ -1244,7 +1436,15 @@
     "שורה אלמנה (פתחיהן כיער.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 9,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s26",
@@ -1279,6 +1479,14 @@
     "nose": 0,
     "lenA": 764,
     "lenB": 764
+   },
+   "abs": {
+    "bold": 4,
+    "space": 1,
+    "dash": 2,
+    "side": 11,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -1316,6 +1524,14 @@
     "nose": 0,
     "lenA": 1284,
     "lenB": 1284
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 16,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1344,6 +1560,14 @@
     "nose": 0,
     "lenA": 341,
     "lenB": 341
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 1,
+    "widow": 1
    }
   },
   {
@@ -1379,6 +1603,14 @@
     "nose": 0,
     "lenA": 978,
     "lenB": 978
+   },
+   "abs": {
+    "bold": 0,
+    "space": 3,
+    "dash": 3,
+    "side": 13,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -1419,7 +1651,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s31",
@@ -1467,7 +1707,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (60 תווים, עד 52): ובטוטפת ובסרביטין בזמן שהן תפורין, בכבול"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 8,
+    "space": 0,
+    "dash": 2,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s32",
@@ -1507,7 +1755,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 5,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s33",
@@ -1537,6 +1793,14 @@
     "nose": 0,
     "lenA": 498,
     "lenB": 498
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 6,
+    "nose": 2,
+    "widow": 1
    }
   },
   {
@@ -1577,7 +1841,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (76 תווים, עד 52): רבי, ר' אליעזר ורשב\"א סברו: כל שמתגנה בו"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s35",
@@ -1605,6 +1877,14 @@
     "nose": 0,
     "lenA": 553,
     "lenB": 553
+   },
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1628,6 +1908,14 @@
     "nose": 0,
     "lenA": 263,
     "lenB": 263
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1663,6 +1951,14 @@
     "nose": 0,
     "lenA": 804,
     "lenB": 804
+   },
+   "abs": {
+    "bold": 10,
+    "space": 0,
+    "dash": 2,
+    "side": 12,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1706,7 +2002,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"של קטן שטמאה מדרס\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 4,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s39",
@@ -1735,6 +2039,14 @@
     "nose": 0,
     "lenA": 390,
     "lenB": 390
+   },
+   "abs": {
+    "bold": 3,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -1765,6 +2077,14 @@
     "nose": 0,
     "lenA": 534,
     "lenB": 534
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 2,
+    "widow": 1
    }
   },
   {
@@ -1802,7 +2122,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s42",
@@ -1846,7 +2174,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (250 תווים, עד 52): לאשתא צמירתא [חולי חום] - יקח סכין שכולו"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 4,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s43",
@@ -1876,6 +2212,14 @@
     "nose": 0,
     "lenA": 526,
     "lenB": 526
+   },
+   "abs": {
+    "bold": 2,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 2,
+    "widow": 1
    }
   },
   {
@@ -1906,8 +2250,70 @@
     "nose": 0,
     "lenA": 1246,
     "lenB": 1246
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 5,
+    "nose": 2,
+    "widow": 3
    }
   }
  ],
- "t": 1795127711423
+ "t": 1795127720622,
+ "summary": "בפרק: 44 הדגשות במשנה, 27 רווחים, 38 מקפי תירוץ, 1 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 44,
+  "space": 27,
+  "dash": 38,
+  "side": 1,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 44,
+  "perSeg": {
+   "bold": 1,
+   "space": 0.61,
+   "dash": 0.86,
+   "side": 6.82,
+   "nose": 1.43,
+   "widow": 0.18
+  },
+  "bold": 44,
+  "space": 27,
+  "dash": 38,
+  "side": 1,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 20,
+  "block": 0,
+  "lenPct": -2.6,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 23,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 76
+  }
+ },
+ "counts": {
+  "shown": 23,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

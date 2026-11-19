@@ -3,7 +3,7 @@
  "jid": "shabbat-s11505-mwnj4i4j",
  "slug": "shabbat",
  "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s11)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 11505,
@@ -57,7 +57,15 @@
     "שורה אלמנה (עליו.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "m1-1",
@@ -81,5 +89,59 @@
    "why": "קושיה שיש לה תשובה בגמרא נשארה בלי תשובה ונראית כתיובתא - והתשובה (דין רב יהודה) היא מסקנת השלב"
   }
  ],
- "t": 1795101407666
+ "t": 1795101419648,
+ "summary": "בפרק: 4 הדגשות במשנה, 0 רווחים, 1 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 4,
+  "space": 0,
+  "dash": 1,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 4,
+   "space": 0,
+   "dash": 1,
+   "side": 5,
+   "nose": 2,
+   "widow": 0
+  },
+  "bold": 4,
+  "space": 0,
+  "dash": 1,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 2,
+  "block": 0,
+  "lenPct": 0,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 4
+  }
+ },
+ "counts": {
+  "shown": 2,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 1
+ }
 }

@@ -249,6 +249,9 @@
        dry - רק מיון. ההכרעה בשרת כבר "התקבל", ולכן אין שליחת הכרעה. */
     reapply:(list,dry)=>{const out=[];const page=skpPageLines();
       const lastEd=new Map();(typeof ED!=='undefined'?ED:[]).forEach(e=>{const m=/^u(\d+)\./.exec(e.k||'');if(m){const id=+m[1];lastEd.set(id,Math.max(lastEd.get(id)||0,e.t||0))}});
+      /* איתור מחדש לפי תוכן (כמו בפתיחת הסקירה): אחרי הקיפול הלילי מזהי היחידות זזים, והנוסח זהה */
+      const byJ=new Map();list.forEach(x=>{if(!byJ.has(x.jid))byJ.set(x.jid,[]);byJ.get(x.jid).push(x)});
+      byJ.forEach(items=>{try{skpRelocate({items})}catch(e){}});
       const prev=SKP.rev;const B=!dry&&window.skmBatchStart?skmBatchStart():null;
       try{list.forEach(x=>{const r={jid:x.jid,iid:x.iid};out.push(r);
         try{

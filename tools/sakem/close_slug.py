@@ -59,6 +59,18 @@ with sync_playwright() as p:
     jobs2 = pg.evaluate("""async()=>{const r=await fetch(SUGGEST_API+'/sakem/jobs?slug='+SLUG,{headers:{'x-admin-key':localStorage.getItem('lg-adm')}});
       const j=await r.json();return (j.items||[])}""")
     rep['after'] = [x['jid'] + ':' + x['st'] + ':' + str(x.get('dec', 0)) + '/' + str(x.get('shown', 0)) for x in jobs2]
+    # פרומפט 68 (19.11.2026): עבודה שנשארה "מוכנה" בשרת בלי אף הצעה פתוחה (למשל 0 הצעות) - closeAll מסתיר אותה רק
+    # מקומית, ולכן היא חוזרת לתור. כאן היא יוצאת מן התור בשרת (אין בה מה ללמוד), כדי שלא יוצג "מחכה לסקירה" סתם.
+    if not a.dry:
+        rep['emptied'] = pg.evaluate("""async(ids)=>{const H={'x-admin-key':localStorage.getItem('lg-adm'),'content-type':'application/json'};const out=[];
+          for(const j of ids){try{const o=await (await fetch(SUGGEST_API+'/sakem/out?jid='+encodeURIComponent(j),{headers:H})).json();const d=o.dec||{};
+            const open=((o.out&&o.out.items)||[]).filter(x=>!x.nochange&&!d[x.iid]).length;
+            if(!open){await fetch(SUGGEST_API+'/sakem/cancel',{method:'POST',headers:H,body:JSON.stringify({jid:j})});out.push(j)}}catch(e){}}
+          return out}""", [x['jid'] for x in jobs2 if x['st'] == 'ready'])
+        if rep['emptied']:
+            print('עבודות ריקות שיצאו מן התור:', rep['emptied'])
+            jobs2 = pg.evaluate("""async()=>{const r=await fetch(SUGGEST_API+'/sakem/jobs?slug='+SLUG,{headers:{'x-admin-key':localStorage.getItem('lg-adm')}});
+              const j=await r.json();return (j.items||[])}""")
     rep['ready_after'] = [x['jid'] for x in jobs2 if x['st'] == 'ready']
     print('אחרי:', rep['after'])
     rep['errors'] = errs[:20]

@@ -3,7 +3,7 @@
  "jid": "shabbat-s11993-mwnpf8bl",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה ועשרים - מי שהחשיך · סבב על הנוסח החי (s13, s14, s15, s16)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 11993,
@@ -74,6 +74,14 @@
     "nose": 0,
     "lenA": 487,
     "lenB": 487
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 4,
+    "side": 8,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -130,7 +138,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"למקום שאינה יכולה להחזיר\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 11,
+    "space": 1,
+    "dash": 2,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -157,6 +173,14 @@
     "nose": 0,
     "lenA": 460,
     "lenB": 460
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 1
    }
   },
   {
@@ -180,6 +204,14 @@
     "nose": 0,
     "lenA": 205,
     "lenB": 205
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -226,7 +258,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (54 תווים, עד 52): אין גובלין את הקלי [קמח תבואה שנתייבשה],"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 2,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s6",
@@ -249,8 +289,70 @@
     "nose": 0,
     "lenA": 279,
     "lenB": 279
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
    }
   }
  ],
- "t": 1795116882978
+ "t": 1795116890609,
+ "summary": "בפרק: 11 הדגשות במשנה, 5 רווחים, 8 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 11,
+  "space": 5,
+  "dash": 8,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 6,
+  "perSeg": {
+   "bold": 1.83,
+   "space": 0.83,
+   "dash": 1.33,
+   "side": 6,
+   "nose": 0.67,
+   "widow": 0.17
+  },
+  "bold": 11,
+  "space": 5,
+  "dash": 8,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 9,
+  "block": 0,
+  "lenPct": -0.2,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 17
+  }
+ },
+ "counts": {
+  "shown": 2,
+  "spatial": 0,
+  "adds": 1,
+  "missing": 0
+ }
 }

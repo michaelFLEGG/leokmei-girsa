@@ -1157,6 +1157,64 @@
     var OBEY_DIN=/^(?:מותר|מותרת|מותרים|מותרות|אסור|אסורה|אסורים|אסורות|חייב|חייבת|חייבים|פטור|פטורה|פטורים|כשר|כשרה|כשרים|פסול|פסולה|פסולים|טמא|טמאה|טמאים|טהור|טהורה|טהורים)$/;
     var OBEY_NODASH=/^(?:לא|אינו|אינה|אינם|אין|הרי|היה|היתה|יהא|יהיה|יהיו|זה|זו|הוא|היא|הם|כן|גם|נמי|אף|ואף|נעשה|נעשית|ונעשה|יהו|להיות|יש|ויש|שיהא|שיהיה|עדיין|עוד|כבר|עצמו|ודאי|בודאי|מדאורייתא|מדרבנן|דאורייתא|מה|ומה|הכל|דבר|לכו"ע|לכתחלה|לכתחילה|בדיעבד|רק|אלא|שוב|כולו|כולן|כולם|נמצא|ונמצא)$/;
     function obeyBody(v){var x=cutSp(v,spans(v,'כב'));x=cutSp(x,spans(x,'פס'));return x}
+    /* =========== פרומפט 69 (19.11.2026): שם תנא בתוך תיבת המשנה - בסגנון אמורא {אם:...} ===========
+       docs/sakem-lessons.md ("בתוך משנה: ... שם התנא ו'אומר:' - בסגנון אמורא גם בתוך ההדגשה"), כלל 4 ב-sakem_prompt.js.
+       בתענית נשארו 16 שמות כאלה ("רבי יוסי: לפניו ואחריו אסור", "רשב"ג: ישנה", "ולא הודו לו חכמים"), כי הבודק לא ראה אותם.
+       tannaScan(v) - שמות התנאים בשורה שאינם בתוך {אם:} / {פס:} / {הס:} / {כב:} / {דה:} / {מפ:}. שם בתוך {ב:} / {נש:} נמנה
+       (בסגנון אמורא גם בתוך ההדגשה). {מש:X} (סגנון "משנה" של הוורד) שכולו שם, או תיאור דובר שנגמר בנקודתיים - הסגנון מוחלף.
+       מחזיר [{kind:'ms'|'plain', a, b, name, sure, why}]: a-b - המקום בשורה (ב-ms: הסוגריים {מש:...} כולם; ב-plain:
+       אותיות החיבור, השם, "אומר" והנקודתיים). sure=false - ספק (ר"ח כסליו הוא ראש חודש, ב"ה בלי נקודתיים, שם באמצע
+       {מש:} ארוך): אינו נעטף ואינו חוסם, רק מדווח. */
+    var TQ='["״]';
+    var TANNA_ABBR='ר'+TQ+'[אעימשגטחנזה]|רי'+TQ+'[הבחטו]|רש'+TQ+'[אגי]|רשב'+TQ+'[גאי]|ראב'+TQ+'[עיצד]|ריב'+TQ+'[זבנקלא]|ב'+TQ+'[שה]|ת'+TQ+'ק|חכ'+TQ+'א';
+    var TANNA_FULL="(?:רבי|רבן|ר')\\s[א-ת]{2,}(?:\\s(?:בן|ברבי|בר)\\s[א-ת]{2,})*(?:\\s(?:הגלילי|הכהן|הזקן|הקטן|הבבלי|המדי|התימני|הסגן))?";
+    var TANNA_LIST='שמעון התימני|שמעון בן שטח|חוני המעגל|נחום המדי|בן עזאי|בן זומא|בן בג בג|חכמים';
+    var TANNA_RE=new RegExp('(^|[^א-ת"״\'])((?:ו|ול|ל|וכ|כ|ד|וד|ש|וש|מ|ומ)?)('+TANNA_FULL+'|'+TANNA_LIST+'|'+TANNA_ABBR+')(?![א-ת"״\'])','g');
+    /* קיצור שיש לו פירוש אחר (ראש חודש, ראש השנה, בית הלל / ברוך הוא): שם רק כשאחריו נקודתיים או "אומר" */
+    var TANNA_AMB=/^(?:ר["״][חה]|ב["״][שה])$/;
+    var TANNA_MONTH=/^\s*(?:ניסן|אייר|סיון|סיוון|תמוז|אב|אלול|תשרי|מרחשון|מרחשוון|חשון|חשוון|כסליו|כסלו|טבת|שבט|אדר|השנה)(?![א-ת])/;
+    var TANNA_OK_IN={'ב':1,'נש':1,'+':1,'!':1};
+    function tagRuns(v){var s=String(v||''),runs=[],st=[],i=0,a=0,flush=function(e){if(e>a)runs.push({a:a,b:e,st:st.slice()})};
+      while(i<s.length){var c=s[i];
+        if(c==='{'){if(s.substr(i,5)==='{טאב}'||s.substr(i,5)==='{ריק}'){flush(i);i+=5;a=i;continue}
+          var m=/^\{([^{}:\s]{1,4}):/.exec(s.slice(i,i+8));if(m){flush(i);st.push(m[1]);i+=m[0].length;a=i;continue}}
+        if(c==='}'&&st.length){flush(i);st.pop();i++;a=i;continue}
+        i++}
+      flush(i);return runs}
+    function stackAt(s,pos){var st=[],i=0;while(i<pos&&i<s.length){var c=s[i];
+        if(c==='{'){if(s.substr(i,5)==='{טאב}'||s.substr(i,5)==='{ריק}'){i+=5;continue}var m=/^\{([^{}:\s]{1,4}):/.exec(s.slice(i,i+8));if(m){st.push(m[1]);i+=m[0].length;continue}}
+        if(c==='}'&&st.length)st.pop();i++}
+      return st}
+    function tannaScan(v){
+      var s=String(v||''),out=[],R=tagRuns(s);
+      /* א. {מש:X} בראש הקינון */
+      var msTop=spans(s,'מש').filter(function(x){return !stackAt(s,x.a).length});
+      msTop.forEach(function(x){var px=plainI(x.v),t=px.replace(/\s+/g,' ').trim(),hits=[],m;TANNA_RE.lastIndex=0;
+        while((m=TANNA_RE.exec(t)))hits.push(m[3]);
+        if(!hits.length)return;
+        var only=new RegExp('^((?:ו|ול|ל|וכ|כ|ד|וד|ש|וש|מ|ומ)?)('+TANNA_FULL+'|'+TANNA_LIST+'|'+TANNA_ABBR+')(?:\\s(?:אומר|אומרים|אומרת))?\\s*(:)?\\s*([.,])?$').exec(t);
+        var amb=hits.every(function(h){return TANNA_AMB.test(h)});
+        if(only&&(!amb||only[3]))out.push({kind:'ms',a:x.a,b:x.b,name:hits[0],sure:true,why:'{מש:} שכולו שם'+(only[4]?' (והפיסוק אחריו)':''),punct:only[4]||''});
+        /* "מעשה ש..." - פתיחת סיפור ולא תיאור דובר: ספק */
+        else if(/:\s*$/.test(t)&&!amb&&!/^ו?מעשה(?![א-ת])/.test(t))out.push({kind:'ms',a:x.a,b:x.b,name:hits.join(', '),sure:true,why:'{מש:} של תיאור דובר שנגמר בנקודתיים'});
+        else out.push({kind:'ms',a:x.a,b:x.b,name:hits.join(', '),sure:false,why:'שם בתוך {מש:} ארוך: "'+t.slice(0,40)+'"'})});
+      /* ב. שם בטקסט (מחוץ לסגנונות, או בתוך {ב:} / {נש:}) */
+      R.forEach(function(r){if(r.st.some(function(t){return !TANNA_OK_IN[t]}))return;
+        var t=s.slice(r.a,r.b),m;TANNA_RE.lastIndex=0;
+        while((m=TANNA_RE.exec(t))){var a=r.a+m.index+m[1].length,b=a+m[2].length+m[3].length,nm=m[3];
+          var rest=s.slice(b),say=/^\s(?:אומר|אומרים|אומרת)(?![א-ת])/.exec(rest);if(say){b+=say[0].length;rest=s.slice(b)}
+          var col=/^:/.test(rest);if(col)b+=1;
+          /* "רבי" / "ר'" ואחריו מילה שאינה שם ("ר' ימים") - נשאר רק כשהמילה מוכרת כשם */
+          var full=/^(?:רבי|רבן|ר')\s/.test(nm);
+          if(full&&!NAME_W[nm.replace(/^(?:רבי|רבן|ר')\s/,'').split(' ')[0]]&&!col&&!say){out.push({kind:'plain',a:a,b:b,name:nm,sure:false,why:'"'+nm+'" - שם שאינו ברשימה'});continue}
+          if(TANNA_AMB.test(nm)&&!col&&!say){out.push({kind:'plain',a:a,b:b,name:nm,sure:false,rosh:TANNA_MONTH.test(rest),why:TANNA_MONTH.test(rest)?'"'+nm+'" לפני שם חודש / השנה - ראש חודש או ראש השנה, לא שם':'"'+nm+'" בלי נקודתיים - אולי אינו שם'});continue}
+          out.push({kind:'plain',a:a,b:b,name:nm,sure:true,why:''})}});
+      return out.sort(function(x,y){return x.a-y.a})}
+    /* פרומפט 69: שורת משנה שיש בה דין (מקף, או פועל דין) - לכל דין העיקר שלו מודגש (lessons: "2-5 מילים מלשון המשנה לכל דין").
+       זיהוי "דין" אינו בטוח (שורת סיפור, פסוק, המשך משפט) - לכן אזהרה בלבד, לא חסימה */
+    var MISH_DIN=/(?:\s-\s|(?:^|[\s,])ו?(?:חייב|חייבין|חייבים|חייבת|פטור|פטורין|פטורים|פטורה|אסור|אסורין|אסורים|אסורה|אסורות|מותר|מותרין|מותרים|מותרת|מותרות|כשר|כשרה|כשרין|פסול|פסולה|פסולין|טמא|טמאה|טמאין|טהור|טהורה|טהורין|מתענין|מתענה|מתענות|מתריעין|מתרעת|מתריעות|גוזרין|משלימין|ישלימו|אין מפסיקין)(?=$|[\s,.:;!?]))/;
+    function mishDinNoBold(v){if(/\{(?:ב|נש):/.test(v))return false;var x=cutSp(v,spans(v,'הס'));x=cutSp(x,spans(x,'פס'));x=cutSp(x,spans(x,'אם'));
+      return MISH_DIN.test(' '+plainI(x).replace(NIK,'').replace(/\s+/g,' ').trim()+' ')}
     function obey(text,o){
       o=o||{};var out=[],inM=false;
       var ok=function(v){return keepOk(o.keep,v)},key=function(v){return keyW(v)};
@@ -1172,12 +1230,20 @@
         /* 11. תבליט (•, ·) ו-{ב:} יתום - בכל שורה, גם בכותרת צד ובמשנה (נמחקו ביד שלוש פעמים ומעלה) */
         if(/[•·▪●]/.test(p))out.push('תבליט ("•" / "·") בשורה "'+pk+'" - למחוק (סימן עבודה, אינו חלק מהנוסח)');
         spans(v,'ב').forEach(function(s){if(!plainI(s.v).replace(NIK,'').replace(/[\s.,:;!?'"\-]/g,''))out.push('הדגשה יתומה {ב:'+s.v+'} בשורה "'+pk+'" - למחוק')});
-        if(inM)return;
         var b=obeyBody(v);
-        /* 10. סוגריים מרובעים של ביאור בגוף השורה - בסגנון הסבר (כלל 6א; המנהל העבירם ביד בכל פרק) */
+        /* 10. סוגריים מרובעים של ביאור בגוף השורה - בסגנון הסבר (כלל 6א; המנהל העבירם ביד בכל פרק).
+           פרומפט 69 (19.11.2026): גם בתיבת המשנה - בתענית ג נשארו שם "[מכה מהלכת]" ו"[עננו]" בסגנון רגיל */
         if(k.t==='line'){var bb=cutSp(b,spans(b,'הס')).replace(/\[(?:תוס'|מס|מקור|דף|צד):[^\]]*\]/g,' ');
           var m=/\[[^\]\n]{1,80}\]/.exec(plainI(bb).replace(/\[(?:תוס'|מס|מקור|דף):[^\]]*\]/g,' '));
           if(m&&!ok(v))out.push('סוגריים מרובעים בסגנון רגיל: "'+m[0].slice(0,40)+'" בשורה "'+pk+'" - {הס:'+m[0].slice(0,30)+'} (כלל 6א). אם זה ציון מקור או לשון הגמרא: נימוק בשורה אחת ב-keep שפותח במילים "'+key(v)+'"')}
+        if(inM){
+          /* 20. פרומפט 69 (19.11.2026): שם תנא בתוך תיבת המשנה בלי {אם:} - חוסם (lessons: "שם התנא ו'אומר:' - בסגנון אמורא גם בתוך
+             ההדגשה"; כלל 4). ספק (ר"ח כסליו, ב"ה בלי נקודתיים, שם באמצע {מש:} ארוך) - אזהרה בלבד. פטור: נימוק ב-keep */
+          if(!ok(v))tannaScan(v).forEach(function(x){if(x.rosh)return;
+            out.push((x.sure?'':'~')+'שם תנא בתיבת המשנה בלי סגנון אמורא: "'+x.name+'" בשורה "'+pk+'" - {אם:'+x.name+'} (כולל אות החיבור, "אומר" והנקודתיים)'+(x.sure?'':' - ספק: '+x.why)+'. אם אין כאן שם: נימוק ב-keep שפותח במילים "'+key(v)+'"')});
+          /* 21. פרומפט 69: שורת משנה שיש בה דין בלי הדגשה - אזהרה בלבד (הזיהוי אינו בטוח) */
+          if(k.t==='line'&&mishDinNoBold(v)&&!ok(v))out.push('~שורת משנה שיש בה דין בלי הדגשה: "'+pk+'" - {ב:...} 2-5 מילים מלשון המשנה לכל דין, מילות המקרה בלבד');
+          return}
         /* 12. ארמית שהמנהל כבר החליף ביד (רשימת ההחלפות שנלמדו) - לשון הקודש */
         var words=plainI(b).replace(NIK,'').replace(/'[^'\n]{2,}'/g,' ').replace(/״/g,'"').replace(/''/g,'"').split(/[\s,.:!?;()\[\]{}]+/);
         var hit=[];words.forEach(function(w){w=w.replace(/^[-–]+|[-–]+$/g,'').replace(/'$/,'');if(!w)return;var q=w.replace(/'+$/,'');
@@ -1306,7 +1372,7 @@
         for(var i=0;i+4<=w.length;i++){var g=w.slice(i,i+4).join(' ');if(seen[g]&&seen[g]!==k)rep[g]=1;seen[g]=seen[g]||k}});
       var rk=Object.keys(rep);if(rk.length)out.push('צירוף שחוזר בקטע: "'+rk.slice(0,2).join('", "')+'"');
       return out}
-    return {dupFlags:dupFlags,acceptSafe:acceptSafe,acceptWhy:acceptWhy,fixLocks:fixLocks,acceptPrep:acceptPrep,acceptErrs:acceptErrs,obey:obey,SELF_CHECK:SELF_CHECK,selfCheckMissing:selfCheckMissing,OBEY_ARAM:OBEY_ARAM,absStat:absStat,absAvg:absAvg,widows:widows,abbrOpen:abbrOpen,wordy:wordy,keepOk:keepOk,wrapW:wrapW,isDashTitle:isDashTitle,dashTitles:dashTitles,dashLost:dashLost,isKushTitle:isKushTitle,amAttach:amAttach,speakerOut:speakerOut,spaceFix:spaceFix,autofixForm:autofixForm,comply:comply,mishnaBlocks:mishnaBlocks,boldBag:boldBag,hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
+    return {dupFlags:dupFlags,acceptSafe:acceptSafe,acceptWhy:acceptWhy,fixLocks:fixLocks,acceptPrep:acceptPrep,acceptErrs:acceptErrs,obey:obey,tannaScan:tannaScan,mishDinNoBold:mishDinNoBold,tagRuns:tagRuns,stackAt:stackAt,SELF_CHECK:SELF_CHECK,selfCheckMissing:selfCheckMissing,OBEY_ARAM:OBEY_ARAM,absStat:absStat,absAvg:absAvg,widows:widows,abbrOpen:abbrOpen,wordy:wordy,keepOk:keepOk,wrapW:wrapW,isDashTitle:isDashTitle,dashTitles:dashTitles,dashLost:dashLost,isKushTitle:isKushTitle,amAttach:amAttach,speakerOut:speakerOut,spaceFix:spaceFix,autofixForm:autofixForm,comply:comply,mishnaBlocks:mishnaBlocks,boldBag:boldBag,hatzDel:hatzDel,hatzNearHead:hatzNearHead,isHeadLine:isHeadLine,h2i:h2i,i2h:i2h,bare:bare,plainI:plainI,toInter:toInter,parse:parse,locks:locks,segments:segments,guard:guard,check:check,autofixTitles:autofixTitles,titleIssues:titleIssues,titleLen:titleLen,splitTitle:splitTitle,shortSide:shortSide,speakerTitle:speakerTitle,overlapN:overlapN,fixInline:fixInline,T2C_OK:function(t){return !!T2C[t]||t==='+'||t==='!'},
             quality:quality,qnorm:qnorm,aramNew:aramNew,aramWords:aramWords,squeeze:squeeze,SQ:{SEG:SQ_SEG,LINE:SQ_LINE,MIN:SQ_MIN},C2T:C2T,P2T:P2T,T2P:T2P,LINE:LINE,LINE_BIG:LINE_BIG,MU_MAX:MU_MAX,meuyanFix:meuyanFix,mergedLong:mergedLong,spans:spans,rows:rows,numOf:numOf,nums:nums,newHs:newHs,movedNames:movedNames,diffKinds:diffKinds,nbase:nbase,pnorm:pnorm}
   })();
   if(typeof module!=='undefined'&&module.exports)module.exports=SKC;

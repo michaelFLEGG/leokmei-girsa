@@ -3,7 +3,7 @@
  "jid": "shabbat-s11792-mwnj4iu1",
  "slug": "shabbat",
  "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s29)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 11792,
@@ -41,8 +41,70 @@
     "nose": 0,
     "lenA": 674,
     "lenB": 674
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795109670052
+ "t": 1795109677215,
+ "summary": "בפרק: 0 הדגשות במשנה, 1 רווחים, 0 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 1,
+  "dash": 0,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 1,
+   "dash": 0,
+   "side": 5,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 1,
+  "dash": 0,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 0,
+  "block": 0,
+  "lenPct": 0,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 0
+  }
+ },
+ "counts": {
+  "shown": 0,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

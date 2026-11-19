@@ -1,6 +1,6 @@
 {
  "slug": "shevuot",
- "made": "2026-11-19 23:17",
+ "made": "2026-11-19 23:32",
  "profile": "a4-large",
  "pages": {
   "a4": 40,
@@ -10,17 +10,15 @@
   "a4": 53,
   "a4-large": 141
  },
- "count": 48,
+ "count": 47,
  "firstTool": {
-  "5": 28,
+  "5": 27,
   "3": 3,
   "2": 1
  },
- "joinCands": 48,
+ "joinCands": 46,
  "mechSplitCands": 0,
- "ctlMismatch": [
-  "u2594.4"
- ],
+ "ctlMismatch": [],
  "rejected": 11,
  "stale": [],
  "unplaced": [],
@@ -1536,53 +1534,6 @@
      }
     }
    ],
-   "tool6": false
-  },
-  {
-   "key": "u2594.4",
-   "id": "2df00aa409021b9a",
-   "u": 2594,
-   "li": 4,
-   "daf": "מה:",
-   "cls": "b0 a0",
-   "mc": "main",
-   "html": "ולא אמרי דשכיר עובר בלא תגזול אלא דגבי בעה&quot;ב יש תרי חזקה ",
-   "ph": "ולא אמרי דשכיר עובר בלא תגזול אלא דגבי בעה&quot;ב יש תרי חזקה ",
-   "text": "ולא אמרי דשכיר עובר בלא תגזול אלא דגבי בעה\"ב יש תרי חזקה",
-   "over": "חזקה",
-   "nA4": 1,
-   "nLarge": 2,
-   "missPx": 4.6,
-   "miss": 1,
-   "long": false,
-   "tail": false,
-   "sug": [
-    {
-     "tool": 5,
-     "kind": "join",
-     "target": "next",
-     "html": "ולא אמרי דשכיר עובר בלא תגזול אלא דגבי בעה&quot;ב יש תרי חזקה <i class=\"am\">א.</i> דאין עובר בבל תלין <i class=\"am\">ב.</i> דאין שכיר משהא שכרו",
-     "targetOrig": "<i class=\"am\">א.</i> דאין עובר בבל תלין <i class=\"am\">ב.</i> דאין שכיר משהא שכרו ",
-     "targetLines": 1,
-     "why": "איחוי עם השורה הבאה",
-     "ok": {
-      "large": [
-       2
-      ],
-      "a4": [
-       2
-      ]
-     }
-    }
-   ],
-   "ctlMismatch": {
-    "a4-large": [
-     1
-    ],
-    "a4": [
-     1
-    ]
-   },
    "tool6": false
   },
   {

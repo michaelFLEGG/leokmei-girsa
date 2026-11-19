@@ -3,7 +3,7 @@
  "jid": "shabbat-s1734-mwmfcrk9",
  "slug": "shabbat",
  "title": "שבת פרק שני - במה מדליקין · סבב על הנוסח החי (s30)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 1734,
@@ -62,8 +62,70 @@
    "read": [],
    "keep": [
     "ולרבא שסבר שגט - סבב על הנוסח החי: המנהל השאיר את 'ולרבא' בגוף השאלה, ואין מוציאים לכותרת צד מה שהשאיר בשורה"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
+   }
   }
  ],
- "t": 1795057912555
+ "t": 1795057923402,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 1 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 1,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 1,
+   "side": 5,
+   "nose": 0,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 1,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 7,
+  "block": 0,
+  "lenPct": -23.2,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 2,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 7
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

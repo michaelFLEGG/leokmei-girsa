@@ -3,7 +3,7 @@
  "jid": "shabbat-s11546-mwnj4ig6",
  "slug": "shabbat",
  "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s13, s14, s15, s16)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 11546,
@@ -83,6 +83,14 @@
     "nose": 0,
     "lenA": 94,
     "lenB": 94
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -105,6 +113,14 @@
     "nose": 0,
     "lenA": 113,
     "lenB": 113
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -127,6 +143,14 @@
     "nose": 0,
     "lenA": 108,
     "lenB": 108
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -168,7 +192,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"אין מחשיכין על התחום\", \"אם יש מחיצות מביא\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -193,6 +225,14 @@
     "nose": 0,
     "lenA": 213,
     "lenB": 213
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -219,6 +259,14 @@
     "nose": 0,
     "lenA": 375,
     "lenB": 375
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -240,6 +288,14 @@
     "nose": 0,
     "lenA": 187,
     "lenB": 187
+   },
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -279,7 +335,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (57 תווים, עד 52): כרב [ולישנא עיקר ברש\"י כשמואל, והיינו כד"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s9",
@@ -305,8 +369,70 @@
     "nose": 0,
     "lenA": 286,
     "lenB": 286
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795106015350
+ "t": 1795106017817,
+ "summary": "בפרק: 5 הדגשות במשנה, 1 רווחים, 6 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 5,
+  "space": 1,
+  "dash": 6,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 9,
+  "perSeg": {
+   "bold": 0.56,
+   "space": 0.11,
+   "dash": 0.67,
+   "side": 3,
+   "nose": 0.44,
+   "widow": 0
+  },
+  "bold": 5,
+  "space": 1,
+  "dash": 6,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 2,
+  "block": 0,
+  "lenPct": -2.5,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 5
+  }
+ },
+ "counts": {
+  "shown": 2,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

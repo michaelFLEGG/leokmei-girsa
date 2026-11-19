@@ -3,7 +3,7 @@
  "jid": "shabbat-s4385-mwmd5xii",
  "slug": "shabbat",
  "title": "שבת פרק שביעי - כלל גדול · סבב על הנוסח החי (s28)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 4385,
@@ -84,8 +84,70 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795076135170
+ "t": 1795076146887,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 0 מקפי תירוץ, 4 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 4,
+  "hatz": 0
+ },
+ "learnedNew": 2,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 0,
+   "side": 7,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 4,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 5,
+  "block": 0,
+  "lenPct": -2.8,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 1,
+   "overLeft": 2
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 2,
+  "missing": 0
+ }
 }

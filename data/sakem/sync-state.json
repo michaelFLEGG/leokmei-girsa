@@ -162,7 +162,7 @@
   "shabbat-s5441-mwmd4ci2": "1c54315eb0aa1405",
   "shabbat-s4372-mwner6ux": "9964c398b6045ae2",
   "shabbat-s10249-mwnf45w9": "e14d2a7def5ee211",
-  "shabbat-s10094-mwnerefk": "0ecf097d17e1196c"
+  "shabbat-s10094-mwnerefk": "470f3cdfa3586447"
  },
  "jobsPut": {
   "shabbat-p1-round2.json": "shabbat-s1-mwev8jkj",
@@ -195,6 +195,10 @@
   "arakhin-p9-learn-176.json": "arakhin-s2665-mwmkihyw",
   "arakhin-p9-learn-21.json": "arakhin-s2296-mwmkiivp",
   "arakhin-p9-learn-33.json": "arakhin-s2327-mwmkmeqr",
-  "arakhin-p9-learn-99.json": "arakhin-s2483-mwmkmfk6"
+  "arakhin-p9-learn-99.json": "arakhin-s2483-mwmkmfk6",
+  "taanit-p1.json": "taanit-p1",
+  "taanit-p2.json": "taanit-p2",
+  "taanit-p3.json": "taanit-p3",
+  "taanit-p4.json": "taanit-p4"
  }
 }

@@ -3,7 +3,7 @@
  "jid": "shabbat-s4339-mwmd5wp6",
  "slug": "shabbat",
  "title": "שבת פרק שביעי - כלל גדול · סבב על הנוסח החי (s24, s25, s26)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 4339,
@@ -74,7 +74,15 @@
    ],
    "keep": [
     "השליך לפני ר\"א - \"אם משום שסבר... או משום עין יפה\" הוא ספק בטעם המעשה, ולא מקרה ודין"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 15,
+    "nose": 3,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -118,7 +126,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -155,8 +171,70 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795075067135
+ "t": 1795075072772,
+ "summary": "בפרק: 0 הדגשות במשנה, 1 רווחים, 1 מקפי תירוץ, 25 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 1,
+  "dash": 1,
+  "side": 25,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 3,
+  "perSeg": {
+   "bold": 0,
+   "space": 0.33,
+   "dash": 0.33,
+   "side": 8.67,
+   "nose": 1.67,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 1,
+  "dash": 1,
+  "side": 25,
+  "nose": 2,
+  "hatz": 0,
+  "abbr": 1,
+  "warnLeft": 8,
+  "block": 0,
+  "lenPct": 20,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 2,
+   "coins": 0,
+   "overLeft": 14
+  }
+ },
+ "counts": {
+  "shown": 3,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

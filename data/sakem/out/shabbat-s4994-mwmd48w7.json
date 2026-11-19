@@ -3,7 +3,7 @@
  "jid": "shabbat-s4994-mwmd48w7",
  "slug": "shabbat",
  "title": "שבת פרק תשיעי - אמר רבי עקיבא · סבב על הנוסח החי (s21, s22, s23, s24)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 4994,
@@ -78,7 +78,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"וכתיב שם מה להלן\", \"בשבת ראש חודש ולא\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -126,7 +134,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"הסכים הקבה על ידו\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "m2-1",
@@ -200,7 +216,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: וישב, וישב"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -244,7 +268,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 4,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "m4-1",
@@ -262,5 +294,59 @@
    "why": "ראיה שלישית של רב פפא באותו מהלך, שאינה מובאת בלאוקמי"
   }
  ],
- "t": 1795081499594
+ "t": 1795081501812,
+ "summary": "בפרק: 0 הדגשות במשנה, 1 רווחים, 3 מקפי תירוץ, 11 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 1,
+  "dash": 3,
+  "side": 11,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 4,
+  "perSeg": {
+   "bold": 0,
+   "space": 0.25,
+   "dash": 0.75,
+   "side": 4.25,
+   "nose": 1.25,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 1,
+  "dash": 3,
+  "side": 11,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 9,
+  "block": 0,
+  "lenPct": 1,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 26
+  }
+ },
+ "counts": {
+  "shown": 6,
+  "spatial": 0,
+  "adds": 5,
+  "missing": 2
+ }
 }

@@ -3,7 +3,7 @@
  "jid": "shabbat-s11360-mwnj4hsc",
  "slug": "shabbat",
  "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s8, s9)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 11360,
@@ -102,6 +102,14 @@
     "nose": 0,
     "lenA": 194,
     "lenB": 194
+   },
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -126,6 +134,14 @@
     "nose": 0,
     "lenA": 189,
     "lenB": 189
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -148,6 +164,14 @@
     "nose": 0,
     "lenA": 140,
     "lenB": 140
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -187,7 +211,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"ואין אומרים להם כלום\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -210,6 +242,14 @@
     "nose": 0,
     "lenA": 110,
     "lenB": 110
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -240,6 +280,14 @@
     "nose": 0,
     "lenA": 477,
     "lenB": 477
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 2,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -269,6 +317,14 @@
     "nose": 0,
     "lenA": 424,
     "lenB": 424
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 8,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -298,6 +354,14 @@
     "nose": 0,
     "lenA": 523,
     "lenB": 523
+   },
+   "abs": {
+    "bold": 6,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -324,6 +388,14 @@
     "nose": 0,
     "lenA": 254,
     "lenB": 254
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -348,6 +420,14 @@
     "nose": 0,
     "lenA": 255,
     "lenB": 255
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -370,6 +450,14 @@
     "nose": 0,
     "lenA": 75,
     "lenB": 75
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -395,8 +483,70 @@
     "nose": 0,
     "lenA": 380,
     "lenB": 380
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795101407010
+ "t": 1795101413379,
+ "summary": "בפרק: 11 הדגשות במשנה, 2 רווחים, 10 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 11,
+  "space": 2,
+  "dash": 10,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 12,
+  "perSeg": {
+   "bold": 0.92,
+   "space": 0.17,
+   "dash": 0.83,
+   "side": 3.67,
+   "nose": 0.58,
+   "widow": 0
+  },
+  "bold": 11,
+  "space": 2,
+  "dash": 10,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 2,
+  "block": 0,
+  "lenPct": -0.8,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 5
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

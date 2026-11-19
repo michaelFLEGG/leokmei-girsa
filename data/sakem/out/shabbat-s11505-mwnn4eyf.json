@@ -3,7 +3,7 @@
  "jid": "shabbat-s11505-mwnn4eyf",
  "slug": "shabbat",
  "title": "שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s10)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 11505,
@@ -178,6 +178,14 @@
     "nose": 0,
     "lenA": 213,
     "lenB": 213
+   },
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -214,7 +222,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "m2-1",
@@ -260,6 +276,14 @@
     "nose": 0,
     "lenA": 326,
     "lenB": 326
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -284,6 +308,14 @@
     "nose": 0,
     "lenA": 205,
     "lenB": 205
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -308,6 +340,14 @@
     "nose": 0,
     "lenA": 221,
     "lenB": 221
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -335,6 +375,14 @@
     "nose": 0,
     "lenA": 308,
     "lenB": 308
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -360,6 +408,14 @@
     "nose": 0,
     "lenA": 213,
     "lenB": 213
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -386,6 +442,14 @@
     "nose": 0,
     "lenA": 375,
     "lenB": 375
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -427,7 +491,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (57 תווים, עד 52): כרב [ולישנא עיקר ברש\"י כשמואל, והיינו כד"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s10",
@@ -453,6 +525,14 @@
     "nose": 0,
     "lenA": 286,
     "lenB": 286
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -477,6 +557,14 @@
     "nose": 0,
     "lenA": 324,
     "lenB": 324
+   },
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -503,6 +591,14 @@
     "nose": 0,
     "lenA": 324,
     "lenB": 324
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -527,6 +623,14 @@
     "nose": 0,
     "lenA": 267,
     "lenB": 267
+   },
+   "abs": {
+    "bold": 3,
+    "space": 1,
+    "dash": 0,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -556,6 +660,14 @@
     "nose": 0,
     "lenA": 486,
     "lenB": 486
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -595,7 +707,15 @@
     "שורה אלמנה (ימי הזקנה,) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s16",
@@ -621,6 +741,14 @@
     "nose": 0,
     "lenA": 414,
     "lenB": 414
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -648,6 +776,14 @@
     "nose": 0,
     "lenA": 468,
     "lenB": 468
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -689,7 +825,15 @@
     "שורה אלמנה (טוחנים.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 6,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s19",
@@ -714,6 +858,14 @@
     "nose": 0,
     "lenA": 438,
     "lenB": 438
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -755,7 +907,15 @@
     "שורה אלמנה (מתכבדות.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 1
+   }
   },
   {
    "iid": "s21",
@@ -780,6 +940,14 @@
     "nose": 0,
     "lenA": 437,
     "lenB": 437
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -803,6 +971,14 @@
     "nose": 0,
     "lenA": 224,
     "lenB": 224
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -829,6 +1005,14 @@
     "nose": 0,
     "lenA": 434,
     "lenB": 434
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -851,6 +1035,14 @@
     "nose": 0,
     "lenA": 542,
     "lenB": 542
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 1
    }
   },
   {
@@ -891,8 +1083,70 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"עתידים צדיקים להיות עפר\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795102621079
+ "t": 1795102766757,
+ "summary": "בפרק: 17 הדגשות במשנה, 8 רווחים, 10 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 17,
+  "space": 8,
+  "dash": 10,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 25,
+  "perSeg": {
+   "bold": 0.68,
+   "space": 0.32,
+   "dash": 0.4,
+   "side": 3.92,
+   "nose": 0.72,
+   "widow": 0.08
+  },
+  "bold": 17,
+  "space": 8,
+  "dash": 10,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 9,
+  "block": 0,
+  "lenPct": -0.6,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 29
+  }
+ },
+ "counts": {
+  "shown": 7,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 1
+ }
 }

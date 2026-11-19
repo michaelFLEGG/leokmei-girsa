@@ -229,3 +229,4 @@
 {"jid":"kiddushin-p1","slug":"kiddushin","perek":1,"title":"קידושין פרק ראשון - האשה נקנית","part":"1/2","segs":62,"segsThisRun":16,"units":1305,"origLen":97926,"start":"2026-11-19T13:51:43.188Z","end":"2026-11-19T14:11:05.813Z","how":"pause","minutes":19.4}
 {"jid":"kiddushin-p3","slug":"kiddushin","perek":3,"title":"קידושין פרק שלישי - האומר","part":"2/2","segs":54,"segsThisRun":27,"units":374,"origLen":27822,"start":"2026-11-19T13:52:15.320Z","end":"2026-11-19T14:20:03.425Z","how":"finish","minutes":27.8}
 {"jid":"shabbat-s10531-mwnerljs","slug":"shabbat","perek":23,"title":"שבת פרק שלוש ועשרים - שואל · סבב על הנוסח החי (s14)","part":"כולו","segs":20,"segsThisRun":20,"units":60,"origLen":9796,"start":"2026-11-19T14:13:08.228Z","end":"2026-11-19T14:30:08.459Z","how":"finish","minutes":17}
+{"jid":"kiddushin-p2","how":"takeover","from":"עובד סכם · 2026-11-19T13:29:55.866Z","idleMin":61,"by":"עובד ג","at":"2026-11-19T14:30:39.039Z"}

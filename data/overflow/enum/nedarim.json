@@ -1,15 +1,8 @@
 {
  "slug": "nedarim",
- "made": "2026-11-20 09:02",
+ "made": "2026-11-20 09:37",
  "found": 1,
- "applied": 1,
- "liveSkipped": 0,
- "examples": [
-  {
-   "daf": "מו:",
-   "key": "u1862.1",
-   "before": "ב. אלא רב יוסף מזעירי: <i class=\"b\">מחלוקת - שאין בה כדי חלוקה</i>, ",
-   "after": "<i class=\"am\">ב.</i> אלא רב יוסף מזעירי: <i class=\"b\">מחלוקת - שאין בה כדי חלוקה</i>, "
-  }
- ]
+ "applied": 0,
+ "liveSkipped": 1,
+ "examples": []
 }

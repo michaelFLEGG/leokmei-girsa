@@ -191,17 +191,19 @@
   "kiddushin-p2@1795089765752",
   "kiddushin-p3@1795089766634",
   "kiddushin-p4@1795089767766",
-  "shabbat-s3129-mwnexg57@1795084442287"
+  "shabbat-s3129-mwnexg57@1795084442287",
+  "shabbat-s4877-mwner91n@1795084153170",
+  "shabbat-s4927-mwner9s5@1795084154167"
  ],
- "learnT": 1795139403046,
+ "learnT": 1795164701679,
  "post": {
-  "bava-batra": 2055,
+  "bava-batra": 2220,
   "bekhorot": 8446,
-  "berakhot": 15966,
+  "berakhot": 16112,
   "ketubot": 4843,
-  "kiddushin": 22,
-  "shabbat": 15648,
-  "sukkah": 6331,
+  "kiddushin": 182,
+  "shabbat": 16454,
+  "sukkah": 7056,
   "bava-kamma": 18,
   "beitzah": 5,
   "chagigah": 6,
@@ -210,7 +212,10 @@
   "megillah": 3,
   "temurah": 4,
   "yoma": 21,
-  "arakhin": 38,
-  "avodah-zarah": 1
+  "arakhin": 1897,
+  "avodah-zarah": 1,
+  "bava-metzia": 4,
+  "nedarim": 1,
+  "niddah": 8
  }
 }

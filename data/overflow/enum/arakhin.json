@@ -1,8 +1,15 @@
 {
  "slug": "arakhin",
- "made": "2026-11-20 07:58",
- "found": 2,
- "applied": 0,
+ "made": "2026-11-20 08:31",
+ "found": 1,
+ "applied": 1,
  "liveSkipped": 0,
- "examples": []
+ "examples": [
+  {
+   "daf": "ז.",
+   "key": "u391.1",
+   "before": "א. א&quot;ר אילא אמר רב: כשעמד בדין. והא הרגו קתני! ",
+   "after": "<i class=\"am\">א.</i> א\"ר אילא אמר רב: כשעמד בדין. והא הרגו קתני! "
+  }
+ ]
 }

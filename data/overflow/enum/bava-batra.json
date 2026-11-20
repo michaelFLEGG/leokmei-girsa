@@ -1,21 +1,8 @@
 {
  "slug": "bava-batra",
- "made": "2026-11-20 08:30",
+ "made": "2026-11-20 09:13",
  "found": 3,
- "applied": 2,
- "liveSkipped": 1,
- "examples": [
-  {
-   "daf": "פ:",
-   "key": "u4235.2",
-   "before": "א. א. א. א. א. אביי: <i class=\"am\">ל&quot;צ</i> אלא לאותן שתי חלות <i class=\"hs\">שמניח</i>.",
-   "after": "<i class=\"am\">א.</i> א. א. א. א. אביי: <i class=\"am\">ל\"צ</i> אלא לאותן שתי חלות <i class=\"hs\">שמניח</i>."
-  },
-  {
-   "daf": "פא:",
-   "key": "u4338.1",
-   "before": "א. אם אינו <i class=\"hs\">ביכורים</i> - דמאי, ואם ביכורים - של הכהן,",
-   "after": "<i class=\"am\">א.</i> אם אינו <i class=\"hs\">ביכורים</i> - דמאי, ואם ביכורים - של הכהן,"
-  }
- ]
+ "applied": 0,
+ "liveSkipped": 3,
+ "examples": []
 }

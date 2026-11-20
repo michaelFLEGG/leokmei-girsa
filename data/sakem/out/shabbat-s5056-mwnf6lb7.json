@@ -127,7 +127,121 @@
   }
  ],
  "total": 20,
- "done": 0,
- "items": [],
- "t": 1795163651363
+ "done": 4,
+ "items": [
+  {
+   "iid": "s1",
+   "kind": "seg",
+   "seg": 0,
+   "sugya": 1,
+   "ids": [
+    5056,
+    5057,
+    5059,
+    5061,
+    5063,
+    5065,
+    5069
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 382,
+    "lenB": 382
+   }
+  },
+  {
+   "iid": "s2",
+   "kind": "seg",
+   "seg": 1,
+   "sugya": 2,
+   "ids": [
+    5073,
+    5074,
+    5076,
+    5078,
+    5080
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 284,
+    "lenB": 284
+   }
+  },
+  {
+   "iid": "s3",
+   "kind": "seg",
+   "seg": 2,
+   "sugya": 3,
+   "ids": [
+    5084,
+    5085,
+    5086,
+    5089,
+    5092,
+    5095,
+    5097,
+    5101,
+    5103,
+    5104,
+    5106
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 397,
+    "lenB": 397
+   }
+  },
+  {
+   "iid": "s4",
+   "kind": "seg",
+   "seg": 3,
+   "sugya": 4,
+   "ids": [
+    5108,
+    5109,
+    5110,
+    5113,
+    5114,
+    5116,
+    5118,
+    5119,
+    5126,
+    5131
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 998,
+    "lenB": 998
+   }
+  }
+ ],
+ "t": 1795163671990
 }

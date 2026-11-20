@@ -1,15 +1,8 @@
 {
  "slug": "shabbat",
- "made": "2026-11-20 08:22",
- "found": 8,
- "applied": 1,
- "liveSkipped": 0,
- "examples": [
-  {
-   "daf": "טו.",
-   "key": "u890.2",
-   "before": "ב. הבוצר לגת, <i class=\"am\">לשמאי:</i> הוכשר,",
-   "after": "<i class=\"am\">ב.</i> הבוצר לגת, <i class=\"am\">לשמאי:</i> הוכשר,"
-  }
- ]
+ "made": "2026-11-20 09:08",
+ "found": 2,
+ "applied": 0,
+ "liveSkipped": 2,
+ "examples": []
 }

@@ -3,7 +3,7 @@
  "jid": "shabbat-s5863-mwmd4lgu",
  "slug": "shabbat",
  "title": "שבת פרק שנים עשר - הבונה · סבב על הנוסח החי (s1, s2, s3, s4, s5, s6)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 5863,
@@ -81,7 +81,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -133,7 +141,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: אלא, אלא, בונה, תחתון"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -202,7 +218,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -224,6 +248,14 @@
     "nose": 0,
     "lenA": 65,
     "lenB": 65
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -263,7 +295,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: המכה בקורנס על הסדן אסור, ותנה"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s6",
@@ -314,8 +354,70 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: חורש, המלקט ותולש עולשין"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 3,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795213049150
+ "t": 1795213095151,
+ "summary": "בפרק: 7 הדגשות במשנה, 0 רווחים, 6 מקפי תירוץ, 24 כותרות צד חדשות, 1 עיטורים נמחקו",
+ "compliance": {
+  "bold": 7,
+  "space": 0,
+  "dash": 6,
+  "side": 24,
+  "hatz": 1
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 6,
+  "perSeg": {
+   "bold": 1.17,
+   "space": 0,
+   "dash": 1,
+   "side": 4,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 7,
+  "space": 0,
+  "dash": 6,
+  "side": 24,
+  "nose": 3,
+  "hatz": 1,
+  "abbr": 0,
+  "warnLeft": 6,
+  "block": 0,
+  "lenPct": 11.8,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 3,
+   "coins": 0,
+   "overLeft": 11
+  }
+ },
+ "counts": {
+  "shown": 5,
+  "spatial": 0,
+  "adds": 8,
+  "missing": 0
+ }
 }

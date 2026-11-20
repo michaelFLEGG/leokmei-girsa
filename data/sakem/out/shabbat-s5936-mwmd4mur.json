@@ -3,7 +3,7 @@
  "jid": "shabbat-s5936-mwmd4mur",
  "slug": "shabbat",
  "title": "שבת פרק שנים עשר - הבונה · סבב על הנוסח החי (s10)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 5936,
@@ -74,7 +74,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"סתום ועשאו פתוח כשר\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -109,7 +117,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -159,8 +175,70 @@
    "read": [],
    "keep": [
     "ריש רשע ופני - רי\"ש כאן היא האות שנדרשת ולא שם דובר, ואינה יוצאת לכותרת צד"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 1
+   }
   }
  ],
- "t": 1795214296496
+ "t": 1795214303161,
+ "summary": "בפרק: 0 הדגשות במשנה, 1 רווחים, 5 מקפי תירוץ, 15 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 1,
+  "dash": 5,
+  "side": 15,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 3,
+  "perSeg": {
+   "bold": 0,
+   "space": 0.33,
+   "dash": 1.67,
+   "side": 5.33,
+   "nose": 0.67,
+   "widow": 0.33
+  },
+  "bold": 0,
+  "space": 1,
+  "dash": 5,
+  "side": 15,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 1,
+  "warnLeft": 4,
+  "block": 0,
+  "lenPct": 4.3,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 1,
+   "overLeft": 16
+  }
+ },
+ "counts": {
+  "shown": 3,
+  "spatial": 1,
+  "adds": 2,
+  "missing": 0
+ }
 }

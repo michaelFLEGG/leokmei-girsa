@@ -3,7 +3,7 @@
  "jid": "shabbat-s4877-mwner91n",
  "slug": "shabbat",
  "title": "שבת פרק שמיני - המוציא יין · סבב על הנוסח החי (s1)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 4877,
@@ -71,8 +71,70 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"אכילה על ידי הדחק\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 6,
+    "space": 1,
+    "dash": 2,
+    "side": 14,
+    "nose": 2,
+    "widow": 0
+   }
   }
  ],
- "t": 1795159970095
+ "t": 1795159990583,
+ "summary": "בפרק: 6 הדגשות במשנה, 1 רווחים, 2 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 6,
+  "space": 1,
+  "dash": 2,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 6,
+   "space": 1,
+   "dash": 2,
+   "side": 14,
+   "nose": 2,
+   "widow": 0
+  },
+  "bold": 6,
+  "space": 1,
+  "dash": 2,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 2,
+  "block": 0,
+  "lenPct": -6.7,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 2,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 5
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

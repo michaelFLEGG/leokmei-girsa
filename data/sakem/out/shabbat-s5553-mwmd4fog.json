@@ -1,0 +1,19 @@
+{
+ "v": 1,
+ "jid": "shabbat-s5553-mwmd4fog",
+ "slug": "shabbat",
+ "title": "שבת פרק אחד עשר - הזורק · סבב על הנוסח החי (s3)",
+ "status": "work",
+ "plan": [
+  {
+   "from": 5553,
+   "to": 5567,
+   "sugya": 1,
+   "title": "מלאכת המקושש"
+  }
+ ],
+ "total": 1,
+ "done": 0,
+ "items": [],
+ "t": 1795203131033
+}

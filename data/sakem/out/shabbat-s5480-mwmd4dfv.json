@@ -3,7 +3,7 @@
  "jid": "shabbat-s5480-mwmd4dfv",
  "slug": "shabbat",
  "title": "שבת פרק עשירי - המצניע · סבב על הנוסח החי (s27, s28)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 5480,
@@ -74,7 +74,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: חכמים"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -116,7 +124,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -163,7 +179,15 @@
     "ציות: דובר בפתח שורה בלי כותרת צד: \"וב\"י\" - [צד:וב\"י:] והשורה מתחילה בתוכן (גם בלי נקודתיים; המנהל העביר ביד 7 פעמים בשבת ד). צלע במחלוקת בשורה אחת, או מימרא קצרה מאוד - נימוק ב-keep שפותח במילים \"ובי כתב שאסור\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -203,8 +227,70 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795166135920
+ "t": 1795166144333,
+ "summary": "בפרק: 5 הדגשות במשנה, 0 רווחים, 1 מקפי תירוץ, 16 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 5,
+  "space": 0,
+  "dash": 1,
+  "side": 16,
+  "hatz": 0
+ },
+ "learnedNew": 2,
+ "score": {
+  "segs": 4,
+  "perSeg": {
+   "bold": 1.25,
+   "space": 0,
+   "dash": 0.25,
+   "side": 4,
+   "nose": 0.75,
+   "widow": 0
+  },
+  "bold": 5,
+  "space": 0,
+  "dash": 1,
+  "side": 16,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 3,
+  "warnLeft": 13,
+  "block": 0,
+  "lenPct": 17.9,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 12
+  }
+ },
+ "counts": {
+  "shown": 4,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

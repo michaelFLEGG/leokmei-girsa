@@ -3,7 +3,7 @@
  "jid": "shabbat-s5750-mwmd4ij1",
  "slug": "shabbat",
  "title": "שבת פרק אחד עשר - הזורק · סבב על הנוסח החי (s23, s24, s26, s27, s28)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 5750,
@@ -82,7 +82,15 @@
    "read": [],
    "keep": [
     "ולרבנן שאמרו אין - צלע שנייה של המחלוקת, מקבילה ל'לר\"מ' שבגוף השורה שלפניה, כפי שסידר המנהל"
-   ]
+   ],
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -135,7 +143,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: ותנה"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 2,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -190,7 +206,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 3,
+    "space": 1,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -254,7 +278,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 3,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -300,8 +332,70 @@
     "שורה אלמנה (חכמים במים.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
+   }
   }
  ],
- "t": 1795209637540
+ "t": 1795209640071,
+ "summary": "בפרק: 12 הדגשות במשנה, 1 רווחים, 1 מקפי תירוץ, 18 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 12,
+  "space": 1,
+  "dash": 1,
+  "side": 18,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 5,
+  "perSeg": {
+   "bold": 2.4,
+   "space": 0.2,
+   "dash": 0.2,
+   "side": 4.6,
+   "nose": 1.4,
+   "widow": 0
+  },
+  "bold": 12,
+  "space": 1,
+  "dash": 1,
+  "side": 18,
+  "nose": 1,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 20,
+  "block": 0,
+  "lenPct": 5.5,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 1,
+   "coins": 0,
+   "overLeft": 22
+  }
+ },
+ "counts": {
+  "shown": 5,
+  "spatial": 0,
+  "adds": 2,
+  "missing": 0
+ }
 }

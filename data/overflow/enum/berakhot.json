@@ -1,8 +1,15 @@
 {
  "slug": "berakhot",
- "made": "2026-11-20 07:37",
+ "made": "2026-11-20 08:18",
  "found": 1,
- "applied": 0,
- "liveSkipped": 1,
- "examples": []
+ "applied": 1,
+ "liveSkipped": 0,
+ "examples": [
+  {
+   "daf": "נב:",
+   "key": "u4724.2",
+   "before": "ב. ריו&quot;ס:בורא <i class=\"am\">לכו&quot;ע</i> ברא, ",
+   "after": "<i class=\"am\">ב.</i> ריו\"ס:בורא <i class=\"am\">לכו\"ע</i> ברא, "
+  }
+ ]
 }

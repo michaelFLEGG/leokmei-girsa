@@ -1,0 +1,19 @@
+{
+ "v": 1,
+ "jid": "shabbat-s6090-mwmd4qcc",
+ "slug": "shabbat",
+ "title": "שבת פרק שלשה עשר - האורג · סבב על הנוסח החי (s9)",
+ "status": "work",
+ "plan": [
+  {
+   "from": 6090,
+   "to": 6090,
+   "sugya": 1,
+   "title": "קורע בחמתו - כמי"
+  }
+ ],
+ "total": 1,
+ "done": 0,
+ "items": [],
+ "t": 1795216432481
+}

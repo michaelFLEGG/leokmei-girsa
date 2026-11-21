@@ -1,15 +1,8 @@
 {
  "slug": "shabbat",
- "made": "2026-11-21 08:40",
+ "made": "2026-11-21 09:10",
  "found": 2,
- "applied": 1,
- "liveSkipped": 1,
- "examples": [
-  {
-   "daf": "קג.",
-   "key": "u7362.1",
-   "before": "א. אביי:",
-   "after": "<i class=\"am\">א.</i> אביי:"
-  }
- ]
+ "applied": 0,
+ "liveSkipped": 2,
+ "examples": []
 }

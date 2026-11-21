@@ -55,10 +55,18 @@ def dump(slug):
             last = n
         time.sleep(8)
         data = pg.evaluate(JS)
+        base = pg.evaluate("""async () => {
+          const src = [...document.scripts].map(s => s.src).find(s => /\\.data\\.js/.test(s));
+          const t = await fetch(src).then(r => r.text());
+          const D = (new Function(t + ';return DATA'))();
+          const out = {};
+          for (const p of D.pages) for (const u of p.units) if (u.lv) out[u.id] = {l: u.l, lv: u.lv};
+          return out;
+        }""")
         b.close()
     live = json.loads(urllib.request.urlopen(urllib.request.Request(API + '/live?slug=' + slug,
                       headers={'user-agent': 'Mozilla/5.0 leokmei-sem/1.0'}), timeout=120).read().decode('utf-8'))
-    blob = base64.b64encode(gzip.compress(json.dumps({'rows': data, 'live': live.get('doc', {}).get('edits', [])},
+    blob = base64.b64encode(gzip.compress(json.dumps({'rows': data, 'base': base, 'live': live.get('doc', {}).get('edits', [])},
                                                      ensure_ascii=False).encode('utf-8'))).decode('ascii')
     print('lines', len(data), 'live', len(live.get('doc', {}).get('edits', [])))
     print('=====SEMDUMP-BEGIN=====')

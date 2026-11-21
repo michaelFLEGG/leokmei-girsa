@@ -17,6 +17,13 @@ def main():
     if not key:
         sys.exit('אין מפתח מנהל (LEOKMEI_ADMIN_KEY)')
     slugs = (os.environ.get('SLUGS') or '').split()
+    # 21.11.2026: התיקון הסמנטי (tools/semantic_io.py) - "dump:<מסכת>" או "file:<נתיב>"
+    sem = [s for s in slugs if s.startswith('dump:') or s.startswith('file:')]
+    if sem:
+        import subprocess
+        for s in sem:
+            subprocess.run([sys.executable, os.path.join(HERE, 'tools', 'semantic_io.py'), s], check=True)
+        sys.exit(0)
     if not slugs:
         slugs = sorted(f[:-5] for f in os.listdir(os.path.join(HERE, 'data', 'edits')) if f.endswith('.json'))
     bad = 0

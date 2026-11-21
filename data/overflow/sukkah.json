@@ -1,24 +1,24 @@
 {
  "slug": "sukkah",
- "made": "2026-11-21 08:29",
+ "made": "2026-11-21 09:01",
  "profile": "a4-large",
  "pages": {
   "a4": 28,
   "a4-large": 31
  },
  "sq25": {
-  "a4": 25,
+  "a4": 24,
   "a4-large": 86
  },
- "count": 15,
+ "count": 14,
  "firstTool": {
   "3": 1,
-  "4": 2,
+  "4": 1,
   "2": 1,
   "5": 2
  },
  "joinCands": 3,
- "mechSplitCands": 2,
+ "mechSplitCands": 1,
  "ctlMismatch": [],
  "rejected": 2,
  "stale": [
@@ -83,50 +83,6 @@
       ],
       "a4": [
        2
-      ]
-     }
-    }
-   ],
-   "tool6": false
-  },
-  {
-   "key": "u394.1",
-   "id": "c1e6e5785182da53",
-   "u": 394,
-   "li": 1,
-   "daf": "יד:",
-   "cls": "b0 a0",
-   "mc": "main",
-   "html": "<i class=\"kt\">ב&#x27; סדינין</i> מצטרפין, <i class=\"kt\">ב נסרין- </i><i class=\"am\">ר&quot;י:</i> אין מצטרפין<i class=\"am\"> ר&quot;מ</i>: כסדין ומצטרפין",
-   "ph": "<i class=\"kt\">ב&#x27; סדינין</i> מצטרפין, <i class=\"kt\">ב נסרין- </i><i class=\"am\">ר&quot;י:</i> אין מצטרפין<i class=\"am\"> ר&quot;מ</i>: כסדין ומצטרפין",
-   "text": "ב' סדינין מצטרפין, ב נסרין- ר\"י: אין מצטרפין ר\"מ: כסדין ומצטרפין",
-   "over": "כסדין ומצטרפין",
-   "nA4": 1,
-   "nLarge": 2,
-   "missPx": 39.1,
-   "miss": 7,
-   "long": false,
-   "tail": false,
-   "sug": [
-    {
-     "tool": 4,
-     "split_before": "ב נסרי",
-     "side": "",
-     "kind": "split",
-     "parts": [
-      "<i class=\"kt\">ב&#x27; סדינין</i> מצטרפין,",
-      "<i class=\"kt\">ב נסרין- </i><i class=\"am\">ר&quot;י:</i> אין מצטרפין<i class=\"am\"> ר&quot;מ</i>: כסדין ומצטרפין"
-     ],
-     "why": "חיתוך אחרי סימן פיסוק",
-     "src": "mech",
-     "ok": {
-      "large": [
-       1,
-       1
-      ],
-      "a4": [
-       1,
-       1
       ]
      }
     }

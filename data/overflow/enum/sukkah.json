@@ -1,15 +1,8 @@
 {
  "slug": "sukkah",
- "made": "2026-11-21 08:29",
+ "made": "2026-11-21 09:01",
  "found": 5,
- "applied": 1,
- "liveSkipped": 4,
- "examples": [
-  {
-   "daf": "ז:",
-   "key": "u180.1",
-   "before": "א. <i class=\"am\">רבי</i> - פוסל בפחות מד&quot;א, ב. <i class=\"am\">ר&#x27; יאשיה</i> - אף מחמת דפנות,",
-   "after": "<i class=\"am\">א.</i> <i class=\"am\">רבי</i> - פוסל בפחות מד\"א, <i class=\"am\">ב.</i> <i class=\"am\">ר' יאשיה</i> - אף מחמת דפנות,"
-  }
- ]
+ "applied": 0,
+ "liveSkipped": 5,
+ "examples": []
 }

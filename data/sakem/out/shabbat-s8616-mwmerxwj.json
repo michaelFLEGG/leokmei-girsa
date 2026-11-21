@@ -3,7 +3,7 @@
  "jid": "shabbat-s8616-mwmerxwj",
  "slug": "shabbat",
  "title": "שבת פרק ששה עשר - כל כתבי · סבב על הנוסח החי (s35, s36)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 8616,
@@ -73,7 +73,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"ובלבד שלא יביא כלי\", \"אלא מזון שלש סעודות\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 9,
+    "space": 0,
+    "dash": 0,
+    "side": 9,
+    "nose": 3,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -96,8 +104,70 @@
     "nose": 0,
     "lenA": 210,
     "lenB": 210
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795266875236
+ "t": 1795266894333,
+ "summary": "בפרק: 9 הדגשות במשנה, 0 רווחים, 0 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 9,
+  "space": 0,
+  "dash": 0,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 2,
+  "perSeg": {
+   "bold": 4.5,
+   "space": 0,
+   "dash": 0,
+   "side": 5.5,
+   "nose": 2,
+   "widow": 0
+  },
+  "bold": 9,
+  "space": 0,
+  "dash": 0,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 7,
+  "block": 0,
+  "lenPct": 0.4,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 12
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

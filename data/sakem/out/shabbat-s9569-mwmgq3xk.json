@@ -3,7 +3,7 @@
  "jid": "shabbat-s9569-mwmgq3xk",
  "slug": "shabbat",
  "title": "שבת פרק תשעה עשר - ר\"א דמילה · סבב על הנוסח החי (s30, s31, s32, s33, s35)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 9569,
@@ -85,6 +85,14 @@
     "nose": 0,
     "lenA": 489,
     "lenB": 489
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -116,6 +124,14 @@
     "nose": 0,
     "lenA": 676,
     "lenB": 676
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -142,6 +158,14 @@
     "nose": 0,
     "lenA": 321,
     "lenB": 321
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -172,6 +196,14 @@
     "nose": 0,
     "lenA": 715,
     "lenB": 715
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 9,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -197,6 +229,14 @@
     "nose": 0,
     "lenA": 161,
     "lenB": 161
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -222,6 +262,14 @@
     "nose": 0,
     "lenA": 204,
     "lenB": 204
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -243,6 +291,14 @@
     "nose": 0,
     "lenA": 179,
     "lenB": 179
+   },
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -278,8 +334,70 @@
     "nose": 0,
     "lenA": 521,
     "lenB": 521
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795298146897
+ "t": 1795298152036,
+ "summary": "בפרק: 5 הדגשות במשנה, 1 רווחים, 10 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 5,
+  "space": 1,
+  "dash": 10,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 8,
+  "perSeg": {
+   "bold": 0.63,
+   "space": 0.13,
+   "dash": 1.25,
+   "side": 6.38,
+   "nose": 0.88,
+   "widow": 0
+  },
+  "bold": 5,
+  "space": 1,
+  "dash": 10,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 0,
+  "block": 0,
+  "lenPct": 0,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 0
+  }
+ },
+ "counts": {
+  "shown": 0,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

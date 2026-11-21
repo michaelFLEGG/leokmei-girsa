@@ -1,39 +1,15 @@
 {
  "slug": "sukkah",
- "made": "2026-11-21 07:37",
- "found": 18,
- "applied": 5,
- "liveSkipped": 0,
+ "made": "2026-11-21 08:29",
+ "found": 5,
+ "applied": 1,
+ "liveSkipped": 4,
  "examples": [
   {
    "daf": "ז:",
-   "key": "u179.1",
+   "key": "u180.1",
    "before": "א. <i class=\"am\">רבי</i> - פוסל בפחות מד&quot;א, ב. <i class=\"am\">ר&#x27; יאשיה</i> - אף מחמת דפנות,",
    "after": "<i class=\"am\">א.</i> <i class=\"am\">רבי</i> - פוסל בפחות מד\"א, <i class=\"am\">ב.</i> <i class=\"am\">ר' יאשיה</i> - אף מחמת דפנות,"
-  },
-  {
-   "daf": "ז:",
-   "key": "u179.2",
-   "before": "ג. <i class=\"am\">ר&quot;י</i> - מכשיר למעלה מכ&#x27;, ד. <i class=\"am\">ר&quot;ש</i> - רביעית טפח,",
-   "after": "<i class=\"am\">ג.</i> <i class=\"am\">ר\"י</i> - מכשיר למעלה מכ', <i class=\"am\">ד.</i> <i class=\"am\">ר\"ש</i> - רביעית טפח,"
-  },
-  {
-   "daf": "ז:",
-   "key": "u179.3",
-   "before": "ה. <i class=\"am\">ר&quot;ג</i> - פוסל בראש עגלה וספינה, ו. <i class=\"am\">ב&quot;ש</i> - באינה מחזקת שולחנו,",
-   "after": "<i class=\"am\">ה.</i> <i class=\"am\">ר\"ג</i> - פוסל בראש עגלה וספינה, <i class=\"am\">ו.</i> <i class=\"am\">ב\"ש</i> - באינה מחזקת שולחנו,"
-  },
-  {
-   "daf": "ז:",
-   "key": "u179.4",
-   "before": "ז. <i class=\"am\">ר\"א</i> - פוסל בצריף ובסמוכה לכותל, ח. <i class=\"am\">ואחרים</i> - בעשויה כשובך.",
-   "after": "<i class=\"am\">ז.</i> <i class=\"am\">ר\"א</i> - פוסל בצריף ובסמוכה לכותל, <i class=\"am\">ח.</i> <i class=\"am\">ואחרים</i> - בעשויה כשובך."
-  },
-  {
-   "daf": "לב:",
-   "key": "u1246.3",
-   "before": "ולא הירדוף - א. <i class=\"am\">לאביי:</i> ד<i class=\"ps\">&#x27;דרכי נעם&#x27;</i>, ב. <i class=\"am\">לרבא:</i> מ<i class=\"ps\">&#x27;האמת והשלום&#x27;</i>.",
-   "after": "ולא הירדוף - <i class=\"am\">א.</i> <i class=\"am\">לאביי:</i> ד<i class=\"ps\">'דרכי נעם'</i>, <i class=\"am\">ב.</i> <i class=\"am\">לרבא:</i> מ<i class=\"ps\">'האמת והשלום'</i>."
   }
  ]
 }

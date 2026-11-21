@@ -3,7 +3,7 @@
  "jid": "shabbat-s7519-mwpmxtlc",
  "slug": "shabbat",
  "title": "שבת פרק שלשה עשר - האורג · סבב על הנוסח החי (s1)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 7519,
@@ -91,6 +91,14 @@
     "nose": 0,
     "lenA": 530,
     "lenB": 530
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 1,
+    "widow": 1
    }
   },
   {
@@ -118,6 +126,14 @@
     "nose": 0,
     "lenA": 103,
     "lenB": 103
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -147,6 +163,14 @@
     "nose": 0,
     "lenA": 780,
     "lenB": 780
+   },
+   "abs": {
+    "bold": 6,
+    "space": 1,
+    "dash": 0,
+    "side": 5,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -182,6 +206,14 @@
     "nose": 0,
     "lenA": 773,
     "lenB": 773
+   },
+   "abs": {
+    "bold": 7,
+    "space": 0,
+    "dash": 3,
+    "side": 12,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -227,7 +259,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 11,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "m5-1",
@@ -278,6 +318,14 @@
     "nose": 0,
     "lenA": 371,
     "lenB": 371
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -308,6 +356,14 @@
     "nose": 0,
     "lenA": 560,
     "lenB": 560
+   },
+   "abs": {
+    "bold": 6,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -358,7 +414,15 @@
    ],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 3,
+    "space": 0,
+    "dash": 1,
+    "side": 6,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s9",
@@ -411,8 +475,70 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"לנועל את ביתו לשומרו\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 6,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 4,
+    "widow": 0
+   }
   }
  ],
- "t": 1795244180300
+ "t": 1795244187215,
+ "summary": "בפרק: 28 הדגשות במשנה, 2 רווחים, 6 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 28,
+  "space": 2,
+  "dash": 6,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 9,
+  "perSeg": {
+   "bold": 3.11,
+   "space": 0.22,
+   "dash": 0.67,
+   "side": 7.11,
+   "nose": 1.56,
+   "widow": 0.11
+  },
+  "bold": 28,
+  "space": 2,
+  "dash": 6,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 3,
+  "block": 0,
+  "lenPct": 1.2,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 13
+  }
+ },
+ "counts": {
+  "shown": 4,
+  "spatial": 0,
+  "adds": 2,
+  "missing": 1
+ }
 }

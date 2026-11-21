@@ -3,7 +3,7 @@
  "jid": "shabbat-s8748-mwmfmkz8",
  "slug": "shabbat",
  "title": "שבת פרק שבעה עשר - כל הכלים · סבב על הנוסח החי (s1, s3, s4)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 8748,
@@ -89,7 +89,15 @@
     "ציות: שורת משנה שיש בה דין בלי הדגשה: \"ושל סקאים - לפתוח בו את הדלת.\" - {ב:...} 2-5 מילים מלשון המשנה לכל דין, מילות המקרה בלבד"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 3,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -114,6 +122,14 @@
     "nose": 0,
     "lenA": 246,
     "lenB": 246
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -159,7 +175,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (71 תווים, עד 52): קורנס של זהבים שנינו, [שמתקנו במכה על קו"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 2,
+    "side": 9,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -187,6 +211,14 @@
     "nose": 0,
     "lenA": 407,
     "lenB": 407
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -211,6 +243,14 @@
     "nose": 0,
     "lenA": 188,
     "lenB": 188
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -233,8 +273,70 @@
     "nose": 0,
     "lenA": 112,
     "lenB": 112
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795270483016
+ "t": 1795270490852,
+ "summary": "בפרק: 3 הדגשות במשנה, 2 רווחים, 3 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 3,
+  "space": 2,
+  "dash": 3,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 6,
+  "perSeg": {
+   "bold": 0.5,
+   "space": 0.33,
+   "dash": 0.5,
+   "side": 3.67,
+   "nose": 1.17,
+   "widow": 0
+  },
+  "bold": 3,
+  "space": 2,
+  "dash": 3,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 9,
+  "block": 0,
+  "lenPct": 1.4,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 4
+  }
+ },
+ "counts": {
+  "shown": 2,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

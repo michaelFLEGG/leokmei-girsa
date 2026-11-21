@@ -215,7 +215,9 @@
   document.head.appendChild(sty);
 
   /* אין התו ; בסיכומים (14.10.2026): גם נוסח שנבחר בעבר ושמור בשרת מוצג עם נקודה */
-  function txt(it){var p=PUB[it.n],t=(p&&p.t)||it.sum||'';return t.replace(/\s*;\s*$/,'.').replace(/\s*;\s*/g,'. ')}
+  /* 21.11.2026 (מיכאל): נקודתיים אחרי "לרש"י" / "לר"ת" וכד' כשאחריהם דבריו - כמו בהדפסה (print_engine.js, tosColon) */
+  var TCOLON=/(^|[^א-ת"'׳])(ו?ל(?:רש"י|ר"ת|ר"י|ריב"א|רבנו תם|רבינו תם|תוס['׳]))(?![:א-ת"'׳])(\s+)(?!ו?ל(?:רש"י|ר"ת|ר"י|ריב"א|תוס))/g;
+  function txt(it){var p=PUB[it.n],t=(p&&p.t)||it.sum||'';return t.replace(/\s*;\s*$/,'.').replace(/\s*;\s*/g,'. ').replace(TCOLON,'$1$2:$3')}
   function dispDh(it){return it.dhs||it.dh||''}
   function ge(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function narrow(){return window.matchMedia&&window.matchMedia('(max-width:760px)').matches}

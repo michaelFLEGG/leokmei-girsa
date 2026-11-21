@@ -25,6 +25,7 @@ import * as COST from './cost.mjs';
 const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SKC = require(path.join(ROOT, 'tools', 'sakem_core.js'));
+const SKU = require(path.join(ROOT, 'tools', 'sakem_units_core.js'));   /* פרומפט 75: פירוק הצעה ליחידות */
 const D = path.join(ROOT, 'data', 'sakem');
 const Q = path.join(D, 'queue'), O = path.join(D, 'out'), DEC = path.join(D, 'decisions');
 const WORK = path.join(ROOT, '_work', 'sakem');
@@ -829,6 +830,11 @@ if (cmd === 'status') {
       if (nn.length) console.log('\n######## הערות חדשות לקלוד (' + nn.length + ') - ללמוד מהן כלל כללי; בריפו הציבורי לא לצטט אותן\n' + nn.map((x) => '- [' + (x.slug || '') + ' ' + (x.daf || '') + '] ' + x.note + (x.was ? '\n  היה: ' + x.was + '\n  נעשה: ' + (x.now || '') : '')).join('\n'));
     } catch (e) { console.log('\n(הערות לקלוד: לא נקראו - ' + e.message + ')'); }
   } else console.log('\n(הערות לקלוד ולוח הסקירה: אין מפתח מנהל בסביבה - דלג; הן נקראות בשיחה המקומית)');
+  /* פרומפט 75 ג: הסקירה הפנימית - אילו סוגי שינויים מיכאל דוחה בעקביות כשהוא מכריע שינוי-שינוי (tools/sakem/units_report.mjs) */
+  try { const UR = await import('./units_report.mjs'); const R = UR.analyze(0);
+    if (R.consistent.length || R.pairs.length) console.log('\n######## סקירה פנימית: נדחה בעקביות - חובה לכתוב מזה כלל ב-docs/sakem-lessons.md (ולשנות את ההצעות בהתאם)\n' +
+      R.consistent.map((c) => '- ' + (c.label || c.kind) + ': נדחו ' + Math.round(100 * c.reject) + '% מתוך ' + c.n).join('\n') + (R.pairs.length ? '\n' + R.pairs.map((p) => '- "' + p.pair + '" נדחה ' + p.n + ' פעמים').join('\n') : ''));
+  } catch (e) { console.log('\n(דוח הסקירה הפנימית לא נקרא: ' + e.message + ')'); }
   if (!todo.length && !nr.length && !ER.length) die('אין הכרעות חדשות.', 0);
   todo.forEach((jid) => {
     const d = rd(path.join(DEC, jid + '.json'));
@@ -836,6 +842,9 @@ if (cmd === 'status') {
     console.log('\n######## ' + jid + ' · ' + ((d.job || {}).title || '') + '\nסיכום לפי שכבה: ' + JSON.stringify(c));
     (d.log || []).filter((x) => x.act === 'reject' || x.act === 'edit').forEach((x) => {
       console.log('\n--- ' + x.iid + ' · ' + (x.act === 'edit' ? 'נערך' : 'נדחה') + ' · ' + (x.layers || []).join(', ') + '\nמקור:\n' + x.orig + '\nהצעה:\n' + x.prop + (x.final ? '\nמה שהמנהל כתב:\n' + x.final : '') + (x.gem ? '\nלשון הגמרא: ' + x.gem : ''));
+      /* פרומפט 75: בכרטיס שנערך - כל שינוי לחוד (התקבל / נדחה / נערך), כפי ששוחזר מן הנוסח הסופי */
+      if (x.act === 'edit' && x.final) { try { const C = SKU.classify(x.orig, x.prop, x.final); const n = (v) => C.filter((c) => c.dec === v).length;
+        console.log('יחידות: התקבלו ' + n('accept') + ', נדחו ' + n('reject') + ', נערכו ' + n('edit') + (C.some((c) => c.dec !== 'accept') ? '\n' + C.filter((c) => c.dec !== 'accept').map((c) => '  ' + (c.dec === 'reject' ? 'נדחה' : 'נערך') + ' (' + c.label + '): "' + c.a.trim().slice(0, 60) + '" -> "' + c.b.trim().slice(0, 60) + '"').join('\n') : '')); } catch (e) {} }
     });
   });
   /* --post: עד איפה נותחו עריכות המנהל בכל מסכת (מספר הרשומות כפי שהוצגו עכשיו).

@@ -1,0 +1,337 @@
+{
+ "t": 1795298588816,
+ "cards": {
+  "mixed": 6,
+  "accept": 2941,
+  "reject": 268,
+  "edit": 20
+ },
+ "kinds": {
+  "סגנון:ב": {
+   "label": "הדגשה",
+   "fine": {
+    "accept": 6,
+    "reject": 0,
+    "edit": 2
+   },
+   "card": {
+    "accept": 1229,
+    "reject": 90
+   }
+  },
+  "איחוד שורות": {
+   "label": "איחוד שורות",
+   "fine": {
+    "accept": 8,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 532,
+    "reject": 60
+   }
+  },
+  "כותרת": {
+   "label": "כותרת",
+   "fine": {
+    "accept": 9,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 1168,
+    "reject": 39
+   }
+  },
+  "סגנון:הס": {
+   "label": "הסבר",
+   "fine": {
+    "accept": 12,
+    "reject": 1,
+    "edit": 2
+   },
+   "card": {
+    "accept": 1707,
+    "reject": 165
+   }
+  },
+  "החלפה": {
+   "label": "החלפה",
+   "fine": {
+    "accept": 122,
+    "reject": 3,
+    "edit": 9
+   },
+   "card": {
+    "accept": 16514,
+    "reject": 581
+   }
+  },
+  "כותרת צד": {
+   "label": "כותרת צד",
+   "fine": {
+    "accept": 64,
+    "reject": 1,
+    "edit": 9
+   },
+   "card": {
+    "accept": 7668,
+    "reject": 437
+   }
+  },
+  "סגנון:אם": {
+   "label": "אמוראים",
+   "fine": {
+    "accept": 16,
+    "reject": 0,
+    "edit": 1
+   },
+   "card": {
+    "accept": 1605,
+    "reject": 85
+   }
+  },
+  "מחיקה": {
+   "label": "מחיקה",
+   "fine": {
+    "accept": 18,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 1626,
+    "reject": 121
+   }
+  },
+  "סגנון:רווח": {
+   "label": "סגנון שורה: רווח לפני",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 391,
+    "reject": 24
+   }
+  },
+  "סגנון:פס": {
+   "label": "פסוק",
+   "fine": {
+    "accept": 8,
+    "reject": 0,
+    "edit": 3
+   },
+   "card": {
+    "accept": 822,
+    "reject": 57
+   }
+  },
+  "תוספת": {
+   "label": "תוספת",
+   "fine": {
+    "accept": 31,
+    "reject": 2,
+    "edit": 0
+   },
+   "card": {
+    "accept": 3363,
+    "reject": 109
+   }
+  },
+  "סגנון:כב": {
+   "label": "כותרת בשורה",
+   "fine": {
+    "accept": 2,
+    "reject": 0,
+    "edit": 1
+   },
+   "card": {
+    "accept": 283,
+    "reject": 4
+   }
+  },
+  "סגנון:!": {
+   "label": "תיקון תוכן",
+   "fine": {
+    "accept": 1,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 126,
+    "reject": 25
+   }
+  },
+  "נעול": {
+   "label": "שינוי בסימון נעול",
+   "fine": {
+    "accept": 1,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 410,
+    "reject": 15
+   }
+  },
+  "סגנון:תשובה": {
+   "label": "סגנון שורה: תשובה",
+   "fine": {
+    "accept": 2,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 90,
+    "reject": 2
+   }
+  },
+  "פיצול שורה": {
+   "label": "פיצול שורה",
+   "fine": {
+    "accept": 3,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 212,
+    "reject": 3
+   }
+  },
+  "סגנון:נושא": {
+   "label": "סגנון שורה: כותרת נושא",
+   "fine": {
+    "accept": 1,
+    "reject": 0,
+    "edit": 1
+   },
+   "card": {
+    "accept": 200,
+    "reject": 15
+   }
+  },
+  "השלמה": {
+   "label": "השלמה מהגמרא",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 1
+   },
+   "card": {
+    "accept": 609,
+    "reject": 25
+   }
+  },
+  "סגנון:דה": {
+   "label": "סגנון שורה: ד\"ה",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 23,
+    "reject": 3
+   }
+  },
+  "עיטור": {
+   "label": "עיטור",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 166,
+    "reject": 18
+   }
+  },
+  "סגנון:מש": {
+   "label": "משנה",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 25,
+    "reject": 0
+   }
+  },
+  "סגנון:אות": {
+   "label": "אות פותחת",
+   "fine": {
+    "accept": 6,
+    "reject": 0,
+    "edit": 1
+   },
+   "card": {
+    "accept": 72,
+    "reject": 0
+   }
+  },
+  "סגנון:נש": {
+   "label": "נושא משנה",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 34,
+    "reject": 0
+   }
+  },
+  "סגנון:נקודה": {
+   "label": "סגנון שורה: נקודה",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 1,
+    "reject": 0
+   }
+  },
+  "סגנון:מעוין": {
+   "label": "סגנון שורה: מעוין",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 5,
+    "reject": 8
+   }
+  },
+  "סגנון:רקע": {
+   "label": "סגנון שורה: רקע",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 15,
+    "reject": 0
+   }
+  },
+  "רווח": {
+   "label": "רווח",
+   "fine": {
+    "accept": 0,
+    "reject": 0,
+    "edit": 0
+   },
+   "card": {
+    "accept": 4,
+    "reject": 0
+   }
+  }
+ },
+ "consistent": [],
+ "pairs": []
+}

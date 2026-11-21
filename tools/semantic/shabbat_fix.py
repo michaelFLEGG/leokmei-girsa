@@ -10,11 +10,36 @@ for _r in ROWS:
     if 'h' in _r:
         _r['h'] = re.sub(r'<span class="bkx[^"]*"[^>]*></span>', '', _r['h'])
 LIVE = {}
+MINE = 1795282688000
+BASE = {int(k): v for k, v in (D.get('base') or {}).items()}
 for e in D['live']:
+    if e.get('t', 0) >= MINE:
+        continue
     if e.get('op') != 'struct' and e.get('k'):
         o = LIVE.get(e['k'])
         if not o or e.get('t', 0) > o.get('t', 0):
             LIVE[e['k']] = e
+
+
+# שחזור הניקוד: יחידה מנוקדת שהניקוד ירד ממנה בגלל עריכה שלי (לא של המנהל) - המקור הוא שכבת הניקוד
+_NIK = re.compile(r'[\u0591-\u05C7]')
+def _pl(h): return html.unescape(re.sub(r'<[^>]+>', '', h))
+_user_units = set()
+for _k in LIVE:
+    _m = re.match(r'^u(\d+)\.', _k)
+    if _m: _user_units.add(int(_m.group(1)))
+RESTORED = 0
+for _r in ROWS:
+    _m = re.match(r'^u(\d+)\.(\d+)$', _r.get('ek') or '')
+    if not _m or 'h' not in _r: continue
+    _u, _n = int(_m.group(1)), int(_m.group(2))
+    if _u not in BASE or _u in _user_units or _NIK.search(_r['t']): continue
+    _lv = BASE[_u]['lv']
+    if _n - 1 >= len(_lv): continue
+    _vh = _lv[_n - 1][1]
+    if _NIK.sub('', _pl(_vh)).split() == _r['t'].split() or _NIK.sub('', _pl(_vh)).replace(' ', '') == _r['t'].replace(' ', '').replace('\xa0', ''):
+        _r['h'] = _vh; _r['t'] = _pl(_vh); RESTORED += 1
+print('restored', RESTORED)
 
 Q = r'(?:&quot;|"|״)'
 TAG = re.compile(r'(<[^>]+>)')
@@ -442,13 +467,34 @@ for i, e in enumerate(_ps):
     if e[0] == 'p' and e[2].get('ek'):
         CTX[e[2]['ek']] = {'b': (_ps[i-1][1] if i else '')[-40:], 'a': (_ps[i+1][1] if i + 1 < len(_ps) else '')[:40]}
 E = []
+def unit_of(ek):
+    m = re.match(r'^u(\d+)\.(\d+)$', ek or '')
+    return (int(m.group(1)), int(m.group(2))) if m else (None, None)
+touched_lv = set()
+for ek in list(newh) + list(DELK):
+    uid, n = unit_of(ek)
+    if uid in BASE: touched_lv.add(uid)
+# כל שורות היחידה המנוקדת נשלחות, כדי שהניקוד יישאר בכולן
+for r in ROWS:
+    uid, n = unit_of(r.get('ek'))
+    if uid in touched_lv and r['ek'] not in newh and r['ek'] not in DELK:
+        newh[r['ek']] = r['h']
 for ek, h2 in newh.items():
     r = BYEK[ek]
     if ek in DELK: continue
     old = LIVE.get(ek)
-    was = old['was'] if old else r['t']
-    wasH = (old.get('wasH') if old and old.get('wasH') is not None else (old and html.escape(old['was'], quote=False))) if old else r['h']
-    wasP = old.get('wasP') if old and old.get('wasP') is not None else dcls(r['c'])
+    uid, n = unit_of(ek)
+    if old:
+        was = old['was']
+        wasH = old.get('wasH') if old.get('wasH') is not None else html.escape(old['was'], quote=False)
+        wasP = old.get('wasP') if old.get('wasP') is not None else dcls(r['c'])
+    elif uid in BASE and n and n - 1 < len(BASE[uid]['l']):
+        bh = BASE[uid]['l'][n - 1][1]
+        was, wasH, wasP = plain(bh), bh, BASE[uid]['l'][n - 1][0]
+        if h2 == bh: continue
+    else:
+        was, wasH, wasP = r['t'], r['h'], dcls(r['c'])
+        if h2 == r['h']: continue
     if plain(h2).replace('\xa0', ' ') != r['t'].replace('\xa0', ' '):
         report['text-mismatch'] += 1; print('MISMATCH', ek, r['t'][:50], '|', plain(h2)[:50]); continue
     e = {'k': ek, 'was': was, 'now': r['t'], 'wasH': wasH, 'nowH': h2, 'wasP': wasP, 'daf': r['_daf'],

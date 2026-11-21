@@ -3,7 +3,7 @@
  "jid": "shabbat-s7864-mwprdppg",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה עשר - שמונה שרצים · סבב על הנוסח החי (s3)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 7864,
@@ -125,6 +125,14 @@
     "nose": 0,
     "lenA": 405,
     "lenB": 405
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -150,6 +158,14 @@
     "nose": 0,
     "lenA": 149,
     "lenB": 149
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -200,7 +216,15 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (57 תווים, עד 52): שורה אדם קילורין מע\"ש ונותן על גב עיניו "
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 11,
+    "nose": 2,
+    "widow": 1
+   }
   },
   {
    "iid": "s4",
@@ -228,6 +252,14 @@
     "nose": 0,
     "lenA": 410,
     "lenB": 410
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -253,6 +285,14 @@
     "nose": 0,
     "lenA": 198,
     "lenB": 198
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -284,6 +324,14 @@
     "nose": 0,
     "lenA": 607,
     "lenB": 607
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -325,7 +373,15 @@
     "שורה אלמנה (שבתורה.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 10,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s8",
@@ -367,7 +423,15 @@
     "שורה אלמנה (אחד,) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s9",
@@ -395,6 +459,14 @@
     "nose": 0,
     "lenA": 507,
     "lenB": 507
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 4,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -445,7 +517,15 @@
     "ציות: הדגשה מן המקור שנוסחה מחדש בלי הדגשה: כל האוכלין"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 3,
+    "widow": 0
+   }
   },
   {
    "iid": "s11",
@@ -470,6 +550,14 @@
     "nose": 0,
     "lenA": 279,
     "lenB": 279
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -496,6 +584,14 @@
     "nose": 0,
     "lenA": 1556,
     "lenB": 1556
+   },
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 2,
+    "nose": 2,
+    "widow": 0
    }
   },
   {
@@ -526,6 +622,14 @@
     "nose": 0,
     "lenA": 597,
     "lenB": 597
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 4,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -557,6 +661,14 @@
     "nose": 0,
     "lenA": 659,
     "lenB": 659
+   },
+   "abs": {
+    "bold": 6,
+    "space": 0,
+    "dash": 3,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -582,8 +694,70 @@
     "nose": 0,
     "lenA": 255,
     "lenB": 255
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795250091426
+ "t": 1795250097701,
+ "summary": "בפרק: 16 הדגשות במשנה, 7 רווחים, 12 מקפי תירוץ, 1 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 16,
+  "space": 7,
+  "dash": 12,
+  "side": 1,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 15,
+  "perSeg": {
+   "bold": 1.07,
+   "space": 0.47,
+   "dash": 0.8,
+   "side": 5.47,
+   "nose": 1.47,
+   "widow": 0.07
+  },
+  "bold": 16,
+  "space": 7,
+  "dash": 12,
+  "side": 1,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 10,
+  "block": 0,
+  "lenPct": -1.4,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 3,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 38
+  }
+ },
+ "counts": {
+  "shown": 4,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

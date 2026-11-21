@@ -3,7 +3,7 @@
  "jid": "shabbat-s8067-mwpuat0a",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה עשר - שמונה שרצים · סבב על הנוסח החי (s4, s5)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 8067,
@@ -92,7 +92,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"ואם לא יביא ראש\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -122,6 +130,14 @@
     "nose": 0,
     "lenA": 597,
     "lenB": 597
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 4,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -145,6 +161,14 @@
     "nose": 0,
     "lenA": 186,
     "lenB": 186
+   },
+   "abs": {
+    "bold": 6,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -182,7 +206,15 @@
     "שורה אלמנה ([השינים].) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -217,7 +249,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s6",
@@ -251,7 +291,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s7",
@@ -276,8 +324,70 @@
     "nose": 0,
     "lenA": 255,
     "lenB": 255
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795251296715
+ "t": 1795251305799,
+ "summary": "בפרק: 6 הדגשות במשנה, 2 רווחים, 8 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 6,
+  "space": 2,
+  "dash": 8,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 7,
+  "perSeg": {
+   "bold": 0.86,
+   "space": 0.29,
+   "dash": 1.14,
+   "side": 2.86,
+   "nose": 0.43,
+   "widow": 0
+  },
+  "bold": 6,
+  "space": 2,
+  "dash": 8,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 8,
+  "block": 0,
+  "lenPct": 0.9,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 13
+  }
+ },
+ "counts": {
+  "shown": 4,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

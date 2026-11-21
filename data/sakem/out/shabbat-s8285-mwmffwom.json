@@ -3,7 +3,7 @@
  "jid": "shabbat-s8285-mwmffwom",
  "slug": "shabbat",
  "title": "שבת פרק ששה עשר - כל כתבי · סבב על הנוסח החי (s3)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 8285,
@@ -64,8 +64,70 @@
    "keep": [
     "ולמד מצילין שמא - צלע שנייה במחלוקת שתי השיטות, מקבילה לשורה שמעליה, כפי שסידר המנהל",
     "לרה מכונסות לרח - מחלוקת בשורה אחת (כלל 22), שתי הדעות קצרות"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 5,
+    "side": 12,
+    "nose": 3,
+    "widow": 0
+   }
   }
  ],
- "t": 1795256142975
+ "t": 1795256156940,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 5 מקפי תירוץ, 1 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 5,
+  "side": 1,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 5,
+   "side": 12,
+   "nose": 3,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 5,
+  "side": 1,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 1,
+  "block": 0,
+  "lenPct": 1.3,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 3
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

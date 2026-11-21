@@ -6,7 +6,7 @@
    "long": "הקדוש ברוך הוא",
    "short": "הקב\"ה",
    "nLong": 1,
-   "nShort": 787,
+   "nShort": 786,
    "kind": "abbr"
   },
   {
@@ -19,21 +19,21 @@
   {
    "long": "אף על פי",
    "short": "אע\"פ",
-   "nLong": 56,
-   "nShort": 153,
+   "nLong": 55,
+   "nShort": 154,
    "kind": "abbr"
   },
   {
    "long": "אף על גב",
    "short": "אע\"ג",
-   "nLong": 14,
-   "nShort": 54,
+   "nLong": 13,
+   "nShort": 55,
    "kind": "abbr"
   },
   {
    "long": "ואחר כך",
    "short": "ואח\"כ",
-   "nLong": 78,
+   "nLong": 76,
    "nShort": 680,
    "kind": "abbr"
   },
@@ -47,15 +47,15 @@
   {
    "long": "אמר לו",
    "short": "א\"ל",
-   "nLong": 439,
-   "nShort": 3867,
+   "nLong": 435,
+   "nShort": 3853,
    "kind": "abbr"
   },
   {
    "long": "שמע מינה",
    "short": "ש\"מ",
    "nLong": 23,
-   "nShort": 700,
+   "nShort": 699,
    "kind": "abbr"
   },
   {
@@ -75,8 +75,8 @@
   {
    "long": "לבית הכנסת",
    "short": "לביהכנ\"ס",
-   "nLong": 7,
-   "nShort": 28,
+   "nLong": 5,
+   "nShort": 30,
    "kind": "abbr"
   },
   {
@@ -89,8 +89,8 @@
   {
    "long": "לעולם הבא",
    "short": "לעוה\"ב",
-   "nLong": 21,
-   "nShort": 184,
+   "nLong": 20,
+   "nShort": 185,
    "kind": "abbr"
   },
   {
@@ -103,8 +103,8 @@
   {
    "long": "עולם הבא",
    "short": "עוה\"ב",
-   "nLong": 6,
-   "nShort": 7,
+   "nLong": 5,
+   "nShort": 8,
    "kind": "abbr"
   },
   {
@@ -117,14 +117,14 @@
   {
    "long": "כל שכן",
    "short": "כ\"ש",
-   "nLong": 30,
-   "nShort": 345,
+   "nLong": 32,
+   "nShort": 343,
    "kind": "abbr"
   },
   {
    "long": "אם כן",
    "short": "א\"כ",
-   "nLong": 87,
+   "nLong": 89,
    "nShort": 325,
    "kind": "abbr"
   },
@@ -132,14 +132,14 @@
    "long": "תלמידי חכמים",
    "short": "ת\"ח",
    "nLong": 46,
-   "nShort": 264,
+   "nShort": 265,
    "kind": "abbr"
   },
   {
    "long": "תלמיד חכם",
    "short": "ת\"ח",
-   "nLong": 37,
-   "nShort": 264,
+   "nLong": 36,
+   "nShort": 265,
    "kind": "abbr"
   },
   {
@@ -159,22 +159,22 @@
   {
    "long": "בית דין",
    "short": "ב\"ד",
-   "nLong": 153,
-   "nShort": 402,
+   "nLong": 152,
+   "nShort": 403,
    "kind": "abbr"
   },
   {
    "long": "ראש השנה",
    "short": "ר\"ה",
-   "nLong": 35,
-   "nShort": 494,
+   "nLong": 37,
+   "nShort": 495,
    "kind": "abbr"
   },
   {
    "long": "יום טוב",
    "short": "יו\"ט",
    "nLong": 38,
-   "nShort": 177,
+   "nShort": 176,
    "kind": "abbr"
   },
   {
@@ -201,15 +201,15 @@
   {
    "long": "תלמוד לומר",
    "short": "ת\"ל",
-   "nLong": 49,
-   "nShort": 516,
+   "nLong": 48,
+   "nShort": 498,
    "kind": "abbr"
   },
   {
    "long": "מכל מקום",
    "short": "מ\"מ",
    "nLong": 73,
-   "nShort": 102,
+   "nShort": 98,
    "kind": "abbr"
   },
   {
@@ -222,7 +222,7 @@
   {
    "long": "עבודה זרה",
    "short": "ע\"ז",
-   "nLong": 34,
+   "nLong": 36,
    "nShort": 284,
    "kind": "abbr"
   },
@@ -237,35 +237,35 @@
    "long": "ספר תורה",
    "short": "ס\"ת",
    "nLong": 40,
-   "nShort": 86,
+   "nShort": 85,
    "kind": "abbr"
   },
   {
    "long": "בני אדם",
    "short": "בנ\"א",
    "nLong": 172,
-   "nShort": 54,
+   "nShort": 55,
    "kind": "abbr"
   },
   {
    "long": "קל וחומר",
    "short": "ק\"ו",
    "nLong": 11,
-   "nShort": 319,
+   "nShort": 321,
    "kind": "abbr"
   },
   {
    "long": "גזירה שוה",
    "short": "ג\"ש",
-   "nLong": 22,
+   "nLong": 23,
    "nShort": 14,
    "kind": "abbr"
   },
   {
    "long": "בעל הבית",
    "short": "בעה\"ב",
-   "nLong": 33,
-   "nShort": 181,
+   "nLong": 34,
+   "nShort": 180,
    "kind": "abbr"
   },
   {
@@ -299,15 +299,15 @@
   {
    "long": "לשון הרע",
    "short": "לה\"ר",
-   "nLong": 23,
-   "nShort": 24,
+   "nLong": 36,
+   "nShort": 15,
    "kind": "abbr"
   },
   {
    "long": "דבר אחר",
    "short": "ד\"א",
-   "nLong": 123,
-   "nShort": 118,
+   "nLong": 120,
+   "nShort": 120,
    "kind": "abbr"
   },
   {
@@ -342,76 +342,76 @@
    "long": "שתי",
    "short": "ב'",
    "nLong": 960,
-   "nShort": 789,
+   "nShort": 790,
    "kind": "num"
   },
   {
    "long": "שלש",
    "short": "ג'",
-   "nLong": 528,
-   "nShort": 958,
+   "nLong": 529,
+   "nShort": 962,
    "kind": "num"
   },
   {
    "long": "שלשה",
    "short": "ג'",
-   "nLong": 671,
-   "nShort": 958,
+   "nLong": 675,
+   "nShort": 962,
    "kind": "num"
   },
   {
    "long": "שלושה",
    "short": "ג'",
-   "nLong": 134,
-   "nShort": 958,
+   "nLong": 129,
+   "nShort": 962,
    "kind": "num"
   },
   {
    "long": "ארבע",
    "short": "ד'",
-   "nLong": 444,
-   "nShort": 589,
+   "nLong": 443,
+   "nShort": 591,
    "kind": "num"
   },
   {
    "long": "ארבעה",
    "short": "ד'",
-   "nLong": 368,
-   "nShort": 589,
+   "nLong": 366,
+   "nShort": 591,
    "kind": "num"
   },
   {
    "long": "חמש",
    "short": "ה'",
-   "nLong": 296,
-   "nShort": 1633,
+   "nLong": 294,
+   "nShort": 1632,
    "kind": "num"
   },
   {
    "long": "חמשה",
    "short": "ה'",
    "nLong": 280,
-   "nShort": 1633,
+   "nShort": 1632,
    "kind": "num"
   },
   {
    "long": "ששה",
    "short": "ו'",
-   "nLong": 210,
+   "nLong": 212,
    "nShort": 98,
    "kind": "num"
   },
   {
    "long": "שבעה",
    "short": "ז'",
-   "nLong": 329,
+   "nLong": 327,
    "nShort": 161,
    "kind": "num"
   },
   {
    "long": "שמונה",
    "short": "ח'",
-   "nLong": 151,
+   "nLong": 152,
    "nShort": 102,
    "kind": "num"
   },
@@ -419,13 +419,13 @@
    "long": "תשעה",
    "short": "ט'",
    "nLong": 107,
-   "nShort": 165,
+   "nShort": 166,
    "kind": "num"
   },
   {
    "long": "עשרה",
    "short": "י'",
-   "nLong": 583,
+   "nLong": 582,
    "nShort": 187,
    "kind": "num"
   },

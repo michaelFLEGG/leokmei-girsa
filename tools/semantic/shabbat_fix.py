@@ -351,6 +351,13 @@ for ek in mfull:
     if plain(h2) != plain(BYEK[ek]['h']):
         print('TEXT CHANGED', ek); continue
     newh[ek] = h2
+# עיקר המשנה בסגנון "נושא משנה" (ns): בתיבת המשנה כל הטקסט כבר מודגש (700), ו-b אינו נראה
+for r in ROWS:
+    if r.get('rc') != 'row' or not r.get('ek') or 'h' not in r: continue
+    h = newh.get(r['ek'], r['h'])
+    h2 = h.replace('<i class="b">', '<i class="ns">')
+    if h2 != h:
+        newh[r['ek']] = h2; report['b->ns'] += 1
 print(report)
 json.dump(newh, open("/home/claude/sem/newh.json","w"), ensure_ascii=False)
 

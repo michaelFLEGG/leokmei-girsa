@@ -115,6 +115,16 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
         # 7.11.2026: הסנכרון של גיטהאב נמשך יותר מ-10 דקות (ברירת המחדל), וכל העלאה בוטלה מאתמול
+        # 21.11.2026 (פרומפט 74): מ-21:48 כל פרסום נכשל תוך שנייה - "Found 0 artifact(s)" מיד אחרי העלאה שהצליחה
+        # (מזהה הארטיפקט נרשם). רשימת הארטיפקטים של גיטהאב מתעדכנת באיחור. ניסיון שני אחרי המתנה, ורק אז כישלון.
+        continue-on-error: true
+        with: { timeout: 2400000 }
+      - name: המתנה לרשימת הארטיפקטים לפני ניסיון פרסום שני
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 45
+      - id: deployment2
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v4
         with: { timeout: 2400000 }
       # הודעה לבינג על הדפים שתוכנם השתנה בבנייה הזאת (IndexNow, פרומפט 10). אינו חוסם.
       - name: הודעה לבינג על דפים שהשתנו

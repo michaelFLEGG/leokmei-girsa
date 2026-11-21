@@ -3,7 +3,7 @@
  "jid": "shabbat-s9163-mwmfmp2m",
  "slug": "shabbat",
  "title": "שבת פרק שמונה עשר - מפנין · סבב על הנוסח החי (s17)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 9163,
@@ -67,7 +67,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"את הולד שלא יפול\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 5,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -92,6 +100,14 @@
     "nose": 0,
     "lenA": 259,
     "lenB": 259
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -117,8 +133,70 @@
     "nose": 0,
     "lenA": 224,
     "lenB": 224
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795282414766
+ "t": 1795282417036,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 0 מקפי תירוץ, 1 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 1,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 3,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 0,
+   "side": 4,
+   "nose": 1.33,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 1,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 1,
+  "warnLeft": 2,
+  "block": 0,
+  "lenPct": 0.4,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 2
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

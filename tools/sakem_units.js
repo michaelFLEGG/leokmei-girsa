@@ -396,7 +396,7 @@
       '#skiubar .skiuc{flex-basis:100%;text-align:center}}'+
     '.skiuin{display:none}html.tch-skp .skmghost .skiuin{display:flex;align-items:center;gap:6px;margin:8px 0 2px;min-height:44px;padding:4px 14px;border:1px solid #b6c8dc;border-radius:12px;background:#fff;color:#2e5b8a;font:600 14px system-ui,sans-serif;cursor:pointer}'+
     'html.skiu .skmghost .skiuin{display:none!important}'+
-    'html.skiu #tchbar,html.skiu #tchundo{display:none!important}'+
+    'html.skiu #tchbar,html.skiu #tchundo,html.skiu #lm-fin{display:none!important}'+
     '#skiubar.fix{position:fixed;left:0;right:0;bottom:var(--tchkb,0px);z-index:91;margin:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:rgba(250,249,246,.98);border-top:1px solid #d9d4c8;box-shadow:0 -2px 10px rgba(0,0,0,.06);font:14px system-ui,sans-serif}'+
     '#skiubar.fix .skiuc{flex-basis:100%;text-align:center}#skiubar.fix .skiunav,#skiubar.fix .skiurest{flex-basis:100%;margin:0}'+
     '#skiubar.fix button{flex:1;min-height:48px;font-size:15px;border-radius:12px}#skiubar.fix .skiurest button{min-height:40px;font-size:14px}'+

@@ -3,7 +3,7 @@
  "jid": "shabbat-s6259-mwmd4xgn",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה עשר - שמונה שרצים · סבב על הנוסח החי (s12, s13)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 6259,
@@ -62,7 +62,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 3,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -109,7 +117,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 2,
+    "widow": 1
+   }
   },
   {
    "iid": "s3",
@@ -148,8 +164,70 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
+   }
   }
  ],
- "t": 1795226207036
+ "t": 1795226213259,
+ "summary": "בפרק: 0 הדגשות במשנה, 1 רווחים, 4 מקפי תירוץ, 19 כותרות צד חדשות, 1 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 1,
+  "dash": 4,
+  "side": 19,
+  "hatz": 1
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 3,
+  "perSeg": {
+   "bold": 0,
+   "space": 0.33,
+   "dash": 1.33,
+   "side": 7,
+   "nose": 1.67,
+   "widow": 0.33
+  },
+  "bold": 0,
+  "space": 1,
+  "dash": 4,
+  "side": 19,
+  "nose": 2,
+  "hatz": 1,
+  "abbr": 4,
+  "warnLeft": 7,
+  "block": 0,
+  "lenPct": 34.9,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 2,
+   "coins": 0,
+   "overLeft": 11
+  }
+ },
+ "counts": {
+  "shown": 3,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

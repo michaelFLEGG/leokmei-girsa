@@ -157,7 +157,7 @@
   }
  ],
  "total": 25,
- "done": 5,
+ "done": 10,
  "items": [
   {
    "iid": "s1",
@@ -348,7 +348,149 @@
     "lenA": 879,
     "lenB": 879
    }
+  },
+  {
+   "iid": "s6",
+   "kind": "seg",
+   "seg": 5,
+   "sugya": 6,
+   "ids": [
+    6866,
+    6867,
+    6869,
+    6871
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 130,
+    "lenB": 130
+   }
+  },
+  {
+   "iid": "s7",
+   "kind": "seg",
+   "seg": 6,
+   "sugya": 7,
+   "ids": [
+    6873,
+    6874,
+    6876,
+    6878,
+    6880,
+    6882,
+    6884,
+    6887,
+    6890,
+    6892,
+    6894,
+    6896,
+    6898,
+    6900,
+    6902,
+    6904
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 760,
+    "lenB": 760
+   }
+  },
+  {
+   "iid": "s8",
+   "kind": "seg",
+   "seg": 7,
+   "sugya": 8,
+   "ids": [
+    6906,
+    6907,
+    6908,
+    6911,
+    6913
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 2,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 330,
+    "lenB": 330
+   }
+  },
+  {
+   "iid": "s9",
+   "kind": "seg",
+   "seg": 8,
+   "sugya": 9,
+   "ids": [
+    6918,
+    6919,
+    6921,
+    6923,
+    6925,
+    6927,
+    6929,
+    6931,
+    6933,
+    6935,
+    6937
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 4,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 481,
+    "lenB": 481
+   }
+  },
+  {
+   "iid": "s10",
+   "kind": "seg",
+   "seg": 9,
+   "sugya": 10,
+   "ids": [
+    6939,
+    6940,
+    6942,
+    6945,
+    6949,
+    6952
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 2,
+    "dash": 1,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 347,
+    "lenB": 347
+   }
   }
  ],
- "t": 1795239302925
+ "t": 1795239311086
 }

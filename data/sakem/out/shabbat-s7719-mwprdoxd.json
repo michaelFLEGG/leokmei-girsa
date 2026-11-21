@@ -3,7 +3,7 @@
  "jid": "shabbat-s7719-mwprdoxd",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה עשר - שמונה שרצים · סבב על הנוסח החי (s1)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 7719,
@@ -101,6 +101,14 @@
     "nose": 0,
     "lenA": 862,
     "lenB": 862
+   },
+   "abs": {
+    "bold": 6,
+    "space": 0,
+    "dash": 4,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -123,6 +131,14 @@
     "nose": 0,
     "lenA": 126,
     "lenB": 126
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -154,6 +170,14 @@
     "nose": 0,
     "lenA": 547,
     "lenB": 547
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 10,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -178,6 +202,14 @@
     "nose": 0,
     "lenA": 174,
     "lenB": 174
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 0,
+    "widow": 0
    }
   },
   {
@@ -202,6 +234,14 @@
     "nose": 0,
     "lenA": 96,
     "lenB": 96
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -252,7 +292,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 1,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s7",
@@ -281,6 +329,14 @@
     "nose": 0,
     "lenA": 424,
     "lenB": 424
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -321,7 +377,15 @@
     "ציות: דובר בפתח שורה בלי כותרת צד: \"שמואל\" - [צד:שמואל:] והשורה מתחילה בתוכן (גם בלי נקודתיים; המנהל העביר ביד 7 פעמים בשבת ד). צלע במחלוקת בשורה אחת, או מימרא קצרה מאוד - נימוק ב-keep שפותח במילים \"שמואל וקרנא ישבו\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 2,
+    "dash": 1,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s9",
@@ -346,6 +410,14 @@
     "nose": 0,
     "lenA": 465,
     "lenB": 465
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 1
    }
   },
   {
@@ -374,8 +446,70 @@
     "nose": 0,
     "lenA": 499,
     "lenB": 499
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 3,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
    }
   }
  ],
- "t": 1795249104478
+ "t": 1795249110104,
+ "summary": "בפרק: 6 הדגשות במשנה, 6 רווחים, 15 מקפי תירוץ, 3 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 6,
+  "space": 6,
+  "dash": 15,
+  "side": 3,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 10,
+  "perSeg": {
+   "bold": 0.6,
+   "space": 0.6,
+   "dash": 1.5,
+   "side": 5.1,
+   "nose": 0.9,
+   "widow": 0.1
+  },
+  "bold": 6,
+  "space": 6,
+  "dash": 15,
+  "side": 3,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 7,
+  "block": 0,
+  "lenPct": 0.5,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 5
+  }
+ },
+ "counts": {
+  "shown": 2,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

@@ -994,7 +994,7 @@
       meas.style.width='';return h/NLH}
     var GAP=N.gapAboveMm*MM;
     /* חור = ריק של יותר משורה וחצי (בקרה, קבוע). המתיחה: עד stretch.maxLines שורות, ועד stretch.maxPtPerGap נק' לכל גבול פסקה (מן הפרופיל) */
-    var STR=prof.stretch||{},NLH=N.linePt*PT,LH=prof.body.linePt*PT,HOLE=1.5*LH,STRMAX=(STR.maxLines||1.5)*LH,STRETCH=(STR.maxPtPerGap||3)*PT;
+    var STR=prof.stretch||{},NLH=N.linePt*PT,LH=prof.body.linePt*PT,HOLE=1.5*LH,STRMAX=(STR.maxLines||1.5)*LH,STRETCH=(STR.maxPtPerGap||3)*PT,STRHOLE=(STR.maxPtPerGapHole||8)*PT;
     var HFIX=QS.get('holefix')!=='0';
     /* 17.11.2026 (מיכאל: "רווחים לא נכונים בין שורה לשורה"): בלאוקמי גירסא כמעט כל שורה היא פסקה, ולכן מתיחה "בין
        גבולות הפסקאות" פיזרה רווח בין כל שתי שורות, ובכל טור במידה אחרת - רשת השורות לא הייתה אחידה. מעכשיו מותחים
@@ -1307,7 +1307,13 @@
            לכל גבול. טור שמסיים פרק (או את הטווח) נשאר כמות שהוא. ג: ריק גדול מזה נרשם בבקרה */
         var endCol=c.bal||c.e>=L.length||isForce(c.e);
         var gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0),nb=nbBrk(ln.ri,le.ri),per=0;
-        if(HFIX&&!endCol&&!sqz&&gapPx>0.5&&gapPx<=STRMAX&&nb>0){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;if(!dry)R.stretched=(R.stretched||0)+1}
+        /* 21.11.2026 (שבת, הכרעת מיכאל: "לא חללים לבנים"): טור שיש בו כבר דחיסה זעירה בגלל חריגה של פיקסל-שניים - כן נדחס.
+           ריק גדול משורה וחצי שנשאר בגלל כללי העימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה) - מתפזר גם הוא, רק בגבולות
+           הקיימים (לפני כותרת, רווח לפני, תיבת משנה), עד STRHOLE לכל גבול. מה שנשאר מעבר לזה - נרשם כחור כמו קודם */
+        var natH=(yE-yS)+(fb?fb.h+GAP:0);
+        if(HFIX&&!sqz&&natH>A+0.25&&natH-A<=SQ){sqz=natH-A+0.25;gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0);if(!dry)R.overSq=(R.overSq||0)+1}
+        if(HFIX&&!endCol&&gapPx>0.5&&gapPx<=STRMAX&&nb>0&&!(c.sq)){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;if(!dry)R.stretched=(R.stretched||0)+1}
+        else if(HFIX&&!endCol&&!c.sq&&gapPx>STRMAX&&nb>0){per=Math.min(STRHOLE,gapPx/nb);gapPx-=per*nb;if(!dry)R.holeStretched=(R.holeStretched||0)+1}
         else if(c.balPer&&nb>0&&!sqz){per=Math.min(c.balPer,Math.max(0,gapPx)/nb);gapPx-=per*nb}
         return {ln:ln,le:le,yS:yS,yE:yE,sqz:sqz,spanY:spanY,spc:spc,fb:fb,endCol:endCol,gapPx:gapPx,nb:nb,per:per}}
       if(pgBal)cs2.forEach(function(c){var g=colGeom(c,true);pgT=Math.max(pgT,g.yE-g.yS-g.sqz+g.per*g.nb)});

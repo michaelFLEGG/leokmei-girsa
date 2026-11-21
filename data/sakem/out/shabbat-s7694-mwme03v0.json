@@ -3,7 +3,7 @@
  "jid": "shabbat-s7694-mwme03v0",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה עשר - שמונה שרצים · סבב על הנוסח החי (s14)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 7694,
@@ -59,8 +59,70 @@
     "שורה שאוחדה ארוכה מן השורה בהדפסה המוגדלת (57 תווים, עד 52): שורה אדם קילורין מע\"ש ונותן על גב עיניו "
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
+   }
   }
  ],
- "t": 1795246393164
+ "t": 1795246399485,
+ "summary": "בפרק: 0 הדגשות במשנה, 1 רווחים, 0 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 1,
+  "dash": 0,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 1,
+   "dash": 0,
+   "side": 8,
+   "nose": 2,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 1,
+  "dash": 0,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 3,
+  "block": 0,
+  "lenPct": 0.6,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 8
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

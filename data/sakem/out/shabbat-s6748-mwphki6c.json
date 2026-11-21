@@ -157,7 +157,7 @@
   }
  ],
  "total": 25,
- "done": 20,
+ "done": 25,
  "items": [
   {
    "iid": "s1",
@@ -873,7 +873,140 @@
     "lenA": 470,
     "lenB": 470
    }
+  },
+  {
+   "iid": "s21",
+   "kind": "seg",
+   "seg": 20,
+   "sugya": 21,
+   "ids": [
+    7190,
+    7191,
+    7193,
+    7195,
+    7198,
+    7201,
+    7204
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 485,
+    "lenB": 485
+   }
+  },
+  {
+   "iid": "s22",
+   "kind": "seg",
+   "seg": 21,
+   "sugya": 22,
+   "ids": [
+    7208,
+    7209,
+    7211,
+    7213,
+    7215,
+    7217
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 290,
+    "lenB": 290
+   }
+  },
+  {
+   "iid": "s23",
+   "kind": "seg",
+   "seg": 22,
+   "sugya": 23,
+   "ids": [
+    7223,
+    700046,
+    7227,
+    7228,
+    7230,
+    7233,
+    7235
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 3,
+    "space": 0,
+    "dash": 2,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 507,
+    "lenB": 507
+   }
+  },
+  {
+   "iid": "s24",
+   "kind": "seg",
+   "seg": 23,
+   "sugya": 24,
+   "ids": [
+    7238,
+    7239,
+    7240,
+    1795022336516,
+    7243,
+    1795022336523
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 300,
+    "lenB": 300
+   }
+  },
+  {
+   "iid": "s25",
+   "kind": "seg",
+   "seg": 24,
+   "sugya": 25,
+   "ids": [
+    7248,
+    7249,
+    7251,
+    7253,
+    7255,
+    7258,
+    7261
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 279,
+    "lenB": 279
+   }
   }
  ],
- "t": 1795239350626
+ "t": 1795239354734
 }

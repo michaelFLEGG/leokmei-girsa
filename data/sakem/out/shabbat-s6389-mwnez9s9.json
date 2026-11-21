@@ -3,7 +3,7 @@
  "jid": "shabbat-s6389-mwnez9s9",
  "slug": "shabbat",
  "title": "שבת פרק עשירי - המצניע · סבב על הנוסח החי (s5)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 6389,
@@ -72,8 +72,70 @@
     "ציות: דובר בפתח שורה בלי כותרת צד: \"ר\"ש\" - [צד:ר\"ש:] והשורה מתחילה בתוכן (גם בלי נקודתיים; המנהל העביר ביד 7 פעמים בשבת ד). צלע במחלוקת בשורה אחת, או מימרא קצרה מאוד - נימוק ב-keep שפותח במילים \"רש פוטר שסבר\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 4,
+    "side": 12,
+    "nose": 3,
+    "widow": 0
+   }
   }
  ],
- "t": 1795229552855
+ "t": 1795229561679,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 4 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 4,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 4,
+   "side": 12,
+   "nose": 3,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 4,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 3,
+  "block": 0,
+  "lenPct": -1.2,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 6
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 1,
+  "missing": 0
+ }
 }

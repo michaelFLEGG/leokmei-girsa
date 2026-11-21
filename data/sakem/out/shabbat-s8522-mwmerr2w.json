@@ -1,0 +1,19 @@
+{
+ "v": 1,
+ "jid": "shabbat-s8522-mwmerr2w",
+ "slug": "shabbat",
+ "title": "שבת פרק ששה עשר - כל כתבי · סבב על הנוסח החי (s24)",
+ "status": "work",
+ "plan": [
+  {
+   "from": 8522,
+   "to": 8523,
+   "sugya": 1,
+   "title": "יוסף מוקיר שבת"
+  }
+ ],
+ "total": 1,
+ "done": 0,
+ "items": [],
+ "t": 1795259552970
+}

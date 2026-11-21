@@ -3,7 +3,7 @@
  "jid": "shabbat-s7269-mwpjm3hi",
  "slug": "shabbat",
  "title": "שבת פרק שנים עשר - הבונה · סבב על הנוסח החי (s3)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 7269,
@@ -67,7 +67,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 8,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -109,7 +117,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 2,
+    "side": 7,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -148,8 +164,70 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 2,
+    "nose": 2,
+    "widow": 0
+   }
   }
  ],
- "t": 1795242763810
+ "t": 1795242847062,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 4 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 4,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 3,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 1.33,
+   "side": 5.67,
+   "nose": 2,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 4,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 0,
+  "block": 0,
+  "lenPct": -4.8,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 3,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 5
+  }
+ },
+ "counts": {
+  "shown": 3,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

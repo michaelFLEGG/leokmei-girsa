@@ -1,0 +1,19 @@
+{
+ "v": 1,
+ "jid": "shabbat-s9250-mwmesev1",
+ "slug": "shabbat",
+ "title": "שבת פרק שמונה עשר - מפנין · סבב על הנוסח החי (s27)",
+ "status": "work",
+ "plan": [
+  {
+   "from": 9250,
+   "to": 9263,
+   "sugya": 1,
+   "title": "אכל חטה והקיז דם"
+  }
+ ],
+ "total": 1,
+ "done": 0,
+ "items": [],
+ "t": 1795284799314
+}

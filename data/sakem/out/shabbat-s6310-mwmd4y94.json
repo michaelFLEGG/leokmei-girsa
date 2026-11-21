@@ -3,7 +3,7 @@
  "jid": "shabbat-s6310-mwmd4y94",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה עשר - שמונה שרצים · סבב על הנוסח החי (s17, s18, s19)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 6310,
@@ -72,7 +72,15 @@
     "ארוך מהמקור"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 1,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -124,7 +132,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"במי משרה ולא בימה\", \"משרה ולא בימה של\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 11,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -180,7 +196,15 @@
      "ok": true
     }
    ],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 10,
+    "space": 1,
+    "dash": 0,
+    "side": 3,
+    "nose": 2,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -220,8 +244,70 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 7,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795228827938
+ "t": 1795228836613,
+ "summary": "בפרק: 10 הדגשות במשנה, 1 רווחים, 4 מקפי תירוץ, 26 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 10,
+  "space": 1,
+  "dash": 4,
+  "side": 26,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 4,
+  "perSeg": {
+   "bold": 2.5,
+   "space": 0.25,
+   "dash": 1,
+   "side": 7,
+   "nose": 1.25,
+   "widow": 0
+  },
+  "bold": 10,
+  "space": 1,
+  "dash": 4,
+  "side": 26,
+  "nose": 1,
+  "hatz": 0,
+  "abbr": 4,
+  "warnLeft": 6,
+  "block": 0,
+  "lenPct": 7.7,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 1,
+   "newTitles": 1,
+   "coins": 0,
+   "overLeft": 23
+  }
+ },
+ "counts": {
+  "shown": 4,
+  "spatial": 1,
+  "adds": 2,
+  "missing": 0
+ }
 }

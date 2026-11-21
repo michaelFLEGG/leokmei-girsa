@@ -30,8 +30,14 @@ JS = r"""
 
 
 def dump(slug):
-    subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', 'playwright'], check=True)
-    from playwright.sync_api import sync_playwright
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        v = '/tmp/semvenv'
+        if not os.path.exists(v):
+            subprocess.run([sys.executable, '-m', 'venv', v], check=True)
+            subprocess.run([v + '/bin/pip', 'install', '-q', 'playwright'], check=True)
+        os.execv(v + '/bin/python', [v + '/bin/python', os.path.abspath(__file__), 'dump:' + slug])
     with sync_playwright() as pw:
         try:
             b = pw.chromium.launch(channel='chrome')

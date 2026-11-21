@@ -3,7 +3,7 @@
  "jid": "shabbat-s6196-mwmd4u4m",
  "slug": "shabbat",
  "title": "שבת פרק ארבעה עשר - שמונה שרצים · סבב על הנוסח החי (s2)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 6196,
@@ -92,8 +92,70 @@
    "read": [],
    "keep": [
     "ריבנ אומר שמנה - המשך לשון הברייתא שבקושיה, ולא התירוץ"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 9,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795221325255
+ "t": 1795221337924,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 3 מקפי תירוץ, 9 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 3,
+  "side": 9,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 3,
+   "side": 9,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 3,
+  "side": 9,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 2,
+  "block": 0,
+  "lenPct": 68.4,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 3
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 1,
+  "adds": 8,
+  "missing": 0
+ }
 }

@@ -54,6 +54,7 @@ def build_assets(site):
     _write(os.path.join(site, 'admin-sakem-cmp.html'), _read(os.path.join(LK, 'admin-sakem-cmp.html')))
     _write(os.path.join(site, 'admin-sakem-learn.html'), _read(os.path.join(LK, 'admin-sakem-learn.html')))
     _write(os.path.join(site, 'admin-sakem.html'), _read(os.path.join(LK, 'admin-sakem.html')))   # פרומפט 36: "מה מוכן לי"
+    _write(os.path.join(site, 'k.html'), _read(os.path.join(LK, 'k.html')))   # פרומפט 74: קישור כניסה אישי למנהל
     _write(os.path.join(site, 'admin-sakem-costs.html'), _read(os.path.join(LK, 'admin-sakem-costs.html')))   # פרומפט 70: "עלות לכל פרק"
     try:   # הנתונים מחושבים מחדש מיומן ההרצות בכל בנייה (אינם כותבים לריפו)
         sys.path.insert(0, os.path.join(HERE, 'bakara'))

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>כניסת מנהל · לאוקמי גירסא</title>
+<!-- פרומפט 74 (21.11.2026): קישור כניסה אישי למנהל, ומסך קטן לניהול המכשירים והקישורים.
+     הקישור: leokmei.com/k.html#<אסימון>. האסימון אחרי # אינו נשלח לשרת האתר. הדף מוחק אותו מן הכתובת
+     לפני כל דבר אחר (replaceState), ואז שולח אותו לשרת העריכות, שבודק, שורף את הקישור ומחזיר אסימון מכשיר.
+     אסימון המכשיר נשמר במקום שבו האתר כבר שומר אותו (lg-adm), ומאז המכשיר מוכר כמנהל - אותן הרשאות בדיוק.
+     בלי סקריפטים או גופנים חיצוניים. -->
+<script>
+(function(){
+  var h = location.hash.replace(/^#/, ''), q = (location.search.match(/[?&]t=([0-9a-f]{32,100})/) || [])[1] || '';
+  window.__LK_T = /^[0-9a-f]{32,100}$/.test(h) ? h : q;
+  if (location.hash || q) try { history.replaceState(null, '', location.pathname); } catch (e) {}
+})();
+</script>
+<style>
+:root { --paper:#faf7ef; --card:#fff; --ink:#232323; --ink2:#6b675c; --line:#e4e1d8; --blue:#1f3a63; --ok:#2e6b3c; --bad:#9a3a2a; }
+@media (prefers-color-scheme: dark) { :root { --paper:#14161c; --card:#1c1f27; --ink:#e8e5dc; --ink2:#9a968a; --line:#2b3140; --blue:#8fb0dd; --ok:#8fcf9c; --bad:#e3a08f; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:"Segoe UI", system-ui, sans-serif; font-size:17px; line-height:1.55; }
+.wrap { max-width: 640px; margin: 0 auto; padding: calc(24px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom)); }
+h1 { font-size: 1.35rem; margin: 8px 0 14px; }
+h2 { font-size: 1.05rem; margin: 26px 0 8px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin:10px 0; }
+.ok { color:var(--ok); } .bad { color:var(--bad); } .sub { color:var(--ink2); font-size:.9rem; }
+button, a.btn { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 18px; border-radius:10px;
+  border:1px solid var(--line); background:var(--card); color:var(--blue); font:inherit; font-weight:600; cursor:pointer; text-decoration:none; }
+button.pri, a.btn.pri { background:var(--blue); color:var(--card); border-color:var(--blue); }
+button.danger { color:var(--bad); }
+.row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); }
+.row:last-child { border-bottom:0; }
+.row b { display:block; }
+input { width:100%; min-height:48px; font:inherit; padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:var(--paper); color:var(--ink); direction:ltr; }
+.btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+[hidden] { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>כניסת מנהל · לאוקמי גירסא</h1>
+  <div id="msg" class="card">רגע…</div>
+
+  <div id="adm" hidden>
+    <h2>המכשירים המוכרים</h2>
+    <div class="card" id="devs">טוען…</div>
+    <h2>קישורי כניסה שטרם נפתחו</h2>
+    <div class="card">
+      <div id="links">טוען…</div>
+      <div class="btns"><button class="pri" id="newl">הנפק קישור חדש</button></div>
+      <div id="newout" hidden>
+        <p class="sub">הקישור מוצג פעם אחת בלבד. פותחים אותו פעם אחת במכשיר החדש, ואז הוא נשרף והמכשיר נשאר מוכר.</p>
+        <input id="newurl" readonly>
+        <div class="btns"><button id="copy">העתק</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var API = (location.hostname === 'localhost' && (function(){ try { return localStorage.getItem('lg-api'); } catch (e) { return ''; } })()) || 'https://leokmei-suggest.m7654301.workers.dev';
+  var $ = function(s){ return document.querySelector(s); };
+  function esc(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]; }); }
+  function key(){ try { return localStorage.getItem('lg-adm') || ''; } catch (e) { return ''; } }
+  function save(t){ try { localStorage.setItem('lg-adm', t); localStorage.setItem('lg-admin', '1'); } catch (e) {} }
+  function api(path, opt, k){
+    opt = opt || {}; var hd = { 'content-type': 'application/json' }; var kk = k === undefined ? key() : k;
+    if (kk) hd['x-admin-key'] = kk;
+    return fetch(API + path, { method: opt.method || 'GET', headers: hd, body: opt.body, cache: 'no-store' })
+      .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ j.__s = r.status; return j; }); });
+  }
+  function msg(html){ $('#msg').innerHTML = html; }
+  function when(t){ if (!t) return '-'; var d = new Date(t); return d.toLocaleDateString('he-IL') + ' ' + d.toLocaleTimeString('he-IL', { hour:'2-digit', minute:'2-digit' }); }
+  function kind(ua){ ua = String(ua || ''); if (/iPad|Tablet|SM-T|SM-X|Android(?!.*Mobile)/i.test(ua)) return 'טאבלט'; if (/Mobile|iPhone|Android/i.test(ua)) return 'טלפון'; return ua ? 'מחשב' : ''; }
+  var HOME = '<div class="btns"><a class="btn pri" href="/">לאתר</a></div>';
+
+  function redeem(t){
+    msg('בודק את הקישור…');
+    var label = 'טאבלט או טלפון';
+    api('/link/redeem', { method:'POST', body: JSON.stringify({ t: t }) }, '').then(function(j){
+      if (j.ok && j.token) return done(j.token);
+      if (j.__s === 429) { msg('<p class="bad">יותר מדי ניסיונות. נסה שוב בעוד שעה.</p>'); return; }
+      /* קישור שהונפק כאסימון מכשיר ישיר (לפני שהשרת ידע לשרוף קישורים): נבדק כמו כל מכשיר מוכר */
+      return api('/whoami', {}, t).then(function(w){
+        if (w && w.admin) return done(t);
+        msg('<p class="bad"><b>הקישור הזה אינו בתוקף.</b></p><p>ייתכן שכבר נפתח במכשיר אחר, או שבוטל. אפשר לבקש קישור חדש.</p>' + HOME);
+      });
+    }).catch(function(){ msg('<p class="bad">אין חיבור לשרת כרגע. נסה לפתוח את הקישור שוב בעוד רגע.</p>'); });
+  }
+  function done(tok){
+    save(tok);
+    msg('<p class="ok"><b>המכשיר הזה מוכר מעכשיו כמנהל.</b></p><p>אין צורך במילה או במפתח. האתר יזכור אותך גם אחרי סגירת הדפדפן.</p>' + HOME);
+    setTimeout(function(){ location.replace('/'); }, 3500);
+  }
+
+  function manage(){
+    api('/whoami').then(function(w){
+      if (!w.admin) { msg('<p>המכשיר הזה אינו מוכר כמנהל.</p><p class="sub">כדי להיכנס, פתח את קישור הכניסה האישי שקיבלת.</p>' + HOME); return; }
+      msg('<p class="ok"><b>המכשיר הזה מוכר כמנהל.</b></p>' + HOME);
+      $('#adm').hidden = false; loadDevs(); loadLinks();
+    }).catch(function(){ msg('<p class="bad">אין חיבור לשרת כרגע.</p>'); });
+  }
+  function loadDevs(){
+    api('/devices').then(function(j){
+      if (!j.ok) { $('#devs').textContent = 'לא ניתן לקרוא את הרשימה.'; return; }
+      $('#devs').innerHTML = j.devices.length ? j.devices.map(function(d){
+        return '<div class="row"><div><b>' + esc(d.label || 'מכשיר') + '</b><span class="sub">' + esc(d.kind || kind(d.ua)) +
+          ' · הוכר ' + when(d.created) + ' · שימוש אחרון ' + when(d.seen) + '</span></div>' +
+          '<button class="danger" data-dev="' + esc(d.id) + '">בטל מכשיר</button></div>';
+      }).join('') : '<p class="sub">אין מכשירים מוכרים.</p>';
+    });
+  }
+  function loadLinks(){
+    api('/links').then(function(j){
+      if (j.__s === 404) { $('#links').innerHTML = '<p class="sub">ניהול הקישורים יופעל אחרי פריסת שרת העריכות המעודכן.</p>'; $('#newl').disabled = true; return; }
+      if (!j.ok) { $('#links').textContent = 'לא ניתן לקרוא את הרשימה.'; return; }
+      $('#links').innerHTML = j.links.length ? j.links.map(function(l){
+        return '<div class="row"><div><b>' + esc(l.label) + '</b><span class="sub">הונפק ' + when(l.created) + (l.exp ? ' · בתוקף עד ' + when(l.exp) : '') + '</span></div>' +
+          '<button class="danger" data-link="' + esc(l.id) + '">בטל קישור</button></div>';
+      }).join('') : '<p class="sub">אין קישורים פתוחים.</p>';
+    });
+  }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.dev) {
+      if (!confirm('לבטל את המכשיר הזה? הוא יאבד את הרשאת המנהל.')) return;
+      api('/devices/revoke', { method:'POST', body: JSON.stringify({ id: b.dataset.dev }) }).then(function(j){ if (!j.ok) alert('הביטול לא נרשם.'); loadDevs(); });
+    } else if (b.dataset.link) {
+      if (!confirm('לבטל את הקישור? הוא לא יעבוד עוד.')) return;
+      api('/links/revoke', { method:'POST', body: JSON.stringify({ id: b.dataset.link }) }).then(function(){ loadLinks(); });
+    } else if (b.id === 'newl') {
+      var label = prompt('שם לקישור (למשל: הטלפון של מיכאל):', 'מכשיר חדש'); if (label === null) return;
+      api('/link/new', { method:'POST', body: JSON.stringify({ label: label.trim() || 'מכשיר חדש' }) }).then(function(j){
+        if (!j.ok) { alert(j.__s === 404 ? 'הנפקת קישור תפעל אחרי פריסת שרת העריכות המעודכן.' : 'לא ניתן להנפיק קישור כרגע.'); return; }
+        $('#newurl').value = location.origin + '/k.html#' + j.token; $('#newout').hidden = false; loadLinks();
+      });
+    } else if (b.id === 'copy') {
+      var i = $('#newurl'); i.select(); try { navigator.clipboard.writeText(i.value).then(function(){ b.textContent = 'הועתק'; }); } catch (x) { document.execCommand('copy'); b.textContent = 'הועתק'; }
+    }
+  });
+  if (window.__LK_T) redeem(window.__LK_T); else manage();
+  window.__LK_T = '';
+})();
+</script>
+</body>
+</html>

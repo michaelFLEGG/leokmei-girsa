@@ -19,6 +19,8 @@
      POST /auth          מילת המנהל -> אסימון מכשיר ארוך-טווח (ראה למטה)
      GET  /devices       רשימת המכשירים המוכרים (מנהל)
      POST /devices/revoke ביטול מכשיר (מנהל)
+     POST /link/new      קישור כניסה אישי חד-פעמי (מנהל) · POST /link/redeem פתיחתו במכשיר
+     GET  /links         קישורים שטרם נפתחו (מנהל) · POST /links/revoke ביטול קישור
 
    המפתח הסודי של המנהל יושב ב-secret בשם ADMIN_KEY בלבד. הקוד ציבורי.
 
@@ -86,7 +88,21 @@ async function isAdmin(req, env) {
   if (sameKey(k, env.ADMIN_KEY || '')) return true;
   if (k.length < 32 || k.length > 100) return false;
   const h = await sha256hex(k);
-  return !!(await env.STORE.get('dev:' + h));
+  const r = await env.STORE.getWithMetadata('dev:' + h);
+  if (!r || !r.value) return false;
+  /* פרומפט 74: "שימוש אחרון" לרשימת המכשירים - נכתב לכל היותר פעם ב-12 שעות לכל מכשיר
+     (מגבלת הכתיבות של KV). מכשיר שנכנס בקישור אישי (rec.link) מקבל תוקף מתגלגל של שנה. */
+  try {
+    const md = r.metadata || {}, now = Date.now();
+    if (!md.seen || now - md.seen > 43200000) {
+      const rec = JSON.parse(r.value);
+      rec.seen = now; md.seen = now;
+      const opt = { metadata: md };
+      if (rec.link) opt.expirationTtl = 31536000;
+      await env.STORE.put('dev:' + h, JSON.stringify(rec), opt);
+    }
+  } catch (e) {}
+  return true;
 }
 const normWord = (w) => String(w || '').normalize('NFC')
   .replace(/[֑-ׇ]/g, '').replace(/[\s"'׳״“”‘’.\-]/g, '');
@@ -134,10 +150,83 @@ async function devices(req, env) {
   const out = [];
   for (const k of await listAll(env, 'dev:')) {
     const v = await env.STORE.get(k.name, 'json');
-    if (v) out.push(v);
+    if (v) { if (!v.kind) v.kind = devKind(v.ua); if (k.metadata && k.metadata.seen && !(v.seen > k.metadata.seen)) v.seen = k.metadata.seen; delete v.ip; out.push(v); }
   }
   out.sort((a, c) => c.created - a.created);
   return json({ ok: true, devices: out });
+}
+/* ------------------------------------------------------------ קישור כניסה אישי (פרומפט 74, 21.11.2026)
+   המנהל מנפיק קישור: leokmei.com/k.html#<אסימון>. האסימון (32 בתים אקראיים) נשמר במחסן רק כטביעת
+   SHA-256 (alink:<טביעה>). פתיחת הקישור במכשיר שורפת אותו ומנפיקה למכשיר אסימון מכשיר רגיל (dev:),
+   בדיוק כמו הכניסה במילת המנהל - אותן הרשאות, לא יותר. מכשיר כזה מוכר לשנה מתגלגלת. האסימון יושב
+   אחרי הסימן #, ולכן אינו נשלח לשרת האתר ואינו נרשם ביומנים; הדף מוחק אותו מן הכתובת מיד. */
+const LINK_TTL = 180 * 86400;
+/* קישורים שהונפקו מחוץ לשרת (כשלא היתה גישת כתיבה למחסן): רק טביעת ה-SHA-256 של האסימון, שאינה סוד
+   (אי אפשר לשחזר ממנה את האסימון). חד-פעמי כמו כל קישור: אחרי הפתיחה נרשם alink-used:<טביעה>. */
+const BOOT_LINKS = {
+  '41ac434a0024f75ae5351d460ad102b98615c1ac6437e541d84a0fda9a1a8a1d': { id: 'lboot74', label: 'הטאבלט של מיכאל', created: 1795296000000 },
+};
+function devKind(ua) {
+  ua = String(ua || '');
+  if (/iPad|Tablet|SM-T|SM-X|Android(?!.*Mobile)/i.test(ua)) return 'טאבלט';
+  if (/Mobile|iPhone|Android/i.test(ua)) return 'טלפון';
+  return 'מחשב';
+}
+async function linkNew(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b = {};
+  try { b = await req.json(); } catch (e) {}
+  const raw = crypto.getRandomValues(new Uint8Array(32));
+  const token = [...raw].map((x) => x.toString(16).padStart(2, '0')).join('');
+  const h = await sha256hex(token);
+  const rec = { id: 'l' + h.slice(0, 9), label: str(b.label, 60) || 'קישור כניסה', created: Date.now() };
+  await env.STORE.put('alink:' + h, JSON.stringify(rec), { expirationTtl: LINK_TTL, metadata: rec });
+  return json({ ok: true, token, id: rec.id, label: rec.label });
+}
+async function linkRedeem(req, env) {
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  const rk = 'lrl:' + ip + ':' + new Date().toISOString().slice(0, 13);
+  const n = parseInt((await env.STORE.get(rk)) || '0', 10);
+  if (n >= 20) return bad('יותר מדי ניסיונות. נסה שוב בעוד שעה', 429);
+  const t = str(b.t, 120);
+  if (!/^[0-9a-f]{64}$/.test(t)) { await env.STORE.put(rk, String(n + 1), { expirationTtl: 4000 }); return bad('הקישור אינו בתוקף', 401); }
+  const lh = await sha256hex(t);
+  let link = await env.STORE.get('alink:' + lh, 'json');
+  if (!link && BOOT_LINKS[lh] && !(await env.STORE.get('alink-used:' + lh))) link = BOOT_LINKS[lh];
+  if (!link) { await env.STORE.put(rk, String(n + 1), { expirationTtl: 4000 }); return bad('הקישור אינו בתוקף', 401); }
+  if (BOOT_LINKS[lh]) await env.STORE.put('alink-used:' + lh, String(Date.now()));
+  else await env.STORE.delete('alink:' + lh);         /* נשרף: פעם אחת בלבד */
+  const raw = crypto.getRandomValues(new Uint8Array(32));
+  const token = [...raw].map((x) => x.toString(16).padStart(2, '0')).join('');
+  const h = await sha256hex(token);
+  const ua = str(req.headers.get('user-agent'), 160);
+  const rec = { id: h.slice(0, 10), label: str(link.label + ' · ' + devKind(ua), 60), ua, ip, created: Date.now(),
+                seen: Date.now(), link: link.id };
+  await env.STORE.put('dev:' + h, JSON.stringify(rec),
+    { expirationTtl: 31536000, metadata: { id: rec.id, label: rec.label, created: rec.created, seen: rec.seen } });
+  return json({ ok: true, token, id: rec.id, label: rec.label });
+}
+async function links(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  const out = [];
+  for (const k of await listAll(env, 'alink:')) if (k.metadata) out.push(Object.assign({ exp: k.expiration ? k.expiration * 1000 : 0 }, k.metadata));
+  for (const h of Object.keys(BOOT_LINKS)) if (!(await env.STORE.get('alink-used:' + h))) out.push(Object.assign({ exp: 0 }, BOOT_LINKS[h]));
+  out.sort((a, c) => c.created - a.created);
+  return json({ ok: true, links: out });
+}
+async function linkRevoke(req, env) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  let b;
+  try { b = await req.json(); } catch (e) { return bad('גוף הבקשה אינו JSON'); }
+  const id = str(b.id, 20);
+  if (!id) return bad('חסר מזהה');
+  for (const k of await listAll(env, 'alink:')) {
+    if (k.metadata && k.metadata.id === id) { await env.STORE.delete(k.name); return json({ ok: true }); }
+  }
+  for (const h of Object.keys(BOOT_LINKS)) if (BOOT_LINKS[h].id === id) { await env.STORE.put('alink-used:' + h, 'revoked ' + Date.now()); return json({ ok: true }); }
+  return bad('הקישור לא נמצא', 404);
 }
 async function revoke(req, env) {
   if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
@@ -1925,6 +2014,10 @@ export default {
       if (p === '/whoami' && req.method === 'GET') return await whoami(req, env);
       if (p === '/devices' && req.method === 'GET') return await devices(req, env);
       if (p === '/devices/revoke' && req.method === 'POST') return await revoke(req, env);
+      if (p === '/link/new' && req.method === 'POST') return await linkNew(req, env);
+      if (p === '/link/redeem' && req.method === 'POST') return await linkRedeem(req, env);
+      if (p === '/links' && req.method === 'GET') return await links(req, env);
+      if (p === '/links/revoke' && req.method === 'POST') return await linkRevoke(req, env);
       if (p === '/mine' && req.method === 'GET') return await mine(req, env, url);
       if (p === '/mine/batch' && req.method === 'POST') return await mineBatch(req, env);
       if (p === '/mine/edit' && req.method === 'POST') return await mineAct(req, env, 'edit');

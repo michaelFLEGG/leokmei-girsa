@@ -6599,9 +6599,11 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     m.addEventListener('click',e=>{if(e.target===m)m.remove()});
     try{
       const j=await api('/devices');
-      $('#devl').innerHTML=j.devices.length?j.devices.map(d=>'<div class="sgrow"><b>'+esc(d.label||'מכשיר')+'</b> <small>הוכר ב-'+
-        HD.date(d.created)+'</small> <button data-id="'+esc(d.id)+'" onclick="devRevoke(this.dataset.id)">ביטול המכשיר</button></div>').join('')
-        :'<div class="edsum">אין מכשירים מוכרים בנקודת הקליטה.</div>';
+      /* פרומפט 74: סוג המכשיר ושימוש אחרון, וקישור למסך קישורי הכניסה האישיים (k.html) */
+      $('#devl').innerHTML=(j.devices.length?j.devices.map(d=>'<div class="sgrow"><b>'+esc(d.label||'מכשיר')+'</b> <small>'+(d.kind?esc(d.kind)+' · ':'')+'הוכר ב-'+
+        HD.date(d.created)+(d.seen?' · שימוש אחרון '+HD.date(d.seen):'')+'</small> <button data-id="'+esc(d.id)+'" onclick="devRevoke(this.dataset.id)">ביטול המכשיר</button></div>').join('')
+        :'<div class="edsum">אין מכשירים מוכרים בנקודת הקליטה.</div>')+
+        '<div class="edsum" style="margin-top:8px"><a href="/k.html" target="_blank" rel="noopener">קישורי כניסה אישיים: הנפקה וביטול</a></div>';
     }catch(e){$('#devl').textContent='לא ניתן לקרוא את הרשימה: '+(e.message||'')}}
   async function devRevoke(id){
     if(!confirm('לבטל את המכשיר הזה? הוא יתבקש להקליד שוב את מילת המנהל.'))return;

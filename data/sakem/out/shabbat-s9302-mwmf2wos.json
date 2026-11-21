@@ -3,7 +3,7 @@
  "jid": "shabbat-s9302-mwmf2wos",
  "slug": "shabbat",
  "title": "שבת פרק תשעה עשר - ר\"א דמילה · סבב על הנוסח החי (s3)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 9302,
@@ -52,8 +52,70 @@
     "שורה אלמנה (עסקי משפחותיו,) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 3,
+    "nose": 1,
+    "widow": 0
+   }
   }
  ],
- "t": 1795286036743
+ "t": 1795286046613,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 0 מקפי תירוץ, 0 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 0,
+  "hatz": 0
+ },
+ "learnedNew": 0,
+ "score": {
+  "segs": 1,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 0,
+   "side": 3,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 0,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 1,
+  "block": 0,
+  "lenPct": 6.5,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 9
+  }
+ },
+ "counts": {
+  "shown": 1,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

@@ -1,6 +1,6 @@
 {
  "slug": "temurah",
- "made": "2026-11-22 10:13",
+ "made": "2026-11-22 18:18",
  "profile": "a4-large",
  "pages": {
   "a4": 33,
@@ -2879,7 +2879,7 @@
    "over": "",
    "nA4": 2,
    "nLarge": 2,
-   "missPx": 110.8,
+   "missPx": 111.2,
    "miss": 19,
    "long": false,
    "sug": [],
@@ -2900,7 +2900,7 @@
    "over": "",
    "nA4": 2,
    "nLarge": 2,
-   "missPx": 37.9,
+   "missPx": 38.2,
    "miss": 7,
    "long": false,
    "sug": [],

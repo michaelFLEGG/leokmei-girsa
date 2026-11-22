@@ -552,7 +552,8 @@
       /* על הטקסט הנקי: שם שהמחבר סימן בשני חלקים ({אם:רמ}{אם:ב"ר}) מתאחד כאן לרמב"ר */
       var src=(plainI(A.map(function(k){return k.v||''}).join(' '))+' '+origText+' '+(o.gemara||'')).replace(/[֑-ׇ]/g,'').replace(/["'״׳]/g,'');
       var amNew=[];B.forEach(function(k){if(k.t==='line'||k.t==='title'){var r=/\{אם:([^{}]*)\}/g,m;while((m=r.exec(k.v)))amNew.push(m[1])}});
-      var unknown=amNew.filter(function(n){
+      /* כלל 30 (פרומפט 76): מילת הסוג אחרי המקף שבתוך השורה ({אם:שאני} וכו') אינה שם אמורא */
+      var unknown=amNew.filter(function(n){if(/^\s*(?:אלא|שאני|מדובר|כאן|דחי|חסורי)\s*$/.test(n))return false;
         var w=n.replace(/[֑-ׇ]/g,'').replace(/["'״׳:!?.,]/g,'').trim().split(/\s+/).filter(function(x){return x.length>1});
         return w.length&&!w.some(function(x){var y=x.replace(/^[ודשהכלבמ](?=..)/,''),y2=x.replace(/^[ודשהכלבמ]{1,3}(?=..)/,'');return src.indexOf(x)>-1||src.indexOf(y)>-1||src.indexOf(y2)>-1})});
       if(unknown.length)errs.push('שם אמורא שאינו במקור: '+unknown.slice(0,3).join(', '));
@@ -937,7 +938,13 @@
     function dashKey(v){return plainI(v).replace(NIK,'').replace(/''/g,'"').replace(/\s+/g,' ').trim()}
     function dashTitles(text){return parse(text).filter(function(k){return k.t==='title'&&isDashTitle(k.v)}).map(function(k){return dashKey(k.v)})}
     function dashLost(orig,text){var b=dashTitles(text),out=[];
-      dashTitles(orig).forEach(function(x){var i=b.indexOf(x);if(i<0)out.push(x);else b.splice(i,1)});return out}
+      dashTitles(orig).forEach(function(x){var i=b.indexOf(x);if(i<0)out.push(x);else b.splice(i,1)});
+      /* כלל 30 (פרומפט 76, 22.11.2026): מקף בלי מילה שקיבל מילת סוג ("- אלא" / "- שאני" / "- מדובר" / "- כאן" / "- דחי" / "- חסורי")
+         אינו מקף שאבד: המקף נשאר, ורק נוספה לו מילת הפעולה */
+      return out.filter(function(x){if(plainI(x).trim()!=='-')return true;
+        var j=b.findIndex(function(y){return R76_DASH.test(plainI(y).trim())&&dashTitles(orig).indexOf(y)<0});
+        if(j<0)return true;b.splice(j,1);return false})}
+    var R76_DASH=/^-\s*(?:אלא|שאני|מדובר|כאן|דחי|חסורי)$/;
     /* מילת קושיה בכותרת צד: אחריה, שורת תירוץ בלי כותרת - מקף תירוץ */
     var KUSH_RE=/^(ו?יקשה|ו?קשה|ו?קשיא|ו?הא|והרי|מיתיבי|איתיביה|איתיבי|ורמינהי|רמינהי|ו?אם תאמר|ו?אם תימא|ו?א"ת|ו?אין לומר|ו?דילמא|ו?ממאי|ו?מנא ליה|ו?מנלן|ותיקשי|ותקשי|ולימא|ולמה)(?=[\s:?!]|$)/;
     function isKushTitle(v){var p=plainI(v).replace(NIK,'').replace(/^\s*[א-י]\.\s*/,'').trim();return KUSH_RE.test(p)}

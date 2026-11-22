@@ -347,7 +347,10 @@ if (cmd === 'status') {
   if (!NOLOCK) gitPull(); /* פרומפט 69: הנעילות והתור כפי שהם עכשיו ב-main */
   /* פרומפט 69 (19.11.2026): מסכת שלמה בשיחה ייעודית (.locks/p69-<slug>.lock) - next בלי מזהה מדלג על כל עבודותיה */
   const p69Mine = (j) => { try { const s = pkOf(j).slug; return !!s && fs.existsSync(path.join(ROOT, '.locks', 'p69-' + s + '.lock')); } catch (e) { return false; } };
-  const cands = (A[0] ? ls(Q) : qFiles()).map((f) => f.slice(0, -5)).filter((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j) && !p69Mine(j))); });
+  /* פרומפט 76 (22.11.2026): סבב כלל 30 (מילת המקף ו"והקשה") - ההצעות נכתבות בכלי הממוקד (tools/sakem/rule76.mjs) ולא בכותב:
+     next בלי מזהה לעולם אינו לוקח עבודה כזו, גם בין הרישום בסנכרון לכתיבת ההצעות */
+  const p76Mine = (j) => { try { return /פרומפט 76/.test(pkOf(j).title || ''); } catch (e) { return false; } };
+  const cands = (A[0] ? ls(Q) : qFiles()).map((f) => f.slice(0, -5)).filter((j) => { const o = outOf(j); return (!A[0] || j === A[0]) && (!o || o.status !== 'ready') && !p51Locked(j) && (A[0] || (!p59Mine(j) && !p61Mine(j) && !p69Mine(j) && !p76Mine(j))); });
   /* ההרצה כבר עובדת על עבודה - ממשיכים בה (גם אם לפניה בתור התפנתה עבודה אחרת) */
   /* פרומפט 70: שרשרת נוסח חי - העבודה הקודמת הסתיימה, וההרצה לוקחת עבודת נוסח חי נוספת באותו פרק */
   if (m0 && m0.chain && !A[0]) { const ch = m0.chain; const nx = cands.filter((j) => { try { const k = pkOf(j); return j !== m0.jid && k.slug === ch.slug && +((k.job && k.job.perek) || k.perek || 0) === ch.perek && /נוסח החי/.test(k.title || ''); } catch (e) { return false; } });

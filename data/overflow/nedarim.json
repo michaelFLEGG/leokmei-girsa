@@ -1,6 +1,6 @@
 {
  "slug": "nedarim",
- "made": "2026-11-21 07:41",
+ "made": "2026-11-22 18:03",
  "profile": "a4-large",
  "pages": {
   "a4": 51,
@@ -1206,7 +1206,7 @@
    "over": "",
    "nA4": 2,
    "nLarge": 2,
-   "missPx": 16.0,
+   "missPx": 16.3,
    "miss": 3,
    "long": false,
    "sug": [],
@@ -1269,7 +1269,7 @@
    "over": "",
    "nA4": 2,
    "nLarge": 2,
-   "missPx": 39.5,
+   "missPx": 39.9,
    "miss": 7,
    "long": false,
    "sug": [],

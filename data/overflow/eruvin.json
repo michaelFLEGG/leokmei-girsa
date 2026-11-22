@@ -1,6 +1,6 @@
 {
  "slug": "eruvin",
- "made": "2026-11-22 10:05",
+ "made": "2026-11-22 18:01",
  "profile": "a4-large",
  "pages": {
   "a4": 80,
@@ -8,7 +8,7 @@
  },
  "sq25": {
   "a4": 107,
-  "a4-large": 200
+  "a4-large": 199
  },
  "count": 167,
  "firstTool": {
@@ -102,7 +102,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 62.3,
-   "miss": 12,
+   "miss": 11,
    "long": false,
    "tail": false,
    "sug": [],
@@ -683,7 +683,7 @@
    "html": "<i class=\"am\">דלרשב&quot;ג</i> דאמר אומרים לבוד - משתמש עד חודו הפנימי של לחי הפנימי.",
    "ph": "<i class=\"am\">דלרשב&quot;ג</i> דאמר אומרים לבוד - משתמש עד חודו הפנימי של לחי הפנימי.",
    "text": "דלרשב\"ג דאמר אומרים לבוד - משתמש עד חודו הפנימי של לחי הפנימי.",
-   "over": "לחי 72 הפנימי.",
+   "over": "לחי הפנימי.",
    "nA4": 1,
    "nLarge": 2,
    "missPx": 44.5,
@@ -1584,7 +1584,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 34.4,
-   "miss": 9,
+   "miss": 8,
    "long": false,
    "tail": false,
    "sug": [
@@ -1804,7 +1804,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 43.9,
-   "miss": 8,
+   "miss": 9,
    "long": false,
    "tail": false,
    "sug": [
@@ -5985,7 +5985,7 @@
    "over": "",
    "nA4": 2,
    "nLarge": 2,
-   "missPx": 26.9,
+   "missPx": 27.2,
    "miss": 5,
    "long": false,
    "sug": [],
@@ -6043,7 +6043,7 @@
    "over": "",
    "nA4": 2,
    "nLarge": 2,
-   "missPx": 95.3,
+   "missPx": 95.6,
    "miss": 18,
    "long": false,
    "sug": [],

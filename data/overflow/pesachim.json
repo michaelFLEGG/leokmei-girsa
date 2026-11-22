@@ -1,6 +1,6 @@
 {
  "slug": "pesachim",
- "made": "2026-11-22 12:51",
+ "made": "2026-11-22 18:03",
  "profile": "a4-large",
  "pages": {
   "a4": 94,
@@ -8,7 +8,7 @@
  },
  "sq25": {
   "a4": 120,
-  "a4-large": 245
+  "a4-large": 246
  },
  "count": 172,
  "firstTool": {
@@ -1374,7 +1374,7 @@
    "nA4": 4,
    "nLarge": 5,
    "missPx": 131.9,
-   "miss": 22,
+   "miss": 23,
    "long": true,
    "tail": false,
    "sug": [
@@ -2244,7 +2244,7 @@
    "over": "ויפרוס הלחם.",
    "nA4": 2,
    "nLarge": 3,
-   "missPx": 42.4,
+   "missPx": 42.5,
    "miss": 8,
    "long": true,
    "tail": false,
@@ -2599,7 +2599,7 @@
    "nA4": 1,
    "nLarge": 2,
    "missPx": 48.5,
-   "miss": 8,
+   "miss": 9,
    "long": false,
    "tail": false,
    "sug": [
@@ -3329,11 +3329,11 @@
    "html": "וכל היכא שכתוב<i class=\"ps\"> &#x27;באש תשרף&#x27; </i>לרבות כל שריפות הבאות מחמת אש.",
    "ph": "וכל היכא שכתוב<i class=\"ps\"> &#x27;באש תשרף&#x27; </i>לרבות כל שריפות הבאות מחמת אש.",
    "text": "וכל היכא שכתוב 'באש תשרף' לרבות כל שריפות הבאות מחמת אש.",
-   "over": "מחמת 16 17 18 19 אש.",
+   "over": "מחמת 16 17 אש.",
    "nA4": 1,
    "nLarge": 2,
    "missPx": 26.0,
-   "miss": 6,
+   "miss": 5,
    "long": false,
    "tail": false,
    "sug": [
@@ -5856,7 +5856,7 @@
    "nA4": 4,
    "nLarge": 5,
    "missPx": 95.9,
-   "miss": 16,
+   "miss": 17,
    "long": true,
    "tail": false,
    "sug": [],
@@ -6178,7 +6178,7 @@
    "over": "",
    "nA4": 2,
    "nLarge": 2,
-   "missPx": 84.5,
+   "missPx": 84.9,
    "miss": 15,
    "long": false,
    "sug": [],

@@ -151,8 +151,12 @@
      אחת של הדף, כפי שהיא. הצעה שלא שינתה שום שורה - כבר בנוסח. */
   const skpLet=t=>String(t||'').replace(/\{\+:/g,'').replace(/\[תוס'[^\]]*\]/g,'').replace(/[^א-ת\n]/g,'');
   function skpPageLines(){return '\n'+skpLet(flatU().map(o=>{try{return skmInter([o])}catch(e){return ''}}).join('\n')).split('\n').filter(Boolean).join('\n')+'\n'}
-  function skpChanged(x){const o=new Set(skpLet(x.orig).split('\n'));return skpLet(x.text).split('\n').filter(l=>l.length>=8&&!o.has(l))}
-  function skpInPage(x,page){return skpChanged(x).every(l=>page.indexOf(l)>-1)}   /* page מופרד בשורות: אין התאמה על פני שתי שורות */
+  /* פרומפט 76 (22.11.2026): שינוי בכותרת צד קצרה ("[צד:-]" ל-"[צד:- שאני]") נפל מתחת לסף 8 האותיות, הרשימה התרוקנה,
+     וההצעה נחשבה "כבר בדף" - נרשמה "התקבל" ולא הוחלה (6 הצעות בברכות). כותרת צד שהשתנתה נבדקת עכשיו גם כשהיא קצרה,
+     בהתאמה של שורה שלמה בדף ולא בתת-מחרוזת */
+  function skpChanged(x){const o=new Set(skpLet(x.orig).split('\n')),R=String(x.text||'').split('\n');
+    return skpLet(x.text).split('\n').filter((l,i)=>!o.has(l)&&(l.length>=8||(l.length>2&&/^\[צד:/.test((R[i]||'').trim()))))}
+  function skpInPage(x,page){return skpChanged(x).every(l=>page.indexOf(l.length>=8?l:'\n'+l+'\n')>-1)}   /* page מופרד בשורות: אין התאמה על פני שתי שורות */
   window.skpInPageTest={skpLet,skpChanged,skpInPage};
   /* פרומפט 56 ד1: לפעולת "קבל הכל בשבת" (sakem-accept.yml) - אותו מסלול בדיוק של הכפתור, דרך הדף עצמו, למנהל בלבד */
   window.skpAuto={open:jid=>skpOpen(jid),all:()=>{if(!SKP.rev)return null;skpAll('per');return SKP.lastAll||null},

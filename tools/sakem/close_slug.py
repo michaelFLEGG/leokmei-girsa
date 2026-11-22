@@ -39,6 +39,8 @@ with sync_playwright() as p:
       const j=await r.json();return (j.items||[])}""")
     rep['all'] = [x['jid'] + ':' + x['st'] + ':' + str(x.get('dec', 0)) + '/' + str(x.get('shown', 0)) for x in jobs]
     print('עבודות:', rep['all'])
+    # פרומפט 76 (22.11.2026): סבב כלל 30 (מילת המקף ו"והקשה") נועד לסקירה של מיכאל - אינו נסגר אוטומטית גם במסכת שב-auto-accept
+    jobs = [x for x in jobs if 'פרומפט 76' not in (x.get('title') or '')]
     todo = [x['jid'] for x in jobs if x['st'] != 'wait' and (x['st'] == 'ready' or (x.get('dec') or 0) < (x.get('shown') or 0))]
     for jid in todo:
         r = {'jid': jid}

@@ -2428,7 +2428,27 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
                   if _ln[1]!=_o: n_orn+=1
   if n_orn:
       qa.append(('טופל בתצוגה: קודי עיטור לטיניים','%d יחידות שבקצה הטקסט שלהן קוד עיטור לטיני (כמו F...E סביב הדרן) - הקוד אינו מוצג. הוורד לא נגע'%n_orn))
-  data={'mbt':mbt,'mnseg':mnseg,'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
+  # פרומפט 78 ותוספתו (22.11.2026): טווח הדפים של כל פרק (מן הקובץ, מאומת מול וילנא; סתירה - לפי וילנא) ושם הפרק
+  # המלא כששני פרקים מתחילים באותן מילים. לכותרת הרצה בהדפסה ולשורת "דפים בפרק" בדף (בכתיב אחיד "(ב. - כ:)").
+  chap={}
+  try:
+      import perek_range as _PR, chapter_ord as _CO
+      chap=_PR.compute(_slug, pages, _CO.chapter_ordinal)
+      _nfix=0
+      for _p in pages:
+          _c=chap.get(_p.get('perek') or '')
+          if not _c: continue
+          for _u in _p['units']:
+              if _u.get('k')=='perek-range' and _u.get('a') is not None:
+                  _new=_c['range']
+                  if re.sub(r'\s|<[^>]+>','',html.unescape(_u['a']))!=re.sub(r'\s','',_new): _nfix+=1
+                  _u['a']=_new
+      _nv=[('%s: %s'%(k,v['note'])) for k,v in chap.items() if v.get('note')]
+      if _nfix: qa.append(('דפים בפרק','%d שורות "דפים בפרק" הוצגו בטווח המדויק (הוורד לא נגע)'%_nfix))
+      if _nv: qa.append(('דפים בפרק - וילנא','; '.join(_nv)[:600]))
+  except Exception as _e:
+      qa.append(('דפים בפרק','לא חושב: %s'%_e))
+  data={'chap':{k:{'range':v['range'],'full':v['full']} for k,v in chap.items()},'mbt':mbt,'mnseg':mnseg,'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 
   CSS=r'''

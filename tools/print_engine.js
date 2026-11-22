@@ -515,6 +515,7 @@
         'span.tmg{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;line-height:0;vertical-align:baseline;margin:0;padding:0}'+
         'sup.tm{display:inline-block;position:relative;width:0;height:0;overflow:visible;direction:ltr;unicode-bidi:isolate;white-space:nowrap;font-family:'+(n.markFamily||n.family)+',serif;font-weight:'+n.markWeight+';font-size:'+n.markScale+'em;line-height:0;vertical-align:baseline;top:-'+n.markRise+'em;letter-spacing:0;margin:0;padding:0;color:#7a7a7a}'+
         'span.tmg sup.tm{display:inline;width:auto;margin:0}span.tmg sup.tm+sup.tm{margin-left:.12em}'+
+        'span.tmg sup.tm.tmh{font-size:0!important;margin:0!important;letter-spacing:0}'+
         /* פרומפט 60 ה: ברשימה ממוספרת (row.enl) ההפניות תופסות את מקומן אחרי המילה, זו אחר זו באותו קו - לא ערימה ברוחב אפס שמרחפת מעל טקסט אחר */
         /* פרומפט 72 (סעיף ט של 67): בוטל - גם ברשימה ההפניה ברוחב אפס ומעל השורה (הכלל של 6.11.2026). ההפניה שתפסה 9px
            דחקה את "הריגה" לשורה נפרדת (תענית ז.). שתי הפניות צמודות כבר נערמות זו לצד זו בצירוף span.tmg */
@@ -709,18 +710,31 @@
       var dir=(prof.notes.clusterDir||'ltr');
       [].slice.call(root.querySelectorAll('sup.tm')).forEach(function(mk){
         if(!mk.isConnected||mk.parentNode.classList.contains('tmg'))return;
-        var run=[mk],nx=mk.nextSibling;
+        var run=[mk],nx=mk.nextSibling,endN=mk.nextSibling;
         while(nx){
           if(nx.nodeType===3&&/^[\u2060\s]*$/.test(nx.nodeValue)){nx=nx.nextSibling;continue}
-          if(nx.nodeType===1&&nx.matches&&nx.matches('sup.tm')){run.push(nx);nx=nx.nextSibling;continue}
+          if(nx.nodeType===1&&nx.matches&&nx.matches('sup.tm')){run.push(nx);nx=nx.nextSibling;endN=nx;continue}
           break}
+        /* ו (פרומפט 78): רק מה שבין ההפניות נמחק. עד כאן נמחק גם הרווח שאחרי ההפניה האחרונה, והמילה שאחריה (לרוב בסגנון
+           אחר, כמו הסבר בסוגריים) נדבקה: "המטר[כשבאים בנחת]", "העביםשאחר המטר" (תענית ג:) */
+        nx=endN;
         if(run.length<2)return;
         var g=document.createElement('span');g.className='tmg';g.setAttribute('dir',dir);
         run[0].parentNode.insertBefore(g,run[0]);
         run.sort(function(a,b){return ITN[a.getAttribute('data-n')].dn-ITN[b.getAttribute('data-n')].dn});
         /* הצמתים שבין ההפניות (מפרידי מילה) נמחקים; ההפניות נכנסות לקבוצה לפי הסדר */
         var n0=g.nextSibling;while(n0&&n0!==nx){var nn=n0.nextSibling;if(n0.nodeType===3)n0.remove();n0=nn}
-        run.forEach(function(m2,i){if(i)g.appendChild(document.createTextNode(' '));g.appendChild(m2)})})}
+        run.forEach(function(m2,i){if(i)g.appendChild(document.createTextNode(' '));g.appendChild(m2)});
+        /* ה (פרומפט 78): יותר משלושה סימנים רצופים על מילה אחת - סימן אחד "26-31". ההפניות האחרות נשארות בדף (המיקום
+           והשיוך לטור ההערות נשענים עליהן) אבל אינן נראות ואינן תופסות מקום. ההערות למטה כרגיל, כל אחת במספרה */
+        var dns=run.map(function(m2){return ITN[m2.getAttribute('data-n')].dn}),seq=true;
+        for(var q2=1;q2<dns.length;q2++)if(dns[q2]!==dns[q2-1]+1){seq=false;break}
+        if(run.length>3&&seq){
+          var lastIt=ITN[run[run.length-1].getAttribute('data-n')];
+          run[0].textContent=run[0].textContent+'-'+(prof.notes.numbering==='digits'?String(lastIt.dn):tosHeb(lastIt));
+          for(var q3=1;q3<run.length;q3++)run[q3].classList.add('tmh');
+          [].slice.call(g.childNodes).forEach(function(x){if(x.nodeType===3)x.nodeValue=''});
+          R.markRuns=(R.markRuns||0)+1}})}
     for(var ci0=0;ci0<chunks.length;ci0++){
       var c0=chunks[ci0],crecs=recs.slice(c0[0],c0[1]);
       var curF=document.getElementById('flow');
@@ -1320,8 +1334,15 @@
       var pageInfo={n:pgi+1,daf0:firstLine.daf,daf1:lastLine.daf,perek:pe,notes:[],cols:[]};
       /* א (14.10.2026): כותרת רצה מיושרת לשדה הטקסט של הטורים: שם הפרק בקצה הימני של שדה הטקסט של הטור הימני (לא מעל המסילה),
            וציון הדפים בקצה השמאלי של שדה הטקסט של הטור השמאלי */
+      /* פרומפט 78 (22.11.2026): ב. שלוש משבצות קבועות (ימין / מרכז / שמאל) ולא פריסה לפי רוחב התוכן - הכותרת עומדת במקום אחד
+         בדפדוף. ד. שם הפרק המלא כששני פרקים מתחילים באותן מילים (D.chap, tools/perek_range.py). תוספת: טווח דפי הפרק בכתב קטן
+         בסוגריים אחרי שם הפרק. א. ספר כרוך (דו-צדדי, או B5 לבית הדפוס): ציון הדפים ושורת האתר בצד החיצוני - בעמוד אי-זוגי
+         בשמאל, ובעמוד זוגי בימין (לפי מספר העמוד המודפס). */
+        var CHP=(D.chap&&D.chap[pe])||{},pnm=CHP.full||pn,mir=(duplex||!!SHRINK)&&((pgi+1)%2===0);
+        var sPk='<span class="phk">'+ge(pe)+(pnm?' \u00B7 '+ge(pnm):'')+(CHP.range?' <span class="phr">'+ge(CHP.range)+'</span>':'')+'</span>',
+            sMs='<span class="phm">'+ge(mname)+'</span>',sDf='<span class="phd2">'+ge(dafSpan(firstLine.daf,lastLine.daf))+'</span>';
         var hd='<div class="phd" style="left:'+(MG.left+dx)+'mm;right:'+(MG.right-dx+prof.rail)+'mm;top:'+prof.header.topMm+'mm">'+
-        '<span>'+ge(pn)+'</span><span>'+ge(pe)+'</span><span>'+ge(mname)+'</span><span>'+ge(dafSpan(firstLine.daf,lastLine.daf))+'</span></div>';
+        (mir?sDf+sMs+sPk:sPk+sMs+sDf)+'</div>';
       var body='';
       /* פרומפט 72: עמוד סוף פרק מאוזן - גובה הטקסט הגבוה מבין השניים, ומתחתיו רצועת ההדרן ואזור ההערות */
       var pgBal=cs2.length===2&&cs2[0].bal&&cs2[1].bal,pgT=0,pgHad=pgBal&&cs2[0].had?cs2[0].had:null,pgHadH=pgHad?hadH(pgHad.s,pgHad.e,cs2[0].tight):0,pgFG=pgBal&&cs2[0].tight?fnGap(true):GAP;
@@ -1386,7 +1407,7 @@
           '<div class="ptx flow" style="overflow:visible">'+hh+'</div></div>';
         R.hadranStrips=(R.hadranStrips||0)+1}
       var foot='<div class="pnum" style="bottom:'+prof.footer.numberFromBottomMm+'mm">'+(pgi+1)+'</div>'+
-        '<div class="psite" style="left:'+(MG.left+dx)+'mm">'+(prof.footer.pageQr?'<span class="qr"></span>':'')+'<span class="st" dir="rtl">'+siteLine()+'</span></div>';
+        '<div class="psite" style="'+(mir?'right:'+(MG.right-dx+prof.rail)+'mm':'left:'+(MG.left+dx)+'mm')+'">'+(prof.footer.pageQr?'<span class="qr"></span>':'')+'<span class="st" dir="rtl">'+siteLine()+'</span></div>';
       pgEl.innerHTML=hd+body+foot;
       pgEl.setAttribute('data-daf',firstLine.daf);
       out.appendChild(pgEl);
@@ -1539,11 +1560,19 @@
     try{R.fonts=Array.from(document.fonts).map(function(f){return f.family+" "+f.weight+" "+f.status})}catch(e){}
     [].forEach.call(document.querySelectorAll('style'),function(x){if(HEAD0.indexOf(x)<0)x.setAttribute('data-prnrun','1')});
     window.__PRN.state='done';
-    document.title='לאוקמי גירסא - '+mname+' - '+QS.get('from')+' - '+(QS.get('to')||QS.get('from'));
+    /* ח (פרומפט 78): שם הקובץ - "לאוקמי גירסא - מסכת תענית - B5 - עם תוס'". מה שהודפס (מסכת / פרק / דפים), הגודל, והתוס'.
+       עד כאן "תענית - null - null" בהדפסת מסכת שלמה (בלי from/to), בלשונית ובבית הדפוס */
+    (function(){var what;
+      if(QS.get('all')==='1')what='מסכת '+mname;
+      else if(PKS&&PKS.whole){var pl=(D.pages[PKS.p0]&&D.pages[PKS.p0].perek)||'';var pc=(D.chap&&D.chap[pl])||{};
+        what='מסכת '+mname+' - '+pl+((pc.full||(D.pages[PKS.p0]&&D.pages[PKS.p0].perekName))?' '+(pc.full||D.pages[PKS.p0].perekName):'')}
+      else{var f0=D.pages[fi]?D.pages[fi].daf:QS.get('from'),t0=D.pages[ti]?D.pages[ti].daf:(QS.get('to')||QS.get('from'));
+        what='מסכת '+mname+' '+(f0===t0?f0:f0+' - '+t0)}
+      var sz=SHRINK?'B5':'A4';
+      document.title='לאוקמי גירסא - '+what+' - '+sz+(withTos?" - עם תוס'":'')})();
     /* פרומפט 51 (16.11.2026): הדפסה בדפדפן עצמו, בלי שרת. הדף נפתח בחלון חדש עם autoprint=1, מעמד במנוע הזה,
        ופותח את חלון ההדפסה של הדפדפן (שם בוחרים מדפסת או "שמירה כ-PDF"). */
     if(QS.get('autoprint')==='1'){
-      if(QS.get('all')==='1')document.title='לאוקמי גירסא - '+mname;
       var bar=document.getElementById('prnwait');if(bar)bar.remove();
       setTimeout(function(){try{window.print()}catch(e){}},250)}
   }
@@ -1581,7 +1610,10 @@
       '.pfn.one{column-count:1!important}'+
       '.pnum{position:absolute;left:0;right:0;text-align:center;line-height:1}'+
       '.psite{position:absolute;display:flex;align-items:flex-end;gap:1.5mm;direction:ltr;line-height:1}'+
-      '.phd{position:absolute;display:flex;justify-content:space-between;align-items:baseline;line-height:1;white-space:nowrap}'+
+      '.phd{position:absolute;display:grid;grid-template-columns:1fr auto 1fr;column-gap:4mm;align-items:baseline;line-height:1;white-space:nowrap}'+
+      '.phd>span:first-child{justify-self:start}.phd>span:nth-child(2){justify-self:center}.phd>span:last-child{justify-self:end}'+
+      /* ג (פרומפט 78): משקל אחד בכל העמודים - בלי סינתזה ובלי ירושה ממקום אחר */
+      '.phd,.phd *{font-synthesis:none}.phd>span{font-weight:inherit}.phd .phr{font-size:.72em}'+
       '.psite .qr{display:block}.psite .qr svg{display:block;width:100%;height:100%}'+
       '.pg.cover .cv{position:absolute;left:0;right:0;top:78mm;text-align:center}'+
       '.cv1{font-family:Franknatan,Vilna,serif;font-size:46pt;line-height:1.1}'+

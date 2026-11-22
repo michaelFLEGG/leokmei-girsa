@@ -227,6 +227,14 @@ def main():
                 except Exception as e:
                     print('אזהרה: תיקון הגופן', best[0], 'נכשל -', e)
                     shutil.copy(src, dst)
+                # פרומפט 78 ט: גופן CFF נשמר ב-PDF של Chrome כ-Type 3, שבתי דפוס פוסלים. אותו גופן בקווי TrueType
+                # (רוחב כל אות זהה, שבירת השורות לא משתנה) - tools/font_ttf.py
+                try:
+                    import font_ttf
+                    if font_ttf.to_glyf(dst):
+                        print('הגופן', best[0] + ': הומר לקווי TrueType (בלי Type 3 ב-PDF)')
+                except Exception as e:
+                    print('אזהרה: המרת הגופן', best[0], 'לקווי TrueType נכשלה -', e)
         absent = [t for t in FONT_MAP if not os.path.exists(os.path.join(SITE, 'fonts', t))]
         if absent: print('אזהרה: גופן חסר באתר:', ', '.join(absent))
     import font_woff2    # גרסת woff2 מקוצצת לכל גופן (גם בבנייה חלקית: הגופנים כבר באתר)

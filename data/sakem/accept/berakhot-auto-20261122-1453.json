@@ -1,0 +1,22 @@
+{
+ "slug": "berakhot",
+ "jobs": [],
+ "started": "2026-11-22 12:53",
+ "all": [
+  "berakhot-s1-mwrq6uds:done:2/2",
+  "berakhot-s886-mwrq6v3d:done:11/11",
+  "berakhot-s886-mwrtpqmp:done:7/7",
+  "berakhot-s1-mwru7cyf:sent:0/0",
+  "berakhot-s886-mwru7dp8:sent:0/0"
+ ],
+ "after": [
+  "berakhot-s1-mwrq6uds:done:2/2",
+  "berakhot-s886-mwrq6v3d:done:11/11",
+  "berakhot-s886-mwrtpqmp:done:7/7",
+  "berakhot-s1-mwru7cyf:sent:0/0",
+  "berakhot-s886-mwru7dp8:sent:0/0"
+ ],
+ "emptied": [],
+ "ready_after": [],
+ "errors": []
+}

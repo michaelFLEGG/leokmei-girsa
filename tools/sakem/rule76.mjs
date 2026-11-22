@@ -14,6 +14,7 @@
 
    node tools/sakem/rule76.mjs cands <jid> [--json f]          השלב המכני + רשימת המועמדים לשלב ב
    node tools/sakem/rule76.mjs apply <jid> [choices.json] [--dry]  כותב את ההצעות ל-data/sakem/out/<jid>.json
+   node tools/sakem/rule76.mjs undo <jid> <jid ישן>...          החזרת הצעות שהתקבלו בלי סקירה (עבודה שהוזמנה ב-order --undo)
    node tools/sakem/rule76.mjs learn                          הכרעות המנהל על סבבי הכלל -> data/sakem/learn/rule76.json
    node tools/sakem/rule76.mjs order <slug>[:1,2] ... | --all [--dry]
         חבילות מן הדף החי (דפדפן, כמבקר, כל בקשה שאינה GET נחסמת) -> data/sakem/jobs-put/<slug>-p<n>-p76.json.
@@ -189,6 +190,27 @@ if (cmd === 'cands') {
     summary: 'סבב כלל 30 (מילת המקף ו"והקשה"): ' + items.length + ' הצעות - ' + (sum || 'אין') + '. רק השורות שהכלל חל עליהן; שום שורה אחרת לא נגעה.' };
   fs.writeFileSync(of, JSON.stringify(out, null, 1));
   console.log('נכתב: ' + path.relative(ROOT, of));
+} else if (cmd === 'undo') {
+  /* החזרת נוסח (22.11.2026): הצעות של הסבב שהתקבלו בלי סקירה (קבלה אוטומטית) - עבודה <jid> על הנוסח החי, ובה לכל
+     יחידה שנוסחה החי שווה להצעה: ההצעה ההפוכה (מן ההצעה אל הנוסח שלפניה). יחידה שנערכה מאז - אינה נוגעת ומדווחת.
+     node tools/sakem/rule76.mjs undo <jid של עבודת ההחזרה> <jid ישן> [<jid ישן> ...] */
+  const jid = POS[1], pk = pkOf(jid), items = [];
+  for (const old of POS.slice(2)) {
+    const o = rd(path.join(D, 'out', old + '.json'));
+    for (const it of o.items) {
+      const ui = pk.units.findIndex((u) => u.id === it.ids[0]); if (ui < 0) { console.log('לא נמצאה בדף: ' + it.ids[0]); continue; }
+      const live = unitInter(pk.units[ui]);
+      if (live === it.orig) { console.log('כבר בנוסח הקודם: ' + it.ids[0]); continue; }
+      if (live !== it.text) { console.log('נערכה מאז - אינה נוגעת: ' + it.ids[0]); continue; }
+      items.push({ iid: 'u76-' + it.ids[0], kind: 'seg', seg: items.length, sugya: 0, ids: it.ids, orig: live, text: it.orig, point: 'החזרת הנוסח שלפני הצעת כלל 30, כדי שתעלה לסקירה',
+        changes: ['הוחזר הנוסח הקודם: ההצעה התקבלה אוטומטית בלי סקירה, ותעלה שוב לסקירה'], layers: ['ליטוש'], skipped: '', adds: [], warn: [], read: [], round: 'p76u', stat: {} });
+    }
+  }
+  console.log('הצעות החזרה: ' + items.length);
+  if (FLAGS.has('--dry')) process.exit(0);
+  const out = { v: 1, jid: pk.jid, slug: pk.slug, title: pk.title, status: 'ready', plan: items.map((x) => ({ iid: x.iid })), total: items.length, done: items.length, items, t: Date.now(), rev: 'p76u', counts: {}, summary: 'החזרת ' + items.length + ' שורות לנוסח הקודם' };
+  fs.writeFileSync(path.join(D, 'out', pk.jid + '.json'), JSON.stringify(out, null, 1));
+  console.log('נכתב: data/sakem/out/' + pk.jid + '.json');
 } else if (cmd === 'learn') {
   /* הכרעות המנהל על הצעות הכלל (decisions/<jid>.json): לכל סוג - כמה התקבלו, נדחו, נערכו. סוג מכני שנדחה ברובו
      (לפחות 3 הכרעות, יותר ממחצית נדחו) - יוצא מן השלב המכני ועובר לספק; הלקח נכתב גם ל-docs/sakem-lessons.md ביד */
@@ -223,9 +245,11 @@ if (cmd === 'cands') {
     for (const s of secs) {
       const n = s.si + 1; if (w.perakim && !w.perakim.includes(n)) continue;
       const k0 = caps.length;
-      await pg.evaluate((si) => window.skpAuto.enqueue(si, window.skpAuto.title(si) + ' · מילת המקף ו"והקשה" (פרומפט 76)', 'seg'), s.si);
+      /* --undo: עבודת החזרת נוסח - בלי "פרומפט 76" בכותרת, כדי שהקבלה האוטומטית תחיל אותה */
+      const UNDO = FLAGS.has('--undo');
+      await pg.evaluate(([si, u]) => window.skpAuto.enqueue(si, window.skpAuto.title(si) + (u ? ' · החזרת נוסח לפני סקירת מילת המקף' : ' · מילת המקף ו"והקשה" (פרומפט 76)'), 'seg'), [s.si, UNDO]);
       if (caps.length === k0) { console.log(w.slug + ' פרק ' + n + ': לא נלכדה חבילה'); continue; }
-      const f = path.join(D, 'jobs-put', w.slug + '-p' + n + '-p76.json');
+      const f = path.join(D, 'jobs-put', w.slug + '-p' + n + (FLAGS.has('--undo') ? '-p76undo' : '-p76') + (FLAGS.has('--again') ? 'b' : '') + '.json');
       if (FLAGS.has('--dry')) console.log('(יבש) ' + path.relative(ROOT, f)); else { fs.writeFileSync(f, caps[caps.length - 1]); console.log('נכתב: ' + path.relative(ROOT, f)); }
     }
     await pg.close();

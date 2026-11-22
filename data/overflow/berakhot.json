@@ -1,6 +1,6 @@
 {
  "slug": "berakhot",
- "made": "2026-11-22 17:27",
+ "made": "2026-11-22 18:00",
  "profile": "a4-large",
  "pages": {
   "a4": 62,
@@ -1469,8 +1469,8 @@
    "over": "שם, שקבע סעודתו עליהן.",
    "nA4": 4,
    "nLarge": 5,
-   "missPx": 72.5,
-   "miss": 14,
+   "missPx": 75.7,
+   "miss": 15,
    "long": true,
    "tail": false,
    "sug": [],

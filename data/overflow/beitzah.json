@@ -1,14 +1,14 @@
 {
  "slug": "beitzah",
- "made": "2026-11-19 23:29",
+ "made": "2026-11-22 17:55",
  "profile": "a4-large",
  "pages": {
   "a4": 24,
   "a4-large": 25
  },
  "sq25": {
-  "a4": 21,
-  "a4-large": 92
+  "a4": 22,
+  "a4-large": 94
  },
  "count": 16,
  "firstTool": {

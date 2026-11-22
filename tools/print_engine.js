@@ -198,9 +198,27 @@
      שתוויתו דף התוספות. אבל העוגן תקף רק אם היחידה שמצא שייכת לפרק של התוספות; אחרת (ובכל עוגן שלא נמצא)
      מחפשים רק בעמודי הפרק שלה: מילות הדיבור המתחיל, ואם אינן - סוף שורת הגמרא הקרובה. לעולם לא בפרק אחר.
      מחזיר {uid, ctx, k, how:'t'|'dh'|'line', why} או {uid:null, why} */
+  /* פרומפט 77 (22.11.2026): העוגן המדויק לא נמצא (הנוסח השתנה בסכם או בעורך: "שלא קיבלה" נעשה "לא קיבלה")
+     - חיפוש מקורב מילה מול מילה: בלי אותיות שימוש ש/ו/ד/ה/ב/ל/כ/מ בתחילת מילה, בלי ו/י באמצע, סופיות כרגילות;
+     העוגן כולו, ואם לא - בלי המילה הראשונה או האחרונה (לפחות שתי מילים). רק התאמה יחידה. מחזיר את הקטע
+     כפי שהוא כתוב בעמוד, כך שהעוגן שנמצא תקף גם באתר וגם בהדפסה (מנוע אחד). אותו כלל: tools/tosafot/anchor_check.py */
+  var FZFIN={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+  function fzWord(w){w=w.replace(/[ךםןףץ]/g,function(c){return FZFIN[c]});
+    var k=0;while(k<2&&w.length>3&&/^[שודהבלכמ]/.test(w)){w=w.slice(1);k++}
+    if(w.length>3)w=w[0]+w.slice(1,-1).replace(/[וי]/g,'')+w[w.length-1];
+    return w}
+  function fzCtx(s,ctx){
+    var ws=[],re=/[^ ]+/g,m;while((m=re.exec(s)))ws.push({w:fzWord(m[0]),a:m.index,e:m.index+m[0].length});
+    var cw=ctx.split(' ').filter(Boolean).map(fzWord),tries=[cw];
+    if(cw.length>=3){tries.push(cw.slice(1));tries.push(cw.slice(0,-1))}
+    for(var t=0;t<tries.length;t++){var q=tries[t],hits=[];if(q.length<2)continue;
+      for(var i=0;i+q.length<=ws.length;i++){var ok=true;for(var j=0;j<q.length;j++)if(ws[i+j].w!==q[j]){ok=false;break}if(ok)hits.push(i)}
+      if(hits.length===1)return s.slice(ws[hits[0]].a,ws[hits[0]+q.length-1].e)}
+    return null}
   function tosResolve(it){
     if(it._rs)return it._rs;
     var M=perekMap(),pk=+it.perek||0,lab=it.page||it.daf,q0=pageIdxOf(lab),ctx=normCtx(it.t||''),why='';
+    if(q0>-1&&ctx&&(it.occ||1)===1&&!occsOf(pageNorm(q0).s,ctx).length){var fz=fzCtx(pageNorm(q0).s,ctx);if(fz)ctx=fz}
     if(q0>-1&&ctx){var h=hitUnit(pageNorm(q0),ctx,it.occ||1);
       if(!h)why='טקסט העוגן לא נמצא בדף';
       else if(pk&&M.upk[h.uid]!==pk)why='העוגן שנקבע ("'+(it.t||'')+'") נמצא בפרק אחר';

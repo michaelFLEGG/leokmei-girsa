@@ -79,7 +79,38 @@ def check(slug, pages):
             c = sum(1 for x in big if x in S) / float(len(big))
             if c < SWALLOW:
                 swallowed.append({'perek': pi + 1, 'mishna': mi + 1, 'cov': round(c, 2), 'text': ' '.join(w[:12])})
-    return {'slug': slug, 'boxes': len(bx), 'alien': alien, 'swallowed': swallowed, 'dup': dup}
+    return {'slug': slug, 'boxes': len(bx), 'alien': alien, 'swallowed': swallowed, 'dup': dup,
+            'certain': certain(slug, pages)}
+
+
+def certain(slug, pages):
+    """ודאי: שורה בתיבת משנה שאינה במשניות, והנוסח שלה הוא בדיוק נוסח של שורת גמרא באותו דף או בדף שליד
+    (כמו שבת ק.: ברייתא 'מבוי ששוה' שהועתקה לתוך משנה ג). זה סימן ל'מחוץ לאחד' ולא לניסוח של המנהל."""
+    gem = {}
+    for i, pg in enumerate(pages):
+        for u in pg.get('units') or []:
+            if u.get('k') == 'u':
+                for l in u.get('l') or []:
+                    k = ' '.join(G.norm_words(_plain(l[1])))
+                    if len(k) > 15:
+                        gem.setdefault(k, set()).add(i)
+    out = []
+    for i, pg in enumerate(pages):
+        pn = chapter_ord.chapter_ordinal(pg.get('perek') or '')
+        for u in pg.get('units') or []:
+            if u.get('k') != 'm':
+                continue
+            for n, l in enumerate(u.get('l') or []):
+                t = _plain(l[1])
+                k = ' '.join(G.norm_words(t))
+                where = gem.get(k)
+                if not where or not any(abs(j - i) <= 1 for j in where):
+                    continue
+                c = G.coverage(slug, t, pn)
+                ca = G.coverage(slug, t)      # גם בכל המסכת (סדר הפרקים בבבלי שונה לפעמים מן המשניות)
+                if c is not None and c < COV and ca < COV:
+                    out.append({'daf': pg.get('daf'), 'k': 'u%s.%d' % (u.get('id'), n + 1), 'cov': round(c, 2), 'text': t[:100]})
+    return out
 
 
 def pages_of(slug, with_layer, live_dir=None):
@@ -109,7 +140,7 @@ def main():
     book = json.load(io.open(os.path.join(HERE, 'data', 'book.json'), encoding='utf-8'))
     slugs = [s for s in book['slugs'] if not a.only or s in a.only.split(',')]
     res = {'when': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'masechtot': {}}
-    print('%-14s %6s | %-16s | %-16s' % ('מסכת', 'תיבות', 'ספר: זרה/נבלעה/כפולה', 'אתר: זרה/נבלעה/כפולה'))
+    print('%-14s %6s | %-16s | %-16s' % ('מסכת', 'תיבות', 'ספר: ודאי/זרה/נבלעה/כפולה', 'אתר: ודאי/זרה/נבלעה/כפולה'))
     for s in slugs:
         row = {}
         for tag, wl in (('book', False), ('site', True)):
@@ -121,7 +152,7 @@ def main():
                 row[tag] = {'slug': s, 'error': str(e)[:200]}
         res['masechtot'][s] = row
         f = lambda r: ('-' if not r else r.get('error') and 'שגיאה' or r.get('skip') and 'אין משניות'
-                       or '%d/%d/%d' % (len(r['alien']), len(r['swallowed']), len(r['dup'])))
+                       or '%d/%d/%d/%d' % (len(r.get('certain') or []), len(r['alien']), len(r['swallowed']), len(r['dup'])))
         print('%-14s %6s | %-16s | %-16s' % (s, (row.get('book') or {}).get('boxes', ''), f(row.get('book')), f(row.get('site'))))
         sys.stdout.flush()
     out = os.path.join(HERE, 'data', 'fold', 'mishna-check.json')

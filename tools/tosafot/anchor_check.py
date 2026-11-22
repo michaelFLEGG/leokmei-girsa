@@ -64,17 +64,20 @@ def _plain(h):
 
 
 def page_texts(pages):
-    """daf -> טקסט מנורמל של העמוד (שורות הגוף, תיבות המשנה והכותרות), כמו buildIndex."""
-    out = {}
+    """כמו pageNorm/unitsNorm במנוע ההדפסה (tools/print_engine.js, tosResolve): שורות כל היחידות של העמוד.
+    first: daf -> העמוד הראשון שתוויתו daf (שם נבדק העוגן t). all: daf -> כל העמודים שתוויתם daf (שם נבדק הד"ה)."""
+    first, allp = {}, {}
     for pg in pages:
         lines = []
         for u in pg.get('units') or []:
-            if u.get('k') in ('dh', 'nose') and u.get('a'):
-                lines.append(_plain(u['a']))
             for l in u.get('l') or []:
-                lines.append(_plain(l[1]))
-        out[pg.get('daf')] = norm_idx(lines)
-    return out
+                lines.append(_plain(l[1] if isinstance(l, (list, tuple)) and len(l) > 1 else ''))
+        t = norm_idx(lines)
+        d = pg.get('daf')
+        if d not in first:
+            first[d] = t
+        allp[d] = allp.get(d, '') + t
+    return first, allp
 
 
 def site_pages(slug, live_dir=None):
@@ -84,7 +87,7 @@ def site_pages(slug, live_dir=None):
 
 
 def check(slug, pages, fix=False):
-    T = page_texts(pages)
+    T, TA = page_texts(pages)
     cnt = {'1': 0, '2': 0, '3': 0, 'f': 0, 'm': 0}
     fixed = {'f': 0, '3': 0, 'm': 0}
     samples = []
@@ -98,6 +101,7 @@ def check(slug, pages, fix=False):
             rule = str(it.get('rule') or '1')
             page = it.get('page') or it.get('daf')
             idx = T.get(page) or T.get(it.get('daf')) or ''
+            idxa = TA.get(page) or TA.get(it.get('daf')) or ''
             st = rule
             if rule in ('1', '2'):
                 ctx = norm_ctx(it.get('t') or '')
@@ -114,6 +118,7 @@ def check(slug, pages, fix=False):
                     c = norm_ctx(dh or '')
                     if len(c.split()) < 2:
                         continue
+                    # הד"ה נבדק בעמוד הראשון (שם העוגן t תקף במנוע ההדפסה), ורק במקום יחיד
                     ex = find_occ(idx, c)
                     r = (c, 1) if len(ex) == 1 else (None if ex else fuzzy(idx, c))
                     if r:
@@ -145,11 +150,12 @@ def main():
     ap.add_argument('--only', default='')
     ap.add_argument('--live-dir', default='')
     ap.add_argument('--fix', action='store_true')
+    ap.add_argument('--out', default='', help='קובץ הדוח (ברירת מחדל data/fold/anchor-check.json)')
     a = ap.parse_args()
     slugs = sorted(os.path.basename(os.path.dirname(p)) for p in glob.glob(os.path.join(ROOT, 'tosafot', '*', 'live-1.json')))
     if a.only:
         slugs = [s for s in slugs if s in a.only.split(',')]
-    outp = os.path.join(ROOT, 'data', 'fold', 'anchor-check.json')
+    outp = a.out or os.path.join(ROOT, 'data', 'fold', 'anchor-check.json')
     res = json.load(io.open(outp, encoding='utf-8')) if os.path.exists(outp) else {'masechtot': {}}
     print('%-14s %6s %6s %6s %6s %6s | %s' % ('מסכת', '1', '2', '3', 'מקורב', 'm', 'תוקנו'))
     for s in slugs:

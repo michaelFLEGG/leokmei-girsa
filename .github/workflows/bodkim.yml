@@ -1,0 +1,73 @@
+name: הבודקים - משניות ועוגני תוס'
+# פרומפט 77 (22.11.2026). רץ כל לילה אחרי הקיפול (fold.yml, 02:17), וידנית.
+# א. בודק העוגנים (tools/tosafot/anchor_check.py --fix): סופר לכל מסכת את סימני התוס' במצב 1/2/3/מקורב/m,
+#    ומעדכן עוגן שהנוסח שלו השתנה (סכם, עורך) לנוסח שבדף, וסימן מוצמד או אבוד - לפי הד"ה של התוספות עצמו.
+#    רק התאמה יחידה. עלייה במספר ה-m מודפסת כאזהרה.
+# ב. בודק המשניות (tools/mishna_check.py): לכל תיבת משנה, בספר ובאתר, מול המשניות של הפרק.
+#    "ודאי" (שורת גמרא שהועתקה לתוך תיבת משנה) - הריצה נכשלת בקול, ומיכאל מקבל מייל מגיטהאב.
+# הדוחות: data/fold/anchor-check.json, data/fold/mishna-check.json. עוגן שתוקן נדחף, והשומר בונה את האתר.
+on:
+  schedule:
+    - cron: '40 1 * * *'      # 03:40 שעון ישראל (חורף), אחרי הקיפול
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'מסכת אחת (slug). ריק = כולן'
+        required: false
+        default: ''
+permissions:
+  contents: write
+concurrency:
+  group: bodkim
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install lxml fonttools brotli pillow
+      - name: בודק העוגנים
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/tosafot/anchor_check.py --fix --only "${{ github.event.inputs.only }}"; else python tools/tosafot/anchor_check.py --fix; fi
+      - name: בודק המשניות
+        id: mc
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/mishna_check.py --only "${{ github.event.inputs.only }}"; else python tools/mishna_check.py; fi
+          python - <<'EOF' >> $GITHUB_OUTPUT
+          import json
+          d = json.load(open('data/fold/mishna-check.json'))['masechtot']
+          n = sum(len(((r.get('site') or {}).get('certain') or [])) for r in d.values())
+          print('certain=%d' % n)
+          EOF
+      - name: שמירה ודחיפה
+        id: save
+        run: |
+          git config user.name "leokmei-bodkim"; git config user.email "bodkim@users.noreply.github.com"
+          git add tosafot data/fold/anchor-check.json data/fold/mishna-check.json
+          git diff --cached --quiet && { echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; }
+          git commit -q -m "הבודקים: עוגני תוס' ובודק המשניות"
+          git stash -u -q || true
+          for i in 1 2 3 4 5; do
+            git pull -q --rebase origin main && git push -q && { echo "pushed=1" >> $GITHUB_OUTPUT; exit 0; }
+            sleep $((i*5))
+          done
+          echo "::error::הבודקים לא נדחפו"; exit 1
+      - name: בניית האתר
+        if: steps.save.outputs.pushed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run watch.yml --ref main
+      - name: תוצאה
+        if: steps.mc.outputs.certain != '0'
+        run: |
+          echo "::error::בודק המשניות מצא ${{ steps.mc.outputs.certain }} שורות גמרא בתוך תיבות משנה באתר. פרטים ב-data/fold/mishna-check.json (certain)"
+          exit 1

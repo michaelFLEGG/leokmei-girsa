@@ -1,0 +1,16 @@
+{
+ "slug": "berakhot",
+ "jobs": [],
+ "started": "2026-11-22 11:01",
+ "all": [
+  "berakhot-s1-mwrq6uds:sent:0/0",
+  "berakhot-s886-mwrq6v3d:sent:0/0"
+ ],
+ "after": [
+  "berakhot-s1-mwrq6uds:sent:0/0",
+  "berakhot-s886-mwrq6v3d:sent:0/0"
+ ],
+ "emptied": [],
+ "ready_after": [],
+ "errors": []
+}

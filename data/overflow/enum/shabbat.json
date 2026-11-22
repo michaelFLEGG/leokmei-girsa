@@ -1,8 +1,15 @@
 {
  "slug": "shabbat",
- "made": "2026-11-21 23:02",
+ "made": "2026-11-22 09:48",
  "found": 2,
- "applied": 0,
- "liveSkipped": 2,
- "examples": []
+ "applied": 1,
+ "liveSkipped": 1,
+ "examples": [
+  {
+   "daf": "טו.",
+   "key": "u891.1",
+   "before": "א. לסמוך <i class=\"hs\">ביו&quot;ט</i> או לא - שכבר נחלקו בה רבותיהם.",
+   "after": "<i class=\"am\">א.</i> לסמוך <i class=\"hs\">ביו\"ט</i> או לא - שכבר נחלקו בה רבותיהם."
+  }
+ ]
 }

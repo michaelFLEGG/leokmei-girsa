@@ -1,14 +1,14 @@
 {
  "slug": "ketubot",
- "made": "2026-11-22 10:10",
+ "made": "2026-11-22 18:10",
  "profile": "a4-large",
  "pages": {
   "a4": 82,
   "a4-large": 89
  },
  "sq25": {
-  "a4": 95,
-  "a4-large": 340
+  "a4": 94,
+  "a4-large": 344
  },
  "count": 84,
  "firstTool": {
@@ -1021,7 +1021,7 @@
    "over": "מסייען אהדדי",
    "nA4": 1,
    "nLarge": 2,
-   "missPx": 24.6,
+   "missPx": 24.8,
    "miss": 4,
    "long": false,
    "tail": false,
@@ -3244,7 +3244,7 @@
    "over": "",
    "nA4": 2,
    "nLarge": 2,
-   "missPx": 8.4,
+   "missPx": 8.7,
    "miss": 2,
    "long": false,
    "sug": [],

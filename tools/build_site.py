@@ -2605,7 +2605,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      אין מעוין, ותו מגופן מערכת היה משתנה ממכשיר למכשיר. אינו תופס מקום בשורה ואינו מזיז דבר (מיקום מוחלט). */
   .main p.mu{position:relative}
   .main p.mu::before{content:'';position:absolute;left:calc(100% + .5em);top:calc(var(--lhpx) * .5 - .2em);
-    width:.3em;height:.3em;background:#4a4a4a;transform:rotate(45deg);pointer-events:none}
+    width:.3em;height:.3em;background:#4d4d4d;transform:rotate(45deg);pointer-events:none}
+  /* פרומפט 84 ב: המעוין שבתוך השורה - אותו סימן ואותו גוון כמו במסילה (אפור כהה, 70% שחור: סימן קטן בגוון בהיר יוצא בבית
+     הדפוס כנקודות מטושטשות), קטן מגובה האות ובאמצע גובה השורה. מצויר בעיצוב ולא כתו (בגופני וילנא שבידינו אין מעוין) */
+  .bkx.dm{position:relative;display:inline;white-space:nowrap;line-height:0}
+  /* line-height:0: הרווחים הקשיחים שבתוכו אינם מגביהים את השורה (נמדד: בלעדיו השורה גבהה בשני פיקסלים ונחשבה כשורה נוספת) */
+  .bkx.dm::before{content:'';position:absolute;right:.02em;top:calc(50% - .17em);width:.3em;height:.3em;background:#4d4d4d;transform:rotate(45deg);pointer-events:none}
   /* בשורה שבמסילתה ציון דף: המעוין צמוד לטקסט, וציון הדף זז החוצה ממנו (מיכאל, 17.11.2026: "המעוין צריך להיות צמוד
      לשורה ולא סימון הדף - תחליף ביניהם"). עד כאן המעוין עמד מעבר לציון הדף */
   .row:has(>.main>p.mu:first-child)>.rail .dafmark{translate:1.1em 0}
@@ -3762,8 +3767,26 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const k=h.indexOf('<div class="main"');if(k<0)return h;
     let r=h.slice(0,k),m=h.slice(k);
     r=r.replace(/(<span class="anchor">(?:<i class="[a-z]+">)?)([א-ת]{1,2}\.)(?=[\s<&])/,'$1<b class="rlt">$2</b>');
-    if(h.indexOf('class="row u enl"')<0)m=m.replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,'$1<span class="bkx og" contenteditable="false"></span> ');
+    if(h.indexOf('class="row u enl"')<0)m=m.replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,lgSep);
     return lgAmWords(r)+lgAmWords(m)}
+  /* פרומפט 84 ב (22.11.2026, מיכאל): הרווח הגדול שבתוך השורה (span.bkx.og, כשלוש אותיות) מוחלף. ההגדרה הקבועה של המעוין
+     בלאוקמי גירסא: המעוין מסמן תחילת יחידה קטנה חדשה שאין לה כותרת - במסילה (p.mu) יחידה שמתחילה בשורה חדשה, ובתוך השורה
+     יחידה שמתחילה באמצע שורה. אותו סימן, אותו גוון.
+     א. החלק השני הוא אמירה/דעה/מעשה עצמאי (שם אומר, "ולא", "אמר", "א"ל", אות מספור וכד') - מעוין קטן אפור, ברווח רגיל לפניו
+        ואחריו (span.bkx.dm: שני רווחים קשיחים, הראשון נושא את המעוין והשני הרווח שאחריו - כך המעוין לעולם אינו נשאר לבד בסוף
+        שורה, ושום דבר מהם אינו נכנס לנוסח: הרווח שלפני המעוין הוא הרווח הרגיל של הטקסט, והרהיט כולו נמחק בשמירה).
+     ב. החלק השני הוא רק מקור או ייחוס לאותו רעיון ("כדתנן", "כרי"ה", "שמודה ל...", "דתניא", "שנא'", ציון דף בסוגריים) - רווח
+        רגיל אחד, בלי מעוין: אין כאן יחידה חדשה.
+     ג. כל השאר - מעוין (ברירת המחדל: שם בסגנון אמוראים אחרי פסיק או נקודה פותח דעה חדשה).
+     תצוגה בלבד, כמו הרווח שקדם לו: אינו נוגע בנתונים ובוורד, ואינו פועל במצב עריכה. המעוין והרווחים צרים מן הרווח הגדול, ולכן
+     אינם מאריכים שורה. QS dm=0 מחזיר את הרווח הישן (לבדיקה). אותו כלל בדיוק ב-pmLook שב-tools/print_mode.js */
+  const LG_SRC=/^(?:ו?כ(?!אן|יוצ|ן(?:\s|$)|ל(?:\s|$)|י(?:\s|$)|ך|מה|מי|ש(?:\s|$)|ה(?:\s|$))[א-ת"'׳]|ו?ש?מוד(?:ה|ים)(?![א-ת])|שנא(?:מר)?(?![א-ת])|ו?ד(?:תנן|תניא|כתיב|איתא|אמרינן|אמר|א"ר|אר"[א-ת]?)(?![א-ת])|שהרי\s+(?:תניא|תנן)|\([א-ת]{1,3}[.:]\)|ע"ש|עיין)/;
+  const LG_DM=(()=>{try{return new URLSearchParams(location.search).get('dm')!=='0'}catch(e){return true}})();
+  function lgSep(x,p,off,str){
+    if(!LG_DM)return p+'<span class="bkx og" contenteditable="false"></span> ';
+    const nx=/^<i class="[a-z]+">([^]*?)<\/i>/.exec(str.slice(off+x.length)),
+          t=(nx?nx[1]:'').replace(/<[^>]+>/g,'').replace(/&quot;/g,'"').replace(/&#x27;|&#39;/g,"'").replace(/&nbsp;/g,' ').trim();
+    return LG_SRC.test(t)?p+' ':p+' <span class="bkx dm" contenteditable="false">&nbsp;&nbsp;</span>'}
   function unitHTML0(u,daf,pi){
     const mk=daf!=null?dafMark(pi):'';
     const H=(u.ref?' data-ref="'+u.ref+'"':''),

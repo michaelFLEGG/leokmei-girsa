@@ -294,7 +294,13 @@
     if(kind==='perek-range')h=h.replace(/\(\s*([א-ת]{1,3}[.:])\s*[-–‐]\s*([א-ת]{1,3}[.:])\s*\)/g,'($1 - $2)');
     if(kind==='nose'||kind==='dh'||kind==='perek-start')h=h.replace(/(\s|&nbsp;)\[([א-ת]{1,3})\](\s*)(?=<\/div>)/g,'$1<span class="cnt">[$2]</span>$3');
     if(h.indexOf('°')>-1)h=h.replace(/(<p class="[^"]*")>(\s|&nbsp;)*°(\s|&nbsp;)*/g,'$1 data-bul="1">');
+    /* פרומפט 84 א (22.11.2026): שורת המשך מוזחת. בפסקת גוף שגולשת לשורה שנייה ואילך, שורות ההמשך מוזחות מימין ב-1.25 רוחב
+       אות של הטקסט הרץ, והשורה הראשונה במקומה (הזחה תלויה, p.hg ב-CSS שלמטה). רק ביחידת גוף: לא בכותרות, לא במסילה ולא בתיבת
+       המשנה (שם - להשאיר כמו שהיא). פסקה שכבר מוזחת (p.in, פיסקת תשובה) - נשארת בהזחה שלה. QS hang=0 - בלי (לבדיקה) */
+    if(kind==='u'&&HANG){var k0=h.indexOf('<div class="main"');
+      if(k0>-1)h=h.slice(0,k0)+h.slice(k0).replace(/<p class="([^"]*)"/g,function(x,c){return /(^|\s)(in|nose|dh|hr|hg)(\s|$)/.test(c)?x:'<p class="'+(c?c+' ':'')+'hg"'})}
     return h}
+  var HANG=QS.get('hang')!=='0';
   /* פרומפט 52 (17.11.2026): מצב דפוס מהיר. דף המנהל מבקש מן המסגרת את ה-HTML של יחידה אחת אחרי עריכה, באותה פונקציה
      שהעימוד משתמש בה (unitHTML + prnFix), כדי לשבץ אותה במקומה בטור בלי עימוד מחדש. רק במסגרת של מצב הדפוס (pm=1);
      אינו משנה דבר בהדפסה */
@@ -319,7 +325,7 @@
   function fitOn(C){if(C.sq.isConnected)return false;document.body.appendChild(C.sq);return true}
   function fitP(p,C,glue){
     p.style.wordSpacing='';p.style.letterSpacing='';delete p.dataset.sq25;delete p.dataset.sq;delete p.dataset.og;
-    [].forEach.call(p.querySelectorAll('.og'),function(x){x.style.width=''});
+    ogSet(p,null);
     if(p.textContent.trim().length<12)return false;
     if(squeeze25(p,C.GM,C.GP,C.W))return true;
     if(!loneStrict(p))return false;
@@ -386,21 +392,29 @@
      (או בחציו) הפסקה נכנסת בשורה אחת פחות - הוא מצטמצם או נמחק, כי "הנראות של כלל הקטע חשובה לא פחות". קודם הצרה
      רגילה עם הרווח המלא; אחר כך חצי רווח, ואחר כך בלי רווח (רק הרווח הרגיל), כל אחד עם הצרה עד 2.5%. סגנון בלבד:
      הטקסט והנתונים אינם משתנים. מסומן data-og="half" / "0" */
-  var OGW=['0.55em','0'];
+  var OGW=['0.55em','0','0'];
+  /* פרומפט 84 ב: המעוין שבתוך השורה (span.dm, במקום הרווח הגדול) משתתף באותו מנגנון: בחצי - הרווח שאחריו מצטמצם, ובאפס - נשאר רק
+     המעוין עם רווח דק. שולי הצד השמאלי (סוף השורה בעברית). רק אם גם זה אינו מספיק כדי שהשורה תישאר כפי שאוחתה (כלל קבוע: שורה
+     שאוחתה נשארת מאוחה תמיד) - המעוין אינו מצויר בשורה הזאת ונשאר הרווח הרגיל בלבד, כמו הרווח הגדול שנמחק שם עד כאן. נספר
+     (R.dmHidden) ונרשם בלוח התקלות לעיון */
+  var DMW=['-0.12em','-0.2em','hide'];
+  function ogSet(root,k){[].forEach.call(root.querySelectorAll('.og'),function(x){x.style.width=k==null?'':OGW[k]});
+    [].forEach.call(root.querySelectorAll('.bkx.dm'),function(x){if(k!=null&&DMW[k]==='hide'){x.style.display='none';x.style.marginLeft=''}else{x.style.display='';x.style.marginLeft=k==null?'':DMW[k]}})}
   /* 17.11.2026, מהירות: בעימוד המלא ההחלה על הפסקאות נדחית לסוף הסבב (SQDEFER), כדי שכל מדידה לא תכריח פריסה מחדש
      של כל הפרק אחרי שהפסקה הקודמת שונתה. התוצאה זהה: כל פסקה נמדדת בסרגל שלה (GP), בלי תלות באחרות */
-  var SQDEFER=null;
+  var SQDEFER=null,R0={};
   function sqApply(p,r){var f=function(){p.style.wordSpacing=r.ws;p.style.letterSpacing=r.ls;if(r.sq)p.dataset.sq25=r.sq;
-      if(r.og!=null){p.dataset.og=r.og?'0':'half';[].forEach.call(p.querySelectorAll('.og'),function(x){x.style.width=OGW[r.og]})}};
+      if(r.og!=null){p.dataset.og=r.og===2?'0d':(r.og?'0':'half');ogSet(p,r.og);if(r.og===2&&p.querySelector('.bkx.dm')){R0.dmHidden=(R0.dmHidden||0)+1}}};
     if(SQDEFER)SQDEFER.push(f);else f();return true}
   function squeeze25(p,GM,GP,W){
-    var og=p.querySelectorAll('.og');
-    if(p.dataset.og){[].forEach.call(og,function(x){x.style.width=''});delete p.dataset.og}
+    var og=p.querySelectorAll('.og,.bkx.dm');
+    if(p.dataset.og){ogSet(p,null);delete p.dataset.og}
     if(!og.length)return sqCore(p,GM,GP,W,null,null);
     if(sqCore(p,GM,GP,W,null,null))return true;
     GM.className=p.parentElement.className;GP.className=p.className;GP.style.wordSpacing='';GP.style.letterSpacing='';GP.innerHTML=p.innerHTML;
     var h0=GP.offsetHeight;
-    for(var k=0;k<OGW.length;k++)if(sqCore(p,GM,GP,W,h0,k))return true;
+    var hasDm=!!p.querySelector('.bkx.dm');
+    for(var k=0;k<OGW.length;k++){if(k===2&&!hasDm)break;if(sqCore(p,GM,GP,W,h0,k))return true}
     return false}
   /* h00: גובה הבסיס (עם הרווח המלא) כשבודקים צמצום של הרווח; אז גם בלי הצרה כלל (f=0) נחשב הצלחה. ogk: רוחב הרווח (OGW) בסרגל */
   function sqCore(p,GM,GP,W,h00,ogk){
@@ -410,7 +424,7 @@
     /* הסינון המהיר רחב בכוונה: השורה הקודמת אינה מלאה עד הקצה, ולכן מה שחסר קטן מרוחב השורה האחרונה. הבדיקה האמיתית בסרגל */
     var cap=SQ25*W;if(h00==null&&inf.lastW/(inf.n-1)>8*cap)return false;
     GM.className=p.parentElement.className;GP.className=p.className;GP.style.wordSpacing='';GP.style.letterSpacing='';GP.innerHTML=p.innerHTML;
-    if(ogk!=null)[].forEach.call(GP.querySelectorAll('.og'),function(x){x.style.width=OGW[ogk]});
+    if(ogk!=null)ogSet(GP,ogk);
     var h0=h00!=null?h00:GP.offsetHeight,fs=parseFloat(getComputedStyle(GP).fontSize)||16;
     if(h00!=null&&GP.offsetHeight<h0-1)return sqApply(p,{ws:'',ls:'',og:ogk});
     var t=inf.text,sp=(t.match(/ /g)||[]).length/inf.n,ch=t.replace(/[\s\u0591-\u05C7\u2060]/g,'').length/inf.n;
@@ -448,7 +462,7 @@
     h.style.wordSpacing='';h.style.letterSpacing='';return false}
   window.__PRNX={lineInfo:lineInfo,squeeze25:squeeze25,loneFix:loneFix,headNL:headNL,headSqueeze:headSqueeze};
   async function runPrint(){
-    var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
+    var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};R0=R;var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
     var HEAD0=[].slice.call(document.querySelectorAll('style'));   /* פרומפט 49: מה שהעימוד הזה מוסיף לדף מסומן, כדי שעימוד חוזר יסיר אותו */
     window.__PRN={state:'running',report:R};
     /* פרומפט 41, בדיקה בלבד: render_pdf.py --ovapply מחיל על עותק הנתונים בזיכרון את ההצעה הראשונה של כל שורה גולשת,
@@ -594,13 +608,18 @@
     TM('picks');
     /* ---- יחידות ---- */
     var recs=[],groups=[];
-    var firstUnit=null;
+    var firstUnit=null,chapOpen=false;
     for(var pi=fi;pi<=ti;pi++){var p=D.pages[pi];if(!p.units.length)continue;var first=true;var g0=recs.length;
       for(var k=0;k<p.units.length;k++){var u=p.units[k];
         if(PKS&&perekMap().upk[u.id]!==PKS.n)continue;
         /* ב (6.11.2026): "(לה. - מה.)" הוא סגנון מוסתר בוורד ("דפים בפרק"), עזר לעורך בלבד: אינו מודפס, והפרק נפתח ישר בכותרתו
            ובמשנה. ציון הדף שהיה עליו עובר ליחידה הבאה (first נשאר) */
         if(u.k==='perek-range')continue;
+        /* פרומפט 84 ד (22.11.2026): שורת שם הפרק שבגוף העמוד ("פרק ראשון - מאימתי") אינה מודפסת: הפרק נפתח תמיד בראש עמוד חדש,
+           והכותרת הרצה שבראשו כבר אומרת זאת. היחידה נשארת בנתונים, בוורד ובאתר; כאן היא רק אינה נכנסת לסרגל. תפקידיה בעימוד
+           (טור/עמוד חדש, תוכן העניינים וסימניות ה-PDF, בודק "פרק שלם נפתח בכותרת הפרק") עוברים ליחידה הבאה (chapOpen).
+           ציון הדף שהיה עליה עובר ליחידה הבאה (first נשאר), ותיבת המשנה הראשונה עולה למקום שהתפנה. QS popen=1 - בלי השינוי (לבדיקה) */
+        if(u.k==='perek-start'&&QS.get('popen')!=='1'){chapOpen=true;R.perekHidden=(R.perekHidden||0)+1;continue}
         /* 13.11.2026 (בעל הפרויקט, כתובות ב.): כותרת נושא או ד"ה ריקה (בוורד, או שהתרוקנה בעריכה) אינה מודפסת.
            עד כאן היא הודפסה כשורה עם "כתוב כאן את הכותרת" (סגנון העורך), נחשבה ליחידה הראשונה של הטווח,
            ולכן נוסף "המשך פרק" לפני כותרת הפרק ונשבר טור. ציון הדף שעליה עובר ליחידה הבאה (first נשאר) */
@@ -608,9 +627,9 @@
         /* תווית הפרק של השורה - לפי הפרק של היחידה עצמה (שארית פרק בעמוד שמתויג לפרק הבא) */
         var LB=perekMap().lab[perekMap().upk[u.id]-1]||{perek:p.perek||'',perekName:p.perekName||''};
         if(!firstUnit)firstUnit={u:u,p:LB};
-        recs.push({u:u,pi:pi,daf:p.daf,perek:LB.perek,perekName:LB.perekName,kind:u.k,
+        recs.push({u:u,pi:pi,daf:p.daf,perek:LB.perek,perekName:LB.perekName,kind:u.k,chapOpen:chapOpen,
           html:prnFix(u.k,unitHTML(u,first?p.daf:null,first?pi:null))});
-        first=false}
+        first=false;chapOpen=false}
       groups.push([g0,recs.length])}
     if(!recs.length)throw new Error('אין בטווח טקסט');
     /* 16.11.2026 (פרומפט 48, תיקון 5): כל כותרת (נושא, ד"ה משנה) מקבלת תמיד לפחות "רווח לפני" (חצי שורה), גם כשלא סומן בוורד.
@@ -618,7 +637,7 @@
        נקבע ביחידה עצמה (style), כדי שהמדידה בסרגל וההצבה בטור יהיו זהות; בראש טור הרווח נחתך ממילא */
     (function(){var PRE={dh:1,nose:1,hatz:1,'perek-start':1,'perek-range':1,cont:1},tp=document.createElement('template');
       R.headSpace=0;
-      for(var r=1;r<recs.length;r++){var x=recs[r];if(x.kind!=='dh'&&x.kind!=='nose')continue;if(PRE[recs[r-1].kind])continue;
+      for(var r=1;r<recs.length;r++){var x=recs[r];if(x.kind!=='dh'&&x.kind!=='nose')continue;if(PRE[recs[r-1].kind]||x.chapOpen)continue;
         tp.innerHTML=x.html;var row=tp.content.firstElementChild;if(!row)continue;
         var mn=row.querySelector(':scope > .main');if(!mn)continue;
         var t=mn.querySelector(':scope > p:first-child')||mn;
@@ -748,7 +767,7 @@
         var pv=i>0?crecs[i-1]:(c0[0]>0?recs[c0[0]-1]:null);
         if(!pv)return;
         var NOGAP={'perek-num':1,'perek-name':1,'perek-range':1,'perek-start':1,'hadran':1,'hatz':1,'cont':1};
-        if(NOGAP[x.kind]||NOGAP[pv.kind])return;
+        if(NOGAP[x.kind]||NOGAP[pv.kind]||x.chapOpen)return;
         if((pv.kind==='m'&&x.kind!=='m')||(x.kind==='m'&&pv.kind!=='m'))x.el.classList.add('gapm')});
       /* סימוני התוספות של דפי הנתח */
       if(withTos){
@@ -912,7 +931,9 @@
         var ri=c0[0]+i;
         var row=x.el,main=row.querySelector(':scope > .main'),rail=row.querySelector(':scope > .rail');
         var rr=row.getBoundingClientRect();
-        if(main&&main.scrollWidth>main.clientWidth+2)R.issues.push({type:'טקסט חורג מרוחב הטור',daf:x.daf,unit:x.u&&x.u.id,detail:'רוחב '+main.scrollWidth+' מול '+main.clientWidth});
+        /* פרומפט 84 א: בהזחה תלויה (p.hg) השורה הראשונה נכנסת אל ריפוד ההזחה, ו-scrollWidth מונה זאת כחריגה. חריגה אמיתית = הטקסט עצמו מחוץ לתיבה */
+        if(main&&main.scrollWidth>main.clientWidth+2&&!(main.querySelector('p.hg')&&(function(){var mr=main.getBoundingClientRect(),rg=document.createRange();rg.selectNodeContents(main);
+          var rr2=rg.getBoundingClientRect();return rr2.left>=mr.left-2&&rr2.right<=mr.right+2})()))R.issues.push({type:'טקסט חורג מרוחב הטור',daf:x.daf,unit:x.u&&x.u.id,detail:'רוחב '+main.scrollWidth+' מול '+main.clientWidth});
         var blocks=main?[].slice.call(main.querySelectorAll(':scope > p')):[];
         if(main&&!blocks.length)blocks=[main];
         var railBottom=rail?rail.getBoundingClientRect().bottom-fr.top:0;
@@ -929,6 +950,15 @@
           if(Math.abs(h/lh-n)>0.2){var key=x.kind+':'+cs.fontSize;
             if(!odd[key]){odd[key]=1;W('גובה פסקה אינו כפולה של גובה השורה ('+x.kind+'): '+(h/lh).toFixed(2)+' ('+x.daf+(x.u?', יחידה '+x.u.id:'')+')')}}
           var top=Ybase+br.top-fr.top+pt+bt;
+          /* פרומפט 84 א ב: שורת רעיון (פסקת גוף של שורה-שתיים) - צמודה לימין, בלי יישור לשני הצדדים. יישור לשני הצדדים רק בפסקה
+             רציפה של שלוש שורות ומעלה. היישור אינו משנה שבירת שורה, ולכן נקבע אחרי המדידה */
+          if(b.classList&&b.classList.contains('hg')){
+            if(n<=2)b.classList.add('rag');
+            /* פרומפט 84 א ד: האם ההזחה הוסיפה לפסקה שורה (מדידה בסרגל הקטן בלי ההזחה) - לספירה ולמנגנון "שורה שהתארכה" */
+            if(n>=2){GM.className=main.className;GP.className=b.className.replace(/\b(hg|rag)\b/g,'');GP.setAttribute('style',b.getAttribute('style')||'');GP.innerHTML=b.innerHTML;
+              var n0=Math.max(1,Math.round(GP.offsetHeight/lh));
+              if(n0<n){R.hangExtra=(R.hangExtra||0)+1;(R.hangList=R.hangList||[]).push({daf:x.daf,u:x.u&&x.u.id,li:bi+1,was:n0,now:n})}
+              GP.removeAttribute('style');GP.className='';GP.innerHTML=''}}
           var wc=n===1?(b.textContent.trim().split(/\s+/).filter(Boolean).length):99;   /* ב5: מילים בפסקה של שורה אחת */
           var lbl=!!(rail&&rail.textContent.trim()&&bi===0);
           /* פרומפט 60 ב: פסקת כותרת בתוך יחידה רגילה (p.nose / p.dh, למשל "מחזקת ראשו ורובו ושולחנו" בסוכה ג.) היא כותרת
@@ -936,7 +966,7 @@
           var hb=!HEADS[x.kind]&&b!==main&&/(^|\s)(nose|dh)(\s|$)/.test(b.className);
           for(var k=0;k<n;k++){
             L.push({ri:ri,kind:x.kind,block:bi,k:k,n:n,y0:top+k*lh,y1:top+(k+1)*lh,
-                    daf:x.daf,perek:x.perek,perekName:x.perekName,notes:[],first:false,last:false,wc:wc,lbl:lbl&&k===0,hb:hb})}});
+                    daf:x.daf,perek:x.perek,perekName:x.perekName,notes:[],first:false,last:false,wc:wc,lbl:lbl&&k===0,hb:hb,co:!!x.chapOpen})}});
         if(L.length>rowFirst){
           L[rowFirst].first=true;L[L.length-1].last=true;
           var lastL=L[L.length-1];
@@ -1048,7 +1078,7 @@
 
     /* ---- כללי השבירה ---- */
     function isForce(i){var l=L[i];
-      return l.first&&(l.kind==='perek-range'||(l.kind==='perek-start'&&!(i>0&&L[i-1].kind==='perek-range')))}
+      return l.first&&(l.co||l.kind==='perek-range'||(l.kind==='perek-start'&&!(i>0&&L[i-1].kind==='perek-range')))}
     /* ה (14.10.2026): שורה בודדת שנותרה מקטע (עד הכותרת הבאה) אינה פותחת טור: קודם דחיסה זעירה בטור הקודם
        (עד 2 נקודות, בהזזה מדורגת של השורות - לא בכיווץ אותיות), ואם אינה מספיקה - שורה נוספת עוברת אל הטור הבא */
     var SQ=2*PT,SOFT=false;   /* SOFT: כללי ב5 החדשים מוותרים כשבלעדיהם נשאר חור (חור גרוע מהם) */
@@ -1129,7 +1159,62 @@
         if(rl*NLH>0.45*cap)break;
         if(canBreak(e,false))res={e:e,split:{n:n,k:k}}}
       return res}
+    /* פרומפט 84 ג (22.11.2026, מיכאל: "עדיף עשרת מונים"): קו התוס' בגובה אחד בשני הטורים. עד כאן כל טור מילא את עצמו עם ההערות
+       שלו, ואזור ההערות של כל טור היה בגובה אחר (תענית עמוד 1: בטור השמאלי חור לבן של כחמש שורות מעל התוס'). מעכשיו, בעמוד
+       שיש בו תוס' (שני טורים): כל ההערות של העמוד הן מאגר אחד שזורם בארבעת טורי ההערות ברצף ומתחלק שווה ככל האפשר בין שני
+       הטורים (הערה יכולה לעבור באמצעה מן הטור הימני לשמאלי, שתי שורות לפחות בכל צד). אזור ההערות מתחיל באותו גובה בשני
+       הטורים, הטקסט זורם מן הטור הימני לשמאלי, ונקודת המעבר נקבעת כך ששני הטורים נגמרים מעל הקו. כל הערה באותו עמוד שבו
+       הסימן שלה. עמוד שאין בו פריסה כזאת (הערות ארוכות מאוד, כללי עימוד) - חוזר לדרך הקודמת ונרשם (R.poolFallback).
+       סוף פרק וסוף הטווח - האיזון הקיים (balanceTo), שבו ההערות של שני הטורים כבר צמודות מתחת לרצועה באותו גובה.
+       QS pool=0 - בלי (לבדיקה) */
+    var POOL=HFIX&&withTos&&prof.cols===2&&QS.get('pool')!=='0';
+    function poolSplit(ids){
+      if(!ids.length)return {h:0,s1:[],s2:[]};
+      var best=null;
+      function ev(s1,s2,cut){var a=s1.length?fnSpec(s1):null,b=s2.length?fnSpec(s2):null,h1=a?a.h:0,h2=b?b.h:0;
+        /* הערה שעוברת באמצעה: שתי שורות לפחות בכל צד */
+        if(cut&&((a&&a.parts[a.parts.length-1]/NLH<1.8)||(b&&b.parts[0]/NLH<1.8)))return null;
+        var o={h:Math.max(h1,h2),d:Math.abs(h1-h2),s1:s1,s2:s2,h1:h1,h2:h2};
+        if(!best||o.h<best.h-0.5||(Math.abs(o.h-best.h)<=0.5&&h1>=h2&&best.h1<best.h2))best=o;return o}
+      for(var j=0;j<=ids.length;j++){
+        ev(specOf(ids.slice(0,j),null,null),specOf(ids.slice(j),null,null),false);
+        if(j===ids.length)break;
+        var n=ids[j],nw=noteWords(n),lo=1,hi=nw.w.length-1;
+        while(lo<=hi){var mid=(lo+hi)>>1,k=mid;while(k>0&&!nw.ok[k-1])k--;if(k<1){lo=mid+1;continue}
+          var s1=specOf(ids.slice(0,j+1),null,{n:n,k:k}),s2=specOf(ids.slice(j+1),{n:n,k:k},null);
+          var a=fnSpec(s1).h,b=fnSpec(s2).h;ev(s1,s2,true);
+          if(a<b)lo=mid+1;else hi=mid-1}}
+      return best}
+    function pagePair(i){
+      if(!POOL||carry||i>=L.length)return null;
+      var got=null,lastIds='',ps=null;
+      for(var e=i+2;e<=L.length;e++){
+        if(e<L.length&&e>i+1&&isForce(e-1)&&e-1>i)break;
+        if(L[e-1].y1-L[i].y0>2*A)break;
+        var legalE=e>=L.length||isForce(e)||canBreak(e,true);
+        if(!legalE)continue;
+        var ids=noteIds(i,e),key=ids.join(',');
+        if(key!==lastIds){ps=poolSplit(ids);lastIds=key}
+        if(!ps)continue;
+        var capT=A-(ps.h?ps.h+GAP:0);
+        if(capT<6*LH)break;
+        var m=-1;
+        for(var q=i+1;q<e;q++){if(L[q-1].y1-L[i].y0>capT+0.5)break;if(!isForce(q)&&canBreak(q,true))m=q}
+        if(m<0)continue;
+        if(L[e-1].y1-L[m].y0>capT+0.5)continue;
+        got={m:m,e:e,ps:ps,capT:capT}}
+      if(got&&!got.ps.s1.length&&got.ps.s2.length)got=null;
+      return got}
     while(i<L.length){
+      /* פרומפט 84 ג: עמוד חדש (הטור הימני) - קודם הפריסה של עמוד שלם עם מאגר הערות אחד */
+      if(POOL&&cols.length%2===0&&noteIds(i,Math.min(L.length,i+1)).length>=0){var pp2=pagePair(i);
+        if(pp2&&noteIds(i,pp2.e).length){var H=pp2.ps.h;
+          cols.push({s:i,e:pp2.m,notes:noteIds(i,pp2.m),sq:0,carry:null,split:null,why:'',pspec:pp2.ps.s1,pH:H,pall:noteIds(i,pp2.e)});
+          cols.push({s:pp2.m,e:pp2.e,notes:noteIds(pp2.m,pp2.e),sq:0,carry:null,split:null,why:'',pspec:pp2.ps.s2,pH:H,pall:noteIds(i,pp2.e)});
+          R.pooled=(R.pooled||0)+1;i=pp2.e;carry=null;
+          if(i<L.length&&isForce(i)){if(balanceTo(i))carry=null}
+          continue}
+        else if(i<L.length&&noteIds(i,Math.min(L.length,i+80)).length)R.poolFallback=(R.poolFallback||0)+1}
       var r1=fillCol(i,A,true),best=r1.best,j=r1.j,sq=0,split=null;
       if(best>i&&best<L.length&&segLen(best)===1&&!(L[best-1].ri===L[best].ri&&L[best-1].block===L[best].block)){
         var r2=fillCol(i,A+SQ,true);
@@ -1268,7 +1353,7 @@
     (function(){if(!L.length||QS.get('all')==='1')return;var r0=recs[L[0].ri]||{};
       function bad(d){R.issues.push({type:'פתיחה מחוץ לטווח',page:1,daf:r0.daf||'',unit:r0.u&&r0.u.id,detail:d})}
       if(r0.kind==='cont')bad('העמוד הראשון נפתח בשורת "המשך"');
-      if(PKS&&PKS.whole){if(r0.kind!=='perek-start'&&r0.kind!=='perek-range')bad('פרק שלם שאינו נפתח בכותרת הפרק ('+r0.kind+')')}
+      if(PKS&&PKS.whole){if(r0.kind!=='perek-start'&&r0.kind!=='perek-range'&&!r0.chapOpen)bad('פרק שלם שאינו נפתח בכותרת הפרק ('+r0.kind+')')}
       else if(r0.daf!==D.pages[fi].daf)bad('השורה הראשונה מדף '+r0.daf+' ולא מן הדף שנבחר ('+D.pages[fi].daf+')');
       if(!(PKS&&PKS.whole)){var INR={};recs.forEach(function(x){if(x.daf)INR[x.daf]=1});
         items.forEach(function(it){if(it.daf&&!INR[it.daf])bad('תוספות '+tosHeb(it)+' מדף '+it.daf+' שמחוץ לטווח')})}})();
@@ -1310,7 +1395,7 @@
         else seenT[key]=it;
         [['[',']'],['(',')']].forEach(function(br){
           if(tx.split(br[0]).length!==tx.split(br[1]).length)iss('סוגר חסר בהערה',a,'הערה '+(it.dn||it.n)+': '+tx.slice(0,40))})})})();
-      var inCol={};c.notes.forEach(function(n){inCol[n]=1});
+      var inCol={};(c.pall||c.notes).forEach(function(n){inCol[n]=1});
       for(var i3=c.s;i3<c.e;i3++)L[i3].notes.forEach(function(n){if(!inCol[n])iss('הערה נפרדה מסימנה',L[i3],String(n))})});
     TM('paginate');
     window.__PRNDBG={L:L,cols:cols,recs:recs.map(function(x){return {kind:x.kind,u:x.u&&x.u.id,daf:x.daf}})};   /* לבדיקות (tools/print/p60_check.py) */
@@ -1349,7 +1434,9 @@
       function colGeom(c,dry){
         var ln=L[c.s],le=L[c.e-1];
         var yS=ln.y0-1,yE=le.y1,sqz=c.sq||0,spanY=Math.max(1,le.y1-ln.y0);
-        var spc=specOf(c.notes,c.carry,c.split),fb=spc.length?fnSpec(spc):null;
+        var spc=c.pspec||specOf(c.notes,c.carry,c.split),fb=spc.length?fnSpec(spc):null;
+        /* פרומפט 84 ג: בעמוד של מאגר הערות - גובה אזור ההערות זהה בשני הטורים (pH), והקו בראשו */
+        if(c.pH!==undefined)fb=fb?{html:fb.html,h:c.pH,one:fb.one,spec:fb.spec,parts:fb.parts,pool:1}:(c.pH?{html:'',h:c.pH,one:false,pool:1,empty:1}:null);
         /* פרומפט 16, ב: ריק קטן שנשאר (עד שורה וחצי) מתפזר בשווה בין גבולות הפסקאות שבטור - לא בתוך פסקה, ועד 3 נק'
            לכל גבול. טור שמסיים פרק (או את הטווח) נשאר כמות שהוא. ג: ריק גדול מזה נרשם בבקרה */
         var endCol=c.bal||c.e>=L.length||isForce(c.e);
@@ -1366,7 +1453,7 @@
       if(pgBal)cs2.forEach(function(c){var g=colGeom(c,true);pgT=Math.max(pgT,g.yE-g.yS-g.sqz+g.per*g.nb)});
       cs2.forEach(function(c,ci){
         var G=colGeom(c,false),ln=G.ln,le=G.le,yS=G.yS,yE=G.yE,sqz=G.sqz,spanY=G.spanY,spc=G.spc,fb=G.fb,endCol=G.endCol,gapPx=G.gapPx,nb=G.nb,per=G.per;
-        var fnTop=pgBal&&fb?pgT+pgHadH+pgFG:null;
+        var fnTop=pgBal&&fb?pgT+pgHadH+pgFG:(fb&&fb.pool?A-fb.h:null);
         if(pgBal){gapPx=A-pgT-pgHadH-(fb?fb.h+pgFG:0);if(gapPx<-0.5)W('עמוד סוף פרק גבוה מגובה הנטו: עמוד '+(pgi+1)+', '+ln.daf+': '+(-gapPx).toFixed(1)+'px')}
         /* שמירה (פרומפט 41): הטור לעולם אינו גבוה מגובה הנטו. מתיחה שהייתה מוציאה אותו מן השוליים מוקטנת, וחריגה שנשארת נרשמת */
         if(per&&(yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)>A+0.25){per=Math.max(0,(A-(yE-yS-sqz)-(fb?fb.h+GAP:0))/nb);R.stretchCut=(R.stretchCut||0)+1}
@@ -1396,7 +1483,7 @@
           rowsHtml+=cl.outerHTML}
         body+='<div class="pcol" style="left:'+boxLeft+'mm;top:'+MG.top+'mm;width:'+(prof.rail+prof.measure)+'mm;height:'+A_mm+'mm">'+
           '<div class="ptx flow" style="height:'+(yE-yS-sqz+per*nb)+'px;overflow:visible;clip-path:inset(-'+MARKROOM+'pt 0 0 0)">'+rowsHtml+'</div>'+
-          (fb?'<div class="pfnw" style="width:'+prof.measure+'mm'+(fnTop!==null?';top:'+fnTop.toFixed(1)+'px;bottom:auto':'')+'"><div class="pfn'+(fb.one?' one':'')+'">'+fb.html+'</div></div>':'')+'</div>';
+          (fb?'<div class="pfnw" style="width:'+prof.measure+'mm'+(fnTop!==null?';top:'+fnTop.toFixed(1)+'px;bottom:auto':'')+'"><div class="pfn'+(fb.one?' one':'')+(fb.empty?' pfe':'')+'">'+fb.html+'</div></div>':'')+'</div>';
         c.notes.forEach(function(n){pageInfo.notes.push(n)});
         pageInfo.cols.push({lines:c.e-c.s,textMm:+((yE-yS)/MM).toFixed(1),notes:c.notes.length,noteMm:fb?+(fb.h/MM).toFixed(1):0,
           gapMm:+(gapPx/MM).toFixed(1),stretchPt:+(per/PT).toFixed(2),split:c.split?c.split.n:0,carry:c.carry?c.carry.n:0})});
@@ -1425,7 +1512,7 @@
     if(QS.get('all')==='1'){
       var toc=[];
       cols.forEach(function(c,ci){for(var i2=c.s;i2<c.e;i2++){var l=L[i2];
-        if(l.kind==='perek-start'&&l.first)toc.push({perek:l.perek,name:l.perekName,page:Math.floor(ci/prof.cols)+1,daf:l.daf})}});
+        if((l.kind==='perek-start'||l.co)&&l.first)toc.push({perek:l.perek,name:l.perekName,page:Math.floor(ci/prof.cols)+1,daf:l.daf})}});
       var first=out.firstChild;
       var cov=document.createElement('section');cov.className='pg cover';
       cov.innerHTML='<div class="cv"><div class="cv1">לאוקמי גירסא</div><div class="cv2">מסכת '+ge(mname)+'</div>'+
@@ -1476,6 +1563,13 @@
     /* ---- בודק חפיפות וחריגות (14.10.2026): מעבר על כל תיבות הטקסט בכל עמוד והשוואת המלבנים שלהן.
        חפיפה בין שני בלוקים, או בלוק שיצא מתיבת השוליים, או פריט בכותרת הרצה שעלה אל מעל המסילה - כשל, לעולם לא בשקט.
        התוצאה ב-R.overlaps / R.bounds, וכל פריט נרשם גם ב-R.issues (לוח התקלות). render_pdf.py נכשל כשיש אחד. */
+    /* פרומפט 84 ג ו: בודק קבוע אחרי כל הפקה - בכל עמוד שיש בו אזור הערות בשני הטורים, הקו שבראשו באותו גובה בדיוק (עד חצי מ"מ).
+       עמוד שנכשל - "קו התוס' בגובה שונה" ב-issues, ו-render_pdf עוצר את המסירה. הריק שמעל הקו נמדד בבקרת החורים ("חור בטור") */
+    (function ruleAudit(){R.ruleChecked=0;R.ruleBad=0;
+      [].slice.call(out.querySelectorAll('.pg')).forEach(function(pe,pn){
+        var fs=[].slice.call(pe.querySelectorAll('.pfnw > .pfn'));if(fs.length!==2)return;R.ruleChecked++;
+        var y=fs.map(function(x){return x.getBoundingClientRect().top});
+        if(Math.abs(y[0]-y[1])>0.5*MM){R.ruleBad++;R.issues.push({type:"קו התוס' בגובה שונה",page:pn+1,daf:pe.getAttribute('data-daf')||'',detail:((Math.abs(y[0]-y[1]))/MM).toFixed(1)+' מ"מ'})}})})();
     (function auditLayout(){
       var tol=0.75,ov=[],bd=[];
       [].slice.call(out.querySelectorAll('.pg')).forEach(function(pe,pn){
@@ -1605,6 +1699,9 @@
       '.phadw .ptx .row>.main{text-align:center!important;text-align-last:center!important;width:auto!important;margin:0!important}'+
       '#prnmeas{position:absolute;left:0;top:0;visibility:hidden}'+
       /* ג (6.11.2026): הערה עוברת באמצעה מטור ההערות הימני לשמאלי שתחת אותו טור, כמו בוילנא - בלי "המשך"; שתי שורות לפחות בכל צד, והטורים מתאזנים */
+      /* פרומפט 84 א: הזחה תלויה לשורות ההמשך (1.25 רוחב אות של הטקסט הרץ), ושורת רעיון קצרה (שורה-שתיים) צמודה לימין בלי מתיחה */
+      'html.prn .main p.hg{padding-right:1.25em;text-indent:-1.25em}'+
+      'html.prn .main p.rag{text-align:right!important;text-align-last:right!important}'+
       '.pfn .fnn{break-inside:auto;orphans:2;widows:2;margin:0}'+
       '.pfn{direction:rtl;text-align:justify;hyphens:none;column-fill:balance}'+
       '.pfn.one{column-count:1!important}'+

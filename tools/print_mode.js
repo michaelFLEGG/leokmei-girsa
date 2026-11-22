@@ -710,7 +710,13 @@
      של 1.3em לפני אות מספור או שם בסגנון אמוראים). בעורך אין אותו. עד כאן השורה בעריכה במצב דפוס הייתה בלעדיו -
      צרה יותר מן ההדפסה - ונראתה נכנסת בשתי שורות, וביציאה (בנוסח של ההדפסה) חזרה לשלוש. עכשיו גם בעריכה הרווח
      נמצא, כך שמה שרואים בעריכה הוא מה שיודפס. הרווח הוא רהיט (bkx): capture מסיר אותו, ואינו נכנס לנתונים */
-  function pmLook(h){return String(h||'').replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,'$1<span class="bkx og" contenteditable="false"></span> ')}
+  /* פרומפט 84 ב: אותו כלל בדיוק כמו lgSep שב-build_site.py - מעוין לפני יחידה עצמאית, רווח רגיל לפני מקור או ייחוס */
+  var PM_SRC=/^(?:ו?כ(?!אן|יוצ|ן(?:\s|$)|ל(?:\s|$)|י(?:\s|$)|ך|מה|מי|ש(?:\s|$)|ה(?:\s|$))[א-ת"'׳]|ו?ש?מוד(?:ה|ים)(?![א-ת])|שנא(?:מר)?(?![א-ת])|ו?ד(?:תנן|תניא|כתיב|איתא|אמרינן|אמר|א"ר|אר"[א-ת]?)(?![א-ת])|שהרי\s+(?:תניא|תנן)|\([א-ת]{1,3}[.:]\)|ע"ש|עיין)/;
+  function pmSep(x,p,off,str){
+    var nx=/^<i class="[a-z]+">([^]*?)<\/i>/.exec(str.slice(off+x.length)),
+        t=(nx?nx[1]:'').replace(/<[^>]+>/g,'').replace(/&quot;/g,'"').replace(/&#x27;|&#39;/g,"'").replace(/&nbsp;/g,' ').trim();
+    return PM_SRC.test(t)?p+' ':p+' <span class="bkx dm" contenteditable="false">&nbsp;&nbsp;</span>'}
+  function pmLook(h){return String(h||'').replace(/([,.])(?:\s|&nbsp;| )*(?=<i class="(?:am|kt|ot)">)/g,pmSep)}
   /* ---- כניסה לשורה ---- */
   function pmEdit(t,ev,off){
     if(S.phone||!t)return;

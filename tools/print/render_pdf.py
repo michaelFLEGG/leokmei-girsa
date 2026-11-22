@@ -85,6 +85,7 @@ def main():
     ap.add_argument('--no-pdf', action='store_true')
     ap.add_argument('--probe', default='', help='קובץ JS לבדיקת ה-DOM אחרי העימוד (אבחון); התוצאה מודפסת')
     ap.add_argument('--report', default='', help='נתיב קובץ הדוח (JSON); בלעדיו הדוח נכתב ליד הקובץ')
+    ap.add_argument('--qs', default='', help='פרומפט 84: פרמטרים נוספים לדף ההדפסה (למשל "hang=0&dm=0&popen=1" - מצב "לפני" לבדיקה)')
     a = ap.parse_args()
     from playwright.sync_api import sync_playwright
 
@@ -105,6 +106,8 @@ def main():
         q['to'] = a.to or a.frm
         if a.pk:
             q['pk'] = a.pk
+    if a.qs:
+        q.update(dict(urllib.parse.parse_qsl(a.qs)))
     url = 'http://%s/%s.html?%s' % (HOST, a.slug, urllib.parse.urlencode(q))
     t0 = time.time()
     logs = []
@@ -230,8 +233,13 @@ def main():
         sys.path.insert(0, os.path.join(ROOT, 'tools', 'overflow'))
         import auto as AUTO
         kb += AUTO.check(a.slug, a.report or (a.out + '.json'), partial=not a.all)
+    # פרומפט 84 ג: קו התוס' בגובה אחד בשני הטורים - עמוד שנכשל עוצר את המסירה
+    rb = [x for x in rep.get('issues') or [] if x.get('type') == "קו התוס' בגובה שונה"]
+    print('קו_תוס_נבדק=%s  קו_תוס_בגובה_שונה=%d  מאגר_הערות_לעמוד=%s' % (rep.get('ruleChecked', 0), len(rb), rep.get('pooled', 0)))
+    for o in rb[:20]:
+        print("  קו התוס' בגובה שונה: עמוד %s (%s): %s" % (o.get('page'), o.get('daf'), o.get('detail')))
     # פרומפט 48: סוף פרק לא מאוזן עוצר את המסירה, כמו חפיפה
-    if ov or bd or ce or oo or kb:
+    if ov or bd or ce or oo or kb or rb:
         sys.exit(3)
 
 

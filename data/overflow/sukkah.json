@@ -1,6 +1,6 @@
 {
  "slug": "sukkah",
- "made": "2026-11-22 12:43",
+ "made": "2026-11-22 17:56",
  "profile": "a4-large",
  "pages": {
   "a4": 27,
@@ -278,7 +278,7 @@
    "nA4": 2,
    "nLarge": 3,
    "missPx": 63.6,
-   "miss": 11,
+   "miss": 12,
    "long": true,
    "tail": false,
    "sug": [

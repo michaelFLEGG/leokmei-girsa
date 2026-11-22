@@ -1,6 +1,6 @@
 {
  "slug": "menachot",
- "made": "2026-11-22 10:31",
+ "made": "2026-11-22 11:51",
  "profile": "a4-large",
  "pages": {
   "a4": 97,
@@ -13,16 +13,14 @@
  "count": 155,
  "firstTool": {
   "5": 73,
-  "3": 7,
+  "3": 9,
   "2": 1
  },
  "joinCands": 110,
  "mechSplitCands": 0,
  "ctlMismatch": [],
  "rejected": 35,
- "stale": [
-  "u4994.1"
- ],
+ "stale": [],
  "unplaced": [],
  "heads": {
   "count": 35,
@@ -3412,8 +3410,25 @@
    "miss": 6,
    "long": false,
    "tail": false,
-   "sug": [],
-   "tool6": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "או שמיעט במדת עשרון",
+     "replace": "או שמיעט",
+     "why": "'במדת עשרון' מובן מן הרישא",
+     "kind": "replace",
+     "html": "כל המנחות שריבה במדת עשרונן או שמיעט - פסולות,",
+     "ok": {
+      "large": [
+       1
+      ],
+      "a4": [
+       1
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u5056.1",
@@ -4185,8 +4200,25 @@
    "miss": 8,
    "long": false,
    "tail": false,
-   "sug": [],
-   "tool6": true
+   "sug": [
+    {
+     "tool": 3,
+     "find": "ואין מקבל טומאה",
+     "replace": "וטהור",
+     "why": "מילה אחת באותה משמעות",
+     "kind": "replace",
+     "html": "דשלחן מקבל טומאה הוא -כלי עץ העשוי לנחת הוא וטהור",
+     "ok": {
+      "large": [
+       1
+      ],
+      "a4": [
+       1
+      ]
+     }
+    }
+   ],
+   "tool6": false
   },
   {
    "key": "u6532.1",

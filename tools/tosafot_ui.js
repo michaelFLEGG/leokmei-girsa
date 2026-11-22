@@ -263,6 +263,27 @@
           return hit}}
       from=k+1}}
 
+  /* פרומפט 77 (22.11.2026): חיפוש מקורב כשהעוגן המדויק לא נמצא (סכם או עורך שינו את הנוסח: "שלא קיבלה
+     מרבותיו" נעשה "לא קיבלה מרבותיו" בשבת צז., והסימן נפל לסוף השורה שמעל). מילה מול מילה, בלי אותיות
+     השימוש ש/ו/ד/ה/ב/ל/כ/מ בתחילת מילה, בלי ו/י באמצע מילה, אותיות סופיות כרגילות. קודם כל העוגן, ואחר כך
+     העוגן בלי המילה הראשונה או בלי האחרונה (לפחות שתי מילים). רק התאמה יחידה. */
+  var FIN={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+  function fzw(w){w=w.replace(/[ךםןףץ]/g,function(c){return FIN[c]});
+    var k=0;while(k<2&&w.length>3&&/^[שודהבלכמ]/.test(w)){w=w.slice(1);k++}
+    if(w.length>3)w=w[0]+w.slice(1,-1).replace(/[וי]/g,'')+w[w.length-1];
+    return w}
+  function findFuzzy(idx,ctx){
+    if(!idx.fw){var ws=[],re=/[^ ]+/g,m;while((m=re.exec(idx.s)))ws.push({w:fzw(m[0]),a:m.index,e:m.index+m[0].length});idx.fw=ws}
+    var W=idx.fw,cw=ctx.split(' ').filter(Boolean).map(fzw),tries=[cw];
+    if(cw.length>=3){tries.push(cw.slice(1));tries.push(cw.slice(0,-1))}
+    for(var t=0;t<tries.length;t++){var q=tries[t],hits=[];if(q.length<2&&cw.length>=2)continue;
+      for(var i=0;i+q.length<=W.length;i++){var ok=true;for(var j=0;j<q.length;j++)if(W[i+j].w!==q[j]){ok=false;break}
+        if(ok)hits.push(i)}
+      if(hits.length===1){var a=W[hits[0]].a,e=W[hits[0]+q.length-1].e-1;
+        while(e>=a&&!idx.map[e])e--;var hit=idx.map[e]||null;if(!hit)return null;
+        hit=hit.slice();var st=idx.map[a];if(st)hit.start=[st[0],Math.max(0,st[1]-1)];hit.fz=1;return hit}}
+    return null}
+  var FUZZY={};
   /* עוגן אפס-רוחב בתוך הטקסט (אינו משנה שבירת שורות). הסימן עצמו נצבע בשכבה צפה בין השורות (tsLayer). */
   function mk(it,rule){
     var s=document.createElement('span');
@@ -308,6 +329,7 @@
   function placeMark(it,rows,ctx0,occ0){
     var idx=buildIndex(rows),ctx=ctx0!==undefined?ctx0:normCtx(it.t||''),hit=null,rule=String(it.rule||'1');
     if(ctx)hit=findAt(idx,ctx,occ0||it.occ||1);
+    if(!hit&&ctx&&(occ0||it.occ||1)===1){hit=findFuzzy(idx,ctx);if(hit)FUZZY[it.n]=1}
     if(hit){
       var r=document.createRange();r.setStart(hit[0],hit[1]);r.collapse(true);
       /* טווח המילים המעוגנות, להדגשה בריחוף (נוצר לפני הוספת העוגן) */

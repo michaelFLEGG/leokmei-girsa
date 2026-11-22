@@ -42,6 +42,28 @@ FONT_MAP = {'vilna-xb.otf': ['ExtraBold'], 'vilna-b.otf': ['Vilna-Bold', 'Vilna 
 GEM = {'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,'ל':30,'מ':40,
        'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400}
 
+
+def _fold_alerts(slug):
+    """פרומפט 77: site/fold/<slug>.json - עריכות טקסט ידניות שלא הוחלו (data/fold/tlushot) וחסומות בשומר
+    המשנה (data/fold/review). בלי שינויי מבנה, בלי עריכות של כלים (by), ובלי מה שסומן "טופל"."""
+    out = []
+    for kind, sub in (('t', 'tlushot'), ('mg', 'review')):
+        fp = os.path.join(ROOT, 'data', 'fold', sub, slug + '.json')
+        if not os.path.exists(fp):
+            continue
+        for e in (json.load(io.open(fp, encoding='utf-8')).get('edits') or []):
+            if e.get('op') == 'struct' or e.get('handled') or e.get('del') or not (e.get('now') or '').strip():
+                continue
+            if kind == 't' and e.get('by'):
+                continue
+            out.append({x: e[x] for x in ('k', 't', 'daf', 'was', 'now', 'ctx', 'folded', 'why') if x in e})
+            out[-1]['src'] = kind
+    out.sort(key=lambda x: -(x.get('t') or 0))
+    if out:
+        os.makedirs(os.path.join(SITE, 'fold'), exist_ok=True)
+        io.open(os.path.join(SITE, 'fold', slug + '.json'), 'w', encoding='utf-8').write(
+            json.dumps({'v': 1, 'slug': slug, 'edits': out}, ensure_ascii=False))
+
 def daf_key(d):
     """מפתח מספרי לציון דף: גימטריה כפול שתיים, ועוד אחד לעמוד ב. זהה לחישוב שב-build_site."""
     if not d: return None
@@ -272,6 +294,12 @@ def main():
                     shutil.copyfile(_pinned(files[0]) or os.path.join(ddir, files[0]), os.path.join(SITE, 'word', SLUG[m] + '.docx'))
             except Exception as _e:
                 print('   אזהרה: הספר לא הועתק לאתר -', _e)
+            # פרומפט 77 (22.11.2026): עריכות של המנהל שלא נקלטו (תלושות מן הקיפול, וחסומות בשומר המשנה) - לאתר,
+            # כדי שיופיעו לו מיד כהתראה בדף ("העריכה שלך בדף X לא נקלטה - החל/בטל"), ולא ייעלמו בשקט.
+            try:
+                _fold_alerts(SLUG[m])
+            except Exception as _e:
+                print('   אזהרה: התראת התלושות לא נכתבה -', _e)
             # מסך הגהה נבנה רק למסכת שיש לה קובץ ממצאים ידני. בלעדיו אין
             # למגיה מה לעשות שם, והגלאים לבדם רק היו מציפים אותו.
             cur = os.path.join(ROOT, 'data', 'hagaha-' + SLUG[m] + '.json')

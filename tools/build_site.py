@@ -23,6 +23,7 @@ import perush_store
 import font_ink
 import nikud_mishna
 import mishna_box
+import mishna_guard
 MISSING_FONTS_REV={v:k for k,v in MISSING_FONTS.items()}
 
 # ---------------------------------------------------------------- ו4
@@ -789,6 +790,7 @@ def _absorbed(e, history):
 # ('text', e, {'was': נוסח הפסקה בפועל לפני התיקון, 'wasH': ה-HTML שלה}). הקולט לוורד
 # (ingest_repo) משתמש בה כדי לכתוב לוורד בדיוק את מה שהאתר מציג, ובאותו סדר.
 PLAN = []
+MG_BLOCKED = []          # פרומפט 77: עריכות ששומר המשנה חסם בבנייה האחרונה (לתור הבדיקה של המנהל)
 
 # מספור קטעי המשנה באותיות לפני ד"ה משנה - מוקפא בידי בעל הפרויקט (5.11.2026). להחזרה: False
 MN_FROZEN = True
@@ -961,10 +963,33 @@ def _syn_dh_edits(pages, slug, ed_stat, qa):
     if n:
         qa.append(('ד"ה משנה שנערך', '%d ד"ה משנה אוטומטיים קיבלו את הנוסח שכתב המנהל' % n))
 
+def _mg_review(slug):
+    """פרומפט 77: תור "לבדיקה" של שומר המשנה - data/fold/review/<slug>.json. נכתב רק כשנבנה מן המאגר
+    (לא בבנייה זמנית של הקיפול), ונקרא בלוח המנהל ובדוח. כשאין חסומות הקובץ מתרוקן."""
+    try:
+        d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'fold', 'review')
+        p = os.path.join(d, slug + '.json')
+        _seen, _list = set(), []
+        for _x in MG_BLOCKED:
+            if (_x.get('k'), _x.get('t')) not in _seen:
+                _seen.add((_x.get('k'), _x.get('t'))); _list.append(_x)
+        if _list:
+            os.makedirs(d, exist_ok=True)
+            io.open(p, 'w', encoding='utf-8', newline='\n').write(json.dumps(
+                {'v': 1, 'slug': slug, 'why': 'שומר המשנה (פרומפט 77): עריכות שלא נכתבו לתוך תיבת משנה',
+                 'edits': _list}, ensure_ascii=False, indent=1) + '\n')
+        elif os.path.exists(p):
+            io.open(p, 'w', encoding='utf-8', newline='\n').write(json.dumps(
+                {'v': 1, 'slug': slug, 'edits': []}, ensure_ascii=False, indent=1) + '\n')
+    except Exception as _e:
+        print('תור הבדיקה של שומר המשנה לא נכתב: %s' % _e)
+
+
 def _apply_site_edits(pages, slug, qa):
     """מחיל על הנתונים את התיקונים שנעשו באתר, ומוחק מן הקובץ את מה
     שכבר הגיע מן הוורד. דילוג שקט אסור: כל תיקון שלא אותר נאמר בבקרה."""
     del PLAN[:]
+    del MG_BLOCKED[:]
     _dedupe_windows(pages)
     path = os.path.join(EDITS_DIR, slug + '.json')
     # 13.11.2026 - עריכות שנקלטו לוורד בענן (data/word-pin/absorbed-<מסכת>.json). הוורד החדש כבר נושא אותן,
@@ -1186,6 +1211,19 @@ def _apply_site_edits(pages, slug, qa):
                 return
         if not (_teq(s['t'], was) or _teq(s['t'], now)) and not rebased:
             lost.append(e); keep.append(e); return
+        # פרומפט 77 (22.11.2026), כלל ברזל לתיבת משנה: עריכה אינה מחליפה פסקת משנה בטקסט שאינו
+        # במשניות המסכת (שבת ק.: ברייתא "מבוי ששוה" נכתבה לתוך משנה ג אחרי רצף איחויים). תיקון קל מותר.
+        # נחסמה - אינה נכתבת, ונרשמת לתור "לבדיקה" גלוי למנהל (data/fold/review), לא נפילה שקטה.
+        if (s.get('unit') or {}).get('k') == 'm' and s['key'] not in ('mb', 'mbw') and now \
+                and not _teq(s['t'], now) and e.get('ps') in (None, '', 'mi'):
+            _ok, _why = mishna_guard.guard(slug, _bare(s['holder'][s['key']] if isinstance(s['key'], int)
+                                                       else s['holder'].get(s['key'], '')), now)
+            if not _ok:
+                lost.append(e); keep.append(e)
+                MG_BLOCKED.append(dict(e, why=_why, slot=s['k']))
+                qa.append(('שומר המשנה', 'עריכה בדף %s לא נכתבה לתוך תיבת המשנה: %s. %r'
+                           % (e.get('daf'), _why, now[:60])))
+                return
         _eff = {'was': _bare(s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')),
                 'wasH': s['holder'][s['key']] if isinstance(s['key'], int) else s['holder'].get(s['key'], '')}
         h = e.get('nowH')
@@ -1205,6 +1243,13 @@ def _apply_site_edits(pages, slug, qa):
                 s['holder']['mbh'] = 'word'
         ps = e.get('ps')
         if ps == 'mi':
+            # פרומפט 77: שורה שנכנסת לתיבת המשנה חייבת להימצא במשניות המסכת
+            _c = mishna_guard.coverage(slug, now)
+            if _c is not None and _c < mishna_guard.COV_MIN:
+                lost.append(e); keep.append(e)
+                MG_BLOCKED.append(dict(e, why='שורה שאינה במשניות (כיסוי %.2f) סומנה להיכנס לתיבת המשנה' % _c, slot=s['k']))
+                qa.append(('שומר המשנה', 'שורה שאינה במשניות לא הוכנסה לתיבת המשנה בדף %s: %r' % (e.get('daf'), now[:60])))
+                return
             moved = _mishna_line(pages, s, h)
             if moved is None:
                 lost.append(e); keep.append(e)
@@ -1285,6 +1330,7 @@ def _apply_site_edits(pages, slug, qa):
           % (slug, done, taken, len(lost)))
     # b (6.11.2026): התיקונים שכבר בנתונים (הוחלו בבנייה או נמצאו בוורד). הדפדפן אינו מחיל אותם שוב
     # מעל הנתונים שכבר נושאים אותם: החלה חוזרת של כותרת צד / איחוי / פיצול כפלה שורות בדף ובהדפסה.
+    _mg_review(slug)
     _lost_t = {x.get('t') for x in lost}
     baked = sorted(({x.get('t') for x in edits if x.get('t') is not None} - _lost_t) | _abs)
     return {'n': len(edits), 'taken': taken, 'lost': len(lost), 'done': done, 'b': baked}
@@ -4181,6 +4227,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       const hits=win.filter(s=>WNC(s.t)===w);if(hits.length===1)return hits[0].k}
     return null}
 
+  /* פרומפט 77 (22.11.2026), שומר תיבת המשנה בדפדפן: עריכה שמחליפה שורה בתיבת משנה בנוסח של שורה אחרת
+     שכבר נמצאת באותו דף (וכמעט בלי מילים משותפות לנוסח הקודם) היא סימן ל"מחוץ לאחד" אחרי שינוי מבנה, כמו
+     בשבת ק. (ברייתא "מבוי ששוה" נכתבה לתוך משנה ג). היא אינה נכתבת: לא בהקלדה, ולא בהחלה מן השרת (תלושה, ונרשמת). */
+  function mgSusp(k,was,now,daf){
+    const m=/^u(\d+)\.(\d+)$/.exec(k||'');if(!m||+m[2]<1||!now||now===was)return false;
+    const u=unitById(+m[1]);if(!u||u.k!=='m')return false;
+    const W=x=>new Set(nonik(x||'').replace(/[^\u05d0-\u05ea\s]/g,' ').split(/\s+/).filter(Boolean));
+    const a=W(was),b=W(now);let inter=0;for(const x of b)if(a.has(x))inter++;
+    const uni=new Set([...a,...b]).size;if(uni&&inter/uni>=0.5)return false;
+    const wn=WN(now);if(!wn)return false;
+    return slotWin(daf).some(s=>s.k!==k&&WNC(s.t)===wn)}
   function spliceLocate(e){
     const w=WN(e.was);if(!w||w.length<8||e.now===undefined)return null;
     if(!SLOTS)SLOTS=slots();
@@ -4348,6 +4405,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const k=el.dataset.ek;const row=el.closest('.row');
     const daf=(()=>{let r=row;while(r){const d=r.querySelector('.dafmark');if(d)return d.dataset.daf||d.textContent;r=r.previousElementSibling}return ''})();
     const old=ED.find(x=>x.k===k);
+    if(!same&&mgSusp(k,old?old.was:was,now,daf)){
+      flash('השורה בתיבת המשנה לא נשמרה: הנוסח החדש הוא של שורה אחרת בדף. בדוק ונסה שוב.');
+      const dh=dataHtml(k);if(dh!=null)setHTML(el,dh);return}
     if(same){
       if(old){ED=ED.filter(x=>x!==old);delete el.dataset.edited}
     }else if(old){
@@ -4533,6 +4593,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           e.lost=1;continue}
         e.lost=0;if(k!==e.k&&String(e.k).indexOf('~')<0)e.k=k;     /* מפתח קפוא אינו מוחלף במקום הנוכחי */
         const cur=(slotIdx().get(k)||{}).t;
+        if(mgSusp(k,cur,e.now,e.daf)){e.lost=1;e.mg=1;continue}
         const htmlSame=e.nowH===undefined||normH(dataHtml(k))===normH(e.nowH);
         if((cur===e.now||nonik(cur)===nonik(e.now))&&(e.ps===undefined||psSame(k,e.ps))&&htmlSame){e.done=1;EDTAKEN++,e.ing&&EDWORD++;continue}   /* כבר בוורד */
         dataSet(k,e.nowH!==undefined?e.nowH:esc(e.now));
@@ -6667,8 +6728,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* 17.11.2026: המסגרת של מצב הדפוס מקבלת את הנתונים מדף המנהל (כולל כל העריכות). עד כאן גם היא משכה מן השרת את
        כל רשימת העריכות של המסכת (מאות קילובייט) והחילה אותה שוב - עבודה כפולה בכל פתיחה של מצב הדפוס */
     if(PRNRO&&new URLSearchParams(location.search).get('pm')==='1')return;
+    /* פרומפט 77: עריכות שלא נקלטו - התראה למנהל (אחרי שהעריכות מן השרת כבר בדף) */
+    if(isAdmin()&&!PRNRO&&!admKey())setTimeout(foldAlerts,2500);
     if(isAdmin()&&admKey()){
-      await syncNow();window.__LGSYNC=Date.now();queueLoad();   /* פרומפט 36: בדיקת ההתיישנות של סכם ממתינה לזה */
+      await syncNow();window.__LGSYNC=Date.now();queueLoad();if(!PRNRO)setTimeout(foldAlerts,2500);   /* פרומפט 36: בדיקת ההתיישנות של סכם ממתינה לזה */
       clearInterval(QQTIMER);QQTIMER=setInterval(queueLoad,60000);
       return}
     if(isAdmin())return;
@@ -6704,6 +6767,52 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
               applyEdits()})}
         }else render(cur)}}
     catch(e){}}
+
+  /* פרומפט 77 (22.11.2026): עריכה של המנהל שלא נקלטה - מופיעה לו מיד, ולא נעלמת בשקט ב-tlushot.
+     הרשימה (fold/<מסכת>.json) נבנית מן התלושות של הקיפול ומן החסומות של שומר המשנה. מה שכבר נראה בדף
+     (הנוסח החדש כבר נמצא באותו דף) אינו מוצג. "החל": מעבר לשורה, סימונה, והעתקת הנוסח החדש להדבקה בעריכה
+     רגילה (כך העריכה נרשמת כמו כל עריכה, עם הנוסח שבדף עכשיו). "בטל": ההתראה יורדת (נשמר במכשיר). */
+  function foldAlerts(){
+    if(document.getElementById('flal'))return;
+    const DK='lg-tl-dis-'+SLUG;let dis;try{dis=new Set(JSON.parse(localStorage.getItem(DK)||'[]'))}catch(e){dis=new Set()}
+    fetch('fold/'+SLUG+'.json?_='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+      if(!j||!j.edits)return;
+      if(!SLOTS)SLOTS=slots();
+      const WK=7*864e5,NOW=Date.now();
+      const L=j.edits.filter(x=>!dis.has(x.t)&&(x.src==='mg'||!x.folded||NOW-Date.parse(x.folded)<WK)&&!slotWin(x.daf).some(s=>WNC(s.t)===WN(x.now)||nonik(WNC(s.t))===nonik(WN(x.now))));
+      if(!L.length)return;
+      const st=document.createElement('style');st.textContent='#flal{position:fixed;bottom:14px;left:14px;z-index:9000;font:14px/1.4 inherit;direction:rtl}'+
+        '#flal>button{background:#fff3cd;border:1px solid #c9a227;border-radius:16px;padding:5px 12px;cursor:pointer}'+
+        '#flal .fp{display:none;position:absolute;bottom:38px;left:0;width:min(560px,92vw);max-height:60vh;overflow:auto;background:#fff;border:1px solid #bbb;border-radius:8px;box-shadow:0 4px 18px #0003;padding:8px}'+
+        '#flal.op .fp{display:block}#flal .it{border-bottom:1px solid #eee;padding:6px 2px}#flal .it b{color:#7a5c00}'+
+        '#flal .w{color:#a33;text-decoration:line-through}#flal .n{color:#155724}#flal .it button{margin-inline-start:6px;font-size:12px}'+
+        '.flhl{outline:3px solid #c9a227!important;outline-offset:2px}';
+      document.head.appendChild(st);
+      const box=document.createElement('div');box.id='flal';
+      const esc2=t=>String(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+      const draw=()=>{const R=L.filter(x=>!dis.has(x.t));
+        if(!R.length){box.remove();return}
+        box.innerHTML='<button type="button" data-a="tg">'+R.length+(R.length===1?' עריכה שלך לא נקלטה':' עריכות שלך לא נקלטו')+'</button>'+
+          '<div class="fp"><div style="margin-bottom:6px">עריכות שלך שלא נכנסו לדף. "החל" מעביר לשורה ומעתיק את הנוסח החדש להדבקה. "בטל" מוריד את ההתראה.'+
+          (R.length>1?' <button type="button" data-a="all">בטל הכל</button>':'')+'</div>'+
+          R.slice(0,300).map(x=>'<div class="it" data-t="'+x.t+'"><b>דף '+esc2(x.daf)+'</b>'+(x.src==='mg'?' (נחסם בשומר המשנה)':'')+
+            '<div class="w">'+esc2(x.was)+'</div><div class="n">'+esc2(x.now)+'</div>'+
+            '<button type="button" data-a="ap">החל</button><button type="button" data-a="no">בטל</button></div>').join('')+'</div>'};
+      const save=()=>{try{localStorage.setItem(DK,JSON.stringify([...dis]))}catch(e){}};
+      box.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const a=b.dataset.a;
+        if(a==='tg'){box.classList.toggle('op');return}
+        if(a==='all'){for(const x of L)dis.add(x.t);save();draw();return}
+        const it=b.closest('.it');if(!it)return;const x=L.find(y=>String(y.t)===it.dataset.t);if(!x)return;
+        if(a==='no'){dis.add(x.t);save();draw();box.classList.add('op');return}
+        if(a==='ap'){
+          const pi=D.pages.findIndex(p=>p.daf===x.daf);if(pi>=0)toDaf(pi);
+          try{navigator.clipboard&&navigator.clipboard.writeText(x.now)}catch(e){}
+          setTimeout(()=>{const k=locate({k:x.k,was:x.was,now:x.was,daf:x.daf,ctx:x.ctx});
+            const el=k&&document.querySelector('[data-ek="'+k+'"]');
+            if(el){el.classList.add('flhl');el.scrollIntoView({block:'center'});setTimeout(()=>el.classList.remove('flhl'),8000);
+              flash('הנוסח החדש הועתק. היכנס לעריכה והדבק אותו בשורה המסומנת.')}
+            else flash('הנוסח הקודם כבר אינו בדף '+x.daf+'. הנוסח החדש הועתק, להדבקה במקום הנכון.')},400)}});
+      document.body.appendChild(box);draw()}).catch(()=>{})}
 
   /* =================== "מקור": הגמרא המנוקדת ===================
      המזהה של המקטע נכתב לדף בזמן הבנייה; הטקסט עצמו יושב בקובץ נפרד

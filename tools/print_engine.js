@@ -1287,6 +1287,9 @@
         for(var capL=A;capL>=A-maxShort-0.5;capL-=LH/2){
           var r2=fillCol(r1,capL,true).best;
           if(r2<=r1||r2>=hs||hs-r2<minLines)continue;
+          /* פרומפט 84 ג: גם העמוד שלפני סוף הפרק - קו התוס' בגובה אחד (מאגר הערות): רק חלוקה ששני טוריה נכנסים מעל קו משותף */
+          if(POOL&&!crP){var idsT=noteIds(P,r2);if(idsT.length){var psT=poolSplit(idsT),capT2=A-psT.h-GAP;
+            if(!psT.s1.length||L[r1-1].y1-L[P].y0>capT2+0.5||L[r2-1].y1-L[r1].y0>capT2+0.5)continue}}
           var bq=bestPair(r2,hs,end,null);
           if(bq&&bq.gap<=2*LH){carry=null;return {r1:r1,r2:r2,bp:bq}}}}
       carry=null;return null}
@@ -1347,6 +1350,15 @@
        (טקסט בלבד, הדרן ברצועה, הערות צמודות) */
     if(prof.cols===2&&cols.length){if(balanceTo(L.length)){carry=null;R.balanced=1}}
 
+    /* פרומפט 84 ג: עמוד שנשאר בדרך הקודמת (העמוד שלפני סוף פרק שעבר לעמוד הבא, עמוד שהפריסה המשותפת לא נמצאה בו) - אם שני
+       טוריו נכנסים מעל קו משותף, גם הוא עובר למאגר הערות אחד, כדי שהקו יהיה באותו גובה. עמוד מאוזן של סוף פרק - כבר אחיד */
+    if(POOL)for(var kp=0;kp+1<cols.length;kp+=2){var c1=cols[kp],c2=cols[kp+1];
+      if(c1.pH!==undefined||c2.pH!==undefined||(c1.bal&&c2.bal)||c1.carry||c1.split||c2.carry||c2.split||c1.sq||c2.sq)continue;
+      var idsP=noteIds(c1.s,c2.e);if(!idsP.length)continue;
+      var psP=poolSplit(idsP);if(!psP||!psP.s1.length)continue;
+      var capP=A-psP.h-GAP,t1=L[c1.e-1].y1-L[c1.s].y0,t2=L[c2.e-1].y1-L[c2.s].y0;
+      if(t1>capP+0.5||t2>capP+0.5){R.poolLeft=(R.poolLeft||0)+1;continue}
+      c1.pspec=psP.s1;c2.pspec=psP.s2;c1.pH=c2.pH=psP.h;c1.pall=c2.pall=idsP;R.pooledLate=(R.pooledLate||0)+1}
     /* ---- בדיקות אחרי העימוד (לוח התקלות): כותרת מנותקת, שורה יתומה או אלמנה, הערה שנפרדה מסימנה ---- */
     /* פרומפט 48 סבב ג (תיקון 3): בודק קבוע - העמוד הראשון פותח במשהו מחוץ לטווח = תקלה שעוצרת את המסירה.
        פרק שלם: השורה הראשונה היא פתיחת הפרק. דף או טווח: השורה הראשונה מן הדף הראשון שנבחר, בלי שורת "המשך". ותוספות מדף שמחוץ לטווח */

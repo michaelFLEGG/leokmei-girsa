@@ -17,7 +17,7 @@ API = 'https://leokmei-suggest.m7654301.workers.dev'
 ORG = 'מכון לאוקמי גירסא'
 # אתרי המכון ודף העמותה בגיידסטאר. ערוץ היוטיוב של השיעורים יתווסף כאן כשתהיה לו כתובת.
 SAME_AS = ['https://nach.leokmei.com/', 'https://xn--8dbacdxfna0hp.com/', 'https://www.guidestar.org.il/organization/580693760']
-NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'admin-quiz.html', 'masechet.html', 'quiz.html')
+NOINDEX = ('lamed.html', 'settings.html', 'done.html', 'admin-lamdim.html', 'admin-quiz.html', 'admin-prints.html', 'masechet.html', 'quiz.html')
 
 ICONS = ('<meta property="og:image" content="%s/brand/og-image.png"><meta property="og:image:width" content="1200">'
          '<meta property="og:image:height" content="630"><meta property="og:image:alt" content="לאוקמי גירסא - קיצור התלמוד הבבלי">'

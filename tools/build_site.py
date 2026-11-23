@@ -1429,6 +1429,7 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
   '<button id="sqbtn" style="display:none" onclick="sqOpen()" title="הצעות שממתינות להכרעתך">' + ic('inbox') + 'הצעות ממתינות</button>'
   '<button onclick="prnOpenBook()" title="חוברת A5 להדפסה וקיפול">' + ic('print') + 'הדפס לחוברת</button>'
   '<button onclick="toPdf()" title="כל המסכת ל-PDF">' + ic('print') + 'כל המסכת ל-PDF</button>'
+  '<button onclick="location.href=\'admin-prints.html\'" title="כמה הודפס, מה, מתי ומאיפה (פרומפט 86)">' + ic('print') + 'נתוני הדפסות</button>'
   # פרומפט 51: הוורד הוא תוצר, מופק בדפדפן מן הדף כפי שהוא עכשיו (כולל עריכות היום), בסגנונות הספר
   '<button onclick="wordExport(this)" title="הוורד של המסכת כפי שהיא עכשיו, כולל עריכות היום">הורד וורד</button>'
   '<button id="lnbtn" onclick="lnOpen()" title="מה נלמד מהתיקונים שלך">הלמידה היומית</button>'
@@ -7962,6 +7963,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     TAILJS='<script>'+_tail_s+'</script>'
   PRELOAD_JS='<link rel="preload" href="%s.data.js?v=%s" as="script"><link rel="preload" href="mas.js?v=%s" as="script">'%(slug,_DV,_MV)
   SKEL=''.join('<i style="width:%d%%"></i>'%w for w in (92,100,96,64,98,100,88,72,94,100,90,58))
+  PRN_EARLY=io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'print','prn_early.html'),encoding='utf-8').read().strip()  # פרומפט 86: פס ההתקדמות של ההדפסה
   BAR=bar_html(masechet,tzbtn=tzbtn,tosbtn=tosbtn,altbtn=altbtn,bkbtn=bkbtn,hgbtn=hgbtn)
   page=f'''<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>לאוקמי גירסא · {masechet}</title>
@@ -7973,7 +7975,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   <link rel="preload" href="fonts/frank-b.woff2" as="font" fetchpriority="low" type="font/woff2" crossorigin>
   <script>{DEVJS}</script>
   <script>try{{var _t=localStorage.getItem('lg-theme');document.documentElement.setAttribute('data-theme',_t==='dark'||_t==='auto'?_t:'light')}}catch(e){{document.documentElement.setAttribute('data-theme','light')}}</script>
-  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><link rel="stylesheet" href="topbar.css?v={TBV}"><script src="daf-yomi.js"></script></head><body>{ICON_SPRITE}{STATIC_M}
+  <style>{CSS}{LAMED_READER_CSS}{GOLD_CSS}</style><link rel="stylesheet" href="ui.css?v={UIV}"><link rel="stylesheet" href="mobile.css?v={MOBV}"><link rel="stylesheet" href="topbar.css?v={TBV}"><script src="daf-yomi.js"></script></head><body>{PRN_EARLY}{ICON_SPRITE}{STATIC_M}
   {BAR}
   <div class="panel" id="search"><button class="x" onclick="panel('search')">×</button><h3>תוצאות חיפוש</h3><div id="sres"></div></div>
   <div class="panel" id="toc"><button class="x" onclick="panel('toc')">×</button><h3>תוכן העניינים - נושאי הסוגיות</h3><div id="tocb"></div></div>

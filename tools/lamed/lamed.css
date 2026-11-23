@@ -563,3 +563,5 @@ body.lm .lm-dycal button.lm-dy.today{border:2px solid #f9e08a;box-shadow:0 0 0 2
 
 /* קישורי הבית הרגילים (פרומפט 10) */
 .lm-seo{text-align:center;margin:22px 0 6px;line-height:2}.lm-seo a{color:var(--gold,#e9c35a);text-decoration:none}.lm-seo a:hover{text-decoration:underline}
+.pr-wrap,.pr-wrap .nv-t,.pr-wrap .lm-list,.pr-wrap .lm-stat{font-family:'Vilna','Frank',serif}
+.nv-t tr.pr-blk td{color:var(--tx2)}

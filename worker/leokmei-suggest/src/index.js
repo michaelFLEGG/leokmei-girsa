@@ -1991,6 +1991,128 @@ async function triApi(req, env, url, method) {
   return bad('פעולה לא מוכרת');
 }
 
+/* ------------------------------------------------------------ הדפסות (פרומפט 86, 23.11.2026)
+   א. הרשאת הדפסה למבקר: פרק אחד ביום (לפי הלוח של ישראל). הדפסה חוזרת של אותו פרק באותו יום מותרת ואינה נספרת שוב.
+      הזיהוי: מזהה מכשיר אנונימי (pid של הלומד, או מזהה אקראי של ההדפסה) וטביעת כתובת מגובבת עם מלח יומי - הכתובת
+      עצמה אינה נשמרת. כתובת משותפת (רשת ישיבה, סינון) אינה חוסמת לומד אחר: לפי הכתובת נחסם רק מי שהדפיס ממנה
+      יותר מ-PRN_IP_CAP פרקים שונים באותו יום (מי שמנקה את המכשיר שוב ושוב). מנהל - בלי הגבלה.
+   ב. מונה הדפסות: כל הדפסה (בדפדפן, או "הפק קובץ PDF בשרת") נרשמת שורה אחת: מתי, מה, איך, איפה (עיר ומדינה מכותרות
+      Cloudflare, בלי כתובת), האם הושלמה, וכמה שניות לקח העימוד. הקריאה - למנהל בלבד, בדף admin-prints.html.
+   POST /prn/allow  {slug, pk, did, dev}            -> {ok, allowed, msg}
+   POST /prn/log    {id, slug, from, to, pk, tos, paper, kind, dev, did, state, secs, err}
+   GET  /prn/stats  ?days=30 (מנהל) */
+const PRN_IP_CAP = 30;
+const PRN_MSG = 'ניתן להדפיס פרק אחד ביום. מחר אפשר להדפיס פרק נוסף.';
+let prnReady = false;
+async function prnEnsure(db) {
+  if (prnReady) return;
+  await db.batch([
+    db.prepare('CREATE TABLE IF NOT EXISTS prn_day (day TEXT NOT NULL, who TEXT NOT NULL, k TEXT NOT NULL, t INTEGER NOT NULL, PRIMARY KEY (day, who, k))'),
+    db.prepare('CREATE TABLE IF NOT EXISTS prn_log (id TEXT PRIMARY KEY, t INTEGER NOT NULL, day TEXT NOT NULL, slug TEXT, rng TEXT, pk TEXT, tos INTEGER, paper TEXT, adm INTEGER, kind TEXT, dev TEXT, city TEXT, country TEXT, did TEXT, state TEXT, secs REAL, err TEXT)'),
+    db.prepare('CREATE INDEX IF NOT EXISTS prn_log_t ON prn_log (t)'),
+  ]);
+  prnReady = true;
+}
+const prnDid = (v) => (/^[a-z0-9]{8,20}$/.test(v || '') ? v : '');
+const prnDev = (v) => (v === 'm' || v === 't' || v === 'd' ? v : '');
+async function prnIpHash(req, env, day) {
+  const ip = req.headers.get('cf-connecting-ip') || '';
+  if (!ip) return '';
+  return (await sha256hex('prn|' + day + '|' + ip + '|' + (env.ADMIN_KEY || ''))).slice(0, 20);
+}
+function prnGeo(req) {
+  const cf = req.cf || {};
+  return { country: String(cf.country || '').slice(0, 2).toUpperCase(), city: String(cf.city || '').slice(0, 40) };
+}
+async function prnBody(req) {
+  try { const b = JSON.parse(await req.text()); return b && typeof b === 'object' ? b : null; } catch (e) { return null; }
+}
+async function prnAllow(req, env) {
+  if (!env.LSTATS) return json({ ok: false, error: 'no-db' }, 503);
+  const b = await prnBody(req);
+  if (!b) return bad('גוף הבקשה אינו JSON');
+  if (await isAdmin(req, env)) return json({ ok: true, allowed: true, adm: true });
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  if (burstHit('prn:' + ip)) return bad('מהיר מדי', 429);
+  const slug = slugOk(b.slug) ? b.slug : '';
+  const pk = str(String(b.pk == null ? '' : b.pk), 4).replace(/[^0-9]/g, '');
+  const did = prnDid(b.did);
+  if (!slug || !pk || !did) return bad('חסר');
+  const now = Date.now(), day = ilDay(now), k = slug + '|' + pk;
+  const db = env.LSTATS;
+  await prnEnsure(db);
+  const iph = await prnIpHash(req, env, day);
+  const mine = (await db.prepare('SELECT k FROM prn_day WHERE day = ?1 AND who = ?2').bind(day, 'd:' + did).all()).results || [];
+  let deny = mine.some((r) => r.k !== k), why = 'device';
+  /* המכשיר עצמו כבר חסם (הדפיס היום פרק אחר, לפי הרישום המקומי): נרשם כחסום, ואינו נספר כפרק חדש */
+  if (!deny && b.ldeny) { deny = true; why = 'local'; }
+  if (!deny && iph && !mine.length) {
+    const ipk = (await db.prepare('SELECT COUNT(DISTINCT k) AS n, SUM(CASE WHEN k = ?3 THEN 1 ELSE 0 END) AS same FROM prn_day WHERE day = ?1 AND who = ?2').bind(day, 'i:' + iph, k).first()) || {};
+    if ((ipk.n || 0) >= PRN_IP_CAP && !(ipk.same > 0)) { deny = true; why = 'ip'; }
+  }
+  if (deny) {
+    const g = prnGeo(req);
+    await db.prepare('INSERT OR REPLACE INTO prn_log (id, t, day, slug, rng, pk, tos, paper, adm, kind, dev, city, country, did, state, secs, err) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,0,?9,?10,?11,?12,?13,?14,0,?15)')
+      .bind('blk-' + rid(), now, day, slug, '', pk, 0, '', 'browser', prnDev(b.dev), g.city, g.country, did, 'blocked', why).run();
+    return json({ ok: true, allowed: false, msg: PRN_MSG, had: (mine[0] || {}).k || '' });
+  }
+  const st = [db.prepare('INSERT OR IGNORE INTO prn_day (day, who, k, t) VALUES (?1, ?2, ?3, ?4)').bind(day, 'd:' + did, k, now)];
+  if (iph) st.push(db.prepare('INSERT OR IGNORE INTO prn_day (day, who, k, t) VALUES (?1, ?2, ?3, ?4)').bind(day, 'i:' + iph, k, now));
+  /* ניקוי: ימים שעברו (שבוע אחורה) אינם נחוצים */
+  st.push(db.prepare('DELETE FROM prn_day WHERE day < ?1').bind(ilDay(now - 7 * 86400000)));
+  await db.batch(st);
+  return json({ ok: true, allowed: true });
+}
+async function prnLog(req, env) {
+  if (!env.LSTATS) return json({ ok: false, error: 'no-db' }, 503);
+  if (BOT.test(req.headers.get('user-agent') || '')) return json({ ok: true, skipped: 1 });
+  const b = await prnBody(req);
+  if (!b) return bad('גוף הבקשה אינו JSON');
+  const ip = req.headers.get('cf-connecting-ip') || '0';
+  if (burstHit('prnlog:' + ip)) return bad('מהיר מדי', 429);
+  const id = str(b.id, 40).replace(/[^a-z0-9-]/g, '');
+  const slug = slugOk(b.slug) ? b.slug : '';
+  if (!id || id.length < 8 || !slug) return bad('חסר');
+  const STATES = ['start', 'done', 'cancel', 'error'];
+  const state = STATES.indexOf(b.state) > -1 ? b.state : 'start';
+  /* מנהל: לפי המפתח בכותרת. בקשה ב-sendBeacon (ביטול כשהחלון נסגר) אינה נושאת כותרות - הדגל adm שבגוף נשמר רק לשורה שכבר
+     נרשמה כמנהל (העדכון אינו משנה את adm) */
+  const adm = (await isAdmin(req, env)) ? 1 : 0;
+  const now = Date.now(), g = prnGeo(req);
+  const rng = b.all ? 'all' : (str(String(b.from || ''), 8) + (b.to && b.to !== b.from ? '-' + str(String(b.to), 8) : ''));
+  const secs = Math.max(0, Math.min(3600, +b.secs || 0));
+  const db = env.LSTATS;
+  await prnEnsure(db);
+  /* שורה אחת לכל הדפסה: "start" יוצר אותה, "done"/"cancel"/"error" מעדכנים את מצבה ואת משך העימוד (מצב סופי אינו חוזר ל-start,
+     וביטול אינו דורס הדפסה שהושלמה) */
+  await db.prepare(
+    'INSERT INTO prn_log (id, t, day, slug, rng, pk, tos, paper, adm, kind, dev, city, country, did, state, secs, err) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17) ' +
+    "ON CONFLICT(id) DO UPDATE SET state = CASE WHEN prn_log.state = 'done' THEN 'done' WHEN prn_log.state IN ('cancel','error') AND ?15 = 'start' THEN prn_log.state ELSE ?15 END, " +
+    "secs = CASE WHEN ?16 > 0 THEN ?16 ELSE prn_log.secs END, err = CASE WHEN ?17 != '' THEN ?17 ELSE prn_log.err END"
+  ).bind(id, now, ilDay(now), slug, rng, str(String(b.pk == null ? '' : b.pk), 60), b.tos ? 1 : 0, /^(a4|b5|book|2up)$/.test(b.paper || '') ? b.paper : '', adm,
+    b.kind === 'server' ? 'server' : 'browser', prnDev(b.dev), g.city, g.country, prnDid(b.did), state, secs, str(String(b.err || ''), 160)).run();
+  return json({ ok: true });
+}
+async function prnStats(req, env, url) {
+  if (!(await isAdmin(req, env))) return bad('אין הרשאה', 401);
+  if (!env.LSTATS) return json({ ok: false, error: 'no-db' }, 503);
+  const db = env.LSTATS;
+  await prnEnsure(db);
+  const days = Math.max(1, Math.min(400, parseInt(url.searchParams.get('days'), 10) || 30));
+  const since = Date.now() - days * 86400000;
+  const q = (sql) => db.prepare(sql).bind(since).all().then((x) => x.results || []);
+  const P = "state != 'blocked'";
+  const [tot, bySlug, byDay, byCity, recent, blocked] = await Promise.all([
+    q("SELECT COUNT(*) AS n, SUM(CASE WHEN state='done' THEN 1 ELSE 0 END) AS done, SUM(CASE WHEN state='cancel' THEN 1 ELSE 0 END) AS cancel, SUM(CASE WHEN state='error' THEN 1 ELSE 0 END) AS err, SUM(adm) AS adm, SUM(tos) AS tos, COUNT(DISTINCT did) AS devices, AVG(CASE WHEN state='done' AND secs > 0 THEN secs END) AS avgSecs, SUM(CASE WHEN kind='server' THEN 1 ELSE 0 END) AS server FROM prn_log WHERE t >= ?1 AND " + P),
+    q("SELECT slug, pk, COUNT(*) AS n, SUM(CASE WHEN state='done' THEN 1 ELSE 0 END) AS done, SUM(tos) AS tos FROM prn_log WHERE t >= ?1 AND " + P + ' GROUP BY slug, pk ORDER BY n DESC LIMIT 200'),
+    q("SELECT day, COUNT(*) AS n, SUM(CASE WHEN state='done' THEN 1 ELSE 0 END) AS done FROM prn_log WHERE t >= ?1 AND " + P + ' GROUP BY day ORDER BY day'),
+    q("SELECT country, city, COUNT(*) AS n FROM prn_log WHERE t >= ?1 AND " + P + ' GROUP BY country, city ORDER BY n DESC LIMIT 60'),
+    q('SELECT id, t, slug, rng, pk, tos, paper, adm, kind, dev, city, country, did, state, secs, err FROM prn_log WHERE t >= ?1 ORDER BY t DESC LIMIT 200'),
+    q("SELECT day, COUNT(*) AS n FROM prn_log WHERE t >= ?1 AND state = 'blocked' GROUP BY day ORDER BY day"),
+  ]);
+  return json({ ok: true, days, totals: tot[0] || {}, bySlug, byDay, byCity, recent, blocked });
+}
+
 import { sakemApi } from './sakem.js';
 
 export default {
@@ -2004,6 +2126,9 @@ export default {
       if (p.startsWith('/tz/img/') && req.method === 'GET') return await tzImg(req, env, url, p);
       if (p === '/stats/hit' && req.method === 'POST') return await statsHit(req, env);
       if (p === '/stats/summary' && req.method === 'GET') return await statsSummary(req, env, url);
+      if (p === '/prn/allow' && req.method === 'POST') return await prnAllow(req, env);
+      if (p === '/prn/log' && req.method === 'POST') return await prnLog(req, env);
+      if (p === '/prn/stats' && req.method === 'GET') return await prnStats(req, env, url);
       if (p === '/tx' && req.method === 'GET') return await txGet(req, env, url);
       if (p === '/tx/save' && req.method === 'POST') return await txSave(req, env);
       if (p === '/tx/revert' && req.method === 'POST') return await txRevert(req, env);

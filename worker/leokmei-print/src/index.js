@@ -147,8 +147,11 @@ async function pdf(req, env, ctx, url) {
     await page.setViewport({ width: 794, height: 1123 });
     // 14.10.2026: העימוד נמדד באותה מדיה שבה הקובץ מופק (print). מדידה במסך והפקה בהדפסה נתנו לתיבת המשנה גובה שונה וחפיפות.
     await page.emulateMediaType('print');
+    // פרומפט 86: השירות פותח את הדף כמבקר בהזמנת המנהל (אכיפה משלו לפי מפתח המנהל, למעלה). הסימון אומר לדף שלא להחיל עליו
+    // את מגבלת המבקר (פרק ביום) ולא לרשום את ההדפסה פעם שנייה (היא נרשמת מחלון המנהל, "PDF בשרת")
+    await page.evaluateOnNewDocument(() => { try { localStorage.setItem('lg-prn-svc', '1'); } catch (e) { } });
     await page.goto(`${SITE}/${m}.html?${target.toString()}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.waitForFunction("window.__PRN && (window.__PRN.state==='done' || window.__PRN.state==='error')", { timeout: 150000 });
+    await page.waitForFunction("window.__PRN && (window.__PRN.state==='done' || window.__PRN.state==='error' || window.__PRN.state==='blocked')", { timeout: 150000 });
     const st = await page.evaluate('window.__PRN.state');
     if (st !== 'done') {
       const msg = await page.evaluate('window.__PRN.error');

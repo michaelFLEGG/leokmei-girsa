@@ -428,6 +428,8 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
         else:
             shutil.copy(_src, os.path.join(_pp, _f))
     shutil.copy(os.path.join(ROOT, 'tools', 'print', 'qrcode.js'), os.path.join(SITE, 'print-qr.js'))
+    # פרומפט 86 (נטפרי): ספריית ה-PDF (pdf-lib 1.17.1, רישיון MIT) מוגשת מן האתר עצמו ולא מאתר חיצוני
+    shutil.copy(os.path.join(ROOT, 'tools', 'print', 'pdf-lib.min.js'), os.path.join(SITE, 'pdf-lib.min.js'))
     # פרומפט 41: רשימת "שורה שהתארכה" (נקראת בדף במצב מנהל; המקור הראשי הוא הקובץ שבמאגר)
     _ov = os.path.join(ROOT, 'data', 'overflow')
     if os.path.isdir(_ov):

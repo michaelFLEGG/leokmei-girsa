@@ -24,6 +24,7 @@ PAGES = [
     ('done.html', 'done', 'הדרן עלך מסכת · לאוקמי גירסא'),
     ('admin-lamdim.html', 'admin', 'תמונת הלומדים · לאוקמי גירסא'),
     ('admin-quiz.html', 'nivhanim', 'הנבחנים · לאוקמי גירסא'),
+    ('admin-prints.html', 'prints', 'נתוני הדפסות · לאוקמי גירסא'),
 ]
 
 

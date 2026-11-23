@@ -15,6 +15,52 @@
   function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
   function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 
+  /* ---------- פרומפט 86 (23.11.2026): פס ההתקדמות, הגבלת המבקר ורישום ההדפסות ---------- */
+  /* היום לפי הלוח של ישראל (המגבלה היומית מתחלפת בחצות בישראל, בכל מקום שהלומד נמצא) */
+  function ilDay(t){try{return new Date(t||Date.now()).toLocaleDateString('en-CA',{timeZone:'Asia/Jerusalem'})}catch(e){return new Date((t||Date.now())+3*3600000).toISOString().slice(0,10)}}
+  function prnRnd(n){var s='',a='abcdefghijklmnopqrstuvwxyz0123456789';
+    try{var u=new Uint8Array(n);crypto.getRandomValues(u);for(var i=0;i<n;i++)s+=a[u[i]%36]}catch(e){for(var j=0;j<n;j++)s+=a[Math.floor(Math.random()*36)]}
+    return s}
+  /* מזהה מכשיר אנונימי: של מערכת הלומד (lg-pid) אם יש, ואחרת מזהה אקראי של ההדפסה. בלי שם ובלי כתובת */
+  function prnDid(){var v=lsGet('lg-pid','');if(/^[a-z0-9]{8,20}$/.test(v))return v;
+    v=lsGet('lg-did','');if(!/^[a-z0-9]{8,20}$/.test(v)){v=prnRnd(14);lsSet('lg-did',v)}return v}
+  function prnDev(){var w=Math.min(screen.width||innerWidth,screen.height||innerHeight),t=('ontouchstart' in window)||(navigator.maxTouchPoints>0);
+    return !t?'d':(w<600?'m':'t')}
+  /* שירות ההפקה בשרת (leokmei-print) פותח את הדף כמבקר, בהזמנת המנהל: הוא מסמן את עצמו, ואינו נספר ואינו מוגבל כאן
+     (שם יש אכיפה משלו לפי מפתח המנהל, וההדפסה נרשמת מחלון המנהל) */
+  function prnSvc(){return lsGet('lg-prn-svc','')==='1'}
+  function prnApiUrl(){try{return SUGGEST_API}catch(e){return 'https://leokmei-suggest.m7654301.workers.dev'}}
+  /* בקשה לשרת העריכות. בלי מפתח מנהל - text/plain (בקשה פשוטה, בלי בקשת בדיקה מוקדמת). תשובה שלא הגיעה תוך ms - null */
+  function prnPost(path,body,ms){
+    var h={'content-type':'text/plain;charset=utf-8'},k=admHdr();if(k['x-admin-key'])h['x-admin-key']=k['x-admin-key'];
+    var ctl=null;try{ctl=new AbortController()}catch(e){}
+    var tm=setTimeout(function(){try{ctl&&ctl.abort()}catch(e){}},ms||6000);
+    return fetch(prnApiUrl()+path,{method:'POST',headers:h,body:JSON.stringify(body),cache:'no-store',signal:ctl?ctl.signal:undefined})
+      .then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(j){clearTimeout(tm);return j})}
+  var PRN_MSG='ניתן להדפיס פרק אחד ביום. מחר אפשר להדפיס פרק נוסף.';
+  /* הרשאת הדפסה למבקר (פרק n של המסכת הזאת). שתי שכבות: המכשיר (lg-prn-day) והשרת. אחת מהן חוסמת - חסום.
+     השרת אינו זמין - לפי המכשיר בלבד (לא חוסמים לומד בגלל תקלה). הדפסה חוזרת של אותו פרק באותו יום - מותרת */
+  function prnAllow(n){
+    var key=SLUG+'|'+n,day=ilDay(),loc=null;try{loc=JSON.parse(lsGet('lg-prn-day','')||'null')}catch(e){}
+    var ldeny=!!(loc&&loc.d===day&&loc.k&&loc.k!==key);
+    return prnPost('/prn/allow',{slug:SLUG,pk:n,did:prnDid(),dev:prnDev(),ldeny:ldeny?1:0},6000).then(function(j){
+      var sdeny=!!(j&&j.ok&&j.allowed===false);
+      if(ldeny||sdeny)return {allowed:false,msg:PRN_MSG,offline:!j};
+      lsSet('lg-prn-day',JSON.stringify({d:day,k:key}));
+      return {allowed:true,offline:!j}})}
+  /* פס ההתקדמות של חלון ההדפסה (#prnprog נוצר בראש הדף, לפני טעינת הנתונים - ראה PRN_EARLY ב-build_site.py) */
+  function prnProg(txt,frac){var s=document.getElementById('prnps'),i=document.getElementById('prnpi');
+    if(s&&txt!=null)s.textContent=txt;if(i&&frac!=null)i.style.width=Math.max(3,Math.min(100,Math.round(frac*100)))+'%'}
+  function prnProgEnd(title,msg,isErr){var p=document.getElementById('prnprog');if(!p)return;
+    try{clearInterval(window.__prnTick)}catch(e){}
+    var h=p.querySelector('h1'),e=document.getElementById('prnpe'),s=document.getElementById('prnps'),b=p.querySelector('.pbar'),t=document.getElementById('prnpt');
+    if(h)h.textContent=title;if(s)s.textContent='';if(b)b.style.display='none';if(t)t.textContent='';
+    if(e){e.textContent=msg;e.hidden=false;e.style.color=isErr?'':'#1d1a16'}}
+  function prnProgHide(){var p=document.getElementById('prnprog');if(p)p.remove();try{clearInterval(window.__prnTick)}catch(e){}}
+  /* הפסקה קצרה לדפדפן: מצייר את פס ההתקדמות ומגיב לגולש. אינה משנה דבר בעימוד */
+  function yieldUI(){return new Promise(function(r){var d=0,f=function(){if(!d){d=1;r()}};
+    try{requestAnimationFrame(function(){setTimeout(f,0)})}catch(e){}setTimeout(f,60)})}
+
   /* ---------- טעינת נתוני התוספות והנוסחים שנבחרו ---------- */
   function tosItems(){return (window.__TOS&&window.__TOS.items)||[]}
   /* ב1: מקום ההפניה מדלג על פיסוק צמוד (גם אחרי רווח שגוי) ועל "וכו'" / "וגו'" שאחרי העוגן */
@@ -227,6 +273,18 @@
   window.qrData=qrData;window.qrBlocks=qrBlocks;
   /* מספר הפרק (1...) של מפתח פרק מן החלון ("פרק שלישי|כירה"), או "#3". מפתח התווית: הפרק שהמשנה הראשונה שלו
      בעמוד הראשון שנושא את התווית; ובלי משנה שם - הפרק של רוב היחידות בעמודים שנושאים אותה */
+  /* פרומפט 86: הערכה מיידית של מספר העמודים, בלי עימוד - אורך הטקסט שבטווח (ותוס', אם נבחרו) חלקי מה שנכנס בעמוד A4.
+     המקדמים נמדדו על פרקים מכמה מסכתות (tools/print/p86_bench.py). הערכה בלבד: לחלון ההדפסה ולפס ההתקדמות */
+  var EST_CH=5200,EST_TCH=9000;
+  function unitLen(u){var t=String(u.a||'');(u.l||[]).forEach(function(l){if(l&&l[1])t+=l[1]});
+    return t.replace(/<[^>]*>/g,'').replace(/&[a-z#0-9]+;/g,' ').replace(/[֑-ׇ]/g,'').length}
+  function prnEst(a,b,rpn,tos){
+    if(a<0||b<a)return 0;var M=perekMap(),ch=0,tc=0;
+    for(var q=a;q<=b;q++)(D.pages[q].units||[]).forEach(function(u){if(rpn&&M.upk[u.id]!==rpn)return;ch+=unitLen(u)});
+    if(tos){var inR={};for(var i=a;i<=b;i++)inR[D.pages[i].daf]=1;
+      tosItems().forEach(function(it){if(rpn?+it.perek===rpn:inR[it.daf])tc+=String(it.sum||'').length+String(it.dh||'').length})}
+    window.__prnEstRaw={ch:ch,tc:tc};   /* לכיול האומדן (tools/print/p86_bench.py) */
+    return Math.max(1,Math.round(ch/EST_CH+tc/EST_TCH))}
   function perekNum(pk){
     var M=perekMap(),mm=/^#(\d+)$/.exec(pk||'');if(mm)return +mm[1]<=M.np?+mm[1]:0;
     var q0=-1,cnt={};
@@ -531,7 +589,9 @@
     h.style.wordSpacing='';h.style.letterSpacing='';return false}
   window.__PRNX={lineInfo:lineInfo,squeeze25:squeeze25,loneFix:loneFix,headNL:headNL,headSqueeze:headSqueeze};
   async function runPrint(){
-    var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{}};R0=R;var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
+    var R={warn:[],pages:[],notes:0,placed:0,moved:[],issues:[],holes:[],t:{},tm:{}};R0=R;var T0=performance.now();function TM(k){R.t[k]=Math.round(performance.now()-T0)}
+    /* פרומפט 86: תתי-שלבים של המדידה (מצטבר על כל הנתחים, מילישניות), למדידת לפני/אחרי. אינו משנה דבר בעימוד */
+    R.t0=Math.round(T0);var TA0=0;function TA(k){var n=performance.now();if(k)R.tm[k]=Math.round(((R.tm[k]||0)+(n-TA0))*10)/10;TA0=n}
     var HEAD0=[].slice.call(document.querySelectorAll('style'));   /* פרומפט 49: מה שהעימוד הזה מוסיף לדף מסומן, כדי שעימוד חוזר יסיר אותו */
     window.__PRN={state:'running',report:R};
     /* פרומפט 41, בדיקה בלבד: render_pdf.py --ovapply מחיל על עותק הנתונים בזיכרון את ההצעה הראשונה של כל שורה גולשת,
@@ -731,6 +791,25 @@
           q.style.marginTop='calc('+prof.body.linePt+'pt * .5)';ch++});
         if(ch){y.html=row2.outerHTML;R.innerHeadSpace+=ch}}})();
     TM('units');
+    /* פרומפט 86: הגבלת המבקר ורישום ההדפסה - לפני העבודה הכבדה. מבקר: לא מסכת שלמה, לא טווח שחוצה פרק (גם כשהכתובת
+       נכתבה ביד), ופרק אחד ביום. מנהל - בלי הגבלה. מצב דפוס (pm), ושירות ההפקה בשרת - אינם נספרים כאן */
+    var PNS={};recs.forEach(function(x){if(x.u){var n=perekMap().upk[x.u.id];if(n)PNS[n]=1}});
+    var PNL=Object.keys(PNS).map(Number).sort(function(a,b){return a-b});
+    if(QS.get('pm')!=='1'&&QS.get('dry')!=='1'&&!prnSvc()){
+      var prnBlock=function(msg){window.__PRN={state:'blocked',error:msg,report:R};prnProgEnd('לא ניתן להדפיס עכשיו',msg,false);try{document.title='לאוקמי גירסא - הדפסה'}catch(e){}};
+      if(!isAdm()){
+        if(QS.get('all')==='1'){prnBlock('מסכת שלמה אינה זמינה להדפסה. '+PRN_MSG);return}
+        if(PNL.length>1){prnBlock(ONE_MSG+'. אפשר לבחור פרק שלם, דף, עמוד או חלק מן הפרק - בתוך פרק אחד.');return}
+        prnProg('בודק הרשאת הדפסה...',0.08);
+        var AL=await prnAllow(PNL[0]||0);
+        if(!AL.allowed){prnBlock(AL.msg);return}}
+      var PLOG={id:'b'+prnRnd(13),slug:SLUG,from:D.pages[fi].daf,to:D.pages[ti].daf,all:QS.get('all')==='1'?1:0,pk:PNL.join(','),tos:withTos?1:0,
+        paper:SHRINK?'b5':'a4',kind:'browser',dev:prnDev(),did:prnDid(),state:'start'};
+      R.logId=PLOG.id;window.__prnLog=PLOG;prnPost('/prn/log',PLOG,6000);
+      /* החלון נסגר לפני שהעימוד הסתיים - "בוטל" (sendBeacon: נשלח גם כשהדף נסגר) */
+      addEventListener('pagehide',function(){if(PLOG.state!=='start')return;PLOG.state='cancel';PLOG.secs=Math.round(performance.now()/100)/10;
+        try{navigator.sendBeacon(prnApiUrl()+'/prn/log',new Blob([JSON.stringify(PLOG)],{type:'text/plain'}))}catch(e){}})}
+    prnProg('מכין את הטקסט...',0.1);await yieldUI();
     /* פתיחת הטווח באמצע פרק: שורה קטנה "המשך פרק", כדי שהדף לא ייפתח יתום */
     /* 13.11.2026: הדפסת פרק שלם נפתחת תמיד בראש הפרק - לעולם לא "המשך פרק" */
     /* פרומפט 48 סבב ג (16.11.2026, תיקון 3, הכרעת בעל הפרויקט): העמוד הראשון פותח בדיוק במה שנבחר - בדף: סימן הדף בשורה הראשונה.
@@ -778,6 +857,9 @@
       if(drift.length)W(drift.length+' תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: '+
         drift.map(function(x){return x.split(' (')[0]}).join(', '))}
     R.notes=items.length;
+    /* פרומפט 86: כמות הטקסט וההערות שהודפסו - לכיול האומדן שבחלון ההדפסה (prnEst) */
+    R.estCh=0;recs.forEach(function(x){if(x.u)R.estCh+=unitLen(x.u);if(x.joined)R.estCh+=unitLen(x.joined)});
+    R.estTc=0;items.forEach(function(it){R.estTc+=String(it.sum||'').length+String(it.dh||'').length});
     /* ח1 (14.10.2026): מספור ההערות מתחיל ב-1 בכל פרק (מספר התצוגה it.dn); המזהה it.n נשאר לקישורים.
        פרומפט 31: הפרק הוא perek של הפריט, לא תווית העמוד */
     (function(){var order=items.slice().sort(function(a,b){return (itPk(a)-itPk(b))||(PM.pos[a._rs.uid]-PM.pos[b._rs.uid])||(a.n-b.n)}),cnt={};
@@ -829,7 +911,8 @@
           [].slice.call(g.childNodes).forEach(function(x){if(x.nodeType===3)x.nodeValue=''});
           R.markRuns=(R.markRuns||0)+1}})}
     for(var ci0=0;ci0<chunks.length;ci0++){
-      var c0=chunks[ci0],crecs=recs.slice(c0[0],c0[1]);
+      prnProg('טוען את הפרק: מודד את השורות'+(chunks.length>1?' (חלק '+(ci0+1)+' מתוך '+chunks.length+')':'')+'...',0.12+0.45*ci0/chunks.length);await yieldUI();
+      var c0=chunks[ci0],crecs=recs.slice(c0[0],c0[1]);TA();
       var curF=document.getElementById('flow');
       if(curF!==f){if(curF)curF.remove();document.body.insertBefore(f,document.body.firstChild)}
       f.innerHTML=crecs.map(function(x){return x.html}).join('');
@@ -870,7 +953,8 @@
             var ps=m.querySelectorAll(':scope > p'),host=ps.length?ps[ps.length-1]:m;
             host.appendChild(document.createTextNode('\u2060'));host.appendChild(mk);R.placed++;R.moved.push(tosHeb(it))})})}
       if(withTos)renumberMarks(f);
-      await document.fonts.ready;
+      TA('build');
+      await document.fonts.ready;TA('fontsready');
       /* קוד האתר עשוי להחליף את אלמנט הסרגל בזמן ההמתנה: מחזירים את שלנו (וכל המדידות אחריו) */
       var curF2=document.getElementById('flow');
       if(curF2!==f||!f.isConnected){
@@ -882,8 +966,10 @@
         if(missingFont.length)W('גופן שלא נטען: '+missingFont.map(function(x){return x[0]+' '+x[1]}).join(', '))}
       if(typeof setDafW==='function')setDafW();
       if(typeof fitAnchors==='function')fitAnchors();
+      TA('fitAnchors');
       if(typeof ltFit==='function')ltFit(f);
-      labelWrap(f);railNoGap(f);
+      TA('ltFit');
+      labelWrap(f);railNoGap(f);TA('railNoGap');
       /* איחוי שורה יתומה (כלל עימוד 4): בדיקה במקום, וניסיונות בסרגל; רק התוצאה נכתבת לפסקה */
       var tSq=performance.now();
       /* כלי 1 (פרומפט 41): הצרה עד 2.5% לפסקה שהשורה האחרונה שלה קצרה מספיק. לפני איחוי היתומה, ובמקומו */
@@ -891,6 +977,7 @@
         try{[].slice.call(f.querySelectorAll('.main p')).forEach(function(p){
           if(p.textContent.trim().length>=12&&squeeze25(p,GM,GP,W25))R.sq25=(R.sq25||0)+1})}
         finally{var sqq=SQDEFER;SQDEFER=null;sqq.forEach(function(fn){fn()})}}
+      TA('sq25');
       /* פרומפט 48 (תיקון 4, 16.11.2026): כותרת (נושא, ד"ה משנה) שתופסת יותר משורה: קודם הצרה עד 2.5% (רווחים ואותיות, בלי לגעת בטקסט);
          ואם אינה מספיקה - שבירה במקום הנכון: אחרי מקף או נקודתיים, כשכל חלק נכנס בשורה אחת; ואחרת שורות מאוזנות (לא מילה בודדת בשנייה).
          מה שנשאר ביותר משורה נרשם בלוח התקלות, להצעת ניסוח קצר יותר בידי המנהל */
@@ -911,6 +998,7 @@
             if(nl(h)===n0&&n0===2){R.headMulti.broken++;R.headMulti.after++;R.headMulti.list.push({t:t.trim().slice(0,60),u:hU(h),how:'שבירה אחרי מקף/נקודתיים'});return}
             br.remove();c.n.data+=rest.data;rest.remove()}
           h.style.textWrap='balance';R.headMulti.after++;R.headMulti.list.push({t:t.trim().slice(0,60),u:hU(h),how:'שורות מאוזנות'})})})();
+      TA('heads');
       var ps0=[].slice.call(f.querySelectorAll('.main p')).filter(function(p){return !p.dataset.sq25&&p.textContent.trim().length>=12&&loneStrict(p)});
       var todo=[];
       ps0.forEach(function(p){
@@ -930,10 +1018,12 @@
         if(t[1][0]||t[1][1]){t[0].style.wordSpacing=t[1][0]?t[1][0]+'em':'';t[0].style.letterSpacing=t[1][1]?t[1][1]+'em':'';t[0].dataset.sq='1'}
         if(t[2]){for(var g2=0;g2<t[2];g2++)glueLastWords(t[0]);t[0].dataset.glue=String(t[2]);fixedGlue++}
         fixedLone++});
-      sqMs+=performance.now()-tSq;
+      sqMs+=performance.now()-tSq;TA('lone');
       if(todo.length&&typeof fitAnchors==='function'){fitAnchors();labelWrap(f);railNoGap(f)}
+      TA('refit');
       /* פרומפט 56 א8: ריווח הפסוק בא אחרי כל תיקוני השורה (הצרה, יתומה), ותופס רק מקום פנוי */
       var psSt=psSpace(f);if(psSt)R.psSpace=psSt;
+      TA('psSpace');
       /* שער: מילה בודדת שנותרה אחרי הדחיסה והרווח הקשיח נרשמת בלוח התקלות (לעולם לא בשקט) */
       [].slice.call(f.querySelectorAll('.main p')).forEach(function(p){
         if(p.textContent.trim().length>=12&&loneStrict(p)){
@@ -956,6 +1046,7 @@
           var n=headNL(m),ws0=m.style.whiteSpace;m.style.whiteSpace='nowrap';var rg=document.createRange();rg.selectNodeContents(m);var nw=rg.getBoundingClientRect().width;m.style.whiteSpace=ws0;
           hb.forEach(function(b){b.style.display=''});m.style.textWrap=ta;
           R.hlines.push({u:x.u.id,k:x.kind,daf:x.daf,n:n,nShown:headNL(m),text:m.textContent.replace(/\s+/g,' ').trim(),a:x.u.a||'',mc:m.className,W:+m.getBoundingClientRect().width.toFixed(1),nw:+nw.toFixed(1),sq:m.dataset.sq25||'',fs:+parseFloat(getComputedStyle(m).fontSize).toFixed(3)})})}
+      TA('loneGate');
       R.semicolons=(R.semicolons||0)+(f.textContent.split(';').length-1);
       /* כותרת צד ששום הקטנה לא מכניסה לצד ציון הדף: ציון הדף מועלה (dup) רק אם אינו נוחת על פריט מסילה של שורה שמעליו;
          אחרת כותרת הצד מוקטנת עוד. (כלל 14.10.2026: מסילה אינה חופפת, ובדיקת החפיפות אחרי ההדפסה תופסת כל שארית) */
@@ -1002,12 +1093,13 @@
           else pull=Math.max(0,pull);
           if(Math.abs(pull)>0.5)row.style.setProperty('--dafpull',pull.toFixed(1)+'px');
           if(mn&&gap-pull<minGap-0.5)R.issues.push({type:'סימן דף קרוב משלוש אותיות לטקסט',daf:dm.textContent.trim(),detail:((gap-pull)/MM).toFixed(1)+' מ"מ'})})})();
+      TA('dafmark');
       /* פרומפט 80 ב: ספירת הצירופים - כמה ד"ה+כותרת נכנסו בשורה אחת (שורה נחסכה) וכמה נשארו בשתיים */
       crecs.forEach(function(x){if(!x.joined||!x.el)return;var m=x.el.querySelector(':scope > .main');if(!m)return;
         R.dhJoin=R.dhJoin||{pairs:0,one:0,two:0,list:[]};R.dhJoin.pairs++;
         var n=headNL(m);if(n<=1){R.dhJoin.one++;if(R.dhJoin.list.length<40)R.dhJoin.list.push({daf:x.daf,u:x.u.id,t:m.textContent.trim().slice(0,70)})}else R.dhJoin.two++});
       /* ---- מדידת שורות הנתח ---- */
-      var fr=f.getBoundingClientRect(),Lc0=L.length;
+      var fr=f.getBoundingClientRect(),Lc0=L.length,LDEF=[];
       crecs.forEach(function(x,i){
         var ri=c0[0]+i;
         var row=x.el,main=row.querySelector(':scope > .main'),rail=row.querySelector(':scope > .rail');
@@ -1033,13 +1125,12 @@
           var top=Ybase+br.top-fr.top+pt+bt;
           /* פרומפט 84 א ב: שורת רעיון (פסקת גוף של שורה-שתיים) - צמודה לימין, בלי יישור לשני הצדדים. יישור לשני הצדדים רק בפסקה
              רציפה של שלוש שורות ומעלה. היישור אינו משנה שבירת שורה, ולכן נקבע אחרי המדידה */
+          /* פרומפט 86 (מהירות): שני אלה כותבים לדף, וכל כתיבה באמצע הלולאה חייבה את הדפדפן לעמד מחדש את כל הנתח לפני
+             המדידה הבאה. הם נדחים לסוף הלולאה, באותו סדר (היישור אינו משנה מדידה, והמדידה בסרגל הקטן אינה נוגעת בנתח) */
           if(b.classList&&b.classList.contains('hg')){
-            if(n<=2)b.classList.add('rag');
+            if(n<=2)LDEF.push([0,b]);
             /* פרומפט 84 א ד: האם ההזחה הוסיפה לפסקה שורה (מדידה בסרגל הקטן בלי ההזחה) - לספירה ולמנגנון "שורה שהתארכה" */
-            if(n>=2){GM.className=main.className;GP.className=b.className.replace(/\b(hg|rag)\b/g,'');GP.setAttribute('style',b.getAttribute('style')||'');GP.innerHTML=b.innerHTML;
-              var n0=Math.max(1,Math.round(GP.offsetHeight/lh));
-              if(n0<n){R.hangExtra=(R.hangExtra||0)+1;(R.hangList=R.hangList||[]).push({daf:x.daf,u:x.u&&x.u.id,li:bi+1,was:n0,now:n})}
-              GP.removeAttribute('style');GP.className='';GP.innerHTML=''}}
+            if(n>=2)LDEF.push([1,b,main,lh,n,x.daf,x.u&&x.u.id,bi+1])}
           var wc=n===1?(b.textContent.trim().split(/\s+/).filter(Boolean).length):99;   /* ב5: מילים בפסקה של שורה אחת */
           var lbl=!!(rail&&rail.textContent.trim()&&bi===0);
           /* פרומפט 60 ב: פסקת כותרת בתוך יחידה רגילה (p.nose / p.dh, למשל "מחזקת ראשו ורובו ושולחנו" בסוכה ג.) היא כותרת
@@ -1053,6 +1144,13 @@
           var lastL=L[L.length-1];
           lastL.y1=Math.max(lastL.y1,Ybase+railBottom,Ybase+rr.bottom-fr.top)}
         x.gtop=Ybase+rr.top-fr.top});
+      LDEF.forEach(function(z){var b=z[1];
+        if(z[0]===0){b.classList.add('rag');return}
+        GM.className=z[2].className;GP.className=b.className.replace(/\b(hg|rag)\b/g,'');GP.setAttribute('style',b.getAttribute('style')||'');GP.innerHTML=b.innerHTML;
+        var n0=Math.max(1,Math.round(GP.offsetHeight/z[3]));
+        if(n0<z[4]){R.hangExtra=(R.hangExtra||0)+1;(R.hangList=R.hangList||[]).push({daf:z[5],u:z[6],li:z[7],was:n0,now:z[4]})}
+        GP.removeAttribute('style');GP.className='';GP.innerHTML=''});
+      TA('lines');
       /* כל סימן שייך לשורה שבה הוא יושב */
       [].slice.call(f.querySelectorAll('sup.tm')).forEach(function(s){
         var rg=document.createRange();rg.selectNode(s);var rcs=rg.getClientRects();
@@ -1064,9 +1162,10 @@
           if(d<bd){bd=d;best=j}}
         if(best<0){W('סימן תוספות '+n+' ללא שורה');return}
         L[best].notes.push(n);LNOF[n]=best});
+      TA('marks');
       crecs.forEach(function(x){x.html2=x.el.outerHTML;x.el=null});
       Ybase+=fr.height;
-      f.innerHTML=''}
+      f.innerHTML='';TA('save')}
     sq.remove();
     R.loneFixed=fixedLone;R.glued=fixedGlue;R.msSqueeze=Math.round(sqMs);R.chunks=chunks.length;
     if(withTos&&R.placed!==items.length)W('ספירת התוספות אינה שלמה: '+R.placed+' מתוך '+items.length);
@@ -1108,26 +1207,55 @@
       var w=t.split(/\s+/).filter(Boolean),ok=[],d=0;
       w.forEach(function(x){d+=x.split('(').length+x.split('[').length-x.split(')').length-x.split(']').length;ok.push(d<=0)});
       return (wcache[n]={w:w,ok:ok})}
-    var meas=document.createElement('div');meas.id='prnmeas';document.body.appendChild(meas);
+    /* פרומפט 86 (מהירות): אזור המדידה של ההערות יושב בתוך "צל" (shadow root) שיש בו רק עיצוב ההדפסה. עד כאן כל מילוי
+       של האזור (אלפי פעמים בפרק עם תוס') עבר על כל אלף ושש מאות כללי העיצוב של האתר; עכשיו רק על הכללים של ההדפסה
+       (פי שניים ויותר מהר). הגופנים והתכונות היורשות מגוף הדף - אותם גופנים ואותם ערכים. fnshadow=0 - הדרך הקודמת.
+       fnverify=1 - כל מדידה נעשית בשתי הדרכים ומושווית (R.fnVerify), לבדיקת הזהות */
+    var FNSH=QS.get('fnshadow')!=='0'&&!!document.body.attachShadow,FNV=QS.get('fnverify')==='1',measHost=null,measV=null;
+    var meas=document.createElement('div');meas.id='prnmeas';
+    if(FNSH){measHost=document.createElement('div');measHost.id='prnmh';measHost.style.cssText='position:absolute;left:0;top:0;width:0;height:0;overflow:visible;visibility:hidden';document.body.appendChild(measHost);
+      var mroot=measHost.attachShadow({mode:'open'});
+      [].forEach.call(document.querySelectorAll('style'),function(x){if(x.textContent.indexOf('.pfn')>-1){var c=document.createElement('style');c.textContent=x.textContent;mroot.appendChild(c)}});
+      mroot.appendChild(meas);
+      if(FNV){measV=document.createElement('div');measV.id='prnmeas';document.body.appendChild(measV);R.fnVerify={n:0,bad:0,ex:[]}}}
+    else document.body.appendChild(meas);
     var fcache={};
+    function partsOf(d){var t=0;[].forEach.call(d.getClientRects(),function(r){t+=r.height});return t}
+    /* מילוי האזור M בהערות ומדידה, כולל דחיסת מילה בודדת בשורה האחרונה (ב6) */
+    function measureInto(M,html,one,FS){
+      M.className='pfn'+(one?' one':'');M.innerHTML=html;
+      /* ב6 (5.11.2026): מילה בודדת בשורה אחרונה של הערה - נדחסת לשורה הקודמת בכיווץ מתון, בגבולות notes.squeeze שבפרופיל */
+      var SQN=N.squeeze||[[-0.03,0],[-0.06,-0.01],[-0.09,-0.02]],sqd=0;
+      /* פרומפט 86 (מהירות, אותו פלט בדיוק): מדידה אחת לכל מצב של הפריסה. עד כאן כל הערה נמדדה ("מילה בודדת?") אחרי
+         שההערה שלפניה נוסתה בכיווץ והוחזרה, ולכן הדפדפן עימד מחדש את כל אזור ההערות לפני כל הערה. ניסיון שנכשל מחזיר
+         את הפריסה בדיוק למצב שלפניו, ולכן המדידה של כל ההערות הבאות (ושל גובה האזור) נעשית פעם אחת, ונמדדת מחדש רק
+         אחרי כיווץ שהצליח ושינה את הפריסה. סדר הבדיקות וההכרעות - כמו קודם */
+      var kids=[].slice.call(M.children),nk=kids.length,lc=[],hh=[],H0=0,P0=null,valid=false;
+      function snapFrom(s){FS.snaps++;for(var t=s;t<nk;t++){lc[t]=loneStrict(kids[t]);hh[t]=lc[t]?kids[t].getBoundingClientRect().height:0}
+        H0=M.getBoundingClientRect().height;P0=kids.map(partsOf);valid=true}
+      for(var di=0;di<nk;di++){
+        if(!valid)snapFrom(di);
+        if(!lc[di])continue;
+        var d=kids[di],h0=hh[di],okq=false;
+        for(var q=0;q<SQN.length;q++){d.style.wordSpacing=SQN[q][0]+'em';d.style.letterSpacing=SQN[q][1]?SQN[q][1]+'em':'';FS.trials++;
+          if(d.getBoundingClientRect().height<h0-1){sqd++;okq=true;FS.ok++;break}}
+        if(okq){valid=false;continue}
+        d.style.wordSpacing='';d.style.letterSpacing=''}
+      var r={html:sqd?M.innerHTML:html,sqd:sqd,nk:nk};
+      if(valid){r.h=H0;r.parts=P0}else{r.h=M.getBoundingClientRect().height;r.parts=kids.map(partsOf)}
+      return r}
     function fnSpec(sp){
       var k=sp.map(function(e){return e.n+(e.t!==undefined?'<'+e.t:'')+(e.f!==undefined?'>'+e.f:'')}).join(',');
       if(fcache[k])return fcache[k];
-      var o={html:'',h:0,spec:sp,parts:[]};
+      var o={html:'',h:0,spec:sp,parts:[]};var FS=R.fnStat||(R.fnStat={miss:0,kids:0,snaps:0,trials:0,ok:0,ms:0}),fT=performance.now();FS.miss++;
       if(sp.length){
-        o.html=sp.map(function(e){return noteHTML(e.n,e)}).join('');
-        meas.className='pfn'+(sp.length<2?' one':'');meas.innerHTML=o.html;
-        /* ב6 (5.11.2026): מילה בודדת בשורה אחרונה של הערה - נדחסת לשורה הקודמת בכיווץ מתון, בגבולות notes.squeeze שבפרופיל */
-        var SQN=N.squeeze||[[-0.03,0],[-0.06,-0.01],[-0.09,-0.02]],sqd=0;
-        [].forEach.call(meas.children,function(d){if(!loneStrict(d))return;var h0=d.getBoundingClientRect().height;
-          for(var q=0;q<SQN.length;q++){d.style.wordSpacing=SQN[q][0]+'em';d.style.letterSpacing=SQN[q][1]?SQN[q][1]+'em':'';
-            if(d.getBoundingClientRect().height<h0-1){sqd++;return}}
-          d.style.wordSpacing='';d.style.letterSpacing=''});
-        if(sqd){o.html=meas.innerHTML;R.noteSqueeze=(R.noteSqueeze||0)+sqd}
-        o.h=meas.getBoundingClientRect().height;
-        o.parts=[].map.call(meas.children,function(d){var t=0;[].forEach.call(d.getClientRects(),function(r){t+=r.height});return t});
-        o.one=sp.length<2}
-      fcache[k]=o;return o}
+        var html=sp.map(function(e){return noteHTML(e.n,e)}).join(''),r=measureInto(meas,html,sp.length<2,FS);
+        if(measV){var v=measureInto(measV,html,sp.length<2,{snaps:0,trials:0,ok:0});R.fnVerify.n++;
+          if(v.h!==r.h||v.html!==r.html||JSON.stringify(v.parts)!==JSON.stringify(r.parts)){R.fnVerify.bad++;if(R.fnVerify.ex.length<5)R.fnVerify.ex.push({k:k,h:[r.h,v.h],p:[r.parts,v.parts],html:v.html!==r.html})}}
+        o.html=r.html;o.h=r.h;o.parts=r.parts;
+        if(r.sqd)R.noteSqueeze=(R.noteSqueeze||0)+r.sqd;
+        o.one=sp.length<2;FS.kids+=r.nk}
+      FS.ms+=performance.now()-fT;fcache[k]=o;return o}
     function fnBox(ids){return fnSpec(ids.map(function(n){return {n:n}}))}
     /* ההערות של טור: ההמשך שעבר אליו (carry) ראשון, ואחריו הערותיו; הערה שמתפצלת בו (split) - רק חלקה הראשון */
     function specOf(ids,carry,split){
@@ -1136,10 +1264,13 @@
       return s}
     /* כמה שורות תתפוס יתרת ההערה בטור הבא (ברוחב עמודת הערות אחת) */
     function remLines(n,k){
-      meas.className='pfn one';meas.style.width=((prof.measure-N.colGapMm)/2)+'mm';
-      meas.innerHTML=noteHTML(n,{f:k});
-      var h=meas.firstChild.getBoundingClientRect().height;
-      meas.style.width='';return h/NLH}
+      function one(M){M.className='pfn one';M.style.width=((prof.measure-N.colGapMm)/2)+'mm';
+        M.innerHTML=noteHTML(n,{f:k});
+        var h=M.firstChild.getBoundingClientRect().height;
+        M.style.width='';return h}
+      var h=one(meas);
+      if(measV){var hv=one(measV);R.fnVerify.n++;if(hv!==h){R.fnVerify.bad++;if(R.fnVerify.ex.length<5)R.fnVerify.ex.push({rem:n+'>'+k,h:[h,hv]})}}
+      return h/NLH}
     var GAP=N.gapAboveMm*MM;
     /* חור = ריק של יותר משורה וחצי (בקרה, קבוע). המתיחה: עד stretch.maxLines שורות, ועד stretch.maxPtPerGap נק' לכל גבול פסקה (מן הפרופיל) */
     var STR=prof.stretch||{},NLH=N.linePt*PT,LH=prof.body.linePt*PT,HOLE=1.5*LH,STRMAX=(STR.maxLines||1.5)*LH,STRETCH=(STR.maxPtPerGap||3)*PT,STRHOLE=(STR.maxPtPerGapHole||8)*PT;
@@ -1317,7 +1448,12 @@
       if(got&&BALMID){var m2=balMid(i,got.e,got.capT,got.m);if(m2!==got.m){got.m=m2;R.balMid=(R.balMid||0)+1}}
       if(got&&!got.ps.s1.length&&got.ps.s2.length)got=null;
       return got}
+    /* פרומפט 86: פס ההתקדמות בעימוד - "מעמד: עמוד N מתוך כ-M". M הוא אומדן: גובה הטקסט שנמדד, ועוד חלק ההערות (כשיש תוס') */
+    var PGEST=Math.max(1,Math.round((L.length?L[L.length-1].y1-L[0].y0:0)*(withTos?1.45:1.04)/(A*(prof.cols||1)))),lastPgShown=-1;
     while(i<L.length){
+      var pgNow=Math.floor(cols.length/(prof.cols||1))+1;
+      if(pgNow!==lastPgShown){lastPgShown=pgNow;var pgOf=Math.max(PGEST,pgNow);
+        prnProg('מעמד: עמוד '+pgNow+' מתוך כ-'+pgOf,0.58+0.34*Math.min(1,(i/L.length)));await yieldUI()}
       /* פרומפט 84 ג: עמוד חדש (הטור הימני) - קודם הפריסה של עמוד שלם עם מאגר הערות אחד */
       if(POOL&&cols.length%2===0&&noteIds(i,Math.min(L.length,i+1)).length>=0){var pp2=pagePair(i);
         if(pp2&&noteIds(i,pp2.e).length){var H=pp2.ps.h;
@@ -1546,7 +1682,7 @@
           if(tx.split(br[0]).length!==tx.split(br[1]).length)iss('סוגר חסר בהערה',a,'הערה '+(it.dn||it.n)+': '+tx.slice(0,40))})})})();
       var inCol={};(c.pall||c.notes).forEach(function(n){inCol[n]=1});
       for(var i3=c.s;i3<c.e;i3++)L[i3].notes.forEach(function(n){if(!inCol[n])iss('הערה נפרדה מסימנה',L[i3],String(n))})});
-    TM('paginate');
+    TM('paginate');prnProg('בודק את העמודים...',0.93);await yieldUI();
     window.__PRNDBG={L:L,cols:cols,recs:recs.map(function(x){return {kind:x.kind,u:x.u&&x.u.id,daf:x.daf}})};   /* לבדיקות (tools/print/p60_check.py) */
     /* ---- בניית העמודים ---- */
     var out=document.createElement('div');out.id='prnout';
@@ -1819,7 +1955,7 @@
     if(p2frame){
       await new Promise(function(ok){if(p2frame.contentDocument&&p2frame.contentDocument.readyState==='complete'&&p2frame.contentDocument.body&&p2frame.contentDocument.body.children.length)return ok();p2frame.onload=function(){ok()};setTimeout(ok,15000)});
       try{await p2frame.contentDocument.fonts.ready}catch(e){}}
-    f.style.display='none';meas.remove();
+    f.style.display='none';meas.remove();if(measHost)measHost.remove();if(measV)measV.remove();
     /* ---- קישורים בקובץ: סימן הפנייה -> ההערה; ציון דף -> מקומו באתר ---- */
     try{
       var siteBase=prof.footer.siteUrl+SLUG+'.html#daf=';
@@ -1945,9 +2081,12 @@
       document.title='לאוקמי גירסא - '+what+' - '+sz+(withTos?" - עם תוס'":'')})();
     /* פרומפט 51 (16.11.2026): הדפסה בדפדפן עצמו, בלי שרת. הדף נפתח בחלון חדש עם autoprint=1, מעמד במנוע הזה,
        ופותח את חלון ההדפסה של הדפדפן (שם בוחרים מדפסת או "שמירה כ-PDF"). */
+    /* פרומפט 86: ההדפסה הושלמה - נרשמת, ופס ההתקדמות אומר "מוכן". אחרי שחלון ההדפסה של הדפדפן נסגר, הפס יורד והעמודים נראים */
+    if(window.__prnLog&&window.__prnLog.state==='start'){var PL=window.__prnLog;PL.state='done';PL.secs=Math.round(performance.now()/100)/10;PL.pages=R.pages.length;prnPost('/prn/log',PL,6000)}
     if(QS.get('autoprint')==='1'){
-      var bar=document.getElementById('prnwait');if(bar)bar.remove();
-      setTimeout(function(){try{window.print()}catch(e){}},250)}
+      prnProg('מוכן, נפתח חלון ההדפסה',1);
+      setTimeout(function(){try{window.print()}catch(e){}setTimeout(prnProgHide,300)},250)}
+    else prnProgHide()
   }
 
   /* ---------- עיצוב מצב ההדפסה ---------- */
@@ -1959,8 +2098,9 @@
       '@page{size:210mm 297mm;margin:0}'+
       "@font-face{font-family:'Vilna';src:url(fonts/vilna-l.woff2) format('woff2'),url(fonts/vilna-l.otf);font-weight:300;font-display:block}"+
       'html.prn,html.prn body,body.prn{margin:0;padding:0;background:#fff;height:auto;overflow:visible;display:block;color:#000}'+
-      'body:not(.prn) > *:not(#flow):not(script):not(style){display:none!important}'+
-      'body.prn > *:not(#prnout):not(#prnmeas):not(#prnsq):not(#flow):not(script):not(style){display:none!important}'+
+      /* פרומפט 86: פס ההתקדמות (#prnprog) נשאר גלוי על המסך בזמן העימוד; בהדפסה עצמה הוא מוסתר (@media print בעיצוב שלו) */
+      'body:not(.prn) > *:not(#flow):not(#prnprog):not(script):not(style){display:none!important}'+
+      'body.prn > *:not(#prnout):not(#prnmeas):not(#prnmh):not(#prnsq):not(#flow):not(#prnprog):not(script):not(style){display:none!important}'+
       'body #flow,body #prnsq{position:absolute;top:0;right:0;height:auto;min-height:0;overflow:visible;padding:0;margin:0;'+
         'columns:auto;column-count:1;column-width:auto;column-gap:0;column-rule:0;background:#fff;visibility:hidden;direction:rtl;'+
         '--gut:0;display:block}'+
@@ -1976,7 +2116,7 @@
       /* פרומפט 72: רצועת ההדרן - שורה אחת ממורכזת על פני שני הטורים */
       '.phadw .ptx .row{display:block!important;position:static!important;margin:0!important}.phadw .ptx .row>.rail{display:none!important}'+
       '.phadw .ptx .row>.main{text-align:center!important;text-align-last:center!important;width:auto!important;margin:0!important}'+
-      '#prnmeas{position:absolute;left:0;top:0;visibility:hidden}'+
+      '#prnmeas{position:absolute;left:0;top:0;visibility:hidden;contain:layout style}'+
       /* ג (6.11.2026): הערה עוברת באמצעה מטור ההערות הימני לשמאלי שתחת אותו טור, כמו בוילנא - בלי "המשך"; שתי שורות לפחות בכל צד, והטורים מתאזנים */
       /* פרומפט 84 א: הזחה תלויה לשורות ההמשך (1.25 רוחב אות של הטקסט הרץ), ושורת רעיון קצרה (שורה-שתיים) צמודה לימין בלי מתיחה */
       'html.prn .main p.hg{padding-right:1.25em;text-indent:-1.25em}'+
@@ -2010,17 +2150,22 @@
     /* 8.11.2026: בלי הפקה שקטה בלי התיקונים. אם התיקונים לא נטענו בזמן, או שנטענה גרסה ישנה מזו שהמנהל ראה
        (et), ההפקה נעצרת בהודעה - ולא מוציאה קובץ חסר. */
     var go=function(){var late=false;
+      prnProg('טוען את התיקונים האחרונים...',0.05);
       Promise.race([Promise.resolve(window.__LIVE).then(function(){return 'ok'}),new Promise(function(r){setTimeout(function(){late=true;r('late')},50000)})]).catch(function(){return 'ok'}).then(function(w){
         var et=+(new URLSearchParams(location.search).get('et')||0);
-        if(window.__LIVE&&w==='late'){window.__PRN={state:'error',error:'התיקונים שפורסמו לא נטענו בזמן. נסה שוב בעוד דקה'};return}
-        if(window.__LIVE&&et&&(window.__LIVET||0)<et){window.__PRN={state:'error',error:'התיקונים האחרונים עוד לא הגיעו לשירות ההדפסה. נסה שוב בעוד דקה'};return}
+        if(window.__LIVE&&w==='late'){window.__PRN={state:'error',error:'התיקונים שפורסמו לא נטענו בזמן. נסה שוב בעוד דקה'};prnFail('התיקונים האחרונים לא נטענו בזמן');return}
+        if(window.__LIVE&&et&&(window.__LIVET||0)<et){window.__PRN={state:'error',error:'התיקונים האחרונים עוד לא הגיעו לשירות ההדפסה. נסה שוב בעוד דקה'};prnFail('התיקונים האחרונים עוד לא הגיעו');return}
         go2()})};
     /* פרומפט 49: במצב דפוס - עימוד חוזר בלי טעינה מחדש של הדף (אחרי עריכה). מה שהעימוד הקודם הוסיף לדף מוסר קודם */
     if(QS.get('pm')==='1')window.__prnRerun=function(){
       [].forEach.call(document.querySelectorAll('style[data-prnrun]'),function(x){x.remove()});
       ['prnout','prnmeas','prnsq'].forEach(function(id){var e=document.getElementById(id);if(e)e.remove()});
       return runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};throw e})};
+    /* פרומפט 86: כישלון אינו שתיקה - פס ההתקדמות אומר מה קרה ומה לעשות, וההדפסה נרשמת "נכשלה" */
+    var prnFail=function(msg){prnProgEnd('ההדפסה לא הצליחה',msg+'. אפשר לסגור את החלון ולנסות שוב בעוד רגע; אם זה חוזר - לנסות טווח קטן יותר (דף או עמוד).',true);
+      var L0=window.__prnLog;if(L0&&L0.state==='start'){L0.state='error';L0.err=String(msg).slice(0,150);L0.secs=Math.round(performance.now()/100)/10;prnPost('/prn/log',L0,6000)}};
     var go2=function(){setTimeout(function(){runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};
+      prnFail(String(e&&e.message||e));
       try{console.error('[print] '+e)}catch(x){}})},100)};
     if(document.readyState==='complete')go();else window.addEventListener('load',go);
   }
@@ -2089,7 +2234,8 @@
           '<div class="pbox" role="dialog" aria-modal="true" aria-label="הדפסה ל-PDF">'+
           '<h2>הדפסה (שני טורים)</h2>'+
           '<div class="pr" id="prn-type">'+
-            '<label><input type="radio" name="prt" value="all">מסכת שלמה</label>'+
+            /* פרומפט 86: מבקר - פרק אחד לכל היותר. "מסכת שלמה" רק למנהל */
+            (ADM?'<label><input type="radio" name="prt" value="all">מסכת שלמה</label>':'')+
             '<label><input type="radio" name="prt" value="perek">'+(ADM?'פרק':'פרק שלם')+'</label>'+
             '<label><input type="radio" name="prt" value="daf">דף אחד (שני עמודיו)</label>'+
             '<label><input type="radio" name="prt" value="amud">עמוד אחד</label>'+
@@ -2111,6 +2257,7 @@
             '<div class="pnote" id="prn-ln" hidden>להדפיס על A4 לרוחב, דו-צדדי, היפוך בצד הקצר, בגודל 100%; לקפל באמצע ולהדק.</div>':'')+
           '<div class="pnote" id="prn-tn"></div>'+
           '<div class="pcnt" id="prn-cnt"></div>'+
+          (ADM?'':'<div class="pnote" id="prn-day"></div>')+
           '<div class="pbar" id="prn-bar"><i></i></div>'+
           '<div class="perr" id="prn-err" hidden></div>'+
           '<div class="pnote">"הדפס" פותח את העמודים בחלון חדש ואת חלון ההדפסה של הדפדפן. שם בוחרים מדפסת, או "שמירה כ-PDF".</div>'+
@@ -2152,7 +2299,8 @@
       var r=PRD.querySelector('input[name=prt][value=perek]');if(r)r.checked=true;
       var d=document.getElementById('prn-dup');if(d)d.checked=false;
       prnSync()};
-    function prnClose(){if(PRD)PRD.classList.remove('open');if(PRSEL.xhr){try{PRSEL.xhr.abort()}catch(e){}}}
+    /* פרומפט 86: סגירת החלון עוצרת כל עבודה פתוחה (הבקשה לשירות ההפקה, וטיימר שטרם רץ) */
+    function prnClose(){if(PRD)PRD.classList.remove('open');if(PRSEL.xhr){try{PRSEL.xhr.abort()}catch(e){}PRSEL.xhr=null}clearTimeout(DRYT)}
     function prnFill(){
       var tp=textPages(),dafs=[],seen={};
       tp.forEach(function(i){var q=dafParts(D.pages[i].daf);if(q&&!seen[q.base]){seen[q.base]=1;dafs.push(q.base)}});
@@ -2227,10 +2375,20 @@
         err.textContent=(a>-1&&b>-1&&b<a)?'סוף הטווח צריך להיות אחרי תחילתו':'הדף שנבחר אינו במסכת';err.hidden=false;return}
       /* פרומפט 31: הדפסת פרק (r.pk) היא תמיד פרק אחד בדיוק - המנוע מדפיס רק את יחידות הפרק. בלי החריג, פרק שנפתח
          בדף שמשותף לפרק הקודם (שבת פרק ב, יט:) נחסם למבקר, כי הדף הראשון בתווית שייך לפרק הקודם */
-      if(false&&!isAdm()&&!r.pk){   /* פרומפט 51: ההדפסה בדפדפן, בלי שרת - אין עוד סיבה להגביל לפרק אחד */
-        var k0=perekKey(D.pages[a]),multi=false;
-        for(var j=a;j<=b;j++)if(perekKey(D.pages[j])!==k0){multi=true;break}
-        if(multi){cnt.textContent='';go.disabled=true;err.textContent=ONE_MSG;err.hidden=false;return}}
+      /* פרומפט 86 (23.11.2026): ההגבלה חוזרת - מבקר מדפיס פרק אחד לכל היותר (טווח שחוצה פרק נחסם כאן ובדף ההדפסה עצמו),
+         ופרק אחד ביום. (פרומפט 51 כיבה אותה כשההדפסה עברה לדפדפן) */
+      var vpn=0;
+      if(!isAdm()){
+        if(r.t==='all'){cnt.textContent='';go.disabled=true;err.textContent=ONE_MSG;err.hidden=false;return}
+        if(!r.pk){var k0=perekKey(D.pages[a]),multi=false;
+          for(var j=a;j<=b;j++)if(perekKey(D.pages[j])!==k0){multi=true;break}
+          if(multi){cnt.textContent='';go.disabled=true;err.textContent=ONE_MSG;err.hidden=false;return}}
+        vpn=perekNum(r.pk||perekKey(D.pages[a]));
+        var dayEl=document.getElementById('prn-day'),loc=null;try{loc=JSON.parse(lsGet('lg-prn-day','')||'null')}catch(e){}
+        var today=loc&&loc.d===ilDay()&&loc.k&&loc.k.split('|')[0]===SLUG?+loc.k.split('|')[1]:0;
+        var otherM=loc&&loc.d===ilDay()&&loc.k&&loc.k.split('|')[0]!==SLUG;
+        if(dayEl)dayEl.textContent=(today||otherM)?'היום כבר הודפס פרק'+(otherM?' במסכת אחרת':'')+'. אפשר להדפיס אותו שוב; מחר אפשר להדפיס פרק נוסף.':'ניתן להדפיס פרק אחד ביום.';
+        if((today&&vpn&&today!==vpn)||otherM){cnt.textContent='';go.disabled=true;err.textContent=PRN_MSG;err.hidden=false;return}}
       go.disabled=false;
       var inR={};for(var i=a;i<=b;i++)inR[D.pages[i].daf]=1;
       /* פרומפט 31: בהדפסת פרק - כל התוספות שה-perek שלהן הוא הפרק הזה (ולא לפי הדף) */
@@ -2240,12 +2398,12 @@
       tosY.disabled=!n;tl.style.opacity=n?'':'.55';
       if(!n){tosN.checked=true;tn.textContent="תוס' עדיין לא נכתבו לדפים אלה"}
       else tn.textContent='בטווח הזה '+n+' תוספות';
-      cnt.textContent='מחשב את מספר העמודים...';
+      /* פרומפט 86: אין עימוד לפני "הדפס". עד כאן כל פתיחה ושינוי בחלון טענו במסגרת נסתרת את כל דף המסכת מחדש והריצו את
+         כל המנוע (דקות בפרק עם תוס'), רק כדי לכתוב את מספר העמודים - והמסגרת המשיכה לעמד ברקע גם אחרי "הדפס". עכשיו:
+         הערכה מיידית מן הנתונים (אורך הטקסט והתוס' בטווח) */
       clearTimeout(DRYT);
-      DRYT=setTimeout(function(){prnDry(r).then(function(rep){
-        if(rep&&rep.pages)cnt.textContent='מספר העמודים הצפוי: '+rep.pages.length;
-        else cnt.textContent='';
-      }).catch(function(){cnt.textContent=''})},350)}
+      var est=prnEst(a,b,rpn,tosOn());
+      cnt.textContent=est?'בערך '+est+(est===1?' עמוד':' עמודים'):''}
     function tosOn(){var y=document.getElementById('prn-tos-y');return !!(y&&y.checked&&!y.disabled)}
     function prnLay(){if(!isAdm())return 'a4';if(PRD&&PRD.querySelector('input[name=prpaper][value=b5]:checked'))return 'a4';var x=PRD&&PRD.querySelector('input[name=prlay]:checked');return x?x.value:'a4'}
     /* ---- פריסה לחוברת / שניים בעמוד (6.11.2026, למנהל) ----
@@ -2254,7 +2412,8 @@
     function prnLib(){
       if(window.PDFLib)return Promise.resolve(window.PDFLib);
       return new Promise(function(ok,no){var sc=document.createElement('script');
-        sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js';
+        /* פרומפט 86 (נטפרי): עותק מקומי תחת leokmei.com - בלי סקריפט מדומיין חיצוני */
+        sc.src='pdf-lib.min.js';
         sc.onload=function(){window.PDFLib?ok(window.PDFLib):no(new Error('ספריית החוברת לא נטענה'))};
         sc.onerror=function(){no(new Error('ספריית החוברת לא נטענה'))};document.head.appendChild(sc)})}
     /* סדר העמודים. n = מספר העמודים; מחזיר רשימת צדדים, לכל צד [שמאל, ימין] (מספרי עמוד מ-1, 0 = ריק).
@@ -2279,23 +2438,7 @@
           var w=e.width*sc,h=e.height*sc;
           pg.drawPage(e,{x:side*HW+(HW-w)/2,y:(SH-h)/2,width:w,height:h})})});
       return await out.save()};
-    var DRYFR=null;
-    function prnDry(r){
-      return new Promise(function(ok,no){
-        var key=prnQuery(r).toString();
-        if(DRYFR){DRYFR.remove();DRYFR=null}
-        var f=document.createElement('iframe');
-        f.style.cssText='position:fixed;left:0;top:0;width:794px;height:1123px;visibility:hidden;border:0;pointer-events:none';
-        f.setAttribute('aria-hidden','true');
-        f.src=location.pathname.split('/').pop()+'?'+key+'&dry=1';
-        DRYFR=f;document.body.appendChild(f);
-        var t0=Date.now();
-        var iv=setInterval(function(){
-          if(DRYFR!==f){clearInterval(iv);return no()}
-          try{var P=f.contentWindow.__PRN;
-            if(P&&P.state==='done'){clearInterval(iv);var rep=P.report;f.remove();DRYFR=null;ok(rep)}
-            else if(P&&P.state==='error'){clearInterval(iv);f.remove();DRYFR=null;no()}}catch(e){}
-          if(Date.now()-t0>90000){clearInterval(iv);f.remove();DRYFR=null;no()}},300)})}
+    /* פרומפט 86: prnDry (מסגרת נסתרת שעימדה את כל הטווח לחישוב מספר העמודים) בוטל - ראה prnEst */
     /* פרומפט 55: מוגדל תמיד, חוץ ממנהל שבחר במפורש "רגיל (קטן)" */
     function prnBig(){return true}   /* פרומפט 56: גודל אחד */
     /* פרומפט 51: הדפסה בדפדפן. אותו מנוע ואותם כללי עימוד, בלי שירות ההפקה ובלי משימת ענן */
@@ -2323,6 +2466,11 @@
       go.disabled=true;bar.style.display='block';err.hidden=true;
       go.textContent='מכין את הקובץ...';
       var t0=Date.now(),iv=setInterval(function(){go.textContent='מכין את הקובץ... '+Math.round((Date.now()-t0)/1000)+' שניות'},1000);
+      /* פרומפט 86: גם ההפקה בשרת נרשמת במונה ההדפסות */
+      var lgId='s'+prnRnd(13),lgB={id:lgId,slug:SLUG,from:r.from,to:r.to,all:r.t==='all'?1:0,pk:r.pk?String(perekNum(r.pk)||''):'',tos:tosOn()?1:0,
+        paper:(PRD&&PRD.querySelector('input[name=prpaper][value=b5]:checked'))?'b5':(prnLay()!=='a4'?prnLay():'a4'),kind:'server',dev:prnDev(),did:prnDid(),state:'start'};
+      prnPost('/prn/log',lgB,6000);
+      var lgEnd=function(st,e){lgB.state=st;lgB.secs=Math.round((Date.now()-t0)/100)/10;if(e)lgB.err=String(e).slice(0,150);prnPost('/prn/log',lgB,6000)};
       var ctrl=new AbortController();PRSEL.xhr={abort:function(){ctrl.abort()}};
       /* 7.11.2026 - ההדפסה לא כללה עריכה שפורסמה זה עתה. השורש: שירות ההפקה שומר כל PDF שהפיק (14 יום) לפי
          גרסת דף המסכת בלבד. עריכה שפורסמה אינה משנה את הדף עד הבנייה הבאה (5 עד 30 דקות ויותר), ולכן חזר
@@ -2356,9 +2504,9 @@
         fname=fname.replace(/\.pdf$/,lay==='book'?' - חוברת A5.pdf':' - שניים בעמוד.pdf');
         return blob.arrayBuffer().then(function(b){return prnImpose(b,lay)}).then(function(u8){return new Blob([u8],{type:'application/pdf'})})}).then(function(blob){
         var a=document.createElement('a'),u=URL.createObjectURL(blob);
-        a.href=u;a.download=fname;document.body.appendChild(a);a.click();
+        a.href=u;a.download=fname;document.body.appendChild(a);a.click();lgEnd('done');
         setTimeout(function(){URL.revokeObjectURL(u);a.remove()},4000)})
-      .catch(function(e){if(e&&e.name==='AbortError')return;err.textContent='ההפקה לא הצליחה: '+((e&&e.message)||'שירות ההפקה אינו זמין כרגע')+'. אפשר לנסות שוב בעוד רגע.';err.hidden=false})
+      .catch(function(e){if(e&&e.name==='AbortError'){lgEnd('cancel');return}lgEnd('error',e&&e.message);err.textContent='ההפקה לא הצליחה: '+((e&&e.message)||'שירות ההפקה אינו זמין כרגע')+'. אפשר לנסות שוב בעוד רגע.';err.hidden=false})
       .then(function(){clearInterval(iv);bar.style.display='none';go.disabled=false;go.textContent='הפק קובץ PDF'})}
   }
   })();

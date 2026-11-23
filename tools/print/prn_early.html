@@ -1,0 +1,12 @@
+<script>/* פרומפט 86: פס ההתקדמות של חלון ההדפסה. נוצר מיד, לפני טעינת נתוני המסכת (כמה מגה), כדי שהלומד לא יראה מסך ריק או קפוא. המנוע (print_engine.js) מעדכן אותו; בהדפסה עצמה הוא מוסתר */
+(function(){var q=location.search;if(!/[?&]print=1(&|$)/.test(q)||/[?&](pm|dry)=1(&|$)/.test(q))return;
+var s=document.createElement('style');s.textContent='#prnprog{position:fixed;inset:0;z-index:2147483000;background:#fbf8f1;display:flex;align-items:center;justify-content:center;direction:rtl;font-family:Vilna,Frank,"Frank Ruhl Libre",serif;color:#1d1a16}'+
+'#prnprog .pb{width:min(32em,90vw);text-align:center}#prnprog h1{font-size:28px;margin:0 0 .5em;color:#7a5a14;font-weight:700}'+
+'#prnprog .ps{font-size:22px;min-height:1.6em}#prnprog .pbar{height:18px;border-radius:9px;background:#e8e0cc;overflow:hidden;margin:.8em 0;border:1px solid #d8ccae}'+
+'#prnprog .pbar i{display:block;height:100%;width:3%;background:#c9a24a;transition:width .4s}#prnprog .pt{font-size:17px;color:#7a6f58}'+
+'#prnprog .pe{color:#a83c2f;font-size:21px;margin-top:.6em;line-height:1.5}@media print{#prnprog{display:none!important}}';
+document.head.appendChild(s);
+var d=document.createElement('div');d.id='prnprog';d.setAttribute('role','status');d.setAttribute('aria-live','polite');
+d.innerHTML='<div class="pb"><h1>מכין את ההדפסה</h1><div class="ps" id="prnps">טוען את הפרק...</div><div class="pbar"><i id="prnpi"></i></div><div class="pt" id="prnpt"></div><div class="pe" id="prnpe" hidden></div></div>';
+document.body.appendChild(d);var t0=Date.now();
+window.__prnTick=setInterval(function(){var e=document.getElementById('prnpt');if(e)e.textContent='עברו '+Math.round((Date.now()-t0)/1000)+' שניות'},1000)})();</script>

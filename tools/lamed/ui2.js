@@ -551,7 +551,7 @@
     html += table('זמן ממוצע לעמוד (הארוכים ביותר: מועמדים להידוק)', data.slow.slice(0, 12).map(function (x) { return { l: LG.nameOf(x.s) + ' ' + x.d, v: LG.dur(x.avg) + ' (' + LG.nf(x.n) + ' קריאות)' }; }));
     html += table('עדיפויות עריכה: נלמדים הרבה וטרם נערכו', data.topPages.filter(function (x) { return x.unedited; }).slice(0, 12).map(function (x) { return { l: LG.nameOf(x.s) + ' ' + x.d, v: LG.nf(x.reads) + ' קריאות' }; }));
     box.innerHTML = html;
-    box.insertAdjacentHTML('afterbegin', '<div class="lm-card"><a class="lm-btn pri" href="admin-quiz.html">הנבחנים: מי נבחן, על מה ואיך</a></div>');
+    box.insertAdjacentHTML('afterbegin', '<div class="lm-card"><a class="lm-btn pri" href="admin-quiz.html">הנבחנים: מי נבחן, על מה ואיך</a> <a class="lm-btn" href="admin-prints.html">נתוני הדפסות</a></div>');
     if (!window.__lmDemo && LG.quiz && LG.quiz.adminDrafts) LG.quiz.adminDrafts(box, key);
   };
 
@@ -638,6 +638,76 @@
       box.innerHTML = html;
       box.querySelectorAll('tr[data-p]').forEach(function (tr) { tr.onclick = function (e) { e.preventDefault(); st.pid = tr.getAttribute('data-p'); go(); scrollTo(0, 0); }; });
       box.querySelectorAll('tr[data-s]').forEach(function (tr) { tr.onclick = function (e) { e.preventDefault(); st.s = tr.getAttribute('data-s'); go(); scrollTo(0, 0); }; });
+    }
+    go();
+  };
+  /* ---------------------------------------------------------- נתוני הדפסות (מנהל, פרומפט 86, 23.11.2026)
+     כל הדפסה של פרק או דף (בדפדפן, או "הפק קובץ PDF בשרת"): כמה, מה, מתי (תאריך עברי), מאיזו עיר, והאם הושלמה.
+     וכמה ניסיונות נחסמו במגבלת "פרק אחד ביום" של המבקרים. הכתובת עצמה אינה נשמרת בשרת. */
+  UI.prints = async function (root) {
+    var wrap = el('main', 'lm-wrap pr-wrap'); wrap.innerHTML = '<h1 class="lm-t">נתוני הדפסות</h1><p class="lm-sub">כל ההדפסות באתר: מה הודפס, מתי, מאיפה, והאם הושלמה. למנהל בלבד.</p><div id="pr-f"></div><div id="pr-b">טוען...</div>';
+    root.appendChild(wrap);
+    var box = $('#pr-b', wrap), fbox = $('#pr-f', wrap);
+    var key = ''; try { key = localStorage.getItem('lg-adm') || ''; } catch (e) { }
+    if (!key) { box.innerHTML = '<div class="lm-card"><p>דף זה למנהל בלבד. היכנס קודם ב<a href="admin-lamdim.html">דף המנהל</a> (מילת המנהל), וחזור לכאן.</p></div>'; return; }
+    var st = { days: 30 };
+    try { var h = new URLSearchParams(location.hash.slice(1)); st.days = +h.get('d') || 30; } catch (e) { }
+    var DEV = { m: 'טלפון', t: 'טאבלט', d: 'מחשב' }, STATE = { done: 'הושלמה', cancel: 'בוטלה', error: 'נכשלה', start: 'לא הסתיימה', blocked: 'נחסמה' };
+    var CC = { IL: 'ישראל', US: 'ארה"ב', GB: 'בריטניה', FR: 'צרפת', BE: 'בלגיה', CA: 'קנדה', AR: 'ארגנטינה', BR: 'ברזיל', MX: 'מקסיקו', AU: 'אוסטרליה', ZA: 'דרום אפריקה', DE: 'גרמניה', CH: 'שווייץ', AT: 'אוסטריה', NL: 'הולנד', UA: 'אוקראינה', RU: 'רוסיה', IT: 'איטליה', ES: 'ספרד', PA: 'פנמה' };
+    function when(t) { try { return HD.dateTime(t); } catch (e) { return ''; } }
+    function dayHe(s) { try { return HD.ymd(s); } catch (e) { return ''; } }
+    function dayShort(s) { try { return HD.ymdShort(s); } catch (e) { return ''; } }
+    function place(r) { return [r.city, CC[r.country] || r.country].filter(Boolean).join(', ') || 'לא ידוע'; }
+    function perek(pk) { var a = String(pk || '').split(',').filter(Boolean); return a.length ? 'פרק ' + a.map(function (n) { if (!/^\d+$/.test(n)) return n; try { return HD.q(+n); } catch (e) { return n; } }).join(', ') : ''; }
+    function rng(r) { return r.rng === 'all' ? 'מסכת שלמה' : String(r.rng || ''); }
+    function filters() {
+      fbox.innerHTML = '<div class="lm-card nv-filt"><div class="lm-row">' +
+        '<label>תקופה <select id="pr-d">' + [[1, 'היום'], [7, 'שבוע'], [30, 'חודש'], [90, 'שלושה חודשים'], [365, 'שנה']].map(function (x) { return '<option value="' + x[0] + '"' + (st.days === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></label>' +
+        '<button type="button" class="lm-btn small ghost" id="pr-csv">הורדה לאקסל (CSV)</button></div></div>';
+      $('#pr-d', fbox).onchange = function () { st.days = +this.value; go(); };
+      $('#pr-csv', fbox).onclick = csv;
+    }
+    var last = null;
+    function csv() {
+      if (!last) return;
+      var rows = [['מתי', 'מסכת', 'פרק', 'טווח', 'תוספות', 'נייר', 'מי', 'סוג', 'מכשיר', 'מקום', 'מצב', 'שניות עימוד']];
+      (last.recent || []).forEach(function (r) { rows.push([when(r.t), LG.nameOf(r.slug), perek(r.pk), rng(r), r.tos ? 'כן' : 'לא', String(r.paper || '').toUpperCase(), r.adm ? 'מנהל' : 'מבקר', r.kind === 'server' ? 'PDF בשרת' : 'דפדפן', DEV[r.dev] || '', place(r), STATE[r.state] || r.state, r.secs ? Math.round(r.secs) : '']); });
+      var txt = '﻿' + rows.map(function (r) { return r.map(function (c) { c = String(c == null ? '' : c); return /[",\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(','); }).join('\n');
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/csv;charset=utf-8' })); a.download = 'hadpasot.csv'; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); }, 1000);
+    }
+    async function go() {
+      try { history.replaceState(null, '', '#d=' + st.days); } catch (e) { }
+      filters(); box.innerHTML = '<div class="lm-card">טוען...</div>';
+      var j;
+      try { j = await LG.sync.api('/prn/stats?days=' + st.days, { method: 'GET', headers: { 'x-admin-key': key } }); }
+      catch (e) {
+        if (/הרשאה/.test(e.message || '')) { box.innerHTML = '<div class="lm-card"><p>המפתח השמור אינו תקף במכשיר הזה. היכנס מחדש ב<a href="admin-lamdim.html">דף המנהל</a>.</p></div>'; return; }
+        box.innerHTML = '<div class="lm-card"><p>לא ניתן לטעון כרגע (' + E(e.message || '') + ').</p></div>'; return;
+      }
+      last = j;
+      var t = j.totals || {}, blk = (j.blocked || []).reduce(function (s, d) { return s + (d.n || 0); }, 0), html = '';
+      html += '<div class="lm-card"><div class="lm-stats">' +
+        '<div class="lm-stat"><b>' + LG.nf(t.n || 0) + '</b><span>הדפסות</span></div>' +
+        '<div class="lm-stat"><b>' + LG.nf(t.done || 0) + '</b><span>הושלמו</span></div>' +
+        '<div class="lm-stat"><b>' + LG.nf(t.devices || 0) + '</b><span>מכשירים</span></div>' +
+        '<div class="lm-stat"><b>' + LG.nf(blk) + '</b><span>נחסמו (פרק ביום)</span></div>' +
+        '<div class="lm-stat"><b>' + (t.avgSecs ? Math.round(t.avgSecs) : '-') + '</b><span>שניות עימוד בממוצע</span></div></div>' +
+        '<p class="lm-note">מתוכן: ' + LG.nf(t.adm || 0) + ' של מנהל, ' + LG.nf(t.tos || 0) + ' עם תוספות, ' + LG.nf(t.server || 0) + ' קובצי PDF בשרת, ' + LG.nf(t.cancel || 0) + ' בוטלו, ' + LG.nf(t.err || 0) + ' נכשלו.</p></div>';
+      var bd = j.byDay || [];
+      if (bd.length) {
+        var bk = {}; (j.blocked || []).forEach(function (d) { bk[d.day] = d.n; });
+        var mx = Math.max.apply(null, bd.map(function (d) { return d.n; }).concat([1]));
+        html += '<div class="lm-card"><h3>הדפסות בכל יום</h3><div class="nv-days">' + bd.map(function (d) { return '<div class="nv-day" title="' + E(dayHe(d.day)) + ': ' + d.n + ' הדפסות, ' + (d.done || 0) + ' הושלמו' + (bk[d.day] ? ', ' + bk[d.day] + ' נחסמו' : '') + '"><i style="height:' + Math.max(3, Math.round(100 * d.n / mx)) + '%"></i><small>' + E(dayShort(d.day).split(' ')[0]) + '</small></div>'; }).join('') + '</div></div>';
+      }
+      function list(title, rows) { return '<div class="lm-card"><h3>' + title + '</h3>' + (rows.length ? '<ul class="lm-list">' + rows.map(function (r) { return '<li><span class="lm-grow">' + E(r.l) + '</span><span>' + E(r.v) + '</span></li>'; }).join('') + '</ul>' : '<p class="lm-note">עוד אין נתונים.</p>') + '</div>'; }
+      var bm = {}; (j.bySlug || []).forEach(function (r) { (bm[r.slug] = bm[r.slug] || { n: 0, done: 0 }); bm[r.slug].n += r.n; bm[r.slug].done += r.done || 0; });
+      html += list('לפי מסכת', Object.keys(bm).sort(function (a, b) { return bm[b].n - bm[a].n; }).map(function (s) { return { l: LG.nameOf(s), v: LG.nf(bm[s].n) + ' הדפסות · ' + LG.nf(bm[s].done) + ' הושלמו' }; }));
+      html += list('לפי פרק', (j.bySlug || []).slice(0, 40).map(function (r) { return { l: LG.nameOf(r.slug) + (r.pk ? ' · ' + perek(r.pk) : ''), v: LG.nf(r.n) + ' הדפסות' + (r.tos ? ' · ' + r.tos + ' עם תוספות' : '') }; }));
+      html += list('לפי עיר', (j.byCity || []).slice(0, 30).map(function (r) { return { l: place(r), v: LG.nf(r.n) + ' הדפסות' }; }));
+      html += '<div class="lm-card"><h3>ההדפסות האחרונות</h3><div class="nv-tw"><table class="nv-t"><thead><tr><th>מתי</th><th>מה</th><th>תוספות</th><th>נייר</th><th>מי</th><th>מכשיר</th><th>מקום</th><th>מצב</th><th>עימוד</th></tr></thead><tbody>' +
+        (j.recent || []).map(function (r) { return '<tr' + (r.state === 'blocked' ? ' class="pr-blk"' : '') + '><td>' + E(when(r.t)) + '</td><td>' + E(LG.nameOf(r.slug)) + ' <small>' + E([perek(r.pk), rng(r)].filter(Boolean).join(' · ')) + '</small></td><td>' + (r.tos ? 'כן' : '') + '</td><td>' + E(String(r.paper || '').toUpperCase()) + '</td><td>' + (r.adm ? 'מנהל' : 'מבקר') + (r.kind === 'server' ? ' <small>PDF בשרת</small>' : '') + '</td><td>' + E(DEV[r.dev] || '') + '</td><td>' + E(place(r)) + '</td><td>' + E(STATE[r.state] || r.state || '') + '</td><td>' + (r.secs ? Math.round(r.secs) + ' שנ\'' : '') + '</td></tr>'; }).join('') +
+        '</tbody></table></div>' + ((j.recent || []).length ? '' : '<p class="lm-note">עוד לא נרשמה הדפסה בתקופה הזאת. הרישום התחיל בי"ג בכסלו תשפ"ז.</p>') + '</div>';
+      box.innerHTML = html;
     }
     go();
   };

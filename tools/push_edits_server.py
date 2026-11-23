@@ -39,6 +39,32 @@ def main():
         slugs = [s for s in slugs if not s.startswith('auto:')]
         if not slugs:
             sys.exit(1 if bad else 0)
+    # פרומפט 87 (23.11.2026): "p87:<מסכת>" - רק רשומות פרומפט 87 שבמאגר (שדה p87), כעריכות מנהל רגילות.
+    # רשומה על שורה שנוצרה בפיצול בשרת אינה נמצאת בבנייה, ולכן חייבת להגיע ל-/live. מפתחותיהן קפואים וחדשים - אינן דורסות דבר.
+    p87s = [s[4:] for s in slugs if s.startswith('p87:')]
+    if p87s:
+        for slug in p87s:
+            rep = json.load(open(os.path.join(HERE, 'data', 'edits', slug + '.json'), encoding='utf-8'))
+            eds = [e for e in rep.get('edits') or [] if e.get('p87')]
+            if not eds:
+                continue
+            body = json.dumps({'slug': slug, 'edits': eds, 'sty': rep.get('sty')}, ensure_ascii=False).encode('utf-8')
+            req = urllib.request.Request(API + '/edits', data=body, method='PUT', headers={
+                'content-type': 'application/json; charset=utf-8', 'x-admin-key': key,
+                'user-agent': 'Mozilla/5.0 leokmei-push/1.0'})
+            try:
+                with urllib.request.urlopen(req, timeout=180) as r:
+                    d = json.loads(r.read().decode('utf-8'))
+                print(slug, 'p87 OK', 'sent', len(eds), 'server', len((d.get('doc') or {}).get('edits') or []))
+            except urllib.error.HTTPError as e:
+                bad += 1
+                print(slug, 'p87 HTTP', e.code, e.read().decode('utf-8', 'replace')[:1000])
+            except Exception as e:
+                bad += 1
+                print(slug, 'p87 FAIL', type(e).__name__, e)
+        slugs = [s for s in slugs if not s.startswith('p87:')]
+        if not slugs:
+            sys.exit(1 if bad else 0)
     keeps = [s[5:] for s in slugs if s.startswith('keep:')]
     if keeps:
         sys.path.insert(0, os.path.join(HERE, 'tools', 'overflow'))

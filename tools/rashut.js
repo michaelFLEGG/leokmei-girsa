@@ -7,7 +7,11 @@
       אותו קטע שזוהה בבנייה (שלד האותיות), כדי שתיקון חי בדף לא יקבל קישור של קטע אחר.
    ב. "הזוהר על סוגיא זו" - סמל קטן ליד ציון הדף שיש עליו ציוני גמרא בזוהר (נ"ך המפורש, /links/zg/<מסכת>.json).
    ג. כפתור קבוע לנ"ך המפורש בסרגל העליון, רצועה בעמוד הבית, והצעה עדינה כשעמוד נרשם כנלמד.
-   ד. ספירת לחיצות בלוח נתוני הגלישה הקיים (ev "רשת|...", מונה השיתופים). */
+   ד. ספירת לחיצות בלוח נתוני הגלישה הקיים (ev "רשת|...", מונה השיתופים).
+   ה. פרומפט 82 (23.11.2026): "תנן התם" שמוביל למקום. כשהגמרא מביאה משנה או ברייתא ממקום אחר בש"ס, לשון ההבאה
+      (תנן, דתנן, כדתניא, והתנן...) מסומנת בקו נקודות עדין, ובלחיצה החלונית מראה את המקום ואת תחילתו, וכפתור
+      למקום בלאוקמי גירסא של המסכת השנייה. הנתונים: /rashut/shas-<מסכת>.json (tools/shas_links.py, קישור ודאי בלבד).
+      בעריכה ובהדפסה - לא מופיע. */
 (function () {
   'use strict';
   var W = window, D = document;
@@ -101,7 +105,11 @@
     '  padding:9px 14px;font:15px Frank,serif;box-shadow:0 8px 24px rgba(0,0,0,.3);direction:rtl;max-width:92vw}',
     '.rs-sug a{color:#e9c35a;margin-inline-start:8px}',
     '.rs-sug button{background:none;border:0;color:#c9bd98;cursor:pointer;font-size:16px;margin-inline-start:6px}',
-    '@media print{.rs-zg,#rsPeek,.rs-sis,.rs-sug{display:none!important}}'
+    '.rs-sh{cursor:pointer;border-bottom:1px dotted rgba(143,106,30,.75);border-radius:2px;transition:background .15s}',
+    '.rs-sh:hover{background:rgba(209,162,58,.16)}',
+    '#rsPeek .rs-q{font-size:17px;line-height:1.6;margin:4px 0 12px;color:#2b2620}',
+    '#rsPeek .rs-alt{display:block;font-size:15px;color:#173a58;margin-top:6px}',
+    '@media print{.rs-zg,#rsPeek,.rs-sis,.rs-sug{display:none!important}.rs-sh{border:0!important;background:none!important}}'
   ].join('\n');
   var st = D.createElement('style'); st.textContent = css; D.head.appendChild(st);
 
@@ -114,7 +122,7 @@
       D.body.appendChild(peek);
       peek.querySelector('.rs-x').onclick = closePeek;
       D.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePeek(); });
-      D.addEventListener('mousedown', function (e) { if (peek.classList.contains('open') && !peek.contains(e.target) && !(e.target.closest && e.target.closest('.rs-ps,.rs-zg'))) closePeek(); });
+      D.addEventListener('mousedown', function (e) { if (peek.classList.contains('open') && !peek.contains(e.target) && !(e.target.closest && e.target.closest('.rs-ps,.rs-zg,.rs-sh'))) closePeek(); });
     }
     peek.querySelector('.rs-h b').textContent = title;
     peek.querySelector('.rs-b').innerHTML = body;
@@ -201,10 +209,61 @@
       dm.insertAdjacentElement('afterend', b);
     });
   }
+  /* ה. "תנן התם": עטיפת לשון ההבאה בטקסט (span.rs-sh). בעריכה - מוסר, והעורך ממילא מנקה תגיות שאינן שלו */
+  var SH = null;
+  var SHKIND = { m: 'משנה', b: 'ברייתא' };
+  function shUnwrap() {
+    Array.prototype.forEach.call(D.querySelectorAll('#flow .rs-sh'), function (sp) {
+      var t = D.createTextNode(sp.textContent); sp.parentNode.replaceChild(t, sp); if (t.parentNode) t.parentNode.normalize();
+    });
+  }
+  function shWrap(el, word) {
+    if (!el || el.querySelector('.rs-sh')) return null;
+    var tw = D.createTreeWalker(el, NodeFilter.SHOW_TEXT, null), n;
+    var re = new RegExp('(^|[^\u05d0-\u05ea])(' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')(?![\u05d0-\u05ea])');
+    while ((n = tw.nextNode())) {
+      if (n.parentNode && n.parentNode.closest && n.parentNode.closest('.srcb,.mlabel,.bkx,sup')) continue;
+      var m = re.exec(n.nodeValue.replace(/[\u0591-\u05C7]/g, function () { return '\u0000'; }).replace(/\u0000/g, ''));
+      if (!m) continue;
+      /* מיקום בטקסט המקורי (עם ניקוד): ספירת אותיות שאינן ניקוד */
+      var raw = n.nodeValue, want = m.index + m[1].length, i = 0, k = 0;
+      while (i < raw.length && k < want) { if (!/[\u0591-\u05C7]/.test(raw[i])) k++; i++; }
+      var j = i, c = 0;
+      while (j < raw.length && c < word.length) { if (!/[\u0591-\u05C7]/.test(raw[j])) c++; j++; }
+      var r = D.createRange(); r.setStart(n, i); r.setEnd(n, j);
+      var sp = D.createElement('span'); sp.className = 'rs-sh';
+      try { r.surroundContents(sp); } catch (e) { return null; }
+      return sp;
+    }
+    return null;
+  }
+  function shMark() {
+    if (!SH) return;
+    if (editing()) { shUnwrap(); return; }
+    Object.keys(SH).forEach(function (uid) {
+      var row = D.getElementById('u' + uid); if (!row || row.querySelector('.rs-sh')) return;
+      var m = SH[uid], el = m[0] === 'a' ? (row.querySelector('.rail .win') || row.querySelector('.anchor')) : row.querySelector('p[data-ek="u' + uid + '.' + m[0] + '"]');
+      if (!el && m[0] !== 'a') el = row.querySelectorAll('.main > p')[m[0] - 1];
+      var sp = shWrap(el, m[1]); if (!sp) return;
+      var t = m[3][0]; sp.setAttribute('data-sh', uid);
+      sp.title = 'מסכת ' + t[1] + ' ' + t[2];
+    });
+  }
+  function shUrl(t) { return '/' + t[0] + '.html#u=' + t[3] + '&daf=' + encodeURIComponent(t[2]); }
+  function showSh(uid) {
+    var m = SH && SH[uid]; if (!m) return;
+    count('תנן-התם');
+    var t = m[3][0];
+    var body = '<p class="rs-dim">' + (SHKIND[t[4]] ? 'ה' + SHKIND[t[4]] + ' שהגמרא מביאה כאן, במקומה' : 'המקום שממנו הגמרא מביאה כאן') + ':</p>' +
+      '<p class="rs-q">' + esc(t[5]) + '</p>' +
+      m[3].slice(1).map(function (x) { return '<a class="rs-alt" href="' + esc(shUrl(x)) + '" data-rs="תנן-התם-נוסף">וגם: מסכת ' + esc(x[1]) + ' ' + esc(x[2]) + '</a>'; }).join('');
+    openPeek('מסכת ' + t[1] + ' ' + t[2], body, '<a class="rs-go" href="' + esc(shUrl(t)) + '" data-rs="תנן-התם-מעבר">למקום בלאוקמי גירסא</a>');
+  }
   var mt = 0;
-  function soon() { clearTimeout(mt); mt = setTimeout(mark, 120); }
+  function soon() { clearTimeout(mt); mt = setTimeout(function () { mark(); shMark(); }, 120); }
   if (isMas) {
     fetch('/rashut/' + SLUG + '.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { MAP = (j && j.u) || {}; soon(); }).catch(function () { });
+    fetch('/rashut/shas-' + SLUG + '.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { SH = (j && j.u) || {}; soon(); }).catch(function () { });
     fetch(NACH + '/links/zg/' + SLUG + '.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { ZG = (j && j.d) || null; soon(); }).catch(function () { });
     if (W.MutationObserver) new MutationObserver(soon).observe(D.getElementById('flow'), { childList: true, subtree: true });
     D.addEventListener('click', function (e) {
@@ -212,6 +271,12 @@
       if (!el || editing()) return;
       e.preventDefault(); e.stopPropagation();
       showVerse(el.getAttribute('data-rs-ref'));
+    }, true);
+    D.addEventListener('click', function (e) {
+      var el = e.target.closest && e.target.closest('.rs-sh');
+      if (!el || editing()) return;
+      e.preventDefault(); e.stopPropagation();
+      showSh(el.getAttribute('data-sh'));
     }, true);
   }
 

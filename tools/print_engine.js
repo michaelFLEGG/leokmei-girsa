@@ -1712,6 +1712,51 @@
       /* מספור מחדש של העמודים (גוף + חזרה מהירה) */
       [].slice.call(out.querySelectorAll(':scope > .pg')).forEach(function(pe,k){pe.setAttribute('data-num',k+1);var pn=pe.querySelector('.pnum');
         if(pn)pn.textContent=k+1;else if(pe.classList.contains('qrp')&&!pe.classList.contains('qrblank')){var d=document.createElement('div');d.className='pnum';d.style.bottom=prof.footer.numberFromBottomMm+'mm';d.textContent=k+1;pe.appendChild(d)}})}
+    /* ---- פרומפט 82 ב4: "מפתח עניינים" בסוף מסכת שלמה (all=1). כותרות הנושא של המסכת לפי האלף-בית, עם הדף, באותו מקור כמו
+       מפתח המושגים באתר (כותרות שנוסחן זהה בשלד - מאוחדות). נבנה מן הנתונים שבדף בזמן ההדפסה. ?mfp=0 - בלי ---- */
+    if(QS.get('all')==='1'&&QS.get('mfp')!=='0'){
+      try{
+        if(!document.getElementById('qrcss')){var stm=document.createElement('style');stm.id='qrcss';stm.textContent=QR_CSS;document.head.appendChild(stm)}
+        var stm2=document.createElement('style');stm2.textContent='.mfl{font-family:Vilna,serif;font-weight:900;font-size:11pt;border-bottom:0.5pt solid #000;margin:2.2mm 0 0.8mm;break-after:avoid}.mfl:first-child{margin-top:0}'+
+          '.mfp .qri{font-size:8.8pt}.mfp .qrt{font-weight:700}';document.head.appendChild(stm2);
+        var FINm={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+        var bareM=function(t){return String(t||'').replace(/[֑-ׇ]/g,'').replace(/[ךםןףץ]/g,function(c){return FINm[c]})};
+        var keyM=function(t){var w=bareM(t).replace(/["״][א-ת]/g,function(m){return m}).match(/[א-ת"'׳״]+/g)||[];
+          w=w.map(function(x){return /["״][א-ת]/.test(x)?x:(x.replace(/['׳]/g,'').replace(/[וי]/g,'')||x)});if(w[0]&&w[0].length>1&&/^ו/.test(bareM(t).trim()))w[0]=w[0].slice(1);return w.join(' ')};
+        var GENM={'פסק ההלכה':1,'פסק הלכה':1,'המקור לכך':1,'דעות נוספות':1,'צריכותא':1,'טעם המחלוקת':1,'טעמי המחלוקת':1,'ועד כמה':1,'בחזקת מי':1,'מקור הדין':1,'הלכה':1,'המקור':1,'מקור':1,'סיכום':1,'קושיא':1,'תירוץ':1,'עוד':1,'ועוד':1,'שאלה':1,'מעשה':1,'מעשים':1,'דרשות':1,'הסבר':1,'ביאור':1,'סיום':1,'הקדמה':1,'שיטות':1,'בירור':1,'הבהרה':1,'סייג':1,'הוכחה':1,'ראיה':1,'דין':1,'דינים':1};
+        var ents={},order=[];
+        D.pages.forEach(function(p){p.units.forEach(function(u){if(u.k!=='nose')return;
+          var t=qrPlain(qrTxt(u.a)).replace(/\s*[,.;:?!]+\s*$/,'').trim();if(!t)return;
+          if(GENM[bareM(t).replace(/[^א-ת ]/g,'').trim()])return;
+          var k=keyM(t);if(!k)return;
+          if(!ents[k]){ents[k]={t:t,d:[]};order.push(k)}
+          if(ents[k].d.indexOf(p.daf)<0)ents[k].d.push(p.daf)})});
+        var sk=function(t){return bareM(t).replace(/^ו(?=[א-ת]{2})/,'').replace(/[^א-ת ]/g,'')};
+        order.sort(function(a,b){var x=sk(ents[a].t),y=sk(ents[b].t);return x<y?-1:x>y?1:0});
+        var mb=[],lastL='';
+        order.forEach(function(k){var e=ents[k],l=sk(e.t).charAt(0);
+          if(l&&l!==lastL){mb.push('<div class="mfl">'+l+'</div>');lastL=l}
+          mb.push('<div class="qri qr-nose"><span class="qrt">'+ge(e.t)+'</span><span class="qrf">'+e.d.map(function(d){return ge(d)}).join(', ')+'</span></div>')});
+        if(mb.length){
+          var holdM=document.createElement('div');holdM.style.cssText='position:absolute;left:-3000mm;top:0';document.body.appendChild(holdM);
+          var madeM=[],bm=0,gm=0;
+          while(bm<mb.length&&gm++<60){
+            var mpg=document.createElement('section');mpg.className='pg qrp mfp';
+            mpg.innerHTML=(madeM.length?'':'<div class="qrtt" style="left:'+MG.left+'mm;right:'+(MG.right+prof.rail)+'mm;top:'+MG.top+'mm">מפתח עניינים<small>מסכת '+ge(D.masechet||'')+'</small></div>')+
+              '<div class="qrc" style="left:'+MG.left+'mm;right:'+(MG.right+prof.rail)+'mm;top:'+(MG.top+(madeM.length?0:17))+'mm;bottom:'+MG.bottom+'mm"></div>';
+            holdM.appendChild(mpg);
+            var mc=mpg.querySelector('.qrc'),mr=mc.getBoundingClientRect(),m0=bm;
+            for(;bm<mb.length;bm++){mc.insertAdjacentHTML('beforeend',mb[bm]);var me=mc.lastElementChild,mrr=me.getBoundingClientRect();
+              if(mrr.left<mr.left-1||mrr.bottom>mr.bottom+1){if(bm>m0){me.remove();break}}}
+            /* אות לא תישאר לבד בתחתית עמוד */
+            if(bm<mb.length&&mc.lastElementChild&&mc.lastElementChild.classList.contains('mfl')&&mc.children.length>1){mc.lastElementChild.remove();bm--}
+            madeM.push(mpg)}
+          if(madeM.length){var lm=madeM[madeM.length-1].querySelector('.qrc');if(lm)lm.style.columnFill='balance'}
+          madeM.forEach(function(m){out.appendChild(m)});holdM.remove();
+          var allPg=[].slice.call(out.querySelectorAll(':scope > .pg'));
+          madeM.forEach(function(m){var k=allPg.indexOf(m)+1;m.setAttribute('data-num',k);var d=document.createElement('div');d.className='pnum';d.style.bottom=prof.footer.numberFromBottomMm+'mm';d.textContent=k;m.appendChild(d)});
+          R.mafteach={entries:order.length,pages:madeM.length}}
+      }catch(e){W('מפתח עניינים: '+e.message)}}
     function qrPageNum(k){var e=ORIGPG[k-1];return e&&e.getAttribute('data-num')?+e.getAttribute('data-num'):k}
     /* ---- מסכת שלמה: שער, עמוד 2 הקבוע ותוכן עניינים (לפני גוף המסכת) ---- */
     var p2frame=null;

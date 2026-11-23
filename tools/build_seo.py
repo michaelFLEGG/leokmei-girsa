@@ -166,6 +166,9 @@ def run(site, built, slug):
             urls.append((fn, '0.8'))
     import build_static
     st_urls, mlm = build_static.run(site, built, slug)
+    # פרומפט 82: מפתח המושגים לכל הש"ס (מכותרות הנושא) - עמודים נקיים, במפה משלו
+    import mafteach
+    st_urls = list(st_urls) + mafteach.run(site, built, slug)
     write_sitemaps(site, urls, st_urls, mlm, slug)
 
 

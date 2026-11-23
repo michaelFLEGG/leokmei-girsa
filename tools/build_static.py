@@ -63,7 +63,7 @@ CSS = ('@font-face{font-family:LGVilnaXB;src:url(/fonts/vilna-xb.woff2) format("
        '@media(max-width:560px){main{margin:14px 10px 24px;width:auto;padding:16px 14px 30px}ul.dafs{columns:2}}')
 
 FOOTER = ('<footer class="sf"><a href="/">%s - קיצור התלמוד הבבלי</a> · <a href="/%s">קיצור הדף היומי</a> · '
-          '<a href="/shas.html">מפת הש"ס</a> · <a href="/about.html">אודות</a><br>'
+          '<a href="/shas.html">מפת הש"ס</a> · <a href="/mafteach/">מפתח מושגים</a> · <a href="/about.html">אודות</a><br>'
           'אתרים נוספים של המכון: <a href="%s">נ״ך המפורש - פירוש משולב על כל הנ״ך</a> · <a href="%s">ממלכת הזוהר</a></footer>') % (NAME, DAF_YOMI, NACH, ZOHAR)
 
 

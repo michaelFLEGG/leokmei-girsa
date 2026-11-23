@@ -466,6 +466,9 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
     # רשת המקומות (3.11.2026): זיהוי הפסוקים שבגמרא ומפתח הדפים לאתרים האחים, ושתילת rashut.js
     import rashut_links
     rashut_links.run(SITE)
+    # פרומפט 82: "תנן התם" שמוביל למקום - קישור ודאי בין מקומות הש"ס (נתונים בלבד; rashut.js מסמן בדפדפן)
+    import shas_links
+    shas_links.run(SITE)
     import add_feel
     add_feel.run(SITE)
     # נתוני גלישה ועיפרון המנהל: אחרון, כדי שיעטוף גם את הדפים הסטטיים (8.10.2026)

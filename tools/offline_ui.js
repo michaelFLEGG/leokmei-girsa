@@ -10,7 +10,7 @@
     function lsSet(k,v){try{if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){}}
     /* כתובות שאסור לשמור: שרתי העריכה וההצעות, קבצי מצב משתנים, ובקשות שעוקפות מטמון בכוונה */
     function skip(u){
-      return u.origin !== location.origin || /^\/(api|live)(\/|$)/.test(u.pathname) || /(^|\/)fold\//.test(u.pathname) ||
+      return u.origin !== location.origin || /^\/(api|live|cdn-cgi)(\/|$)/.test(u.pathname) || /(^|\/)fold\//.test(u.pathname) ||
         /(edited-pages|status|layout-audit)\.json$/.test(u.pathname) || /[?&](_|z|r|t)=/.test(u.search) || /\.html?$/.test(u.pathname) && u.pathname !== location.pathname}
     function urls(){
       var set = {}, add = function(h){ if(!h) return; try{ var u = new URL(h, location.href); u.hash = ''; if(skip(u)) return; set[u.pathname + u.search] = 1 }catch(e){} };

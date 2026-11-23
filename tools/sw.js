@@ -56,7 +56,7 @@ self.addEventListener('fetch', e => {
 async function saveSet(slug, urls) {
   const c = await caches.open(SAVED + slug);
   const have = new Set((await c.keys()).map(r => new URL(r.url).pathname + new URL(r.url).search));
-  let n = 0, bytes = 0, failed = 0;
+  let n = 0, bytes = 0, failed = 0, skipped = 0;
   const want = new Set();
   const one = async path => {
     const url = new URL(path, self.registration.scope);
@@ -67,7 +67,8 @@ async function saveSet(slug, urls) {
         const r0 = await c.match(url.href); if (r0) { n++; bytes += +(r0.headers.get('content-length') || 0); return; }
       }
       const res = await fetch(url.href, { cache: 'no-cache', credentials: 'same-origin' });
-      if (!res.ok || res.type !== 'basic') { failed++; return; }
+      /* קובץ שאינו קיים (4xx) אינו מכשיל את השמירה: הוא פשוט אינו נשמר. רק תקלת רשת או שרת מכשילה */
+      if (!res.ok || res.type !== 'basic') { if (res.status >= 400 && res.status < 500) skipped++; else failed++; return; }
       const b = await res.clone().blob();
       await c.put(url.href, res);
       n++; bytes += b.size;
@@ -76,9 +77,9 @@ async function saveSet(slug, urls) {
   const list = urls.slice();
   const workers = Array.from({ length: 4 }, async () => { while (list.length) await one(list.shift()); });
   await Promise.all(workers);
-  if (failed) return { ok: false, n, bytes, failed };
+  if (failed) return { ok: false, n, bytes, failed, skipped };
   for (const r of await c.keys()) { const u = new URL(r.url); if (!want.has(u.pathname + u.search)) await c.delete(r); }
-  return { ok: true, n, bytes, failed };
+  return { ok: true, n, bytes, failed, skipped };
 }
 self.addEventListener('message', e => {
   const d = e.data || {}, port = e.ports && e.ports[0];

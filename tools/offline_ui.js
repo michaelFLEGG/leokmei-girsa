@@ -27,14 +27,22 @@
       add('shas.json');
       return Object.keys(set)}
     function sw(){ return navigator.serviceWorker.ready.then(function(r){ return r.active }) }
-    function ask(msg){ return sw().then(function(a){ return new Promise(function(res, rej){
+    function ask(msg, ms){ return sw().then(function(a){ return new Promise(function(res, rej){
       if(!a){ rej(new Error('no sw')); return }
       var ch = new MessageChannel(); ch.port1.onmessage = function(e){ res(e.data) }; a.postMessage(msg, [ch.port2]);
-      setTimeout(function(){ rej(new Error('timeout')) }, 600000) }) }) }
+      setTimeout(function(){ rej(new Error('timeout')) }, ms || 600000) }) }) }
+    /* גרסה ישנה של ה-Service Worker (לפני פרומפט 79) אינה עונה. בודקים קודם בשאלה קצרה, ואם אין תשובה - מבקשים
+       מן הדפדפן לעדכן אותו, ומודיעים ללומד לנסות שוב בעוד רגע (בלי המתנה שקטה) */
+    function ready(){ return ask({ type: 'lg-list' }, 4000).then(function(r){ return !!(r && r.ok) }, function(){
+      return navigator.serviceWorker.getRegistration().then(function(g){ return g && g.update() }).then(function(){
+        return ask({ type: 'lg-list' }, 4000).then(function(r){ return !!(r && r.ok) }, function(){ return false }) }, function(){ return false }) }) }
     function mb(n){ return (n / 1048576).toFixed(n > 10485760 ? 0 : 1) }
     function save(box){
       var st = box.querySelector('.offst'); st.textContent = 'שומר במכשיר... (אפשר להמשיך ללמוד)';
-      return ask({ type: 'lg-save', slug: SLUG, urls: urls() }).then(function(r){
+      return ready().then(function(ok){
+        if(!ok){ st.textContent = 'רכיב השמירה במכשיר מתעדכן עכשיו. נסה שוב בעוד דקה (או רענן את הדף).'; draw(box); return null }
+        return ask({ type: 'lg-save', slug: SLUG, urls: urls() }) }).then(function(r){
+        if(r === null) return;
         if(!r || !r.ok){ st.textContent = 'השמירה לא הושלמה' + (r && r.failed ? ' (' + r.failed + ' קבצים לא ירדו)' : '') + '. נסה שוב כשהחיבור טוב.'; return }
         lsSet(LSK, String(Date.now()));
         st.textContent = 'נשמר: ' + r.n + ' קבצים, ' + mb(r.bytes) + ' מגה. המסכת תיפתח גם בלי חיבור, ותתעדכן לבד בכל כניסה עם חיבור.';
@@ -67,5 +75,5 @@
       setTimeout(function(){
         if(!navigator.onLine || Date.now() - (+lsGet(LSK + '-chk') || 0) < 6 * 3600000) return;
         lsSet(LSK + '-chk', String(Date.now()));
-        ask({ type: 'lg-save', slug: SLUG, urls: urls(), quiet: 1 }).then(function(r){ if(r && r.ok) lsSet(LSK, String(Date.now())) }).catch(function(){}) }, 15000) });
+        ready().then(function(ok){ return ok ? ask({ type: 'lg-save', slug: SLUG, urls: urls(), quiet: 1 }) : null }).then(function(r){ if(r && r.ok) lsSet(LSK, String(Date.now())) }).catch(function(){}) }, 15000) });
   })();

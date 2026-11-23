@@ -43,26 +43,96 @@ GEM = {'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'�
        'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400}
 
 
+_NIK = re.compile('[\u0591-\u05c7]')
+
+
+def _alert_norm(t):
+    """פרומפט 86: נרמול להשוואת עריכה מול הדף - בלי ניקוד, nbsp, פיסוק, מקפים וגרשיים."""
+    t = html.unescape(re.sub(r'<[^>]+>', ' ', t or ''))
+    t = _NIK.sub('', t).replace('\xa0', ' ').replace('\u200f', '').replace('\u200e', '')
+    t = re.sub(r'[^\u05d0-\u05ea0-9a-zA-Z ]', ' ', t)
+    return re.sub(r'\s+', ' ', t).strip()
+
+
+def _site_text(slug):
+    """כל הטקסט של המסכת כפי שנבנה (site/<slug>.data.js), מנורמל, כמחרוזת אחת. None - אין בנייה."""
+    fp = os.path.join(SITE, slug + '.data.js')
+    if not os.path.exists(fp):
+        return None
+    s = io.open(fp, encoding='utf-8').read()
+    d, _ = json.JSONDecoder().raw_decode(s[s.index('{'):])
+    out = []
+    for p in d.get('pages') or []:
+        for u in p.get('units') or []:
+            for k in ('a', 'w', 'mbw'):
+                if isinstance(u.get(k), str): out.append(_alert_norm(u[k]))
+            for l in u.get('l') or []:
+                if len(l) > 1: out.append(_alert_norm(l[1]))
+    return ' ' + ' '.join(out) + ' '
+
+
 def _fold_alerts(slug):
     """פרומפט 77: site/fold/<slug>.json - עריכות טקסט ידניות שלא הוחלו (data/fold/tlushot) וחסומות בשומר
-    המשנה (data/fold/review). בלי שינויי מבנה, בלי עריכות של כלים (by), ובלי מה שסומן "טופל"."""
+    המשנה (data/fold/review). בלי שינויי מבנה, בלי עריכות של כלים (by), ובלי מה שסומן "טופל".
+    פרומפט 86 (23.11.2026): רק מה שאבד באמת. לא מוצגת עריכה שהנוסח החדש שלה כבר נמצא בכל מקום במסכת
+    (לא רק בחלון הדף - ציון הדף או המפתח מתחלפים בקיפול), אחרי נרמול ניקוד, nbsp ופיסוק; לא was==now
+    (שינוי סגנון או רווח); לא קטע של שתי אותיות. שרשרת פיצול (פיצולים ועריכות במילישניות עוקבות באותו דף)
+    מוצגת כפריט אחד: הנוסח שהיה = הפסקה המקורית, הנוסח החדש = השורות שלה זו אחר זו, כך שזוג was/now
+    הוא תמיד של אותה שורה."""
     out = []
+    txt = _site_text(slug)
     for kind, sub in (('t', 'tlushot'), ('mg', 'review')):
         fp = os.path.join(ROOT, 'data', 'fold', sub, slug + '.json')
         if not os.path.exists(fp):
             continue
-        for e in (json.load(io.open(fp, encoding='utf-8')).get('edits') or []):
+        eds = json.load(io.open(fp, encoding='utf-8')).get('edits') or []
+        # שרשראות: פיצול שמתחיל רצף, ואחריו (עד שתי שניות בין רשומה לרשומה, באותו דף) עוד פיצולים ועריכות
+        chain_of, orig = {}, {}
+        srt = sorted(eds, key=lambda e: e.get('t') or 0)
+        cur = None
+        for e in srt:
+            if cur and e.get('daf') == cur[1] and (e.get('t') or 0) - cur[2] <= 2000:
+                chain_of[(e.get('k'), e.get('t'))] = cur[0]; cur[2] = e.get('t') or 0
+            elif e.get('op') == 'struct' and e.get('kind') == 'split' and len(e.get('texts') or []) == 1:
+                cur = [e.get('t'), e.get('daf'), e.get('t') or 0]
+                orig[e.get('t')] = e['texts'][0]
+                chain_of[(e.get('k'), e.get('t'))] = e.get('t')
+            else:
+                cur = None
+        groups, seen = {}, set()
+        for e in srt:
             if e.get('op') == 'struct' or e.get('handled') or e.get('del') or not (e.get('now') or '').strip():
                 continue
             if kind == 't' and e.get('by'):
                 continue
+            if (e.get('t'), e.get('now')) in seen:
+                continue
+            seen.add((e.get('t'), e.get('now')))
+            n, w = _alert_norm(e.get('now')), _alert_norm(e.get('was'))
+            if kind == 't':
+                if n == w or len(n) < 6:
+                    continue
+                if txt is not None and (' ' + n + ' ') in txt:
+                    continue
+            c = chain_of.get((e.get('k'), e.get('t')))
+            if kind == 't' and c is not None:
+                g = groups.get(c)
+                if g is None:
+                    g = groups[c] = {x: e[x] for x in ('k', 't', 'daf', 'ctx', 'folded') if x in e}
+                    g.update(was=orig.get(c) or e.get('was'), now=e.get('now'), src=kind, chain=1)
+                    out.append(g)
+                else:
+                    g['now'] = g['now'] + '\n' + e.get('now')
+                continue
             out.append({x: e[x] for x in ('k', 't', 'daf', 'was', 'now', 'ctx', 'folded', 'why') if x in e})
             out[-1]['src'] = kind
     out.sort(key=lambda x: -(x.get('t') or 0))
+    p = os.path.join(SITE, 'fold', slug + '.json')
     if out:
         os.makedirs(os.path.join(SITE, 'fold'), exist_ok=True)
-        io.open(os.path.join(SITE, 'fold', slug + '.json'), 'w', encoding='utf-8').write(
-            json.dumps({'v': 1, 'slug': slug, 'edits': out}, ensure_ascii=False))
+        io.open(p, 'w', encoding='utf-8').write(json.dumps({'v': 1, 'slug': slug, 'edits': out}, ensure_ascii=False))
+    elif os.path.exists(p):
+        os.remove(p)       # אין עוד מה להתריע: הקובץ הישן (מן המטמון של הבנייה הקודמת) אינו נשאר
 
 def daf_key(d):
     """מפתח מספרי לציון דף: גימטריה כפול שתיים, ועוד אחד לעמוד ב. זהה לחישוב שב-build_site."""
@@ -348,6 +418,11 @@ def main():
                 print('   אזהרה: המרווחים לא נגזרו מן הוורד של', m, '-', e)
             r = build(jp, os.path.join(SITE, SLUG[m] + '.html'), m, hagaha=has_hagaha,
                       sources=sources, spacing=spacing)
+            # פרומפט 86: ההתראה נכתבת שוב אחרי הבנייה, מול הדף שנבנה עכשיו (כל המסכת)
+            try:
+                _fold_alerts(SLUG[m])
+            except Exception as _e:
+                print('   אזהרה: התראת התלושות לא נכתבה -', _e)
             if has_hagaha:
                 h = hagaha.build(blocks, os.path.join(SITE, SLUG[m] + '-hagaha.html'), m, SLUG[m], cur, f)
                 print('   מסך הגהה:', h['findings'], 'ממצאים,', h['severe'], 'טעונים תיקון')

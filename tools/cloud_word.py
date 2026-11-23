@@ -285,6 +285,10 @@ def layer(slug, masechet, srv):
     done = {}
     for e in arch.get('edits') or []:
         done[ekey(e)] = max(done.get(ekey(e), 0), e.get('t') or 0)
+    # פרומפט 86: עריכה שהקיפול כתב במפתח חדש (data/fold/rekey) אינה "ישנה" רק משום שמפתחה החדש שימש פעם
+    # פסקה אחרת שנקלטה בזמן מאוחר יותר. בלי זה היא נשמטה מן השכבה בשקט (מנותקת אחרי rekey).
+    rk = {(ekey(e), e.get('t')) for e in (rjson(os.path.join(HERE, 'data', 'fold', 'rekey', slug + '.json')) or {}).get('edits') or []}
+    asig = {(ekey(e), e.get('t')) for e in arch.get('edits') or []}
     by = {}
     for e in (rep.get('edits') or []) + ((srv or {}).get('edits') or []):
         k = ekey(e)
@@ -293,7 +297,8 @@ def layer(slug, masechet, srv):
         o = by.get(k)
         if o is None or (e.get('t') or 0) > (o.get('t') or 0):
             by[k] = e
-    edits = [e for e in by.values() if not e.get('del') and (e.get('t') or 0) > done.get(ekey(e), -1)]
+    edits = [e for e in by.values() if not e.get('del') and ((e.get('t') or 0) > done.get(ekey(e), -1)
+             or ((ekey(e), e.get('t')) in rk and (ekey(e), e.get('t')) not in asig))]
     for e in edits:
         if e.get('op') == 'struct' and not e.get('k'):
             e['k'] = ekey(e)
@@ -593,8 +598,13 @@ def tombstones(slugs, log=print):
         for e in srv.get('edits') or []:
             live[ekey(e)] = e
         out = []
+        keep0 = {(ekey(e), e.get('t')) for e in (rjson(os.path.join(EDITS, slug + '.json')) or {}).get('edits') or []}
+        keep0 |= {(ekey(e), e.get('t')) for e in (rjson(os.path.join(HERE, 'data', 'fold', 'rekey', slug + '.json')) or {}).get('edits') or []}
         for a in arch['edits']:
             s = live.get(ekey(a))
+            # פרומפט 86: עריכה חיה שנשארה בשכבה או שנכתבה במפתח חדש אינה מקבלת מצבה בגלל פסקה אחרת באותו מפתח
+            if s is not None and (ekey(s), s.get('t')) in keep0 and (ekey(s), s.get('t')) != (ekey(a), a.get('t')):
+                continue
             if s is not None and not s.get('del') and (s.get('t') or 0) <= (a.get('t') or 0):
                 out.append({'k': ekey(a), 'del': 1, 't': (a.get('t') or 0) + 1})
         # פרומפט 64 (19.11.2026): אותה עריכה (אותו רגע ואותו תוכן) שחיה בשרת במפתח אחר (נמדד בכתובות: 465

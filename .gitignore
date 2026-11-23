@@ -26,3 +26,8 @@ _work/sakem/
 _work/convert/
 _work/sakem/
 _work/daf_src/
+
+# פרומפט 86: עותק פרוש של הגיבוי (הארכיון backup-p86.tgz נשמר)
+_work/backup-p86/fold/
+_work/backup-p86/edits/
+_work/backup-p86/word-cloud/

@@ -174,6 +174,8 @@
     if ($('#prbtn')) items.push(['prn', 'print', 'הדפסה ל-PDF']);
     try { if ($('#prbtn') && typeof isAdmin === 'function' && isAdmin()) items.push(['book', 'print', 'הדפס לחוברת']); } catch (e) { }
     items.push(['toc', 'list', 'תוכן עניינים']);
+    /* פרומפט 81: חזרה מהירה (tools/review_ui.js) */
+    if (window.qrToggle) items.push(['qr', 'fold', document.documentElement.classList.contains('qr') ? 'הצג הכל' : 'חזרה מהירה']);
     /* פרומפט 79: לימוד בלי חיבור */
     if (window.offOpen) items.push(['off', 'down', 'לימוד בלי חיבור']);
     /* פרומפט 38: שני כפתורי המנהל של הסרגל (שורות כפולות, סכם הבא) - בטלפון כאן */
@@ -226,6 +228,7 @@
       else if (m === 'book') prnOpenBook();
       else if (m === 'toc') panel('toc');
       else if (m === 'off') { if (window.offOpen) offOpen(); }
+      else if (m === 'qr') { if (window.qrToggle) qrToggle(); }
       else if (m === 'dup') { if (window.skpTop) skpTop.dup(); }
       else if (m === 'sknext') { if (window.skpTop) skpTop.next(); }
       else if (m === 'join') { lsSet('lg-wa-joined', '1'); H.classList.add('wa-joined'); window.open('https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e', '_blank', 'noopener'); }

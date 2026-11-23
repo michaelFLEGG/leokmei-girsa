@@ -133,7 +133,7 @@
   }
  ],
  "total": 21,
- "done": 15,
+ "done": 17,
  "items": [
   {
    "iid": "s1",
@@ -757,6 +757,55 @@
    "keep": []
   },
   {
+   "iid": "s15",
+   "kind": "seg",
+   "seg": 14,
+   "sugya": 15,
+   "ids": [
+    3621,
+    3622,
+    3625
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 379,
+    "lenB": 379
+   }
+  },
+  {
+   "iid": "s16",
+   "kind": "seg",
+   "seg": 15,
+   "sugya": 16,
+   "ids": [
+    3631,
+    3632,
+    3634,
+    3636,
+    3637,
+    3639
+   ],
+   "nochange": true,
+   "keep": [],
+   "stat": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "hatz": 0,
+    "nose": 0,
+    "lenA": 158,
+    "lenB": 158
+   }
+  },
+  {
    "iid": "s17",
    "kind": "seg",
    "seg": 16,
@@ -800,5 +849,5 @@
    "keep": []
   }
  ],
- "t": 1795453289041
+ "t": 1795453297388
 }

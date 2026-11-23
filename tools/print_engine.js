@@ -1125,12 +1125,13 @@
           var top=Ybase+br.top-fr.top+pt+bt;
           /* פרומפט 84 א ב: שורת רעיון (פסקת גוף של שורה-שתיים) - צמודה לימין, בלי יישור לשני הצדדים. יישור לשני הצדדים רק בפסקה
              רציפה של שלוש שורות ומעלה. היישור אינו משנה שבירת שורה, ולכן נקבע אחרי המדידה */
-          /* פרומפט 86 (מהירות): שני אלה כותבים לדף, וכל כתיבה באמצע הלולאה חייבה את הדפדפן לעמד מחדש את כל הנתח לפני
-             המדידה הבאה. הם נדחים לסוף הלולאה, באותו סדר (היישור אינו משנה מדידה, והמדידה בסרגל הקטן אינה נוגעת בנתח) */
           if(b.classList&&b.classList.contains('hg')){
-            if(n<=2)LDEF.push([0,b]);
+            if(n<=2)b.classList.add('rag');
             /* פרומפט 84 א ד: האם ההזחה הוסיפה לפסקה שורה (מדידה בסרגל הקטן בלי ההזחה) - לספירה ולמנגנון "שורה שהתארכה" */
-            if(n>=2)LDEF.push([1,b,main,lh,n,x.daf,x.u&&x.u.id,bi+1])}
+            if(n>=2){GM.className=main.className;GP.className=b.className.replace(/(hg|rag)/g,'');GP.setAttribute('style',b.getAttribute('style')||'');GP.innerHTML=b.innerHTML;
+              var n0=Math.max(1,Math.round(GP.offsetHeight/lh));
+              if(n0<n){R.hangExtra=(R.hangExtra||0)+1;(R.hangList=R.hangList||[]).push({daf:x.daf,u:x.u&&x.u.id,li:bi+1,was:n0,now:n})}
+              GP.removeAttribute('style');GP.className='';GP.innerHTML=''}}
           var wc=n===1?(b.textContent.trim().split(/\s+/).filter(Boolean).length):99;   /* ב5: מילים בפסקה של שורה אחת */
           var lbl=!!(rail&&rail.textContent.trim()&&bi===0);
           /* פרומפט 60 ב: פסקת כותרת בתוך יחידה רגילה (p.nose / p.dh, למשל "מחזקת ראשו ורובו ושולחנו" בסוכה ג.) היא כותרת

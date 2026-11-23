@@ -643,7 +643,12 @@ def fold_one(slug, dry=False, log=print, srv=None, docx=None, efilter=None, tag=
             for e in remain0:
                 mm = re.match(r'^u(\d+)(\..*)$', e.get('k') or '')
                 if mm and idmap.get(mm.group(1)) and idmap[mm.group(1)] != mm.group(1):
-                    ne = dict(e, k='u' + idmap[mm.group(1)] + mm.group(2))
+                    # פרומפט 86: המפתח החדש קפוא (~<זמן>). מספרי היחידות מתחלפים בכל קיפול, ומפתח חדש כמו u5000.2
+                    # עלול להיות מפתח של פסקה אחרת שכבר בארכיון בזמן מאוחר יותר. אז השכבה (C.layer) השמיטה את העריכה
+                    # בשקט, והמצבות מחקו אותה בשרת - עריכה מנותקת. מפתח קפוא ייחודי לעריכה, והאיתור בודק קודם את
+                    # המפתח שלפני ה-~ (כמו בדפדפן), כך שהמקום המדויק נשמר.
+                    suf = mm.group(2) if '~' in mm.group(2) else '%s~%s' % (mm.group(2), e.get('t'))
+                    ne = dict(e, k='u' + idmap[mm.group(1)] + suf)
                     remain.append(ne); rekeyed.append((e, ne))
                 else:
                     remain.append(e)

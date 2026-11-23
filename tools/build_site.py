@@ -761,6 +761,200 @@ def _ctx_exact(e, slots):
     return not any(_teq(x['t'], now) for x in near)
 
 
+# ------------------------------------------------ פרומפט 86 (23.11.2026): שרשרת פיצול ושורה מקוטעת
+# עד כאן הדפדפן החיל עריכה שה-was שלה הוא תחילת פסקה או סופה (spliceLocate), והבנייה לא: מה שהמנהל
+# ראה בדף לא נכנס לבנייה של הקיפול, נרשם "תלוש", ונעלם מן השכבה. וכך גם שרשרת של הדבקה או Enter:
+# הדפדפן רושם פיצולים עוקבים במילישניות (was מקוטע: "כנגד", "כ", "מו", "תו.") ואחריהם עריכות שממלאות כל
+# קטע. כשנוסח הפסקה בבנייה שונה במעט, הפיצול הראשון נכשל, והשרשרת כולה נשרה (שבת מט., 366 התראות).
+
+_TAGRE = re.compile(r'<[^>]+>|&[#a-zA-Z0-9]+;|[\s\S]')
+
+
+def _html_chars(h):
+    """[(תו, תחילה ב-HTML, סוף ב-HTML, מחסנית התגיות הפתוחות לפני התו)]"""
+    out, stack = [], []
+    for m in _TAGRE.finditer(h or ''):
+        x = m.group(0)
+        if x.startswith('<') and len(x) > 1:
+            if x.startswith('</'):
+                if stack: stack.pop()
+            elif not x.endswith('/>') and not re.match(r'<br\b', x):
+                stack.append(x)
+            continue
+        c = html.unescape(x) if x.startswith('&') else x
+        out.append((c, m.start(), m.end(), list(stack)))
+    return out
+
+
+def _splice_html(raw, w, now_h, pre):
+    """מחליף ב-raw את החלק שנוסחו w (בתחילה כש-pre, אחרת בסוף) ב-now_h. None - לא נמצא."""
+    ch = _html_chars(raw)
+    txt = ''.join(c for c, _, _, _ in ch)
+    cut = -1
+    if pre:
+        for i in range(1, len(txt) + 1):
+            if _wn(txt[:i]) == w:
+                cut = i; break
+    else:
+        for j in range(len(txt) - 1, -1, -1):
+            if _wn(txt[j:]) == w:
+                cut = j; break
+    if cut <= 0 or cut >= len(txt):
+        return None
+    pos = ch[cut][1]
+    st = ch[cut][3]
+    if pre:
+        rest = ''.join(st) + raw[pos:]
+        sep = '' if (now_h.endswith((' ', '\xa0', '&nbsp;')) or txt[cut:cut + 1].isspace()) else ' '
+        return now_h + sep + rest
+    head = raw[:pos] + ''.join('</%s>' % re.match(r'<(\w+)', t).group(1) for t in reversed(st))
+    sep = '' if (txt[cut - 1:cut].isspace() or now_h.startswith((' ', '\xa0', '&nbsp;'))) else ' '
+    return head + sep + now_h
+
+
+def _splice_slot(e, slots):
+    """כמו spliceLocate בדפדפן: was הוא תחילת פסקה או סופה, במקום יחיד (באותו דף ובשכניו)."""
+    w = _wn(e.get('was', ''))
+    if len(w) < 8 or e.get('now') is None or e.get('ps') is not None:
+        return None
+    # ד"ה משנה אוטומטי (u7xxxxx) מוחל אחר כך בידי _syn_dh_edits; תיבת משנה אינה נחתכת לעולם
+    if re.match(r'^u7\d{5}\.', str(e.get('k') or '')):
+        return None
+    nw = _wn(e.get('now', ''))
+    k0 = _daf_key(e.get('daf'))
+    hits = []
+    for x in slots:
+        if k0 is not None and _daf_key(x['daf']) is not None and abs(_daf_key(x['daf']) - k0) > 1:
+            continue
+        if (x.get('unit') or {}).get('k') != 'u' or not isinstance(x['key'], int):
+            continue
+        t = x['t']
+        if nw and nw in t:
+            continue
+        if t == w or len(t) <= len(w):
+            continue
+        if t.startswith(w): hits.append((x, True))
+        elif t.endswith(w): hits.append((x, False))
+    if len(hits) != 1:
+        return None
+    x, pre = hits[0]
+    raw = x['holder'][x['key']] if isinstance(x['key'], int) else x['holder'].get(x['key'], '')
+    nh = e.get('nowH')
+    if nh is None:
+        nh = html.escape(e.get('now') or '', quote=False)
+    h = _splice_html(raw, w, nh, pre)
+    return (x, h) if h is not None else None
+
+
+def _arch_index(slug):
+    """ארכיון הקליטה (data/word-cloud/ingested): לכל מפתח בסיס - [(זמן, was, now)] של עריכות שכבר בספר."""
+    out = collections.defaultdict(list)
+    try:
+        fp = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'word-cloud', 'ingested', slug + '.json')
+        if os.path.exists(fp):
+            for x in json.load(io.open(fp, encoding='utf-8')).get('edits') or []:
+                if x.get('op') or x.get('del') or not x.get('now'):
+                    continue
+                out[str(x.get('k') or '').split('~')[0]].append((x.get('t') or 0, _wn(x.get('was', '')), _wn(x['now'])))
+    except Exception as _e:
+        print('ארכיון הקליטה לא נקרא: %s' % _e)
+    return out
+
+
+def _prior_slot(e, slots, prev):
+    """המקום שמחזיק את הנוסח הקודם של אותה שורה: רשומה בארכיון באותו מפתח ובאותו was, בזמן מוקדם יותר,
+    שה-now שלה נמצא במקום יחיד בדף ובשכניו. מן המאוחרת למוקדמת."""
+    if not prev:
+        return None
+    was = _wn(e.get('was', ''))
+    k0 = _daf_key(e.get('daf'))
+    for t, w, n in sorted(prev.get(str(e.get('k') or '').split('~')[0], []), reverse=True):
+        if t >= (e.get('t') or 0) or w != was or not n:
+            continue
+        hits = [x for x in slots if _teq(x['t'], n) and (k0 is None or _daf_key(x['daf']) is None
+                                                       or abs(_daf_key(x['daf']) - k0) <= 1)]
+        if len(hits) == 1:
+            return hits[0]
+    return None
+
+
+CHAIN_MS = 2000
+
+
+def _compact_chains(edits):
+    """שרשרת פיצול (Enter / הדבקה של כמה שורות): פיצולים עוקבים באותו דף (עד שתי שניות בין רשומה לרשומה),
+    שכל אחד מפצל קטע שיצא מן הקודם, ועריכות טקסט שממלאות את הקטעים. מוחלת כיחידה אחת: רשומת מבנה
+    אחת (texts = הפסקה המקורית, res = השורות בסוף השרשרת), שמאותרת לפי הפסקה כולה ולא לפי קטע של מילה.
+    רשומה שאינה חלק מן השרשרת ונוגעת באחד הקטעים עוצרת אותה (הסדר נשמר). מחזיר רשימה חדשה."""
+    out, used = [], set()
+    n = len(edits)
+    for i, e in enumerate(edits):
+        if id(e) in used:
+            continue
+        if not (e.get('op') == 'struct' and e.get('kind') == 'split' and not e.get('ins')
+                and len(e.get('texts') or []) == 1 and len(e.get('res') or []) >= 2
+                and all(isinstance(r, list) and len(r) >= 2 for r in e['res'])):
+            out.append(e); continue
+        lines = [[r[0], r[-1], _wnb(r[-1])] for r in e['res']]
+        mem, last, ntext, locked = [e], e.get('t') or 0, 0, set()
+        for j in range(i + 1, n):
+            x = edits[j]
+            if (x.get('t') or 0) - last > CHAIN_MS:
+                break
+            if id(x) in used:
+                continue
+            same = (x.get('daf') or '') == (e.get('daf') or '')
+            if same and x.get('op') == 'struct' and x.get('kind') == 'split' and not x.get('ins') \
+                    and len(x.get('texts') or []) == 1 and all(isinstance(r, list) and len(r) >= 2 for r in x.get('res') or []):
+                tw = _wnc(x['texts'][0])
+                ix = [q for q, l in enumerate(lines) if l[2] == tw]
+                if ix and tw not in locked:
+                    q = ix[-1]
+                    lines[q:q + 1] = [[r[0], r[-1], _wnb(r[-1])] for r in x['res']]
+                    mem.append(x); last = x.get('t') or 0
+                    continue
+            if same and not x.get('op') and x.get('ps') is None and x.get('was') and x.get('now') is not None:
+                tw = _wnc(x['was'])
+                ix = [q for q, l in enumerate(lines) if l[2] == tw]
+                if ix and tw not in locked:
+                    q = ix[0]
+                    h = x.get('nowH')
+                    if h is None: h = html.escape(x['now'], quote=False)
+                    lines[q] = [lines[q][0], h, _wnb(h)]
+                    mem.append(x); last = x.get('t') or 0; ntext += 1
+                    continue
+            # רשומה זרה: הקטעים שהיא נשענת עליהם נעולים מכאן והלאה
+            for tt in (x.get('texts') or []) + [x.get('was') or '']:
+                if tt: locked.add(_wnc(tt))
+        if len(mem) < 2 or not ntext:
+            out.append(e); continue
+        for x in mem: used.add(id(x))
+        out.append({'k': 'c%s' % e.get('t'), 't': e.get('t'), 'daf': e.get('daf'), 'op': 'struct', 'kind': 'split',
+                    'texts': list(e['texts']), 'res': [[l[0], l[1]] for l in lines], 'resT': [l[2] for l in lines],
+                    '_chain': mem})
+    return out
+
+
+def _chain_fuzzy(pages, e):
+    """הפסקה המקורית של השרשרת לא נמצאה בדיוק: פסקה יחידה בדף ובשכניו שדומה לה מאוד (0.85). השורות
+    שבשרשרת הן עדיין הנוסח המקורי מקבלות את הנוסח שבדף עכשיו (לא דורסים את מה שנעשה בה מאז)."""
+    import difflib as _dl
+    want = _wnc(e['texts'][0])
+    k0 = _daf_key(e.get('daf'))
+    hits = []
+    for p in pages:
+        if k0 is not None and _daf_key(p['daf']) is not None and abs(_daf_key(p['daf']) - k0) > 1:
+            continue
+        for u in p['units']:
+            if u['k'] not in ('u', 'm'):
+                continue
+            for i, l in enumerate(u['l']):
+                t = _wnb(l[1])
+                if t and abs(len(t) - len(want)) < 0.3 * len(want) + 4 and _dl.SequenceMatcher(None, t, want).ratio() >= 0.85:
+                    hits.append((u, i))
+    return hits[0] if len(hits) == 1 else None
+
+
 def _absorbed(e, history):
     """תיקון שנרשם אחרי שינוי מבנה ומתאר בדיוק את תוצאתו (נוסח ו-HTML): השינוי כבר
     נעשה בנתונים, ואין מה להחיל. כלל צר; אחרת התיקון נשאר תלוש."""
@@ -1052,6 +1246,13 @@ def _apply_site_edits(pages, slug, qa):
                  and not (_x.get('k') in _tomb and (_x.get('t') or 0) <= _tomb[_x.get('k')])]
     if not edits:
         return {'n': 0, 'taken': 0, 'lost': 0, 'done': 0, 'b': sorted(_abs)}
+    _arch_prev = _arch_index(slug)
+    _late = [False]           # פרומפט 86: חיתוך שורה (spliceLocate) רק בסבב האחרון, אחרי כל הסבבים הרגילים
+    _edits0 = edits
+    edits = _compact_chains(edits)          # פרומפט 86: שרשרת פיצול כיחידה אחת
+    _nchain = sum(1 for x in edits if x.get('_chain'))
+    if _nchain:
+        print('שרשראות פיצול ב-%s: %d (%d רשומות)' % (slug, _nchain, sum(len(x['_chain']) for x in edits if x.get('_chain'))))
     slots = _slots(pages)
     by_key = {}
     for s in slots:
@@ -1073,6 +1274,34 @@ def _apply_site_edits(pages, slug, qa):
 
     def _one(e):
         nonlocal done, taken
+        # --- פרומפט 86: שרשרת פיצול. נמצאה הפסקה המקורית (בדיוק, או בדמיון גבוה ויחיד) - כל השרשרת מוחלת
+        # בבת אחת. לא נמצאה - כל רשומה לבדה, כמו קודם (ולא נאבד דבר לעומת מה שהיה) ---
+        if e.get('_chain'):
+            mem = e['_chain']
+            # רק כגיבוי: כשהפיצול הראשון נמצא (או כבר בספר) - הדרך הישנה, רשומה אחר רשומה, בדיוק כמו קודם.
+            # השרשרת כיחידה נכנסת רק כשהפיצול הראשון היה נכשל (נוסח הפסקה שונה במעט), ואז היתה נושרת כולה.
+            if _find_run(pages, mem[0].get('texts') or [], e.get('daf')) is not None \
+                    or _find_run(pages, mem[0].get('resT') or [], e.get('daf')) is not None \
+                    or _find_run(pages, e.get('resT') or [], e.get('daf')) is not None:
+                for x in mem:
+                    _one(x)
+                return
+            fz = _chain_fuzzy(pages, e)
+            if fz is None:
+                for x in mem:
+                    _one(x)
+                return
+            u, i = fz
+            cur = u['l'][i]
+            w0 = _wnc(e['texts'][0])
+            u['l'][i:i + 1] = [[x[0], cur[1]] if _wnc(_bare(x[1])) == w0 else list(x) for x in e['res']]
+            u.pop('lv', None)
+            done += len(mem)
+            keep.extend(mem)
+            PLAN.append(('struct', e))
+            history.append(('s', e))
+            reslot()
+            return
         # --- שינוי מבנה: פיצול פסקה או איחוי שתיים ---
         if e.get('op') == 'struct':
             kind = e.get('kind')
@@ -1196,7 +1425,27 @@ def _apply_site_edits(pages, slug, qa):
             if not now and any(h[0] == 't' and not h[2] and _teq(h[1], was) for h in history):
                 taken += 1              # מחיקה שנרשמה פעמיים: הראשונה כבר הוחלה (6.11.2026)
                 return
-            lost.append(e); keep.append(e); return
+            # פרומפט 86: עריכה חוזרת באותו מפתח אחרי קיפול. הדפדפן שומר את was המקורי של המפתח, אבל
+            # הנוסח הקודם של מיכאל באותה שורה (באותו מפתח ובאותו was) כבר נכנס לספר - שם היא נמצאת.
+            # רק בסוף, כשאין דרך אחרת, ורק מחוץ לתיבת משנה.
+            ps_ = _prior_slot(e, slots, _arch_prev)
+            if ps_ is not None and (ps_.get('unit') or {}).get('k') != 'm' and not _teq(ps_['t'], now):
+                s = ps_
+                rebased = True
+            sp = None if (s is not None or not _late[0]) else _splice_slot(e, slots)
+            if sp is not None:
+                x, h = sp
+                _eff = {'was': _bare(x['holder'][x['key']] if isinstance(x['key'], int) else x['holder'].get(x['key'], '')),
+                        'wasH': x['holder'][x['key']] if isinstance(x['key'], int) else x['holder'].get(x['key'], '')}
+                x['holder'][x['key']] = h
+                x['t'] = _wn(_bare(h))
+                history.append(('t', was, now))
+                done += 1
+                keep.append(e)
+                PLAN.append(('text', e, _eff))
+                return
+            if s is None:
+                lost.append(e); keep.append(e); return
         if e.get('ps') == 'mi' and s['t'] in (was, now) and (s.get('unit') or {}).get('k') == 'm':
             taken += 1                  # שורת משנה שכבר בתוך התיבה (הגיעה מן הוורד)
             history.append(('t', was, now))
@@ -1307,6 +1556,14 @@ def _apply_site_edits(pages, slug, qa):
         for x in sorted(_pend, key=lambda z: z.get('t') or 0):
             _one(x)
         if len([x for x in lost if not any(x is v for v in virtual)])>=_before: break
+    # פרומפט 86: סבב אחרון - was שהוא תחילת פסקה או סופה (כמו spliceLocate בדפדפן), למה שעדיין תלוש
+    _late[0] = True
+    _pend = [x for x in lost if not any(x is v for v in virtual) and not x.get('op')]
+    if _pend:
+        for x in _pend:
+            lost[:] = [y for y in lost if y is not x]; keep[:] = [y for y in keep if y is not x]
+        for x in sorted(_pend, key=lambda z: z.get('t') or 0):
+            _one(x)
     keep.sort(key=lambda z: z.get('t') or 0)
     lost.extend(virtual)
     if lost:
@@ -1319,7 +1576,14 @@ def _apply_site_edits(pages, slug, qa):
         qa.append(('תיקון שנקלט',
                    '%d תיקונים כבר נמצאים בקובץ הוורד והוסרו מקובץ התיקונים' % taken))
     _nrec = len(_rec)
-    keep[:] = [x for x in keep if not x.get('_rec')]
+    keep[:] = [x for x in keep if not x.get('_rec') and not x.get('_chain')]
+    # שרשרת שלא הוחלה כיחידה (lost) - הרשומות שלה עצמן נשארות בקובץ
+    for x in lost:
+        if x.get('_chain'):
+            keep.extend(x['_chain'])
+    lost[:] = [y for x in lost for y in (x['_chain'] if x.get('_chain') else [x])]
+    keep.sort(key=lambda z: z.get('t') or 0)
+    edits = _edits0
     if len(keep) != len(edits) - _nrec:
         # המצבות נשארות בקובץ עד שהאפייה רואה שהשרת מחק (tools/pull_edits.py)
         doc['edits'] = sorted(keep + _tombs, key=lambda z: z.get('t') or 0)
@@ -6915,7 +7179,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(!j||!j.edits)return;
       if(!SLOTS)SLOTS=slots();
       const WK=7*864e5,NOW=Date.now();
-      const L=j.edits.filter(x=>!dis.has(x.t)&&(x.src==='mg'||!x.folded||NOW-Date.parse(x.folded)<WK)&&!slotWin(x.daf).some(s=>WNC(s.t)===WN(x.now)||nonik(WNC(s.t))===nonik(WN(x.now))));
+      /* פרומפט 86 (23.11.2026): מה שכבר בדף נבדק מול כל המסכת (ציון הדף והמפתח מתחלפים בקיפול), אחרי נרמול ניקוד,
+         nbsp, פיסוק ומקפים; was==now (סגנון או רווח בלבד) אינו "עריכה שלא נקלטה". שרשרת פיצול באה כפריט אחד: now
+         הוא השורות שלה, אחת בכל שורה, ונבדקת כל שורה לבדה */
+      const AN=t=>nonik(String(t||'')).replace(/[\u00a0\u200e\u200f]/g,' ').replace(/[^\u05d0-\u05ea0-9a-zA-Z ]/g,' ').replace(/\s+/g,' ').trim();
+      const ALLT=' '+SLOTS.map(s=>AN(s.t)).join(' ')+' ';
+      const here=x=>String(x.now||'').split('\n').every(n=>{const a=AN(n);return a.length<6||ALLT.indexOf(' '+a+' ')>-1});
+      const L=j.edits.filter(x=>!dis.has(x.t)&&(x.src==='mg'||!x.folded||NOW-Date.parse(x.folded)<WK)&&(x.src==='mg'||(AN(x.was)!==AN(x.now)&&!here(x))));
       if(!L.length)return;
       const st=document.createElement('style');st.textContent='#flal{position:fixed;bottom:14px;left:14px;z-index:9000;font:14px/1.4 inherit;direction:rtl}'+
         '#flal>button{background:#fff3cd;border:1px solid #c9a227;border-radius:16px;padding:5px 12px;cursor:pointer}'+
@@ -6932,7 +7202,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
           '<div class="fp"><div style="margin-bottom:6px">עריכות שלך שלא נכנסו לדף. "החל" מעביר לשורה ומעתיק את הנוסח החדש להדבקה. "בטל" מוריד את ההתראה.'+
           (R.length>1?' <button type="button" data-a="all">בטל הכל</button>':'')+'</div>'+
           R.slice(0,300).map(x=>'<div class="it" data-t="'+x.t+'"><b>דף '+esc2(x.daf)+'</b>'+(x.src==='mg'?' (נחסם בשומר המשנה)':'')+
-            '<div class="w">'+esc2(x.was)+'</div><div class="n">'+esc2(x.now)+'</div>'+
+            '<div class="w">'+esc2(x.was)+'</div><div class="n">'+esc2(x.now).replace(/\n/g,'<br>')+'</div>'+
             '<button type="button" data-a="ap">החל</button><button type="button" data-a="no">בטל</button></div>').join('')+'</div>'};
       const save=()=>{try{localStorage.setItem(DK,JSON.stringify([...dis]))}catch(e){}};
       box.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const a=b.dataset.a;

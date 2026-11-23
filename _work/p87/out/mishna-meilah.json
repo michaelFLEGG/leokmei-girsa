@@ -1,0 +1,227 @@
+{
+ "slug": "meilah",
+ "when": "2026-11-23T15:55:39.024Z",
+ "items": [
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    4
+   ],
+   "n": 4,
+   "text": "בְּקָדְשֵׁי קָדָשִׁים, לְהָקֵל וּלְהַחֲמִיר.",
+   "daf": "ז:",
+   "outside": [],
+   "fid": [
+    1.0,
+    1.0
+   ],
+   "content": 4,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    9
+   ],
+   "n": 1,
+   "text": "וּמִשּׁוּם",
+   "daf": "י.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "בָּהֶן.",
+   "daf": "יא.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "דִּבְרֵי",
+   "daf": "יג.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    6
+   ],
+   "n": 3,
+   "text": "יְהוּדָה. וְרַבִּי שִׁמְעוֹן",
+   "daf": "יג.",
+   "outside": [],
+   "fid": [
+    0.93,
+    0.93
+   ],
+   "content": 2,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    6
+   ],
+   "n": 2,
+   "text": "לֹא תֹאכַל",
+   "daf": "יג.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "מִמֶּנָּה",
+   "daf": "יג:",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    3
+   ],
+   "n": 3,
+   "text": "זֶה עִם זֶה.",
+   "daf": "יז.",
+   "outside": [],
+   "fid": [
+    1.0,
+    1.0
+   ],
+   "content": 3,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    3
+   ],
+   "n": 3,
+   "text": "זֶה עִם זֶה:",
+   "daf": "יז.",
+   "outside": [],
+   "fid": [
+    0.89,
+    0.88
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.89, 0.88])"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    4
+   ],
+   "n": 3,
+   "text": "זֶה עִם זֶה,",
+   "daf": "יז:",
+   "outside": [],
+   "fid": [
+    1.0,
+    1.0
+   ],
+   "content": 3,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    1
+   ],
+   "n": 3,
+   "text": "דִּבְרֵי רַבִּי עֲקִיבָא.",
+   "daf": "יח.",
+   "outside": [
+    {
+     "ri": 305,
+     "ek": "u771.1",
+     "cov": 0.67,
+     "own": 0.25,
+     "t": "מודה ר\"ע לחכמים בדבר שיש בו פגם."
+    }
+   ],
+   "fid": [
+    0.92,
+    0.92
+   ],
+   "content": 0,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    1
+   ],
+   "n": 2,
+   "text": "וְכָל דָּבָר",
+   "daf": "יח.",
+   "decision": "word"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    5
+   ],
+   "n": 1,
+   "text": "הַבַּיִת,",
+   "daf": "כא:",
+   "decision": "word"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "שֶׁנָּפְלָה",
+   "daf": "כא:",
+   "decision": "word"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    6
+   ],
+   "n": 3,
+   "text": "דִּבְרֵי רַבִּי עֲקִיבָא.",
+   "daf": "כא:",
+   "outside": [],
+   "fid": [
+    0.95,
+    0.95
+   ],
+   "content": 0,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  }
+ ]
+}

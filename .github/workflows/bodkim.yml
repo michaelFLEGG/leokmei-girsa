@@ -5,6 +5,9 @@ name: הבודקים - משניות ועוגני תוס'
 #    רק התאמה יחידה. עלייה במספר ה-m מודפסת כאזהרה.
 # ב. בודק המשניות (tools/mishna_check.py): לכל תיבת משנה, בספר ובאתר, מול המשניות של הפרק.
 #    "ודאי" (שורת גמרא שהועתקה לתוך תיבת משנה) - הריצה נכשלת בקול, ומיכאל מקבל מייל מגיטהאב.
+#    פרומפט 87: גם חוסר חלקי בתיבה ("partial" - רצף של 3 מילים ומעלה מן המשנה שנשמט) מכשיל את הריצה בקול.
+# ג. שורות כפולות (tools/dup_lines.py --apply, פרומפט 87): שורה זהה שחוזרת באותה יחידה או עד 12 שורות, ושארית פיצול,
+#    נמחקות בשכבה כעריכה רגילה (כלל קבוע של מיכאל: "ודאי טעות"). כמעט-זהות - לעיון בלבד, ב-data/fold/dups.json.
 # הדוחות: data/fold/anchor-check.json, data/fold/mishna-check.json. עוגן שתוקן נדחף, והשומר בונה את האתר.
 on:
   schedule:
@@ -47,12 +50,20 @@ jobs:
           d = json.load(open('data/fold/mishna-check.json'))['masechtot']
           n = sum(len(((r.get('site') or {}).get('certain') or [])) for r in d.values())
           print('certain=%d' % n)
+          p = sum(len([x for x in ((r.get('site') or {}).get('partial') or []) if not x.get('error')]) for r in d.values())
+          print('partial=%d' % p)
           EOF
+      - name: שורות כפולות
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/dup_lines.py --apply --only "${{ github.event.inputs.only }}"; else python tools/dup_lines.py --apply; fi
       - name: שמירה ודחיפה
         id: save
         run: |
           git config user.name "leokmei-bodkim"; git config user.email "bodkim@users.noreply.github.com"
-          git add tosafot data/fold/anchor-check.json data/fold/mishna-check.json
+          git add tosafot data/fold/anchor-check.json data/fold/mishna-check.json data/fold/dups.json data/edits
           git diff --cached --quiet && { echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; }
           git commit -q -m "הבודקים: עוגני תוס' ובודק המשניות"
           git stash -u -q || true
@@ -70,4 +81,9 @@ jobs:
         if: steps.mc.outputs.certain != '0'
         run: |
           echo "::error::בודק המשניות מצא ${{ steps.mc.outputs.certain }} שורות גמרא בתוך תיבות משנה באתר. פרטים ב-data/fold/mishna-check.json (certain)"
+          exit 1
+      - name: חוסר חלקי במשניות
+        if: ${{ !cancelled() && steps.mc.outputs.partial != '0' }}
+        run: |
+          echo "::error::בודק המשניות מצא ${{ steps.mc.outputs.partial }} משניות שחסר בהן רצף של 3 מילים ומעלה. פרטים ב-data/fold/mishna-check.json (partial)"
           exit 1

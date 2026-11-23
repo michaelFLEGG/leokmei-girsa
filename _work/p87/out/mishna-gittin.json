@@ -1,0 +1,1330 @@
+{
+ "slug": "gittin",
+ "when": "2026-11-23T15:55:07.850Z",
+ "items": [
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    1
+   ],
+   "n": 1,
+   "text": "וּבְפָנַי",
+   "daf": "ב.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    1
+   ],
+   "n": 2,
+   "text": "הַמֵּבִיא מִן",
+   "daf": "ב.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    1
+   ],
+   "n": 1,
+   "text": "נִכְתַּב",
+   "daf": "ב.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    1
+   ],
+   "n": 1,
+   "text": "נֶחְתָּם,",
+   "daf": "ב.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    1
+   ],
+   "n": 6,
+   "text": "צָרִיךְ שֶׁיֹּאמַר בְּפָנַי נִכְתַּב וּבְפָנַי נֶחְתָּם.",
+   "daf": "ב.",
+   "outside": [],
+   "fid": [
+    0.77,
+    0.77
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.77, 0.77])"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    2
+   ],
+   "n": 2,
+   "text": "לַמִּזְרָח, וְרֶקֶם",
+   "daf": "ב.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    2
+   ],
+   "n": 2,
+   "text": "לַדָּרוֹם, וְאַשְׁקְלוֹן",
+   "daf": "ב.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    2
+   ],
+   "n": 2,
+   "text": "לַצָּפוֹן, וְעַכּוֹ",
+   "daf": "ב.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    3
+   ],
+   "n": 3,
+   "text": "אֵינוֹ צָרִיךְ שֶׁיֹּאמַר",
+   "daf": "ב:",
+   "outside": [],
+   "fid": [
+    0.64,
+    0.64
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.64, 0.64])"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    3
+   ],
+   "n": 1,
+   "text": "נִכְתַּב",
+   "daf": "ב:",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    3
+   ],
+   "n": 4,
+   "text": "נֶחְתָּם. אִם יֵשׁ עָלָיו",
+   "daf": "ב:",
+   "outside": [],
+   "fid": [
+    0.69,
+    0.69
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.69, 0.69])"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    3
+   ],
+   "n": 1,
+   "text": "נִכְתַּב",
+   "daf": "ט.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    3
+   ],
+   "n": 1,
+   "text": "נֶחְתָּם,",
+   "daf": "ט.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    5
+   ],
+   "n": 1,
+   "text": "לִפְנֵי",
+   "daf": "י.",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    6
+   ],
+   "n": 4,
+   "text": "יַחֲזֹר, דִּבְרֵי רַבִּי מֵאִיר.",
+   "daf": "יא:",
+   "outside": [],
+   "fid": [
+    0.83,
+    0.83
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.83, 0.83])"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "שֶׁהוּא",
+   "daf": "יא:",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    1
+   ],
+   "n": 3,
+   "text": "בְּפָנַי נֶחְתָּם אֲבָל",
+   "daf": "טו.",
+   "outside": [],
+   "fid": [
+    1.0,
+    1.0
+   ],
+   "content": 3,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    2
+   ],
+   "n": 3,
+   "text": "שֶׁהָיָה רַבִּי שִׁמְעוֹן",
+   "daf": "יז.",
+   "outside": [],
+   "fid": [
+    0.93,
+    0.93
+   ],
+   "content": 1,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    3
+   ],
+   "n": 2,
+   "text": "שֶׁהוּא שֶׁל",
+   "daf": "יט.",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    4
+   ],
+   "n": 2,
+   "text": "מִפְּנֵי שֶׁהוּא",
+   "daf": "כא:",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    5
+   ],
+   "n": 2,
+   "text": "שׁוֹטֶה וְקָטָן",
+   "daf": "כג.",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "שֶׁהִיא",
+   "daf": "כג:",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "נִכְתַּב",
+   "daf": "כג:",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "נֶחְתָּם:",
+   "daf": "כג:",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "הַכּוֹתֵב",
+   "daf": "כד.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "וּמְקוֹם",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "וּמְקוֹם",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "מְקוֹם",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "מְקוֹם",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "וּמְקוֹם",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "צָרִיךְ",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "וּמְקוֹם",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "וּמְקוֹם",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "וּמְקוֹם",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "וּמְקוֹם",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "שֶׁנֶּאֱמַר",
+   "daf": "כו.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "נִכְתַּב",
+   "daf": "כט:",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    6
+   ],
+   "n": 2,
+   "text": "נֶחְתָּם. וְאֵין",
+   "daf": "כט:",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    6
+   ],
+   "n": 3,
+   "text": "נִכְתַּב וּבְפָנַי נֶחְתָּם,",
+   "daf": "כט:",
+   "outside": [],
+   "fid": [
+    0.8,
+    0.8
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.8, 0.8])"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "לִהְיוֹת",
+   "daf": "ל.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "עֲלֵיהֶן",
+   "daf": "ל.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "שֶׁמָּא",
+   "daf": "ל.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    8
+   ],
+   "n": 1,
+   "text": "לִהְיוֹת",
+   "daf": "לא.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    8
+   ],
+   "n": 4,
+   "text": "מָעוֹת לִהְיוֹת מַפְרִישׁ עֲלֵיהֶן",
+   "daf": "לא.",
+   "outside": [],
+   "fid": [
+    0.81,
+    0.81
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.81, 0.81])"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    8
+   ],
+   "n": 5,
+   "text": "דִּבְרֵי רַבִּי אֶלְעָזָר בֶּן שַׁמּוּעַ.",
+   "daf": "לא.",
+   "outside": [],
+   "fid": [
+    0.83,
+    0.83
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.83, 0.83])"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    5
+   ],
+   "n": 4,
+   "text": "דִּבְרֵי בֵית הִלֵּל. אָמְרוּ לָהֶם",
+   "daf": "מא:",
+   "outside": [],
+   "fid": [
+    0.92,
+    0.92
+   ],
+   "content": 1,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    5
+   ],
+   "n": 2,
+   "text": "הָעוֹלָם אֶלָּא",
+   "daf": "מא:",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    5
+   ],
+   "n": 2,
+   "text": "וְלִרְבִיָּה, שֶׁנֶּאֱמַר",
+   "daf": "מא:",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    5
+   ],
+   "n": 1,
+   "text": "כְּדִבְרֵי",
+   "daf": "מא:",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "צָרִיךְ",
+   "daf": "מה:",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    7
+   ],
+   "n": 3,
+   "text": "יוֹסֵי בְּרַבִּי יְהוּדָה,",
+   "daf": "מה:",
+   "outside": [],
+   "fid": [
+    0.95,
+    0.95
+   ],
+   "content": 2,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "בְּאֶחָד",
+   "daf": "מה:",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    9
+   ],
+   "n": 1,
+   "text": "וְחָזַר",
+   "daf": "מז.",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    9
+   ],
+   "n": 3,
+   "text": "מִמֶּנּוּ יִשְׂרָאֵל, הַלּוֹקֵחַ",
+   "daf": "מז.",
+   "outside": [],
+   "fid": [
+    0.91,
+    0.91
+   ],
+   "content": 3,
+   "decision": "weak",
+   "why": "עוגן חלש"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    2
+   ],
+   "n": 3,
+   "text": "בִּמְקוֹם שֶׁיֵּשׁ נְכָסִים",
+   "daf": "מח:",
+   "outside": [],
+   "fid": [
+    0.98,
+    0.98
+   ],
+   "content": 3,
+   "decision": "rephrase",
+   "why": "בתיבה ניסוח אחר (1 מילים) במקום החסר",
+   "extra": "כשיש"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    5
+   ],
+   "n": 1,
+   "text": "שֶׁהִיא",
+   "daf": "נד:",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    5
+   ],
+   "n": 2,
+   "text": "וְאִם מֵתָה,",
+   "daf": "נד:",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    5
+   ],
+   "n": 1,
+   "text": "שֶׁהִיא",
+   "daf": "נד:",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "כֵּיצַד.",
+   "daf": "נה:",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "הַבַּיִת,",
+   "daf": "נה:",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    6
+   ],
+   "n": 7,
+   "text": "זוֹ מִשְׁנָה רִאשׁוֹנָה. בֵּית דִּין שֶׁל אַחֲרֵיהֶם",
+   "daf": "נה:",
+   "outside": [],
+   "fid": [
+    0.97,
+    0.94
+   ],
+   "content": 7,
+   "decision": "fix",
+   "ek": "u3662.4",
+   "mode": "after",
+   "wasH": "מן האשה וחזר ולקח מן האיש - מקחו קיים.",
+   "nowH": "מן האשה וחזר ולקח מן האיש - מקחו קיים, זו משנה ראשונה. בית דין של אחריהם",
+   "was": "מן האשה וחזר ולקח מן האיש - מקחו קיים.",
+   "now": "מן האשה וחזר ולקח מן האיש - מקחו קיים, זו משנה ראשונה. בית דין של אחריהם",
+   "move": [],
+   "row": "u3662"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "אֵימָתַי,",
+   "daf": "נה:",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    6
+   ],
+   "n": 5,
+   "text": "רַבִּי הוֹשִׁיב בֵּית דִּין וְנִמְנוּ,",
+   "daf": "נה:",
+   "outside": [],
+   "fid": [
+    0.94,
+    0.87
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.94, 0.87])"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    8
+   ],
+   "n": 3,
+   "text": "מִפְּנֵי דַרְכֵי שָׁלוֹם.",
+   "daf": "נט.",
+   "outside": [],
+   "fid": [
+    0.59,
+    0.59
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.59, 0.59])"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    8
+   ],
+   "n": 3,
+   "text": "מִפְּנֵי דַרְכֵי שָׁלוֹם.",
+   "daf": "נט.",
+   "outside": [],
+   "fid": [
+    0.59,
+    0.59
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.59, 0.59])"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    8
+   ],
+   "n": 3,
+   "text": "מִפְּנֵי דַרְכֵי שָׁלוֹם.",
+   "daf": "נט.",
+   "outside": [],
+   "fid": [
+    0.59,
+    0.59
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.59, 0.59])"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    8
+   ],
+   "n": 11,
+   "text": "יֵשׁ בָּהֶם מִשּׁוּם גָּזֵל, מִפְּנֵי דַרְכֵי שָׁלוֹם. רַבִּי יוֹסֵי אוֹמֵר, גָּזֵל גָּמוּר.",
+   "daf": "נט.",
+   "outside": [],
+   "fid": [
+    0.65,
+    0.65
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.65, 0.65])"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    8
+   ],
+   "n": 13,
+   "text": "שׁוֹטֶה וְקָטָן, יֵשׁ בָּהֶן מִשּׁוּם גָּזֵל, מִפְּנֵי דַרְכֵי שָׁלוֹם. רַבִּי יוֹסֵי אוֹמֵר, גָּזֵל גָּמוּר.",
+   "daf": "נט.",
+   "outside": [],
+   "fid": [
+    0.67,
+    0.67
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.67, 0.67])"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    8
+   ],
+   "n": 3,
+   "text": "מִפְּנֵי דַרְכֵי שָׁלוֹם.",
+   "daf": "נט.",
+   "outside": [],
+   "fid": [
+    0.59,
+    0.59
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.59, 0.59])"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    1
+   ],
+   "n": 1,
+   "text": "יַחֲזֹר.",
+   "daf": "סב.",
+   "decision": "word"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "בִּלְבָד.",
+   "daf": "סד:",
+   "decision": "word"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    3
+   ],
+   "n": 3,
+   "text": "אִם רָצָה לְהַחֲזִיר,",
+   "daf": "סה.",
+   "outside": [],
+   "fid": [
+    0.95,
+    0.95
+   ],
+   "content": 3,
+   "decision": "weak",
+   "why": "עוגן חלש"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    3
+   ],
+   "n": 1,
+   "text": "הָאִשָּׁה",
+   "daf": "סה.",
+   "decision": "word"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    6
+   ],
+   "n": 5,
+   "text": "רַבָּן שִׁמְעוֹן בֶּן גַּמְלִיאֵל, אָמְרוּ חֲכָמִים,",
+   "daf": "סו.",
+   "outside": [],
+   "fid": [
+    0.97,
+    0.97
+   ],
+   "content": 4,
+   "decision": "abbr",
+   "why": "שם בראשי תיבות"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    7
+   ],
+   "n": 3,
+   "text": "דִּבְרֵי רַבִּי מֵאִיר.",
+   "daf": "סו:",
+   "outside": [],
+   "fid": [
+    0.81,
+    0.81
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.81, 0.81])"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    7
+   ],
+   "n": 14,
+   "text": "מְקֻבָּל אֲנִי בְּאוֹמֵר לִשְׁלֹשָׁה, תְּנוּ גֵט לְאִשְׁתִּי, שֶׁיֹּאמְרוּ לַאֲחֵרִים וְיִכְתְּבוּ, מִפְּנֵי שֶׁעֲשָׂאָן בֵּית דִּין.",
+   "daf": "סו:",
+   "outside": [],
+   "fid": [
+    0.92,
+    0.92
+   ],
+   "content": 14,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "נוּמֵינוּ",
+   "daf": "סו:",
+   "decision": "word"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    3
+   ],
+   "n": 4,
+   "text": "זֶה גִטֵּךְ אִם מַתִּי",
+   "daf": "עב:",
+   "outside": [],
+   "fid": [
+    0.95,
+    0.95
+   ],
+   "content": 4,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    3
+   ],
+   "n": 2,
+   "text": "זֶה גִטֵּךְ",
+   "daf": "עב:",
+   "decision": "word"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    5
+   ],
+   "n": 4,
+   "text": "רַבָּן שִׁמְעוֹן בֶּן גַּמְלִיאֵל,",
+   "daf": "עד.",
+   "outside": [],
+   "fid": [
+    0.96,
+    0.96
+   ],
+   "content": 3,
+   "decision": "abbr",
+   "why": "שם בראשי תיבות"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    5
+   ],
+   "n": 1,
+   "text": "בְּאֶחָד",
+   "daf": "עד.",
+   "decision": "word"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    6
+   ],
+   "n": 3,
+   "text": "שֶׁמֵּת הָאָב אוֹ",
+   "daf": "עה:",
+   "outside": [],
+   "fid": [
+    0.92,
+    0.92
+   ],
+   "content": 3,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    6
+   ],
+   "n": 4,
+   "text": "רַבָּן שִׁמְעוֹן בֶּן גַּמְלִיאֵל,",
+   "daf": "עה:",
+   "outside": [],
+   "fid": [
+    0.94,
+    0.94
+   ],
+   "content": 1,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    7
+   ],
+   "n": 10,
+   "text": "הֲרֵי זֶה גִטֵּךְ אִם לֹא בָאתִי מִכָּאן עַד שְׁלֹשִׁים יוֹם,",
+   "daf": "עו.",
+   "outside": [],
+   "fid": [
+    0.8,
+    0.8
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.8, 0.8])"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    7
+   ],
+   "n": 10,
+   "text": "הֲרֵי זֶה גִטֵּךְ אִם לֹא בָאתִי מִכָּאן עַד שְׁלֹשִׁים יוֹם,",
+   "daf": "עו.",
+   "outside": [],
+   "fid": [
+    0.8,
+    0.8
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.8, 0.8])"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    8
+   ],
+   "n": 3,
+   "text": "שְׁנֵים עָשָׂר חֹדֶשׁ,",
+   "daf": "עו:",
+   "outside": [],
+   "fid": [
+    0.81,
+    0.81
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.81, 0.81])"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    8
+   ],
+   "n": 3,
+   "text": "שְׁנֵים עָשָׂר חֹדֶשׁ,",
+   "daf": "עו:",
+   "outside": [],
+   "fid": [
+    0.81,
+    0.81
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.81, 0.81])"
+  },
+  {
+   "perek": 8,
+   "chapter": 8,
+   "mishna": [
+    5
+   ],
+   "n": 3,
+   "text": "שֶׁל זֶה וְיוֹרְשָׁיו",
+   "daf": "עט:",
+   "outside": [],
+   "fid": [
+    0.99,
+    0.99
+   ],
+   "content": 3,
+   "decision": "fix",
+   "ek": "u5844.11",
+   "mode": "before",
+   "wasH": "ואין יורשין של זה ויורשין של זה יורשים כתובתה.",
+   "nowH": "ואין יורשין של זה ויורשיו של זה ויורשין של זה יורשים כתובתה.",
+   "was": "ואין יורשין של זה ויורשין של זה יורשים כתובתה.",
+   "now": "ואין יורשין של זה ויורשיו של זה ויורשין של זה יורשים כתובתה.",
+   "move": [],
+   "row": "u5844"
+  },
+  {
+   "perek": 8,
+   "chapter": 8,
+   "mishna": [
+    10
+   ],
+   "n": 3,
+   "text": "דִּבְרֵי בֶן נַנָּס.",
+   "daf": "פא:",
+   "outside": [],
+   "fid": [
+    0.88,
+    0.88
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.88, 0.88])"
+  },
+  {
+   "perek": 8,
+   "chapter": 8,
+   "mishna": [
+    10
+   ],
+   "n": 4,
+   "text": "אֵין מַשְׁלִימִין עָלָיו אֶלָּא",
+   "daf": "פא:",
+   "outside": [],
+   "fid": [
+    0.91,
+    0.91
+   ],
+   "content": 4,
+   "decision": "fix",
+   "ek": "u5980.3",
+   "mode": "before",
+   "wasH": "<i class=\"tn\"> </i><i class=\"am\">ר&quot;ע:</i><i class=\"tn\"> </i>רק קרובים הראויין להעיד במקום אחר משלימין עליו.",
+   "nowH": "<i class=\"tn\"> </i><i class=\"am\">ר&quot;ע:</i><i class=\"tn\"> </i>רק אין משלימין עליו אלא קרובים הראויין להעיד במקום אחר משלימין עליו.",
+   "was": " ר\"ע: רק קרובים הראויין להעיד במקום אחר משלימין עליו.",
+   "now": " ר\"ע: רק אין משלימין עליו אלא קרובים הראויין להעיד במקום אחר משלימין עליו.",
+   "move": [],
+   "row": "u5980"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    4
+   ],
+   "n": 9,
+   "text": "הֲרֵי אֵלּוּ שְׁלֹשָׁה גִטִּין פְּסוּלִין. וְאִם נִשֵּׂאת, הַוָּלָד כָּשֵׁר.",
+   "daf": "פו.",
+   "outside": [],
+   "fid": [
+    1.0,
+    1.0
+   ],
+   "content": 9,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    8
+   ],
+   "n": 1,
+   "text": "וְכָשֵׁר:",
+   "daf": "פח:",
+   "decision": "word"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    9
+   ],
+   "n": 1,
+   "text": "קָרוֹב",
+   "daf": "פח:",
+   "decision": "word"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    9,
+    10
+   ],
+   "n": 5,
+   "text": "זוֹ הִיא אֲמַתְלָא: בֵּית שַׁמַּאי",
+   "daf": "פח:",
+   "outside": [],
+   "fid": [
+    0.89,
+    0.93
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [0.89, 0.93])"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    10
+   ],
+   "n": 1,
+   "text": "שֶׁנֶּאֱמַר",
+   "daf": "צ.",
+   "decision": "word"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    10
+   ],
+   "n": 1,
+   "text": "שֶׁנֶּאֱמַר",
+   "daf": "צ.",
+   "decision": "word"
+  }
+ ]
+}

@@ -1,0 +1,233 @@
+{
+ "slug": "shevuot",
+ "when": "2026-11-23T15:55:14.762Z",
+ "items": [
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    4
+   ],
+   "n": 3,
+   "text": "דִּבְרֵי רַבִּי יְהוּדָה.",
+   "daf": "ב.",
+   "outside": [],
+   "fid": [
+    0.95,
+    0.95
+   ],
+   "content": 0,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    5
+   ],
+   "n": 3,
+   "text": "יוֹם הַכִּפּוּרִים, שֶׁהֵן",
+   "daf": "ב:",
+   "outside": [],
+   "fid": [
+    0.98,
+    0.98
+   ],
+   "content": 3,
+   "decision": "rephrase",
+   "why": "בתיבה ניסוח אחר (1 מילים) במקום החסר",
+   "extra": "יוֹה''כ"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "שֶׁדַּם",
+   "daf": "ב:",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "אַחֲרֵיהֶם,",
+   "daf": "יד.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    1
+   ],
+   "n": 2,
+   "text": "חַיָּב, דִּבְרֵי",
+   "daf": "יט:",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    5
+   ],
+   "n": 10,
+   "text": "אִם כֵּן אֵין לִי אֶלָּא דְבָרִים שֶׁיֵּשׁ בָּהֶן הֲרָעָה וַהֲטָבָה,",
+   "daf": "כה.",
+   "outside": [],
+   "fid": [
+    0.99,
+    0.99
+   ],
+   "content": 9,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    5
+   ],
+   "n": 1,
+   "text": "מִנַּיִן.",
+   "daf": "כה.",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    10
+   ],
+   "n": 1,
+   "text": "וּבִקְרוֹבִים,",
+   "daf": "כט:",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    11
+   ],
+   "n": 1,
+   "text": "כֵּיצַד.",
+   "daf": "כט:",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    10
+   ],
+   "n": 1,
+   "text": "שֶׁיִּהְיֶה",
+   "daf": "לה.",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    13
+   ],
+   "n": 2,
+   "text": "חַיָּב, דִּבְרֵי",
+   "daf": "לה.",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    13
+   ],
+   "n": 2,
+   "text": "חַיָּב, דִּבְרֵי",
+   "daf": "לה.",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    1
+   ],
+   "n": 3,
+   "text": "דִּבְרֵי רַבִּי מֵאִיר.",
+   "daf": "לו:",
+   "outside": [
+    {
+     "ri": 741,
+     "ek": "u2053.7",
+     "cov": 0.67,
+     "own": 0.11,
+     "t": "- א\"ל ר\"מ חוץ מזה דא\"ל ר\"כ אנא תנינא והכי תנינא: אחד זדונה ואחד שגגתה - אשם בכסף שקלים."
+    }
+   ],
+   "fid": [
+    0.99,
+    0.99
+   ],
+   "content": 0,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 6,
+   "chapter": 6,
+   "mishna": [
+    2
+   ],
+   "n": 2,
+   "text": "בִּפְנֵי עֵדִים",
+   "daf": "לח:",
+   "decision": "word"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    5
+   ],
+   "n": 4,
+   "text": "בָאִין לִידֵי שְׁבוּעַת שָׁוְא",
+   "daf": "מה.",
+   "outside": [],
+   "fid": [
+    0.98,
+    0.98
+   ],
+   "content": 4,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    7
+   ],
+   "n": 4,
+   "text": "רַבָּן שִׁמְעוֹן בֶּן גַּמְלִיאֵל,",
+   "daf": "מה.",
+   "outside": [],
+   "fid": [
+    0.98,
+    0.98
+   ],
+   "content": 3,
+   "decision": "abbr",
+   "why": "שם בראשי תיבות"
+  }
+ ]
+}

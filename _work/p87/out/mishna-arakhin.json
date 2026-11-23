@@ -1,0 +1,427 @@
+{
+ "slug": "arakhin",
+ "when": "2026-11-23T15:55:30.898Z",
+ "items": [
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    2
+   ],
+   "n": 6,
+   "text": "רַבִּי יְהוּדָה אוֹמֵר, מַעֲרִיךְ אֲבָל לֹא נֶעֱרָךְ.",
+   "daf": "ה:",
+   "outside": [],
+   "fid": [
+    1.0,
+    1.0
+   ],
+   "decision": "summary",
+   "why": "תיבה מקוצרת (נאמנות [1.0, 1.0])"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    3
+   ],
+   "n": 7,
+   "text": "אֲבָל אֵינוֹ נִדָּר, מִפְּנֵי שֶׁאֵין דָּמָיו קְצוּבִין.",
+   "daf": "ו:",
+   "outside": [],
+   "fid": [
+    1.0,
+    1.0
+   ],
+   "content": 7,
+   "decision": "fix",
+   "ek": "u374.2",
+   "mode": "after",
+   "wasH": "<i class=\"am\">ר&#x27; חנינא בן עקביא אומר:</i> נערך, מפני שדמיו קצובין.",
+   "nowH": "<i class=\"am\">ר&#x27; חנינא בן עקביא אומר:</i> נערך, מפני שדמיו קצובין, אבל אינו נדר, מפני שאין דמיו קצובין.",
+   "was": "ר' חנינא בן עקביא אומר: נערך, מפני שדמיו קצובין.",
+   "now": "ר' חנינא בן עקביא אומר: נערך, מפני שדמיו קצובין, אבל אינו נדר, מפני שאין דמיו קצובין.",
+   "move": [],
+   "row": "u374"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    3
+   ],
+   "n": 1,
+   "text": "בַּתַּשְׁלוּמִין:",
+   "daf": "ו:",
+   "decision": "word"
+  },
+  {
+   "perek": 1,
+   "chapter": 1,
+   "mishna": [
+    4
+   ],
+   "n": 1,
+   "text": "שֶׁהִיא",
+   "daf": "ז.",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "נֶאֱכָלוֹת",
+   "daf": "ח:",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    5
+   ],
+   "n": 1,
+   "text": "וְלִשְׁנֵי",
+   "daf": "יג.",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    5
+   ],
+   "n": 5,
+   "text": "וּמוֹסִיפִין עַד לְעוֹלָם. אֵין פּוֹחֲתִין",
+   "daf": "יג.",
+   "outside": [],
+   "fid": [
+    0.97,
+    0.97
+   ],
+   "content": 5,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "עוֹמְדִים",
+   "daf": "יג:",
+   "decision": "word"
+  },
+  {
+   "perek": 2,
+   "chapter": 2,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "עוֹמְדִים",
+   "daf": "יג:",
+   "decision": "word"
+  },
+  {
+   "perek": 3,
+   "chapter": 3,
+   "mishna": [
+    5
+   ],
+   "n": 3,
+   "text": "וְלֹא שָׁמְעוּ בְּקוֹלִי:",
+   "daf": "טו.",
+   "outside": [],
+   "fid": [
+    0.98
+   ],
+   "content": 3,
+   "decision": "rephrase",
+   "why": "בתיבה ניסוח אחר (1 מילים) במקום החסר",
+   "extra": "וגו'."
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    1
+   ],
+   "n": 1,
+   "text": "הֶשֵּׂג",
+   "daf": "יז.",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "אֲפִלּוּ",
+   "daf": "יז:",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    4
+   ],
+   "n": 2,
+   "text": "אִם זָכָר,",
+   "daf": "יח.",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    4
+   ],
+   "n": 1,
+   "text": "לוֹמַר,",
+   "daf": "יח.",
+   "decision": "word"
+  },
+  {
+   "perek": 4,
+   "chapter": 4,
+   "mishna": [
+    4
+   ],
+   "n": 1,
+   "text": "מִמֶּנָּה,",
+   "daf": "יח.",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    1
+   ],
+   "n": 1,
+   "text": "וְנָתְנָה",
+   "daf": "יט.",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    1
+   ],
+   "n": 1,
+   "text": "וְגִידִין",
+   "daf": "יט.",
+   "decision": "word"
+  },
+  {
+   "perek": 5,
+   "chapter": 5,
+   "mishna": [
+    2
+   ],
+   "n": 3,
+   "text": "וְכַמָּה הוּא שָׁוֶה",
+   "daf": "יט:",
+   "outside": [],
+   "fid": [
+    1.0,
+    1.0
+   ],
+   "content": 3,
+   "decision": "condensed",
+   "why": "התוכן כבר בתיבה (צמצום)"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    2
+   ],
+   "n": 1,
+   "text": "לְבֵין",
+   "daf": "כה.",
+   "decision": "word"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    3
+   ],
+   "n": 1,
+   "text": "אֵינָהּ",
+   "daf": "כה.",
+   "decision": "word"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    4
+   ],
+   "n": 3,
+   "text": "דִּבְרֵי רַבִּי יְהוּדָה.",
+   "daf": "כה:",
+   "outside": [],
+   "fid": [
+    0.98,
+    0.98
+   ],
+   "content": 0,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 7,
+   "chapter": 7,
+   "mishna": [
+    5
+   ],
+   "n": 3,
+   "text": "דִּבְרֵי רַבִּי מֵאִיר.",
+   "daf": "כו:",
+   "outside": [],
+   "fid": [
+    0.96,
+    0.96
+   ],
+   "content": 0,
+   "decision": "style",
+   "why": "מילות מסגרת וייחוס בלבד"
+  },
+  {
+   "perek": 8,
+   "chapter": 8,
+   "mishna": [
+    4
+   ],
+   "n": 2,
+   "text": "חַיָּב לִהְיוֹת",
+   "daf": "כח.",
+   "decision": "word"
+  },
+  {
+   "perek": 8,
+   "chapter": 8,
+   "mishna": [
+    5
+   ],
+   "n": 5,
+   "text": "כֹּהֲנִים וּלְוִיִּם אֵינָן מַחֲרִימִין, דִּבְרֵי",
+   "daf": "כח.",
+   "outside": [],
+   "fid": [
+    1.0,
+    1.0
+   ],
+   "content": 4,
+   "decision": "fix",
+   "ek": "u2390.1",
+   "mode": "after",
+   "wasH": "<i class=\"b\">המחרים בנו ובתו</i>, ועבדו ושפחתו העברים, ושדה מקנתו - <i class=\"b\">אין מוחרמין</i>, שאין אדם מחרים דבר שאינו שלו.",
+   "nowH": "<i class=\"b\">המחרים בנו ובתו</i>, ועבדו ושפחתו העברים, ושדה מקנתו - <i class=\"b\">אין מוחרמין</i>, שאין אדם מחרים דבר שאינו שלו, כהנים ולוים אינן מחרימין, דברי",
+   "was": "המחרים בנו ובתו, ועבדו ושפחתו העברים, ושדה מקנתו - אין מוחרמין, שאין אדם מחרים דבר שאינו שלו.",
+   "now": "המחרים בנו ובתו, ועבדו ושפחתו העברים, ושדה מקנתו - אין מוחרמין, שאין אדם מחרים דבר שאינו שלו, כהנים ולוים אינן מחרימין, דברי",
+   "move": [],
+   "row": "u2390"
+  },
+  {
+   "perek": 8,
+   "chapter": 8,
+   "mishna": [
+    6
+   ],
+   "n": 1,
+   "text": "שֶׁהוּא",
+   "daf": "כח:",
+   "decision": "word"
+  },
+  {
+   "perek": 8,
+   "chapter": 8,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "הַפּוֹדִין",
+   "daf": "כח:",
+   "decision": "word"
+  },
+  {
+   "perek": 8,
+   "chapter": 8,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "אֶפְשָׁר",
+   "daf": "כט.",
+   "decision": "word"
+  },
+  {
+   "perek": 8,
+   "chapter": 8,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "אֶפְשָׁר",
+   "daf": "כט.",
+   "decision": "word"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    3
+   ],
+   "n": 1,
+   "text": "תְמִימָה.",
+   "daf": "לא.",
+   "decision": "word"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    4
+   ],
+   "n": 1,
+   "text": "הַזָּקֵן,",
+   "daf": "לא:",
+   "decision": "word"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    7
+   ],
+   "n": 1,
+   "text": "וְנִגְאָלִין",
+   "daf": "לג.",
+   "decision": "word"
+  },
+  {
+   "perek": 9,
+   "chapter": 9,
+   "mishna": [
+    7
+   ],
+   "n": 2,
+   "text": "שְׁתֵּי חֲצֵרוֹת",
+   "daf": "לג:",
+   "decision": "word"
+  }
+ ]
+}

@@ -9,6 +9,9 @@
   זרה   - תיבה שהטקסט שלה אינו נמצא במשניות הפרק (כיסוי זוגות מילים נמוך מ-COV).
   נבלעה - משנה שקיימת במשניות הפרק ואין תיבה שמכסה אותה.
   כפולה - שתי תיבות בטקסט זהה.
+  חלקי  - (פרומפט 87) רצף של 3 מילים ומעלה מן המשנה שחסר בתוך תיבה שהיא לשון המשנה (tools/mishna_gaps.py):
+          "יוצא הגמל באפסר ונאקה בחטם" שנשמט משבת נא: בעריכת פיצול. ממצא שכבר נבדק ונמצא שאינו חוסר
+          (ראשי תיבות, צמצום של המחבר) רשום ב-data/fold/mishna-partial-known.json ואינו מתריע שוב.
 
     python tools/mishna_check.py                 כל המסכתות שב-data/book.json (ספר ואתר)
     python tools/mishna_check.py --only shabbat
@@ -20,7 +23,27 @@ import os, sys, io, json, argparse, datetime, urllib.request
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import mishna_guard as G
+import mishna_gaps as MG
 import chapter_ord
+
+KNOWN = os.path.join(HERE, 'data', 'fold', 'mishna-partial-known.json')
+
+
+def partial(slug, pages):
+    """חוסר חלקי בתיבות (פרומפט 87): רק fix/move/outside - חוסר של ממש בתיבה שהיא לשון המשנה."""
+    try:
+        known = set((json.load(io.open(KNOWN, encoding='utf-8')).get(slug) or {}).keys())
+    except Exception:
+        known = set()
+    out = []
+    for x in MG.report(slug, MG.rows_from_pages(pages)):
+        if x.get('decision') not in ('fix', 'move', 'outside'):
+            continue
+        if MG.sig(x) in known:
+            continue
+        out.append({'daf': x.get('daf'), 'perek': x.get('perek'), 'mishna': x.get('mishna'), 'decision': x['decision'],
+                    'text': x.get('text'), 'ek': x.get('ek'), 'sig': MG.sig(x)})
+    return out
 
 COV = 0.3            # תיבה זרה: פחות מזה מן הזוגות שלה נמצאים במשניות הפרק (ברייתא בשבת ק.: 0.07)
 SWALLOW = 0.35       # משנה נבלעה: פחות מזה מזוגותיה נמצאים בתיבות הפרק
@@ -79,8 +102,12 @@ def check(slug, pages):
             c = sum(1 for x in big if x in S) / float(len(big))
             if c < SWALLOW:
                 swallowed.append({'perek': pi + 1, 'mishna': mi + 1, 'cov': round(c, 2), 'text': ' '.join(w[:12])})
+    try:
+        part = partial(slug, pages)
+    except Exception as e:
+        part = [{'error': str(e)[:200]}]
     return {'slug': slug, 'boxes': len(bx), 'alien': alien, 'swallowed': swallowed, 'dup': dup,
-            'certain': certain(slug, pages)}
+            'certain': certain(slug, pages), 'partial': part}
 
 
 def certain(slug, pages):
@@ -140,7 +167,7 @@ def main():
     book = json.load(io.open(os.path.join(HERE, 'data', 'book.json'), encoding='utf-8'))
     slugs = [s for s in book['slugs'] if not a.only or s in a.only.split(',')]
     res = {'when': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), 'masechtot': {}}
-    print('%-14s %6s | %-16s | %-16s' % ('מסכת', 'תיבות', 'ספר: ודאי/זרה/נבלעה/כפולה', 'אתר: ודאי/זרה/נבלעה/כפולה'))
+    print('%-14s %6s | %-16s | %-16s' % ('מסכת', 'תיבות', 'ספר: ודאי/זרה/נבלעה/כפולה/חלקי', 'אתר: ודאי/זרה/נבלעה/כפולה/חלקי'))
     for s in slugs:
         row = {}
         for tag, wl in (('book', False), ('site', True)):
@@ -152,7 +179,8 @@ def main():
                 row[tag] = {'slug': s, 'error': str(e)[:200]}
         res['masechtot'][s] = row
         f = lambda r: ('-' if not r else r.get('error') and 'שגיאה' or r.get('skip') and 'אין משניות'
-                       or '%d/%d/%d/%d' % (len(r.get('certain') or []), len(r['alien']), len(r['swallowed']), len(r['dup'])))
+                       or '%d/%d/%d/%d/%d' % (len(r.get('certain') or []), len(r['alien']), len(r['swallowed']), len(r['dup']),
+                                             len(r.get('partial') or [])))
         print('%-14s %6s | %-16s | %-16s' % (s, (row.get('book') or {}).get('boxes', ''), f(row.get('book')), f(row.get('site'))))
         sys.stdout.flush()
     out = os.path.join(HERE, 'data', 'fold', 'mishna-check.json')

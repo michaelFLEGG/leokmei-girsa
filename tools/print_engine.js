@@ -37,6 +37,16 @@
     var tm=setTimeout(function(){try{ctl&&ctl.abort()}catch(e){}},ms||6000);
     return fetch(prnApiUrl()+path,{method:'POST',headers:h,body:JSON.stringify(body),cache:'no-store',signal:ctl?ctl.signal:undefined})
       .then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(j){clearTimeout(tm);return j})}
+  /* סדר העמודים לחוברת / שניים בעמוד. n = מספר העמודים; מחזיר רשימת צדדים, לכל צד [שמאל, ימין] (מספרי עמוד מ-1, 0 = ריק).
+     חוברת עברית (כריכה מימין): בחוץ - עמוד 1 משמאל לקפל ועמוד האחרון מימין; מאחוריו 2 מימין ו-(אחרון פחות 1) משמאל, וכן הלאה פנימה.
+     שניים בעמוד: לפי סדר הקריאה, הראשון מימין והשני משמאל. (משותף להפקה בשרת ולהדפסה בדפדפן) */
+  function prnImpOrder(n,mode){
+    var o=[],N,s;
+    if(mode==='book'){N=Math.ceil(n/4)*4;
+      for(s=0;s<N/4;s++){o.push([1+2*s,N-2*s]);o.push([N-1-2*s,2+2*s])}
+      return o.map(function(sd){return sd.map(function(p){return p<=n?p:0})})}
+    for(s=0;s<n;s+=2)o.push([s+2<=n?s+2:0,s+1]);
+    return o}
   var PRN_MSG='ניתן להדפיס פרק אחד ביום. מחר אפשר להדפיס פרק נוסף.';
   /* הרשאת הדפסה למבקר (פרק n של המסכת הזאת). שתי שכבות: המכשיר (lg-prn-day) והשרת. אחת מהן חוסמת - חסום.
      השרת אינו זמין - לפי המכשיר בלבד (לא חוסמים לומד בגלל תקלה). הדפסה חוזרת של אותו פרק באותו יום - מותרת */
@@ -1381,9 +1391,27 @@
        סוף פרק וסוף הטווח - האיזון הקיים (balanceTo), שבו ההערות של שני הטורים כבר צמודות מתחת לרצועה באותו גובה.
        QS pool=0 - בלי (לבדיקה) */
     var POOL=HFIX&&withTos&&prof.cols===2&&QS.get('pool')!=='0';
+    /* פרומפט 86 המשך (סוכה פרק ב: כ-30 תוס' בעמוד, כ-12 שניות לעמוד): גיזום חיפוש החיתוך בתוך הערה, באותו פלט.
+       חיתוך בתוך הערה j נותן גובה שאינו קטן מ-max(גובה ההערות שלפניה, גובה ההערות שאחריה) - שתיהן תת-קבוצה של שני
+       הצדדים. U = הטוב שבחיתוכים בין הערות שלמות (כולם נבדקים ממילא). הערה שהחסם שלה גבוה מ-U בשתי שורות הערה ויותר
+       אינה יכולה להיבחר ולא להכריע שוויון (כלל השוויון הוא עד חצי פיקסל), ולכן החיפוש בתוכה מדולג. psprune=0 - בלי גיזום;
+       psverify=1 - מחשב גם בלי גיזום ומשווה (R.psVerify) */
+    var PSPR=QS.get('psprune')!=='0',PSV=QS.get('psverify')==='1';
     function poolSplit(ids){
+      if(!PSV)return poolSplit0(ids,PSPR);
+      var a=poolSplit0(ids,true),b=poolSplit0(ids,false),V=R.psVerify||(R.psVerify={n:0,bad:0,ex:[]});V.n++;
+      var ka=a?JSON.stringify([a.h,a.s1,a.s2]):'',kb=b?JSON.stringify([b.h,b.s1,b.s2]):'';
+      if(ka!==kb){V.bad++;if(V.ex.length<5)V.ex.push({ids:ids.join(','),a:ka.slice(0,300),b:kb.slice(0,300)})}
+      return b}
+    function poolSplit0(ids,prune){
       if(!ids.length)return {h:0,s1:[],s2:[]};
-      var best=null;
+      var best=null,skip=null;
+      if(prune&&ids.length>2){
+        var Hp=[],Hs=[],U=Infinity,nI=ids.length;
+        for(var j0=0;j0<=nI;j0++){Hp[j0]=j0?fnSpec(specOf(ids.slice(0,j0),null,null)).h:0;Hs[j0]=j0<nI?fnSpec(specOf(ids.slice(j0),null,null)).h:0;
+          U=Math.min(U,Math.max(Hp[j0],Hs[j0]))}
+        skip=[];var thr=U+2*NLH;
+        for(var j1=0;j1<nI;j1++)if(Math.max(Hp[j1],Hs[j1+1])>thr){skip[j1]=1;R.psSkip=(R.psSkip||0)+1}}
       function ev(s1,s2,cut){var a=s1.length?fnSpec(s1):null,b=s2.length?fnSpec(s2):null,h1=a?a.h:0,h2=b?b.h:0;
         /* הערה שעוברת באמצעה: שתי שורות לפחות בכל צד */
         if(cut&&((a&&a.parts[a.parts.length-1]/NLH<1.8)||(b&&b.parts[0]/NLH<1.8)))return null;
@@ -1392,6 +1420,7 @@
       for(var j=0;j<=ids.length;j++){
         ev(specOf(ids.slice(0,j),null,null),specOf(ids.slice(j),null,null),false);
         if(j===ids.length)break;
+        if(skip&&skip[j])continue;
         var n=ids[j],nw=noteWords(n),lo=1,hi=nw.w.length-1;
         while(lo<=hi){var mid=(lo+hi)>>1,k=mid;while(k>0&&!nw.ok[k-1])k--;if(k<1){lo=mid+1;continue}
           var s1=specOf(ids.slice(0,j+1),null,{n:n,k:k}),s2=specOf(ids.slice(j+1),{n:n,k:k},null);
@@ -1426,7 +1455,59 @@
       if(g1&&BALMID&&g1.e<L.length&&!isForce(g1.e)&&ppResid(i,g1)>LH){var g2=pagePair1(i,fnGap(true));
         if(g2&&g2.e>g1.e){g2.tight=1;R.poolTight=(R.poolTight||0)+1;return g2}}
       return g1}
+    /* פרומפט 86 המשך: pagePair1 חישב את פיצול ההערות (poolSplit) לכל סוף-עמוד אפשרי e, מן הקצר אל הארוך, אף שרק
+       ההצלחה האחרונה לפני העצירה נשמרת. באותו פלט: (1) מוצאים בזול את ה-e הראשון שבו העצירה "capT<6 שורות" אפשרית -
+       חסם עליון לגובה המאגר (חיתוך אחד בין הערות שלמות סמוך לאמצע; poolSplit אינו בוחר גבוה ממנו ביותר מפיקסל).
+       לפניו אין עצירה, ולכן (2) מחשבים בדיוק מן ה-e הזה והלאה, כמו קודם (כולל העצירה), ו(3) רק אם לא נמצאה שם
+       הצלחה - יורדים ממנו אחורה עד ההצלחה הראשונה. ppfast=0 - הדרך הקודמת; ppverify=1 - שתיהן ומשווה (R.ppVerify) */
+    var PPF=QS.get('ppfast')!=='0',PPV=QS.get('ppverify')==='1';
     function pagePair1(i,GAPp){
+      if(DBGPP||!(PPF||PPV))return pagePair1Full(i,GAPp);
+      if(!PPV)return pagePair1Fast(i,GAPp);
+      var a=pagePair1Fast(i,GAPp),b=pagePair1Full(i,GAPp),V=R.ppVerify||(R.ppVerify={n:0,bad:0,ex:[]});V.n++;
+      function kf(g){return g?JSON.stringify([g.m,g.e,g.capT,g.ps.h,g.ps.s1,g.ps.s2]):''}
+      if(kf(a)!==kf(b)){V.bad++;if(V.ex.length<5)V.ex.push({i:i,a:kf(a).slice(0,200),b:kf(b).slice(0,200)})}
+      return b}
+    function psUB(ids){
+      if(!ids.length)return 0;
+      var W=0,c=0,j=0,ws=ids.map(function(n){var w=noteWords(n).w.length;W+=w;return w});
+      while(j<ids.length&&c+ws[j]<=W/2){c+=ws[j];j++}
+      function hs(a,b){return a<b?fnSpec(specOf(ids.slice(a,b),null,null)).h:0}
+      var u=Math.max(hs(0,j),hs(j,ids.length));
+      if(j<ids.length)u=Math.min(u,Math.max(hs(0,j+1),hs(j+1,ids.length)));
+      return u}
+    function pagePair1Fast(i,GAPp){
+      if(!POOL||carry||i>=L.length)return null;
+      var es=[];
+      for(var e=i+2;e<=L.length;e++){
+        if(e<L.length&&e>i+1&&isForce(e-1)&&e-1>i)break;
+        if(L[e-1].y1-L[i].y0>2*A)break;
+        if(e>=L.length||isForce(e)||canBreak(e,true))es.push(e)}
+      var thr=A-GAPp-6*LH,s0=es.length;
+      for(var x=0;x<es.length;x++)if(psUB(noteIds(i,es[x]))+1.5>=thr){s0=x;break}
+      var memo={};
+      function tryE(e){
+        /* כמו בדרך הקודמת: בלי הערות כלל - ps אינו מחושב (lastIds מתחיל ריק), והסוף הזה אינו נבחר */
+        var ids=noteIds(i,e);if(!ids.length)return {};
+        var key=ids.join(','),ps=memo[key]||(memo[key]=poolSplit(ids));
+        if(!ps)return {};
+        var capT=A-(ps.h?ps.h+GAPp:0);
+        if(capT<6*LH)return {brk:1};
+        var m=-1,tolT=BALMID?TOLQ:0;
+        for(var q=i+1;q<e;q++){if(L[q-1].y1-L[i].y0>capT+tolT+0.5)break;if(!isForce(q)&&canBreak(q,true))m=q}
+        if(m<0)return {};
+        if(L[e-1].y1-L[m].y0>capT+tolT+0.5)return {};
+        return {got:{m:m,e:e,ps:ps,capT:capT}}}
+      var got=null;
+      for(var x2=s0;x2<es.length;x2++){var r=tryE(es[x2]);if(r.brk)break;if(r.got)got=r.got}
+      if(!got)for(var x3=s0-1;x3>=0;x3--){var r3=tryE(es[x3]);if(r3.got){got=r3.got;break}}
+      R.ppFast=(R.ppFast||0)+1;
+      return ppFinish(i,got)}
+    function ppFinish(i,got){
+      if(got&&BALMID){var m2=balMid(i,got.e,got.capT,got.m);if(m2!==got.m){got.m=m2;R.balMid=(R.balMid||0)+1}}
+      if(got&&!got.ps.s1.length&&got.ps.s2.length)got=null;
+      return got}
+    function pagePair1Full(i,GAPp){
       if(!POOL||carry||i>=L.length)return null;
       var got=null,lastIds='',ps=null;
       for(var e=i+2;e<=L.length;e++){
@@ -1446,9 +1527,7 @@
         if(m<0)continue;
         if(L[e-1].y1-L[m].y0>capT+tolT+0.5)continue;
         got={m:m,e:e,ps:ps,capT:capT}}
-      if(got&&BALMID){var m2=balMid(i,got.e,got.capT,got.m);if(m2!==got.m){got.m=m2;R.balMid=(R.balMid||0)+1}}
-      if(got&&!got.ps.s1.length&&got.ps.s2.length)got=null;
-      return got}
+      return ppFinish(i,got)}
     /* פרומפט 86: פס ההתקדמות בעימוד - "מעמד: עמוד N מתוך כ-M". M הוא אומדן: גובה הטקסט שנמדד, ועוד חלק ההערות (כשיש תוס') */
     var PGEST=Math.max(1,Math.round((L.length?L[L.length-1].y1-L[0].y0:0)*(withTos?1.45:1.04)/(A*(prof.cols||1)))),lastPgShown=-1;
     while(i<L.length){
@@ -2083,6 +2162,25 @@
     /* פרומפט 51 (16.11.2026): הדפסה בדפדפן עצמו, בלי שרת. הדף נפתח בחלון חדש עם autoprint=1, מעמד במנוע הזה,
        ופותח את חלון ההדפסה של הדפדפן (שם בוחרים מדפסת או "שמירה כ-PDF"). */
     /* פרומפט 86: ההדפסה הושלמה - נרשמת, ופס ההתקדמות אומר "מוכן". אחרי שחלון ההדפסה של הדפדפן נסגר, הפס יורד והעמודים נראים */
+    /* 23.11.2026 (מיכאל: "לא מדפיס מצב חוברת למרות שלחצתי"): החוברת ו"שניים בעמוד" נעשו רק בהפקה בשרת (pdf-lib על הקובץ),
+       ו"הדפס" בדפדפן התעלם מהבחירה. מעכשיו גם בדפדפן: אותם עמודים בדיוק, מוקטנים ביחס אחיד (0.707) לחצי גיליון A4 לרוחב,
+       באותו סדר עמודים (prnImpOrder) */
+    var LAYQ=QS.get('lay');
+    if((LAYQ==='book'||LAYQ==='2up')&&!SHRINK){
+      var IOUT=document.getElementById('prnout'),IPG=[].slice.call(IOUT.children).filter(function(x){return x.classList.contains('pg')||x.classList.contains('shp')});
+      var ist=document.createElement('style');ist.setAttribute('data-prnrun','1');
+      ist.textContent='@page{size:297mm 210mm;margin:0}'+
+        '.imps{position:relative;width:297mm;height:210mm;overflow:hidden;display:flex;direction:ltr;background:#fff;break-after:page;page-break-after:always;break-inside:avoid}'+
+        '.imps:last-child{break-after:auto;page-break-after:auto}'+
+        '.imph{position:relative;width:148.5mm;height:210mm;overflow:hidden;flex:none}'+
+        '.imph>.pg,.imph>.shp{position:absolute!important;left:50%;top:50%;transform-origin:50% 50%;transform:translate(-50%,-50%) scale(.7070);break-after:auto!important;page-break-after:auto!important}';
+      document.head.appendChild(ist);
+      var ifr=document.createDocumentFragment();
+      prnImpOrder(IPG.length,LAYQ).forEach(function(sd){var sh=document.createElement('div');sh.className='imps';
+        sd.forEach(function(p){var h=document.createElement('div');h.className='imph';if(p)h.appendChild(IPG[p-1]);sh.appendChild(h)});
+        ifr.appendChild(sh)});
+      IOUT.innerHTML='';IOUT.appendChild(ifr);R.imposed={mode:LAYQ,pages:IPG.length};
+      document.title+=LAYQ==='book'?' - חוברת A5':' - שניים בעמוד'}
     if(window.__prnLog&&window.__prnLog.state==='start'){var PL=window.__prnLog;PL.state='done';PL.secs=Math.round(performance.now()/100)/10;PL.pages=R.pages.length;prnPost('/prn/log',PL,6000)}
     if(QS.get('autoprint')==='1'){
       prnProg('מוכן, נפתח חלון ההדפסה',1);
@@ -2420,13 +2518,7 @@
     /* סדר העמודים. n = מספר העמודים; מחזיר רשימת צדדים, לכל צד [שמאל, ימין] (מספרי עמוד מ-1, 0 = ריק).
        חוברת עברית (כריכה מימין): בחוץ - עמוד 1 משמאל לקפל ועמוד האחרון מימין; מאחוריו 2 מימין ו-(אחרון פחות 1) משמאל, וכן הלאה פנימה.
        שניים בעמוד: לפי סדר הקריאה, הראשון מימין והשני משמאל. */
-    window.prnImposeOrder=function(n,mode){
-      var o=[],N,s;
-      if(mode==='book'){N=Math.ceil(n/4)*4;
-        for(s=0;s<N/4;s++){o.push([1+2*s,N-2*s]);o.push([N-1-2*s,2+2*s])}
-        return o.map(function(sd){return sd.map(function(p){return p<=n?p:0})})}
-      for(s=0;s<n;s+=2)o.push([s+2<=n?s+2:0,s+1]);
-      return o};
+    window.prnImposeOrder=prnImpOrder;
     window.prnImpose=async function(bytes,mode,PDFLib){
       PDFLib=PDFLib||await prnLib();
       var src=await PDFLib.PDFDocument.load(bytes),out=await PDFLib.PDFDocument.create();
@@ -2452,9 +2544,26 @@
       var b5=PRD&&PRD.querySelector('input[name=prpaper][value=b5]:checked');
       q.set('profile',(b5?'b5':'a4')+(big?'lg':''));
       q.set('autoprint','1');
-      var u=location.pathname+'?'+q.toString();
-      var w=null;try{w=window.open(u,'_blank')}catch(e){}
-      if(!w)location.href=u;
+      var lay=prnLay();if(lay!=='a4')q.set('lay',lay);
+      /* 23.11.2026 (מיכאל: "מדפיס לא את המצב המעודכן", שבת פרק ה'): חלון ההדפסה טוען רק תיקונים שכבר פורסמו, ותיקונים
+         שעדיין בתור של המכשיר (פורסמו רק אחרי עשר שניות, או ביציאה מן הדף - ושם עד 60 ק"ב) לא נכנסו. כמו בהפקה בשרת:
+         קודם מפרסמים את התור, ומעבירים לחלון את חותמת הגרסה (et) - הוא מחכה לה, ואם אינה מגיעה אומר זאת ואינו מדפיס חסר.
+         החלון נפתח מיד (חוסם החלונות מתיר רק פתיחה בתוך הלחיצה) ועובר לדף ההדפסה אחרי הפרסום */
+      var needPub=isAdm()&&typeof pubNow==='function'&&typeof pubPending==='function'&&pubPending();
+      if(!needPub){
+        var u=location.pathname+'?'+q.toString();
+        var w=null;try{w=window.open(u,'_blank')}catch(e){}
+        if(!w)location.href=u;
+        prnClose();return}
+      var w2=null;try{w2=window.open('','_blank')}catch(e){}
+      try{if(w2)w2.document.write('<!doctype html><meta charset="utf-8"><title>לאוקמי גירסא - הדפסה</title><body dir="rtl" style="font-family:Vilna,serif;font-size:20px;padding:3em;text-align:center">מפרסם את התיקונים האחרונים לפני ההדפסה...</body>')}catch(e){}
+      var needKey=!admHdr()['x-admin-key']&&typeof askAdminWord==='function';
+      Promise.resolve().then(function(){return needKey?askAdminWord():null}).catch(function(){})
+        .then(function(){return pubNow(1)}).catch(function(){})
+        .then(function(){return fetch(SUGGEST_API+'/live?slug='+encodeURIComponent(SLUG),{cache:'no-store'})}).then(function(r){return r.ok?r.text():''}).catch(function(){return ''})
+        .then(function(t){try{var et=JSON.parse(t).doc.t;if(et)q.set('et',String(et))}catch(e){}
+          var u2=location.pathname+'?'+q.toString();
+          if(w2&&!w2.closed)w2.location.href=u2;else location.href=u2});
       prnClose()}
     function prnGo(){
       var r=prnRange(),go=document.getElementById('prn-go'),bar=document.getElementById('prn-bar'),err=document.getElementById('prn-err');

@@ -150,6 +150,11 @@ def run(a):
                     rec['error'] = pg.evaluate('window.__PRN.error||null')
                     rec['t0'] = pg.evaluate('window.__PRN.report&&window.__PRN.report.t0||null')
                     rec['tm'] = pg.evaluate('window.__PRN.report&&window.__PRN.report.tm||null')
+                    if st != 'done':
+                        # פרומפט 86 המשך: גם בריצה שלא הסתיימה - מוני המדידה וקוד הניסוי (לאבחון מקרים שנתקעים)
+                        rec['stat'] = pg.evaluate('(function(r){return r?{fn:r.fnStat||null,pooled:r.pooled,ps:r.psStat||null}:null})(window.__PRN.report)')
+                        if a.eval_js:
+                            rec['evalr'] = pg.evaluate(open(a.eval_js, encoding='utf-8').read())
                     if st == 'done':
                         rec['pages'] = pg.evaluate('window.__PRN.report.pages.length')
                         rec['issues'] = pg.evaluate("(window.__PRN.report.issues||[]).map(i=>i.type+'|'+i.page)")

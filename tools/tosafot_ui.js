@@ -294,11 +294,25 @@
     if(!l){l=document.createElement('div');l.id='tsl';l.setAttribute('aria-hidden','false');document.body.appendChild(l)}return l}
   var LQ=0;
   function tsLayerSoon(){if(LQ)return;LQ=requestAnimationFrame(function(){LQ=0;tsLayer()})}
+  /* פרומפט 79 (23.11.2026): מיקום הסימנים נמדד רק לעוגנים שבתצוגה ובסביבתה (IntersectionObserver),
+     ורק כשמשהו השתנה (גלילה, שינוי גודל, שינוי בטקסט, גופנים). קודם נמדדו כל העוגנים שבדף (בשבת 1,550)
+     כל 700 מילישניות, וכל מדידה חייבה פריסה מחדש. בדפדפן בלי IntersectionObserver - כמו קודם, כל העוגנים. */
+  var TSIO=null,TSVIS=new Set(),TSOBS=new WeakSet();
+  if(window.IntersectionObserver){
+    TSIO=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting)TSVIS.add(e.target);else TSVIS.delete(e.target)});
+      tsLayerSoon()},{root:null,rootMargin:'300px 300px 300px 300px'})}
   function tsLayer(){
     var L=layerEl(),f=document.getElementById('flow');if(!f)return;
-    var anchors=[].slice.call(f.querySelectorAll('.tsa'));
+    var all=f.querySelectorAll('.tsa'),anchors;
+    if(TSIO){
+      for(var i=0;i<all.length;i++){var a0=all[i];if(!TSOBS.has(a0)){TSOBS.add(a0);TSIO.observe(a0)}}
+      anchors=[];TSVIS.forEach(function(a){if(a.isConnected)anchors.push(a);else TSVIS.delete(a)});
+    }else anchors=[].slice.call(all);
     var have={};[].forEach.call(L.children,function(x){have[x.getAttribute('data-n')]=x});
     var seen={},fr=f.getBoundingClientRect(),placed=[];
+    /* כפתור של עוגן שקיים בדף אבל אינו בתצוגה: מוסתר ונשמר (אינו נמדד) */
+    if(TSIO)for(var j=0;j<all.length;j++){var nn=all[j].getAttribute('data-n');seen[nn]=1;if(have[nn])have[nn].style.display='none'}
     anchors.forEach(function(a){
       var n=a.getAttribute('data-n'),it=byN[n];if(!it)return;seen[n]=1;
       var el=have[n];
@@ -323,7 +337,22 @@
   window.tsLayer=tsLayer;
   addEventListener('resize',function(){tsLayerSoon();tpFit()});
   document.addEventListener('scroll',tsLayerSoon,true);
-  setInterval(function(){if(!document.body.classList.contains('bk-on')&&document.querySelector('#flow .tsa'))tsLayer()},700);
+  /* במקום setInterval כל 700ms: מדידה רק כששינוי נראה. שינוי בטקסט (עריכה, ציור פרק), בגודל התצוגה,
+     בגודל הגופן או במחלקות התצוגה, וסיום טעינת הגופנים. */
+  (function(){
+    function hook(){var f=document.getElementById('flow');if(!f)return false;
+      function soon(){if(!document.body.classList.contains('bk-on')&&f.querySelector('.tsa'))tsLayerSoon()}
+      if(window.MutationObserver){
+        new MutationObserver(soon).observe(f,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class','style']});
+        new MutationObserver(soon).observe(document.documentElement,{attributes:true,attributeFilter:['class','style']});
+        new MutationObserver(soon).observe(document.body,{attributes:true,attributeFilter:['class','style']})}
+      if(window.ResizeObserver)new ResizeObserver(soon).observe(f);
+      if(document.fonts&&document.fonts.ready)document.fonts.ready.then(soon);
+      if(document.fonts&&document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',soon);
+      addEventListener('transitionend',soon,true);
+      if(!window.MutationObserver)setInterval(soon,700);   /* דפדפן ישן מאוד: כמו קודם */
+      return true}
+    if(!hook())document.addEventListener('DOMContentLoaded',hook)})();
 
   function lineOf(ref){var m=/\.(\d+)$/.exec(ref||'');return m?+m[1]:0}
   function placeMark(it,rows,ctx0,occ0){
@@ -544,6 +573,13 @@
     PLACED={};RANGES={};hiWord(0,false)}
   function off(){return mode==='off'||(typeof BOOK!=='undefined'&&BOOK)||(typeof PRINTING!=='undefined'&&PRINTING)||(typeof EDIT!=='undefined'&&EDIT)||(typeof SUGM!=='undefined'&&SUGM)}
   var warned=false,preloaded=false;
+  /* טביעת הנוסח של המסכת (מספר התוספות, היחידות וכל טקסט): משתנה בכל עריכה, פיצול או איחוי */
+  var TSFP=null;
+  function tsTextPrint(){var h=TS.items.length|0,n=0;
+    for(var q=0;q<D.pages.length;q++){var us=D.pages[q].units;n+=us.length;
+      for(var i=0;i<us.length;i++){var u=us[i],l=u.l||[];h=(h*31+(+u.id||0))|0;
+        for(var j=0;j<l.length;j++){var t=(l[j]&&l[j][1])||'';for(var k=0;k<t.length;k++)h=(h*31+t.charCodeAt(k))|0}}}
+    return h+':'+n}
   window.tsMark=function(){
     var f=document.getElementById('flow');if(!f)return;
     strip();
@@ -554,9 +590,14 @@
        רק בטקסט של הפרק שלה. כך הערת סוף הפרק הקודם (שבת לו:, קמ"ו של פרק ב) מוצגת בסוף פרק ב ולא במשנת "כירה". */
     var LK=window.lkTos;
     if(LK){
-      LK.reset();
-      var M=LK.perekMap(),groups={},order=[];
+      /* פרומפט 79 (23.11.2026): העוגנים שחושבו נשמרים בין הדלקה לכיבוי ובין מעבר פרק. מחשבים מחדש רק כשטקסט המסכת
+         השתנה (טביעה של כל הנוסח), ורק לתוספות של הפרקים שמוצגים עכשיו. קודם כל לחיצה חישבה מחדש את כל התוספות
+         של המסכת (בשבת 1,550) - בטלפון חלש עד 17 שניות */
+      var fp=tsTextPrint();if(fp!==TSFP){TSFP=fp;LK.reset()}
+      var M=LK.perekMap(),groups={},order=[],DP={};
+      [].forEach.call(f.children,function(r){if(r.id&&r.id[0]==='u'){var pk=M.upk[r.id.slice(1)];if(pk)DP[pk]=1}});
       TS.items.forEach(function(it){
+        if(+it.perek&&!DP[+it.perek]&&!it._rs)return;      /* פרק שאינו מוצג: לא מחשבים עכשיו */
         var rs=LK.resolve(it);
         if(!rs.uid){var q0=pageIdx(it.daf);if(q0>-1&&pageRows(q0).length)bad.push(it.daf+': '+it.hn+' ללא מקום בפרק '+it.perek);return}
         if(!document.getElementById('u'+rs.uid))return;     /* היחידה אינה מוצגת עכשיו */

@@ -1398,6 +1398,7 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
   '<button id="prbtn" onclick="prnOpen()" title="הדפסה לקובץ PDF">' + ic('print') + 'הדפסה</button>'
   + altbtn +
   '<button id="quizbtn" onclick="quizDaf()" title="שאלות על הדף">' + ic('quiz') + 'שאלות על הדף</button>'
+  '<button id="offbtn" onclick="if(window.offOpen)offOpen()" title="שמירת המסכת במכשיר, ללימוד גם בלי חיבור לאינטרנט">' + ic('down') + 'לימוד בלי חיבור</button>'
   '<button id="zgbtn" onclick="zgOpen()" title="הזוהר על הסוגיא">' + ic('star') + 'הזוהר על הסוגיא</button>'
   + tzbtn +
   '<button id="dybtn" onclick="dafYomi()" title="הדף של היום">' + ic('cal') + 'הדף היומי</button>'
@@ -3819,6 +3820,51 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   }
   /* ALL: מצב רצף - כל המסכת בטור אחד, מן הדף הראשון עד האחרון בגלילה אחת. */
   let ALL=false;
+  /* פרומפט 79 (23.11.2026): "רצף" לפי פרקים. קודם צוירה בו כל המסכת בבת אחת (בשבת 242 עמודים, 1,550 סימני תוס').
+     עכשיו מצוירים הפרק שהלומד בו והסמוכים לו (חלון WA..WB), והחלון זז מעצמו בגלילה, כשהלומד מתקרב לקצהו,
+     בלי שהמקום שעליו הוא עומד יזוז. מצב ספר, הדפסה ומנוע ההדפסה אינם בחלון (כמו קודם, כל הטווח).
+     בעריכה ובהצעות החלון קפוא: הוא אינו נבנה מחדש מתחת לסמן. */
+  let WA=-1,WB=-1,WINR=false,WKEEP=0,WQ='';
+  function winRange(){return WINR&&WA>=0?[SEC[WA].from,SEC[WB].to]:(ALL?[0,D.pages.length-1]:[SEC[cur].from,SEC[cur].to])}
+  function winScroller(){const f=$('#flow');if(!f)return null;
+    return (f.scrollHeight>f.clientHeight+4&&/(auto|scroll)/.test(getComputedStyle(f).overflowY))?f:(document.scrollingElement||document.documentElement)}
+  /* השורה העליונה שנראית במסך, ומקומה - כדי להחזיר אותה בדיוק לאותו מקום אחרי בנייה מחדש */
+  function winTopRow(){const f=$('#flow');if(!f)return null;const sc=winScroller();
+    const top=sc===f?f.getBoundingClientRect().top:0;
+    for(const r of f.children){if(!r.id||r.id[0]!=='u')continue;const b=r.getBoundingClientRect();if(b.bottom>top+2)return {id:r.id,top:b.top}}
+    return null}
+  let UPI=null;
+  function unitPi(id){if(!UPI){UPI=new Map();D.pages.forEach((p,i)=>p.units.forEach(u=>UPI.set('u'+u.id,i)))}return UPI.get(id)}
+  function winCheck(){
+    if(!WINR||!ALL||BOOK||PRINTING||EDIT||(typeof SUGM!=='undefined'&&SUGM))return;
+    const sc=winScroller();if(!sc)return;
+    const tr=winTopRow();if(!tr)return;const pi=unitPi(tr.id);if(pi===undefined)return;
+    const c=secOf(pi);let a=Math.max(0,c-1),b=Math.min(SEC.length-1,c+1);
+    const left=sc.scrollHeight-sc.scrollTop-sc.clientHeight,vh=sc.clientHeight||innerHeight;
+    /* בונים מחדש רק כשצריך: הלומד קרוב לקצה החלון, או שהחלון רחוק מן הפרק שלו.
+       פרק קצר מגובה המסך: בקצה מוסיפים פרק נוסף מעבר לחלון, כדי שהגלילה לעולם לא תיעצר */
+    const nearEnd=left<vh*1.5&&WB<SEC.length-1,nearTop=sc.scrollTop<vh*1.5&&WA>0;
+    if(!nearEnd&&!nearTop&&WA>=c-2&&WB<=c+2&&WA<=c&&WB>=c)return;   /* סבולת של פרק: בלי בנייה הלוך ושוב */
+    if(nearEnd)b=Math.min(SEC.length-1,Math.max(b,WB+1));
+    if(nearTop)a=Math.max(0,Math.min(a,WA-1));
+    if(a===WA&&b===WB)return;
+    WA=a;WB=b;cur=c;winRebuild(c,tr,sc)}
+  /* בנייה מחדש של החלון: השורה העליונה חוזרת לאותו מקום בדיוק, וסימון "נמצא" (hit) ועוגן הקפיצה נשמרים */
+  function winRebuild(c,tr,sc){
+    const hits=[...document.querySelectorAll('#flow .hit')].map(e=>e.id).filter(Boolean),jid=JEL&&JEL.id;
+    WKEEP=1;try{render(c,WQ||undefined)}finally{WKEEP=0}
+    hits.forEach(id=>{const e=document.getElementById(id);if(e)e.classList.add('hit')});
+    if(jid){const e=document.getElementById(jid);if(e)JEL=e}
+    if(tr&&sc){const e=document.getElementById(tr.id);if(e){const d=e.getBoundingClientRect().top-tr.top;if(Math.abs(d)>1)sc.scrollTop+=d}}
+    if(jid&&JEL&&JEL.isConnected){const g=$('#flow');JPOS=g?[g.scrollLeft,g.scrollTop]:null}}
+  let WCT=0;
+  function winSoon(){clearTimeout(WCT);WCT=setTimeout(winCheck,120)}
+  /* ההרחבה הראשונה (הפרק הסמוך) נעשית ברקע, אחרי שהפרק הנוכחי צויר ונפרס */
+  function winIdle(){const go=()=>{if(WINR&&WA===WB)winCheckForce()};
+    if(window.requestIdleCallback)requestIdleCallback(go,{timeout:2500});else setTimeout(go,1200)}
+  function winCheckForce(){if(!WINR||!ALL||BOOK||PRINTING||EDIT||(typeof SUGM!=='undefined'&&SUGM))return;
+    const tr=winTopRow();const c=cur,a=Math.max(0,c-1),b=Math.min(SEC.length-1,c+1);if(a===WA&&b===WB)return;
+    const sc=winScroller();WA=a;WB=b;winRebuild(c,tr,sc)}
   function pagesHTML(from,to,lazy){let h='',nr=0;
     for(let pi=from;pi<=to;pi++){const p=D.pages[pi];
       if(!p.units.length)continue;   /* ב1: עמוד בלי טקסט אינו נכתב (הבנייה כבר צירפה אותו לטווח) */
@@ -3892,16 +3938,21 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     f.classList.toggle('book',BOOK);
     if(BOOK)f.style.setProperty('--sheets',sheetsNow());
     /* ראש הפרק בלבד נפרס בציור הראשון (ראה revealTail) */
-    const lazy=!BOOK&&!PRINTING&&!EDIT&&!f.classList.contains('book');
+    const lazy=!BOOK&&!PRINTING&&!EDIT&&!WKEEP&&!f.classList.contains('book');
+    /* פרומפט 79: ברצף - חלון של פרקים (ראה winCheck). בנייה רגילה (מעבר פרק, קפיצה) פותחת חלון של הפרק עצמו,
+       והסמוך נוסף ברקע; בנייה מתוך winCheck שומרת את החלון שנקבע שם */
+    WINR=ALL&&!BOOK&&!PRINTING&&!f.classList.contains('book');
+    if(WINR&&!WKEEP){if(!(EDIT||(typeof SUGM!=='undefined'&&SUGM))||WA<0||cur<WA||cur>WB){WA=cur;WB=cur}}
+    if(!WKEEP)WQ=q||'';
     const h=BOOK?bookHTML(ALL?0:s.from,ALL?D.pages.length-1:s.to)
-                :(ALL?pagesHTML(0,D.pages.length-1,lazy):pagesHTML(s.from,s.to,lazy));
+                :(WINR?pagesHTML(SEC[WA].from,SEC[WB].to,lazy):pagesHTML(s.from,s.to,lazy));
     LZ=lazy&&h.indexOf('<div class="row lz')>-1;LZW=0;
     f.innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;
     if(!ALL&&!BOOK){f.scrollTop=0;f.scrollLeft=SGN>0?f.scrollWidth:0}
     if(BOOK){f.scrollTop=0;f.scrollLeft=0}
     $('#peresel').value=cur;$('#curdaf').textContent=D.pages[s.from].label||D.pages[s.from].daf;$('#dafsel').value=s.from;
     document.title=`לאוקמי גירסא · ${D.masechet} · ${ALL?'רצף':(s.perekName||s.perek||D.pages[s.from].daf)}`;
-    location.hash=`p=${cur}`;
+    if(WKEEP){try{history.replaceState(history.state,'',location.pathname+location.search+'#p='+cur)}catch(e){}}else location.hash=`p=${cur}`;
     if(BOOK||PRINTING)fitAnchors();else fitSoon();
     markEditable();applyEdits();
     if(typeof sqMark==='function')sqMark();
@@ -3911,6 +3962,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!BOOK)squeezeRun();
     REFS=null;if(typeof srcSyncSoon==='function')srcSyncSoon();
     srcLayer();
+    if(WINR&&!WKEEP&&WA===WB)winIdle();
   }
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
   function toDaf(pi){DAFNAV=Date.now();const si=secOf(pi);if(si!==cur)render(si);
@@ -4042,6 +4094,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
    else if(params.get('daf')){let pi=0;D.pages.forEach((p,i)=>{if(p.daf===params.get('daf')&&!pi)pi=i});render(secOf(pi));toDaf(pi)}
    else render(+(params.get('p')||0));
    sqBadge();netInit();viewUi();
+   /* פרומפט 79: חלון הפרקים של הרצף זז בגלילה */
+   $('#flow').addEventListener('scroll',winSoon,{passive:true});addEventListener('scroll',winSoon,{passive:true});addEventListener('resize',winSoon);
    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{barFit();barH()});barFit();barH();setTimeout(barFit,500);setTimeout(barFit,2000);addEventListener('load',()=>setTimeout(barFit,100));
   }
   /* =================== מצב עריכה למנהל ===================
@@ -6800,12 +6854,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         if(typeof applyStruct==='function'){
           if(BOOK||PRINTING||PRNQ){applyStruct();render(cur)}
           else{
-            const from=ALL?0:SEC[cur].from,to=ALL?D.pages.length-1:SEC[cur].to,snaps=[];
+            const [from,to]=winRange(),snaps=[];
             for(let i=from;i<=to;i++)snaps.push(snapOf(i));
             const c0=cur,a0=ALL;
             applyStructAsync().then(()=>{
               /* הלומד עבר פרק בינתיים: מציירים את הפרק החדש מן הנתונים המתוקנים */
-              if(c0!==cur||a0!==ALL||BOOK||PRINTING){render(cur);return}
+              if(c0!==cur||a0!==ALL||BOOK||PRINTING||winRange()[0]!==from||winRange()[1]!==to){render(cur);return}
               patchPages(snaps,true);
               applyEdits()})}
         }else render(cur)}}
@@ -7733,7 +7787,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _td=os.path.dirname(os.path.abspath(__file__))
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+
          # מנוע ההדפסה ל-PDF (11.10.2026): קוד משותף לכל המסכתות. במצב ?print=1 הוא מחליף את התצוגה בעמודי A4; אחרת - רק חלון ההדפסה.
-         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"word_export.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"hv_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_perek.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_units_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_units.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"overflow_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"print_mode.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"touch_review.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"word_export.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"hv_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_perek.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_units_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_units.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"overflow_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"print_mode.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"touch_review.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"offline_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   _SHARED_BODY=JS[:JS.rindex(chr(10)+"  build();")]   # הקוד המשותף לכל המסכתות; מה שאחריו (בקרה, צורת הדף, תוספות) פרטי למסכת
   # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
   # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.

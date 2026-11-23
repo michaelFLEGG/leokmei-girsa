@@ -238,8 +238,13 @@ def main():
     print('קו_תוס_נבדק=%s  קו_תוס_בגובה_שונה=%d  מאגר_הערות_לעמוד=%s' % (rep.get('ruleChecked', 0), len(rb), rep.get('pooled', 0)))
     for o in rb[:20]:
         print("  קו התוס' בגובה שונה: עמוד %s (%s): %s" % (o.get('page'), o.get('daf'), o.get('detail')))
+    # פרומפט 85 ג: ריק של יותר משורה מעל קו התוס' (אחרי המתיחה, חוץ מסוף פרק) - עוצר את המסירה
+    th = [x for x in rep.get('issues') or [] if x.get('type') == "ריק מעל קו התוס'"]
+    print('ריק_מעל_קו_התוס=%d' % len(th))
+    for o in th[:30]:
+        print("  ריק מעל קו התוס': עמוד %s (%s): %s" % (o.get('page'), o.get('daf'), o.get('detail')))
     # פרומפט 48: סוף פרק לא מאוזן עוצר את המסירה, כמו חפיפה
-    if ov or bd or ce or oo or kb or rb:
+    if ov or bd or ce or oo or kb or rb or th:
         sys.exit(3)
 
 

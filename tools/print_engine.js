@@ -1185,7 +1185,35 @@
           var a=fnSpec(s1).h,b=fnSpec(s2).h;ev(s1,s2,true);
           if(a<b)lo=mid+1;else hi=mid-1}}
       return best}
+    var DBGPP=QS.get('dbgpp')?(R.dbgpp=[]):null,BALMID=QS.get('balmid')!=='0',TOLQ=Math.max(0,SQ-1.5);   /* TOLQ: עד כמה הטור יכול לחרוג ולהידחס (yS מתחיל פיקסל מעל) */
+    /* פרומפט 85 (23.11.2026): חור לבן מעל קו התוס'. עד כאן הטור הימני מולא עד הקו והשמאלי קיבל את השארית, וכשהשורה הבאה מביאה
+       איתה תוס' (שמורידות את הקו בשני הטורים) היא אינה נכנסת, וכל הריק נשאר בטור השמאלי (תענית ב.: כחמש שורות). מעכשיו נקודת המעבר
+       בין הטורים נבחרת כך שהריק מתחלק בין שני הטורים (הריק הגדול מבין השניים קטן ככל האפשר; בשוויון - הימני הגבוה, כמו בוילנא),
+       והמתיחה האנכית שבכל טור ממלאת את חלקו. רק שבירה חוקית, בלי לשבור שורות ובלי לנתק כותרת */
+    /* כמה ריק המתיחה יכולה למלא בטור: עד STRHOLE לכל גבול, ולא יותר מ-STRMAX (שלוש שורות) בטור */
+    function strCap(r0,r1){return Math.min(STRMAX,nbBrk(r0,r1)*STRHOLE+(r1-r0)*STRETCH)}
+    function balMid(s,e,cap,m0){
+      var best=m0,bs=null;
+      for(var q=s+1;q<e;q++){if(isForce(q)||!canBreak(q,true))continue;
+        var r=L[q-1].y1-L[s].y0,l=L[e-1].y1-L[q].y0;if(r>cap+TOLQ+0.5||l>cap+TOLQ+0.5)continue;
+        /* הריק שיישאר אחרי המתיחה (עד STRHOLE לכל גבול פסקאות שבטור) קובע; אחריו - הריק הגולמי */
+        var rr=Math.max(0,cap-r-strCap(L[s].ri,L[q-1].ri)),rl=Math.max(0,cap-l-strCap(L[q].ri,L[e-1].ri));
+        var sc=10*Math.max(rr,rl)+Math.max(cap-r,cap-l)+(r<l?0.25*LH:0);
+        if(bs===null||sc<bs-0.5){bs=sc;best=q}}
+      return best}
+    /* פרומפט 85: רווח הקו בטור של מאגר הערות (בעמוד "צפוף" - חצי, כמו בסוף פרק) */
+    function cGap(c){return c&&c.ptight?fnGap(true):GAP}
+    function ppResid(i,g){var m=g.m,e=g.e,cap=g.capT;
+      var r=Math.max(0,cap-(L[m-1].y1-L[i].y0)-strCap(L[i].ri,L[m-1].ri)),l=Math.max(0,cap-(L[e-1].y1-L[m].y0)-strCap(L[m].ri,L[e-1].ri));
+      return Math.max(r,l)}
     function pagePair(i){
+      var g1=pagePair1(i,GAP);
+      /* פרומפט 85: נשאר ריק של יותר משורה גם אחרי החלוקה והמתיחה - מנסים שוב ברווח קו מצומצם (חצי, כמו fnGap בסוף פרק),
+         כדי שהשורות הבאות ייכנסו לחור. רק כשהעמוד מקבל יותר שורות */
+      if(g1&&BALMID&&g1.e<L.length&&!isForce(g1.e)&&ppResid(i,g1)>LH){var g2=pagePair1(i,fnGap(true));
+        if(g2&&g2.e>g1.e){g2.tight=1;R.poolTight=(R.poolTight||0)+1;return g2}}
+      return g1}
+    function pagePair1(i,GAPp){
       if(!POOL||carry||i>=L.length)return null;
       var got=null,lastIds='',ps=null;
       for(var e=i+2;e<=L.length;e++){
@@ -1196,21 +1224,24 @@
         var ids=noteIds(i,e),key=ids.join(',');
         if(key!==lastIds){ps=poolSplit(ids);lastIds=key}
         if(!ps)continue;
-        var capT=A-(ps.h?ps.h+GAP:0);
+        var capT=A-(ps.h?ps.h+GAPp:0);
         if(capT<6*LH)break;
         var m=-1;
-        for(var q=i+1;q<e;q++){if(L[q-1].y1-L[i].y0>capT+0.5)break;if(!isForce(q)&&canBreak(q,true))m=q}
+        var tolT=BALMID?TOLQ:0;   /* פרומפט 85: חריגה של עד SQ (2 נק') נבלעת בדחיסה הקיימת של רווחי הפסקאות (colGeom, overSq) */
+        for(var q=i+1;q<e;q++){if(L[q-1].y1-L[i].y0>capT+tolT+0.5)break;if(!isForce(q)&&canBreak(q,true))m=q}
+        if(DBGPP)DBGPP.push({i:i,e:e,daf:L[e-1].daf,kind:L[e-1].kind,psh:+(ps.h/LH).toFixed(2),capT:+(capT/LH).toFixed(2),m:m,left:m<0?null:+((L[e-1].y1-L[m].y0)/LH).toFixed(2),right:m<0?null:+((L[m-1].y1-L[i].y0)/LH).toFixed(2),ok:m>=0&&L[e-1].y1-L[m].y0<=capT+0.5});
         if(m<0)continue;
-        if(L[e-1].y1-L[m].y0>capT+0.5)continue;
+        if(L[e-1].y1-L[m].y0>capT+tolT+0.5)continue;
         got={m:m,e:e,ps:ps,capT:capT}}
+      if(got&&BALMID){var m2=balMid(i,got.e,got.capT,got.m);if(m2!==got.m){got.m=m2;R.balMid=(R.balMid||0)+1}}
       if(got&&!got.ps.s1.length&&got.ps.s2.length)got=null;
       return got}
     while(i<L.length){
       /* פרומפט 84 ג: עמוד חדש (הטור הימני) - קודם הפריסה של עמוד שלם עם מאגר הערות אחד */
       if(POOL&&cols.length%2===0&&noteIds(i,Math.min(L.length,i+1)).length>=0){var pp2=pagePair(i);
         if(pp2&&noteIds(i,pp2.e).length){var H=pp2.ps.h;
-          cols.push({s:i,e:pp2.m,notes:noteIds(i,pp2.m),sq:0,carry:null,split:null,why:'',pspec:pp2.ps.s1,pH:H,pall:noteIds(i,pp2.e)});
-          cols.push({s:pp2.m,e:pp2.e,notes:noteIds(pp2.m,pp2.e),sq:0,carry:null,split:null,why:'',pspec:pp2.ps.s2,pH:H,pall:noteIds(i,pp2.e)});
+          cols.push({s:i,e:pp2.m,notes:noteIds(i,pp2.m),sq:0,carry:null,split:null,why:'',pspec:pp2.ps.s1,pH:H,pall:noteIds(i,pp2.e),ptight:pp2.tight||0});
+          cols.push({s:pp2.m,e:pp2.e,notes:noteIds(pp2.m,pp2.e),sq:0,carry:null,split:null,why:'',pspec:pp2.ps.s2,pH:H,pall:noteIds(i,pp2.e),ptight:pp2.tight||0});
           R.pooled=(R.pooled||0)+1;i=pp2.e;carry=null;
           if(i<L.length&&isForce(i)){if(balanceTo(i))carry=null}
           continue}
@@ -1293,6 +1324,19 @@
           var bq=bestPair(r2,hs,end,null);
           if(bq&&bq.gap<=2*LH){carry=null;return {r1:r1,r2:r2,bp:bq}}}}
       carry=null;return null}
+    function twoPagePool(P,hs,end,minLines,loose){
+      var best=null;
+      for(var e=P+2;e<=hs-minLines;e++){
+        if(L[e-1].y1-L[P].y0>2*A)break;
+        if(isForce(e)||!canBreak(e,true))continue;
+        var ids=noteIds(P,e);if(!ids.length)continue;
+        var ps=poolSplit(ids);if(!ps||(!ps.s1.length&&ps.s2.length))continue;
+        var capT=A-(ps.h+GAP);if(capT<6*LH)break;
+        var m=balMid(P,e,capT,-1);if(m<0){if(DBGPP)(R.tpdbg=R.tpdbg||[]).push({P:P,e:e,nom:1,cap:+(capT/LH).toFixed(2)});continue}
+        var bq=bestPair(e,hs,end,null);if(!bq||bq.gap>2*LH){if(DBGPP)(R.tpdbg=R.tpdbg||[]).push({P:P,e:e,nobq:1});continue}
+        var rs=ppResid(P,{m:m,e:e,capT:capT});if(DBGPP)(R.tpdbg=R.tpdbg||[]).push({P:P,e:e,m:m,rs:+(rs/LH).toFixed(2),cap:+(capT/LH).toFixed(2),r:+((L[m-1].y1-L[P].y0)/LH).toFixed(2),l:+((L[e-1].y1-L[m].y0)/LH).toFixed(2),bq:+(bq.gap/LH).toFixed(2)});if(rs>LH&&!loose)continue;   /* רק עמוד שמתמלא עד הקו; אחרת - הדרך הקודמת (loose: הטוב ביותר, לפני הקיצור הגדול) */
+        if(!best||rs<best.rs-0.5||(Math.abs(rs-best.rs)<=0.5&&e>best.r2))best={r1:m,r2:e,bp:bq,rs:rs}}
+      return best}
     function balanceTo(end){
       var k=cols.length-1,k0=k%2===0?k:k-1,c0=cols[k0];
       R.balDbg=R.balDbg||[];
@@ -1318,9 +1362,19 @@
       /* ג. שני עמודים: קודם בקיצור של עד שלוש שורות (המתיחה ממלאת אותו), ורק אחר כך קיצור גדול יותר (נרשם כחור) */
       /* 21.11.2026 (שבת קי., קכה.): קיצור של עד 40% מהטור השאיר חור של עשר שורות באמצע העמוד. מעכשיו: עד שש שורות (המתיחה
          ממלאת את רובן); אם לא - איזון בעמוד הנוכחי כשההפרש בו עד ארבע שורות; ורק אחרי זה הקיצור הגדול */
+      /* פרומפט 85: בעמוד עם תוס' - העמוד שלפני סוף הפרק נקבע כמו כל עמוד של מאגר הערות (קו משותף, הריק מתחלק בין הטורים
+         והמתיחה ממלאת), ולא בקיצור הטורים מגובה הנטו: עד כאן הקיצור נמדד מן הנטו ולא מן הקו, ונשאר חור לבן מעל התוס' */
+      if(POOL&&BALMID&&hs-s0>=6&&!cr0){var tq=twoPagePool(s0,hs,end,6);
+        if(tq){put4(k0,s0,cr0,tq);R.balDbg.push({daf:daf,why:'moved-pool'});R.perekBalanced=(R.perekBalanced||0)+1;R.perekMoved=(R.perekMoved||0)+1;return true}}
+      if(POOL&&BALMID&&okP&&!pp.carry&&hs-pp.s>=6){var tq2=twoPagePool(pp.s,hs,end,6);
+        if(tq2){put4(k0-2,pp.s,pp.carry,tq2);R.balDbg.push({daf:daf,why:'moved-prev-pool'});R.perekBalanced=(R.perekBalanced||0)+1;R.perekMoved=(R.perekMoved||0)+1;return true}}
       var lim=[3*LH,6*LH,0.4*A];
       for(var li=0;li<lim.length;li++){
         if(li===2&&bp&&bp.gap<=4*LH)break;
+        /* פרומפט 85: לפני הקיצור הגדול (עד 40% מהטור, חור גדול מעל התוס') - העמוד שלפני סוף הפרק כמאגר הערות, בחלוקה שהריק בה הקטן ביותר */
+        if(li===2&&POOL&&BALMID){var tl=!cr0&&hs-s0>=6?twoPagePool(s0,hs,end,6,true):null,tl2=okP&&!pp.carry&&hs-pp.s>=6?twoPagePool(pp.s,hs,end,6,true):null;
+          if(tl&&(!tl2||tl.rs<=tl2.rs)){put4(k0,s0,cr0,tl);R.balDbg.push({daf:daf,why:'moved-pool-loose',rs:+(tl.rs/LH).toFixed(1)});R.perekBalanced=(R.perekBalanced||0)+1;R.perekMoved=(R.perekMoved||0)+1;return true}
+          if(tl2){put4(k0-2,pp.s,pp.carry,tl2);R.balDbg.push({daf:daf,why:'moved-prev-pool-loose',rs:+(tl2.rs/LH).toFixed(1)});R.perekBalanced=(R.perekBalanced||0)+1;R.perekMoved=(R.perekMoved||0)+1;return true}}
         var t=hs-s0>=6?twoPage(s0,cr0,hs,end,lim[li],6):null;
         if(t){put4(k0,s0,cr0,t);R.balDbg.push({daf:daf,why:'moved',short:li});R.perekBalanced=(R.perekBalanced||0)+1;R.perekMoved=(R.perekMoved||0)+1;return true}
         if(okP){t=twoPage(pp.s,pp.carry,hs,end,lim[li],6);
@@ -1358,6 +1412,8 @@
       var psP=poolSplit(idsP);if(!psP||!psP.s1.length)continue;
       var capP=A-psP.h-GAP,t1=L[c1.e-1].y1-L[c1.s].y0,t2=L[c2.e-1].y1-L[c2.s].y0;
       if(t1>capP+0.5||t2>capP+0.5){R.poolLeft=(R.poolLeft||0)+1;continue}
+      /* פרומפט 85: גם כאן הריק מתחלק בין שני הטורים (העמוד שלפני סוף פרק שהתקצר, עמוד שנשאר בדרך הקודמת) */
+      if(BALMID&&!c1.bal&&!c2.bal){var mq=balMid(c1.s,c2.e,capP,c1.e);if(mq!==c1.e){c1.e=mq;c2.s=mq;c1.notes=noteIds(c1.s,c1.e);c2.notes=noteIds(c2.s,c2.e);R.balMid=(R.balMid||0)+1}}
       c1.pspec=psP.s1;c2.pspec=psP.s2;c1.pH=c2.pH=psP.h;c1.pall=c2.pall=idsP;R.pooledLate=(R.pooledLate||0)+1}
     /* ---- בדיקות אחרי העימוד (לוח התקלות): כותרת מנותקת, שורה יתומה או אלמנה, הערה שנפרדה מסימנה ---- */
     /* פרומפט 48 סבב ג (תיקון 3): בודק קבוע - העמוד הראשון פותח במשהו מחוץ לטווח = תקלה שעוצרת את המסירה.
@@ -1452,26 +1508,36 @@
         /* פרומפט 16, ב: ריק קטן שנשאר (עד שורה וחצי) מתפזר בשווה בין גבולות הפסקאות שבטור - לא בתוך פסקה, ועד 3 נק'
            לכל גבול. טור שמסיים פרק (או את הטווח) נשאר כמות שהוא. ג: ריק גדול מזה נרשם בבקרה */
         var endCol=c.bal||c.e>=L.length||isForce(c.e);
-        var gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0),nb=nbBrk(ln.ri,le.ri),per=0;
+        var gapPx=A-(yE-yS-sqz)-(fb?fb.h+cGap(c):0),nb=nbBrk(ln.ri,le.ri),per=0;
         /* 21.11.2026 (שבת, הכרעת מיכאל: "לא חללים לבנים"): טור שיש בו כבר דחיסה זעירה בגלל חריגה של פיקסל-שניים - כן נדחס.
            ריק גדול משורה וחצי שנשאר בגלל כללי העימוד (כותרת עם שתי שורות אחריה, יתומה/אלמנה) - מתפזר גם הוא, רק בגבולות
            הקיימים (לפני כותרת, רווח לפני, תיבת משנה), עד STRHOLE לכל גבול. מה שנשאר מעבר לזה - נרשם כחור כמו קודם */
-        var natH=(yE-yS)+(fb?fb.h+GAP:0);
-        if(HFIX&&natH-sqz>A+0.25&&natH-sqz-A<=SQ){sqz=natH-A+0.25;gapPx=A-(yE-yS-sqz)-(fb?fb.h+GAP:0);if(!dry)R.overSq=(R.overSq||0)+1}
-        if(HFIX&&!endCol&&gapPx>0.5&&gapPx<=STRMAX&&nb>0&&!(c.sq)){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;if(!dry)R.stretched=(R.stretched||0)+1}
+        var natH=(yE-yS)+(fb?fb.h+cGap(c):0);
+        if(HFIX&&natH-sqz>A+0.25&&natH-sqz-A<=SQ){sqz=natH-A+0.25;gapPx=A-(yE-yS-sqz)-(fb?fb.h+cGap(c):0);if(!dry)R.overSq=(R.overSq||0)+1}
+        /* פרומפט 85: בטור שיש מתחתיו תוס' - ריק של יותר משורה מעל הקו מתפזר עד STRHOLE לכל גבול (כמו חור גדול), ולא רק עד STRETCH */
+        if(HFIX&&BALMID&&fb&&!endCol&&gapPx>LH&&nb>0&&!(c.sq)&&sqz<0.5){per=Math.min(STRHOLE,gapPx/nb);gapPx-=per*nb;if(!dry)R.holeStretched=(R.holeStretched||0)+1}
+        else if(HFIX&&!endCol&&gapPx>0.5&&gapPx<=STRMAX&&nb>0&&!(c.sq)){per=Math.min(STRETCH,gapPx/nb);gapPx-=per*nb;if(!dry)R.stretched=(R.stretched||0)+1}
         else if(HFIX&&!endCol&&!c.sq&&gapPx>STRMAX&&nb>0){per=Math.min(STRHOLE,gapPx/nb);gapPx-=per*nb;if(!dry)R.holeStretched=(R.holeStretched||0)+1}
         else if(c.balPer&&nb>0&&!sqz){per=Math.min(c.balPer,Math.max(0,gapPx)/nb);gapPx-=per*nb}
-        return {ln:ln,le:le,yS:yS,yE:yE,sqz:sqz,spanY:spanY,spc:spc,fb:fb,endCol:endCol,gapPx:gapPx,nb:nb,per:per}}
+        /* פרומפט 85: מה שנשאר מעל קו התוס' (יותר מחצי שורה) מתפזר גם בין כל היחידות שבטור, עד STRETCH (3 נק') לכל גבול */
+        var nu=le.ri-ln.ri,per2=0;
+        if(HFIX&&BALMID&&fb&&!fb.empty&&!endCol&&!c.sq&&sqz<0.5&&gapPx>0.5*LH&&nu>0){per2=Math.min(STRETCH,gapPx/nu);gapPx-=per2*nu;if(!dry)R.unitStretched=(R.unitStretched||0)+1}
+        return {ln:ln,le:le,yS:yS,yE:yE,sqz:sqz,spanY:spanY,spc:spc,fb:fb,endCol:endCol,gapPx:gapPx,nb:nb,per:per,nu:nu,per2:per2}}
       if(pgBal)cs2.forEach(function(c){var g=colGeom(c,true);pgT=Math.max(pgT,g.yE-g.yS-g.sqz+g.per*g.nb)});
       cs2.forEach(function(c,ci){
-        var G=colGeom(c,false),ln=G.ln,le=G.le,yS=G.yS,yE=G.yE,sqz=G.sqz,spanY=G.spanY,spc=G.spc,fb=G.fb,endCol=G.endCol,gapPx=G.gapPx,nb=G.nb,per=G.per;
+        var G=colGeom(c,false),ln=G.ln,le=G.le,yS=G.yS,yE=G.yE,sqz=G.sqz,spanY=G.spanY,spc=G.spc,fb=G.fb,endCol=G.endCol,gapPx=G.gapPx,nb=G.nb,per=G.per,nu=G.nu,per2=G.per2;
         var fnTop=pgBal&&fb?pgT+pgHadH+pgFG:(fb&&fb.pool?A-fb.h:null);
         if(pgBal){gapPx=A-pgT-pgHadH-(fb?fb.h+pgFG:0);if(gapPx<-0.5)W('עמוד סוף פרק גבוה מגובה הנטו: עמוד '+(pgi+1)+', '+ln.daf+': '+(-gapPx).toFixed(1)+'px')}
         /* שמירה (פרומפט 41): הטור לעולם אינו גבוה מגובה הנטו. מתיחה שהייתה מוציאה אותו מן השוליים מוקטנת, וחריגה שנשארת נרשמת */
-        if(per&&(yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)>A+0.25){per=Math.max(0,(A-(yE-yS-sqz)-(fb?fb.h+GAP:0))/nb);R.stretchCut=(R.stretchCut||0)+1}
-        if((yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)>A+0.5)W('טור גבוה מגובה הנטו: עמוד '+(pgi+1)+', '+ln.daf+': '+((yE-yS-sqz+per*nb)+(fb?fb.h+GAP:0)-A).toFixed(2)+'px (טקסט '+(yE-yS).toFixed(1)+', דחיסה '+sqz.toFixed(1)+', מתיחה '+(per*nb).toFixed(1)+')');
+        if((per||per2)&&(yE-yS-sqz+per*nb+per2*nu)+(fb?fb.h+cGap(c):0)>A+0.25){per2=0;per=Math.max(0,(A-(yE-yS-sqz)-(fb?fb.h+cGap(c):0))/(nb||1));R.stretchCut=(R.stretchCut||0)+1}
+        if((yE-yS-sqz+per*nb+per2*nu)+(fb?fb.h+cGap(c):0)>A+0.5)W('טור גבוה מגובה הנטו: עמוד '+(pgi+1)+', '+ln.daf+': '+((yE-yS-sqz+per*nb+per2*nu)+(fb?fb.h+cGap(c):0)-A).toFixed(2)+'px (טקסט '+(yE-yS).toFixed(1)+', דחיסה '+sqz.toFixed(1)+', מתיחה '+(per*nb).toFixed(1)+')');
+        /* פרומפט 85 ג: בודק קבוע - בעמוד שיש בו תוס', ריק של יותר משורה אחת מעל הקו (אחרי המתיחה) = כישלון שעוצר את המסירה.
+           סוף פרק וסוף הטווח - לפי הכלל הקיים (טורים מאוזנים, הדרן ממורכז), ואינם נבדקים כאן */
+        if(BALMID&&fb&&!fb.empty&&!endCol&&!pgBal&&gapPx>LH+0.5){R.tosHoles=R.tosHoles||[];
+          R.tosHoles.push({page:pgi+1,col:ci===0?'ימני':'שמאלי',daf:ln.daf,lines:+(gapPx/LH).toFixed(2),why:c.why||'',nb:nb,s:c.s,e:c.e,pre:c.pre||0,pool:c.pH!==undefined?1:0,tight:c.ptight||0});
+          R.issues.push({type:"ריק מעל קו התוס'",page:pgi+1,daf:ln.daf,unit:recs[ln.ri]&&recs[ln.ri].u&&recs[ln.ri].u.id,detail:'טור '+(ci===0?'ימני':'שמאלי')+': ריק של '+(gapPx/LH).toFixed(1)+' שורות מעל הקו'})}
         if(!endCol&&gapPx>HOLE){
-          var hl={page:pgi+1,col:ci===0?'ימני':'שמאלי',daf:ln.daf,lines:+(gapPx/LH).toFixed(1),why:c.why||''};
+          var hl={page:pgi+1,col:ci===0?'ימני':'שמאלי',daf:ln.daf,lines:+(gapPx/LH).toFixed(1),why:c.why||'',nb:nb,per:+per.toFixed(2),pool:fb&&fb.pool?1:0};
           R.holes.push(hl);
           R.issues.push({type:'חור בטור',page:hl.page,daf:hl.daf,unit:recs[ln.ri]&&recs[ln.ri].u&&recs[ln.ri].u.id,detail:'טור '+hl.col+': ריק של '+hl.lines+' שורות'+(hl.why?' ('+hl.why+')':'')})}
         /* ci 0 = הטור הימני: מכולה של 80 מ"מ שימינה עד שולי הימין */
@@ -1491,10 +1557,10 @@
              וההפניה המורמת של השורה הראשונה בטור הבא נראתה גם בתחתית הטור הקודם */
           [].slice.call(cl.querySelectorAll('sup.tm')).forEach(function(mk){var li=LNOF[mk.getAttribute('data-n')];
             if(li===undefined||li<c.s||li>=c.e){mk.style.visibility='hidden';mk.removeAttribute('id')}});
-          cl.style.position='absolute';cl.style.top=(rc.gtop-yS-sqz*Math.max(0,Math.min(1,(rc.gtop-ln.y0)/spanY))+per*nbBrk(ln.ri,ri))+'px';cl.style.right='0';cl.style.width=(prof.rail+prof.measure)+'mm';
+          cl.style.position='absolute';cl.style.top=(rc.gtop-yS-sqz*Math.max(0,Math.min(1,(rc.gtop-ln.y0)/spanY))+per*nbBrk(ln.ri,ri)+per2*(ri-ln.ri))+'px';cl.style.right='0';cl.style.width=(prof.rail+prof.measure)+'mm';
           rowsHtml+=cl.outerHTML}
         body+='<div class="pcol" style="left:'+boxLeft+'mm;top:'+MG.top+'mm;width:'+(prof.rail+prof.measure)+'mm;height:'+A_mm+'mm">'+
-          '<div class="ptx flow" style="height:'+(yE-yS-sqz+per*nb)+'px;overflow:visible;clip-path:inset(-'+MARKROOM+'pt 0 0 0)">'+rowsHtml+'</div>'+
+          '<div class="ptx flow" style="height:'+(yE-yS-sqz+per*nb+per2*nu)+'px;overflow:visible;clip-path:inset(-'+MARKROOM+'pt 0 0 0)">'+rowsHtml+'</div>'+
           (fb?'<div class="pfnw" style="width:'+prof.measure+'mm'+(fnTop!==null?';top:'+fnTop.toFixed(1)+'px;bottom:auto':'')+'"><div class="pfn'+(fb.one?' one':'')+(fb.empty?' pfe':'')+'">'+fb.html+'</div></div>':'')+'</div>';
         c.notes.forEach(function(n){pageInfo.notes.push(n)});
         pageInfo.cols.push({lines:c.e-c.s,textMm:+((yE-yS)/MM).toFixed(1),notes:c.notes.length,noteMm:fb?+(fb.h/MM).toFixed(1):0,

@@ -308,6 +308,16 @@ def main():
                 _fold_alerts(SLUG[m])
             except Exception as _e:
                 print('   אזהרה: התראת התלושות לא נכתבה -', _e)
+            # פרומפט 80 ד: מילון ראשי התיבות של המסכת (tools/abbr_build.py) - לעמוד "מפתח ראשי תיבות" בהדפסה (ולנגיעה באתר, פרומפט 81)
+            try:
+                _ab = os.path.join(ROOT, 'data', 'abbr', SLUG[m] + '.json')
+                if os.path.exists(_ab):
+                    os.makedirs(os.path.join(SITE, 'abbr'), exist_ok=True)
+                    _abd = json.load(io.open(_ab, encoding='utf-8'))
+                    io.open(os.path.join(SITE, 'abbr', SLUG[m] + '.json'), 'w', encoding='utf-8').write(
+                        json.dumps({'abbr': _abd.get('abbr') or {}, 'at': _abd.get('at') or {}}, ensure_ascii=False, separators=(',', ':')))
+            except Exception as _e:
+                print('   אזהרה: מילון ראשי התיבות לא הועתק -', _e)
             # מסך הגהה נבנה רק למסכת שיש לה קובץ ממצאים ידני. בלעדיו אין
             # למגיה מה לעשות שם, והגלאים לבדם רק היו מציפים אותו.
             cur = os.path.join(ROOT, 'data', 'hagaha-' + SLUG[m] + '.json')

@@ -2449,6 +2449,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if _nv: qa.append(('דפים בפרק - וילנא','; '.join(_nv)[:600]))
   except Exception as _e:
       qa.append(('דפים בפרק','לא חושב: %s'%_e))
+  # פרומפט 80 א (23.11.2026): ד"ה משנה מנוקד. אחרי כל תיקוני התצוגה של u['a'] (מספר הקטע, עיטורים), כדי שהשכבה תתאים לנוסח המוצג.
+  # ד"ה משנה מנוקד - שכבה נפרדת u['av'] (tools/dh_nikud.py). מקור: משניות ספריא
+  # (data/mishna), ומילה שאינה במשנה - המנקד (data/nikud-dh, מסומן nks לבדיקת המנהל). נוסח הוורד (u['a']) אינו משתנה.
+  try:
+      import dh_nikud
+      _dn=dh_nikud.apply(pages,os.path.basename(out_path)[:-5],mbt)
+      if _dn['dh']:
+          qa.append(('ניקוד ד"ה משנה',
+                     '%d ד"ה משנה מתוך %d נוקדו: %d מילים מן המשנה (ספריא), %d מן המנקד (מסומנות לבדיקה), '
+                     '%d נשארו בלי ניקוד (ראשי תיבות, מספרים או שלא נמצאו)'
+                     % (_dn['voc'],_dn['dh'],_dn['mishna'],_dn['est'],_dn['left'])))
+  except Exception as _e:
+      qa.append(('ניקוד ד"ה משנה','לא רץ: %s'%_e))
+
   data={'chap':{k:{'range':v['range'],'full':v['full']} for k,v in chap.items()},'mbt':mbt,'mnseg':mnseg,'masechet':masechet,'pages':pages,'toc':toc,'sty':sty,'ed':ed_stat,'am':amlist,'qa':qa,'nPsk':len(psk),'nAm':sum(am.values()),'src':srcmeta,'nk':nk}
   J=json.dumps(data,ensure_ascii=False).replace('</','<\\/')
 
@@ -2665,6 +2679,10 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   body.adm .main.prop,body.adm .main.prop *{color:#7B3F00!important}
   .main.nose{text-align:center;text-align-last:center;font-family:'Frank','Frank Ruhl Libre',serif;font-weight:700;
         font-size:calc(var(--k-nose) * 1em);margin:0;color:var(--ink)}
+  /* פרומפט 80 ב: כותרת הנושא בתוך שורת הד"ה - בגופן הנושא, כתיבה אחת שאינה נשברת בין השורות, באותו גובה שורה */
+  .main.dh .nsi{display:inline-block;font-family:'Frank','Frank Ruhl Libre',serif;font-weight:700;font-size:calc(var(--k-nose) / var(--k-dh) * 1em);
+        color:var(--ink);line-height:inherit;text-align:center;text-align-last:center;text-indent:0;max-width:100%}
+  .main.dh .dhsp{word-spacing:1.1em;white-space:normal}.main.dh .dhsp.dsh{word-spacing:normal;font-weight:400;color:#4d4d4d}
   /* ב. הכוכביות אינן כוכביות: בגופני וילנא יש שרשרת ליגטורות ב-rlig,
      וכל מספר כוכביות נותן עיטור אחר. letter-spacing ביטל אותה, ולכן
      הוא חוזר ל-normal והליגטורות נדלקות במפורש. */
@@ -3816,8 +3834,26 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     }
     /* א: החציצה אחידה - העיטור של סוכה בכל מקום. הנוסח שבוורד לא נגע. */
     if(u.k==='hatz')return `<div class="row hatz" id="u${u.id}"${H}>${win(u.w,0)}<div class="main hatz ${u.s||''}">${u.a}</div></div>`;
-    return `<div class="row ${u.k}" id="u${u.id}"${H}>${win(u.w,0)}<div class="main ${u.k==='dh'||u.k==='nose'?u.k:''} ${u.s||''}"${u.k==='dh'?MN:''}>${u.a}${sb}</div></div>`;
+    /* פרומפט 80 א: ד"ה משנה מנוקד - שכבת u.av, רק כשהיא תואמת את הנוסח (בלי ניקוד ותגיות) ולא במצב עריכה */
+    const AH=(u.k==='dh'&&NK&&!EDIT&&avOk(u))?u.av:u.a;
+    return `<div class="row ${u.k}" id="u${u.id}"${H}>${win(u.w,0)}<div class="main ${u.k==='dh'||u.k==='nose'?u.k:''} ${u.s||''}"${u.k==='dh'?MN:''}>${AH}${sb}</div></div>`;
   }
+  /* פרומפט 80 ב (23.11.2026): ד"ה משנה ומיד אחריו כותרת נושא - שורה אחת, כל אחת בגופן שלה, עם רווח מוגדל ביניהן (span.dhsp).
+     הכותרת היא תיבה אחת (span.nsi, inline-block): אם אינה נכנסת בשורה של הד"ה היא יורדת כולה לשורה הבאה - כך שתי שורות
+     כמו קודם, ולעולם אינה נשברת באמצע בין השורות. החצי שורה שלפני הכותרת נשמר לפני השורה המאוחדת (של הד"ה). תצוגה בלבד:
+     היחידות נשארות שתיים בנתונים ובעריכה (לא במצב עריכה). אותו קוד מזין את ההדפסה ואת מצב הדפוס (unitHTML/print_engine).
+     ?dhj=0 - בלי; ?dhsep=dash - מקף במקום הרווח (להשוואה). */
+  const DHQ=new URLSearchParams(location.search);
+  function dhJoinable(u,nx,any){
+    if((EDIT&&!any)||!u||!nx||u.k!=='dh'||nx.k!=='nose'||DHQ.get('dhj')==='0')return false;
+    const t=x=>String(x||'').replace(/<[^>]+>/g,'').replace(/&nbsp;|\u00a0/g,' ').trim();
+    if(!t(u.a)||!t(nx.a)||t(nx.w))return false;
+    if(/מכאן כתוב|כתוב כאן/.test(t(nx.a)))return false;
+    return true}
+  function dhJoinHTML(uh,nx){const i=uh.lastIndexOf('</div></div>');if(i<0)return uh;
+    const sep=DHQ.get('dhsep')==='dash'?'<span class="dhsp dsh"> – </span>':'<span class="dhsp"> </span>';
+    return uh.slice(0,i)+sep+'<span class="nsi" id="u'+nx.id+'" data-nu="'+nx.id+'">'+LTX(nx.a)+'</span>'+uh.slice(i)}
+  function avOk(u){if(!u.av)return false;const z=x=>String(x||'').replace(/<[^>]+>/g,'').replace(/[\u0591-\u05C7]/g,'');return z(u.av)===z(u.a)}
   /* ALL: מצב רצף - כל המסכת בטור אחד, מן הדף הראשון עד האחרון בגלילה אחת. */
   let ALL=false;
   /* פרומפט 79 (23.11.2026): "רצף" לפי פרקים. קודם צוירה בו כל המסכת בבת אחת (בשבת 242 עמודים, 1,550 סימני תוס').
@@ -3869,7 +3905,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     for(let pi=from;pi<=to;pi++){const p=D.pages[pi];
       if(!p.units.length)continue;   /* ב1: עמוד בלי טקסט אינו נכתב (הבנייה כבר צירפה אותו לטווח) */
       let first=true;
-      for(const u of p.units){let uh=unitHTML(u,first?p.daf:null,first?pi:null);first=false;
+      for(let ui=0;ui<p.units.length;ui++){const u=p.units[ui];let uh=unitHTML(u,first?p.daf:null,first?pi:null);first=false;
+        /* פרומפט 80 ב: ד"ה משנה וכותרת הנושא שאחריו - בשורה אחת כשנכנס (dhJoin) */
+        if(dhJoinable(u,p.units[ui+1])){uh=dhJoinHTML(uh,p.units[ui+1]);ui++}
         if(lazy&&++nr>HEADN)uh=uh.replace('<div class="row','<div class="row lz');
         /* ב (8.10.2026): פרק חדש בתוך זרימה אחת מסומן chap1, וה-CSS פותח אותו
            בראש טור חדש (טורים) או ברווח ניכר (רצף). הפרק הראשון בזרימה אינו מסומן. */
@@ -4378,7 +4416,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       if(m[2]==='w'){u.w=h;delete u.lv;return true}
       if(m[2]==='mb'){u.mbw=h;const mm=/^\s*משנה\s+([א-ת"׳']{1,4})/.exec(plain(h));if(mm&&HD.num(mm[1]))u.mbn=HD.num(mm[1]);return true}
       const n=+m[2];
-      if(n===0){if(u.k==='u'||u.k==='dh'||u.k==='nose'){u.a=h;delete u.lv;return true}return false}
+      if(n===0){if(u.k==='u'||u.k==='dh'||u.k==='nose'){u.a=h;delete u.lv;delete u.av;return true}return false}
       if(u.l&&u.l[n-1]){u.l[n-1][1]=h;delete u.lv;return true}
       return false}
     return false}

@@ -75,7 +75,10 @@
         side(u.w);(u.l||[]).forEach(function(l,li){if(l[0]==='hatz')return;out.push({t:'L',h:(mkl[li]?mkl[li]+' ':'')+l[1],ps:'משניות',m:1})})}
       else if(k==='hatz'||k==='perek-range'||k==='perek-start'||k==='hadran'){
         out.push({t:'X',st:{'hatz':'חציצה','perek-range':'דפים בפרק ב','perek-start':'פתיחת פרק','hadran':'הדרן'}[k],h:u.a||''})}
-      else if(k==='dh'||k==='nose'){side(u.w);out.push({t:k==='dh'?'D':'H',h:mka+(u.a||'')})}});
+      else if(k==='dh'||k==='nose'){side(u.w);
+        /* פרומפט 80 א: ד"ה משנה מנוקד גם בוורד שמורד מן הדף (שכבת u.av, כשהיא תואמת את הנוסח) */
+        var dha=(k==='dh'&&typeof avOk==='function'&&avOk(u))?String(u.av).replace(/<span class="nks">([^<]*)<\/span>/g,'$1'):(u.a||'');
+        out.push({t:k==='dh'?'D':'H',h:mka+dha,u:u})}});
     return out}
 
   /* פרומפט 56 א3 (17.11.2026): הוורד הוא תוצר של הדף, ולכן גם בו הגודל המוגדל. דף הספר בוורד קטן (90 מ"מ, גוף 9 נק',
@@ -142,11 +145,31 @@
           return '<w:r><w:rPr>'+pr+'</w:rPr>'+body+'</w:r>'}).join('');
         return '<w:p><w:pPr>'+(sid?'<w:pStyle w:val="'+sid+'"/>':'')+'<w:bidi/></w:pPr>'+r+'</w:p>'}
       say('כותב את הפסקאות...');
-      var xs=[];
+      var xs=[],JOINED=0;
+      /* רוחב הטור של הספר (הגדרות העמוד שבסוף המסמך) וגודלי הסגנונות ד"ה ונושא - למדידת "נכנס בשורה אחת" */
+      var sect=doc.slice(doc.lastIndexOf('<w:sectPr')),tw=function(re,d){var m=sect.match(re);return m?+m[1]:d};
+      var colPx=(tw(/<w:pgSz [^>]*w:w="(\d+)"/,5103)-tw(/<w:pgMar [^>]*w:right="(\d+)"/,567)-tw(/<w:pgMar [^>]*w:left="(\d+)"/,567))/1440*96;
+      var szOf=function(id,d){var m=id&&stx.match(new RegExp('<w:style\\b[^>]*w:styleId="'+id.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'"[\\s\\S]*?<\\/w:style>'));
+        var z=m&&(m[0].match(/<w:szCs w:val="(\d+)"/)||m[0].match(/<w:sz w:val="(\d+)"/));return z?+z[1]/2:d};
+      var ptD=szOf(P.D,10),ptH=szOf(P.H,11);
+      var MEAS=document.createElement('div');MEAS.style.cssText='position:absolute;visibility:hidden;white-space:nowrap;direction:rtl;left:-9999px;top:0';document.body.appendChild(MEAS);
+      function wFits(hd,hn){MEAS.innerHTML='<span style="font-family:Vilna,serif;font-weight:900;font-size:'+ptD+'pt">'+hd+'</span><span style="font-size:'+ptD+'pt">\u2003</span>'+
+        '<span style="font-family:Frank,serif;font-weight:700;font-size:'+ptH+'pt">'+hn+'</span>';var w=MEAS.getBoundingClientRect().width;return w<=colPx*0.97}
       D.pages.forEach(function(pg){
         if(!pg.units||!pg.units.length)return;
         xs.push(para(P.P,xe(pg.daf)));
-        itemsOf(pg).forEach(function(it){
+        var its=itemsOf(pg);
+        its.forEach(function(it,ii){
+          if(it.skip)return;
+          /* פרומפט 80 ב: ד"ה משנה ומיד אחריו כותרת נושא - פסקה אחת (סגנון ד"ה), והכותרת בסגנון התו "נושא תו", כשהשתיים נכנסות
+             יחד בשורה אחת ברוחב הטור של הספר (נמדד כאן בגופנים ובגדלים של הסגנונות). אחרת - שתי פסקאות כמו קודם */
+          var nx=its[ii+1];
+          if(it.t==='D'&&nx&&nx.t==='H'&&it.u&&nx.u&&typeof dhJoinable==='function'&&dhJoinable(it.u,nx.u,1)&&wFits(it.h,nx.h)){
+            nx.skip=1;JOINED++;
+            var pp=para(P.D,it.h),gap='<w:r><w:rPr><w:rtl/></w:rPr><w:t xml:space="preserve">\u2003</w:t></w:r>';
+            var nr=para(null,nx.h).replace(/^<w:p><w:pPr><w:bidi\/><\/w:pPr>/,'').replace(/<\/w:p>$/,'')
+              .replace(/<w:rPr>/g,'<w:rPr>'+(C.ns?'<w:rStyle w:val="'+C.ns+'"/>':'<w:b/><w:bCs/>'));
+            xs.push(pp.replace(/<\/w:p>$/,gap+nr+'</w:p>'));return}
           if(it.t==='S')xs.push(para(P.S,it.h));
           else if(it.t==='H')xs.push(para(P.H,it.h));
           else if(it.t==='D')xs.push(para(P.D,it.h));
@@ -159,6 +182,7 @@
       while((mm=re.exec(body))){if(pid&&mm[0].indexOf('w:val="'+pid+'"')>-1)break;head+=mm[0]}
       var nd=doc.slice(0,bi)+head+xs.join('')+doc.slice(be);
       get('word/document.xml').data=u8(nd);
+      MEAS.remove();
       say('אורז...');
       var blob=await zip(files);
       var d=new Date(),ds=d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear();

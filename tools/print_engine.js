@@ -156,6 +156,75 @@
       lab.push({perek:pg.perek||'',perekName:pg.perekName||''})}
     PMAP={flat:flat,pos:pos,keys:keys,starts:starts,upk:upk,how:how,np:NP,m1:m1,lab:lab};
     return PMAP}
+  /* =================== פרומפט 80 ג (23.11.2026): "חזרה מהירה" בסוף כל פרק ===================
+     כל הפרק בעמוד-שניים: לכל משנה - מספרה, ד"ה המשנה (מנוקד: תחילת המשנה עד הפיסוק הראשון) ונושאי המשנה (המילים שסומנו
+     כעיקר המשנה, i.ns). מתחתיה, לפי הסדר: ד"ה המשנה של הסוגיות (מנוקדים) וכותרות הנושא, עם ציון הדף בצד. בלי שאלות
+     (הבנק אינו טוב לדעת מיכאל, ושאלות שכתב או אישר לפרק - אין במאגר). נבנה מן הנתונים שבדף בזמן ההדפסה (כולל עריכות היום).
+     גם עמוד נפרד באתר: <מסכת>.html?qr=1 (וכל פרק: ?qr=1&qrp=3). ?qrp=0 בהדפסה - בלי. */
+  function qrTxt(h){return String(h||'').replace(/<span class="nks">([^<]*)<\/span>/g,'$1').replace(/<i class="mk"[^>]*>[^]*?<\/i>\s*/g,'')
+      .replace(/<sup[^>]*>[^]*?<\/sup>/g,'').replace(/<(?!\/?(?:i|b)\b)[^>]+>/g,'').replace(/<i class="(?!dm|ns|am|tn)[^"]*">/g,'<i>').trim()}
+  function qrPlain(h){var t=document.createElement('template');t.innerHTML=String(h||'');return (t.content.textContent||'').replace(/\s+/g,' ').trim()}
+  function qrHeb(n){var o='',a=[[400,'ת'],[300,'ש'],[200,'ר'],[100,'ק'],[90,'צ'],[80,'פ'],[70,'ע'],[60,'ס'],[50,'נ'],[40,'מ'],[30,'ל'],[20,'כ'],[10,'י'],[9,'ט'],[8,'ח'],[7,'ז'],[6,'ו'],[5,'ה'],[4,'ד'],[3,'ג'],[2,'ב'],[1,'א']];
+    if(n===15)return 'טו';if(n===16)return 'טז';a.forEach(function(x){while(n>=x[0]){o+=x[1];n-=x[0]}});return o}
+  function qrData(n){
+    var M=perekMap(),mb={};(D.mbt||[]).forEach(function(m){mb[m.id]=m});
+    var out={n:n,lab:M.lab[n-1]||{},pre:[],ms:[]},cur=null;
+    var okL=function(u){return u.lv&&u.l&&u.lv.length===u.l.length&&!(typeof EDIT!=='undefined'&&EDIT)};
+    function sub(k,h,daf){var t=qrTxt(h);if(!qrPlain(t))return;var it={k:k,h:t,daf:daf};(cur?cur.subs:out.pre).push(it)}
+    D.pages.forEach(function(p){p.units.forEach(function(u){
+      if(M.upk[u.id]!==n)return;
+      if(u.k==='m'){var L=okL(u)?u.lv:(u.l||[]);
+        var ns=[];L.forEach(function(l){String(l[1]||'').replace(/<i class="ns">([^]*?)<\/i>/g,function(_,x){var t=qrTxt(x);if(qrPlain(t))ns.push(t);return _})});
+        var m=mb[u.id];
+        if(m||!cur){
+          var first=L.length?qrPlain(qrTxt(L[0][1])):'';
+          /* עד הפיסוק הראשון שאחרי שלוש מילים לפחות ("ב"ש: בערב כל אדם יטה" - לא נעצר אחרי "ב"ש") */
+          var cut=-1,rp=/[.,:;?!]/g,mt;while((mt=rp.exec(first))){if(first.slice(0,mt.index).split(/\s+/).filter(Boolean).length>=3){cut=mt.index;break}}
+          var w=(cut>-1?first.slice(0,cut):first).split(/\s+/).filter(Boolean);
+          if(w.length>8)w=w.slice(0,6).concat(['וכו\'']);
+          var dhw=w.join(' '),bare=function(x){return qrPlain(x).replace(/[\u0591-\u05C7]/g,'').replace(/[^א-ת ]/g,'').trim()};
+          /* נושא שזהה לפתיחה כבר כתוב בשורת המשנה */
+          ns=ns.filter(function(x){return bare(x)!==bare(dhw)});
+          cur={num:m?m.n:(out.ms.length+1),dh:ge(dhw),ns:ns,subs:[],daf:p.daf,id:u.id};out.ms.push(cur)}
+        else cur.ns=cur.ns.concat(ns);
+        /* כותרת שהיא פסקה בתוך המשנה (p.nose) */
+        (u.l||[]).forEach(function(l){if(/(^|\s)(nose|dh)(\s|$)/.test(l[0]||''))sub(/nose/.test(l[0])?'nose':'dh',l[1],p.daf)});
+        return}
+      if(u.k==='dh'){if(!qrPlain(u.a))return;sub('dh',(typeof avOk==='function'&&avOk(u)&&!(typeof EDIT!=='undefined'&&EDIT))?u.av:u.a,p.daf);return}
+      if(u.k==='nose'){sub('nose',u.a,p.daf);return}
+      if(u.k==='u')(u.l||[]).forEach(function(l){if(/(^|\s)(nose|dh)(\s|$)/.test(l[0]||''))sub(/nose/.test(l[0])?'nose':'dh',l[1],p.daf)})})});
+    /* ניקוי: נושא שחוזר על עצמו (ns שנמשך בשתי פסקאות) */
+    out.ms.forEach(function(m){var seen={};m.ns=m.ns.filter(function(x){var k=qrPlain(x);if(seen[k])return false;seen[k]=1;return true})});
+    return out}
+  /* הפריטים של פרק כרצף בלוקים (HTML), לעימוד בשני טורים */
+  function qrBlocks(d){
+    var b=[],lastDaf='';
+    function item(it){var df=it.daf&&it.daf!==lastDaf?it.daf:'';if(it.daf)lastDaf=it.daf;
+      return '<div class="qri qr-'+it.k+'"><span class="qrt">'+it.h+'</span><span class="qrf">'+(df?ge(df):'')+'</span></div>'}
+    d.pre.forEach(function(it){b.push(item(it))});
+    d.ms.forEach(function(m){lastDaf='';
+      b.push('<div class="qrm"><div class="qrmh"><span class="qrn">משנה '+qrHeb(+m.num||0)+'</span> <span class="qrd">'+m.dh+'</span><span class="qrf">'+ge(m.daf||'')+'</span></div>'+
+        (m.ns.length?'<div class="qrns">'+m.ns.join('<span class="qrsep"> · </span>')+'</div>':'')+'</div>');
+      lastDaf=m.daf;
+      m.subs.forEach(function(it){b.push(item(it))})});
+    return b}
+  var QR_CSS='.qrp{font-family:Frank,serif}'+
+    '.qrp .qrtt{position:absolute;text-align:center;font-family:Vilna,serif;font-weight:900;font-size:15pt;line-height:1.2}'+
+    '.qrp .qrtt small{display:block;font-weight:700;font-size:10.5pt;color:#333;margin-top:1mm}'+
+    '.qrp .qrc{position:absolute;column-count:2;column-gap:7mm;column-fill:auto;column-rule:0.4pt solid #999;direction:rtl}'+
+    '.qrm{break-inside:avoid;margin:2.6mm 0 1mm}.qrm:first-child{margin-top:0}'+
+    '.qrmh{display:flex;align-items:baseline;gap:1.6mm;font-family:Vilna,serif;font-weight:900;font-size:10.5pt;line-height:1.35;border-bottom:0.5pt solid #000;padding-bottom:0.4mm}'+
+    '.qrmh .qrn{white-space:nowrap}.qrmh .qrd{flex:1}'+
+    '.qrns{font-family:Frank,serif;font-weight:700;font-size:8.6pt;line-height:1.35;color:#222;margin-top:0.6mm}.qrns .qrsep{color:#888;font-weight:400}'+
+    '.qri{display:flex;align-items:baseline;gap:2mm;break-inside:avoid;line-height:1.38}'+
+    '.qri .qrt{flex:1}.qrf{font-family:Vilna,serif;font-weight:700;font-size:8pt;color:#4d4d4d;white-space:nowrap;min-width:6mm;text-align:left}'+
+    '.qr-dh{font-family:Vilna,serif;font-weight:700;font-size:9.2pt;margin-top:0.9mm}'+
+    '.qr-nose{font-family:Frank,serif;font-weight:700;font-size:8.8pt;padding-right:3.5mm}'+
+    '.qrp i.ns,.qrp i.am,.qrp i.tn,.qrp i.dm{font-style:normal}.qrp i{font-style:normal}'+
+    '.qrw{font-family:Frank,serif;direction:rtl;max-width:46em;margin:0 auto;padding:16px}'+
+    '.qrw .qrc{column-count:2;column-gap:2em;column-rule:1px solid #ccc}.qrw h2{font-family:Vilna,serif;text-align:center;margin:1.4em 0 .6em}'+
+    '@media (max-width:640px){.qrw .qrc{column-count:1}}';
+  window.qrData=qrData;window.qrBlocks=qrBlocks;
   /* מספר הפרק (1...) של מפתח פרק מן החלון ("פרק שלישי|כירה"), או "#3". מפתח התווית: הפרק שהמשנה הראשונה שלו
      בעמוד הראשון שנושא את התווית; ובלי משנה שם - הפרק של רוב היחידות בעמודים שנושאים אותה */
   function perekNum(pk){
@@ -627,8 +696,13 @@
         /* תווית הפרק של השורה - לפי הפרק של היחידה עצמה (שארית פרק בעמוד שמתויג לפרק הבא) */
         var LB=perekMap().lab[perekMap().upk[u.id]-1]||{perek:p.perek||'',perekName:p.perekName||''};
         if(!firstUnit)firstUnit={u:u,p:LB};
-        recs.push({u:u,pi:pi,daf:p.daf,perek:LB.perek,perekName:LB.perekName,kind:u.k,chapOpen:chapOpen,
-          html:prnFix(u.k,unitHTML(u,first?p.daf:null,first?pi:null))});
+        /* פרומפט 80 ב (23.11.2026): ד"ה משנה ומיד אחריו כותרת נושא - שורה אחת כשנכנס (dhJoinable/dhJoinHTML שבקוד האתר, אותו כלל
+           בדיוק): הכותרת נכנסת לשורת הד"ה כתיבה אחת, ואם אינה נכנסת היא יורדת כולה לשורה הבאה. יחידת הנושא אינה נכנסת לסרגל
+           בנפרד; החצי שורה שלפני הכותרת נשמר לפני השורה המאוחדת. ספירה: R.dhJoin */
+        var uhtml=unitHTML(u,first?p.daf:null,first?pi:null),nxu=p.units[k+1],joined=null;
+        if(typeof dhJoinable==='function'&&dhJoinable(u,nxu)&&!(PKS&&perekMap().upk[nxu.id]!==PKS.n)){uhtml=dhJoinHTML(uhtml,nxu);joined=nxu;k++}
+        recs.push({u:u,pi:pi,daf:p.daf,perek:LB.perek,perekName:LB.perekName,kind:u.k,chapOpen:chapOpen,joined:joined,
+          html:prnFix(u.k,uhtml)});
         first=false;chapOpen=false}
       groups.push([g0,recs.length])}
     if(!recs.length)throw new Error('אין בטווח טקסט');
@@ -823,7 +897,10 @@
       (function(){
         var nl=headNL,hU=function(h){var rw=h.parentElement;return rw&&rw.dataset.u?+rw.dataset.u:null};
         var hd=[].slice.call(f.querySelectorAll('.row.nose > .main,.row.dh > .main'));R.headMulti=R.headMulti||{before:0,after:0,squeezed:0,broken:0,list:[]};
-        hd.forEach(function(h){var n0=nl(h);if(n0<2)return;R.headMulti.before++;
+        hd.forEach(function(h){var n0=nl(h);if(n0<2)return;
+          /* פרומפט 80 ב: ד"ה עם כותרת שצורפה אליו - הצרה בלבד (אולי ייכנס בשורה אחת). אחרת שתי שורות כמו קודם, בלי שבירה פנימית */
+          if(h.querySelector('.nsi')){if(headSqueeze(h))R.dhJoinSq=(R.dhJoinSq||0)+1;return}
+          R.headMulti.before++;
           var t=h.textContent;
           if(headSqueeze(h)){R.headMulti.squeezed++;return}
           /* שבירה אחרי " - " או ": " הקרוב ביותר לאמצע, אם כך יוצאות בדיוק שתי שורות */
@@ -925,6 +1002,10 @@
           else pull=Math.max(0,pull);
           if(Math.abs(pull)>0.5)row.style.setProperty('--dafpull',pull.toFixed(1)+'px');
           if(mn&&gap-pull<minGap-0.5)R.issues.push({type:'סימן דף קרוב משלוש אותיות לטקסט',daf:dm.textContent.trim(),detail:((gap-pull)/MM).toFixed(1)+' מ"מ'})})})();
+      /* פרומפט 80 ב: ספירת הצירופים - כמה ד"ה+כותרת נכנסו בשורה אחת (שורה נחסכה) וכמה נשארו בשתיים */
+      crecs.forEach(function(x){if(!x.joined||!x.el)return;var m=x.el.querySelector(':scope > .main');if(!m)return;
+        R.dhJoin=R.dhJoin||{pairs:0,one:0,two:0,list:[]};R.dhJoin.pairs++;
+        var n=headNL(m);if(n<=1){R.dhJoin.one++;if(R.dhJoin.list.length<40)R.dhJoin.list.push({daf:x.daf,u:x.u.id,t:m.textContent.trim().slice(0,70)})}else R.dhJoin.two++});
       /* ---- מדידת שורות הנתח ---- */
       var fr=f.getBoundingClientRect(),Lc0=L.length;
       crecs.forEach(function(x,i){
@@ -1575,6 +1656,10 @@
         '<div class="psite" style="'+(mir?'right:'+(MG.right-dx+prof.rail)+'mm':'left:'+(MG.left+dx)+'mm')+'">'+(prof.footer.pageQr?'<span class="qr"></span>':'')+'<span class="st" dir="rtl">'+siteLine()+'</span></div>';
       pgEl.innerHTML=hd+body+foot;
       pgEl.setAttribute('data-daf',firstLine.daf);
+      /* פרומפט 80 ג: הפרק של השורה הראשונה והאחרונה בעמוד, והאם יש בו "הדרן" (סוף פרק) - לשיבוץ "חזרה מהירה" */
+      (function(){var r0=recs[firstLine.ri],r1=recs[lastLine.ri],M=perekMap();
+        if(r0&&r0.u)pgEl.setAttribute('data-pk0',M.upk[r0.u.id]||'');if(r1&&r1.u)pgEl.setAttribute('data-pk1',M.upk[r1.u.id]||'');
+        for(var q=cs2[0].s;q<cs2[cs2.length-1].e;q++)if(L[q].kind==='hadran'){pgEl.setAttribute('data-had','1');break}})();
       out.appendChild(pgEl);
       R.pages.push(pageInfo)}
     /* טז (14.10.2026): טווח שנגמר באמצע סוגיה (היחידה שאחריו גוף ולא כותרת) - מסומן בסוף העמוד האחרון ומדווח */
@@ -1585,12 +1670,55 @@
         var cutEl=document.createElement('div');cutEl.className='pcut';cutEl.textContent='הסוגיה נמשכת בדף '+nextDaf;
         out.lastChild.appendChild(cutEl);
         R.issues.push({type:'הטווח נחתך באמצע סוגיה',daf:lastLine.daf,detail:'ממשיך בדף '+nextDaf})}}
+    /* ---- פרומפט 80 ג: "חזרה מהירה" אחרי העמוד האחרון של כל פרק שנגמר בטווח (גם בהדפסת פרק לבד). בדו-צדדי - מספר זוגי של עמודים,
+       כדי שהזוגיות (שוליים מראה, כותרת) של העמודים שאחריו לא תשתנה. המספור והתוכן מחושבים מחדש אחרי השיבוץ ---- */
+    var ORIGPG=[].slice.call(out.querySelectorAll(':scope > .pg'));
+    if(QS.get('qrp')!=='0'){
+      try{
+        var stq=document.createElement('style');stq.textContent=QR_CSS;document.head.appendChild(stq);
+        var hold=document.createElement('div');hold.style.cssText='position:absolute;left:-3000mm;top:0';document.body.appendChild(hold);
+        var donePk={};R.qr=[];
+        var QM=perekMap(),lastIx={};
+        recs.forEach(function(x){if(!x.u)return;var n=QM.upk[x.u.id],i=QM.pos[x.u.id];if(n&&(lastIx[n]===undefined||i>lastIx[n]))lastIx[n]=i;
+          if(x.joined){var i2=QM.pos[x.joined.id];if(i2>lastIx[n])lastIx[n]=i2}});
+        /* הפרק נגמר בטווח: אחרי היחידה האחרונה שלו שהודפסה אין עוד תוכן של אותו פרק (רק הדרן, טווח דפים או כותרת ריקה) */
+        var pkDone=function(n){if(lastIx[n]===undefined)return false;var end=n<QM.starts.length?QM.starts[n]:QM.flat.length;
+          for(var i=lastIx[n]+1;i<end;i++){var u=QM.flat[i].u;if(u.k==='hadran'||u.k==='perek-range'||((u.k==='nose'||u.k==='dh')&&emptyHead(u)))continue;return false}return true};
+        for(var qi=0;qi<ORIGPG.length;qi++){var qpe=ORIGPG[qi];
+          var qn=+qpe.getAttribute('data-pk1');if(!qn||donePk[qn])continue;
+          var qnx=ORIGPG[qi+1];if(qnx&&+qnx.getAttribute('data-pk0')===qn)continue;
+          if(!pkDone(qn))continue;
+          donePk[qn]=1;
+          var qd=qrData(qn),qb=qrBlocks(qd);if(!qb.length)continue;
+          var qlab=qd.lab||{},CHQ=(D.chap&&D.chap[qlab.perek])||{},qttl='חזרה מהירה<small>'+ge(qlab.perek||'')+((CHQ.full||qlab.perekName)?' - '+ge(CHQ.full||qlab.perekName):'')+'</small>';
+          var made=[],bi=0,guard=0;
+          while(bi<qb.length&&guard++<12){
+            var qpg=document.createElement('section');qpg.className='pg qrp';
+            qpg.innerHTML=(made.length?'':'<div class="qrtt" style="left:'+MG.left+'mm;right:'+(MG.right+prof.rail)+'mm;top:'+MG.top+'mm">'+qttl+'</div>')+
+              '<div class="qrc" style="left:'+MG.left+'mm;right:'+(MG.right+prof.rail)+'mm;top:'+(MG.top+(made.length?0:17))+'mm;bottom:'+MG.bottom+'mm"></div>';
+            hold.appendChild(qpg);
+            var qc=qpg.querySelector('.qrc'),qr=qc.getBoundingClientRect(),n0=bi;
+            for(;bi<qb.length;bi++){qc.insertAdjacentHTML('beforeend',qb[bi]);var le=qc.lastElementChild,lr=le.getBoundingClientRect();
+              if(lr.left<qr.left-1||lr.bottom>qr.bottom+1){if(bi>n0){le.remove();break}}}
+            /* כותרת משנה לא תישאר לבד בתחתית הטור האחרון בעמוד */
+            if(bi<qb.length&&qc.lastElementChild&&qc.lastElementChild.classList.contains('qrm')&&qc.children.length>1){qc.lastElementChild.remove();bi--}
+            made.push(qpg)}
+          /* העמוד האחרון: טורים מאוזנים (לא טור מלא ולידו ריק) */
+          if(made.length){var lq=made[made.length-1].querySelector('.qrc');if(lq)lq.style.columnFill='balance'}
+          if(duplex&&made.length%2){var bl=document.createElement('section');bl.className='pg qrp qrblank';made.push(bl)}
+          var ref=qpe.nextSibling;made.forEach(function(m){out.insertBefore(m,ref)});
+          R.qr.push({perek:qn,pages:made.length,items:qb.length,mishnayot:qd.ms.length})}
+        hold.remove()}catch(e){W('חזרה מהירה: '+e.message)}
+      /* מספור מחדש של העמודים (גוף + חזרה מהירה) */
+      [].slice.call(out.querySelectorAll(':scope > .pg')).forEach(function(pe,k){pe.setAttribute('data-num',k+1);var pn=pe.querySelector('.pnum');
+        if(pn)pn.textContent=k+1;else if(pe.classList.contains('qrp')&&!pe.classList.contains('qrblank')){var d=document.createElement('div');d.className='pnum';d.style.bottom=prof.footer.numberFromBottomMm+'mm';d.textContent=k+1;pe.appendChild(d)}})}
+    function qrPageNum(k){var e=ORIGPG[k-1];return e&&e.getAttribute('data-num')?+e.getAttribute('data-num'):k}
     /* ---- מסכת שלמה: שער, עמוד 2 הקבוע ותוכן עניינים (לפני גוף המסכת) ---- */
     var p2frame=null;
     if(QS.get('all')==='1'){
       var toc=[];
       cols.forEach(function(c,ci){for(var i2=c.s;i2<c.e;i2++){var l=L[i2];
-        if((l.kind==='perek-start'||l.co)&&l.first)toc.push({perek:l.perek,name:l.perekName,page:Math.floor(ci/prof.cols)+1,daf:l.daf})}});
+        if((l.kind==='perek-start'||l.co)&&l.first)toc.push({perek:l.perek,name:l.perekName,page:qrPageNum(Math.floor(ci/prof.cols)+1),daf:l.daf})}});
       var first=out.firstChild;
       var cov=document.createElement('section');cov.className='pg cover';
       cov.innerHTML='<div class="cv"><div class="cv1">לאוקמי גירסא</div><div class="cv2">מסכת '+ge(mname)+'</div>'+
@@ -1613,7 +1741,35 @@
       tc.innerHTML='<div class="toct">תוכן עניינים</div><div class="tocm">מסכת '+ge(mname)+'</div>'+
         toc.map(function(t){return '<div class="tocr"><span class="tn">'+ge(t.perek)+(t.name?' - '+ge(t.name):'')+'</span><span class="td"></span><span class="tp">'+t.page+'</span></div>'}).join('');
       out.insertBefore(tc,first);
-      R.toc=toc}
+      R.toc=toc;
+      /* פרומפט 80 ד: "מפתח ראשי תיבות" אחרי תוכן העניינים - רק ראשי התיבות שבמסכת הזאת, בשני טורים, עם כל הפתיחות שנמצאו לכל אחד
+         בגמרא (tools/abbr_build.py; פתיחה שנמצאה פעם אחת בלבד - אינה נכנסת). עמוד פתיחה (בלי מספר, כמו תוכן העניינים). ?abbr=0 - בלי */
+      if(QS.get('abbr')!=='0'){
+        try{
+          var abr=await fetch('abbr/'+SLUG+'.json',{cache:'no-store'});
+          var abj=abr.ok?await abr.json():null,ab=(abj&&abj.abbr)||{};
+          var ks=Object.keys(ab).map(function(a){var ex=Object.keys(ab[a]).filter(function(e){return ab[a][e]>=2}).sort(function(x,y){return ab[a][y]-ab[a][x]}).slice(0,4);return [a,ex]})
+            .filter(function(x){return x[1].length}).sort(function(x,y){return x[0].replace(/"/g,'').localeCompare(y[0].replace(/"/g,''),'he')});
+          if(ks.length){
+            var stA=document.createElement('style');stA.textContent='.abp .qrc{column-count:2;column-gap:8mm;column-fill:auto;column-rule:0.4pt solid #999;position:absolute;direction:rtl}'+
+              '.abr{break-inside:avoid;font-family:Frank,serif;font-size:9.6pt;line-height:1.45}.abr b{font-family:Vilna,serif;font-weight:900;margin-left:1.5mm}.abr .abs{color:#888}';
+            document.head.appendChild(stA);
+            var hold2=document.createElement('div');hold2.style.cssText='position:absolute;left:-3000mm;top:0';document.body.appendChild(hold2);
+            var rowsA=ks.map(function(x){return '<div class="abr"><b>'+ge(x[0])+'</b>'+x[1].map(ge).join('<span class="abs"> · </span>')+'</div>'});
+            var ai=0,ag=0,abPages=[];
+            while(ai<rowsA.length&&ag++<20){
+              var ap=document.createElement('section');ap.className='pg tocp abp';ap.style.padding='0';
+              ap.innerHTML=(abPages.length?'':'<div class="toct" style="position:absolute;left:0;right:0;top:30mm">מפתח ראשי תיבות</div><div class="tocm" style="position:absolute;left:0;right:0;top:41mm">מסכת '+ge(mname)+'</div>')+
+                '<div class="qrc" style="left:30mm;right:30mm;top:'+(abPages.length?30:58)+'mm;bottom:25mm"></div>';
+              hold2.appendChild(ap);var qa=ap.querySelector('.qrc'),qar=qa.getBoundingClientRect(),a0=ai;
+              for(;ai<rowsA.length;ai++){qa.insertAdjacentHTML('beforeend',rowsA[ai]);var la=qa.lastElementChild.getBoundingClientRect();
+                if((la.left<qar.left-1||la.bottom>qar.bottom+1)&&ai>a0){qa.lastElementChild.remove();break}}
+              abPages.push(ap)}
+            if(abPages.length){var lqa=abPages[abPages.length-1].querySelector('.qrc');if(lqa)lqa.style.columnFill='balance'}
+            hold2.remove();abPages.forEach(function(ap){out.insertBefore(ap,first)});
+            R.abbr={kinds:ks.length,pages:abPages.length}}
+        }catch(e){W('מפתח ראשי תיבות: '+e.message)}}
+    }
     document.body.appendChild(out);
     if(p2frame){
       await new Promise(function(ok){if(p2frame.contentDocument&&p2frame.contentDocument.readyState==='complete'&&p2frame.contentDocument.body&&p2frame.contentDocument.body.children.length)return ok();p2frame.onload=function(){ok()};setTimeout(ok,15000)});
@@ -1832,6 +1988,24 @@
   function isAdm(){try{return typeof isAdmin==='function'&&!!isAdmin()}catch(e){return false}}
   function admHdr(){try{var k=localStorage.getItem('lg-adm')||'';return (k&&!/[^\x00-\xff]/.test(k))?{'x-admin-key':k}:{}}catch(e){return {}}}
   function perekKey(p){return (p.perek||'')+'|'+(p.perekName||'')}
+  /* פרומפט 80 ג: "חזרה מהירה" כעמוד נפרד באתר - <מסכת>.html?qr=1 (כל הפרקים) או ?qr=1&qrp=3 (פרק אחד). אותו תוכן כמו בהדפסה,
+     וכל ציון דף מוביל אל מקומו בדף המסכת. (הכפתורים באתר - פרומפט 81) */
+  if(!ON&&QS.get('qr')==='1'){
+    var qrShow=function(){
+      if(typeof D==='undefined'||!D.pages)return setTimeout(qrShow,200);
+      var st=document.createElement('style');st.textContent=QR_CSS+'#qrv{position:fixed;inset:0;z-index:9999;background:#fff;overflow:auto}'+
+        '#qrv .qrtop{position:sticky;top:0;background:#fff;border-bottom:1px solid #ddd;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;font-family:Vilna,serif;font-weight:700}'+
+        '#qrv a{color:inherit;text-decoration:none}#qrv .qrf a{color:#4d4d4d}#qrv .qrw{font-size:17px}#qrv .qrmh{font-size:1.12em}#qrv .qr-dh{font-size:1em}#qrv .qr-nose{font-size:.95em}#qrv .qrns{font-size:.9em}#qrv .qrf{font-size:.8em}';
+      document.head.appendChild(st);
+      var M=perekMap(),only=+QS.get('qrp')||0,h='';
+      for(var n=1;n<=M.np;n++){if(only&&n!==only)continue;var d=qrData(n),b=qrBlocks(d);if(!b.length)continue;
+        var lab=d.lab||{},CH=(D.chap&&D.chap[lab.perek])||{};
+        h+='<h2>'+ge(lab.perek||('פרק '+qrHeb(n)))+((CH.full||lab.perekName)?' - '+ge(CH.full||lab.perekName):'')+'</h2><div class="qrc">'+b.join('')+'</div>'}
+      var v=document.createElement('div');v.id='qrv';v.dir='rtl';
+      v.innerHTML='<div class="qrtop"><span>חזרה מהירה · מסכת '+ge(D.masechet||'')+'</span><a href="'+location.pathname+'">חזרה לדף ←</a></div><div class="qrw">'+(h||'<p>אין פרק להצגה</p>')+'</div>';
+      [].forEach.call(v.querySelectorAll('.qrf'),function(f){var t=f.textContent.trim();if(t)f.innerHTML='<a href="'+location.pathname+'#daf='+encodeURIComponent(t)+'">'+ge(t)+'</a>'});
+      document.body.appendChild(v);document.title='חזרה מהירה · '+(D.masechet||'')};
+    if(document.readyState==='complete')setTimeout(qrShow,0);else window.addEventListener('load',qrShow)}
   if(!ON){
     function dafParts(key){var m=/^(.*?)([.:])$/.exec(key||'');return m?{base:m[1],amud:m[2]===':'?'ב':'א',mark:m[2]}:null}
     function textPages(){var o=[];D.pages.forEach(function(p,i){if(p.units&&p.units.length)o.push(i)});return o}

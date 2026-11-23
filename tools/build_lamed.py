@@ -9,7 +9,7 @@ import os, io, re, hashlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, 'lamed')
-PARTS = ['core', 'tracker', 'brand', 'ui', 'ui2', 'shiurim', 'sync', 'quiz', 'boot']
+PARTS = ['core', 'tracker', 'brand', 'ui', 'ui2', 'shiurim', 'shma', 'sync', 'quiz', 'boot']
 MARK = '/* ---- בדף הלימוד'
 
 PAGES = [
@@ -136,7 +136,10 @@ def placeholder(site):
 
 
 def js_text():
-    return read(os.path.join(HERE, 'hdate.js')) + '\n' + '\n'.join(read(os.path.join(SRC, p + '.js')) for p in PARTS)
+    # "שמע" (פרומפט 83): רשימת המסכתות שיש להן שיעור מוקלט, כדי שדף בלי שמע לא יבקש דבר מן השרת
+    import json as _json, shma
+    pre = 'window.LG_SHMA=' + _json.dumps(shma.slugs()) + ';\n'
+    return pre + read(os.path.join(HERE, 'hdate.js')) + '\n' + '\n'.join(read(os.path.join(SRC, p + '.js')) for p in PARTS)
 
 
 def js_hash():

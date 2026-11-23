@@ -443,6 +443,9 @@ if(a){{a.classList.add('now');var tag=document.createElement('span');tag.classNa
         shutil.copytree(_tz, os.path.join(SITE, 'tzura'), dirs_exist_ok=True)
     import build_lamed
     build_lamed.build(SITE)
+    # "שמע" ליד כל יחידה (פרומפט 83): נתוני ההתאמה והשמע המתארח
+    import shma
+    shma.build(SITE)
     import quiz_build
     quiz_build.run(SITE)
     # עמוד "מקורות": הייחוס הנדרש ברישיון, פעם אחת, בשורה שקטה. השם המקורי

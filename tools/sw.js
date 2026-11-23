@@ -46,6 +46,8 @@ self.addEventListener('fetch', e => {
   if (u.origin !== location.origin) return;
   if (u.pathname.indexOf('/api') === 0 || u.pathname.endsWith('edited-pages.json') || u.pathname.endsWith('status.json')) return;
   if (req.headers.get('range')) return;
+  // שמע השיעורים (פרומפט 83): קבצים גדולים שהנגן מבקש בחלקים - ישר מן הרשת, בלי מטמון
+  if (u.pathname.indexOf('/audio/') === 0 || u.pathname.indexOf('/shma/') === 0) return;
   const p = u.pathname;
   const stat = /\/(fonts|brand)\//.test(p) || /\.(woff2?|otf|ttf|webp|png|svg|ico)$/.test(p) || (u.search.indexOf('v=') > -1 && /\.(css|js)$/.test(p));
   e.respondWith(caches.open(V).then(c => stat ? cacheFirst(req, c) : swr(req, c)).catch(() => fetch(req).catch(() => anyMatch(req))));

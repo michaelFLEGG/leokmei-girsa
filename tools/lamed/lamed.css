@@ -451,6 +451,22 @@ body:has(.panel.open) #lm-layer #lm-fin,body:has(.modal) #lm-layer #lm-fin,body:
 @keyframes lmhl{0%{background-color:rgba(255,226,122,.75)}100%{background-color:rgba(255,226,122,0)}}
 .lm-hl{animation:lmhl 2s ease-out}
 
+/* ---- "שמע" ליד כל יחידה (פרומפט 83): כפתור קטן מעל השורה, בלי להזיז טקסט. הכיתוב ב-CSS, מחוץ להעתקה ולוורד ---- */
+.row:has(>.lm-shma){position:relative}
+.lm-shma{position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:3;font:600 12px var(--ui);line-height:1;
+  color:var(--blue);background:var(--sheet);border:1px solid var(--line);border-radius:999px;padding:4px 9px;cursor:pointer;opacity:.55}
+.lm-shma::after{content:'\25B6\FE0E  שמע'}
+.lm-shma:hover,.lm-shma:focus-visible{opacity:1;background:var(--blue-soft);border-color:var(--blue)}
+#flow.book .lm-shma,#prnout .lm-shma{display:none!important}
+@media (max-width:600px){.lm-shma{padding:4px 7px}.lm-shma::after{content:'\25B6\FE0E'}}
+@media print{.lm-shma,.lm-shma-bar{display:none!important}}
+.lm-shma-bar{position:fixed;bottom:0;left:0;right:0;z-index:45;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
+  padding:8px 14px calc(8px + env(safe-area-inset-bottom));background:var(--sheet);color:var(--tx);border-top:1px solid var(--line);box-shadow:var(--shadow);font:600 14px var(--ui)}
+.lm-shma-bar audio{flex:1 1 260px;min-width:0;height:40px}
+.lm-shma-t{flex:1 1 100%}
+.lm-shma-bar button{font:inherit;background:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer;color:inherit;min-height:32px}
+.lm-shma-bar .lm-shma-x{border:0;font-size:24px;padding:0 6px}
+
 /* ---- שיעורי יוטיוב ---- */
 .lm-shiur-btn{position:fixed;bottom:20px;inset-inline-start:16px;z-index:35;background:var(--blue);color:var(--blue-ink);border:0;border-radius:999px;padding:10px 20px;font:700 16px var(--ui);cursor:pointer;box-shadow:var(--shadow)}
 .lm-shiur-btn[hidden]{display:none}

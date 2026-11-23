@@ -369,7 +369,7 @@ def align(srcs):
                 tot['dafs'] += 1
         wr(os.path.join(DATA, slug + '.json'), res)
     idx = sorted(os.path.splitext(os.path.basename(p))[0] for p in glob.glob(os.path.join(DATA, '*.json'))
-                 if not p.endswith('sources.json'))
+                 if os.path.basename(p) not in ('sources.json', 'index.json'))
     wr(os.path.join(DATA, 'index.json'), idx)
     print('שמע: %d עמודים עם שמע, %d יחידות, %d מהן עם נקודת התחלה ודאית' % (tot['dafs'], tot['units'], tot['sure']))
     return tot

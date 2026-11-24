@@ -538,6 +538,23 @@ def fold_one(slug, dry=False, log=print, srv=None, docx=None, efilter=None, tag=
         docx = pin[1] if pin else C.docx_of(m)
     if srv is None:
         srv = live_doc(slug)
+    # פרומפט 91 (24.11.2026): תיקוני ציוני הדף (data/daf-fix/<מסכת>.json, tools/daf_fix.py) נכנסים לספר כאן, בקיפול
+    # בלבד. הם מוחלים על עותק לפני הקיפול, וכל הקיפול נעשה עליו: מה שהמנהל רואה (A) ומה שבספר (W0) נמדדים שניהם
+    # על הספר המתוקן, ולכן מספר העמודים תואם. עריכות השכבה מאותרות בטקסט בטווח של עמוד אחד לכל צד, ולכן ציון
+    # שזז בעמוד אחד אינו מנתק אותן.
+    docx0, dfix, dskip = docx, 0, []
+    if efilter is None:
+        import daf_fix as DFX
+        fx = os.path.join(C.WORK, 'daffix-' + slug + '.docx')
+        try:
+            dfix, dskip = DFX.apply(slug, docx, fx, log=log)
+        except Exception as e:
+            log('%s: תיקוני ציוני הדף לא הוחלו - %s' % (m, str(e)[:200]))
+        for o_, w_ in dskip:
+            log('%s: תיקון ציון דף %s %s לא הוחל - %s' % (m, o_.get('op'), o_.get('daf'), w_))
+        if dfix:
+            docx = fx
+            log('%s: %d תיקוני ציוני דף הוחלו על הספר' % (m, dfix))
     rep, doc, gone, raw = C.layer(slug, m, srv)
     raw, absorbed = pin_adjust(slug, docx, raw, log=log)
     outside = []
@@ -545,12 +562,14 @@ def fold_one(slug, dry=False, log=print, srv=None, docx=None, efilter=None, tag=
         outside = [e for e in raw['edits'] if not efilter(e)]
         raw = dict(raw, edits=[e for e in raw['edits'] if efilter(e)])
     rec = {'when': now_iso(), 'slug': slug, 'file': os.path.basename(docx) + tag, 'layer': len(raw['edits'])}
-    rec['_art'] = {'rep': rep, 'raw': raw, 'absorbed': absorbed, 'outside': outside, 'pin': pin, 'docx': docx, 'm': m}
+    rec['_art'] = {'rep': rep, 'raw': raw, 'absorbed': absorbed, 'outside': outside, 'pin': pin, 'docx': docx0, 'm': m,
+                   'dfix': (dfix, dskip)}
     if absorbed: rec['absorbed'] = len(absorbed)
+    if dfix or dskip: rec['daf_fix'] = {'applied': dfix, 'skipped': len(dskip)}
     if not raw['edits']:
         log('%s: השכבה ריקה, אין מה לקפל' % m)
         rec['result'] = 'ריק'
-        if pin or absorbed:
+        if pin or absorbed or dfix:
             # אין מה לקפל, אבל הצילום המוצמד נעשה לספר (וההצמדה יורדת), והנקלטות יוצאות מן השכבה
             rec['_art'].update(work=docx, remain=[], retired=list(absorbed), lost=[], rekeyed=[])
             rec['result'] = 'עבר'
@@ -752,6 +771,9 @@ def save_one(slug, rec, write_book=True):
             rec['unpinned'] = a['pin'][0]
         if os.path.abspath(work) != os.path.abspath(dst):
             shutil.copyfile(work, dst)
+    if write_book and a.get('dfix'):
+        import daf_fix as DFX
+        DFX.record(slug, a['dfix'][0], a['dfix'][1])
     remain = remain + list(a.get('outside') or [])
     C.wjson(os.path.join(C.EDITS, slug + '.json'),
             dict(rep, edits=sorted(remain, key=lambda e: e.get('t') or 0), when=now_iso()))

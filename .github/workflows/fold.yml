@@ -42,12 +42,22 @@ jobs:
           if [ -n "${{ github.event.inputs.only }}" ]; then python tools/fold.py --only "${{ github.event.inputs.only }}"; else python tools/fold.py; fi
           echo "code=$?" >> $GITHUB_OUTPUT
           exit 0
+      # פרומפט 91 (24.11.2026): שער ציוני הדף - רצף העמודים בספר החדש. עלייה בחסרים, בכפולים או בחזרות לעומת
+      # הבסיס (data/daf-check/_base.json) - הפעולה נכשלת בקול (הספר נשמר, כדי שהעריכות לא יחכו; ההתראה גלויה).
+      - name: שער ציוני הדף
+        id: dafgate
+        if: github.event.inputs.tombstones_only == ''
+        run: |
+          set +e
+          python tools/daf_check.py --gate ${{ github.event.inputs.only && format('--only {0}', github.event.inputs.only) || '' }}
+          echo "code=$?" >> $GITHUB_OUTPUT
+          exit 0
       - name: שמירה ודחיפה
         id: save
         if: github.event.inputs.tombstones_only == ''
         run: |
           git config user.name "leokmei-fold"; git config user.email "fold@users.noreply.github.com"
-          git add -A input/docx data/edits data/word-cloud/ingested data/fold data/word-pin
+          git add -A input/docx data/edits data/word-cloud/ingested data/fold data/word-pin data/daf-fix data/daf-check
           git diff --cached --quiet && { echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; }
           git commit -q -m "הקיפול הלילי: העריכות נכנסו לספר [skip ci]"
           # קבצים נגזרים שהבנייה כתבה בדרך (data/mbox ועוד) אינם חלק מן הקיפול
@@ -76,4 +86,9 @@ jobs:
         if: github.event.inputs.tombstones_only == '' && steps.fold.outputs.code != '0'
         run: |
           echo "::error::לפחות מסכת אחת לא קופלה (השער נכשל). השכבה שלה נשארה כמות שהיא. פרטים ב-data/fold/log.jsonl"
+          exit 1
+      - name: תוצאת שער ציוני הדף
+        if: github.event.inputs.tombstones_only == '' && steps.dafgate.outputs.code != '0'
+        run: |
+          echo "::error::שער ציוני הדף נכשל: יותר עמודים חסרים, כפולים או חוזרים מן הבסיס. פרטים ב-data/daf-check/<מסכת>.json"
           exit 1

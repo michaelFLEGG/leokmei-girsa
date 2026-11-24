@@ -362,6 +362,11 @@
       else if(M.flat[M.pos[h.uid]].u.k==='perek-range')why='העוגן בשורת טווח הדפים, שאינה מודפסת';
       else return (it._rs={uid:h.uid,ctx:ctx,k:h.k,how:'t'})}
     else why=q0<0?'דף התוספות אינו בנתונים':'אין טקסט עוגן';
+    /* פרומפט 91 (24.11.2026): ציון דף חסר, כפול או במקום לא נכון בספר (שבת: 118 עמודים חסרים) - טקסט העוגן יושב
+       בעמוד אחר מזה שתוויתו דף התוספות. מחפשים (1) בכל העמודים שתוויתם דף התוספות יחד (תווית כפולה), ואם לא -
+       (2) בעמודים שתוויתם עמוד אחד לפני או אחרי, רק מופע ראשון ורק התאמה יחידה, ורק ביחידות הפרק שלה.
+       כך הסימן נשאר במקומו גם לפני תיקון ציוני הדף וגם אחריו (tools/daf_check.py) */
+    if(ctx){var nb=tosNear(it,lab,ctx,pk,M);if(nb)return (it._rs=nb)}
     /* היחידות של הפרק שלה: בעמודים שתוויתם דף התוספות; ואם אין בהם יחידה מן הפרק שלה (התוספות האחרונה של פרק
        על דף שהעמוד שלו פותח את הפרק הבא) - העמוד הקרוב לפניו שיש בו מן הפרק שלה, ואם אין - אחריו */
     var C=[],dir=0;
@@ -385,6 +390,26 @@
     else{var best=null,fst=null;txt.forEach(function(u){var ln=lineOf(u.ref);if(!ln)return;if(!fst)fst=u;if(ln<=(it.line||0))best=u});
       tgt=best||fst||txt[txt.length-1]}
     return (it._rs={uid:tgt.id,ctx:'',k:0,how:'line',why:why})}
+  function dkOf(d){var V={'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,'ל':30,'מ':40,'נ':50,'ס':60,'ע':70,'פ':80,'צ':90,'ק':100,'ר':200,'ש':300,'ת':400};
+    d=String(d||'').trim();var m=/^([א-ת]+)\s*([.:])$/.exec(d);if(!m)return null;var n=0;
+    for(var i=0;i<m[1].length;i++)n+=V[m[1][i]]||0;return n?n*2+(m[2]===':'?1:0):null}
+  function tosNear(it,lab,ctx,pk,M){
+    function own(q){return D.pages[q].units.filter(function(u){return (!pk||M.upk[u.id]===pk)&&u.k!=='perek-range'})}
+    function tryIn(units,c,occ){if(!units.length)return null;var N=unitsNorm(units),h=hitUnit(N,c,occ);
+      if(!h){if(occ!==1||occsOf(N.s,c).length)return null;var f=fzCtx(N.s,c);if(!f)return null;h=hitUnit(N,f,1);if(!h)return null;c=f}
+      return {uid:h.uid,ctx:c,k:h.k}}
+    var same=[];D.pages.forEach(function(p,q){if(p.daf===lab)same=same.concat(own(q))});
+    var r=tryIn(same,ctx,it.occ||1);if(r){r.how='t2';return r}
+    if((it.occ||1)!==1)return null;
+    var k0=dkOf(lab);if(k0===null)return null;
+    var hits=[];
+    D.pages.forEach(function(p,q){var k=dkOf(p.daf);if(k===null||p.daf===lab||Math.abs(k-k0)!==1)return;
+      var u=own(q);if(!u.length)return;var N=unitsNorm(u),oc=occsOf(N.s,ctx);
+      if(oc.length){oc.forEach(function(){hits.push([u,ctx])})}
+      else{var f=fzCtx(N.s,ctx);if(f)hits.push([u,f])}});
+    if(hits.length!==1)return null;
+    r=tryIn(hits[0][0],hits[0][1],1);if(r){r.how='nb';return r}
+    return null}
   function tosReset(){PMAP=null;PNORM={};tosItems().forEach(function(it){delete it._rs})}
   /* גם תצוגת האתר (tosafot_ui.js) מצמידה לפי אותו שיוך: מקור אחד לכלל */
   window.lkTos={resolve:tosResolve,perekMap:perekMap,reset:tosReset};

@@ -1,0 +1,254 @@
+{
+ "berakhot": {
+  "missing": 8,
+  "dup": 5,
+  "back": 1,
+  "sure": 3,
+  "doubt": 55
+ },
+ "shabbat": {
+  "missing": 120,
+  "dup": 51,
+  "back": 2,
+  "sure": 58,
+  "doubt": 163
+ },
+ "kiddushin": {
+  "missing": 30,
+  "dup": 2,
+  "back": 0,
+  "sure": 9,
+  "doubt": 90
+ },
+ "eruvin": {
+  "missing": 48,
+  "dup": 38,
+  "back": 3,
+  "sure": 19,
+  "doubt": 112
+ },
+ "pesachim": {
+  "missing": 48,
+  "dup": 35,
+  "back": 1,
+  "sure": 15,
+  "doubt": 128
+ },
+ "yoma": {
+  "missing": 45,
+  "dup": 8,
+  "back": 0,
+  "sure": 6,
+  "doubt": 31
+ },
+ "beitzah": {
+  "missing": 0,
+  "dup": 0,
+  "back": 0,
+  "sure": 0,
+  "doubt": 27
+ },
+ "rosh-hashanah": {
+  "missing": 14,
+  "dup": 3,
+  "back": 0,
+  "sure": 3,
+  "doubt": 33
+ },
+ "taanit": {
+  "missing": 12,
+  "dup": 4,
+  "back": 0,
+  "sure": 3,
+  "doubt": 38
+ },
+ "megillah": {
+  "missing": 16,
+  "dup": 2,
+  "back": 0,
+  "sure": 8,
+  "doubt": 27
+ },
+ "moed-katan": {
+  "missing": 16,
+  "dup": 3,
+  "back": 0,
+  "sure": 3,
+  "doubt": 31
+ },
+ "chagigah": {
+  "missing": 22,
+  "dup": 0,
+  "back": 0,
+  "sure": 4,
+  "doubt": 32
+ },
+ "yevamot": {
+  "missing": 55,
+  "dup": 9,
+  "back": 1,
+  "sure": 11,
+  "doubt": 77
+ },
+ "nedarim": {
+  "missing": 1,
+  "dup": 0,
+  "back": 0,
+  "sure": 0,
+  "doubt": 33
+ },
+ "nazir": {
+  "missing": 4,
+  "dup": 1,
+  "back": 0,
+  "sure": 1,
+  "doubt": 22
+ },
+ "sotah": {
+  "missing": 1,
+  "dup": 1,
+  "back": 0,
+  "sure": 1,
+  "doubt": 25
+ },
+ "gittin": {
+  "missing": 22,
+  "dup": 9,
+  "back": 1,
+  "sure": 6,
+  "doubt": 93
+ },
+ "bava-kamma": {
+  "missing": 40,
+  "dup": 12,
+  "back": 0,
+  "sure": 14,
+  "doubt": 112
+ },
+ "bava-metzia": {
+  "missing": 18,
+  "dup": 0,
+  "back": 0,
+  "sure": 7,
+  "doubt": 115
+ },
+ "makkot": {
+  "missing": 2,
+  "dup": 0,
+  "back": 0,
+  "sure": 0,
+  "doubt": 25
+ },
+ "shevuot": {
+  "missing": 9,
+  "dup": 5,
+  "back": 0,
+  "sure": 6,
+  "doubt": 15
+ },
+ "zevachim": {
+  "missing": 13,
+  "dup": 10,
+  "back": 0,
+  "sure": 8,
+  "doubt": 25
+ },
+ "menachot": {
+  "missing": 16,
+  "dup": 18,
+  "back": 5,
+  "sure": 7,
+  "doubt": 35
+ },
+ "chullin": {
+  "missing": 26,
+  "dup": 10,
+  "back": 1,
+  "sure": 7,
+  "doubt": 25
+ },
+ "arakhin": {
+  "missing": 4,
+  "dup": 3,
+  "back": 0,
+  "sure": 1,
+  "doubt": 18
+ },
+ "temurah": {
+  "missing": 3,
+  "dup": 1,
+  "back": 0,
+  "sure": 0,
+  "doubt": 11
+ },
+ "keritot": {
+  "missing": 3,
+  "dup": 2,
+  "back": 0,
+  "sure": 1,
+  "doubt": 7
+ },
+ "meilah": {
+  "missing": 1,
+  "dup": 1,
+  "back": 0,
+  "sure": 1,
+  "doubt": 5
+ },
+ "niddah": {
+  "missing": 11,
+  "dup": 7,
+  "back": 1,
+  "sure": 4,
+  "doubt": 30
+ },
+ "bekhorot": {
+  "missing": 0,
+  "dup": 0,
+  "back": 0,
+  "sure": 0,
+  "doubt": 22
+ },
+ "bava-batra": {
+  "missing": 39,
+  "dup": 12,
+  "back": 1,
+  "sure": 6,
+  "doubt": 163
+ },
+ "sukkah": {
+  "missing": 0,
+  "dup": 0,
+  "back": 0,
+  "sure": 0,
+  "doubt": 30
+ },
+ "ketubot": {
+  "missing": 26,
+  "dup": 2,
+  "back": 0,
+  "sure": 6,
+  "doubt": 87
+ },
+ "sanhedrin": {
+  "missing": 48,
+  "dup": 2,
+  "back": 2,
+  "sure": 12,
+  "doubt": 86
+ },
+ "avodah-zarah": {
+  "missing": 8,
+  "dup": 5,
+  "back": 0,
+  "sure": 3,
+  "doubt": 24
+ },
+ "horayot": {
+  "missing": 2,
+  "dup": 1,
+  "back": 0,
+  "sure": 1,
+  "doubt": 2
+ }
+}

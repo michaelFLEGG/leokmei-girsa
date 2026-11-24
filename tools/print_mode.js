@@ -94,7 +94,7 @@
       'html.pmspread #prnout{display:flex;flex-wrap:wrap;align-content:flex-start;column-gap:6mm}'+
       'html.pmspread #prnout > .pmsp{visibility:hidden;box-shadow:none!important}'+
       'html.pmcol #prnout > .pg,html.pmcol #prnout > .shp,html.pmcol #prnout > .pmsp{display:none!important}'+
-      '#pmcols{display:none}html.pmcol #pmcols{display:block}'+
+      '#pmcols{display:none;padding-right:10mm}html.pmcol #pmcols{display:block}'+   /* 24.11.2026: מקום לתווית "1 ימ\'" בתוך הגוש, כדי שבהגדלה לא תיצור גלילה הצידה */
       '#pmcols .pmc{position:relative;margin:0 0 4mm 0;background:#fff;box-shadow:0 0 0 .35px #555}'+
       '#pmcols .pmc > .pg{margin:0!important;box-shadow:none!important;overflow:hidden}'+
       '#pmcols .pmcn{position:absolute;right:-9mm;top:0;font:10px Frank,serif;color:#6b6b6b}'+
@@ -179,7 +179,9 @@
     /* פרומפט 52: בזמן המצב, שינויי הבחירה בדף הרגיל (סרגל הסגנונות, ציון הדף, הצעת סכם על בחירה) אינם רלוונטיים -
        הדף מוסתר - וכל אחד מהם מודד מיקום ומכריח פריסה. הם נחסמים כל עוד המצב פתוח */
     document.addEventListener('selectionchange',function(e){if(S.open)e.stopImmediatePropagation()},true);
-    window.addEventListener('resize',function(){if(!S.open)return;pmFrameSize(S.fr);if(S.zoom==='fit')pmZoom('fit')})}
+    window.addEventListener('resize',function(){if(!S.open)return;pmFrameSize(S.fr);if(S.zoom==='fit')pmZoom('fit')});
+    /* 24.11.2026: גם כשהשטח משתנה בלי שינוי חלון (פתיחת "לבדוק אחר כך", סרגל שנשבר לשתי שורות) - "רוחב מסך" נשאר ברוחב המסך */
+    try{var roT=0;new ResizeObserver(function(){if(!S.open||roT)return;roT=requestAnimationFrame(function(){roT=0;pmFrameSize(S.fr);if(S.zoom==='fit')pmZoom('fit')})}).observe(document.getElementById('pmmain'))}catch(e){}}
 
   /* ---------- פתיחה, טעינה, עימוד ---------- */
   function pmProfile(){return (P.paper==='a4'?'a4':'b5')+'lg'}   /* פרומפט 56: גודל אחד */
@@ -195,7 +197,7 @@
     if(!w||!w.__prnRerun||!S.report){pmLoad();return}
     pmLeave();
     S.reconf=false;S.busy=true;S.dirty=false;S.t0=performance.now();
-    var keep=pmKeep(),oldPages=S.report.pages.length;
+    var keep=pmKeep(),oldPages=S.pages.length;
     S.completing={pages:oldPages,cols:[]};
     pmStat('מעמד '+pmWhat()+'...',1);
     setTimeout(function(){
@@ -281,7 +283,7 @@
     S.busy=true;S.dirty=false;S.t0=performance.now();
     var keep=pmKeep();
     pmStat('מעמד...',1);
-    var oldPages=S.report?S.report.pages.length:0;
+    var oldPages=S.pages.length;   /* 24.11.2026: אותו מונה כמו "N עמודים" (מספר העמודים בדף, לא רשומות הדוח) */
     w.__prnRerun().then(function(){
       var rep=w.__PRN&&w.__PRN.report;pmDone(rep,keep,oldPages)},
       function(e){S.busy=false;pmStat('שגיאה: '+(e&&e.message||e),1)})}
@@ -366,7 +368,7 @@
     pmZoom(S.zoom==='nat'||S.zoom==='fit'?S.zoom:'keep')}
   function pmNatW(){
     var doc=pmDoc();if(!doc)return 800;var out=doc.getElementById('prnout');
-    if(S.view==='col'){var c=doc.querySelector('#pmcols .pmc');return c?c.offsetWidth:600}   /* כבר בגודל המודפס (גם ב-B5) */
+    if(S.view==='col'){var c=doc.querySelector('#pmcols .pmc');return c?c.offsetWidth+10*96/25.4:600}   /* כבר בגודל המודפס (גם ב-B5) */
     var p=S.pages[0];if(!p)return 800;
     return S.view==='page'&&S.spread?p.offsetWidth*2+6*96/25.4+8:p.offsetWidth}
   function pmZoom(z){

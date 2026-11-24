@@ -11,6 +11,9 @@
         ציון "דף בצד" שתוכנו daf_from והפסקה הראשונה אחריו מתחילה ב-text - מקבל את התוכן daf.
         occ (רשות): כשיש כמה ציונים זהים (תווית כפולה) - הציון ה-occ ביניהם (text ריק).
         move_before (רשות): הציון עובר אל לפני הפסקה הזאת (עד 12 פסקאות לפניו או אחריו).
+  {"op": "drop", "daf": "יז.", "occ": 2, "text": "כיצד הרגל"}
+        פרומפט 92: ציון כפול מיותר (אותה תווית פעמיים, והשני אינו תחילת עמוד) יוצא מן הספר. רק כשהתווית עדיין
+        כפולה (ולכן בטוח לחזרה), ורק אם הפסקה שאחריו מתחילה ב-text (כשניתן). התוכן אינו משתנה.
 
 כל פעולה בודדת בטוחה לחזרה: ציון שכבר קיים (add) או שכבר תוקן (fix) - מדולג. פעולה שלא נמצא לה מקום יחיד -
 מדולגת ונרשמת (עצירה רועשת: מופיעה בדוח של הקיפול, לא נבלעת).
@@ -102,7 +105,7 @@ def apply(slug, src, dst, log=print):
 
     before_texts = [(_ptext(p)) for p in paras() if not is_daf(p)]
     n_daf0 = sum(1 for p in paras() if is_daf(p))
-    done, skipped, adds = 0, [], 0
+    done, skipped, adds, drops = 0, [], 0, 0
     for o in ops:
         ps = paras()
         labels = [(_ptext(ps[i]).strip()) for i in range(len(ps)) if is_daf(ps[i])]
@@ -123,6 +126,10 @@ def apply(slug, src, dst, log=print):
                 for i in range(a, b):
                     if nz(_ptext(ps[i])).startswith(want):
                         cand.append(i)
+            if len(cand) > 1 and o.get('prev'):
+                # פרומפט 92: עוגן שחוזר בעמוד - הפסקה שלפניו מכריעה
+                pv = nz(o['prev'])
+                cand = [i for i in cand if i > 0 and nz(_ptext(ps[i - 1])).startswith(pv)]
             if len(cand) != 1:
                 skipped.append((o, 'נמצאו %d מקומות' % len(cand))); continue
             i = cand[0]
@@ -140,6 +147,21 @@ def apply(slug, src, dst, log=print):
             ps[i].addprevious(np_)
             done += 1; adds += 1
             log('  %s: נוסף ציון %s לפני "%s"' % (slug, o['daf'], _ptext(ps[i])[:40]))
+        elif o['op'] == 'drop':
+            if labels.count(o['daf']) < 2:
+                continue                       # כבר אינו כפול
+            mks = [mi for lab, mi, a, b in page_ranges(ps) if lab == o['daf']]
+            occ = int(o.get('occ') or 2)
+            if occ > len(mks):
+                skipped.append((o, 'אין ציון %s במקום %d' % (o['daf'], occ))); continue
+            mi = mks[occ - 1]
+            want = nz(o.get('text'))
+            nxt = [x for x in ps[mi + 1:mi + 4] if nz(_ptext(x))][:3]
+            if want and not any(nz(_ptext(x)).startswith(want) for x in nxt):
+                skipped.append((o, 'הפסקה שאחרי הציון אינה מתחילה בעוגן')); continue
+            body.remove(ps[mi])
+            done += 1; drops += 1
+            log('  %s: ציון כפול %s (מקום %d) הוסר' % (slug, o['daf'], occ))
         elif o['op'] == 'fix':
             if o['daf'] in labels and o['daf_from'] != o['daf'] and labels.count(o['daf_from']) <= 1 and not o.get('move_before'):
                 continue                       # כבר תוקן
@@ -184,8 +206,8 @@ def apply(slug, src, dst, log=print):
     # השער
     after_texts = [(_ptext(p)) for p in paras() if not is_daf(p)]
     n_daf1 = sum(1 for p in paras() if is_daf(p))
-    if after_texts != before_texts or n_daf1 != n_daf0 + adds:
-        raise RuntimeError('daf_fix: השער נכשל (פסקאות התוכן השתנו, או מספר הציונים %d->%d ולא +%d)' % (n_daf0, n_daf1, adds))
+    if after_texts != before_texts or n_daf1 != n_daf0 + adds - drops:
+        raise RuntimeError('daf_fix: השער נכשל (פסקאות התוכן השתנו, או מספר הציונים %d->%d ולא %+d)' % (n_daf0, n_daf1, adds - drops))
     tmp = dst + '.tmp'
     zin = zipfile.ZipFile(src)
     zout = zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED)

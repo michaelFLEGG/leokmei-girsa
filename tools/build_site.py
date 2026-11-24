@@ -5003,11 +5003,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      נצרך עד סופו; בהרצה בנקודת הקליטה של הלומד (applyStructAsync) הוא נצרך
      בפרוסות של כ-18 מילישניות, כדי שמאות עריכות לא יהיו משימה אחת
      (11.10.2026). */
+  /* 24.11.2026 (בדיקת השימור, בבא קמא קב.): עריכה שכבר נבדקה בטעינה הזאת ולא נמצא לה מקום, אינה נבדקת שוב בהחלה
+     חוזרת (applyIncoming, כשמגיעה עריכה ממכשיר אחר). בהחלה החוזרת היא נבדקה על המצב הסופי של הדף, ולא על המצב
+     שבזמנה, ו-spliceLocate מצא לה מקום בשורה זרה: למשל, אין כופין נדרס בברייתא שמעליו. בטעינה טרייה הכול
+     נבדק מחדש לפי סדר הזמן. הסימון אינו נשמר, כי אובייקט עריכה חדש לא נמצא ב-WeakSet. */
+  const EDTRIED=new WeakSet();
   function* applyStructG(){
     let any=false;
-    const todo=ED.filter(e=>!e._ap&&!e.done).sort((a,b)=>(a.t||0)-(b.t||0));
+    const todo=ED.filter(e=>!e._ap&&!e.done&&!(e.lost&&EDTRIED.has(e))).sort((a,b)=>(a.t||0)-(b.t||0));
     const BAKED=(D.ed&&D.ed.b)?(D.__bk||(D.__bk=new Set(D.ed.b))):null;
     for(const e of todo){
+      EDTRIED.add(e);
       yield;
       /* כבר בנתונים מן הבנייה (6.11.2026): לא מוחל שוב, ונשאר ברשימה עד שייקלט בוורד */
       if(BAKED&&BAKED.has(e.t)){e._ap=1;e.lost=0;if(e.op!=='struct')e._cur=e.now;continue}

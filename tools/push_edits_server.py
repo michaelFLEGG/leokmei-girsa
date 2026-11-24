@@ -41,11 +41,14 @@ def main():
             sys.exit(1 if bad else 0)
     # פרומפט 87 (23.11.2026): "p87:<מסכת>" - רק רשומות פרומפט 87 שבמאגר (שדה p87), כעריכות מנהל רגילות.
     # רשומה על שורה שנוצרה בפיצול בשרת אינה נמצאת בבנייה, ולכן חייבת להגיע ל-/live. מפתחותיהן קפואים וחדשים - אינן דורסות דבר.
-    p87s = [s[4:] for s in slugs if s.startswith('p87:')]
+    # פרומפט 91 (24.11.2026): אותו מסלול לכל תג פרומפט ("p91:<מסכת>" - רק רשומות עם שדה p91)
+    import re as _re
+    p87s = [(m.group(1), m.group(2)) for m in (_re.match(r'^(p\d+):(.+)$', s) for s in slugs) if m]
+    slugs = [s for s in slugs if not _re.match(r'^p\d+:', s)]
     if p87s:
-        for slug in p87s:
+        for tag, slug in p87s:
             rep = json.load(open(os.path.join(HERE, 'data', 'edits', slug + '.json'), encoding='utf-8'))
-            eds = [e for e in rep.get('edits') or [] if e.get('p87')]
+            eds = [e for e in rep.get('edits') or [] if e.get(tag)]
             if not eds:
                 continue
             body = json.dumps({'slug': slug, 'edits': eds, 'sty': rep.get('sty')}, ensure_ascii=False).encode('utf-8')
@@ -55,13 +58,13 @@ def main():
             try:
                 with urllib.request.urlopen(req, timeout=180) as r:
                     d = json.loads(r.read().decode('utf-8'))
-                print(slug, 'p87 OK', 'sent', len(eds), 'server', len((d.get('doc') or {}).get('edits') or []))
+                print(slug, tag, 'OK', 'sent', len(eds), 'server', len((d.get('doc') or {}).get('edits') or []))
             except urllib.error.HTTPError as e:
                 bad += 1
-                print(slug, 'p87 HTTP', e.code, e.read().decode('utf-8', 'replace')[:1000])
+                print(slug, tag, 'HTTP', e.code, e.read().decode('utf-8', 'replace')[:1000])
             except Exception as e:
                 bad += 1
-                print(slug, 'p87 FAIL', type(e).__name__, e)
+                print(slug, tag, 'FAIL', type(e).__name__, e)
         slugs = [s for s in slugs if not s.startswith('p87:')]
         if not slugs:
             sys.exit(1 if bad else 0)

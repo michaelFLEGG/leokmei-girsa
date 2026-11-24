@@ -114,25 +114,72 @@ def check(slug, pages, fix=False):
                             _set(it, A, r[0], r[1], rule, 'פרומפט 77: העוגן עודכן לנוסח שבדף (היה "%s")' % it.get('t'))
                             fixed['f'] += 1; chg = True
             if st in ('3', 'm') and fix:
-                for dh in (it.get('dh'), it.get('dhs')):
-                    c = norm_ctx(dh or '')
-                    if len(c.split()) < 2:
-                        continue
-                    # הד"ה נבדק בעמוד הראשון (שם העוגן t תקף במנוע ההדפסה), ורק במקום יחיד
-                    ex = find_occ(idx, c)
-                    r = (c, 1) if len(ex) == 1 else (None if ex else fuzzy(idx, c))
-                    if r:
-                        _set(it, A, r[0], r[1], '1', 'פרומפט 77: עוגן מן הד"ה של התוספות עצמו')
-                        fixed[st] += 1; chg = True
-                        if len(samples) < 12:
-                            samples.append('%s %s: %s' % (it.get('daf'), it.get('hn'), r[0]))
+                # פרומפט 92: אחרי תיקוני ציוני הדף לעמוד האמיתי של התוס' (daf) יש עכשיו ציון משלו. החיפוש מן הד"ה
+                # נעשה קודם בעמוד הזה, אחר כך בעמוד שנרשם (page), ואחר כך בעמוד הסמוך לכל צד. נמצא במקום יחיד -
+                # מעוגן (כלל 1), והעמוד (page) מתעדכן לעמוד שבו נמצא.
+                tries = []
+                td = _ref_daf(it) or it.get('daf')
+                for pg in (td, page, _near(td, -1), _near(td, 1)):
+                    if pg and pg in T and pg not in tries:
+                        tries.append(pg)
+                done_ = False
+                for pg in tries:
+                    for dh in (it.get('dh'), it.get('dhs')):
+                        c = norm_ctx(dh or '')
+                        if len(c.split()) < 2:
+                            continue
+                        # הד"ה נבדק בעמוד הראשון (שם העוגן t תקף במנוע ההדפסה), ורק במקום יחיד
+                        ex = find_occ(T[pg], c)
+                        r = (c, 1) if len(ex) == 1 else (None if ex else fuzzy(T[pg], c))
+                        if r:
+                            _set(it, A, r[0], r[1], '1', 'פרומפט 77/92: עוגן מן הד"ה של התוספות עצמו' + ('' if pg == page else ' (עמוד %s)' % pg))
+                            if pg != page:
+                                _set_page(it, A, pg)
+                            fixed[st] += 1; chg = True; done_ = True
+                            if len(samples) < 12:
+                                samples.append('%s %s: %s' % (it.get('daf'), it.get('hn'), r[0]))
+                            break
+                    if done_:
                         break
+                if not done_ and td and td in T and (page or it.get('daf')) != td:
+                    # אין מקבילה בשום עמוד: לפחות העמוד הנכון (תוס' על ב. לא יופיע ביד:), בכלל 3 - ליד התוס' שלפניו
+                    _set_page(it, A, td)
+                    it['why'] = 'פרומפט 92: העמוד תוקן לפי ההפניה לספריא (%s), אין מקבילה - כלל 3' % td
+                    fixed['pg'] = fixed.get('pg', 0) + 1; chg = True
             cnt[st] += 1
         if chg:
             io.open(lp, 'w', encoding='utf-8', newline='\n').write(json.dumps(L, ensure_ascii=False, indent=1) + '\n')
             if A:
                 io.open(ap, 'w', encoding='utf-8', newline='\n').write(json.dumps(A, ensure_ascii=False, indent=1) + '\n')
     return {'count': cnt, 'fixed': fixed, 'samples': samples}
+
+
+def _ref_daf(it):
+    """העמוד האמיתי מן ההפניה לספריא ("Tosafot on Kiddushin 2a:1:1" -> "ב."). השדה daf אינו אמין תמיד."""
+    from daf_check import heb
+    m = re.search(r' (\d+)([ab]):', it.get('ref') or '')
+    if not m:
+        return None
+    return heb(int(m.group(1))) + ('.' if m.group(2) == 'a' else ':')
+
+
+def _near(d, k):
+    """התווית של העמוד הסמוך (k=-1 לפני, 1 אחרי)."""
+    from daf_check import dk, heb
+    n = dk(d or '')
+    if n is None:
+        return None
+    n += k
+    return heb(n // 2) + ('.' if n % 2 == 0 else ':')
+
+
+def _set_page(it, A, pg):
+    it['page'] = pg
+    a = A.get(str(it.get('disp'))) if A else None
+    if a is None and A:
+        a = A.get(str(it.get('n')))
+    if isinstance(a, dict):
+        a['page'] = pg
 
 
 def _set(it, A, t, occ, rule, why):

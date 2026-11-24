@@ -168,6 +168,15 @@ def apply(pages, toc, qa):
         if (not has_dh and nxt is not None and nxt.get('k') == 'u') or \
            (has_dh is False and nxt is not None and nxt.get('k') in ('nose',) and False):
             w = _first_words(u)
+            # 24.11.2026 (בדיקת השימור, בבא בתרא סז:): כותרת נושא שאחרי המשנה, ונוסחה כמילות הפתיחה, כבר משמשת ד"ה.
+            # ד"ה אוטומטי לפניה הוא אותה כותרת פעמיים ברצף, ולכן אינו נוסף. נספר בבקרה.
+            def _same(nose_h, w=w):
+                a, b = _norm(nose_h), _norm(html.escape(w, quote=False))
+                return bool(a) and len(a.split()) >= 2 and (a == b or (b + ' ').startswith(a + ' '))
+            if w and any(flat[q][1].get('k') == 'nose' and _same(flat[q][1].get('a', '')) for q in range(i + 1, k)):
+                st['dh_nose_same'] = st.get('dh_nose_same', 0) + 1
+                n_syn += 1      # המספר נשמר, כדי שמזהי הד"ה האוטומטיים שאחריו (u700000+n) לא יזוזו ועריכות עליהם לא ייתלשו
+                w = ''
             if w:
                 n_syn += 1
                 nu = {'k': 'dh', 'a': '<i class="mk">א. </i>' + html.escape(w, quote=False) + ' ', 'l': [],

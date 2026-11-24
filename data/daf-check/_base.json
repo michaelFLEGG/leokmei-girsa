@@ -14,11 +14,9 @@
   "doubt": 163
  },
  "kiddushin": {
-  "missing": 30,
-  "dup": 2,
-  "back": 0,
-  "sure": 9,
-  "doubt": 90
+  "missing": 0,
+  "dup": 0,
+  "back": 0
  },
  "eruvin": {
   "missing": 48,

@@ -6435,7 +6435,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       delete el.__was;
       if(e.ps!==undefined&&el.tagName==='P'){PCLS.forEach(c=>el.classList.remove(c));
         (e.wasP||'').split(' ').filter(Boolean).forEach(c=>el.classList.add(c))}
-      if(e.ps!==undefined&&el.tagName==='DIV'&&/(nose|dh)/.test(e.wasP||''))headTo(el,(e.wasP||'').split(' ').filter(Boolean))}
+      if(e.ps!==undefined&&el.tagName==='DIV'&&/\b(nose|dh)\b/.test(e.wasP||''))headTo(el,(e.wasP||'').split(' ').filter(Boolean))}
     ED.splice(i,1);tomb(e.k);saveED();if($('#edn'))$('#edn').textContent=ED.length;drawEd();pubSoon();syncSoon()}
   function edClear(){if(!confirm('למחוק את כל '+ED.length+' התיקונים? הם יימחקו גם מן הפרסום ומכל המכשירים.'))return;
     /* הנתונים נושאים את העריכות, והדרך הבטוחה להחזיר אותם למקורם היא

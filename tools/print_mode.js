@@ -123,7 +123,7 @@
         '<span class="pmt">מצב דפוס</span>'+
         '<select id="pm-pk" title="פרק">'+pks+'</select>'+
         '<span class="pmg"><select id="pm-paper" title="גודל הדף"><option value="b5">B5</option><option value="a4">A4</option></select>'+
-        '<label title="עם הערות התוס\'"><input type="checkbox" id="pm-tos"> תוס\'</label></span>'+
+        '<button id="pm-tos" title="עם הערות התוס\' או בלעדיהן (T)">תוס\'</button></span>'+
         '<span class="pmsep"></span>'+
         '<span class="pmg"><button data-v="page" title="עמודים כפי שיודפסו">עמוד</button><button data-v="spread" class="pmwide" title="עמוד מול עמוד">כפולה</button><button data-v="col" title="הטורים בלבד, זה מתחת לזה">טור</button></span>'+
         '<span class="pmg"><button data-z="nat" title="מילימטרים אמיתיים על המסך">גודל טבעי</button><button data-z="fit" title="לרוחב המסך">רוחב מסך</button>'+
@@ -140,7 +140,7 @@
         '<span id="pm-pend"></span>'+
         '<button id="pm-print" title="הדפסה של העימוד הזה בדיוק">הדפס מה שאני רואה</button>'+
         '<span id="pm-stat"></span>'+
-        '<button id="pm-x" title="יציאה (Esc או F8)">✕ יציאה</button>'+
+        '<button id="pm-x" title="יציאה (F8, או Esc פעמיים)">✕ יציאה</button>'+
       '</div>'+
       '<div id="pmmain"><iframe id="pmf" title="מצב דפוס"></iframe><div id="pmside"></div></div>';
     document.body.appendChild(d);
@@ -150,9 +150,10 @@
     document.body.appendChild(cal);
     var menu=document.createElement('div');menu.id='pmmenu';document.body.appendChild(menu);
     var $p=function(id){return document.getElementById(id)};
-    $p('pm-paper').value=P.paper;$p('pm-tos').checked=!!P.tos;
-    ['pm-paper','pm-tos'].forEach(function(id){$p(id).addEventListener('change',function(){
-      P.paper=$p('pm-paper').value;P.tos=$p('pm-tos').checked?1:0;pmLsSet('lg-pm-prefs',P);pmLoad()})});
+    /* 24.11.2026: תוס' וגודל הדף - הכפתור מראה מיד את הבחירה, והעימוד נעשה באותה מסגרת בלי לטעון את הדף מחדש (pmReconf) */
+    $p('pm-paper').value=P.paper;pmTosBtn();
+    $p('pm-paper').addEventListener('change',function(){P.paper=$p('pm-paper').value;pmLsSet('lg-pm-prefs',P);pmReconf()});
+    $p('pm-tos').addEventListener('click',pmTosToggle);
     $p('pm-pk').addEventListener('change',function(){S.pk=this.value;S.anchor=null;pmShowPerek(S.pk);pmLoad()});
     [].forEach.call(d.querySelectorAll('[data-v]'),function(b){b.addEventListener('click',function(){
       var n=+document.getElementById('pm-pg').value||1;
@@ -182,6 +183,24 @@
 
   /* ---------- פתיחה, טעינה, עימוד ---------- */
   function pmProfile(){return (P.paper==='a4'?'a4':'b5')+'lg'}   /* פרומפט 56: גודל אחד */
+  function pmTosBtn(){var b=document.getElementById('pm-tos');if(!b)return;b.classList.toggle('on',!!+P.tos);b.textContent=+P.tos?'✓ תוס\'':'תוס\'';b.setAttribute('aria-pressed',+P.tos?'true':'false')}
+  function pmTosToggle(){P.tos=+P.tos?0:1;pmLsSet('lg-pm-prefs',P);pmTosBtn();pmReconf()}
+  function pmWhat(){return (P.paper==='a4'?'A4':'B5')+(+P.tos?' עם תוס\'':' בלי תוס\'')}
+  /* 24.11.2026: שינוי הגדרה (תוס', גודל דף): עימוד באותה מסגרת עם ההגדרה החדשה. עד כאן כל שינוי טען את כל הדף מחדש,
+     ולחיצה בזמן עימוד הלכה לאיבוד או התחילה הכל מהתחלה. באמצע עימוד - נרשם, ויוחל מיד כשהעימוד הנוכחי מסתיים */
+  function pmReconf(){
+    if(!S.open)return;
+    var w=pmWin();
+    if(S.busy&&w&&w.__prnRerun){S.reconf=true;pmStat('יעומד מחדש '+pmWhat()+' מיד אחרי העימוד הנוכחי...',1);return}
+    if(!w||!w.__prnRerun||!S.report){pmLoad();return}
+    pmLeave();
+    S.reconf=false;S.busy=true;S.dirty=false;S.t0=performance.now();
+    var keep=pmKeep(),oldPages=S.report.pages.length;
+    S.completing={pages:oldPages,cols:[]};
+    pmStat('מעמד '+pmWhat()+'...',1);
+    setTimeout(function(){
+      w.__prnRerun({tos:+P.tos?'1':'0',profile:pmProfile()}).then(function(){pmDone(w.__PRN&&w.__PRN.report,keep,oldPages)},
+        function(e){S.busy=false;pmStat('שגיאה: '+(e&&e.message||e),1)})},30)}
   function pmOpen(){
     if(!pmAdm()){pmMsg('מצב דפוס - למנהל בלבד');return}
     if(S.open)return;
@@ -232,13 +251,16 @@
     fr.style.cssText='flex:none;width:'+FRW+'px;height:'+h+'px;transform:scale('+k+');transform-origin:top right;position:absolute;top:0;right:0'}
   function pmStat(t,busy){var e=document.getElementById('pm-stat');if(!e)return;e.textContent=t||'';e.classList.toggle('busy',!!busy)}
   function pmLoad(){
+    /* 24.11.2026: שורה שבעריכה נשמרת קודם (עד כאן החלפת פרק או הגדרה באמצע הקלדה איבדה את מה שהוקלד) */
+    try{if(S.editing)pmLeave()}catch(e){}
+    S.reconf=false;
     /* מסגרת חדשה בכל טעינה: המסמך הקודם (פרק אחר, פרופיל אחר) נזרק מיד ואינו יכול "לסיים" במקום החדש */
     var old=document.getElementById('pmf'),fr=document.createElement('iframe');fr.id='pmf';fr.title='מצב דפוס';
     old.parentNode.replaceChild(fr,old);
     pmFrameSize(fr);
     S.fr=fr;S.busy=true;S.t0=performance.now();S.report=null;S.pages=[];S.issues=[];
     S.editing=null;S.pend=0;S.bal=0;S.staleFrom=0;S.cross=0;S.badges={};S.mv={};S.base={};S.completing=null;S.resume=null;
-    pmStat('מעמד...',1);
+    pmStat('מעמד '+pmWhat()+'...',1);
     fr.src=pmUrl();
     pmWait()}
   function pmWait(){
@@ -300,11 +322,13 @@
     var n=S.pages.length;
     document.getElementById('pm-pgn').textContent='/ '+n;document.getElementById('pm-pg').max=n;
     var dl='';if(oldPages&&oldPages!==n)dl=' · '+(n>oldPages?'+':'')+(n-oldPages)+' עמ\'';
-    pmStat('פרק: '+n+' עמודים'+dl+' · '+(S.lastMs/1000).toFixed(1)+' שנ\'',0);
+    pmStat(pmWhat()+' · '+n+' עמודים'+dl+' · '+(S.lastMs/1000).toFixed(1)+' שנ\'',0);
     /* מקום הקריאה: היחידה שבה עמדת, או הפסקה שנערכה - באותו גובה על המסך */
     if(keep){var el=pmFindRow(doc,keep.k.u,keep.k.li);if(el){var dy=el.getBoundingClientRect().top-keep.y;doc.scrollingElement.scrollTop+=dy}}
     else if(S.anchor){var r0=pmFindRow(doc,S.anchor,0);if(r0)pmScrollTo(r0,'start')}
     if(S.completing)pmAfterFull();else pmBar();
+    var rp=document.getElementById('pm-tos');if(rp)pmTosBtn();
+    if(S.reconf){S.reconf=false;setTimeout(pmReconf,0);return}
     if(S.dirty)pmSoon()}
 
   /* ---------- תצוגות: עמוד / כפולה / טור ---------- */
@@ -347,11 +371,17 @@
     return S.view==='page'&&S.spread?p.offsetWidth*2+6*96/25.4+8:p.offsetWidth}
   function pmZoom(z){
     if(z==='cal'){var c=document.getElementById('pmcal');var r=document.getElementById('pmcr');r.value=PXMM||(96/25.4);document.getElementById('pmcard').style.width=(CARD_MM*r.value)+'px';c.classList.add('on');return}
-    var doc=pmDoc();if(!doc)return;var out=doc.getElementById('prnout');if(!out)return;
+    /* 24.11.2026: לחיצה בזמן שהעמודים עוד מעומדים אינה הולכת לאיבוד - הבחירה נשמרת, מסומנת מיד, ומוחלת כשהעימוד מסתיים */
+    var doc=pmDoc(),out=doc&&doc.getElementById('prnout');
+    if(!out||!S.pages.length){
+      if(z==='fit'||z==='nat')S.zoom=z;else if(z==='+'){S.zoom='z';S.z=Math.min(8,S.z*1.15)}else if(z==='-'){S.zoom='z';S.z=Math.max(0.15,S.z/1.15)}
+      P.zoom=S.zoom;P.z=S.z;pmLsSet('lg-pm-prefs',P);
+      [].forEach.call(document.querySelectorAll('#pmbar [data-z]'),function(b){b.classList.toggle('on',b.getAttribute('data-z')===S.zoom)});
+      return}
     var fw=S.fr.clientWidth-90,natw=pmNatW();   /* מקום לסימני הבדיקה בשוליים */
-    if(z==='fit'){S.zoom='fit';S.z=Math.max(0.2,Math.min(4,fw/natw))}
+    if(z==='fit'){S.zoom='fit';S.z=Math.max(0.2,Math.min(8,fw/natw))}   /* 24.11.2026: עד פי 8 (עד כאן 4), כדי שגם בתצוגת "טור" הטור ימלא את רוחב המסך */
     else if(z==='nat'){S.zoom='nat';S.z=(PXMM||(96/25.4))/(96/25.4)}
-    else if(z==='+'){S.zoom='z';S.z=Math.min(5,S.z*1.15)}
+    else if(z==='+'){S.zoom='z';S.z=Math.min(8,S.z*1.15)}
     else if(z==='-'){S.zoom='z';S.z=Math.max(0.15,S.z/1.15)}
     P.zoom=S.zoom;P.z=S.z;pmLsSet('lg-pm-prefs',P);
     [].forEach.call(document.querySelectorAll('#pmbar [data-z]'),function(b){var v=b.getAttribute('data-z');b.classList.toggle('on',v===S.zoom)});
@@ -495,7 +525,8 @@
       i.mk.style.top=((r.top-o.top)/z)+'px';
       i.mk.style.left=((pr.right-o.left)/z+6)+'px'});
     /* "מוכן לדפוס": בשוליים העליונים של העמוד הראשון, בפינה השמאלית (אין שם טקסט) */
-    if(S.readyEl&&S.pages[0]){var pr0=S.pages[0].getBoundingClientRect();S.readyEl.style.top=((pr0.top-o.top)/z+6)+'px';S.readyEl.style.left=((pr0.left-o.left)/z+8)+'px'}}
+    if(S.readyEl)S.readyEl.style.display=S.view==='col'?'none':'';
+    if(S.readyEl&&S.pages[0]&&S.view!=='col'){var pr0=S.pages[0].getBoundingClientRect();S.readyEl.style.top=((pr0.top-o.top)/z+6)+'px';S.readyEl.style.left=((pr0.left-o.left)/z+8)+'px'}}
   /* 17.11.2026: "הבא" ממשיך מן השורה שבה אתה עומד (או מן הממצא הנוכחי) אל הממצא הבא שעוד לא סודר, ומכניס את הסמן לשורה
      מיד - בלי לחיצה נוספת. "שורה שהתארכה" פותחת את חלונית ההצעות */
   function pmNext(){
@@ -1244,8 +1275,11 @@
   function pmKeys(e){
     if(S.proxying)return false;
     if(e.key==='F9'){e.preventDefault();pmComplete();return true}
-    if(e.key==='F8'||e.key==='Escape'){e.preventDefault();pmClose();return true}
+    if(e.key==='F8'){e.preventDefault();pmClose();return true}
+    /* 24.11.2026: Esc אחד (אחרי יציאה מן השורה) אינו סוגר את המצב - סגירה בטעות עלתה בעימוד מחדש של כל הפרק. שתי לחיצות Esc רצופות סוגרות */
+    if(e.key==='Escape'){e.preventDefault();var nw=Date.now();if(S.escT&&nw-S.escT<1200){S.escT=0;pmClose()}else{S.escT=nw;pmStat('ליציאה ממצב דפוס: Esc שוב, או F8',0)}return true}
     if((e.key==='n'||e.key==='מ')&&!e.ctrlKey&&!e.altKey&&!e.metaKey){e.preventDefault();pmNext();return true}
+    if((e.key==='t'||e.key==='T'||e.key==='א')&&!e.ctrlKey&&!e.altKey&&!e.metaKey){e.preventDefault();pmTosToggle();return true}
     if(e.key==='F4'){e.preventDefault();if(e.shiftKey)pmOkNext();else pmNext();return true}
     if(e.key==='PageDown'||e.key==='PageUp'){var n=(+document.getElementById('pm-pg').value||1)+(e.key==='PageDown'?1:-1);e.preventDefault();pmGoPage(n);return true}
     if((e.ctrlKey||e.metaKey)&&(e.key==='p'||e.key==='פ')){e.preventDefault();pmPrint();return true}

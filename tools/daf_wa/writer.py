@@ -74,6 +74,20 @@ _ONE = r'[א-ת"\']+[.:](?: [\d, -]+)?(?: \([^)]*\))?'
 REF = re.compile(r'^%s(?: · %s)*$' % (_ONE, _ONE))
 
 
+_SAGE = r"(?:רב|רבי|רבן|רבה|רבא|מר|שמואל|עולא|אביי|ריש|חזקיה|לוי)"
+SHORT_RULES = [
+    (re.compile(r'(?:^|[\s(])%s(?: [א-ת"\']+){0,4} (?:אמר|משום) %s(?:[\s:,.]|$)' % (_SAGE, _SAGE)),
+     'שרשרת מסירה ("פלוני אמר פלוני") - כותבים רק את בעל המימרא'),
+    (re.compile(r'(?:^|[\s(])(?:תני|תנא|תניא)(?:[\s:,.)]|$)'), 'לא כותבים מי שנה ("תני", "תנא", "תניא") - רק את הדין'),
+    (re.compile(r'מנין לנו|מניין לנו|מנלן'), 'שורת "מנין לנו" - המקור בסוגריים צמוד לדין'),
+    (re.compile(r'לא נצרכה|מאי טעמא|איבעיא להו|תא שמע'), 'מהלך הסוגיא ("לא נצרכה", "מאי טעמא" וכדומה) - רק עיקר הדין'),
+]
+
+
+def short_rules(t):
+    return [why for rx, why in SHORT_RULES if rx.search(t or '')]
+
+
 def gate(keys):
     bad = []
     files = [k + '.json' for k in keys] if keys else sorted(f for f in os.listdir(DATA) if f.endswith('.json'))
@@ -111,6 +125,13 @@ def gate(keys):
             e.append("ציטוט במרכאות כפולות - רק גרש לפני ואחרי ('...')")
         if NIKUD.search(bare):
             e.append('ניקוד בתוכן')
+        # פרומפט 88 (מיכאל 24.11.2026): כללי הקיצור של 'הדף בקצרה'. חוסם רק בתוכן שנכתב או נבדק מ-24.11.2026 והלאה
+        # (תוכן ישן שכבר נשלח אינו נפסל בדיעבד). שרשרת מסירה, 'תני/תנא/תניא', שורת 'מנין לנו', ומהלך הסוגיא.
+        chk = c.get('check') or {}
+        if not chk.get('ok') or str(chk.get('at', '')) >= '2026-11-24':
+            for i, x in enumerate(lines):
+                for why in short_rules(x.get('t', '')):
+                    e.append('שורה %d: %s' % (i, why))
         if f[:-5] != '%s-%s' % (c.get('slug'), c.get('n')):
             e.append('שם הקובץ אינו תואם slug-n')
         if e:

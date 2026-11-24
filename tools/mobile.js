@@ -371,11 +371,13 @@
 
   /* בטלפון ובטאבלט הקטע גולל לאורך: toEl של הדף מניח טורים שגוללים הצידה */
   var _toEl = window.toEl;
-  window.toEl = function (e) {
+  /* פרומפט 89 (24.11.2026): הפרמטר השני (top - "ראש הדף בראש המסך") עובר הלאה. קודם הוא נבלע כאן, ובמחשב
+     הנחיתה מן הקישור של הדף היומי נעשתה לאמצע המסך (כחצי מסך מן הדף הקודם מעליו), ובלי היישור החוזר בזמן הטעינה */
+  window.toEl = function (e, top) {
     var f = flow();
-    if (dev() !== 'desk' && f && !f.classList.contains('book')) { e.scrollIntoView({ block: 'start' }); return; }
+    if (dev() !== 'desk' && f && !f.classList.contains('book')) { if (top) return _toEl.apply(this, arguments); e.scrollIntoView({ block: 'start' }); return; }
     if (dev() !== 'desk' && f && f.classList.contains('book')) { var sh = e.closest('.sheet'); if (sh) sh.scrollIntoView({ inline: 'center', block: 'nearest' }); return; }
-    return _toEl(e);
+    return _toEl.apply(this, arguments);
   };
 
   /* קפיצה יזומה (בורר הדפים, הקישור, החיפוש) אינה גלילה של הלומד: הסרגלים נשארים */

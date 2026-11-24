@@ -2900,6 +2900,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .main p.nose,.main p.dh{text-align:center;text-align-last:center;font-family:'Vilna',serif}
   .main p.nose{font-family:'Frank','Frank Ruhl Libre',serif;font-weight:700;font-size:calc(var(--k-nose) * 1em)}
   .main p.dh{font-weight:900;font-size:calc(var(--k-dh) * 1em)}
+  @media screen{#flow .row.dy{box-shadow:3px 0 0 0 rgba(176,138,58,.75)}#flow .dafmark.dy0{position:relative}
+    #flow .dafmark.dy0::after{content:'הדף היומי';position:absolute;top:1.25em;right:0;font:400 .52em/1 'Vilna',serif;color:#8f6a1e;white-space:nowrap;letter-spacing:0}}   /* פרומפט 89 */
   .dafmark{grid-column:2;justify-self:end;font-family:'Vilna',serif;font-weight:900;
            font-size:1.197em;color:#000;margin:0}
   /* אין עוד overflow:hidden ואין ellipsis: חלון שנחתך בשקט הוא כישלון
@@ -3391,6 +3393,12 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(!L||L.perek!==p.perek||L.perekName!==p.perekName)SEC.push({perek:p.perek,perekName:p.perekName,from:i,to:i});
     else L.to=i});
   function secOf(pi){for(let i=0;i<SEC.length;i++)if(pi>=SEC[i].from&&pi<=SEC[i].to)return i;return 0}
+  /* פרומפט 89 (24.11.2026): דף שלם = עמוד א ועמוד ב, גם כשהדף חוצה פרק (ערכין ז: עמוד א סוף פרק א, עמוד ב תחילת פרק ב).
+     dafSec מחזיר את פרק תחילת הדף ומבקש מן הציור הבא חלון שמגיע עד סוף הדף (WFORCE). */
+  function dafNum(pi){const p=D.pages[pi];return p?String(p.daf||'').replace(/[.:]$/,''):''}
+  function dafEnd(pi){const n=dafNum(pi);let e=pi;while(e+1<D.pages.length&&dafNum(e+1)===n)e++;return e}
+  let WFORCE=null,CURB=0;   /* CURB: הפרק האחרון שצויר בתצוגה שאינה רצף-בחלון (טלפון וטאבלט: טור אחד בלי חלון) */
+  function dafSec(pi){const a=secOf(pi),b=secOf(dafEnd(pi));WFORCE=b>a?[a,b]:null;return a}
   let cur=0;
 
   /* כיוון הגלילה בטורים מימין לשמאל אינו זהה בכל הדפדפנים, ולכן הוא נמדד ולא מנוחש */
@@ -3436,7 +3444,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     history.replaceState(history.state,'',location.pathname+location.search+'#p='+cur+'&daf='+encodeURIComponent(d))}catch(e){}}
   /* קישור לדף אחר באותה מסכת, כשהדף כבר פתוח (הכתובת משתנה בלי טעינה) */
   addEventListener('hashchange',()=>{const d=new URLSearchParams(location.hash.slice(1)).get('daf');if(!d)return;
-    const pi=D.pages.findIndex(p=>p.daf===d);if(pi<0||+$('#dafsel').value===pi)return;render(secOf(pi));toDaf(pi)});
+    const pi=D.pages.findIndex(p=>p.daf===d);if(pi<0||+$('#dafsel').value===pi)return;render(dafSec(pi));toDaf(pi)});
   function dafSoon(){clearTimeout(DAFT);DAFT=setTimeout(dafTrack,100)}
   (function(){const f=$('#flow');if(f)f.addEventListener('scroll',dafSoon,{passive:true});
     addEventListener('scroll',dafSoon,{passive:true});addEventListener('resize',dafSoon);
@@ -4245,10 +4253,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     /* פרומפט 79: ברצף - חלון של פרקים (ראה winCheck). בנייה רגילה (מעבר פרק, קפיצה) פותחת חלון של הפרק עצמו,
        והסמוך נוסף ברקע; בנייה מתוך winCheck שומרת את החלון שנקבע שם */
     WINR=ALL&&!BOOK&&!PRINTING&&!f.classList.contains('book');
-    if(WINR&&!WKEEP){if(!(EDIT||(typeof SUGM!=='undefined'&&SUGM))||WA<0||cur<WA||cur>WB){WA=cur;WB=cur}}
+    if(WINR&&!WKEEP){if(!(EDIT||(typeof SUGM!=='undefined'&&SUGM))||WA<0||cur<WA||cur>WB){WA=cur;WB=cur}
+      if(WFORCE){WA=Math.max(0,Math.min(WA,WFORCE[0]));WB=Math.min(SEC.length-1,Math.max(WB,WFORCE[1]))}}   /* פרומפט 89 */
+    /* בלי חלון (טלפון, טאבלט): הדף שחוצה פרק מצויר עד סופו - הפרק שלו והפרק שבו נגמר */
+    const span=(!WINR&&!BOOK&&!WKEEP&&WFORCE)?WFORCE:null;CURB=span?span[1]:cur;
+    if(!WKEEP)WFORCE=null;
     if(!WKEEP)WQ=q||'';
     const h=BOOK?bookHTML(ALL?0:s.from,ALL?D.pages.length-1:s.to)
-                :(WINR?pagesHTML(SEC[WA].from,SEC[WB].to,lazy):pagesHTML(s.from,s.to,lazy));
+                :(WINR?pagesHTML(SEC[WA].from,SEC[WB].to,lazy):span?pagesHTML(SEC[span[0]].from,SEC[span[1]].to,lazy):pagesHTML(s.from,s.to,lazy));
     LZ=lazy&&h.indexOf('<div class="row lz')>-1;LZW=0;
     f.innerHTML=q?hl(h,esc(q).replace(/"/g,'&quot;').replace(/'/g,'&#x27;')):h;
     if(!ALL&&!BOOK){f.scrollTop=0;f.scrollLeft=SGN>0?f.scrollWidth:0}
@@ -4261,19 +4273,36 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(typeof sqMark==='function')sqMark();
     if(typeof bkMark==='function')bkMark();
     if(typeof tsMark==='function')tsMark();   /* תוספות (11.10.2026): סימנים והערות שוליים, מוסרים במצב עריכה */
+    dyMark();
     if(EDIT)setEdit(true);
     if(!BOOK)squeezeRun();
     REFS=null;if(typeof srcSyncSoon==='function')srcSyncSoon();
     srcLayer();
     if(WINR&&!WKEEP&&WA===WB)winIdle();
   }
+  /* פרומפט 89 (24.11.2026): הדף היומי מסומן בדף המסכת - קו זהב דק לצד כל שורותיו (עמוד א ועמוד ב)
+     ותווית קטנה "הדף היומי" מתחת לסימן הדף. בתצוגה בלבד: לא בעריכה, לא בספר ולא בהדפסה; בלי רקע ובלי שינוי שבירת שורות. */
+  function dyMark(){const f=$('#flow');if(!f)return;
+    f.querySelectorAll('.row.dy').forEach(r=>r.classList.remove('dy'));
+    f.querySelectorAll('.dafmark.dy0').forEach(m=>{m.classList.remove('dy0');m.removeAttribute('title')});
+    if(EDIT||BOOK||PRINTING)return;
+    let t=null;try{t=window.LGDaf&&LGDaf.today()}catch(e){t=null}
+    if(!t||t.slug!==SLUG)return;
+    const n=String(t.daf||'').replace(/[.:]$/,'');const a=D.pages.findIndex((p,i)=>dafNum(i)===n);if(a<0)return;
+    const b=dafEnd(a),m=document.getElementById('d'+a);if(!m)return;
+    const r0=m.closest('.row');if(!r0)return;
+    for(let x=r0;x;x=x.nextElementSibling){const dm=x!==r0&&x.querySelector('.dafmark');
+      if(dm&&/^d\d+$/.test(dm.id)&&+dm.id.slice(1)>b)break;
+      if(x.classList.contains('row'))x.classList.add('dy')}
+    m.classList.add('dy0');m.title='הדף היומי'}
   function hl(h,q){const r=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','g');return h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(r,'<mark>$1</mark>')+'<')}
-  function toDaf(pi){DAFNAV=Date.now();const si=secOf(pi);if(si!==cur)render(si);
+  function toDaf(pi){DAFNAV=Date.now();const si=dafSec(pi),se=secOf(dafEnd(pi));
+    if(si!==cur||(!EDIT&&(WINR?(WA>si||WB<se):CURB<se)))render(si);else WFORCE=null;
     setTimeout(()=>{const e=$('#d'+pi);if(e){toEl(e,1);jumpMark(e)}$('#curdaf').textContent=D.pages[pi].label||D.pages[pi].daf;$('#dafsel').value=pi;hashDaf(pi)},20)}
   function dafYomi(){const t=window.LGDaf&&LGDaf.today();if(!t)return;
     if(t.slug===SLUG){const pi=D.pages.findIndex(p=>p.daf===t.daf);
       if(pi<0){alert('הדף '+t.daf+' אינו במסכת '+D.masechet);return}
-      render(secOf(pi));toDaf(pi);return}
+      render(dafSec(pi));toDaf(pi);return}
     fetch(t.slug+'.html',{method:'HEAD'}).then(r=>{if(r.ok)location.href=t.slug+'.html#daf='+encodeURIComponent(t.daf);
       else alert('מסכת '+t.name+' עדיין אינה באתר')}).catch(()=>alert('מסכת '+t.name+' עדיין אינה באתר'))}
   function goDaf(d){const now=+$('#dafsel').value||0;toDaf(Math.max(0,Math.min(D.pages.length-1,now+d)))}
@@ -4394,7 +4423,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
    const u0=params.get('u'), mn0=params.get('mn');
    if(mn0&&/^\d+-\d+$/.test(mn0)&&MBT.some(x=>x.p+'-'+x.n===mn0)){const e=MBT.find(x=>x.p+'-'+x.n===mn0);jump(mbPi(e.id),e.id)}
    else if(u0){let pi=0;D.pages.forEach((p,i)=>{if(p.units.some(x=>x.id==u0))pi=i});jump(pi,+u0)}
-   else if(params.get('daf')){let pi=0;D.pages.forEach((p,i)=>{if(p.daf===params.get('daf')&&!pi)pi=i});render(secOf(pi));toDaf(pi)}
+   else if(params.get('daf')){let pi=0;D.pages.forEach((p,i)=>{if(p.daf===params.get('daf')&&!pi)pi=i});render(dafSec(pi));toDaf(pi)}
    else render(+(params.get('p')||0));
    sqBadge();netInit();viewUi();
    /* פרומפט 79: חלון הפרקים של הרצף זז בגלילה */

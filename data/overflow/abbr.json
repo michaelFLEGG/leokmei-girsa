@@ -48,7 +48,7 @@
    "long": "אמר לו",
    "short": "א\"ל",
    "nLong": 435,
-   "nShort": 3798,
+   "nShort": 3788,
    "kind": "abbr"
   },
   {
@@ -342,7 +342,7 @@
    "long": "שתי",
    "short": "ב'",
    "nLong": 959,
-   "nShort": 786,
+   "nShort": 785,
    "kind": "num"
   },
   {
@@ -369,15 +369,15 @@
   {
    "long": "ארבע",
    "short": "ד'",
-   "nLong": 440,
-   "nShort": 609,
+   "nLong": 438,
+   "nShort": 611,
    "kind": "num"
   },
   {
    "long": "ארבעה",
    "short": "ד'",
    "nLong": 365,
-   "nShort": 609,
+   "nShort": 611,
    "kind": "num"
   },
   {
@@ -418,8 +418,8 @@
   {
    "long": "תשעה",
    "short": "ט'",
-   "nLong": 107,
-   "nShort": 163,
+   "nLong": 108,
+   "nShort": 162,
    "kind": "num"
   },
   {

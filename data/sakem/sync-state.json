@@ -312,7 +312,8 @@
   "berakhot-s886-mwrtpqmp": "2c564a087cd678c3",
   "berakhot-s1-mwru7cyf": "401e93ddffbb3306",
   "berakhot-s886-mwru7dp8": "4e52eddfdac63c0a",
-  "shabbat-p5": "61a3c19f304b6499"
+  "shabbat-p5": "61a3c19f304b6499",
+  "arakhin-s0-mwucp9ip": "28fa820e4598153d"
  },
  "jobsPut": {
   "shabbat-p1-round2.json": "shabbat-s1-mwev8jkj",
@@ -359,6 +360,6 @@
   "berakhot-p1-p76b.json": "berakhot-s1-mwru7cyf",
   "berakhot-p2-p76b.json": "berakhot-s886-mwru7dp8",
   "arakhin-p1-p90.json": "arakhin-s0-mwucp9ip",
-  "arakhin-p2-p90.json": "arakhin-s464-mwuctev4"
+  "arakhin-p2-p90.json": "arakhin-s464-mwucvmrc"
  }
 }

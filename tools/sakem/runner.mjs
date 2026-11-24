@@ -79,6 +79,11 @@ function chavCtx(pk) {
   const txt = chavShow('origin/perush-store', 'perush/' + pk.slug + '.json');
   if (txt) out.per = JSON.parse(txt);
   else out.warn = 'פירוש הגמרא לא נמצא בריפו הפרטי (ענף perush-store).';
+  /* פרומפט 92 (מימוש פרומפט 91 ה.): רש"י מספריא, מן הריפו הפרטי (rashi/<מסכת>.json, tools/fetch_rashi.py).
+     סכם קורא אותו בכל קטע, בעיקר בהכרעות "הלכה כמי" ו"מי אמר מה". חסר - אזהרה (לא עצירה), עד שיימשך לכל המסכתות. */
+  out.rashi = {};
+  const rt = chavShow('origin/main', 'rashi/' + pk.slug + '.json');
+  if (rt) { try { out.rashi = JSON.parse(rt).pages || {}; } catch (e) {} }
   for (const pg of pk.pages || []) {
     const name = String(pg.daf).replace(/[^א-ת]/g, '') + (/:\s*$/.test(pg.daf) ? 'ב' : 'א');
     const t = chavShow('origin/main', 'packs/' + pk.slug + '/' + name + '.json');
@@ -431,6 +436,11 @@ if (cmd === 'status') {
   let hv = '';
   Object.keys(prv.hv).forEach((d) => { hv += '## דף ' + d + '\n' + prv.hv[d].map((s) => (s.g ? s.g + ' ' : '') + s.e).join('\n') + '\n\n'; });
   if (hv) fs.writeFileSync(path.join(dir, 'chavruta.md'), '# חברותא\n\n' + hv);
+  /* פרומפט 92: רש"י לכל דף שבחבילה */
+  let rs = '';
+  (pk.pages || []).forEach((pg) => { const r = (prv.rashi || {})[pg.daf]; if (r && r.length) rs += '## דף ' + pg.daf + '\n' + r.map((x) => '- ' + x).join('\n') + '\n\n'; });
+  if (rs) fs.writeFileSync(path.join(dir, 'rashi.md'), '# רש"י (ספריא, דפוס וילנא) - לבדיקת "מי אמר מה", "הלכה כמי" ופרטי הדין\n\n' + rs);
+  else { try { fs.unlinkSync(path.join(dir, 'rashi.md')); } catch (e) {} console.log('אזהרה: אין רש"י לדפי החבילה (rashi/' + pk.slug + '.json בריפו הפרטי). להריץ tools/fetch_rashi.py ' + pk.slug); }
   /* ג. הלאוקמי גירסא של הפרק, יחידה-יחידה עם המזהה */
   const pu = perUnit(pk.units);
   let l = '# ' + (pk.title || jid) + ' - לאוקמי גירסא (פורמט הביניים)\n# כל יחידה פותחת ב-⟦מזהה⟧. החלוקה לקטעים (plan) היא לפי המזהים האלה.\n\n';
@@ -462,7 +472,7 @@ if (cmd === 'status') {
   if (/סבב כללים חדשים/.test(pk.title || '')) { const F = path.join(ROOT, 'docs', 'פרומפט-62', 'סבב-כללים.md');
     if (fs.existsSync(F)) console.log('\n######## פרומפט 62 - סבב כללים חדשים (גובר על כלל כללי)\n' + fs.readFileSync(F, 'utf8')); }
   console.log('יחידות:', pk.units.length, '· דפים:', (pk.pages || []).map((p) => p.daf).join(' '));
-  console.log('לקריאה:', path.relative(ROOT, dir) + '/{' + (part ? 'context.md, ' : '') + 'gemara.md, leokmei.md' + (hv ? ', chavruta.md' : '') + '}');
+  console.log('לקריאה:', path.relative(ROOT, dir) + '/{' + (part ? 'context.md, ' : '') + 'gemara.md, leokmei.md' + (hv ? ', chavruta.md' : '') + (rs ? ', rashi.md' : '') + '}');
   /* פרומפט 71: פרק ענק שטרם חולק - ההרצה הזאת כותבת את החלוקה בלבד, ועוצרת */
   if (!o && pk.units.length > 600) console.log('פרק ענק (' + pk.units.length + ' יחידות): בהרצה הזאת רק החלוקה (plan --push), לפי leokmei.md (קרא בחלקים) והגמרא לפי הצורך. אחריה: pause ' + jid + ' --reason=סוף-חלק --push, וצא. הכתיבה - בחלקים, בהרצות הבאות.');
   if (o) console.log('המשך מהרצה קודמת: ' + o.done + ' מתוך ' + o.total + ' קטעים כבר נכתבו. הקטע הבא: ' + (o.plan.findIndex((s, i) => !o.items.some((x) => x.seg === i)) + 1));

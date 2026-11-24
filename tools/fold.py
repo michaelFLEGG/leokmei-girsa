@@ -13,8 +13,9 @@
 ד. השער: הספר החדש עם מה שנשאר בשכבה זהה ל-A בכל עמוד, ואין יותר פסקאות צמודות כפולות.
    נכשל - שום דבר אינו נשמר, והכלי יוצא בקוד שגיאה.
 ה. עברו: הספר נשמר, השכבה שבמאגר = מה שנשאר, כל השאר עובר לארכיון (data/word-cloud/ingested,
-   ממנו נכתבות המצבות בשרת אחרי הדחיפה: --tombstones). עריכה תלושה (אינה נראית היום בדף)
-   אינה מוחלת, ונרשמת לעיון ב-data/fold/tlushot/<slug>.json.
+   ממנו נכתבות המצבות בשרת אחרי הדחיפה: --tombstones). עריכה תלושה (אינה נראית היום בבנייה)
+   אינה מוחלת בספר, ולעולם אינה יוצאת מן השכבה (פרומפט 92): היא נשארת בשכבה מסומנת tlusha, ונרשמת
+   גם לעיון ב-data/fold/tlushot/<slug>.json (התראת המנהל).
 
     python tools/fold.py --only berakhot --dry
     python tools/fold.py                       כל המסכתות שב-data/book.json
@@ -733,17 +734,24 @@ def fold_one(slug, dry=False, log=print, srv=None, docx=None, efilter=None, tag=
             log('%s: %s' % (m, rec['why']))
             return rec
         break
-    keep_k = {(C.ekey(e), e.get('t')) for e in remain}
+    # פרומפט 92 (24.11.2026), הכרעה בשם מיכאל: עריכה תלושה לעולם אינה יוצאת מן השכבה. ב-24.11 בבוקר הקיפול
+    # הוציא כך את המשנה השלמה שמיכאל כתב בנב. (הדפדפן החיל אותה, הבנייה לא איתרה אותה), והיא נמחקה בשרת במצבה.
+    # מעכשיו היא נשארת בשכבה כפי שהיא (הדפדפן ממשיך להציגה כמו שמיכאל ראה), מסומנת tlusha, ונרשמת גם ב-tlushot
+    # להתראת המנהל. היא אינה נכנסת לשער (אינה מוחלת בבנייה), ולכן אינה משנה את מה שהספר נותן.
+    lost_keep = []
+    for e in lost:
+        lost_keep.append(dict(e, tlusha=e.get('tlusha') or now_iso()))
+    keep_k = {(C.ekey(e), e.get('t')) for e in remain} | {(C.ekey(e), e.get('t')) for e in lost}
     # עריכה שמפתחה הוחלף יוצאת במפתח הישן (מצבה), ונכתבת לשרת במפתח החדש (--tombstones)
     retired = [e for e in raw['edits'] if (C.ekey(e), e.get('t')) not in keep_k]
     rec['rekeyed'] = len(rekeyed)
     rec.update(result='עבר', reverted=sorted(rdaf), remain=len(remain), retired=len(retired), tlushot=len(lost),
                dups=[d0, d1], secs=int(time.time() - t0))
-    log('%s: השער עבר. %d עמודים נכנסו לספר, %d חזרו, %d עריכות יצאו מן השכבה, %d נשארו, %d תלושות לעיון'
+    log('%s: השער עבר. %d עמודים נכנסו לספר, %d חזרו, %d עריכות יצאו מן השכבה, %d נשארו, %d תלושות נשארות בשכבה ולעיון'
         % (m, len(changed) - len(reverted), len(reverted), len(retired), len(remain), len(lost)))
     retired = retired + list(absorbed)
     rec['retired'] = len(retired)
-    rec['_art'].update(work=work, remain=remain, retired=retired, lost=lost, rekeyed=rekeyed)
+    rec['_art'].update(work=work, remain=remain + lost_keep, retired=retired, lost=lost, rekeyed=rekeyed)
     if dry:
         rec['dry'] = True
         return rec

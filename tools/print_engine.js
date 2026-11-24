@@ -2209,10 +2209,16 @@
       var IOUT=document.getElementById('prnout'),IPG=[].slice.call(IOUT.children).filter(function(x){return x.classList.contains('pg')||x.classList.contains('shp')});
       var ist=document.createElement('style');ist.setAttribute('data-prnrun','1');
       ist.textContent='@page{size:297mm 210mm;margin:0}'+
-        '.imps{position:relative;width:297mm;height:210mm;overflow:hidden;display:flex;direction:ltr;background:#fff;break-after:page;page-break-after:always;break-inside:avoid}'+
+        /* 24.11.2026 (מיכאל: "יוצא שניים בעמוד בצורה מוזרה, לא כמו שזה נראה במסך"): בלי contain:strict ה-Chrome מפצל
+           לעמודים לפי גובה הפריסה שלפני ההקטנה (297 מ"מ בתוך חצי גיליון של 210), והעמודים יצאו זזים וחתוכים בהדפסה בלבד.
+           כמו ב-B5 (applyShrink): contain:strict, עוגן בפינה וההקטנה מן הפינה, ובלי break-inside על העמוד */
+        'html.prn,html.prn body,body.prn,#prnout{width:297mm!important;margin:0!important;padding:0!important}'+
+        '#prnout{direction:ltr!important}'+
+        '.imps{position:relative;width:297mm;height:210mm;overflow:hidden;display:flex;direction:ltr;background:#fff;contain:strict;break-after:page;page-break-after:always;break-inside:avoid;margin:0}'+
         '.imps:last-child{break-after:auto;page-break-after:auto}'+
-        '.imph{position:relative;width:148.5mm;height:210mm;overflow:hidden;flex:none}'+
-        '.imph>.pg,.imph>.shp{position:absolute!important;left:50%;top:50%;transform-origin:50% 50%;transform:translate(-50%,-50%) scale(.7070);break-after:auto!important;page-break-after:auto!important}';
+        '.imph{position:relative;width:148.5mm;height:210mm;overflow:hidden;flex:none;contain:strict}'+
+        '.imph>.pg,.imph>.shp{position:absolute!important;left:0!important;top:0!important;margin:0!important;transform-origin:0 0!important;transform:scale(.7070)!important;contain:strict;break-after:auto!important;page-break-after:auto!important;break-inside:auto!important}'+
+        '@media print{.imph>.pg,.imph>.shp{break-inside:auto!important}}';
       document.head.appendChild(ist);
       var ifr=document.createDocumentFragment();
       prnImpOrder(IPG.length,LAYQ).forEach(function(sd){var sh=document.createElement('div');sh.className='imps';

@@ -75,6 +75,18 @@ def _style_map(z):
     return m, inv
 
 
+def _add_cands(ps, page_ranges, kd, want):
+    cand = []
+    for lab, mi, a, b in page_ranges(ps):
+        kl = _dk(lab)
+        if kd is not None and (kl is None or not (kd - 3 <= kl < kd)):
+            continue
+        for i in range(a, b):
+            if nz(_ptext(ps[i])).startswith(want):
+                cand.append(i)
+    return cand
+
+
 def apply(slug, src, dst, log=print):
     """מחיל את התיקונים על src וכותב dst. מחזיר (מספר שהוחל, רשימת דילוגים). אין תיקון - (0, []) ו-dst אינו נכתב."""
     from lxml import etree
@@ -117,15 +129,12 @@ def apply(slug, src, dst, log=print):
                 skipped.append((o, 'טקסט עוגן קצר מדי')); continue
             cand = []
             kd = _dk(o['daf'])
-            for lab, mi, a, b in page_ranges(ps):
-                # העמוד שלפני הציון החדש: תווית שקודמת לו בעד שלושה עמודים (כמה ציונים חסרים ברצף משנים את
-                # התווית בזמן ההחלה, ולכן לא תווית מדויקת)
-                kl = _dk(lab)
-                if kd is not None and (kl is None or not (kd - 3 <= kl < kd)):
-                    continue
-                for i in range(a, b):
-                    if nz(_ptext(ps[i])).startswith(want):
-                        cand.append(i)
+            # פרומפט 92: הקיפול מחיל את התיקונים על הספר שכבר נושא את העריכות, ולכן עוגן יכול להיות בנוסח הספר
+            # (text) או בנוסח החי (text0). קודם text, ואם אין לו מקום - text0.
+            for want in [w for w in (want, nz(o.get('text0'))) if len(w) >= 6]:
+                cand = _add_cands(ps, page_ranges, kd, want)
+                if cand:
+                    break
             if len(cand) > 1 and o.get('prev'):
                 # פרומפט 92: עוגן שחוזר בעמוד - הפסקה שלפניו מכריעה
                 pv = nz(o['prev'])

@@ -527,6 +527,133 @@ def edit_in(e, spec, m):
     return (lo is None or k >= lo) and (hi is None or k <= hi)
 
 
+
+def _unit_sig(u):
+    t = (u.get('a') or '') + ' ' + ' '.join((x[1] if isinstance(x, (list, tuple)) and len(x) > 1 else str(x)) for x in (u.get('l') or []))
+    return (u.get('k'), _wsn(plain(t))[:120])
+
+
+def relabel_after_daffix(slug, m, docx0, docx1, raw, log=print, raw0=None):
+    """פרומפט 92 (24.11.2026): תיקוני ציוני הדף (daf_fix) משנים את תווית העמוד של קטעים שלמים, וכל עריכה מאותרת
+    בעמוד שנרשם בה (e.daf) ובשכניו בלבד - בבנייה ובדפדפן. בשבת נמדד: 58 עריכות של מיכאל שנמצאות היום בדף לא נמצאו
+    אחרי תיקוני הדף, והיו נעלמות מן הדף. כאן כל עריכה כזאת מקבלת את התווית החדשה של אותו מקום בספר:
+    היחידות של הספר לפני התיקון ואחריו זהות (רק ציוני הדף זזו), ולכן הן מותאמות ברצף, ולכל תווית ישנה ידוע אילו
+    תוויות חדשות יש באותו קטע. העריכה מנסה אותן לפי הסדר, ונשארת עם הראשונה שבה היא נמצאת. מחזיר מספר."""
+    W0o, _ = view(docx0, slug, m, None)
+    W0f, _ = view(docx1, slug, m, None)
+    so = [(p.get('daf'), _unit_sig(u)) for p in W0o for u in p.get('units') or []]
+    sf = [(p.get('daf'), _unit_sig(u)) for p in W0f for u in p.get('units') or []]
+    import collections, daf_check as DC
+    by = collections.defaultdict(collections.Counter)
+    sm = difflib.SequenceMatcher(None, [x[1] for x in so], [x[1] for x in sf], autojunk=False)
+    for blk in sm.get_matching_blocks():
+        for j in range(blk.size):
+            ko = DC.dk(so[blk.a + j][0] or '')
+            if ko is not None:
+                by[ko][sf[blk.b + j][0]] += 1
+    def cands(d):
+        k = DC.dk(d or '')
+        if k is None:
+            return []
+        out = []
+        for kk in (k, k + 1, k - 1, k + 2, k - 2):
+            for lab, _n in by.get(kk, collections.Counter()).most_common():
+                if lab and lab not in out and lab != d:
+                    out.append(lab)
+        return out
+    _, a0 = view(docx0, slug, m, raw0 or raw)
+    _, a1 = view(docx1, slug, m, raw)
+    b0, b1 = set(a0.get('b') or []), set(a1.get('b') or [])
+    todo = [e for e in raw['edits'] if e.get('t') in b0 and e.get('t') not in b1 and not e.get('del')]
+    if not todo:
+        return 0
+    log('%s: %d עריכות שנמצאות בדף לא נמצאות אחרי תיקוני ציוני הדף - מעבירים אותן לתווית החדשה' % (m, len(todo)))
+    orig = {id(e): e.get('daf') for e in todo}
+    fixed = 0
+    for r in range(6):
+        live = []
+        for e in todo:
+            c = cands(orig[id(e)])
+            if r < len(c):
+                e['daf'] = c[r]; live.append(e)
+        if not live:
+            break
+        _, ar = view(docx1, slug, m, raw)
+        br = set(ar.get('b') or [])
+        nxt = []
+        for e in todo:
+            if e.get('t') in br:
+                if e.get('daf') != orig[id(e)]:
+                    e['daf0'] = orig[id(e)]
+                fixed += 1
+            else:
+                e['daf'] = orig[id(e)]; nxt.append(e)
+        todo = nxt
+        if not todo:
+            break
+    for e in todo:
+        e['daf'] = orig[id(e)]
+    log('%s: %d עריכות עברו לתווית החדשה, %d לא נמצאו גם כך (יישארו בשכבה, מסומנות)' % (m, fixed, len(todo)))
+    return fixed
+
+
+
+def apply_daffix(slug, m, work, rdoc, rec, log=print):
+    """פרומפט 92: תיקוני ציוני הדף (data/daf-fix, tools/daf_fix.py) על הספר שבסוף הקיפול, אחרי שהעריכות כבר בו.
+    ציון דף שנוסף מזיז את מספרי היחידות שאחריו, ולכן העריכות שנשארות בשכבה (rdoc) עוברות למפתח החדש של אותה
+    יחידה (מפתח קפוא, כמו בעמודים שחזרו), ואחר כך לתווית העמוד החדשה כשצריך (relabel_after_daffix).
+    מחזיר (הספר, העריכות שנשארות, [(ישנה, חדשה)] להעלאה לשרת במפתח החדש)."""
+    import daf_fix as DFX
+    edits = list((rdoc or {}).get('edits') or [])
+    fx = os.path.join(C.WORK, 'daffix-' + slug + '.docx')
+    try:
+        dfix, dskip = DFX.apply(slug, work, fx, log=log)
+    except Exception as e:
+        log('%s: תיקוני ציוני הדף לא הוחלו - %s' % (m, str(e)[:200]))
+        return work, edits, []
+    for o_, w_ in dskip:
+        log('%s: תיקון ציון דף %s %s לא הוחל - %s' % (m, o_.get('op'), o_.get('daf'), w_))
+    rec['_art']['dfix'] = (dfix, dskip)
+    if dfix or dskip:
+        rec['daf_fix'] = {'applied': dfix, 'skipped': len(dskip)}
+    if not dfix:
+        return work, edits, []
+    log('%s: %d תיקוני ציוני דף הוחלו על הספר' % (m, dfix))
+    rek = []
+    if edits:
+        W0o, _ = view(work, slug, m, None)
+        W0f, _ = view(fx, slug, m, None)
+        uo = [(u.get('id'), _unit_sig(u)) for p in W0o for u in p.get('units') or []]
+        uf = [(u.get('id'), _unit_sig(u)) for p in W0f for u in p.get('units') or []]
+        idmap = {}
+        sm = difflib.SequenceMatcher(None, [x[1] for x in uo], [x[1] for x in uf], autojunk=False)
+        for blk in sm.get_matching_blocks():
+            for j in range(blk.size):
+                a_, b_ = uo[blk.a + j][0], uf[blk.b + j][0]
+                if a_ is not None and b_ is not None:
+                    idmap[str(a_)] = str(b_)
+        out = []
+        for e in edits:
+            mm = re.match(r'^u(\d+)(\..*)$', e.get('k') or '')
+            if mm and idmap.get(mm.group(1)) and idmap[mm.group(1)] != mm.group(1):
+                suf = mm.group(2) if '~' in mm.group(2) else '%s~%s' % (mm.group(2), e.get('t'))
+                ne = dict(e, k='u' + idmap[mm.group(1)] + suf)
+                out.append(ne); rek.append((e, ne))
+            else:
+                out.append(e)
+        if rek:
+            log('%s: %d עריכות שבשכבה עברו למספר היחידה החדש אחרי תיקוני הדף' % (m, len(rek)))
+        try:
+            n = relabel_after_daffix(slug, m, work, fx, dict(rdoc, edits=out), log=log, raw0=dict(rdoc, edits=edits))
+            if n: rec['daf_relabel'] = n
+        except Exception as e_:
+            log('%s: העברת העריכות לתוויות החדשות נכשלה - %s' % (m, str(e_)[:200]))
+        edits = out
+    dst = os.path.join(C.WORK, 'fold-daffix-' + slug + '.docx')
+    shutil.copyfile(fx, dst)
+    return dst, edits, rek
+
+
 def fold_one(slug, dry=False, log=print, srv=None, docx=None, efilter=None, tag=''):
     import time
     t0 = time.time()
@@ -543,19 +670,9 @@ def fold_one(slug, dry=False, log=print, srv=None, docx=None, efilter=None, tag=
     # בלבד. הם מוחלים על עותק לפני הקיפול, וכל הקיפול נעשה עליו: מה שהמנהל רואה (A) ומה שבספר (W0) נמדדים שניהם
     # על הספר המתוקן, ולכן מספר העמודים תואם. עריכות השכבה מאותרות בטקסט בטווח של עמוד אחד לכל צד, ולכן ציון
     # שזז בעמוד אחד אינו מנתק אותן.
+    # פרומפט 92: תיקוני הדף מוחלים בסוף הקיפול (apply_daffix), על הספר שכבר נושא את העריכות. כשהוחלו בתחילה (פרומפט
+    # 91), העריכות אותרו על ספר שתוויות העמודים שלו כבר זזו, ובשבת 58 עריכות שמיכאל רואה בדף לא נמצאו ונעלמו.
     docx0, dfix, dskip = docx, 0, []
-    if efilter is None:
-        import daf_fix as DFX
-        fx = os.path.join(C.WORK, 'daffix-' + slug + '.docx')
-        try:
-            dfix, dskip = DFX.apply(slug, docx, fx, log=log)
-        except Exception as e:
-            log('%s: תיקוני ציוני הדף לא הוחלו - %s' % (m, str(e)[:200]))
-        for o_, w_ in dskip:
-            log('%s: תיקון ציון דף %s %s לא הוחל - %s' % (m, o_.get('op'), o_.get('daf'), w_))
-        if dfix:
-            docx = fx
-            log('%s: %d תיקוני ציוני דף הוחלו על הספר' % (m, dfix))
     rep, doc, gone, raw = C.layer(slug, m, srv)
     raw, absorbed = pin_adjust(slug, docx, raw, log=log)
     outside = []
@@ -564,15 +681,18 @@ def fold_one(slug, dry=False, log=print, srv=None, docx=None, efilter=None, tag=
         raw = dict(raw, edits=[e for e in raw['edits'] if efilter(e)])
     rec = {'when': now_iso(), 'slug': slug, 'file': os.path.basename(docx) + tag, 'layer': len(raw['edits'])}
     rec['_art'] = {'rep': rep, 'raw': raw, 'absorbed': absorbed, 'outside': outside, 'pin': pin, 'docx': docx0, 'm': m,
-                   'dfix': (dfix, dskip)}
+                   'dfix': (0, [])}
     if absorbed: rec['absorbed'] = len(absorbed)
-    if dfix or dskip: rec['daf_fix'] = {'applied': dfix, 'skipped': len(dskip)}
     if not raw['edits']:
         log('%s: השכבה ריקה, אין מה לקפל' % m)
         rec['result'] = 'ריק'
+        wk, dfix = docx, 0
+        if efilter is None:
+            wk, _e, _r = apply_daffix(slug, m, docx, None, rec, log)
+            dfix = rec['_art']['dfix'][0]
         if pin or absorbed or dfix:
             # אין מה לקפל, אבל הצילום המוצמד נעשה לספר (וההצמדה יורדת), והנקלטות יוצאות מן השכבה
-            rec['_art'].update(work=docx, remain=[], retired=list(absorbed), lost=[], rekeyed=[])
+            rec['_art'].update(work=wk, remain=[], retired=list(absorbed), lost=[], rekeyed=[])
             rec['result'] = 'עבר'
             if not dry:
                 save_one(slug, rec)
@@ -738,6 +858,11 @@ def fold_one(slug, dry=False, log=print, srv=None, docx=None, efilter=None, tag=
     # הוציא כך את המשנה השלמה שמיכאל כתב בנב. (הדפדפן החיל אותה, הבנייה לא איתרה אותה), והיא נמחקה בשרת במצבה.
     # מעכשיו היא נשארת בשכבה כפי שהיא (הדפדפן ממשיך להציגה כמו שמיכאל ראה), מסומנת tlusha, ונרשמת גם ב-tlushot
     # להתראת המנהל. היא אינה נכנסת לשער (אינה מוחלת בבנייה), ולכן אינה משנה את מה שהספר נותן.
+    if efilter is None:
+        # פרומפט 92: תיקוני ציוני הדף - עכשיו, על הספר שכבר נושא את העריכות. העריכות שנשארות מקבלות מפתח ותווית חדשים
+        work, remain, rk_ = apply_daffix(slug, m, work, dict(raw, edits=remain), rec, log)
+        nxt_ = {id(a_): b_ for a_, b_ in rk_}
+        rekeyed = [(a_, nxt_.pop(id(b_), b_)) for a_, b_ in rekeyed] + [(a_, b_) for a_, b_ in rk_ if id(b_) in {id(x) for x in nxt_.values()}]
     lost_keep = []
     for e in lost:
         lost_keep.append(dict(e, tlusha=e.get('tlusha') or now_iso()))

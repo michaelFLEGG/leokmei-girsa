@@ -519,11 +519,16 @@
     paras.forEach(function(p){setP(p,full)});
     var h1=paras.map(function(p){return p.offsetHeight});
     var st={full:0,reduced:0,to:{}};
-    paras.forEach(function(p,i){
-      var ok=function(){return p.offsetHeight<=h0[i]+0.5&&(l0[i]||!(p.textContent.trim().length>=12&&loneStrict(p)))};
-      if(h1[i]<=h0[i]+0.5&&ok()){st.full++;return}
-      var v=0;for(var x=Math.round(full*100)-5;x>0;x-=5){setP(p,x/100);if(ok()){v=x/100;break}}
-      if(!v)setP(p,0);st.reduced++;st.to[v]=(st.to[v]||0)+1});
+    var ok=function(i){var p=paras[i];return p.offsetHeight<=h0[i]+0.5&&(l0[i]||!(p.textContent.trim().length>=12&&loneStrict(p)))};
+    /* 24.11.2026, מהירות: אותה החלטה בדיוק, אבל בשלבים משותפים - בכל שלב כל הפסקאות שעוד לא נכנסו מקבלות את הריווח הבא יחד,
+       ונמדדות יחד (פריסה אחת לשלב, במקום פריסה לכל פסקה בכל שלב). כל פסקה נשברת לשורות בעצמה, ולכן התוצאה זהה */
+    var bad=[];paras.forEach(function(p,i){if(h1[i]<=h0[i]+0.5&&ok(i))st.full++;else bad.push(i)});
+    var V={};
+    for(var x=Math.round(full*100)-5;x>0&&bad.length;x-=5){
+      bad.forEach(function(i){setP(paras[i],x/100)});
+      var still=[];bad.forEach(function(i){if(ok(i))V[i]=x/100;else still.push(i)});bad=still}
+    bad.forEach(function(i){setP(paras[i],0);V[i]=0});
+    Object.keys(V).forEach(function(i){var v=V[i];st.reduced++;st.to[v]=(st.to[v]||0)+1});
     return st}
   /* 17.11.2026 (מיכאל): הרווח הקבוע לפני הדעה השנייה (span.og של lgLook, 1.3em) הוא חלק ממנגנון האיחוי: אם בלעדיו
      (או בחציו) הפסקה נכנסת בשורה אחת פחות - הוא מצטמצם או נמחק, כי "הנראות של כלל הקטע חשובה לא פחות". קודם הצרה
@@ -1087,7 +1092,7 @@
           [.9,.82,LMIN].some(function(sc){if(sc>=cs||sc<LMIN)return false;w.style.fontSize=sc+'em';return !hit(RC(dm),RC(wa))});
           if(hit(RC(dm),RC(wa)))R.issues.push({type:'תווית מתנגשת בציון הדף',detail:wa.textContent.trim().slice(0,30)})})})();
       /* ד: משיכת ציון הדף אל הטקסט, לפי המרווח הפנוי בפועל במסילה (אחרי ההתאמה של כותרות הצד) */
-      (function(){var mx=(prof.dafPullMm||0)*MM;if(!mx)return;
+      (function(){var mx=(prof.dafPullMm||0)*MM;if(!mx)return;var DPW=[];
         [].slice.call(f.querySelectorAll('.row')).forEach(function(row){
           var dm=row.querySelector(':scope > .rail .dafmark');if(!dm)return;
           var rl=dm.closest('.rail'),w=rl.querySelector('.win');
@@ -1101,8 +1106,10 @@
           var pull=Math.min(mx,lim,gap-minGap);
           if(pull<0)pull=Math.max(pull,-(rr.right-rd.right-1));
           else pull=Math.max(0,pull);
-          if(Math.abs(pull)>0.5)row.style.setProperty('--dafpull',pull.toFixed(1)+'px');
-          if(mn&&gap-pull<minGap-0.5)R.issues.push({type:'סימן דף קרוב משלוש אותיות לטקסט',daf:dm.textContent.trim(),detail:((gap-pull)/MM).toFixed(1)+' מ"מ'})})})();
+          /* 24.11.2026, מהירות: הכתיבה נדחית לסוף (כל שורה נמדדת לעצמה; המשיכה של שורה אחת אינה משנה מדידה של אחרת) */
+          if(Math.abs(pull)>0.5)DPW.push([row,pull.toFixed(1)+'px']);
+          if(mn&&gap-pull<minGap-0.5)R.issues.push({type:'סימן דף קרוב משלוש אותיות לטקסט',daf:dm.textContent.trim(),detail:((gap-pull)/MM).toFixed(1)+' מ"מ'})});
+        DPW.forEach(function(z){z[0].style.setProperty('--dafpull',z[1])})})();
       TA('dafmark');
       /* פרומפט 80 ב: ספירת הצירופים - כמה ד"ה+כותרת נכנסו בשורה אחת (שורה נחסכה) וכמה נשארו בשתיים */
       crecs.forEach(function(x){if(!x.joined||!x.el)return;var m=x.el.querySelector(':scope > .main');if(!m)return;
@@ -1135,13 +1142,13 @@
           var top=Ybase+br.top-fr.top+pt+bt;
           /* פרומפט 84 א ב: שורת רעיון (פסקת גוף של שורה-שתיים) - צמודה לימין, בלי יישור לשני הצדדים. יישור לשני הצדדים רק בפסקה
              רציפה של שלוש שורות ומעלה. היישור אינו משנה שבירת שורה, ולכן נקבע אחרי המדידה */
+          /* 24.11.2026, מהירות: כתיבה בתוך לולאת המדידה (הוספת rag, ומדידה בסרגל GP) הכריחה פריסה מחדש של כל הנתח בכל פסקה -
+             כ-1000 פסקאות hg בפרק, כ-28 שניות. עכשיו נאספות ב-LDEF ומוחלות אחרי המדידה (היישור אינו משנה שבירת שורה, והסרגל
+             נפרד מן הנתח). גם תוקן: בביטוי הישן נכתב תו backspace במקום \b, וההזחה לא הוסרה במדידה */
           if(b.classList&&b.classList.contains('hg')){
-            if(n<=2)b.classList.add('rag');
+            if(n<=2)LDEF.push([0,b]);
             /* פרומפט 84 א ד: האם ההזחה הוסיפה לפסקה שורה (מדידה בסרגל הקטן בלי ההזחה) - לספירה ולמנגנון "שורה שהתארכה" */
-            if(n>=2){GM.className=main.className;GP.className=b.className.replace(/(hg|rag)/g,'');GP.setAttribute('style',b.getAttribute('style')||'');GP.innerHTML=b.innerHTML;
-              var n0=Math.max(1,Math.round(GP.offsetHeight/lh));
-              if(n0<n){R.hangExtra=(R.hangExtra||0)+1;(R.hangList=R.hangList||[]).push({daf:x.daf,u:x.u&&x.u.id,li:bi+1,was:n0,now:n})}
-              GP.removeAttribute('style');GP.className='';GP.innerHTML=''}}
+            if(n>=2)LDEF.push([1,b,main,lh,n,x.daf,x.u&&x.u.id,bi+1])}
           var wc=n===1?(b.textContent.trim().split(/\s+/).filter(Boolean).length):99;   /* ב5: מילים בפסקה של שורה אחת */
           var lbl=!!(rail&&rail.textContent.trim()&&bi===0);
           /* פרומפט 60 ב: פסקת כותרת בתוך יחידה רגילה (p.nose / p.dh, למשל "מחזקת ראשו ורובו ושולחנו" בסוכה ג.) היא כותרת
@@ -1155,12 +1162,19 @@
           var lastL=L[L.length-1];
           lastL.y1=Math.max(lastL.y1,Ybase+railBottom,Ybase+rr.bottom-fr.top)}
         x.gtop=Ybase+rr.top-fr.top});
-      LDEF.forEach(function(z){var b=z[1];
-        if(z[0]===0){b.classList.add('rag');return}
-        GM.className=z[2].className;GP.className=b.className.replace(/\b(hg|rag)\b/g,'');GP.setAttribute('style',b.getAttribute('style')||'');GP.innerHTML=b.innerHTML;
-        var n0=Math.max(1,Math.round(GP.offsetHeight/z[3]));
-        if(n0<z[4]){R.hangExtra=(R.hangExtra||0)+1;(R.hangList=R.hangList||[]).push({daf:z[5],u:z[6],li:z[7],was:n0,now:z[4]})}
-        GP.removeAttribute('style');GP.className='';GP.innerHTML=''});
+      /* 24.11.2026, מהירות: כל המדידות בלי ההזחה בבת אחת - שורת סרגל לכל פסקה בתוך הסרגל (אותו מבנה כמו GM/GP), פריסה אחת
+         וקריאה אחת, במקום פריסה לכל פסקה */
+      var LMS=LDEF.filter(function(z){return z[0]===1}),LROWS=[];
+      if(LMS.length){var lfr=document.createDocumentFragment();
+        LMS.forEach(function(z){var b=z[1],rw=document.createElement('div');rw.className='row';rw.innerHTML='<div class="rail"></div><div class="main"><p></p></div>';
+          var mm=rw.lastChild,pp=mm.firstChild;mm.className=z[2].className;pp.className=b.className.replace(/\b(hg|rag)\b/g,'');pp.setAttribute('style',b.getAttribute('style')||'');pp.innerHTML=b.innerHTML;
+          LROWS.push(pp);lfr.appendChild(rw)});
+        sq.appendChild(lfr);
+        var LH=LROWS.map(function(pp){return pp.offsetHeight});
+        LMS.forEach(function(z,i){var n0=Math.max(1,Math.round(LH[i]/z[3]));
+          if(n0<z[4]){R.hangExtra=(R.hangExtra||0)+1;(R.hangList=R.hangList||[]).push({daf:z[5],u:z[6],li:z[7],was:n0,now:z[4]})}});
+        LROWS.forEach(function(pp){pp.parentNode.parentNode.remove()})}
+      LDEF.forEach(function(z){if(z[0]===0)z[1].classList.add('rag')});
       TA('lines');
       /* כל סימן שייך לשורה שבה הוא יושב */
       [].slice.call(f.querySelectorAll('sup.tm')).forEach(function(s){

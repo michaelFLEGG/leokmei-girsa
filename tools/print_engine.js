@@ -2301,6 +2301,7 @@
       [].forEach.call(document.querySelectorAll('style[data-prnrun]'),function(x){x.remove()});
       ['prnout','prnmeas','prnsq'].forEach(function(id){var e=document.getElementById(id);if(e)e.remove()});
       return runPrint().catch(function(e){window.__PRN={state:'error',error:String(e&&e.message||e),report:(window.__PRN&&window.__PRN.report)||null};throw e})};
+    if(window.__prnRerun)window.__prnRerun.opts=1;
     /* פרומפט 86: כישלון אינו שתיקה - פס ההתקדמות אומר מה קרה ומה לעשות, וההדפסה נרשמת "נכשלה" */
     var prnFail=function(msg){prnProgEnd('ההדפסה לא הצליחה',msg+'. אפשר לסגור את החלון ולנסות שוב בעוד רגע; אם זה חוזר - לנסות טווח קטן יותר (דף או עמוד).',true);
       var L0=window.__prnLog;if(L0&&L0.state==='start'){L0.state='error';L0.err=String(msg).slice(0,150);L0.secs=Math.round(performance.now()/100)/10;prnPost('/prn/log',L0,6000)}};

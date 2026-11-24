@@ -194,7 +194,8 @@
     if(!S.open)return;
     var w=pmWin();
     if(S.busy&&w&&w.__prnRerun){S.reconf=true;pmStat('יעומד מחדש '+pmWhat()+' מיד אחרי העימוד הנוכחי...',1);return}
-    if(!w||!w.__prnRerun||!S.report){pmLoad();return}
+    /* מנוע שאינו מקבל הגדרות (גרסה ישנה במטמון) - טעינה מלאה, כדי שהבחירה תמיד תתבצע */
+    if(!w||!w.__prnRerun||!w.__prnRerun.opts||!S.report){pmLoad();return}
     pmLeave();
     S.reconf=false;S.busy=true;S.dirty=false;S.t0=performance.now();
     var keep=pmKeep(),oldPages=S.pages.length;
@@ -241,6 +242,9 @@
     S.pkPi=[Math.max(0,a-1),Math.min(D.pages.length-1,b+1)];
     q.set('from',D.pages[a].daf);q.set('to',D.pages[b].daf);q.set('pk',pk);
     q.set('tos',+P.tos?'1':'0');q.set('duplex','0');q.set('profile',pmProfile());
+    /* 24.11.2026: גרסת הקוד של הדף הזה. הדפדפן שומר את דף המסכת עד 10 דקות, ובלי זה המסגרת נטענה לפעמים מגרסה ישנה
+       (מנוע ישן שאינו מקבל "תוס'" בלי טעינה מחדש - הכפתור סומן והתוס' לא הופיעו). עכשיו המסגרת תמיד מאותה גרסה כמו הדף */
+    try{var mv=[].map.call(document.scripts,function(x){return x.src||''}).filter(function(x){return /\/mas\.js\?v=/.test(x)})[0];if(mv)q.set('b',mv.split('v=')[1])}catch(e){}
     return location.pathname.split('/').pop()+'?'+q.toString()}
   /* מסך צר (טלפון, חלון קטן): עיצוב האתר לטלפון משנה את הגופן והרוחב של הסרגל, והמנוע היה מודד עליו עימוד אחר.
      לכן המסגרת תמיד ברוחב של מחשב (FRW), ומוקטנת כגוש להתאים למסך. העימוד זהה להדפסה גם בטלפון */

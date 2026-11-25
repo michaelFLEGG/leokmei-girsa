@@ -243,7 +243,7 @@ def main():
                 stats[how] += 1
                 if a.write:
                     it.update(t=t, occ=occ, rule=rule, why=why, page=lab, daf=lab)
-                    key = str(it['n'] if (a.slug == 'kiddushin' and perek == 1) else it['disp'])
+                    key = str(it['n'] if (a.slug == 'kiddushin' and perek == 1) else it['n'] - perek * 1000)   # מפתח הספירה (כמו make_live)
                     ak = A.get(key)
                     if isinstance(ak, dict):
                         ak.update(t=t, occ=occ, rule=rule, why=why, page=lab)

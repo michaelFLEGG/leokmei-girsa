@@ -13,8 +13,9 @@
   4. העוגן נכתב כקטע טקסט ייחודי בעמוד (מאריכים מילים עד שהוא יחיד) ונבדק בהדמיה של tosResolve שהוא נופל ביחידה שנבחרה.
 כותב: anchors-N.json (t, occ, rule, why, page, daf) ו-live-N.json (t, occ, rule, why, page, daf). אינו נוגע בנוסח הדף ובסיכומים.
 
-    uv run python tools/tosafot/dump_pages.py kiddushin                 (או: node tools/tosafot/dump_pages.js URL OUT)
-    uv run python tools/tosafot/reanchor.py kiddushin --pages data/fold/pages-kiddushin.json [--write]
+    node tools/tosafot/dump_pages.js https://leokmei.com/kiddushin.html pages-kiddushin.json
+    (אחרי הכתיבה: node tools/tosafot/verify_marks.js URL new.json - 0 בעמוד שגוי ו-0 היפוכים)
+    uv run python tools/tosafot/reanchor.py kiddushin --pages pages-kiddushin.json [--write]
 בלי --write: דוח בלבד.
 """
 import os, sys, io, re, json, argparse

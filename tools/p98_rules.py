@@ -45,7 +45,7 @@ def fix_comma_space(h):
 
 # p98b: ראשי תיבות קבועים במקום המילים המלאות: "כל שכן" -> כ"ש, "אין צריך" -> א"צ.
 ABBR = [(re.compile(r'(?<![%s])(ו?)כל שכן(?![%s])' % (HEB, HEB)), r'\1כ"ש'),
-        (re.compile(r'(?<![%s])(ו?)אין צריך(?![%s])' % (HEB, HEB)), r'\1א"צ')]
+        (re.compile(r'(?<![%s])(ו?)אין צריך(?![%s])(?! לומר)' % (HEB, HEB)), r'\1א"צ')]
 
 
 def fix_abbr(h):
@@ -117,10 +117,16 @@ def conform(pages, rid):
     return ok, bad
 
 
-def gated(pages, rids):
-    """הכללים שעוברים את שער המנהג במסכת הזו, ודוח השער."""
+def gated(pages, rids, slug=None, scope=None):
+    """הכללים שעוברים את שער המנהג במסכת הזו, ודוח השער. scope: {כלל: [מסכתות]} מן הפנקס - כלל סגנוני מוחל
+    רק במסכתות שנכתבו בסגנון החדש (25.11: קידושין ובבא קמא). במסכתות הישנות רבות מן השורות הן לשון משנה
+    וגמרא ("ואין צריך לומר בשבת", "זו ואין צריך לומר זו קתני", "דתנן:" בתוך גמרא) - שם הכלל רק בתור ההצעות."""
     rep, out = {}, []
     for rid in rids:
+        sc = (scope or {}).get(rid)
+        if sc and slug and slug not in sc:
+            rep[rid] = {'pass': False, 'why': 'מחוץ לתחום הכלל'}
+            continue
         ok, bad = conform(pages, rid)
         rep[rid] = {'conform': ok, 'violate': bad, 'pass': ok >= bad}
         if ok >= bad:
@@ -407,6 +413,12 @@ def main():
                 # רק לפי נוסח: המפתחות בארכיון הקליטה ישנים (לפני rekey) ואינם מצביעים על אותה יחידה
                 t = re.sub(r'\s+', ' ', (h['t'].split(' | ')[-1])).strip()[:60]
                 return any(t and (t == x or x.startswith(t[:40])) for x in htp)
+            sc = {k: v.get('scope') for k, v in rules.items() if v.get('scope')}
+            ok_rids, _g = gated(pages, [k for k in MECH], s, sc)
+            for rid in MECH:
+                if rid not in ok_rids:
+                    q[rid] = [{kk: vv for kk, vv in h.items() if not kk.startswith('_')} | {'now': plain(h['_h2'])[:140]}
+                              for h in mech_hits(pages, rid)]
             q = {k: [h for h in v if not _mine(h)] for k, v in q.items()}
             p = os.path.join(ROOT, 'data', 'fold', 'p98-queue', s + '.json')
             os.makedirs(os.path.dirname(p), exist_ok=True)
@@ -417,7 +429,7 @@ def main():
             print('%-14s %s' % (s, '  '.join('%s %d' % (k, len(v)) for k, v in q.items())))
             continue
         hot = S.recent_hot(s, 24 * 30)
-        ok_rids, gate = gated(pages, rids)
+        ok_rids, gate = gated(pages, rids, s, {k: v.get('scope') for k, v in rules.items() if v.get('scope')})
         eds, skipped = apply_edits(s, pages, ok_rids, hot, int(time.time() * 1000))
         by = {}
         for e in eds:

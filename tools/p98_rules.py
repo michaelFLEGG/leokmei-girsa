@@ -85,6 +85,48 @@ def fix_src_style(h):
 
 MECH = {'p98a': fix_comma_space, 'p98b': fix_abbr, 'p98c': fix_miyiri, 'p98d': fix_src_style}
 
+# שער "בהתאמה": כלל סגנוני מוחל במסכת רק כשהמסכת עצמה כבר נוהגת כך ברובה (מתאים >= מפר).
+# נמדד 25.11: בחולין "דתניא:" בסגנון אמוראים 2 מול 94 בלי, בעירובין 0 מול 38 - שם זה מנהג המסכת, ואין להפוך אותו.
+# רווח אחרי פסיק (p98a) אינו מנהג אלא תיקון, ואין לו שער.
+CONFORM = {
+    'p98b': (re.compile(r'(?<![%s])ו?(?:כ"ש|א"צ)(?![%s])' % (HEB, HEB)), re.compile(r'(?<![%s])ו?(?:כל שכן|אין צריך)(?![%s])' % (HEB, HEB)), 'text'),
+    'p98c': (re.compile(r'(?<![%s])ו?מיירי ל' % HEB), RX_NITZRACH, 'text'),
+    'p98d': (re.compile(r'<i class="am">[^<]*(?:ד(?:תניא|תנן)|שהרי אמרו חכמים):'), None, 'html'),
+}
+
+
+def conform(pages, rid):
+    """(מתאים, מפר) במסכת. לכלל בלי שער - (1, 0)."""
+    if rid not in CONFORM:
+        return 1, 0
+    ok_rx, bad_rx, mode = CONFORM[rid]
+    ok = bad = 0
+    for pg in pages:
+        for u in pg.get('units') or []:
+            if u.get('k') != 'u':
+                continue
+            for l in u.get('l') or []:
+                h = l[1] if len(l) > 1 else ''
+                if mode == 'html':
+                    ok += len(ok_rx.findall(h))
+                    bad += 1 if MECH[rid](h) != h else 0
+                else:
+                    t = plain(h)
+                    ok += len(ok_rx.findall(t))
+                    bad += len(bad_rx.findall(t))
+    return ok, bad
+
+
+def gated(pages, rids):
+    """הכללים שעוברים את שער המנהג במסכת הזו, ודוח השער."""
+    rep, out = {}, []
+    for rid in rids:
+        ok, bad = conform(pages, rid)
+        rep[rid] = {'conform': ok, 'violate': bad, 'pass': ok >= bad}
+        if ok >= bad:
+            out.append(rid)
+    return out, rep
+
 # ------------------------------------------------------------------ כללי בינה (בדיקה בלבד)
 RX_KAL = re.compile(r'(לא כ"ש\s*\?|אינו דין ש[^?]*\?|לא כל שכן\s*\?)')
 RX_TZRICH = re.compile(r'(אם השמיענו|הייתי אומר:[^.]*קמ"ל|^ו?אם רק )')
@@ -104,7 +146,7 @@ def _unstyled(h, rx):
             elif not p.startswith('<br'):
                 depth += 1
             continue
-        if depth == 0 and rx.search(p):
+        if depth == 0 and rx.search(_html.unescape(p)):
             return True
     return False
 
@@ -132,7 +174,7 @@ def sem_hits(pages):
                 h = l[1] if len(l) > 1 else ''
                 t = NIK.sub('', plain(h))
                 ek = 'u%s.%d' % (u.get('id'), n + 1)
-                if RX_KAL.search(t):
+                if RX_KAL.search(t) and not re.search(r'ולא נאמר|ולא נלמד|ונלמד בק"ו\?|שאין ק"ו|פירכא|מה ל', t):
                     out['p98e'].append({'daf': daf, 'ek': ek, 't': t[:140]})
                 if RX_TZRICH.search(t):
                     out['p98f'].append({'daf': daf, 'ek': ek, 't': t[:140]})
@@ -358,6 +400,14 @@ def main():
             continue
         if a.cmd == 'queue':
             q = sem_hits(pages)
+            hk, ht = S.recent_hot(s, 72)  # סבב ההגהה הנוכחי שלו (30 יום כולל קבלות סכם ישנות)
+            htp = [re.sub(r'\s+', ' ', NIK.sub('', x)).strip()[:60] for x in ht]
+
+            def _mine(h):
+                # רק לפי נוסח: המפתחות בארכיון הקליטה ישנים (לפני rekey) ואינם מצביעים על אותה יחידה
+                t = re.sub(r'\s+', ' ', (h['t'].split(' | ')[-1])).strip()[:60]
+                return any(t and (t == x or x.startswith(t[:40])) for x in htp)
+            q = {k: [h for h in v if not _mine(h)] for k, v in q.items()}
             p = os.path.join(ROOT, 'data', 'fold', 'p98-queue', s + '.json')
             os.makedirs(os.path.dirname(p), exist_ok=True)
             io.open(p, 'w', encoding='utf-8', newline='\n').write(json.dumps(
@@ -367,9 +417,15 @@ def main():
             print('%-14s %s' % (s, '  '.join('%s %d' % (k, len(v)) for k, v in q.items())))
             continue
         hot = S.recent_hot(s, 24 * 30)
-        eds, skipped = apply_edits(s, pages, rids, hot, int(time.time() * 1000))
-        summary[s] = {'edits': len(eds), 'skipped_hot': skipped}
-        print('%-14s עריכות %d, דולגו (מיכאל ערך) %d' % (s, len(eds), skipped))
+        ok_rids, gate = gated(pages, rids)
+        eds, skipped = apply_edits(s, pages, ok_rids, hot, int(time.time() * 1000))
+        by = {}
+        for e in eds:
+            for r_ in e['p98']['rules']:
+                by[r_] = by.get(r_, 0) + 1
+        summary[s] = {'edits': len(eds), 'skipped_hot': skipped, 'by_rule': by, 'gate': gate}
+        print('%-14s עריכות %d %s, דולגו (מיכאל ערך) %d, נעצרו בשער המנהג: %s' % (
+            s, len(eds), by, skipped, [r_ for r_ in rids if r_ not in ok_rids]))
         if eds and not a.dry:
             p = os.path.join(ROOT, 'data', 'edits', s + '.json')
             doc = json.load(io.open(p, encoding='utf-8')) if os.path.exists(p) else {'v': 1, 'slug': s, 'edits': []}

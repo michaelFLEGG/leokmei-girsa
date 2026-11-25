@@ -180,6 +180,7 @@ def mech_edits(slug, res, t0, pages=None, hot30=None):
             import speaker_to_side as _S2
             hot30 = _S2.recent_hot(slug, 24 * 30)
         done = {str(x.get('k', '')).split('~')[0] for x in eds}
+        p98, _gate = _P98.gated(pages, p98)
         e, _skip = _P98.apply_edits(slug, pages, p98, hot30, t0 + 100000, skip=done)
         eds += e
     return eds

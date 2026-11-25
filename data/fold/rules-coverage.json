@@ -1,0 +1,2543 @@
+{
+ "rules": {
+  "17": {
+   "berakhot": {
+    "when": "2026-11-25T16:36:08Z",
+    "violations": 34,
+    "certain": 1,
+    "applied": 1,
+    "last_applied": "2026-11-25T16:36:08Z",
+    "first": 34
+   },
+   "shabbat": {
+    "when": "2026-11-25T16:36:58Z",
+    "violations": 35,
+    "certain": 3,
+    "applied": 3,
+    "last_applied": "2026-11-25T16:36:58Z",
+    "first": 35
+   },
+   "kiddushin": {
+    "when": "2026-11-25T16:37:03Z",
+    "violations": 31,
+    "certain": 1,
+    "applied": 1,
+    "last_applied": "2026-11-25T16:37:03Z",
+    "first": 31
+   },
+   "eruvin": {
+    "when": "2026-11-25T16:37:06Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "pesachim": {
+    "when": "2026-11-25T16:37:09Z",
+    "violations": 7,
+    "certain": 1,
+    "applied": 1,
+    "last_applied": "2026-11-25T16:37:09Z",
+    "first": 7
+   },
+   "yoma": {
+    "when": "2026-11-25T16:37:11Z",
+    "violations": 19,
+    "certain": 16,
+    "applied": 16,
+    "last_applied": "2026-11-25T16:37:11Z",
+    "first": 19
+   },
+   "beitzah": {
+    "when": "2026-11-25T16:37:12Z",
+    "violations": 17,
+    "certain": 6,
+    "applied": 6,
+    "last_applied": "2026-11-25T16:37:12Z",
+    "first": 17
+   },
+   "rosh-hashanah": {
+    "when": "2026-11-25T16:37:13Z",
+    "violations": 7,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 7
+   },
+   "taanit": {
+    "when": "2026-11-25T16:37:14Z",
+    "violations": 10,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 10
+   },
+   "megillah": {
+    "when": "2026-11-25T16:37:15Z",
+    "violations": 7,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 7
+   },
+   "moed-katan": {
+    "when": "2026-11-25T16:37:16Z",
+    "violations": 4,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 4
+   },
+   "chagigah": {
+    "when": "2026-11-25T16:37:18Z",
+    "violations": 5,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 5
+   },
+   "yevamot": {
+    "when": "2026-11-25T16:37:22Z",
+    "violations": 236,
+    "certain": 116,
+    "applied": 116,
+    "last_applied": "2026-11-25T16:37:22Z",
+    "first": 236
+   },
+   "nedarim": {
+    "when": "2026-11-25T16:37:24Z",
+    "violations": 18,
+    "certain": 6,
+    "applied": 6,
+    "last_applied": "2026-11-25T16:37:24Z",
+    "first": 18
+   },
+   "nazir": {
+    "when": "2026-11-25T16:37:26Z",
+    "violations": 37,
+    "certain": 14,
+    "applied": 14,
+    "last_applied": "2026-11-25T16:37:26Z",
+    "first": 37
+   },
+   "sotah": {
+    "when": "2026-11-25T16:37:29Z",
+    "violations": 28,
+    "certain": 3,
+    "applied": 3,
+    "last_applied": "2026-11-25T16:37:29Z",
+    "first": 28
+   },
+   "gittin": {
+    "when": "2026-11-25T16:37:32Z",
+    "violations": 36,
+    "certain": 3,
+    "applied": 3,
+    "last_applied": "2026-11-25T16:37:32Z",
+    "first": 36
+   },
+   "bava-metzia": {
+    "when": "2026-11-25T16:37:35Z",
+    "violations": 48,
+    "certain": 15,
+    "applied": 15,
+    "last_applied": "2026-11-25T16:37:35Z",
+    "first": 48
+   },
+   "makkot": {
+    "when": "2026-11-25T16:37:37Z",
+    "violations": 15,
+    "certain": 9,
+    "applied": 9,
+    "last_applied": "2026-11-25T16:37:37Z",
+    "first": 15
+   },
+   "shevuot": {
+    "when": "2026-11-25T16:37:39Z",
+    "violations": 18,
+    "certain": 2,
+    "applied": 2,
+    "last_applied": "2026-11-25T16:37:39Z",
+    "first": 18
+   },
+   "zevachim": {
+    "when": "2026-11-25T16:37:42Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "menachot": {
+    "when": "2026-11-25T16:37:45Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chullin": {
+    "when": "2026-11-25T16:37:48Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "arakhin": {
+    "when": "2026-11-25T16:37:51Z",
+    "violations": 16,
+    "certain": 2,
+    "applied": 2,
+    "last_applied": "2026-11-25T16:37:51Z",
+    "first": 16
+   },
+   "temurah": {
+    "when": "2026-11-25T16:37:53Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "keritot": {
+    "when": "2026-11-25T16:37:54Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "meilah": {
+    "when": "2026-11-25T16:37:55Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "niddah": {
+    "when": "2026-11-25T16:37:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bekhorot": {
+    "when": "2026-11-25T16:38:07Z",
+    "violations": 12,
+    "certain": 2,
+    "applied": 2,
+    "last_applied": "2026-11-25T16:38:07Z",
+    "first": 12
+   },
+   "bava-batra": {
+    "when": "2026-11-25T16:38:13Z",
+    "violations": 78,
+    "certain": 28,
+    "applied": 28,
+    "last_applied": "2026-11-25T16:38:13Z",
+    "first": 78
+   },
+   "sukkah": {
+    "when": "2026-11-25T16:38:19Z",
+    "violations": 27,
+    "certain": 3,
+    "applied": 3,
+    "last_applied": "2026-11-25T16:38:19Z",
+    "first": 27
+   },
+   "ketubot": {
+    "when": "2026-11-25T16:38:22Z",
+    "violations": 129,
+    "certain": 86,
+    "applied": 86,
+    "last_applied": "2026-11-25T16:38:22Z",
+    "first": 129
+   },
+   "sanhedrin": {
+    "when": "2026-11-25T16:38:28Z",
+    "violations": 41,
+    "certain": 13,
+    "applied": 13,
+    "last_applied": "2026-11-25T16:38:28Z",
+    "first": 41
+   },
+   "avodah-zarah": {
+    "when": "2026-11-25T16:38:30Z",
+    "violations": 13,
+    "certain": 3,
+    "applied": 3,
+    "last_applied": "2026-11-25T16:38:30Z",
+    "first": 13
+   },
+   "horayot": {
+    "when": "2026-11-25T16:38:31Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   }
+  },
+  "side2": {
+   "berakhot": {
+    "when": "2026-11-25T16:36:08Z",
+    "violations": 7,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 7
+   },
+   "shabbat": {
+    "when": "2026-11-25T16:36:58Z",
+    "violations": 30,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 30
+   },
+   "kiddushin": {
+    "when": "2026-11-25T16:37:03Z",
+    "violations": 10,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 10
+   },
+   "eruvin": {
+    "when": "2026-11-25T16:37:06Z",
+    "violations": 136,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 136
+   },
+   "pesachim": {
+    "when": "2026-11-25T16:37:09Z",
+    "violations": 103,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 103
+   },
+   "yoma": {
+    "when": "2026-11-25T16:37:11Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "beitzah": {
+    "when": "2026-11-25T16:37:12Z",
+    "violations": 52,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 52
+   },
+   "rosh-hashanah": {
+    "when": "2026-11-25T16:37:13Z",
+    "violations": 27,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 27
+   },
+   "taanit": {
+    "when": "2026-11-25T16:37:14Z",
+    "violations": 3,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 3
+   },
+   "megillah": {
+    "when": "2026-11-25T16:37:15Z",
+    "violations": 52,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 52
+   },
+   "moed-katan": {
+    "when": "2026-11-25T16:37:16Z",
+    "violations": 60,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 60
+   },
+   "chagigah": {
+    "when": "2026-11-25T16:37:18Z",
+    "violations": 21,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 21
+   },
+   "yevamot": {
+    "when": "2026-11-25T16:37:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nedarim": {
+    "when": "2026-11-25T16:37:24Z",
+    "violations": 96,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 96
+   },
+   "nazir": {
+    "when": "2026-11-25T16:37:26Z",
+    "violations": 16,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 16
+   },
+   "sotah": {
+    "when": "2026-11-25T16:37:29Z",
+    "violations": 66,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 66
+   },
+   "gittin": {
+    "when": "2026-11-25T16:37:32Z",
+    "violations": 207,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 207
+   },
+   "bava-metzia": {
+    "when": "2026-11-25T16:37:35Z",
+    "violations": 181,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 181
+   },
+   "makkot": {
+    "when": "2026-11-25T16:37:37Z",
+    "violations": 20,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 20
+   },
+   "shevuot": {
+    "when": "2026-11-25T16:37:39Z",
+    "violations": 58,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 58
+   },
+   "zevachim": {
+    "when": "2026-11-25T16:37:42Z",
+    "violations": 322,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 322
+   },
+   "menachot": {
+    "when": "2026-11-25T16:37:45Z",
+    "violations": 319,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 319
+   },
+   "chullin": {
+    "when": "2026-11-25T16:37:48Z",
+    "violations": 58,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 58
+   },
+   "arakhin": {
+    "when": "2026-11-25T16:37:51Z",
+    "violations": 7,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 7
+   },
+   "temurah": {
+    "when": "2026-11-25T16:37:53Z",
+    "violations": 87,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 87
+   },
+   "keritot": {
+    "when": "2026-11-25T16:37:54Z",
+    "violations": 107,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 107
+   },
+   "meilah": {
+    "when": "2026-11-25T16:37:55Z",
+    "violations": 40,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 40
+   },
+   "niddah": {
+    "when": "2026-11-25T16:37:58Z",
+    "violations": 275,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 275
+   },
+   "bekhorot": {
+    "when": "2026-11-25T16:38:07Z",
+    "violations": 177,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 177
+   },
+   "bava-batra": {
+    "when": "2026-11-25T16:38:13Z",
+    "violations": 171,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 171
+   },
+   "sukkah": {
+    "when": "2026-11-25T16:38:19Z",
+    "violations": 17,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 17
+   },
+   "ketubot": {
+    "when": "2026-11-25T16:38:22Z",
+    "violations": 6,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 6
+   },
+   "sanhedrin": {
+    "when": "2026-11-25T16:38:28Z",
+    "violations": 219,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 219
+   },
+   "avodah-zarah": {
+    "when": "2026-11-25T16:38:30Z",
+    "violations": 81,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 81
+   },
+   "horayot": {
+    "when": "2026-11-25T16:38:31Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   }
+  },
+  "27": {
+   "berakhot": {
+    "when": "2026-11-25T16:36:08Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shabbat": {
+    "when": "2026-11-25T16:36:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "kiddushin": {
+    "when": "2026-11-25T16:37:03Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "eruvin": {
+    "when": "2026-11-25T16:37:06Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "pesachim": {
+    "when": "2026-11-25T16:37:09Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yoma": {
+    "when": "2026-11-25T16:37:11Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "beitzah": {
+    "when": "2026-11-25T16:37:12Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "rosh-hashanah": {
+    "when": "2026-11-25T16:37:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "taanit": {
+    "when": "2026-11-25T16:37:14Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "megillah": {
+    "when": "2026-11-25T16:37:15Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "moed-katan": {
+    "when": "2026-11-25T16:37:16Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chagigah": {
+    "when": "2026-11-25T16:37:18Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yevamot": {
+    "when": "2026-11-25T16:37:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nedarim": {
+    "when": "2026-11-25T16:37:24Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nazir": {
+    "when": "2026-11-25T16:37:26Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sotah": {
+    "when": "2026-11-25T16:37:29Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "gittin": {
+    "when": "2026-11-25T16:37:32Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-metzia": {
+    "when": "2026-11-25T16:37:35Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "makkot": {
+    "when": "2026-11-25T16:37:37Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shevuot": {
+    "when": "2026-11-25T16:37:39Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "zevachim": {
+    "when": "2026-11-25T16:37:42Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "menachot": {
+    "when": "2026-11-25T16:37:45Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chullin": {
+    "when": "2026-11-25T16:37:48Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "arakhin": {
+    "when": "2026-11-25T16:37:51Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "temurah": {
+    "when": "2026-11-25T16:37:53Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "keritot": {
+    "when": "2026-11-25T16:37:54Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "meilah": {
+    "when": "2026-11-25T16:37:55Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "niddah": {
+    "when": "2026-11-25T16:37:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bekhorot": {
+    "when": "2026-11-25T16:38:07Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-batra": {
+    "when": "2026-11-25T16:38:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sukkah": {
+    "when": "2026-11-25T16:38:19Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "ketubot": {
+    "when": "2026-11-25T16:38:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sanhedrin": {
+    "when": "2026-11-25T16:38:28Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "avodah-zarah": {
+    "when": "2026-11-25T16:38:30Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "horayot": {
+    "when": "2026-11-25T16:38:31Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   }
+  },
+  "28": {
+   "berakhot": {
+    "when": "2026-11-25T16:36:08Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shabbat": {
+    "when": "2026-11-25T16:36:58Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "kiddushin": {
+    "when": "2026-11-25T16:37:03Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "eruvin": {
+    "when": "2026-11-25T16:37:06Z",
+    "violations": 12,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 12
+   },
+   "pesachim": {
+    "when": "2026-11-25T16:37:09Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yoma": {
+    "when": "2026-11-25T16:37:11Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "beitzah": {
+    "when": "2026-11-25T16:37:12Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "rosh-hashanah": {
+    "when": "2026-11-25T16:37:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "taanit": {
+    "when": "2026-11-25T16:37:14Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "megillah": {
+    "when": "2026-11-25T16:37:15Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "moed-katan": {
+    "when": "2026-11-25T16:37:16Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "chagigah": {
+    "when": "2026-11-25T16:37:18Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yevamot": {
+    "when": "2026-11-25T16:37:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nedarim": {
+    "when": "2026-11-25T16:37:24Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nazir": {
+    "when": "2026-11-25T16:37:26Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sotah": {
+    "when": "2026-11-25T16:37:29Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "gittin": {
+    "when": "2026-11-25T16:37:32Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-metzia": {
+    "when": "2026-11-25T16:37:35Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "makkot": {
+    "when": "2026-11-25T16:37:37Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shevuot": {
+    "when": "2026-11-25T16:37:39Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "zevachim": {
+    "when": "2026-11-25T16:37:42Z",
+    "violations": 19,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 19
+   },
+   "menachot": {
+    "when": "2026-11-25T16:37:45Z",
+    "violations": 6,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 6
+   },
+   "chullin": {
+    "when": "2026-11-25T16:37:48Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "arakhin": {
+    "when": "2026-11-25T16:37:51Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "temurah": {
+    "when": "2026-11-25T16:37:53Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "keritot": {
+    "when": "2026-11-25T16:37:54Z",
+    "violations": 3,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 3
+   },
+   "meilah": {
+    "when": "2026-11-25T16:37:55Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "niddah": {
+    "when": "2026-11-25T16:37:58Z",
+    "violations": 8,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 8
+   },
+   "bekhorot": {
+    "when": "2026-11-25T16:38:07Z",
+    "violations": 6,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 6
+   },
+   "bava-batra": {
+    "when": "2026-11-25T16:38:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sukkah": {
+    "when": "2026-11-25T16:38:19Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "ketubot": {
+    "when": "2026-11-25T16:38:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sanhedrin": {
+    "when": "2026-11-25T16:38:28Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "avodah-zarah": {
+    "when": "2026-11-25T16:38:30Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "horayot": {
+    "when": "2026-11-25T16:38:31Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   }
+  },
+  "29": {
+   "berakhot": {
+    "when": "2026-11-25T16:36:08Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shabbat": {
+    "when": "2026-11-25T16:36:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "kiddushin": {
+    "when": "2026-11-25T16:37:03Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "eruvin": {
+    "when": "2026-11-25T16:37:06Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "pesachim": {
+    "when": "2026-11-25T16:37:09Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yoma": {
+    "when": "2026-11-25T16:37:11Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "beitzah": {
+    "when": "2026-11-25T16:37:12Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "rosh-hashanah": {
+    "when": "2026-11-25T16:37:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "taanit": {
+    "when": "2026-11-25T16:37:14Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "megillah": {
+    "when": "2026-11-25T16:37:15Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "moed-katan": {
+    "when": "2026-11-25T16:37:16Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chagigah": {
+    "when": "2026-11-25T16:37:18Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yevamot": {
+    "when": "2026-11-25T16:37:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nedarim": {
+    "when": "2026-11-25T16:37:24Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nazir": {
+    "when": "2026-11-25T16:37:26Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sotah": {
+    "when": "2026-11-25T16:37:29Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "gittin": {
+    "when": "2026-11-25T16:37:32Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-metzia": {
+    "when": "2026-11-25T16:37:35Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "makkot": {
+    "when": "2026-11-25T16:37:37Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shevuot": {
+    "when": "2026-11-25T16:37:39Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "zevachim": {
+    "when": "2026-11-25T16:37:42Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "menachot": {
+    "when": "2026-11-25T16:37:45Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chullin": {
+    "when": "2026-11-25T16:37:48Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "arakhin": {
+    "when": "2026-11-25T16:37:51Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "temurah": {
+    "when": "2026-11-25T16:37:53Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "keritot": {
+    "when": "2026-11-25T16:37:54Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "meilah": {
+    "when": "2026-11-25T16:37:55Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "niddah": {
+    "when": "2026-11-25T16:37:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bekhorot": {
+    "when": "2026-11-25T16:38:07Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-batra": {
+    "when": "2026-11-25T16:38:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sukkah": {
+    "when": "2026-11-25T16:38:19Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "ketubot": {
+    "when": "2026-11-25T16:38:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sanhedrin": {
+    "when": "2026-11-25T16:38:28Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "avodah-zarah": {
+    "when": "2026-11-25T16:38:30Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "horayot": {
+    "when": "2026-11-25T16:38:31Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   }
+  },
+  "chalku": {
+   "berakhot": {
+    "when": "2026-11-25T16:36:08Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shabbat": {
+    "when": "2026-11-25T16:36:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "kiddushin": {
+    "when": "2026-11-25T16:37:03Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "eruvin": {
+    "when": "2026-11-25T16:37:06Z",
+    "violations": 8,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 8
+   },
+   "pesachim": {
+    "when": "2026-11-25T16:37:09Z",
+    "violations": 10,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 10
+   },
+   "yoma": {
+    "when": "2026-11-25T16:37:11Z",
+    "violations": 29,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 29
+   },
+   "beitzah": {
+    "when": "2026-11-25T16:37:12Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "rosh-hashanah": {
+    "when": "2026-11-25T16:37:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "taanit": {
+    "when": "2026-11-25T16:37:14Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "megillah": {
+    "when": "2026-11-25T16:37:15Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "moed-katan": {
+    "when": "2026-11-25T16:37:16Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chagigah": {
+    "when": "2026-11-25T16:37:18Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yevamot": {
+    "when": "2026-11-25T16:37:22Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "nedarim": {
+    "when": "2026-11-25T16:37:24Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nazir": {
+    "when": "2026-11-25T16:37:26Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sotah": {
+    "when": "2026-11-25T16:37:29Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "gittin": {
+    "when": "2026-11-25T16:37:32Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "bava-metzia": {
+    "when": "2026-11-25T16:37:35Z",
+    "violations": 2,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 2
+   },
+   "makkot": {
+    "when": "2026-11-25T16:37:37Z",
+    "violations": 2,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 2
+   },
+   "shevuot": {
+    "when": "2026-11-25T16:37:39Z",
+    "violations": 15,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 15
+   },
+   "zevachim": {
+    "when": "2026-11-25T16:37:42Z",
+    "violations": 6,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 6
+   },
+   "menachot": {
+    "when": "2026-11-25T16:37:45Z",
+    "violations": 6,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 6
+   },
+   "chullin": {
+    "when": "2026-11-25T16:37:48Z",
+    "violations": 54,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 54
+   },
+   "arakhin": {
+    "when": "2026-11-25T16:37:51Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "temurah": {
+    "when": "2026-11-25T16:37:53Z",
+    "violations": 5,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 5
+   },
+   "keritot": {
+    "when": "2026-11-25T16:37:54Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "meilah": {
+    "when": "2026-11-25T16:37:55Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "niddah": {
+    "when": "2026-11-25T16:37:58Z",
+    "violations": 6,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 6
+   },
+   "bekhorot": {
+    "when": "2026-11-25T16:38:07Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-batra": {
+    "when": "2026-11-25T16:38:13Z",
+    "violations": 2,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 2
+   },
+   "sukkah": {
+    "when": "2026-11-25T16:38:19Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "ketubot": {
+    "when": "2026-11-25T16:38:22Z",
+    "violations": 2,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 2
+   },
+   "sanhedrin": {
+    "when": "2026-11-25T16:38:28Z",
+    "violations": 6,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 6
+   },
+   "avodah-zarah": {
+    "when": "2026-11-25T16:38:30Z",
+    "violations": 21,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 21
+   },
+   "horayot": {
+    "when": "2026-11-25T16:38:31Z",
+    "violations": 10,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 10
+   }
+  },
+  "shani": {
+   "berakhot": {
+    "when": "2026-11-25T16:36:08Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "shabbat": {
+    "when": "2026-11-25T16:36:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "kiddushin": {
+    "when": "2026-11-25T16:37:03Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "eruvin": {
+    "when": "2026-11-25T16:37:06Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "pesachim": {
+    "when": "2026-11-25T16:37:09Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yoma": {
+    "when": "2026-11-25T16:37:11Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "beitzah": {
+    "when": "2026-11-25T16:37:12Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "rosh-hashanah": {
+    "when": "2026-11-25T16:37:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "taanit": {
+    "when": "2026-11-25T16:37:14Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "megillah": {
+    "when": "2026-11-25T16:37:15Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "moed-katan": {
+    "when": "2026-11-25T16:37:16Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chagigah": {
+    "when": "2026-11-25T16:37:18Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yevamot": {
+    "when": "2026-11-25T16:37:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nedarim": {
+    "when": "2026-11-25T16:37:24Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nazir": {
+    "when": "2026-11-25T16:37:26Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sotah": {
+    "when": "2026-11-25T16:37:29Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "gittin": {
+    "when": "2026-11-25T16:37:32Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-metzia": {
+    "when": "2026-11-25T16:37:35Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "makkot": {
+    "when": "2026-11-25T16:37:37Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shevuot": {
+    "when": "2026-11-25T16:37:39Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "zevachim": {
+    "when": "2026-11-25T16:37:42Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "menachot": {
+    "when": "2026-11-25T16:37:45Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chullin": {
+    "when": "2026-11-25T16:37:48Z",
+    "violations": 14,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 14
+   },
+   "arakhin": {
+    "when": "2026-11-25T16:37:51Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "temurah": {
+    "when": "2026-11-25T16:37:53Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "keritot": {
+    "when": "2026-11-25T16:37:54Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "meilah": {
+    "when": "2026-11-25T16:37:55Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "niddah": {
+    "when": "2026-11-25T16:37:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bekhorot": {
+    "when": "2026-11-25T16:38:07Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-batra": {
+    "when": "2026-11-25T16:38:13Z",
+    "violations": 5,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 5
+   },
+   "sukkah": {
+    "when": "2026-11-25T16:38:19Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "ketubot": {
+    "when": "2026-11-25T16:38:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sanhedrin": {
+    "when": "2026-11-25T16:38:28Z",
+    "violations": 6,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 6
+   },
+   "avodah-zarah": {
+    "when": "2026-11-25T16:38:30Z",
+    "violations": 3,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 3
+   },
+   "horayot": {
+    "when": "2026-11-25T16:38:31Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   }
+  },
+  "49": {
+   "berakhot": {
+    "when": "2026-11-25T16:36:08Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shabbat": {
+    "when": "2026-11-25T16:36:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "kiddushin": {
+    "when": "2026-11-25T16:37:03Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "eruvin": {
+    "when": "2026-11-25T16:37:06Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "pesachim": {
+    "when": "2026-11-25T16:37:09Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yoma": {
+    "when": "2026-11-25T16:37:11Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "beitzah": {
+    "when": "2026-11-25T16:37:12Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "rosh-hashanah": {
+    "when": "2026-11-25T16:37:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "taanit": {
+    "when": "2026-11-25T16:37:14Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "megillah": {
+    "when": "2026-11-25T16:37:15Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "moed-katan": {
+    "when": "2026-11-25T16:37:16Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chagigah": {
+    "when": "2026-11-25T16:37:18Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yevamot": {
+    "when": "2026-11-25T16:37:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nedarim": {
+    "when": "2026-11-25T16:37:24Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nazir": {
+    "when": "2026-11-25T16:37:26Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sotah": {
+    "when": "2026-11-25T16:37:29Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "gittin": {
+    "when": "2026-11-25T16:37:32Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-metzia": {
+    "when": "2026-11-25T16:37:35Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "makkot": {
+    "when": "2026-11-25T16:37:37Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shevuot": {
+    "when": "2026-11-25T16:37:39Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "zevachim": {
+    "when": "2026-11-25T16:37:42Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "menachot": {
+    "when": "2026-11-25T16:37:45Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chullin": {
+    "when": "2026-11-25T16:37:48Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "arakhin": {
+    "when": "2026-11-25T16:37:51Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "temurah": {
+    "when": "2026-11-25T16:37:53Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "keritot": {
+    "when": "2026-11-25T16:37:54Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "meilah": {
+    "when": "2026-11-25T16:37:55Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "niddah": {
+    "when": "2026-11-25T16:37:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bekhorot": {
+    "when": "2026-11-25T16:38:07Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-batra": {
+    "when": "2026-11-25T16:38:13Z",
+    "violations": 1,
+    "certain": 1,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "sukkah": {
+    "when": "2026-11-25T16:38:19Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "ketubot": {
+    "when": "2026-11-25T16:38:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sanhedrin": {
+    "when": "2026-11-25T16:38:28Z",
+    "violations": 1,
+    "certain": 1,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "avodah-zarah": {
+    "when": "2026-11-25T16:38:30Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "horayot": {
+    "when": "2026-11-25T16:38:31Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   }
+  },
+  "lrt": {
+   "berakhot": {
+    "when": "2026-11-25T16:36:08Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shabbat": {
+    "when": "2026-11-25T16:36:58Z",
+    "violations": 1,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 1
+   },
+   "kiddushin": {
+    "when": "2026-11-25T16:37:03Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "eruvin": {
+    "when": "2026-11-25T16:37:06Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "pesachim": {
+    "when": "2026-11-25T16:37:09Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yoma": {
+    "when": "2026-11-25T16:37:11Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "beitzah": {
+    "when": "2026-11-25T16:37:12Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "rosh-hashanah": {
+    "when": "2026-11-25T16:37:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "taanit": {
+    "when": "2026-11-25T16:37:14Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "megillah": {
+    "when": "2026-11-25T16:37:15Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "moed-katan": {
+    "when": "2026-11-25T16:37:16Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chagigah": {
+    "when": "2026-11-25T16:37:18Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "yevamot": {
+    "when": "2026-11-25T16:37:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nedarim": {
+    "when": "2026-11-25T16:37:24Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "nazir": {
+    "when": "2026-11-25T16:37:26Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sotah": {
+    "when": "2026-11-25T16:37:29Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "gittin": {
+    "when": "2026-11-25T16:37:32Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-metzia": {
+    "when": "2026-11-25T16:37:35Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "makkot": {
+    "when": "2026-11-25T16:37:37Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "shevuot": {
+    "when": "2026-11-25T16:37:39Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "zevachim": {
+    "when": "2026-11-25T16:37:42Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "menachot": {
+    "when": "2026-11-25T16:37:45Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "chullin": {
+    "when": "2026-11-25T16:37:48Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "arakhin": {
+    "when": "2026-11-25T16:37:51Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "temurah": {
+    "when": "2026-11-25T16:37:53Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "keritot": {
+    "when": "2026-11-25T16:37:54Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "meilah": {
+    "when": "2026-11-25T16:37:55Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "niddah": {
+    "when": "2026-11-25T16:37:58Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bekhorot": {
+    "when": "2026-11-25T16:38:07Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "bava-batra": {
+    "when": "2026-11-25T16:38:13Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sukkah": {
+    "when": "2026-11-25T16:38:19Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "ketubot": {
+    "when": "2026-11-25T16:38:22Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "sanhedrin": {
+    "when": "2026-11-25T16:38:28Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "avodah-zarah": {
+    "when": "2026-11-25T16:38:30Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   },
+   "horayot": {
+    "when": "2026-11-25T16:38:31Z",
+    "violations": 0,
+    "certain": 0,
+    "applied": 0,
+    "last_applied": null,
+    "first": 0
+   }
+  }
+ },
+ "when": "2026-11-25T16:38:31Z"
+}

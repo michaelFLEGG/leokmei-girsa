@@ -958,6 +958,20 @@
       s=s.replace(/\{אם:([^{}]*?)\}([ \t]*)(אומר|אומרים|אמר|אמרו|אמרי|אומרת)(\s*:)/g,function(x,n,sp,w,c){ch++;return '{אם:'+n.replace(/:\s*$/,'')+' '+w+':}'});
       return {v:s,ch:ch}}
     /* ---- ב2: {אם:X:} בפתח שורה -> [צד:X:] ---- */
+    /* פרומפט 97: צירוף דובר לכותרת צד קיימת. מחזיר את שורת הכותרת החדשה או null. מקף ואות מספור אינם נספרים;
+       עד שתי מילים, שלוש רק כשהראשונה מילת קישור. (אותו כלל בצד המכני: tools/speaker_to_side.py) */
+    var SIDE_LINK=/^(והא|ת"ש|והך|והרי|שהרי|מיתיבי|איתיביה|ורמינהו|והתניא|והתנן|ותניא|ותנן|וקשה|ויקשה|קשה|והקשה|ותירץ|ועוד|וכן|אלא|שאני)$/;
+    function sideMerge(prevLine,nm){
+      var m=/^\[צד:([^\]]*)\]\s*$/.exec(prevLine);if(!m)return null;
+      var t=m[1].trim(),dash='',num='';
+      if(/^[-־–]/.test(t)){dash='-';t=t.replace(/^[-־–]\s*/,'')}
+      var nu=/^([א-י]\.)\s*/.exec(t);if(nu){num=nu[1];t=t.slice(nu[0].length)}
+      t=t.replace(/:\s*$/,'').trim();
+      var aw=t?t.split(/\s+/):[];if(aw.length>1)return null;
+      var x=nm.replace(/:\s*$/,'').trim(),xw=x.split(/\s+/).filter(Boolean);
+      if(!/:\s*$/.test(nm)||!xw.length||xw.length>2||/^[א-י]\./.test(x))return null;
+      var tot=aw.length+xw.length;if(tot>3||(tot===3&&!SIDE_LINK.test(aw[0]||'')))return null;
+      return '[צד:'+[dash,num,aw.concat(xw).join(' ')].filter(Boolean).join(' ')+':]'}
     function speakerOut(text){
       var P=String(text||'').replace(/\r/g,'').split('\n'),out=[],notes=[],inM=false;
       for(var i=0;i<P.length;i++){
@@ -971,6 +985,9 @@
         /* 9.11: שורה ממוספרת (א. ב.) - המספר נשאר בגוף, ולכן גם הדובר נשאר (אחרת "ב." עובר לצד ו"א." נשאר בגוף) */
         if(!m||num){out.push(raw);continue}
         var nm=m[1].trim(),rest=body.slice(m[0].length);
+        /* פרומפט 97: כותרת צד קצרה מעל - הדובר (גם נוסחת ייחוס: דתנן, דתניא, נאמר) מצטרף אליה */
+        var prev0=out.length?out[out.length-1].trim():'',mg0=/^\[צד:/.test(prev0)&&!/\{אם:[^{}]*:\}/.test(rest)&&plainI(rest).replace(NIK,'').trim().length>=20?sideMerge(prev0,nm):null;
+        if(mg0){out[out.length-1]=mg0;out.push((sty?sty[0]:'')+rest);notes.push('דובר הצטרף לכותרת הצד: '+plainI(nm));continue}
         /* רק דובר שאומר (נקודתיים), עד שלוש מילים, ושאחריו יש תוכן */
         /* (שורה קצרה מאוד - צלע של מחלוקת או תשובה בת מילים ספורות - נשארת בשורה, כדי שלא תיוותר שורה בת מילה) */
         /* רק שם חכם (לא "ושמא תאמר", לא "א"ל" לבדו), ולא סימון שכבר נושא מקף או מספור בתוך הסגנון */
@@ -979,7 +996,9 @@
         /* צלע במחלוקת שכולה בשורה אחת ("לב"ש: ... וב"ה: ...") - נשארת בשורה (כלל 8 וכלל 17ג) */
         if(/\{אם:[^{}]*:\}/.test(rest)){out.push(raw);continue}
         var prev=out.length?out[out.length-1].trim():'';
-        if(/^\[צד:/.test(prev)){out.push(raw);continue}
+        /* פרומפט 97 (25.11.2026): כשכבר יש כותרת צד קצרה (מקף, מילת קישור אחת, אות מספור) - הדובר מצטרף אליה
+           ("[צד:והא]" + "{אם:דתנן:} ..." = "[צד:והא דתנן:]"). עד כאן הדילוג כאן היה הכשל: הכלל לא חל על שורה שיש לה כותרת. */
+        if(/^\[צד:/.test(prev)){var mg=sideMerge(prev,nm);if(mg){out[out.length-1]=mg;out.push((sty?sty[0]:'')+rest);notes.push('דובר הצטרף לכותרת הצד: '+plainI(nm))}else out.push(raw);continue}
         /* "ר"מ אומר:" -> [צד:ר"מ:] (מה שבכותרת אינו חוזר, ו"אומר" מיותר כשהשם בכותרת) */
         var nm2=nm.replace(/\s+(אומר|אומרים|אמר|אמרו|אמרי|אומרת)\s*:$/,':');
         out.push('[צד:'+(num?num.trim()+' ':'')+nm2+']');

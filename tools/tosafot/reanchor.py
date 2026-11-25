@@ -243,6 +243,8 @@ def main():
                     rep['page_fixed'] += 1
                 stats[how] += 1
                 if a.write:
+                    if it.get('t') == t and (it.get('occ') or 1) == occ and it.get('page') == lab and it.get('daf') == lab:
+                        continue    # העוגן לא השתנה: לא נוגעים (בלי שינוי סתמי בנימוק)
                     it.update(t=t, occ=occ, rule=rule, why=why, page=lab, daf=lab)
                     key = str(it['n'] if (a.slug == 'kiddushin' and perek == 1) else it['n'] - perek * 1000)   # מפתח הספירה (כמו make_live)
                     ak = A.get(key)

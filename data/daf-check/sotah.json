@@ -3,21 +3,14 @@
  "pages": 96,
  "first": "ב.",
  "last": "מט:",
- "missing": [
-  "לב:"
- ],
- "dup": [
-  {
-   "pi": 61,
-   "daf": "לב."
-  }
- ],
+ "missing": [],
+ "dup": [],
  "back": [],
  "badlabel": [],
- "n_missing": 1,
- "n_dup": 1,
+ "n_missing": 0,
+ "n_dup": 0,
  "n_back": 0,
- "when": "2026-11-24T11:24:37Z",
+ "when": "2026-11-25T09:08:15Z",
  "mode": "book",
  "props": [
   {
@@ -148,6 +141,15 @@
   },
   {
    "op": "moved",
+   "daf": "לב.",
+   "now_at": 2289,
+   "pred_at": 2291,
+   "shift_units": 1,
+   "ok": 0,
+   "why": "הציון קיים, והחזוי במרחק 1 יחידות"
+  },
+  {
+   "op": "moved",
    "daf": "לה:",
    "now_at": 2540,
    "pred_at": 2543,
@@ -244,18 +246,8 @@
    "shift_units": -1,
    "ok": 0,
    "why": "הציון קיים, והחזוי במרחק -1 יחידות"
-  },
-  {
-   "op": "fix",
-   "daf_from": "לב.",
-   "daf": "לב:",
-   "page_index_from": 61,
-   "after_id": 2314,
-   "text": "פרשת סוטה- בכל לשון.",
-   "ok": 1,
-   "why": "19 מתוך 19 יחידות שויכו ל-לב:"
   }
  ],
- "n_sure": 1,
- "n_doubt": 25
+ "n_sure": 0,
+ "n_doubt": 26
 }

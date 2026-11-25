@@ -3,23 +3,25 @@
  "pages": 41,
  "first": "ב.",
  "last": "כב.",
- "missing": [
-  "ב:"
- ],
- "dup": [
-  {
-   "pi": 1,
-   "daf": "ב."
-  }
- ],
+ "missing": [],
+ "dup": [],
  "back": [],
  "badlabel": [],
- "n_missing": 1,
- "n_dup": 1,
+ "n_missing": 0,
+ "n_dup": 0,
  "n_back": 0,
- "when": "2026-11-24T11:25:00Z",
+ "when": "2026-11-25T09:08:43Z",
  "mode": "book",
  "props": [
+  {
+   "op": "moved",
+   "daf": "ב:",
+   "now_at": 23,
+   "pred_at": 21,
+   "shift_units": -1,
+   "ok": 0,
+   "why": "הציון קיים, והחזוי במרחק -1 יחידות"
+  },
   {
    "op": "moved",
    "daf": "ח.",
@@ -64,19 +66,8 @@
    "shift_units": 1,
    "ok": 0,
    "why": "הציון קיים, והחזוי במרחק 1 יחידות"
-  },
-  {
-   "op": "fix",
-   "daf_from": "ב.",
-   "daf": "ב:",
-   "page_index_from": 1,
-   "after_id": 22,
-   "text": "האם עלו ירדו - מחלוקת רבה ורב יוסף",
-   "ok": 1,
-   "why": "7 מתוך 7 יחידות שויכו ל-ב:",
-   "move_before": "אם עלו, מהו שירדו? רבה : אם עלו - ירדו,"
   }
  ],
- "n_sure": 1,
- "n_doubt": 5
+ "n_sure": 0,
+ "n_doubt": 6
 }

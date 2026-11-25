@@ -133,6 +133,15 @@ html.tb-onefab #lk-fab button:hover{opacity:1}
   .bar .bg+.bg{padding-inline-start:3px}
   .bar .bg.sr{min-width:46px}
 }
+/* פרומפט 93: מחשב צר (חלון צר או דף מוגדל, html.dev-narrow) - הסרגל מתקצר לסמלים (הכיתוב בריחוף) ואינו מאבד כפתורים */
+@media (max-width:700px){
+  html.dev-narrow .bar .tbwa .lng{display:none}html.dev-narrow .bar .tbwa .sht{display:inline}
+  html.dev-narrow .bar .tbpill{padding:0;width:32px;justify-content:center}html.dev-narrow .bar .tbpill .t{display:none}
+  html.dev-narrow .bar .ib.stk .t{display:none!important}html.dev-narrow .bar .ib.stk{min-width:32px;padding:2px}
+  html.dev-narrow .bar .brand .nm{display:none}
+  html.dev-narrow .bar .where .wsep{display:none}html.dev-narrow .bar .where #peresel{max-width:3.6em;min-width:2.8em}
+  html.dev-narrow .bar .bg.loc{flex-wrap:wrap;row-gap:6px;min-width:0}html.dev-narrow .bar .where{max-width:100%}
+}
 /* הגופן העברי של הממשק חסר את הסימן +, ולכן הסימנים בגופן רגיל */
 .bar .vwp .row3 .pm{font-family:Arial,'Segoe UI',sans-serif;font-weight:700;margin-inline-start:1px}
 /* בלי כפילויות במחשב: "בחר נוסח" יושב בתפריט "עוד", ו"סכם פרק" בכפתור שבאזור המנהל.

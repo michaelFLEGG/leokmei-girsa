@@ -51,7 +51,7 @@
    '.tzapx{position:absolute;top:6px;right:8px;background:rgba(43,38,32,.78);color:#f1ead9;font-size:12px;padding:2px 9px;border-radius:10px;pointer-events:none}'+
    '.tzdrag{position:absolute;top:0;bottom:0;right:-12px;width:24px;cursor:col-resize;z-index:12;touch-action:none}'+
    '.tzdrag::after{content:"";position:absolute;top:0;bottom:0;left:10px;width:4px;background:rgba(201,162,74,.55);border-radius:2px}'+
-   '@media screen and (max-width:760px){.tzx.split{left:0;right:0;top:auto;bottom:0;width:auto;height:62vh}body.tzsplit .flow{width:auto;margin-left:0}}'+
+   '@media screen and (max-width:760px){:where(html:not(.dev-desk)) .tzx.split{left:0;right:0;top:auto;bottom:0;width:auto;height:62vh}:where(html:not(.dev-desk)) body.tzsplit .flow{width:auto;margin-left:0}}'+
    '@media print{.tzx,#tzl{display:none!important}}';
   document.head.appendChild(tzSty);
   var tzL=document.createElement('div');tzL.id='tzl';tzL.setAttribute('aria-hidden','true');document.body.appendChild(tzL);
@@ -116,7 +116,7 @@
     if(typeof closeSrc==='function')closeSrc();
     barH();
     var box=tzBox();
-    var mode=innerWidth<900?'full':'split';
+    var mode=(document.documentElement.classList.contains('dev-desk')?innerWidth<480:innerWidth<900)?'full':'split';
     if(!box){box=document.createElement('div');box.id='tzx';box.tabIndex=0;document.body.appendChild(box)}
     box.className='tzx '+mode;
     var w=+tzGet('tz-w','46');if(!(w>=28&&w<=70))w=46;

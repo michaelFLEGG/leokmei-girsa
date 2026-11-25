@@ -38,9 +38,12 @@
 
   /* ------------------------------------------------------------------ סוג המכשיר (מתעדכן בסיבוב) */
   function classify() {
-    var w = innerWidth, h = innerHeight, mn = Math.min(w, h), mx = Math.max(w, h);
+    /* פרומפט 93 (25.11.2026): לפי המכשיר הפיזי (screen ומגע), לא לפי innerWidth - הגדלת הדף במחשב
+       אינה הופכת אותו לטלפון. זהה ל-DEV_CLASS_JS ב-build_site.py. */
+    var w = innerWidth, h = innerHeight, sa = screen.width || w, sb = screen.height || h;
+    var mn = Math.min(sa, sb), mx = Math.max(sa, sb), sw = w > h ? mx : mn;
     var co = matchMedia('(pointer:coarse)').matches;
-    var ph = w < 768 || (co && mn < 500);
+    var ph = co ? (sw < 768 || mn < 500) : mn < 460;
     var tb = !ph && co && mn >= 500 && mx <= 1400;
     H.classList.toggle('dev-phone', ph); H.classList.toggle('dev-tab', tb); H.classList.toggle('dev-desk', !ph && !tb);
     H.classList.toggle('land', w > h); H.classList.toggle('port', w <= h);

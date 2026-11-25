@@ -1601,11 +1601,78 @@ def _apply_site_edits(pages, slug, qa):
 
 
 # סיווג המכשיר (טלפון / טאבלט / מחשב) לפני הציור הראשון, כדי שהמעטפת לא תקפוץ.
-# זהה ל-classify ב-mobile.js. טלפון: רוחב עד 767, או מגע וצר. טאבלט: מגע וגדול. מחשב: השאר.
+# זהה ל-classify ב-mobile.js. פרומפט 93 (25.11.2026): הסיווג לפי המכשיר הפיזי, לא לפי innerWidth -
+# הגדלת הדף (Ctrl ועוד +) במחשב מקטינה את innerWidth, ואסור שתהפוך מחשב לטלפון ותעלים את מסילת הצד.
+# מגע (pointer:coarse): המידות הן של המסך (screen), בכיוון הנוכחי. טלפון: רוחב עד 767 או צד קצר מתחת ל-500.
+# טאבלט: מגע וגדול. בלי מגע: טלפון רק כשהמסך עצמו צר מאוד (פחות מ-460, למשל הדמיית טלפון), אחרת מחשב.
 DEV_CLASS_JS = (
-  "(function(){try{var d=document.documentElement,w=innerWidth,h=innerHeight,mn=Math.min(w,h),mx=Math.max(w,h),"
-  "co=matchMedia('(pointer:coarse)').matches,ph=w<768||(co&&mn<500),tb=!ph&&co&&mn>=500&&mx<=1400;"
-  "d.classList.add(ph?'dev-phone':tb?'dev-tab':'dev-desk');d.classList.add(w>h?'land':'port')}catch(e){}})();")
+  "(function(){try{var d=document.documentElement,w=innerWidth,h=innerHeight,S=screen,sa=S.width||w,sb=S.height||h,"
+  "mn=Math.min(sa,sb),mx=Math.max(sa,sb),sw=w>h?mx:mn,co=matchMedia('(pointer:coarse)').matches,"
+  "ph=co?(sw<768||mn<500):mn<460,tb=!ph&&co&&mn>=500&&mx<=1400;"
+  "d.classList.add(ph?'dev-phone':tb?'dev-tab':'dev-desk');d.classList.add(w>h?'land':'port');"
+  # מחשב צר (חלון צר או דף מוגדל): המסילה נשארת בצד בעמודה מצומצמת, כמו בטלפון, והטקסט מתכווץ
+  # הרוחב הקובע הוא רוחב עמודת הטקסט בפועל (כשמגירת "מקור" או צורת הדף פתוחות לצדה, היא צרה), חלקי הגדלת הדף שבתצוגה.
+  "var n=function(){var z=1;try{z=+localStorage.getItem('lg-vz')||1}catch(e){}"
+  "var f=document.getElementById('flow'),fw=f&&f.clientWidth?f.clientWidth:innerWidth;"
+  "d.classList.toggle('dev-narrow',d.classList.contains('dev-desk')&&self===top&&fw/z<640)};n();"
+  "addEventListener('resize',n);document.addEventListener('DOMContentLoaded',function(){n();"
+  "if(window.MutationObserver)new MutationObserver(n).observe(document.body,{attributes:true,attributeFilter:['class']})})}catch(e){}})();")
+
+# פרומפט 93: כללי הטלפון שבשאילתות max-width חלים רק על טלפון/טאבלט (html:not(.dev-desk)).
+# במחשב מוגדל הרוחב ב-CSS קטן, אבל המסילה, כפתור המפרשים והחלונות בצד נשארים במקומם.
+_DEV_MQ = ('@media screen and (max-width:760px){', '@media screen and (max-width:900px){')
+_DEV_PRE = 'html:not(.dev-desk)'
+
+
+def _dev_sel(sel):
+    out = []
+    for one in re.split(r',(?![^()]*\))', sel):
+        t = one.strip()
+        if not t:
+            continue
+        # :where - בלי תוספת ספציפיות, כדי שבטלפון סדר הכללים יישאר בדיוק כפי שהיה
+        if t.startswith(':root'):
+            out.append(':root:where(:not(.dev-desk))' + t[5:])
+        elif re.match(r'html(?![\w-])', t):
+            m = re.match(r'html((?::[\w-]+(?:\([^()]*\))?|\.[\w-]+)*)', t)
+            out.append('html' + m.group(1) + ':where(:not(.dev-desk))' + t[m.end():])
+        else:
+            out.append(':where(' + _DEV_PRE + ') ' + t)
+    return ','.join(out)
+
+
+def _dev_block(inner):
+    """מוסיף את התחילית לכל בורר בגוף שאילתת מדיה (כללים שטוחים, עם הערות)."""
+    o, i, n = [], 0, len(inner)
+    while i < n:
+        if inner.startswith('/*', i):
+            j = inner.index('*/', i) + 2; o.append(inner[i:j]); i = j; continue
+        if inner[i].isspace():
+            o.append(inner[i]); i += 1; continue
+        a = inner.index('{', i); b = inner.index('}', a)
+        if '{' in inner[a + 1:b]:
+            raise SystemExit('עצירה: שאילתת מדיה מקוננת בתוך כללי הטלפון - _dev_block אינו תומך')
+        o.append(_dev_sel(inner[i:a]) + inner[a:b + 1]); i = b + 1
+    return ''.join(o)
+
+
+def dev_scope(css):
+    """פרומפט 93: כל שאילתת max-width:760/900 במסך - רק לטלפון/טאבלט. שער: לא נשארת אף אחת בלי תחילית."""
+    for mq in _DEV_MQ:
+        k = 0
+        while True:
+            k = css.find(mq, k)
+            if k < 0:
+                break
+            st = k + len(mq); dep, j = 1, st
+            while dep:
+                c = css[j]; dep += (c == '{') - (c == '}'); j += 1
+            body = css[st:j - 1]
+            nb = _dev_block(body)
+            css = css[:st] + nb + css[j - 1:]
+            k = st + len(nb)
+    return css
+
 
 # ---------------------------------------------------------------------------------------------
 # הסרגל העליון של דף המסכת (פרומפט 28, 9.11.2026): שלוש קבוצות ברורות, בלי גלישה ובלי חיתוך.
@@ -1651,6 +1718,8 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
   '<select id="shsel" style="display:none" onchange="setSheets(this.value)" title="מספר גיליונות"><option value="1">גיליון אחד</option><option value="2">שני גיליונות</option><option value="3">שלושה גיליונות</option></select>'
   '<div class="sml">גודל הגופן</div>'
   '<div class="row3"><button onclick="fs(-2)" title="הקטנה (Ctrl+מינוס)" aria-label="הקטנת הגופן">א<span class="pm">-</span></button><button id="fsnow" data-fs="18" onclick="setFs(18)" title="חזרה לגודל הרגיל">רגיל</button><button onclick="fs(2)" title="הגדלה (Ctrl+פלוס)" aria-label="הגדלת הגופן">א<span class="pm">+</span></button></div>'
+  '<div class="sml">הגדלת הדף (הטקסט והמסילה יחד)</div>'
+  '<div class="row3" id="vzrow"><button onclick="vz(-1)" title="הקטנת הדף כולו" aria-label="הקטנת הדף">הקטן</button><button id="vznow" onclick="vz(0)" title="חזרה לגודל הרגיל">100%</button><button onclick="vz(1)" title="הגדלת הדף כולו: הטקסט, המסילה וכפתורי הצד נשארים במקומם" aria-label="הגדלת הדף">הגדל</button></div>'
   '<button id="nkbtn" class="swrow keep" role="switch" aria-checked="false" style="display:none" onclick="nikud()" title="ניקוד המשניות"><span>ניקוד</span><i class="sw" aria-hidden="true"></i></button>'
   '<div class="acc"><div class="sml">נגישות</div><button id="hcbtn" class="swrow sm keep" role="switch" aria-checked="false" onclick="hcToggle()" title="ניגודיות גבוהה"><span>ניגודיות גבוהה</span><i class="sw" aria-hidden="true"></i></button></div>'
   '</div></span>'
@@ -2864,13 +2933,13 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       width:calc(var(--rail) + var(--measure))}
     html body.ed .flow:not(.book) .row>.rail{flex:0 0 var(--rail);min-width:0}
     html body.ed .flow:not(.book) .row>.main{flex:1 1 0;min-width:0;box-sizing:border-box}
-    html.dev-phone body.ed .flow:not(.book) .row{flex-direction:row;align-items:baseline;column-gap:.35em;
+    html:is(.dev-phone,.dev-narrow) body.ed .flow:not(.book) .row{flex-direction:row;align-items:baseline;column-gap:.35em;
       width:calc(var(--mrail,3.1em) + .35em + var(--measure,20.75em));max-width:100%;margin:0 auto}
-    html.dev-phone body.ed .flow:not(.book) .row>.rail{flex:0 0 var(--mrail,3.1em)}
-    html.dev-phone body.ed .flow .row.hatz,html.dev-phone body.ed .flow .row.perek-num,html.dev-phone body.ed .flow .row.perek-name{
+    html:is(.dev-phone,.dev-narrow) body.ed .flow:not(.book) .row>.rail{flex:0 0 var(--mrail,3.1em)}
+    html:is(.dev-phone,.dev-narrow) body.ed .flow .row.hatz,html:is(.dev-phone,.dev-narrow) body.ed .flow .row.perek-num,html:is(.dev-phone,.dev-narrow) body.ed .flow .row.perek-name{
       flex-direction:column;align-items:stretch;width:auto;margin:0}
-    html.dev-phone body.ed .flow .row.hatz>.rail,html.dev-phone body.ed .flow .row.perek-num>.rail,html.dev-phone body.ed .flow .row.perek-name>.rail,
-    html.dev-phone body.ed .flow .row.hatz>.main,html.dev-phone body.ed .flow .row.perek-num>.main,html.dev-phone body.ed .flow .row.perek-name>.main{flex:0 0 auto}
+    html:is(.dev-phone,.dev-narrow) body.ed .flow .row.hatz>.rail,html:is(.dev-phone,.dev-narrow) body.ed .flow .row.perek-num>.rail,html:is(.dev-phone,.dev-narrow) body.ed .flow .row.perek-name>.rail,
+    html:is(.dev-phone,.dev-narrow) body.ed .flow .row.hatz>.main,html:is(.dev-phone,.dev-narrow) body.ed .flow .row.perek-num>.main,html:is(.dev-phone,.dev-narrow) body.ed .flow .row.perek-name>.main{flex:0 0 auto}
   }
   @media screen and (max-width:760px){
     html:not(.dev-phone) body.ed .flow:not(.book) .row{flex-direction:column;align-items:stretch;width:auto}
@@ -3255,8 +3324,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* בטלפון גיליון אחד, וגודל האות מוקטן כדי שרוחב הגיליון ייכנס למסך.
      זה בדיוק מה שהכלל הנעול מתיר: היחס קבוע, ורק --fs זז. בלעדי זה
      הגיליון יצא 553 פיקסל במסך של 375, והלומד היה נדרש לגלול לצדדים. */
-  @media screen and (max-width:900px){.flow.book{--sheets:1!important;
-    font-size:min(var(--fs),calc((100vw - 2.2rem) / 31.125))}}
+  @media screen and (max-width: 900px){.flow.book{--sheets:1!important}}
+  @media screen and (max-width:900px){.flow.book{font-size:min(var(--fs),calc((100vw - 2.2rem) / 31.125))}}
   /* ד - ההדפסה היא מנוע הגיליונות, גיליון אחד בעמוד. גודל האות נגזר
      מן היחס הנעול (60 מ"מ חלקי 20.75) ורשת השורות 11 נקודות, כבוורד. */
   @media print{
@@ -3377,9 +3446,15 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     html:not(.prn) .ps{letter-spacing:%(ps).5fem}
   }
   @media screen and (max-width:760px){:root{--fs:%(fsm).3fpx}}
-  @media screen{html.dev-phone{--mrail:%(mrail).4fem}}
+  @media screen{html:is(.dev-phone,.dev-narrow){--mrail:%(mrail).4fem}}
   @media screen and (max-width:900px){.flow.book{font-size:min(var(--fs),calc((100vw - 2.2rem) / %(tot).4f))}}
   ''' % SCREEN_BIG
+  CSS = CSS + '''
+  /* פרומפט 93: "הגדל / הקטן" בתצוגה - עמודת התוכן כולה (הטקסט, המסילה, החלונות) גדלה כגוש. מסך בלבד, לא בהדפסה */
+  /* ההגדלה חלה על תוכן העמודה ולא על תיבת העמודה עצמה: כך רוחב העמודה, גובהה ומגירת "מקור" שלצדה אינם זזים */
+  @media screen{html:not(.prn) .flow:not(.book)>*{zoom:var(--vz,1)}}
+  '''
+  CSS = dev_scope(CSS)   # פרומפט 93: הגדלה במחשב אינה מפעילה את פריסת הטלפון
 
   JS=r'''
   const D=DATA;const MNSEG=D.mnseg||{};const $=s=>document.querySelector(s);
@@ -4315,6 +4390,17 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   function fs(d){const r=document.documentElement;
     const v=Math.max(12,Math.min(60,Math.round(parseFloat(getComputedStyle(r).getPropertyValue('--fs'))/FSK)+d));setFs(v)}
   function setFs(v){document.documentElement.style.setProperty('--fs',(v*FSK).toFixed(3)+'px');localStorage.setItem('lg-fs',v);sizeBtns(v);setDafW();fitAnchors()}
+  /* פרומפט 93 (25.11.2026): הגדלת הדף כגוש - עמודת התוכן עם המסילה (zoom), נשמרת לדפדפן. הגדלת צפייה בלבד:
+     ההדפסה ומצב דפוס אינם מושפעים (‎--vz חל רק על המסך, ולא ב-html.prn). חלופה נוחה לזום הדפדפן ולטאבלט. */
+  const VZS=[.8,.9,1,1.1,1.25,1.5,1.75,2];
+  function vzApply(z){z=+z||1;const H=document.documentElement;
+    if(z===1)H.style.removeProperty('--vz');else H.style.setProperty('--vz',String(z));
+    const n=document.getElementById('vznow');if(n){n.textContent=Math.round(z*100)+'%';n.classList.toggle('on',z!==1)}
+    try{window.dispatchEvent(new Event('resize'))}catch(e){}}
+  function vz(d){let z=+(localStorage.getItem('lg-vz')||1);
+    if(!d)z=1;else{let i=VZS.indexOf(z);if(i<0)i=2;z=VZS[Math.max(0,Math.min(VZS.length-1,i+d))]}
+    try{if(z===1)localStorage.removeItem('lg-vz');else localStorage.setItem('lg-vz',String(z))}catch(e){}
+    vzApply(z)}
   function sizeBtns(v){document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('on',+b.dataset.fs===+v));
     const n=$('#fsnow');if(n){n.textContent=(+v===18||!v)?'רגיל':String(+v);n.title=(+v===18||!v)?'הגודל הרגיל':'חזרה לגודל הרגיל'}}
   /* ניגודיות גבוהה: מתג תחת "נגישות", נזכר במכשיר (פרומפט 28) */
@@ -4393,6 +4479,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
      $('#qab').insertAdjacentHTML('beforeend',t);
    }).catch(()=>{})};
    const sv=+localStorage.getItem('lg-fs');if(sv)setFs(sv);else sizeBtns(18);
+   try{const z0=+localStorage.getItem('lg-vz');if(z0&&z0!==1)vzApply(z0)}catch(e){}
    /* פרומפט 28 (9.11.2026): בחלון התצוגה שתי אפשרויות - "טור אחד" ו"ספר". במחשב, מי שבחר "טורים" עובר אוטומטית ל"טור אחד".
       בטלפון ובטאבלט אין שינוי (mobile.js קובע טור אחד). "טורים" נשאר בקוד בלבד, ואינו מוצג. */
    const VW1=!localStorage.getItem('lg-vert')&&!BOOK&&document.documentElement.classList.contains('dev-desk')&&params.get('print')!=='1'&&new URLSearchParams(location.search).get('print')!=='1';
@@ -7269,7 +7356,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   /* צמוד לטקסט (ברירת מחדל) או דפדוף חופשי */
   let SRCSYNC=localStorage.getItem('lg-srcsync')!=='0';
   let SX=null, REFS=null, SRCT=null;
-  function srcDefault(){return innerWidth<900?'full':'split'}
+  /* פרומפט 93: במחשב מוגדל המקור נפתח בצד (לא על כל המסך), כל עוד יש לו מקום */
+  function srcDefault(){return (document.documentElement.classList.contains('dev-desk')?innerWidth<480:innerWidth<900)?'full':'split'}
   function loadSrc(){
     if(SRC)return Promise.resolve(SRC);
     if(SRCLOAD)return SRCLOAD;

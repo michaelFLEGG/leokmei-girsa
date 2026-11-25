@@ -46,17 +46,24 @@ html.dev-phone .flow,html.dev-tab .flow{padding-top:calc(var(--mtop) + 10px);pad
 html.dev-phone body.ed .flow,html.dev-tab body.ed .flow{padding-top:.9em;padding-bottom:1.2em}
 html.dev-phone .flow.book,html.dev-tab .flow.book{padding-top:calc(var(--mtop) + 10px);padding-bottom:calc(var(--mbh) + 10px)}
 
-/* ---- טלפון: כותרות הצד בעמודה שמורה (גריד), רוחב מצומצם, ולעולם לא בתוך הטקסט ---- */
-html.dev-phone .flow:not(.book){column-width:auto;column-count:auto;column-rule:0;column-fill:balance;width:auto;padding-inline:.7em;overflow-x:hidden}
-html.dev-phone .flow:not(.book) .row{display:grid;grid-template-columns:[rail] var(--mrail,3.1em) [text] minmax(0,var(--measure,20.75em));justify-content:center;align-items:baseline;column-gap:.35em;width:auto;max-width:100%;margin:0}
-html.dev-phone .rail{display:grid;grid-template-columns:minmax(0,1fr);grid-column:rail;text-align:right;padding:0;line-height:1.06;min-width:0;overflow-wrap:anywhere}
-html.dev-phone .rail>*{font-size:.78em;line-height:1.05;white-space:normal}
-html.dev-phone .main{grid-column:text;min-width:0}
-html.dev-phone .win{display:block;white-space:normal;max-width:100%}
-html.dev-phone .anchor{display:block;font-size:.78em}
-html.dev-phone .dafmark{display:block;margin:0}
-html.dev-phone .mlabel{display:block;margin:0}
-html.dev-phone .flow .row.hatz,html.dev-phone .flow .row.perek-num,html.dev-phone .flow .row.perek-name{grid-template-columns:minmax(0,1fr)}
+/* ---- טלפון: כותרות הצד בעמודה שמורה (גריד), רוחב מצומצם, ולעולם לא בתוך הטקסט ----
+   פרומפט 93: גם מחשב צר (dev-narrow: חלון צר או דף מוגדל) - המסילה בצד, והטקסט מתכווץ */
+html:is(.dev-phone,.dev-narrow) .flow:not(.book){column-width:auto;column-count:auto;column-rule:0;column-fill:balance;width:auto;padding-inline:.7em;overflow-x:hidden}
+html:is(.dev-phone,.dev-narrow) .flow:not(.book) .row{display:grid;grid-template-columns:[rail] var(--mrail,3.1em) [text] minmax(0,var(--measure,20.75em));justify-content:center;align-items:baseline;column-gap:.35em;width:auto;max-width:100%;margin:0}
+html:is(.dev-phone,.dev-narrow) .rail{display:grid;grid-template-columns:minmax(0,1fr);grid-column:rail;text-align:right;padding:0;line-height:1.06;min-width:0;overflow-wrap:anywhere}
+html:is(.dev-phone,.dev-narrow) .rail>*{font-size:.78em;line-height:1.05;white-space:normal}
+html:is(.dev-phone,.dev-narrow) .main{grid-column:text;min-width:0}
+html:is(.dev-phone,.dev-narrow) .win{display:block;white-space:normal;max-width:100%}
+html:is(.dev-phone,.dev-narrow) .anchor{display:block;font-size:.78em}
+html:is(.dev-phone,.dev-narrow) .dafmark{display:block;margin:0}
+html:is(.dev-phone,.dev-narrow) .mlabel{display:block;margin:0}
+html:is(.dev-phone,.dev-narrow) .flow .row.hatz,html:is(.dev-phone,.dev-narrow) .flow .row.perek-num,html:is(.dev-phone,.dev-narrow) .flow .row.perek-name{grid-template-columns:minmax(0,1fr)}
+/* מחשב צר: שוליים שמאליים לסמל "מקור" (הגמרא והמפרשים), כדי שיופיע בצד ולא על הטקסט */
+html.dev-narrow .flow:not(.book){padding-left:52px}
+/* מחשב צר עם מגירה בצד (מקור / צורת הדף / הצעות): העמודה נשארת ברוחב שליד המגירה, כמו במחשב */
+html.dev-narrow body.splitsrc .flow:not(.book){width:calc(100vw - var(--srcw,50vw));margin-left:auto}
+html.dev-narrow body.tzsplit .flow:not(.book){width:calc(100vw - var(--tzw,46vw));margin-left:auto}
+html.dev-narrow body:has(#sgq.open) .flow:not(.book){width:calc(100vw - min(460px,100vw));margin-left:auto}
 
 /* ---- טאבלט: "טור אחד" רצוף (במקום טורים שגוללים הצידה), ו"ספר" כעמוד שלם ---- */
 html.dev-tab .flow:not(.book){column-width:auto;column-count:auto;column-rule:0;column-fill:balance;width:auto;padding-inline:.6em;overflow-x:hidden}

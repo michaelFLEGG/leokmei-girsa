@@ -8,7 +8,8 @@ name: הבודקים - משניות ועוגני תוס'
 #    פרומפט 87: גם חוסר חלקי בתיבה ("partial" - רצף של 3 מילים ומעלה מן המשנה שנשמט) מכשיל את הריצה בקול.
 # ג. שורות כפולות (tools/dup_lines.py --apply, פרומפט 87): שורה זהה שחוזרת באותה יחידה או עד 12 שורות, ושארית פיצול,
 #    נמחקות בשכבה כעריכה רגילה (כלל קבוע של מיכאל: "ודאי טעות"). כמעט-זהות - לעיון בלבד, ב-data/fold/dups.json.
-# הדוחות: data/fold/anchor-check.json, data/fold/mishna-check.json. עוגן שתוקן נדחף, והשומר בונה את האתר.
+# ד. בודק השלמות (tools/integrity_check.py --apply, פרומפט 94).
+# הדוחות: data/fold/anchor-check.json, data/fold/mishna-check.json, data/fold/integrity.json. עוגן שתוקן נדחף, והשומר בונה את האתר.
 on:
   schedule:
     - cron: '40 1 * * *'      # 03:40 שעון ישראל (חורף), אחרי הקיפול
@@ -60,11 +61,19 @@ jobs:
           PYTHONUNBUFFERED: '1'
         run: |
           if [ -n "${{ github.event.inputs.only }}" ]; then python tools/dup_lines.py --apply --only "${{ github.event.inputs.only }}"; else python tools/dup_lines.py --apply; fi
+      - name: בודק השלמות
+        # פרומפט 94 (25.11.2026): כותרת שהועתקה לשורה (והשורה שנדרסה מוחזרת), כותרת צד כפולה, שורה כפולה בסוגריים,
+        # רווח חסר אחרי איחוי - ודאי, נכתב לשכבה. שורה תלושה רחוקה, כותרת צד ריקה - לעיון ב-data/fold/integrity.json
+        env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/integrity_check.py --apply --only "${{ github.event.inputs.only }}"; else python tools/integrity_check.py --apply; fi
       - name: שמירה ודחיפה
         id: save
         run: |
           git config user.name "leokmei-bodkim"; git config user.email "bodkim@users.noreply.github.com"
-          git add tosafot data/fold/anchor-check.json data/fold/mishna-check.json data/fold/dups.json data/edits
+          git add tosafot data/fold/anchor-check.json data/fold/mishna-check.json data/fold/dups.json data/fold/integrity.json data/edits
           git diff --cached --quiet && { echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; }
           git commit -q -m "הבודקים: עוגני תוס' ובודק המשניות"
           git stash -u -q || true

@@ -201,6 +201,11 @@
       const B=window.skmBatchStart?skmBatchStart():null;const done=[];
       try{R.items.forEach((x,i)=>{if(R.dec[x.iid])return;
         try{const orig=x.kind==='seg'?skmInter(skmUnits(x.ids)):undefined;
+          /* פרומפט 94 (25.11.2026): כאן נוצרו בשבת פרק הבונה (18.11) כותרת שהועתקה לשורה, שורה כפולה, כותרת צד כפולה
+             ושורה שנדרסה ונעלמה - הצעה שנכתבה על נוסח אחר הוחלה בכפייה, שורה לפי מספר שורה. מעתה: רק כשהאותיות זהות
+             (השתנו רק חלוקת היחידות או הסימון), כמו ב-reapply. אחרת - נשאר לסקירת המנהל, ולעולם לא בכפייה */
+          if(orig!==undefined&&orig!==x.orig&&skpLet(orig).replace(/\n/g,'')!==skpLet(x.orig).replace(/\n/g,''))
+            throw new Error('הקטע השתנה מאז ההצעה - לא מוחל בכפייה (פרומפט 94), נשאר לסקירה');
           /* מיכאל אישר מראש (18.11.2026) גם שורה שננעלה בהדפסה - ההצעה האחרונה גוברת */
           window.__SKMFORCE=1;try{skpApplyOne(x,x.text,orig)}finally{window.__SKMFORCE=0}
           done.push([x,i]);ok++}catch(e){bad.push(x.iid+': '+String(e&&e.message||e).slice(0,120))}})}

@@ -179,7 +179,9 @@ def apply(slug, src, dst, log=print):
             for lab, mi, a, b in page_ranges(ps):
                 if lab != o['daf_from']:
                     continue
-                nxt = [ps[i] for i in range(a, b) if nz(_ptext(ps[i]))][:3]    # עד שלוש פסקאות (משנה בצד, כותרת צד)
+                # עד שלוש פסקאות (משנה בצד, כותרת צד). פרומפט 94: בפתיחת פרק - טווח הפרק, פתיחת הפרק ו"משנה א" לפני
+                # המשנה עצמה, ולכן עד חמש (שבת קב: נשאר "נמצאו 0 ציונים מתאימים", ותוס' קב: כולם נפלו לכלל 3)
+                nxt = [ps[i] for i in range(a, b) if nz(_ptext(ps[i]))][:5]
                 if nxt and (not want or any(nz(_ptext(x)).startswith(want) for x in nxt)):
                     cand.append(mi)
             if o.get('occ') and len(cand) >= o['occ'] and o['daf'] not in labels:

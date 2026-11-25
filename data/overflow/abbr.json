@@ -13,14 +13,14 @@
    "long": "ואף על פי",
    "short": "ואע\"פ",
    "nLong": 6,
-   "nShort": 31,
+   "nShort": 30,
    "kind": "abbr"
   },
   {
    "long": "אף על פי",
    "short": "אע\"פ",
    "nLong": 55,
-   "nShort": 151,
+   "nShort": 150,
    "kind": "abbr"
   },
   {
@@ -47,7 +47,7 @@
   {
    "long": "אמר לו",
    "short": "א\"ל",
-   "nLong": 435,
+   "nLong": 436,
    "nShort": 3788,
    "kind": "abbr"
   },
@@ -125,7 +125,7 @@
    "long": "אם כן",
    "short": "א\"כ",
    "nLong": 91,
-   "nShort": 355,
+   "nShort": 354,
    "kind": "abbr"
   },
   {
@@ -341,8 +341,8 @@
   {
    "long": "שתי",
    "short": "ב'",
-   "nLong": 959,
-   "nShort": 785,
+   "nLong": 958,
+   "nShort": 784,
    "kind": "num"
   },
   {
@@ -418,14 +418,14 @@
   {
    "long": "תשעה",
    "short": "ט'",
-   "nLong": 108,
+   "nLong": 107,
    "nShort": 162,
    "kind": "num"
   },
   {
    "long": "עשרה",
    "short": "י'",
-   "nLong": 584,
+   "nLong": 583,
    "nShort": 187,
    "kind": "num"
   },

@@ -47,7 +47,7 @@
   {
    "long": "אמר לו",
    "short": "א\"ל",
-   "nLong": 434,
+   "nLong": 433,
    "nShort": 3788,
    "kind": "abbr"
   },
@@ -118,7 +118,7 @@
    "long": "כל שכן",
    "short": "כ\"ש",
    "nLong": 36,
-   "nShort": 350,
+   "nShort": 348,
    "kind": "abbr"
   },
   {
@@ -251,7 +251,7 @@
    "long": "קל וחומר",
    "short": "ק\"ו",
    "nLong": 11,
-   "nShort": 336,
+   "nShort": 337,
    "kind": "abbr"
   },
   {
@@ -341,7 +341,7 @@
   {
    "long": "שתי",
    "short": "ב'",
-   "nLong": 957,
+   "nLong": 956,
    "nShort": 784,
    "kind": "num"
   },

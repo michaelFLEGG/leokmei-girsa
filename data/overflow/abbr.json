@@ -55,7 +55,7 @@
    "long": "שמע מינה",
    "short": "ש\"מ",
    "nLong": 22,
-   "nShort": 712,
+   "nShort": 711,
    "kind": "abbr"
   },
   {
@@ -117,7 +117,7 @@
   {
    "long": "כל שכן",
    "short": "כ\"ש",
-   "nLong": 37,
+   "nLong": 36,
    "nShort": 350,
    "kind": "abbr"
   },
@@ -426,7 +426,7 @@
    "long": "עשרה",
    "short": "י'",
    "nLong": 582,
-   "nShort": 188,
+   "nShort": 189,
    "kind": "num"
   },
   {

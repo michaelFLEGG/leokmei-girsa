@@ -9,7 +9,7 @@
 
 התנאי (יחידת גוף, השורה הראשונה):
   א. השורה נפתחת ב-<i class="am">X:</i> - דובר או נוסחת ייחוס, X עד שתי מילים, מסתיים בנקודתיים.
-  ב. כותרת הצד: מקף, מילה אחת, או אות מספור (+ מילה אחת). (כותרת ריקה - אין לה מקום עריכה; לעיון.)
+  ב. כותרת הצד: ריקה, מקף, מילה אחת, או אות מספור (+ מילה אחת). ריקה - כשינוי מבנה "כותרת צד" (כמו העורך שבדף).
   ג. הצירוף "כותרת + X" עד שתי מילים; שלוש רק כשהראשונה מילת קישור קצרה (והא, ת"ש, והך, והרי, שהרי,
      מיתיבי ועוד). מקף ואות מספור אינם נספרים.
   ד. לא חל: צלע מקבילה בתוך השורה (דובר נוסף {אם:..:} באותה שורה - כלל 17ג), שורת משנה, ומימרא קצרה
@@ -87,6 +87,27 @@ def recent_hot(slug, hours=24, live_dir=None):
     return keys, texts
 
 
+_KIND = {}
+
+
+def classify(ws):
+    """שם חכם / מילת מהלך - לפי sakem_core (isNameW, isTransW), אותו מילון שסכם משתמש בו."""
+    import os, json, subprocess
+    need = sorted({w for w in ws if w not in _KIND})
+    if not need:
+        return
+    js = "const S=require(process.argv[1]);const W=JSON.parse(require('fs').readFileSync(0,'utf8'));" \
+         "console.log(JSON.stringify(W.map(w=>[w,!!S.isNameW(w),!!S.isTransW(w)])))"
+    try:
+        r = subprocess.run(['node', '-e', js, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sakem_core.js')],
+                           input=json.dumps(need, ensure_ascii=False), capture_output=True, text=True, timeout=120)
+        for w, n, t in json.loads(r.stdout):
+            _KIND[w] = 'name' if n else ('trans' if t else '')
+    except Exception:
+        for w in need:
+            _KIND.setdefault(w, '?')
+
+
 def judge(u, hot=()):
     """מחזיר None או {'certain', 'why', 'a_new', 'l_new', ...} ליחידה אחת."""
     if u.get('k') != 'u' or not u.get('l'):
@@ -117,10 +138,14 @@ def judge(u, hot=()):
         reasons.append('אינו דובר אלא קביעה')
     elif side_named and not FORMULA.match(x.rstrip(':').strip()):
         reasons.append('בכותרת כבר דובר (שני דוברים)')
-    if empty:
-        reasons.append('כותרת צד ריקה - אין לה מקום עריכה בשכבה (שינוי מבנה)')
     if not ok_len:
         reasons.append('הצירוף ארוך משתי מילים')
+    if ',' in x:
+        reasons.append('פסיק בתוך הדובר')
+    if empty or (aw and not side_named and aw[0] not in LINK):
+        x0 = xw[0].rstrip(',')
+        if not (FORMULA.match(x.rstrip(':').strip()) or x0 in LINK or _KIND.get(x0) in ('name', 'trans')):
+            reasons.append('לא זוהה כשם חכם או מילת מהלך')
     if re.search(r'<i class="am">[^<]*:\s*</i>', rest_h):
         reasons.append('דובר נוסף בתוך השורה (צלע מקבילה)')
     if len(rest) < 20 and len(u['l']) == 1:
@@ -140,10 +165,20 @@ def judge(u, hot=()):
         reasons.append('הסרה מן השורה אינה נקייה')
     return {'certain': not reasons and not is_hot, 'held': is_hot, 'why': '; '.join(reasons),
             'id': u['id'], 'a_was': u['a'], 'a_new': _html.escape(new_a, quote=False), 'l_was': h, 'l_new': nh,
-            'x': x, 'side': plain(u['a']).strip(), 'line': plain(h)}
+            'x': x, 'side': plain(u.get('a') or '').strip(), 'line': plain(h), 'struct': empty, 'cls': sty}
 
 
 def scan(pages, hot=()):
+    ws = []
+    for pg in pages:
+        for u in pg.get('units') or []:
+            if u.get('k') == 'u' and u.get('l'):
+                m = AM_HEAD.match(u['l'][0][1])
+                if m:
+                    w = words(plain(m.group(2)).rstrip(':'))
+                    if w:
+                        ws.append(w[0].rstrip(','))
+    classify(ws)
     out = []
     for pg in pages:
         for u in pg.get('units') or []:
@@ -154,11 +189,28 @@ def scan(pages, hot=()):
     return out
 
 
+def sig(e):
+    """חתימה למניעת כפילות בין הרצות (המפתח של שינוי מבנה משתנה בכל הרצה)."""
+    if e.get('op') == 'struct':
+        return 'struct|' + str((e.get('texts') or [''])[0])
+    return str(e.get('wasH')) + '|' + str(e.get('k', '')).split('~')[0]
+
+
 def edits_for(found, t0, tag='p97'):
     out = []
     t = t0
     for r in found:
         if not r['certain']:
+            continue
+        if r.get('struct'):
+            # כותרת צד ריקה: אין לה מקום עריכה, ולכן שינוי מבנה "כותרת צד" - באותה צורה שהעורך שבדף כותב
+            # (build_site.sideDo / _side_apply): הטקסט של השורה, השורה בלי הדובר, והכותרת.
+            t += 1
+            was_t = plain(r['l_was'])
+            out.append({'op': 'struct', 'kind': 'side', 'k': 's%d' % t, 't': t, 'texts': [was_t],
+                        'res': [[r['cls'], r['l_new']], [r['a_new']], [0, len(was_t) - len(plain(r['l_new']))]],
+                        'resT': [plain(r['l_new']), plain(r['a_new'])], 'daf': r['daf'] or '', 'pub': 0,
+                        tag: {'why': 'דובר בפתח השורה עלה לכותרת הצד (כלל 17, פרומפט 97)'}})
             continue
         for kk, was, now in (('.0', r['a_was'], r['a_new']), ('.1', r['l_was'], r['l_new'])):
             t += 1
@@ -211,8 +263,8 @@ def main():
         if a.apply and eds:
             p = os.path.join(root, 'data', 'edits', s + '.json')
             doc = json.load(io.open(p, encoding='utf-8')) if os.path.exists(p) else {'v': 1, 'slug': s, 'edits': []}
-            have = {str(e.get('wasH')) + '|' + str(e.get('k', '')).split('~')[0] for e in doc.get('edits') or [] if e.get('p97')}
-            new = [e for e in eds if e['wasH'] + '|' + e['k'].split('~')[0] not in have]
+            have = {sig(e) for e in doc.get('edits') or [] if e.get('p97')}
+            new = [e for e in eds if sig(e) not in have]
             doc['edits'] = (doc.get('edits') or []) + new
             io.open(p, 'w', encoding='utf-8', newline='\n').write(json.dumps(doc, ensure_ascii=False, indent=1))
             total += len(new)

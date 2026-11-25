@@ -265,11 +265,11 @@ def main():
                 if rl_eds:
                     p_ = os.path.join(root, 'data', 'edits', s + '.json')
                     doc_ = json.load(io.open(p_, encoding='utf-8')) if os.path.exists(p_) else {'v': 1, 'slug': s, 'edits': []}
-                    have_ = {str(e.get('wasH')) + '|' + str(e.get('k', '')).split('~')[0] for e in doc_.get('edits') or [] if e.get('p97')}
-                    new_ = [e for e in rl_eds if e['wasH'] + '|' + e['k'].split('~')[0] not in have_]
+                    have_ = {_S.sig(e) for e in doc_.get('edits') or [] if e.get('p97')}
+                    new_ = [e for e in rl_eds if _S.sig(e) not in have_]
                     doc_['edits'] = (doc_.get('edits') or []) + new_
                     io.open(p_, 'w', encoding='utf-8', newline='\n').write(json.dumps(doc_, ensure_ascii=False, indent=1))
-                    rl_applied['17'] = len(new_) // 2
+                    rl_applied['17'] = sum(1 for e in new_ if e.get('op') == 'struct' or e['k'].split('~')[0].endswith('.1'))
                     total += len(new_)
             RL.cover_update(s, rl_res, rl_applied)
             rules_rep = {k: {'n': len(v), 'certain': sum(1 for h in v if h.get('certain')), 'applied': rl_applied.get(k, 0),

@@ -208,11 +208,11 @@ def main():
             if eds:
                 p = os.path.join(ROOT, 'data', 'edits', s + '.json')
                 doc = json.load(io.open(p, encoding='utf-8')) if os.path.exists(p) else {'v': 1, 'slug': s, 'edits': []}
-                have = {str(e.get('wasH')) + '|' + str(e.get('k', '')).split('~')[0] for e in doc.get('edits') or [] if e.get('p97')}
-                new = [e for e in eds if e['wasH'] + '|' + e['k'].split('~')[0] not in have]
+                have = {_S.sig(e) for e in doc.get('edits') or [] if e.get('p97')}
+                new = [e for e in eds if _S.sig(e) not in have]
                 doc['edits'] = (doc.get('edits') or []) + new
                 io.open(p, 'w', encoding='utf-8', newline='\n').write(json.dumps(doc, ensure_ascii=False, indent=1))
-                applied['speaker_side'] = len(new) // 2
+                applied['17'] = sum(1 for e in new if e.get('op') == 'struct' or e['k'].split('~')[0].endswith('.1'))
         cover_update(s, res, applied)
         rep['masechtot'][s] = strip_private(res)
         print('%-14s %s' % (s, '  '.join('%s %d' % (k, len(v)) for k, v in res.items())), ('  הוחלו: %s' % applied) if applied else '')

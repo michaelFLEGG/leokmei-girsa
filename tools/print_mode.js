@@ -777,6 +777,8 @@
        שמתחתיה. ואם הגובה בכל זאת השתנה - שאר הטור זז, ולעולם אין חפיפה */
     var eh=row.classList.contains('u')?pmLook(el.innerHTML):el.innerHTML;
     if(t.innerHTML!==eh){t.innerHTML=eh;pmFitEd(t)}
+    /* פרומפט 95: המעוין שבתוך השורה - אותו מרווח חכם וכיול כמו בהדפסה (dmFit של המסגרת, tools/dm_fit.js) */
+    try{var dw=pmWin();if(dw&&dw.dmFit)dw.dmFit([t])}catch(e){}
     t.setAttribute('contenteditable','true');t.classList.add('pmed');t.spellcheck=false;
     var h1=row.offsetHeight;if(h1!==h0)pmShift(row,h1-h0,0);
     S.editing.h=row.offsetHeight;S.editing.n=pmLines(t);

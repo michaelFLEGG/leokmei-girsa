@@ -2094,6 +2094,9 @@
           b.parentNode.insertBefore(a,b);a.appendChild(b)})})
     }catch(e){W('קישורים בקובץ: '+e.message)}
     TM('pages');R.cols=cols.length;R.lines=L.length;
+    /* פרומפט 95 (25.11.2026): המעוין שבתוך השורה - כיול הגובה והמרכז, והריק העודף בשורה לשני צדיו (dmFit, tools/dm_fit.js).
+       רץ אחרי כל ההצרות והאיחויים ואחרי חלוקת העמודים, ולכן אינו משנה שום שבירה: כל תוספת קטנה מן הריק שבשורה עצמה */
+    try{if(window.dmFit){R.dmFit=dmFit([out]);var dmH=0;[].forEach.call(out.querySelectorAll('.pg .ptx p'),function(p){if(p.querySelector('.bkx.dm'))dmH++});R.dmParas=dmH}}catch(e){W('המעוין שבתוך השורה: '+e.message)}
     /* ---- בודק חפיפות וחריגות (14.10.2026): מעבר על כל תיבות הטקסט בכל עמוד והשוואת המלבנים שלהן.
        חפיפה בין שני בלוקים, או בלוק שיצא מתיבת השוליים, או פריט בכותרת הרצה שעלה אל מעל המסילה - כשל, לעולם לא בשקט.
        התוצאה ב-R.overlaps / R.bounds, וכל פריט נרשם גם ב-R.issues (לוח התקלות). render_pdf.py נכשל כשיש אחד. */

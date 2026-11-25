@@ -2957,9 +2957,16 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     width:.3em;height:.3em;background:#4d4d4d;transform:rotate(45deg);pointer-events:none}
   /* פרומפט 84 ב: המעוין שבתוך השורה - אותו סימן ואותו גוון כמו במסילה (אפור כהה, 70% שחור: סימן קטן בגוון בהיר יוצא בבית
      הדפוס כנקודות מטושטשות), קטן מגובה האות ובאמצע גובה השורה. מצויר בעיצוב ולא כתו (בגופני וילנא שבידינו אין מעוין) */
-  .bkx.dm{position:relative;display:inline;white-space:nowrap;line-height:0}
+  .bkx.dm{position:relative;display:inline;white-space:nowrap;line-height:0;padding:0 var(--dmx,0px)}
   /* line-height:0: הרווחים הקשיחים שבתוכו אינם מגביהים את השורה (נמדד: בלעדיו השורה גבהה בשני פיקסלים ונחשבה כשורה נוספת) */
-  .bkx.dm::before{content:'';position:absolute;right:.02em;top:calc(50% - .17em);width:.3em;height:.3em;background:#4d4d4d;transform:rotate(45deg);pointer-events:none}
+  /* פרומפט 95 (25.11.2026, מיכאל): קטן מעט (אלכסון כ-72% מגובה האות העברית, כ-85% מן המעוין הקודם), אפור (62% שחור: אפור ברור על המסך, ובהדפסה עדיין
+     מלא ולא נקודות), במרכז גובה האותיות העבריות ובמרכז הריק שבין שתי השיטות, וריק עודף בשורה ניתן קודם לשני צדיו עד כטאב.
+     המדידה והמרווח - dmFit (tools/dm_fit.js), רכיב אחד לתצוגה, למצב דפוס ולמנוע ההדפסה. הערכים שכאן הם ברירת המחדל עד
+     שהמדידה רצה (ביחידות הרהיט, שגופנו 1.12 מגופן הפסקה) */
+  .bkx.dm::before{content:'';position:absolute;right:calc(var(--dmc,.12em) - var(--dmd,.21em) / 2);bottom:var(--dmb,.46em);
+    width:var(--dmd,.21em);height:var(--dmd,.21em);background:#626262;transform:rotate(45deg);pointer-events:none}
+  /* המדידה של dmFit: הפסקה מיושרת לימין לרגע (שבירת השורות אינה תלויה ביישור), כדי שכל הריק של השורה יהיה בסופה */
+  .main p.dmq,p.dmq{text-align:right!important;text-align-last:right!important}
   /* בשורה שבמסילתה ציון דף: המעוין צמוד לטקסט, וציון הדף זז החוצה ממנו (מיכאל, 17.11.2026: "המעוין צריך להיות צמוד
      לשורה ולא סימון הדף - תחליף ביניהם"). עד כאן המעוין עמד מעבר לציון הדף */
   .row:has(>.main>p.mu:first-child)>.rail .dafmark{translate:1.1em 0}
@@ -3604,13 +3611,14 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     if(w===undefined){GM.className=p.parentElement.className;GP.className=p.className;GP.innerHTML='';
       w=GP.offsetWidth+'/'+getComputedStyle(GP).fontSize;WM.set(k,w)}
     return w}
-  function sqKey(p,WM){return sqHash(sqW(p,WM)+'|'+p.parentElement.className+'|'+p.className+'|'+p.innerHTML)}
+  /* פרומפט 95: המדידה על הרוחב הבסיסי של המעוין, בלי המרווח החכם (dmPlain מסיר את משתני dmFit) */
+  function sqKey(p,WM){return sqHash(sqW(p,WM)+'|'+p.parentElement.className+'|'+p.className+'|'+(window.dmPlain?dmPlain(p):p.innerHTML))}
   /* מדידה של פסקה אחת בסרגל: מספר השלב בסולם שמאחה אותה, או -1 */
   function sqMeasure(p){
     GM.className=p.parentElement.className;   /* mishna וכדומה משנים גופן */
     GP.className=p.className;
     GP.style.wordSpacing='';GP.style.letterSpacing='';
-    GP.innerHTML=p.innerHTML;
+    GP.innerHTML=window.dmPlain?dmPlain(p):p.innerHTML;
     const h0=GP.offsetHeight;
     if(!lastLineIsLone(GP))return -1;
     for(let j=0;j<STEPS.length;j++){const [ws,ls]=STEPS[j];
@@ -3622,6 +3630,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     const st=j>-1?STEPS[j]:[0,0],W=st[0]?st[0]+'em':'',L=st[1]?st[1]+'em':'';
     if(p.style.wordSpacing!==W)p.style.wordSpacing=W;
     if(p.style.letterSpacing!==L)p.style.letterSpacing=L;
+    if(p.__dmw)dmQueue(p);   /* פרומפט 95: האיחוי שינה את הריווח - המעוין נמדד מחדש */
     if(j>-1){if(p.dataset.sq!=='1')p.dataset.sq='1'}else if(p.dataset.sq)delete p.dataset.sq}
   /* רוחב וגופן לכל סוג פסקה: נמדדים פעם אחת לריצה (משתנים רק בשינוי גודל או גופן, ואז הריצה מתחילה מחדש) */
   let SQWM=new Map();
@@ -3651,6 +3660,19 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   let SQIO=null,SQHOLD=[];
   /* הסקירה נסגרה: מה שהמתין נמדד עכשיו */
   window.sqResume=function(){if(!SQHOLD.length||!SQ)return;const v=SQHOLD.filter(p=>p.isConnected);SQHOLD=[];if(v.length)sqPass(v,GEN,(fixed)=>{if(fixed)fitAnchors(sqRows(v.filter(p=>p.dataset.sq==='1')))})};
+  /* פרומפט 95 (25.11.2026): המרווח החכם של המעוין שבתוך השורה (dmFit, tools/dm_fit.js) - רק בפסקאות שקרובות למסך,
+     ובכל פעם שהאיחוי משנה פסקה, או שהרוחב או הגופנים משתנים. לא במצב עריכה (שם אין מעוין) */
+  let DMIO=null,DMT=0,DMW0=0;const DMQ=new Set();
+  function dmQueue(p){DMQ.add(p);if(!DMT)DMT=requestAnimationFrame(()=>{DMT=0;const a=[...DMQ].filter(x=>x.isConnected);DMQ.clear();
+    if(a.length&&window.dmFit&&!EDIT)try{dmFit(a)}catch(e){}})}
+  function dmWatch(){
+    if(DMIO){DMIO.disconnect();DMIO=null}
+    const f=$('#flow');if(!f||EDIT||!window.IntersectionObserver||!window.dmFit)return;
+    DMIO=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting)dmQueue(e.target)},{rootMargin:'900px 0px'});
+    f.querySelectorAll('.main p .bkx.dm').forEach(s=>{const p=s.closest('p');if(p){p.__dmw=1;DMIO.observe(p)}})}
+  document.addEventListener('DOMContentLoaded',()=>{const f=$('#flow');if(!f)return;
+    if(window.ResizeObserver)new ResizeObserver(()=>{const w=f.clientWidth;if(Math.abs(w-DMW0)<1)return;DMW0=w;dmWatch()}).observe(f);
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(dmWatch)});
   function squeezeRun(){
     const g=++GEN;
     if(SQIO){SQIO.disconnect();SQIO=null}
@@ -4351,6 +4373,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     dyMark();
     if(EDIT)setEdit(true);
     if(!BOOK)squeezeRun();
+    dmWatch();
     REFS=null;if(typeof srcSyncSoon==='function')srcSyncSoon();
     srcLayer();
     if(WINR&&!WKEEP&&WA===WB)winIdle();
@@ -8219,7 +8242,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   _td=os.path.dirname(os.path.abspath(__file__))
   JS=JS.replace(chr(10)+"  build();",chr(10)+io.open(os.path.join(_td,"suggest_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_edit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"m2_ui.js"),encoding="utf-8").read()+chr(10)+
          # מנוע ההדפסה ל-PDF (11.10.2026): קוד משותף לכל המסכתות. במצב ?print=1 הוא מחליף את התצוגה בעמודי A4; אחרת - רק חלון ההדפסה.
-         io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"word_export.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"hv_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_perek.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_units_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_units.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"overflow_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"print_mode.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"touch_review.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"offline_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"review_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
+         io.open(os.path.join(_td,"dm_fit.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"print_engine.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"word_export.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"suggest_title.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"pickers.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"hv_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_perek.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_units_core.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"sakem_units.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"overflow_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"print_mode.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"touch_review.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"offline_ui.js"),encoding="utf-8").read()+chr(10)+io.open(os.path.join(_td,"review_ui.js"),encoding="utf-8").read()+chr(10)+"  build();",1)
   _SHARED_BODY=JS[:JS.rindex(chr(10)+"  build();")]   # הקוד המשותף לכל המסכתות; מה שאחריו (בקרה, צורת הדף, תוספות) פרטי למסכת
   # בקרת תוכן (6.10.2026): הקוד נכלל רק במסכת שיש לה קובץ ממצאים. הממצאים עצמם
   # אינם נכנסים לדף: הם נמשכים מנקודת הקליטה רק למנהל שהמכשיר שלו הוכר.

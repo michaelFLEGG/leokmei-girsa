@@ -155,7 +155,7 @@ def edits_for(found, t0, tag='p94int', recs=None, pages_text=''):
             r = lost_text(x, recs, pages_text)
             if r:
                 out.append(rec(x['ek'], x['h'], r.get('wasH') or _html.escape(r.get('was') or '', quote=False), x['daf'],
-                               'כותרת שנכתבה על שורה - השורה שנדרסה הוחזרה', {'keep': x.get('head_ek'), 'from': r.get('k')}))
+                               'כותרת שנכתבה על שורה - השורה שנדרסה הוחזרה', {'keep': x.get('head_ek'), 'from': r.get('k'), 'from_t': r.get('t')}))
             else:
                 out.append(rec(x['ek'], x['h'], '', x['daf'], 'כותרת שהועתקה לשורה שלפניה', {'keep': x.get('head_ek')}))
         elif x['kind'] == 'missing_space':
@@ -241,6 +241,18 @@ def main():
                                'fixed': [{'daf': e['daf'], 'k': e['k'], 'was': e['was'][:200], 'now': e['now'][:200], 'why': e['p94int']['why']} for e in eds],
                                'review': review}
         print('%-14s תוקנו %3d  לעיון %3d  %s' % (s, len(eds), len(review), dict(Counter(x['kind'] for x in found))))
+        # רשומת השרת שכתבה את הכותרת על השורה - נכנסת לארכיון הקליטה כמצבה (dup), כדי שהקיפול יכתוב לה מצבה בשרת
+        # (cloud_word.tombstones). בלי זה היא חוזרת וחלה על הספר אחרי כל קיפול, והשורה נדרסת שוב (נמדד 25.11, שבת קד:)
+        srcs = [(e['p94int'].get('from'), e['p94int'].get('from_t')) for e in eds if e['p94int'].get('from')]
+        if a.apply and srcs:
+            ap_ = os.path.join(root, 'data', 'word-cloud', 'ingested', s + '.json')
+            arch = json.load(io.open(ap_, encoding='utf-8')) if os.path.exists(ap_) else {'v': 1, 'slug': s, 'edits': []}
+            have_ = {(x.get('k'), x.get('t')) for x in arch.get('edits') or []}
+            for k_, t_ in srcs:
+                if (k_, t_) not in have_:
+                    arch.setdefault('edits', []).append({'k': k_, 't': t_, 'dup': 1, 'p94int': 'כותרת שנכתבה על שורה בקבלה כפויה - מצבה'})
+            arch['edits'].sort(key=lambda x: x.get('t') or 0)
+            io.open(ap_, 'w', encoding='utf-8', newline='\n').write(json.dumps(arch, ensure_ascii=False, indent=1) + '\n')
         if a.apply and eds:
             p = os.path.join(root, 'data', 'edits', s + '.json')
             doc = json.load(io.open(p, encoding='utf-8')) if os.path.exists(p) else {'v': 1, 'slug': s, 'edits': []}

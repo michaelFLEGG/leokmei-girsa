@@ -488,6 +488,8 @@ body:has(.panel.open) #lm-layer #lm-fin,body:has(.modal) #lm-layer #lm-fin,body:
 
 #lm-fin button{background:linear-gradient(180deg,#1d4466,#0f263b);color:#f9e08a;border:1px solid var(--gold-500);box-shadow:0 2px 0 #06111b,0 4px 8px rgba(0,0,0,.4);font-family:var(--ui);font-weight:500;font-size:15px}
 #lm-fin button:hover{background:linear-gradient(180deg,#245278,#143451);border-color:var(--gold-300)}
+/* פרומפט 93: במחשב צר / דף מוגדל - סמל ✓ קטן בשוליים, לא על הטקסט */
+#lm-fin.c button{padding:0;width:30px;min-height:30px;height:30px;font-size:16px;line-height:1}
 
 body.lm{--card2:#173a58}
 

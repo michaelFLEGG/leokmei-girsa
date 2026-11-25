@@ -287,10 +287,18 @@
     var rail = row.querySelector('.rail'), fr = $('#flow').getBoundingClientRect();
     var r = (rail || row).getBoundingClientRect();
     box.style.display = '';
-    box.firstChild.textContent = 'סיימתי את העמוד';
-    var top = Math.max(fr.top + 4, Math.min(fr.bottom - 30, r.bottom - 28));
+    /* פרומפט 93 (25.11.2026): הכפתור לעולם אינו על כותרת הצד או על הטקסט. יש מקום מימין למסילה - שם, במלואו;
+       אין (חלון צר או דף מוגדל) - סמל ✓ קטן בשוליים שמשמאל לטקסט, בראש היחידה האחרונה (סמל "מקור" בתחתיתה) */
+    box.classList.remove('c'); box.firstChild.textContent = 'סיימתי את העמוד'; box.firstChild.title = '';
+    var bw = box.offsetWidth || 130, rr = row.getBoundingClientRect(), mn = row.querySelector('.main'), top, left;
+    if (r.right + 8 + bw <= fr.right - 4) { top = Math.max(fr.top + 4, Math.min(fr.bottom - 30, r.bottom - 28)); left = r.right + 8; }
+    else {
+      box.classList.add('c'); box.firstChild.textContent = '✓'; box.firstChild.title = 'סיימתי את העמוד';
+      var ml = mn ? mn.getBoundingClientRect().left : rr.left;
+      top = Math.max(fr.top + 4, Math.min(fr.bottom - 30, rr.top)); left = Math.max(fr.left + 2, ml - 36);
+    }
     box.style.top = Math.round(top) + 'px';
-    box.style.left = Math.round(Math.max(fr.left + 4, r.left)) + 'px';
+    box.style.left = Math.round(left) + 'px';
   }
   function drawClock() {
     var s = LG.settings(), c = $('#lm-clock');

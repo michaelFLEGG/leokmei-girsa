@@ -29,6 +29,10 @@ LINK = {'והא', 'ת"ש', 'והך', 'והרי', 'שהרי', 'מיתיבי', 'א
         'ותניא', 'ותנן', 'וקשה', 'ויקשה', 'קשה', 'והקשה', 'ותירץ', 'ואמנם', 'ועוד', 'וכן', 'אלא', 'שאני'}
 NUM = re.compile(r'^([א-י]\.)\s*')
 DASH = ('-', '־', '–')
+# X שאינו דובר אלא קביעה או מהלך - לא מצטרף לכותרת (לכו"ע, קמ"ל, את"ל, למ"ד...)
+NOT_X = {'לכו"ע', 'קמ"ל', 'את"ל', 'למ"ד', 'וא"ד', 'א"ד', 'מתחילה', 'ש"מ', 'נפק"מ', 'ואת"ל', 'ולמ"ד'}
+# נוסחת ייחוס שמצטרפת גם לשם שבכותרת ("ולר"ש דתנן:", "רשב"ג כדתנן:", "ורשב"א מר"מ:")
+FORMULA = re.compile(r'^(ו?(?:כ|מ)?ד?(?:תנן|תניא|תנא)|ו?(?:ה|ש)?רי (?:תנן|תניא)|ושנינו|ו?כדתנן|מ\S+)$')
 AM_HEAD = re.compile(r'^(\s*)<i class="am">([^<]*)</i>')
 
 
@@ -57,6 +61,32 @@ def side_parts(a):
     return dash, num, w
 
 
+def recent_hot(slug, hours=24, live_dir=None):
+    """מה שמיכאל ערך ב-hours השעות האחרונות: מפתחות ונוסחים. גם מן השרת (dup_lines.hot_keys) וגם מארכיון הקליטה -
+    כי אחרי קיפול העריכה יוצאת מן השרת, והמפתח עלול להשתנות (rekey). לכן גם התאמה לפי נוסח השורה."""
+    import os, io, json, time
+    from dup_lines import hot_keys
+    keys = set(hot_keys(slug, live_dir, hours))
+    texts = set()
+    since = int(time.time() * 1000) - hours * 3600 * 1000
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    for sub in (('word-cloud', 'ingested'), ('fold', 'rekey')):
+        p = os.path.join(root, 'data', *sub, slug + '.json')
+        try:
+            d = json.load(io.open(p, encoding='utf-8'))
+        except Exception:
+            continue
+        for e in d.get('edits') or []:
+            if (e.get('t') or 0) >= since and not e.get('p97'):
+                k = str(e.get('k') or '').split('~')[0]
+                if k:
+                    keys.add(k); keys.add(k.split('.')[0])
+                n = re.sub(r'\s+', ' ', plain(e.get('nowH') or e.get('now') or '')).strip()
+                if len(n) >= 8:
+                    texts.add(n)
+    return keys, texts
+
+
 def judge(u, hot=()):
     """מחזיר None או {'certain', 'why', 'a_new', 'l_new', ...} ליחידה אחת."""
     if u.get('k') != 'u' or not u.get('l'):
@@ -81,6 +111,12 @@ def judge(u, hot=()):
     tot = len(aw) + len(xw)
     ok_len = tot <= 2 or (tot == 3 and aw and aw[0] in LINK)
     reasons = []
+    a_plain = plain(u.get('a') or '').strip()
+    side_named = bool(aw) and a_plain.endswith(':') and aw[0] not in LINK
+    if x.rstrip(':').strip() in NOT_X or (xw and xw[0] in NOT_X):
+        reasons.append('אינו דובר אלא קביעה')
+    elif side_named and not FORMULA.match(x.rstrip(':').strip()):
+        reasons.append('בכותרת כבר דובר (שני דוברים)')
     if empty:
         reasons.append('כותרת צד ריקה - אין לה מקום עריכה בשכבה (שינוי מבנה)')
     if not ok_len:
@@ -92,7 +128,9 @@ def judge(u, hot=()):
     if 'mi' in sty.split() or 'nose' in sty.split():
         reasons.append('שורה בסגנון מיוחד')
     uid = 'u%s' % u['id']
-    is_hot = uid in hot or (uid + '.0') in hot or (uid + '.1') in hot
+    hk, ht = hot if isinstance(hot, tuple) and len(hot) == 2 and isinstance(hot[0], set) else (set(hot), set())
+    is_hot = uid in hk or (uid + '.0') in hk or (uid + '.1') in hk or \
+        re.sub(r'\s+', ' ', plain(h)).strip() in ht or re.sub(r'\s+', ' ', plain(u.get('a') or '')).strip() in ht
     new_a = ' '.join(p for p in [dash, num, ' '.join(aw + xw)] if p) + ':'
     new_a = new_a.replace(' :', ':')
     # השורה: X נמחק עם הרווח שאחריו; סימון ריק שנותר יורד
@@ -160,7 +198,7 @@ def main():
             print(s, 'שגיאה', e)
             rep['masechtot'][s] = {'error': str(e)[:200]}
             continue
-        hot = hot_keys(s, None, a.hours)
+        hot = recent_hot(s, a.hours)
         found = scan(pages, hot)
         eds = edits_for(found, int(time.time() * 1000))
         cert = [r for r in found if r['certain']]

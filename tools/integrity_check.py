@@ -19,6 +19,9 @@
 התיקון עצמו (tools/tosafot/reanchor.py) צריך את שיוך היחידות לפרק מן הדפדפן, ולכן אינו רץ כאן בלילה: הבודק רושם,
 והדוח (data/fold/integrity.json, המפתח tos) מראה מה לתקן.
 
+ובנוסף, פנקס הכללים (פרומפט 97; docs/rules-ledger.json, tools/rules_ledger.py): כל כלל עם בדיקה רץ על כל מסכת. מכני (כלל 17 - דובר לכותרת הצד) מוחל
+בשכבה עם --apply; בינה נרשם כתור. טבלת הכיסוי: data/fold/rules-coverage.json.
+
 שורה או יחידה שמיכאל ערך ב-12 השעות האחרונות - לא נוגעים (ייתכן שהוא באמצע), נרשמת לעיון.
 
     python tools/integrity_check.py --only shabbat             דוח בלבד (data/fold/integrity.json)
@@ -250,7 +253,31 @@ def main():
             tos = TAL.tos_check(s, pages)
         except Exception as e:
             tos = {'error': str(e)[:200]}
-        rep['masechtot'][s] = {'tos': tos, 'count': dict(Counter(x['kind'] for x in found)),
+        # פנקס הכללים (פרומפט 97): כל כלל עם בדיקה - בכל מסכת, בכל לילה. מכני מוחל בשכבה, בינה נרשם כתור.
+        try:
+            import rules_ledger as RL
+            from dup_lines import hot_keys as _hk
+            import speaker_to_side as _S
+            rl_res = RL.run(s, pages, _S.recent_hot(s, 24, a.live_dir or None))
+            rl_applied = {}
+            if a.apply:
+                rl_eds = RL.mech_edits(s, rl_res, t0 + 5000)
+                if rl_eds:
+                    p_ = os.path.join(root, 'data', 'edits', s + '.json')
+                    doc_ = json.load(io.open(p_, encoding='utf-8')) if os.path.exists(p_) else {'v': 1, 'slug': s, 'edits': []}
+                    have_ = {str(e.get('wasH')) + '|' + str(e.get('k', '')).split('~')[0] for e in doc_.get('edits') or [] if e.get('p97')}
+                    new_ = [e for e in rl_eds if e['wasH'] + '|' + e['k'].split('~')[0] not in have_]
+                    doc_['edits'] = (doc_.get('edits') or []) + new_
+                    io.open(p_, 'w', encoding='utf-8', newline='\n').write(json.dumps(doc_, ensure_ascii=False, indent=1))
+                    rl_applied['17'] = len(new_) // 2
+                    total += len(new_)
+            RL.cover_update(s, rl_res, rl_applied)
+            rules_rep = {k: {'n': len(v), 'certain': sum(1 for h in v if h.get('certain')), 'applied': rl_applied.get(k, 0),
+                             'sample': [{kk: vv for kk, vv in h.items() if not kk.startswith('_')} for h in v[:30]]} for k, v in rl_res.items()}
+            print('%-14s פנקס: %s' % ('', '  '.join('%s %d' % (k, len(v)) for k, v in rl_res.items() if v)))
+        except Exception as e:
+            rules_rep = {'error': str(e)[:200]}
+        rep['masechtot'][s] = {'tos': tos, 'rules': rules_rep,'count': dict(Counter(x['kind'] for x in found)),
                                'fixed': [{'daf': e['daf'], 'k': e['k'], 'was': e['was'][:200], 'now': e['now'][:200], 'why': e['p94int']['why']} for e in eds],
                                'review': review}
         print('%-14s תוקנו %3d  לעיון %3d  %s' % (s, len(eds), len(review), dict(Counter(x['kind'] for x in found))))

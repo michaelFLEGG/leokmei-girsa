@@ -61,6 +61,13 @@ jobs:
           PYTHONUNBUFFERED: '1'
         run: |
           if [ -n "${{ github.event.inputs.only }}" ]; then python tools/dup_lines.py --apply --only "${{ github.event.inputs.only }}"; else python tools/dup_lines.py --apply; fi
+      - name: לימוד מהגהות מיכאל
+        # פרומפט 98 (25.11.2026): מסכת שבה מיכאל ערך יותר מ-30 עריכות ביממה - כל עריכה מסווגת, והחלפת לשון שחוזרת
+        # 3 פעמים נכנסת לפנקס הכללים (docs/rules-ledger.json) ולסבב החוזר שבבודק השלמות. דוח: data/fold/learn/.
+        env:
+          PYTHONUNBUFFERED: '1'
+        run: |
+          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/p98_learn.py --only "${{ github.event.inputs.only }}"; else python tools/p98_learn.py; fi || echo "::warning::לימוד מהגהות נכשל"
       - name: בודק השלמות
         # פרומפט 94 (25.11.2026): כותרת שהועתקה לשורה (והשורה שנדרסה מוחזרת), כותרת צד כפולה, שורה כפולה בסוגריים,
         # רווח חסר אחרי איחוי - ודאי, נכתב לשכבה. שורה תלושה רחוקה, כותרת צד ריקה - לעיון ב-data/fold/integrity.json
@@ -73,7 +80,7 @@ jobs:
         id: save
         run: |
           git config user.name "leokmei-bodkim"; git config user.email "bodkim@users.noreply.github.com"
-          git add tosafot data/fold/anchor-check.json data/fold/mishna-check.json data/fold/dups.json data/fold/integrity.json data/edits
+          git add tosafot data/fold/anchor-check.json data/fold/mishna-check.json data/fold/dups.json data/fold/integrity.json data/edits data/fold/learn docs/rules-ledger.json docs/rules-learned-log.md data/fold/rules-coverage.json data/fold/rules-ledger-hits.json
           git diff --cached --quiet && { echo "pushed=0" >> $GITHUB_OUTPUT; exit 0; }
           git commit -q -m "הבודקים: עוגני תוס' ובודק המשניות"
           git stash -u -q || true

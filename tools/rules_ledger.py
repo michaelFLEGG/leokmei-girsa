@@ -120,6 +120,18 @@ CHECKS = {
     'lrt_colon': chk_lrt_colon,
 }
 
+# כללי פרומפט 98 (הגהות מיכאל בקידושין ב.-יד., 25.11.2026): tools/p98_rules.py
+try:
+    import p98_rules as _P98
+except ImportError:
+    import sys as _sys
+    _sys.path.insert(0, HERE)
+    import p98_rules as _P98
+for _rid, _chk in (('p98a', 'comma_space'), ('p98b', 'abbr_fixed'), ('p98c', 'miyiri'), ('p98d', 'src_style'),
+                   ('p98e', 'kal_vachomer'), ('p98f', 'tzrichuta'), ('p98g', 'vehare_side'), ('p98h', 'haim_side'),
+                   ('p98i', 'side_transmitter'), ('p98j', 'verse_unstyled')):
+    CHECKS[_chk] = _P98.check_for(_rid)
+
 
 def ledger():
     return json.load(io.open(LEDGER, encoding='utf-8'))
@@ -130,6 +142,8 @@ def run(slug, pages, hot=()):
     res = {}
     for r in ledger()['rules']:
         f = CHECKS.get(r.get('check') or '')
+        if r.get('check') == 'learned_sub' and r.get('from'):
+            f = _P98.learned_check(r['from'], r.get('to') or '')
         if not f:
             continue
         try:
@@ -139,7 +153,10 @@ def run(slug, pages, hot=()):
     return res
 
 
-def mech_edits(slug, res, t0):
+_PAGES, _HOT = {}, {}
+
+
+def mech_edits(slug, res, t0, pages=None, hot30=None):
     """העריכות של הכללים המכניים (הוודאיים בלבד)."""
     import speaker_to_side as S
     eds = []
@@ -151,6 +168,20 @@ def mech_edits(slug, res, t0):
         if r.get('check') == 'speaker_side':
             e = S.edits_for([h['_r'] for h in hits if h.get('certain')], t0 + len(eds) * 3 + 1)
             eds += e
+    for rid, r in rules.items():
+        if r.get('check') == 'learned_sub' and r.get('apply') and r.get('from') and rid in res:
+            _P98.MECH[rid] = _P98.learned_fix(r['from'], r.get('to') or '')
+    p98 = [rid for rid in _P98.MECH if (rules.get(rid) or {}).get('apply') and rid in res]
+    pages = pages if pages is not None else _PAGES.get(slug)
+    if p98 and pages is not None:
+        if hot30 is None:
+            hot30 = _HOT.get(slug)
+        if hot30 is None:
+            import speaker_to_side as _S2
+            hot30 = _S2.recent_hot(slug, 24 * 30)
+        done = {str(x.get('k', '')).split('~')[0] for x in eds}
+        e, _skip = _P98.apply_edits(slug, pages, p98, hot30, t0 + 100000, skip=done)
+        eds += e
     return eds
 
 
@@ -201,6 +232,7 @@ def main():
             continue
         import speaker_to_side as _S
         hot = _S.recent_hot(s, 24)
+        _PAGES[s], _HOT[s] = pages, _S.recent_hot(s, 24 * 30)
         res = run(s, pages, hot)
         applied = {}
         if a.apply:
@@ -208,11 +240,14 @@ def main():
             if eds:
                 p = os.path.join(ROOT, 'data', 'edits', s + '.json')
                 doc = json.load(io.open(p, encoding='utf-8')) if os.path.exists(p) else {'v': 1, 'slug': s, 'edits': []}
-                have = {_S.sig(e) for e in doc.get('edits') or [] if e.get('p97')}
+                have = {_S.sig(e) for e in doc.get('edits') or [] if e.get('p97') or e.get('p98')}
                 new = [e for e in eds if _S.sig(e) not in have]
                 doc['edits'] = (doc.get('edits') or []) + new
                 io.open(p, 'w', encoding='utf-8', newline='\n').write(json.dumps(doc, ensure_ascii=False, indent=1))
-                applied['17'] = sum(1 for e in new if e.get('op') == 'struct' or e['k'].split('~')[0].endswith('.1'))
+                applied['17'] = sum(1 for e in new if e.get('p97') and (e.get('op') == 'struct' or e['k'].split('~')[0].endswith('.1')))
+                for e in new:
+                    for rid in (e.get('p98') or {}).get('rules') or []:
+                        applied[rid] = applied.get(rid, 0) + 1
         cover_update(s, res, applied)
         rep['masechtot'][s] = strip_private(res)
         print('%-14s %s' % (s, '  '.join('%s %d' % (k, len(v)) for k, v in res.items())), ('  הוחלו: %s' % applied) if applied else '')

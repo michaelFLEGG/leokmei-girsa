@@ -170,3 +170,80 @@ def anchor_pos(it, pages, upk):
     ctx = norm_ctx(it.get('t') or '')
     oc = occs(s, ctx)
     return (gi, (oc[k - 1] + len(ctx)) if len(oc) >= k else len(s))
+
+
+def fz_ctx(s, ctx):
+    """כמו fzCtx בדפדפן: התאמה מקורבת יחידה של העוגן (או בלי המילה הראשונה/האחרונה). מחזיר את הקטע או None."""
+    words = [(m.group(0), m.start(), m.end()) for m in re.finditer(r'\S+', s)]
+    W = [fzw(w) for w, _, _ in words]
+    cw = [fzw(w) for w in ctx.split()]
+    tries = [cw] + ([cw[1:], cw[:-1]] if len(cw) >= 3 else [])
+    for q in tries:
+        if len(q) < 2:
+            continue
+        hits = [i for i in range(len(W) - len(q) + 1) if W[i:i + len(q)] == q]
+        if len(hits) == 1:
+            return s[words[hits[0]][1]:words[hits[0] + len(q) - 1][2]]
+    return None
+
+
+def tos_check(slug, pages):
+    """שלוש הבדיקות הקבועות של פרומפט 96 על tosafot/<slug>/live-*.json מול הדף כפי שהאתר מציג אותו:
+      noanchor - העוגן אינו נמצא בעמוד (גם לא במקורב): הסימן נופל לסוף שורה או לא מוצג.
+      wrongpage - העמוד שהאתר מחפש בו (page/daf) שונה מעמוד התוס' לפי ספריא. ודאי כשהעוגן או הד"ה נמצאים
+                  בעמוד הנכון (אפשר לתקן במקום); ספק כשאין להם זכר שם (גבול עמוד באתר שונה מוילנא).
+      order    - שני סימנים סמוכים באותו עמוד שסדרם בטקסט הפוך ממספרם.
+    בלי שיוך לפרק (אינו זמין כאן בלי הדפדפן); השיוך נבדק בדפדפן (reanchor.py ו-tools/tosafot/verify)."""
+    import glob, io, json
+    out = {'items': 0, 'noanchor': [], 'wrongpage_certain': [], 'wrongpage_doubt': [], 'order': []}
+    files = sorted(glob.glob(os.path.join(ROOT, 'tosafot', slug, 'live-*.json')))
+    if not files:
+        return None
+    flat = {}
+    i = 0
+    for p in pages:
+        for u in p.get('units') or []:
+            flat[u['id']] = (i, u); i += 1
+    labs = {}
+    for p in pages:
+        labs.setdefault(p.get('daf'), []).extend(p.get('units') or [])
+    lab_norm = {}
+
+    def LN(lab):
+        if lab not in lab_norm:
+            lab_norm[lab] = units_norm(labs.get(lab) or [])
+        return lab_norm[lab]
+    bypage = {}
+    for f in files:
+        for it in json.load(io.open(f, encoding='utf-8')).get('items') or []:
+            out['items'] += 1
+            td = ref_daf(it.get('ref'))
+            lab = it.get('page') or it.get('daf')
+            tag = '%s %s' % (it.get('daf'), it.get('hn') or it.get('n'))
+            ctx = norm_ctx(it.get('t') or '')
+            q = dict(it, perek=0)
+            r = resolve(q, pages, {}) if ctx else None
+            if not r and ctx and (it.get('occ') or 1) == 1 and lab in labs:
+                f2 = fz_ctx(LN(lab)[0], ctx)
+                if f2:
+                    r = resolve(dict(q, t=f2, occ=1), pages, {})
+            if not r:
+                out['noanchor'].append({'n': it.get('n'), 'daf': lab, 'ref_daf': td, 't': it.get('t')})
+            if td and lab != td:
+                s_td = LN(td)[0] if td in labs else ''
+                dh = norm_ctx(it.get('dh') or '')
+                present = bool(s_td) and ((ctx and occs(s_td, ctx)) or (len(dh.split()) >= 2 and occs(s_td, dh)))
+                (out['wrongpage_certain'] if present else out['wrongpage_doubt']).append(
+                    {'n': it.get('n'), 'page': lab, 'ref_daf': td, 't': it.get('t')})
+            if r and r[0] in flat:
+                gi, u = flat[r[0]]
+                s_u = units_norm([u])[0]
+                oc = occs(s_u, ctx) if ctx else []
+                pos = (gi, (oc[r[1] - 1] + len(ctx)) if len(oc) >= r[1] else len(s_u))
+                bypage.setdefault(td or lab, []).append((it.get('n'), pos))
+    for d, l in bypage.items():
+        l.sort(key=lambda x: x[0])
+        for a, b in zip(l, l[1:]):
+            if b[1] < a[1]:
+                out['order'].append({'daf': d, 'a': a[0], 'b': b[0]})
+    return out

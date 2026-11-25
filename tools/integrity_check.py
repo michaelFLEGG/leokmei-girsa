@@ -12,6 +12,13 @@
   empty_side  - כותרת צד ריקה (רק רווח או סימן).                                                  ספק: לעיון.
 (שורה כפולה רגילה ושארית פיצול - tools/dup_lines.py, שרץ באותו לילה. עוגני תוס' - tools/tosafot/anchor_check.py.)
 
+ובנוסף, בכל מסכת שיש לה תוס' (פרומפט 96, 25.11.2026; tools/tosafot/tos_anchor_lib.tos_check):
+  tos noanchor  - תוס' שהעוגן שלה אינו נמצא בעמוד (גם לא במקורב).                       ודאי: לתקן ב-reanchor.py.
+  tos wrongpage - העמוד שהאתר מחפש בו שונה מעמוד התוס' לפי ספריא. ודאי כשהעוגן/הד"ה נמצאים בעמוד הנכון, אחרת ספק.
+  tos order     - שני סימנים סמוכים באותו עמוד שסדרם בטקסט הפוך ממספרם.                ודאי: לתקן ב-reanchor.py.
+התיקון עצמו (tools/tosafot/reanchor.py) צריך את שיוך היחידות לפרק מן הדפדפן, ולכן אינו רץ כאן בלילה: הבודק רושם,
+והדוח (data/fold/integrity.json, המפתח tos) מראה מה לתקן.
+
 שורה או יחידה שמיכאל ערך ב-12 השעות האחרונות - לא נוגעים (ייתכן שהוא באמצע), נרשמת לעיון.
 
     python tools/integrity_check.py --only shabbat             דוח בלבד (data/fold/integrity.json)
@@ -237,10 +244,21 @@ def main():
                    'other': x.get('other'), 'other_daf': x.get('other_daf'), 'held': x['ek'] in {e['k'].split('~')[0] for e in held}}
                   for x in found if x['ek'] not in fixed]
         from collections import Counter
-        rep['masechtot'][s] = {'count': dict(Counter(x['kind'] for x in found)),
+        try:
+            sys.path.insert(0, os.path.join(here, 'tosafot'))
+            import tos_anchor_lib as TAL
+            tos = TAL.tos_check(s, pages)
+        except Exception as e:
+            tos = {'error': str(e)[:200]}
+        rep['masechtot'][s] = {'tos': tos, 'count': dict(Counter(x['kind'] for x in found)),
                                'fixed': [{'daf': e['daf'], 'k': e['k'], 'was': e['was'][:200], 'now': e['now'][:200], 'why': e['p94int']['why']} for e in eds],
                                'review': review}
         print('%-14s תוקנו %3d  לעיון %3d  %s' % (s, len(eds), len(review), dict(Counter(x['kind'] for x in found))))
+        if tos and 'error' not in tos:
+            print('%-14s תוס\' %4d: בלי עוגן %d, עמוד שגוי %d ודאי + %d ספק, סדר הפוך %d' % (
+                '', tos['items'], len(tos['noanchor']), len(tos['wrongpage_certain']), len(tos['wrongpage_doubt']), len(tos['order'])))
+        elif tos:
+            print('   תוס\': שגיאה', tos['error'])
         # רשומת השרת שכתבה את הכותרת על השורה - נכנסת לארכיון הקליטה כמצבה (dup), כדי שהקיפול יכתוב לה מצבה בשרת
         # (cloud_word.tombstones). בלי זה היא חוזרת וחלה על הספר אחרי כל קיפול, והשורה נדרסת שוב (נמדד 25.11, שבת קד:)
         srcs = [(e['p94int'].get('from'), e['p94int'].get('from_t')) for e in eds if e['p94int'].get('from')]

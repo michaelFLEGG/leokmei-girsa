@@ -3,7 +3,7 @@
  "jid": "bava-batra-s1249-mwxgcdek",
  "slug": "bava-batra",
  "title": "בבא בתרא פרק שני - לא יחפור · סבב על הנוסח החי (s1)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 1249,
@@ -71,7 +71,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s2",
@@ -108,7 +116,15 @@
    "read": [],
    "keep": [
     "ויא אף דוד - צלע קצרה שהמנהל השאיר בגוף השורה, בסבב על הנוסח החי אינה מוצאת לכותרת"
-   ]
+   ],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 0,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -144,7 +160,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -181,7 +205,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -223,7 +255,15 @@
     "שורה אלמנה (דוד.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 1,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "m5-1",
@@ -245,5 +285,59 @@
    "why": "בלי הקושיה 'והלא בת ישי היא' לא מובן איך הפסוק מלמד שישי מת בעטיו של נחש."
   }
  ],
- "t": 1795698006593
+ "t": 1795698019335,
+ "summary": "בפרק: 0 הדגשות במשנה, 0 רווחים, 0 מקפי תירוץ, 1 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 1,
+  "hatz": 0
+ },
+ "learnedNew": 1,
+ "score": {
+  "segs": 5,
+  "perSeg": {
+   "bold": 0,
+   "space": 0,
+   "dash": 0,
+   "side": 0.6,
+   "nose": 1,
+   "widow": 0
+  },
+  "bold": 0,
+  "space": 0,
+  "dash": 0,
+  "side": 1,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 1,
+  "block": 0,
+  "lenPct": 3.5,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 7
+  }
+ },
+ "counts": {
+  "shown": 6,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 1
+ }
 }

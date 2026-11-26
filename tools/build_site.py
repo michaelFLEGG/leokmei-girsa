@@ -6732,8 +6732,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   addEventListener('online',()=>{if(PRNRO)return;PUBMSG='';pubDraw();
     setTimeout(()=>{if(edOffline())return;
       if(SUGM){try{sugPush(0)}catch(e){}return}
-      if(isAdmin()&&pubPending())pubNow(0);
-      else if(isAdmin()&&admKey()){try{syncNow()}catch(e){}}},2500)});
+      if(isAdmin()&&pubPending())pubNow(0)},2500)});
   /* כניסה לעריכה: א. המסכת נשמרת במכשיר בשקט (כמו "לימוד בלי חיבור"), כדי שאם הקליטה תתנתק הדף ייפתח גם בלי רשת.
      ב. אזהרה אם אותה מסכת פתוחה לעריכה גם בלשונית אחרת - שתי לשוניות כותבות לאותה שמירה במכשיר */
   let EDBC=null;

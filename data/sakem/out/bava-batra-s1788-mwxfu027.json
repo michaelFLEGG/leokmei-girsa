@@ -3,7 +3,7 @@
  "jid": "bava-batra-s1788-mwxfu027",
  "slug": "bava-batra",
  "title": "בבא בתרא פרק שני - לא יחפור · סבב על הנוסח החי (s29, s30, s31, s32)",
- "status": "work",
+ "status": "ready",
  "plan": [
   {
    "from": 1788,
@@ -73,6 +73,14 @@
     "nose": 0,
     "lenA": 351,
     "lenB": 351
+   },
+   "abs": {
+    "bold": 5,
+    "space": 0,
+    "dash": 0,
+    "side": 2,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -113,7 +121,15 @@
    "adds": [],
    "warn": [],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s3",
@@ -158,7 +174,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"היו דקליו על גבול\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 4,
+    "space": 0,
+    "dash": 0,
+    "side": 8,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s4",
@@ -200,7 +224,15 @@
     "ציות: מלל מיותר? צירוף שחוזר בקטע: \"לא נהנין ולא מועלין\", \"נהנין ולא מועלין ואם\""
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 4,
+    "nose": 1,
+    "widow": 0
+   }
   },
   {
    "iid": "s5",
@@ -227,6 +259,14 @@
     "nose": 0,
     "lenA": 443,
     "lenB": 443
+   },
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 0,
+    "side": 6,
+    "nose": 1,
+    "widow": 0
    }
   },
   {
@@ -274,7 +314,15 @@
     "שורה אלמנה (בט\"ז אמה.) - להדק או לשבור מוקדם"
    ],
    "read": [],
-   "keep": []
+   "keep": [],
+   "abs": {
+    "bold": 0,
+    "space": 0,
+    "dash": 3,
+    "side": 11,
+    "nose": 0,
+    "widow": 0
+   }
   },
   {
    "iid": "s7",
@@ -297,8 +345,70 @@
     "nose": 0,
     "lenA": 163,
     "lenB": 163
+   },
+   "abs": {
+    "bold": 0,
+    "space": 1,
+    "dash": 0,
+    "side": 2,
+    "nose": 0,
+    "widow": 0
    }
   }
  ],
- "t": 1795694282916
+ "t": 1795694292040,
+ "summary": "בפרק: 9 הדגשות במשנה, 1 רווחים, 3 מקפי תירוץ, 2 כותרות צד חדשות, 0 עיטורים נמחקו",
+ "compliance": {
+  "bold": 9,
+  "space": 1,
+  "dash": 3,
+  "side": 2,
+  "hatz": 0
+ },
+ "learnedNew": 17,
+ "score": {
+  "segs": 7,
+  "perSeg": {
+   "bold": 1.29,
+   "space": 0.14,
+   "dash": 0.43,
+   "side": 5.86,
+   "nose": 0.57,
+   "widow": 0
+  },
+  "bold": 9,
+  "space": 1,
+  "dash": 3,
+  "side": 2,
+  "nose": 0,
+  "hatz": 0,
+  "abbr": 0,
+  "warnLeft": 5,
+  "block": 0,
+  "lenPct": -0.1,
+  "model": {
+   "segs": 28,
+   "perSeg": {
+    "bold": 1.18,
+    "space": 0.04,
+    "dash": 0.07,
+    "side": 6.96,
+    "nose": 0.36,
+    "widow": 0.68
+   },
+   "lenPct": 4.8
+  },
+  "round2": {
+   "merges": 0,
+   "newTitles": 0,
+   "coins": 0,
+   "overLeft": 21
+  }
+ },
+ "counts": {
+  "shown": 4,
+  "spatial": 0,
+  "adds": 0,
+  "missing": 0
+ }
 }

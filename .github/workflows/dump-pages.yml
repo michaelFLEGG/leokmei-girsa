@@ -10,6 +10,10 @@ on:
         description: 'ביטוי לחיפוש (אופציונלי)'
         required: false
         default: ''
+      rules:
+        description: 'כללי פנקס להדפסה מלאה (אופציונלי)'
+        required: false
+        default: ''
 permissions:
   contents: read
 jobs:
@@ -24,6 +28,7 @@ jobs:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
           ONLY: ${{ github.event.inputs.only }}
           GREP: ${{ github.event.inputs.grep }}
-        run: python tools/dump_pages.py --only "$ONLY" --out _work/dump --grep "$GREP"
+          RULES: ${{ github.event.inputs.rules }}
+        run: python tools/dump_pages.py --only "$ONLY" --out _work/dump --grep "$GREP" --rules "$RULES"
       - uses: actions/upload-artifact@v4
         with: { name: dump, path: _work/dump, retention-days: 3 }

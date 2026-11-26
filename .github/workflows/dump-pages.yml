@@ -1,0 +1,23 @@
+name: עיון - הדף כפי שהמנהל רואה אותו (ידני)
+# 26.11.2026: כלי עיון בלבד. אינו כותב דבר למאגר או לשרת - הקובץ עולה כחפץ (artifact) של ההרצה.
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: 'מסכת (slug)'
+        required: true
+permissions:
+  contents: read
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install lxml fonttools brotli pillow
+      - env:
+          LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
+        run: python tools/dump_pages.py --only "${{ github.event.inputs.only }}" --out _work/dump
+      - uses: actions/upload-artifact@v4
+        with: { name: dump, path: _work/dump, retention-days: 3 }

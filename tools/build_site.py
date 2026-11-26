@@ -2866,8 +2866,20 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .bar .edfs{display:inline-flex;gap:2px;margin-inline-start:6px}
   .bar .edfs button{min-width:30px;font-family:'VilnaG','Vilna',serif;font-size:17px;font-weight:700}
   .bar .edfs .pm{font-size:13px;margin-inline-start:1px}
-  body.ed .bar .bg:not(.loc):not(.edonly):not(.edsw){display:none!important}
-  body.ed .bar .loc .seg>button:not(.pkb),body.ed .bar .loc #peresel{display:none}
+  /* 26.11.2026 (בקשת מיכאל): במצב עריכה חוזרים כלי העבודה - דף קודם/הבא, חיפוש, מקור, תוס', תצוגה
+     (גודל האותיות, הגדלת הדף, טור/ספר, ניקוד) ו"עוד" (תוכן, אמוראים, הדפסה). בסמלים בלבד, הכיתוב בריחוף,
+     כדי שהכל ייכנס בשורה אחת גם בחלון של כ-930 פיקסלים. מוסתרים בעריכה רק פריטי הלומדים (ווטסאפ, נ"ך המפורש,
+     שיתוף, קוד), הלוגו ובורר הפרק (בורר הדף נשאר). החיפוש סמל, ונפתח לרוחב כשלוחצים עליו. */
+  body.ed .bar .bg:not(.loc):not(.edonly):not(.edsw):not(.tools):not(.sr){display:none!important}
+  html body.ed #bar.bar .ib.stk .t{display:none!important}
+  html body.ed #bar.bar .tools .ib.stk{min-width:34px;padding:2px 4px}
+  body.ed .bar #lkshbtn,body.ed .bar #qrbtn{display:none!important}
+  body.ed .bar .loc #peresel,html body.ed #bar.bar .loc .brand{display:none!important}
+  html body.ed #bar.bar .bg.sr{flex:0 0 auto;min-width:0;width:44px;transition:width .15s}
+  html body.ed #bar.bar .bg.sr:focus-within{width:210px}
+  html body.ed #bar.bar .bg.sr input::placeholder{color:transparent}
+  html body.ed .bar #edstat>.ddb .edpub{max-width:8.5em!important;display:block;white-space:normal!important;font-size:13px!important;line-height:1.15}
+  html body.ed #bar .edfs button{min-width:26px;padding:0 3px}
   body.ed .bar .loc #curdaf{display:none}
   #curdaf{font-family:'VilnaG','Vilna',serif;font-size:19px}
   /* --lhpx הוא גובה שורת הגוף במידה מוחלטת. פריטי המסילה זקוקים לו:

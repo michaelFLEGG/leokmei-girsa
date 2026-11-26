@@ -7,6 +7,7 @@ sys.path.insert(0, here)
 ap = argparse.ArgumentParser()
 ap.add_argument('--only', required=True)
 ap.add_argument('--out', default='_work/dump')
+ap.add_argument('--rules', default='', help='כללי הפנקס להדפסה מלאה (מופרדים בפסיק), עם ה-HTML של המקום')
 ap.add_argument('--grep', default='', help='הדפסת היחידות סביב כל התאמה (ביומן ההרצה)')
 a = ap.parse_args()
 import mishna_check as MC, fold as F
@@ -50,6 +51,19 @@ for s in a.only.split(','):
             if hit * 2 >= len(cand): ok += 1
             else: miss += 1; ms.append(iid)
         print('בדיקת החלה', jid, 'בדף', ok, 'חסר', miss, ' '.join(ms))
+    if a.rules:
+        import rules_ledger as RL
+        res = RL.run(s, pages, set())
+        H = {}
+        for pg in pages:
+            for u in pg.get('units') or []:
+                H['u%s.0' % u.get('id')] = u.get('a') or ''
+                for n, l in enumerate(u.get('l') or []):
+                    H['u%s.%d' % (u.get('id'), n + 1)] = l[1] if len(l) > 1 else ''
+        for rid in a.rules.split(','):
+            for h in res.get(rid) or []:
+                ek = h.get('ek') or ''
+                print('RULEHIT', json.dumps({'r': rid, 'daf': h.get('daf'), 'ek': ek, 'c': h.get('certain'), 'h': H.get(ek, '')}, ensure_ascii=False))
     if a.grep:
         import re
         U = [(pg.get('daf'), u) for pg in pages for u in pg.get('units') or []]

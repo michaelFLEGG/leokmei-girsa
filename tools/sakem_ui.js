@@ -850,12 +850,16 @@
     for(let i=0;i+1<got.length;i++){const k=skmNearDup(got[i],got[i+1]);
       if(k)return 'שורה כפולה בדף: "'+got[i].slice(0,40)+'"'}
     /* פרומפט 94 (25.11.2026, שבת פרק הבונה): ארבעת הדפוסים שנוצרו בקבלה כפויה של הצעה ישנה - עוצרים גם אותם */
-    const ig=skmIntegrity(got,fu,a,b);if(ig)return ig;
+    /* 26.11.2026 (בבא בתרא לה.): כותרת נושא/ד"ה/משנה שההצעה כתבה מתוך לשון התוכן (כמו "זה אומר של אבותי וזה אומר
+       של אבותי") אינה "שורה תלושה" גם כשהיא זהה לשורה במקום אחר - כותרת מתוך לשון התוכן היא כלל של בעל הפרויקט */
+    const heads=new Set(String(text||'').split('\n').map(x=>x.trim()).filter(x=>/^\((נושא|דה|משנה)\)/.test(x)||/^\[כותרת-(נושא|דה):/.test(x))
+      .map(x=>skmNearNorm(skmVerifyLines(x.replace(/^\[כותרת-(?:נושא|דה):(.*)\]$/,'$1')).join(' '))).filter(Boolean));
+    const ig=skmIntegrity(got,fu,a,b,heads);if(ig)return ig;
     return ''}
   /* פרומפט 94: (א) כותרת (נושא/צד) שמופיעה גם כשורה או כסוף השורה שלפניה; (ב) כותרת צד שחוזרת בתחילת השורה שתחתיה;
      (ג) שורה ארוכה (5 מילים ומעלה) שזהה לשורה מחוץ לקטע, עד 60 יחידות ממנו - שורה תלושה שהועתקה ממקום אחר.
      אותם כללים כמו בבודק השלמות הלילי (tools/integrity_check.py) */
-  function skmIntegrity(got,fu,a,b){
+  function skmIntegrity(got,fu,a,b,heads){heads=heads||new Set();
     const N=x=>skmNearNorm(x),isH=x=>/^צד: /.test(x);
     for(let i=0;i+1<got.length;i++){const x=got[i],y=got[i+1];
       if(!isH(x)&&isH(y)){const xn=N(x),yn=N(y);
@@ -864,7 +868,7 @@
         if(xn.length>=4&&xn.split(' ').length>=1&&!/^[-־]$/.test(xn)&&(yn===xn||yn.startsWith(xn+' ')))return 'כותרת צד שחוזרת בתחילת השורה: "'+xn.slice(0,40)+'"'}}
     try{const lo=Math.max(0,a-60),hi=Math.min(fu.length-1,b+60);
       const out=new Set(skmVerifyLines(skmInter(fu.slice(lo,a).concat(fu.slice(b+1,hi+1)).filter(o=>o.u&&o.u.k!=='m'))).filter(x=>!isH(x)).map(N).filter(x=>x.split(' ').length>=5));
-      for(const x of got){if(isH(x))continue;const n=N(x);if(n.split(' ').length>=5&&out.has(n)&&!/^(גופא|תנן|תניא)/.test(n))return 'שורה זהה לשורה במקום אחר בדף (שורה תלושה?): "'+n.slice(0,40)+'"'}}
+      for(const x of got){if(isH(x))continue;const n=N(x);if(heads.has(n))continue;if(n.split(' ').length>=5&&out.has(n)&&!/^(גופא|תנן|תניא)/.test(n))return 'שורה זהה לשורה במקום אחר בדף (שורה תלושה?): "'+n.slice(0,40)+'"'}}
     catch(e){}
     return ''}
   function skmNearNorm(t){

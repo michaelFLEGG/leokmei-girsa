@@ -700,9 +700,12 @@
     var INL=/\[(תוס'|מס):([^\]]{1,12})\]/g;
     function inlScan(text){
       /* מפת התווים הנקיים (בלי סימנים, בלי ניקוד, בלי שורות נעולות) -> מקומם בטקסט */
-      var P=[],I=[],A=[],lines=String(text).split('\n'),off=0;
+      var P=[],I=[],A=[],B=[],lines=String(text).split('\n'),off=0;
       lines.forEach(function(ln){
         var t=ln.trim(),lock=LOCK_RE.test(t);
+        /* 26.11.2026 (בבא בתרא לז.): גבולות הקטעים שבין הנעולים ([מקור] אינו מפריד) - כדי שעוגן תוס' שמוחזר
+           בניחוש לא יעבור מעל [דף] או כותרת */
+        if(lock&&!/^\[מקור[:\]]/.test(t))B.push(P.length);
         if(!lock){
           var i=0,ls=P.length;
           var m0=/^\s*(\((?:תשובה|רווח|מעוין|נושא|דה|רקע|נקודה)\)\s*|\[צד:)/.exec(ln),end=ln.length;if(m0)i=m0[0].length;
@@ -718,7 +721,7 @@
             P.push(/\s/.test(c)?' ':c);I.push(off+i);i++}
           P.push(' ');I.push(off+ln.length)}
         off+=ln.length+1});
-      return {p:P.join(''),i:I,a:A}}
+      return {p:P.join(''),i:I,a:A,b:B}}
     /* ---- פרומפט 38 (15.11.2026): בדיקת הקבלה המשותפת - הדף ("קבל") והכותב (put) ----
        fixLocks: מחזיר את האלמנטים הנעולים של המקור (הנוסח שבדף) אל ההצעה, כשהם זזו בינתיים (עבר מ-sakem_perek.js,
        שם נקרא skpFixLocks). לפני היישור [מקור] שצמוד לכותרת נכתב אחריה בשני הצדדים: הוא אינו מפריד ואינו נכתב
@@ -841,14 +844,31 @@
     function fixInline(orig,text){
       var O=inlScan(orig),T=inlScan(text),moved=[];
       var ok=O.a.map(function(x){return x.k}),tk=T.a.map(function(x){return x.k});
-      if(ok.join('|')===tk.join('|'))return {text:text,moved:moved};
+      /* 26.11.2026: הקטע (בין הנעולים) של כל עוגן. כשמספר הקטעים שווה - עוגן שבנוסח יושב בקטע אחר מבדף אינו "במקומו" */
+      var segOf=function(S,pl){var g=0;while(g<S.b.length&&S.b[g]<=pl)g++;return g};
+      var segOK=O.b.length===T.b.length;
+      var oSeg={};O.a.forEach(function(x){oSeg[x.k]=segOf(O,x.pl)});
+      var inSeg=function(x){return !segOK||oSeg[x.k]===segOf(T,x.pl)};
+      if(ok.join('|')===tk.join('|')&&T.a.every(inSeg))return {text:text,moved:moved};
       /* האם העוגנים שבנוסח הם תת-סדרה של המקור, באותו סדר (רק חסרים)? */
       var keep=[],j=0;
       for(var q=0;q<ok.length&&j<tk.length;q++)if(ok[q]===tk[j]){keep[q]=T.a[j];j++}
-      var sub=j===tk.length&&tk.every(function(k){return ok.indexOf(k)>-1});
+      var sub=j===tk.length&&tk.every(function(k){return ok.indexOf(k)>-1})&&T.a.every(inSeg);
       if(!sub){
-        /* סדר אחר או עוגן זר: מסירים את כל העוגנים שבנוסח ומחזירים את כולם */
-        text=String(text).replace(INL,'');T=inlScan(text);keep=[]}
+        /* סדר אחר, עוגן זר או עוגן בקטע אחר. 26.11.2026 (בבא בתרא לז.): קודם הוסרו כל העוגנים והוחזרו בניחוש, וגם
+           עוגנים שישבו נכון זזו. עכשיו נשארים במקומם העוגנים הארוכים ביותר שתואמים בסדר ובקטע (LCS), והשאר מוחזרים */
+        var C=T.a.filter(function(x){return ok.indexOf(x.k)>-1&&inSeg(x)});
+        var L=[];for(var i1=0;i1<=ok.length;i1++){L.push([]);for(var j1=0;j1<=C.length;j1++)L[i1].push(0)}
+        for(var i2=ok.length-1;i2>=0;i2--)for(var j2=C.length-1;j2>=0;j2--)
+          L[i2][j2]=ok[i2]===C[j2].k?L[i2+1][j2+1]+1:Math.max(L[i2+1][j2],L[i2][j2+1]);
+        var keepAt={},i3=0,j3=0;
+        while(i3<ok.length&&j3<C.length){if(ok[i3]===C[j3].k){keepAt[C[j3].at]=1;i3++;j3++}
+          else if(L[i3+1][j3]>=L[i3][j3+1])i3++;else j3++}
+        T.a.slice().sort(function(x,y){return y.at-x.at}).forEach(function(x){
+          if(!keepAt[x.at])text=text.slice(0,x.at)+text.slice(x.at+x.s.length)});
+        T=inlScan(text);keep=[];j=0;
+        var tk2=T.a.map(function(x){return x.k});
+        for(var q3=0;q3<ok.length&&j<tk2.length;q3++)if(ok[q3]===tk2[j]){keep[q3]=T.a[j];j++}}
       var ins=[];  /* {pos (מקום בטקסט), s} */
       var Tp=T.p,n=O.a.length;
       function plOf(q){return keep[q]?keep[q].pl:null}
@@ -860,6 +880,11 @@
         for(var b=q2-1;b>=0;b--){var x=plOf(b);if(x!==null){lo=x;break}
           var y=ins.filter(function(z){return z.q===b})[0];if(y){lo=y.pl;break}}
         for(var c2=q2+1;c2<n;c2++){var x2=plOf(c2);if(x2!==null){hi=x2;break}}
+        /* 26.11.2026: אותו קטע שבין הנעולים כמו בדף. עוגן "לימא ליה" שהנוסח החדש ניסח "יאמר לו" נשתל בניחוש
+           אחרי [דף:לז:], והשומר חסם את כל ההצעה ("הכותרות, הדפים או המשניות אינם תואמים") */
+        if(O.b.length===T.b.length){var sg=0;while(sg<O.b.length&&O.b[sg]<=a.pl)sg++;
+          var sLo=sg>0?T.b[sg-1]:0,sHi=sg<T.b.length?Math.max(sLo,T.b[sg]-1):Tp.length;
+          if(sLo>lo)lo=sLo;if(sHi<hi)hi=sHi;if(hi<lo)hi=lo}
         var ctx=O.p.slice(Math.max(0,a.pl-14),a.pl).replace(/^\S*\s/,'').replace(/\s+$/,'');
         var pl=-1;
         [ctx,ctx.slice(-7)].some(function(cx){

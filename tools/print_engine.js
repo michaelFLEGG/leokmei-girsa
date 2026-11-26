@@ -266,6 +266,7 @@
     return b}
   var QR_CSS='.qrp{font-family:Frank,serif}'+
     '.qrp .qrtt{position:absolute;text-align:center;font-family:Vilna,serif;font-weight:900;font-size:15pt;line-height:1.2}'+
+    '.qrp .qrtt .qrsub{font-weight:700;font-size:10pt}'+
     '.qrp .qrtt small{display:block;font-weight:700;font-size:10.5pt;color:#333;margin-top:1mm}'+
     '.qrp .qrc{position:absolute;column-count:2;column-gap:7mm;column-fill:auto;column-rule:0.4pt solid #999;direction:rtl}'+
     '.qrm{break-inside:avoid;margin:2.6mm 0 1mm}.qrm:first-child{margin-top:0}'+
@@ -784,6 +785,9 @@
         /* ב (6.11.2026): "(לה. - מה.)" הוא סגנון מוסתר בוורד ("דפים בפרק"), עזר לעורך בלבד: אינו מודפס, והפרק נפתח ישר בכותרתו
            ובמשנה. ציון הדף שהיה עליו עובר ליחידה הבאה (first נשאר) */
         if(u.k==='perek-range')continue;
+        /* 26.11.2026 (בעל הפרויקט, בבא בתרא כח.): שורה בסגנון "שם פרק" שכל תוכנה טווח דפים ("כח.- סא.") - היא שורת הטווח
+           שסומנה בטעות בסגנון אחר. אינה מודפסת כמו שורת הטווח; אחרת היא נשארת לבדה בטור הימני, והפרק עצמו נפתח בטור השני */
+        if(u.k==='perek-name'&&/^[\s(]*[א-ת]{1,3}[.:]\s*[-–‐]\s*[א-ת]{1,3}[.:][\s)]*$/.test(String(u.a||'').replace(/<[^>]*>/g,'').replace(/&nbsp;/g,' ')))continue;
         /* פרומפט 84 ד (22.11.2026): שורת שם הפרק שבגוף העמוד ("פרק ראשון - מאימתי") אינה מודפסת: הפרק נפתח תמיד בראש עמוד חדש,
            והכותרת הרצה שבראשו כבר אומרת זאת. היחידה נשארת בנתונים, בוורד ובאתר; כאן היא רק אינה נכנסת לסרגל. תפקידיה בעימוד
            (טור/עמוד חדש, תוכן העניינים וסימניות ה-PDF, בודק "פרק שלם נפתח בכותרת הפרק") עוברים ליחידה הבאה (chapOpen).
@@ -1931,7 +1935,10 @@
     if(QS.get('qrp')!=='0'){
       try{
         var stq=document.createElement('style');stq.textContent=QR_CSS;document.head.appendChild(stq);
-        var hold=document.createElement('div');hold.style.cssText='position:absolute;left:-3000mm;top:0';document.body.appendChild(hold);
+        var hold=document.createElement('div');hold.style.cssText='position:absolute;left:-3000mm;top:0';
+        /* 26.11.2026: בהדפסה כל ילד של body חוץ מן העמודים מוסתר (display:none!important), ולכן המדידה כאן החזירה אפס, הכל "נכנס"
+           לעמוד אחד, והיתר גלש לטור שלישי מחוץ לדף. התצוגה נכפית כאן על מכל המדידה בלבד */
+        hold.style.setProperty('display','block','important');document.body.appendChild(hold);
         var donePk={};R.qr=[];
         var QM=perekMap(),lastIx={};
         recs.forEach(function(x){if(!x.u)return;var n=QM.upk[x.u.id],i=QM.pos[x.u.id];if(n&&(lastIx[n]===undefined||i>lastIx[n]))lastIx[n]=i;
@@ -1945,7 +1952,7 @@
           if(!pkDone(qn))continue;
           donePk[qn]=1;
           var qd=qrData(qn),qb=qrBlocks(qd);if(!qb.length)continue;
-          var qlab=qd.lab||{},CHQ=(D.chap&&D.chap[qlab.perek])||{},qttl='חזרה מהירה<small>'+ge(qlab.perek||'')+((CHQ.full||qlab.perekName)?' - '+ge(CHQ.full||qlab.perekName):'')+'</small>';
+          var qlab=qd.lab||{},CHQ=(D.chap&&D.chap[qlab.perek])||{},qttl='שיננא <span class="qrsub">(לחזרה מהירה)</span><small>'+ge(qlab.perek||'')+((CHQ.full||qlab.perekName)?' - '+ge(CHQ.full||qlab.perekName):'')+'</small>';
           var made=[],bi=0,guard=0;
           while(bi<qb.length&&guard++<12){
             var qpg=document.createElement('section');qpg.className='pg qrp';
@@ -1993,7 +2000,7 @@
           if(l&&l!==lastL){mb.push('<div class="mfl">'+l+'</div>');lastL=l}
           mb.push('<div class="qri qr-nose"><span class="qrt">'+ge(e.t)+'</span><span class="qrf">'+e.d.map(function(d){return ge(d)}).join(', ')+'</span></div>')});
         if(mb.length){
-          var holdM=document.createElement('div');holdM.style.cssText='position:absolute;left:-3000mm;top:0';document.body.appendChild(holdM);
+          var holdM=document.createElement('div');holdM.style.cssText='position:absolute;left:-3000mm;top:0';holdM.style.setProperty('display','block','important');document.body.appendChild(holdM);
           var madeM=[],bm=0,gm=0;
           while(bm<mb.length&&gm++<60){
             var mpg=document.createElement('section');mpg.className='pg qrp mfp';

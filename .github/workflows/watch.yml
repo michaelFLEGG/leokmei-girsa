@@ -6,7 +6,7 @@ on:
     branches: [main]
     # דחיפת תיקון מן האתר מטופלת בעבודה הקצרה שב-edits.yml. בלי
     # ההחרגה הזאת רצו שתי בנייה על אותה דחיפה, והתור נחנק.
-    paths-ignore: ['data/edits/**', 'docs/**', 'data/sakem/**', 'data/overflow/**']
+    paths-ignore: ['data/edits/**', 'docs/**', 'data/sakem/**', 'data/overflow/**', 'data/chokker/**', 'tools/chokker/**', '.github/workflows/chokker.yml']   # החוקר (26.11.2026) אינו משנה את האתר
 permissions:
   contents: write
   pages: write

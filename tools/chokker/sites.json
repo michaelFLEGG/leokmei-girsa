@@ -1,0 +1,86 @@
+{
+ "leokmei": {
+  "name": "לאוקמי גירסא",
+  "base": "https://leokmei.com",
+  "allowed": [
+   "leokmei.com"
+  ],
+  "known_foreign": {
+   "m7654301.workers.dev": "שרת ההצעות וההדפסה - לבדוק שנטפרי אינו חוסם (רצוי להעביר תחת leokmei.com)"
+  },
+  "masechtot": [
+   "berakhot",
+   "shabbat",
+   "kiddushin",
+   "eruvin",
+   "pesachim",
+   "yoma",
+   "beitzah",
+   "rosh-hashanah",
+   "taanit",
+   "megillah",
+   "moed-katan",
+   "chagigah",
+   "yevamot",
+   "nedarim",
+   "nazir",
+   "sotah",
+   "gittin",
+   "bava-kamma",
+   "bava-metzia",
+   "makkot",
+   "shevuot",
+   "zevachim",
+   "menachot",
+   "chullin",
+   "arakhin",
+   "temurah",
+   "keritot",
+   "meilah",
+   "niddah",
+   "bekhorot",
+   "bava-batra",
+   "sukkah",
+   "ketubot",
+   "sanhedrin",
+   "avodah-zarah",
+   "horayot"
+  ],
+  "repo": "leokmei-girsa"
+ },
+ "zohar": {
+  "name": "ממלכת הזוהר",
+  "base": "https://xn--8dbacdxfna0hp.com/",
+  "allowed": [
+   "xn--8dbacdxfna0hp.com",
+   "malchut-hazohar.pages.dev"
+  ],
+  "known_foreign": {},
+  "max_pages": 60,
+  "seed": [],
+  "repo": "zohar-nikud",
+  "_note": "לעולם לא curl על נתיב תוכן (חסם את המשרד ל-60 יום). רק דפדפן, בעדינות."
+ },
+ "nach": {
+  "name": "נ\"ך המפורש",
+  "base": "https://nach.leokmei.com/",
+  "allowed": [
+   "leokmei.com"
+  ],
+  "known_foreign": {},
+  "max_pages": 60,
+  "seed": [],
+  "repo": "nach-hameforash"
+ },
+ "shefa": {
+  "name": "שפע יואל",
+  "base": "https://shefa-yoel.com/",
+  "allowed": [
+   "shefa-yoel.com"
+  ],
+  "known_foreign": {},
+  "max_pages": 60,
+  "seed": [],
+  "repo": "shefa-yoel"
+ }
+}

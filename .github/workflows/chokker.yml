@@ -1,0 +1,114 @@
+name: החוקר - הליכה לילית על כל האתרים
+# מערכת הבקרה הפנימית "החוקר" (26.11.2026, בקשת מיכאל). החלק המכני, בלי טוקנים:
+# כל מסכת בלאוקמי (בשישה חלקים מקבילים), כל גודל מסך, תצוגת זרימה וספר, כל כפתור, כל פרופיל הדפסה,
+# ובנוסף ממלכת הזוהר, נ"ך המפורש ושפע יואל. התוצאות: data/chokker/findings.json (יומן קבוע) ו-data/chokker/runs/<תאריך>/.
+# גיליונות המגע (רק מסכים שהשתנו או שיש בהם ממצא) נדחפים לענף chokker-sheets, והמוח הלילי (משימת ענן) מסתכל בהם בעיניים.
+# דחיפה לקוד החוקר מריצה סבב על מסכת אחת (ברירת מחדל: בבא בתרא) לבדיקה מהירה.
+on:
+  schedule:
+    - cron: '15 2 * * *'     # 04:15 שעון ישראל (חורף), אחרי הקיפול והבודקים
+  push:
+    branches: [main]
+    paths: ['tools/chokker/**', '.github/workflows/chokker.yml']
+  workflow_dispatch:
+    inputs:
+      only: { description: 'מסכתות (slug, מופרדות בפסיק). ריק = כולן', required: false, default: '' }
+      parts: { description: 'flow,buttons,print', required: false, default: 'flow,buttons,print' }
+      sites: { description: 'אתרים נוספים: zohar,nach,shefa (ריק = בלי)', required: false, default: 'zohar,nach,shefa' }
+permissions:
+  contents: write
+concurrency:
+  group: chokker
+  cancel-in-progress: false
+env:
+  ONLY: ${{ github.event_name == 'push' && 'bava-batra' || github.event.inputs.only }}
+  PARTS: ${{ github.event.inputs.parts || 'flow,buttons,print' }}
+jobs:
+  walk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5]
+    steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: 'tools/chokker', sparse-checkout-cone-mode: true }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install playwright pymupdf pillow && python -m playwright install --with-deps chromium
+      - name: הליכה
+        run: |
+          if [ -n "$ONLY" ]; then
+            [ "${{ matrix.shard }}" = "0" ] || exit 0
+            python tools/chokker/walk.py --site leokmei --only "$ONLY" --parts "$PARTS" --out out/l0
+          else
+            python tools/chokker/walk.py --site leokmei --shard ${{ matrix.shard }}/6 --parts "$PARTS" --out out/l${{ matrix.shard }}
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: 'walk-l${{ matrix.shard }}', path: out/, retention-days: 21, if-no-files-found: ignore }
+  sites:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    if: github.event_name != 'push' && (github.event.inputs.sites != '' || github.event_name == 'schedule')
+    steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: 'tools/chokker', sparse-checkout-cone-mode: true }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install playwright pymupdf pillow && python -m playwright install --with-deps chromium
+      - name: הליכה על שאר האתרים
+        run: python tools/chokker/walk.py --site "${{ github.event.inputs.sites || 'zohar,nach,shefa' }}" --pause 2 --out out/s
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: 'walk-s', path: out/, retention-days: 21, if-no-files-found: ignore }
+  merge:
+    needs: [walk, sites]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install pillow
+      - uses: actions/download-artifact@v4
+        with: { path: parts, pattern: 'walk-*' }
+      - name: איחוד, יומן, גיליונות
+        id: m
+        run: |
+          D=$(TZ=Asia/Jerusalem date +%F)
+          R=data/chokker/runs/$D
+          python tools/chokker/merge.py work $(ls -d parts/*/* 2>/dev/null)
+          mkdir -p $R && cp work/walk.json $R/walk.json
+          PREV=$(ls -d data/chokker/runs/*/ 2>/dev/null | grep -v "$D" | tail -1)
+          python tools/chokker/ledger.py $R
+          cp -r work/shots $R/shots 2>/dev/null || true
+          python tools/chokker/sheets.py $R ${PREV:+--changed $PREV} --max 80
+          echo "run=$R" >> $GITHUB_OUTPUT
+          echo "day=$D" >> $GITHUB_OUTPUT
+      - name: גיליונות המגע לענף chokker-sheets
+        run: |
+          R=${{ steps.m.outputs.run }}; D=${{ steps.m.outputs.day }}
+          git config --global user.name "החוקר"; git config --global user.email "chokker@leokmei.com"
+          git fetch -q --depth 1 origin chokker-sheets 2>/dev/null || true
+          if git rev-parse -q --verify FETCH_HEAD >/dev/null 2>&1 && git ls-remote --exit-code origin chokker-sheets >/dev/null; then
+            git worktree add -q -B chokker-sheets /tmp/wt FETCH_HEAD
+          else
+            git worktree add -q --orphan -b chokker-sheets /tmp/wt
+          fi
+          cd /tmp/wt && rm -rf latest && mkdir latest && cp -r $GITHUB_WORKSPACE/$R/sheets/. latest/ 2>/dev/null; cp $GITHUB_WORKSPACE/$R/summary.md $GITHUB_WORKSPACE/$R/stats.json latest/
+          echo "$D" > latest/DATE
+          echo "גיליונות המגע של החוקר - הלילה האחרון (latest). ההיסטוריה ב-git log." > README.md
+          git add -A && git commit -qm "החוקר: גיליונות $D" && for i in 1 2 3; do git push -q origin chokker-sheets && break; sleep 5; done
+      - name: יומן הממצאים והסיכום למאגר
+        run: |
+          R=${{ steps.m.outputs.run }}
+          rm -rf $R/shots $R/sheets
+          gzip -f $R/walk.json
+          git add data/chokker && git commit -qm "החוקר: סבב ${{ steps.m.outputs.day }} $(python -c "import json;s=json.load(open('$R/stats.json'));print('חדשים %d, נסיגות %d, אומתו %d' % (s['new'],s['regressed'],s['gone']))")" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep $((i*7)); done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: 'chokker-full', path: 'work/', retention-days: 14, if-no-files-found: ignore }

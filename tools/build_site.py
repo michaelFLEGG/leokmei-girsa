@@ -6079,6 +6079,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
       return}
     EDIT=on;document.body.classList.toggle('ed',on);
     edLayout(on);
+    if(on&&!was&&!SUGM&&isAdmin()){try{edOffPrep()}catch(e){}}
     if(typeof tsMark==='function')tsMark();   /* מוסר את סימני התוספות לפני שהטקסט נקרא לעריכה */
     if(!on&&SUGM){sugPush(0);SUGM=false;document.body.classList.remove('sugm')}
     /* המשניות מוצגות מנוקדות, ובמצב עריכה הן חייבות לחזור לנוסח
@@ -6654,6 +6655,8 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
     pubDraw()}
   function pubDraw(){const e=$('#edpub');if(!e)return;
     if(SUGM){sugDraw();return}
+    if(edOffline()&&!PRNRO&&EDIT)PUBMSG=offMsg();
+    else if(PUBMSG.indexOf('אין קליטה')===0)PUBMSG='';
     const np=pubPending();
     let t=PUBMSG||(PUBBUSY?'מפרסם…':np?(np===1?'תיקון אחד ממתין':np+' תיקונים ממתינים')+(PUBNEXT?' · יפורסמו '+inText(PUBNEXT-Date.now()):''):
       (ED.length?(PUBAT?'פורסם '+agoText(Date.now()-PUBAT):'נשמר ומוצג לכל הלומדים'):'אין תיקונים ממתינים'));
@@ -6719,11 +6722,35 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
            daf:e.daf,t:e.t}
         : {k:e.k,was:e.was,now:e.now,wasH:e.wasH,nowH:e.nowH,
            ps:e.ps,psw:e.psw,wasP:e.wasP,daf:e.daf,ctx:e.ctx,t:e.t})},null,1)}
+  /* 26.11.2026 (בקשת מיכאל): עבודה בלי קליטה. כל עריכה נשמרת קודם במכשיר (כמו תמיד). כשאין קליטה לא מנסים לשלוח
+     ולא מציגים "המחשב הראשי אינו פועל": מציגים כמה תיקונים שמורים במכשיר, וברגע שהקליטה חוזרת הכל נשלח לבד
+     (וגם בכל דקה שעוברת, וגם בפתיחה הבאה של הדף). */
+  function edOffline(){return typeof navigator!=='undefined'&&navigator.onLine===false}
+  function offMsg(){const n=pubPending();
+    return 'אין קליטה · '+(n?(n===1?'תיקון אחד שמור':n+' תיקונים שמורים')+' במכשיר, ויעלו לבד כשהקליטה תחזור':'אפשר להמשיך לערוך, הכל נשמר במכשיר')}
+  addEventListener('offline',()=>{if(PRNRO)return;PUBMSG=offMsg();pubDraw()});
+  addEventListener('online',()=>{if(PRNRO)return;PUBMSG='';pubDraw();
+    setTimeout(()=>{if(edOffline())return;
+      if(SUGM){try{sugPush(0)}catch(e){}return}
+      if(isAdmin()&&pubPending())pubNow(0);
+      else if(isAdmin()&&admKey()){try{syncNow()}catch(e){}}},2500)});
+  /* כניסה לעריכה: א. המסכת נשמרת במכשיר בשקט (כמו "לימוד בלי חיבור"), כדי שאם הקליטה תתנתק הדף ייפתח גם בלי רשת.
+     ב. אזהרה אם אותה מסכת פתוחה לעריכה גם בלשונית אחרת - שתי לשוניות כותבות לאותה שמירה במכשיר */
+  let EDBC=null;
+  function edOffPrep(){
+    if(!edOffline()&&typeof window.offAuto==='function')window.offAuto();
+    if(!EDBC&&'BroadcastChannel' in window){EDBC=new BroadcastChannel('lg-edtab-'+SLUG);
+      EDBC.onmessage=ev=>{if(!EDIT)return;
+        if(ev.data==='hi'){EDBC.postMessage('here')}
+        if(ev.data==='hi'||ev.data==='here')toast('שים לב: מסכת '+D.masechet+' פתוחה לעריכה גם בלשונית אחרת. כדי שלא יתערבבו העריכות, עבוד בלשונית אחת וסגור את השנייה.',9000)}}
+    if(EDBC)EDBC.postMessage('hi')}
   async function pubNow(loud){
     if(PRNRO)return;
     if(SUGM)return sugPush(loud);
     clearTimeout(PUBT);
     if(PUBBUSY)return;
+    if(edOffline()){PUBDIRTY=true;pdSave();PUBNEXT=Date.now()+60000;if(!PUBTK)PUBTK=setInterval(pubTick,5000);
+      PUBMSG=offMsg();pubDraw();return}
     const body=pubBody();
     /* אותה רשימה בדיוק אינה נדחפת פעמיים. בלי השער הזה נרשמה עשירייה
        של הפניות ריקות למאגר בתוך דקות, וכל אחת מהן הפעילה בנייה. */
@@ -6754,6 +6781,7 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
         pubDraw();drawEd();return}
       catch(err){
         if(/אין הרשאה/.test(err.message||'')){PUBBUSY=false;PUBMSG='';PUBDIRTY=true;devRevoked();return}
+        if(edOffline()){PUBBUSY=false;failed();PUBMSG=offMsg();pubDraw();drawEd();return}
         /* אין חיבור לנקודת הקליטה: ממשיכים לדרכים האחרות, והעריכות שמורות */
       }
     }

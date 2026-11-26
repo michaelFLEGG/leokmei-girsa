@@ -70,6 +70,16 @@
         else if(k === 'save'){ a.disabled = true; save(box) }
         else if(k === 'rm') ask({ type: 'lg-remove', slug: SLUG }).then(function(){ lsSet(LSK, null); box.querySelector('.offst').textContent = 'הוסר מן המכשיר.'; draw(box) }).catch(function(){}) });
       m.addEventListener('keydown', function(e){ if(e.key === 'Escape') m.remove() }) };
+    /* 26.11.2026: בכניסה לעריכה המסכת נשמרת במכשיר בשקט (פעם בשש שעות לכל היותר), כדי שעבודה בלי קליטה תהיה אפשרית
+       בלי שהמנהל יצטרך לזכור ללחוץ "שמור". אותה שמירה בדיוק כמו בכפתור. */
+    window.offAuto = function(){
+      if(!OK || typeof SLUG === 'undefined' || !navigator.onLine) return;
+      if(lsGet(LSK) && Date.now() - (+lsGet(LSK + '-chk') || 0) < 6 * 3600000) return;
+      lsSet(LSK + '-chk', String(Date.now()));
+      setTimeout(function(){
+        ready().then(function(ok){ return ok ? ask({ type: 'lg-save', slug: SLUG, urls: urls(), quiet: 1 }) : null })
+          .then(function(r){ if(r && r.ok){ lsSet(LSK, String(Date.now())); try{ if(typeof toast === 'function') toast('מסכת ' + D.masechet + ' נשמרה במכשיר: אפשר לעבוד עליה גם כשהקליטה מתנתקת.', 5000) }catch(e){} } })
+          .catch(function(){}) }, 4000) };
     /* עדכון לבד: מסכת שמורה, ופתיחה עם חיבור - אחרי שהדף נרגע, פעם בשש שעות לכל היותר */
     if(OK && typeof SLUG !== 'undefined' && lsGet(LSK)) addEventListener('load', function(){
       setTimeout(function(){

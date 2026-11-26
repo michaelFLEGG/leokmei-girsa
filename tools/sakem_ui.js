@@ -853,7 +853,7 @@
     /* 26.11.2026 (בבא בתרא לה.): כותרת נושא/ד"ה/משנה שההצעה כתבה מתוך לשון התוכן (כמו "זה אומר של אבותי וזה אומר
        של אבותי") אינה "שורה תלושה" גם כשהיא זהה לשורה במקום אחר - כותרת מתוך לשון התוכן היא כלל של בעל הפרויקט */
     const heads=new Set(String(text||'').split('\n').map(x=>x.trim()).filter(x=>/^\((נושא|דה|משנה)\)/.test(x)||/^\[כותרת-(נושא|דה):/.test(x))
-      .map(x=>skmNearNorm(skmVerifyLines(x.replace(/^\[כותרת-(?:נושא|דה):(.*)\]$/,'$1')).join(' '))).filter(Boolean));
+      .flatMap(x=>[skmVerifyLines(x.replace(/^\[כותרת-(?:נושא|דה):(.*)\]$/,'$1')).join(' '),skmVerifyLines(x).join(' ')]).map(skmNearNorm).filter(Boolean));
     const ig=skmIntegrity(got,fu,a,b,heads);if(ig)return ig;
     return ''}
   /* פרומפט 94: (א) כותרת (נושא/צד) שמופיעה גם כשורה או כסוף השורה שלפניה; (ב) כותרת צד שחוזרת בתחילת השורה שתחתיה;

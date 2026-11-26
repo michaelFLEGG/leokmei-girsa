@@ -9,6 +9,7 @@
   side_repeat - כותרת צד שחוזרת בתחילת השורה שתחתיה ("בני רחבה:" / "בני רחבה: א"כ...").      ודאי כשהכותרת 2 מילים ומעלה ומסתיימת בנקודתיים: הכפילות נמחקת מן השורה.
   bracket_dup - שתי שורות סמוכות שזהות אחרי הסרת [סוגריים] ("מטיף לתוכו אבר [עופרת]." / "מטיף לתוכו אבר.").  ודאי: הקצרה נמחקת.
   far_dup     - שורה של 6 מילים ומעלה שזהה לשורה במרחק 16 יחידות ומעלה (שורה תלושה), שאינה "גופא", משנה או ציטוט מנוקד.  ספק: לעיון.
+  side_dup    - אותה כותרת צד על שתי יחידות סמוכות (26.11.2026).                                     ודאי: נמחקת מן הראשונה.
   empty_side  - כותרת צד ריקה (רק רווח או סימן).                                                  ספק: לעיון.
 (שורה כפולה רגילה ושארית פיצול - tools/dup_lines.py, שרץ באותו לילה. עוגני תוס' - tools/tosafot/anchor_check.py.)
 
@@ -56,6 +57,7 @@ def flat(pages):
         for u in pg.get('units') or []:
             ls = [('u%s.%d' % (u.get('id'), n + 1), l[1] if len(l) > 1 else '') for n, l in enumerate(u.get('l') or [])]
             out.append({'pi': pi, 'daf': pg.get('daf'), 'id': u.get('id'), 'k': u.get('k'), 'a': u.get('a') or '',
+                        'cls': [str(l[0] if l else '') for l in (u.get('l') or [])],
                         'lines': [(ek, h, plain(h), norm(plain(h))) for ek, h in ls]})
     return out
 
@@ -75,8 +77,25 @@ def scan(pages):
                 at = plain(u['a']).strip()
                 after = t.strip()[len(at):] if t.strip().startswith(at) else ''
                 certain = n != a and t.strip().startswith(at) and ((len(a.split()) >= 2 and at.endswith(':')) or re.match(r'^\s*[-־:]\s', after or 'x') is not None)
+                # 26.11.2026 (בבא בתרא פרק חזקת, מיכאל: "פשיטא / פשיטא שיש לו קרקע", וכן שמות אמוראים): גם כותרת של מילה
+                # אחת, או כל כותרת שמסתיימת בנקודתיים, שחוזרת בפתח השורה ואחריה עוד שתי מילים לפחות - ודאי
+                if not certain and n != a and t.strip().startswith(at) and len(n.split()) >= len(a.split()) + 2 and \
+                        (at.endswith(':') or len(a.split()) == 1):
+                    certain = True
                 found.append({'kind': 'side_repeat', 'certain': certain, 'daf': u['daf'], 'ek': ek, 'anchor_ek': 'u%s.0' % u['id'],
                               'anchor': at, 'h': h, 't': t})
+        # side_dup (26.11.2026, בבא בתרא לז.): אותה כותרת צד על שתי יחידות סמוכות ("◆ פשיטא," מעל "פשיטא") - שארית החלה.
+        # ודאי: הכותרת נמחקת מן היחידה הראשונה (זו שמעל), והשנייה - שלצד התוכן - נשארת
+        nx = F[i + 1] if i + 1 < len(F) else None
+        if u['a'] and nx and nx['k'] == 'u' and nx['a']:
+            k1 = re.sub(r'[^א-ת ]', '', NIK.sub('', plain(u['a']))).split()
+            k2 = re.sub(r'[^א-ת ]', '', NIK.sub('', plain(nx['a']))).split()
+            # ודאי רק כשהיחידה העליונה אינה דיאלוג רגיל ("א"ל: / א"ל:" ברצף הוא תקין): אין בה שורות, או שכל שורותיה
+            # כותרת (נושא/ד"ה), או שהכותרת נושאת מעוין/סימן שנשאר מהחלה
+            top_head = not u['lines'] or all(re.search(r'\b(nose|dh)\b', c or '') for c in u['cls'])
+            if k1 and k1 == k2:
+                found.append({'kind': 'side_dup', 'certain': top_head or bool(re.search('[◆♦•]', plain(u['a']))), 'daf': u['daf'], 'ek': 'u%s.0' % u['id'], 'h': u['a'],
+                              't': plain(u['a']), 'keep': 'u%s.0' % nx['id']})
         if u['a'] and not re.search('[א-ת]', plain(u['a'])) and plain(u['a']).strip() not in ('-', '־', '–'):
             found.append({'kind': 'empty_side', 'certain': False, 'daf': u['daf'], 'ek': 'u%s.0' % u['id'], 't': plain(u['a'])})
         # head_line / head_tail: הכותרת שאחרי היחידה
@@ -172,6 +191,8 @@ def edits_for(found, t0, tag='p94int', recs=None, pages_text=''):
             nh = re.sub(r'(?<=[א-ת])([,.])(?=(?:<[^>]+>)*[א-ת])', r'\1 ', x['h'])
             if nh != x['h'] and norm(plain(nh)) == norm(x['t']):
                 out.append(rec(x['ek'], x['h'], nh, x['daf'], 'רווח חסר אחרי פסיק (שארית איחוי שורות)'))
+        elif x['kind'] == 'side_dup':
+            out.append(rec(x['ek'], x['h'], '', x['daf'], 'כותרת צד כפולה ביחידה הסמוכה', {'keep': x.get('keep')}))
         elif x['kind'] == 'bracket_dup':
             out.append(rec(x['ek'], x['h'], '', x['daf'], 'שורה כפולה (זהה בלי הסוגריים)', {'keep': x.get('keep')}))
         elif x['kind'] == 'side_repeat':
@@ -201,6 +222,9 @@ def main():
     ap.add_argument('--apply', action='store_true')
     ap.add_argument('--live-dir', default='')
     ap.add_argument('--pages', default='', help='קובץ pickle של pages (לבדיקה)')
+    # 26.11.2026: חלון "לא נוגעים במה שמיכאל ערך" (ברירת מחדל 12 שעות). בהרצה ידנית אחרי קבלת הצעות סכם בכמות (שנרשמות
+    # כעריכות של היום) - חלון קצר, כדי שהתיקונים יחולו, ועדיין לא ייגעו במה שמיכאל עורך ממש עכשיו
+    ap.add_argument('--hot-hours', type=float, default=12)
     a = ap.parse_args()
     import mishna_check as MC
     from dup_lines import hot_keys
@@ -238,7 +262,7 @@ def main():
             srv = {}
         ptxt = ' | '.join(l[3] for u in flat(pages) for l in u['lines'])
         eds = edits_for(found, t0, recs=srv.get('edits') or [], pages_text=ptxt)
-        hot = hot_keys(s, a.live_dir or None)
+        hot = hot_keys(s, a.live_dir or None, a.hot_hours)
         held = [e for e in eds if e['k'].split('~')[0] in hot or e['k'].split('.')[0] in hot]
         eds = [e for e in eds if e not in held]
         t0 += len(eds) + 10
@@ -258,10 +282,10 @@ def main():
             import rules_ledger as RL
             from dup_lines import hot_keys as _hk
             import speaker_to_side as _S
-            rl_res = RL.run(s, pages, _S.recent_hot(s, 24, a.live_dir or None))
+            rl_res = RL.run(s, pages, _S.recent_hot(s, min(24, a.hot_hours * 2), a.live_dir or None))
             rl_applied = {}
             if a.apply:
-                rl_eds = RL.mech_edits(s, rl_res, t0 + 5000, pages, _S.recent_hot(s, 24 * 30, a.live_dir or None))
+                rl_eds = RL.mech_edits(s, rl_res, t0 + 5000, pages, _S.recent_hot(s, 24 * 30 if a.hot_hours >= 12 else a.hot_hours, a.live_dir or None))
                 if rl_eds:
                     p_ = os.path.join(root, 'data', 'edits', s + '.json')
                     doc_ = json.load(io.open(p_, encoding='utf-8')) if os.path.exists(p_) else {'v': 1, 'slug': s, 'edits': []}

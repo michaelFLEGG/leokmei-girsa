@@ -166,6 +166,7 @@ def main():
     ap.add_argument('--only', default='')
     ap.add_argument('--apply', action='store_true', help='לכתוב את המחיקות לשכבה (data/edits/<מסכת>.json)')
     ap.add_argument('--live-dir', default='')
+    ap.add_argument('--hot-hours', type=float, default=12)
     a = ap.parse_args()
     import mishna_check as MC, mishna_gaps as MG
     book = json.load(io.open(os.path.join(root, 'data', 'book.json'), encoding='utf-8'))
@@ -183,7 +184,7 @@ def main():
         found = scan(rows)
         eds = edits_for(s, rows, found, t0)
         # שורה שמיכאל ערך ב-12 השעות האחרונות (או ביחידה שנוצרה בהן) - לא נוגעים: ייתכן שהוא באמצע עבודה עליה
-        hot = hot_keys(s, a.live_dir or None)
+        hot = hot_keys(s, a.live_dir or None, a.hot_hours)
         held = [e for e in eds if e['k'].split('~')[0] in hot or e['k'].split('.')[0] in hot]
         eds = [e for e in eds if e not in held]
         t0 += len(eds) + 10

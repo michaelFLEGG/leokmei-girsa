@@ -19,6 +19,10 @@ on:
         description: 'מסכת אחת (slug). ריק = כולן'
         required: false
         default: ''
+      hot_hours:
+        description: 'חלון "לא נוגעים" בשעות (ברירת מחדל 12)'
+        required: false
+        default: '12'
 permissions:
   contents: write
   actions: write
@@ -60,7 +64,7 @@ jobs:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
           PYTHONUNBUFFERED: '1'
         run: |
-          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/dup_lines.py --apply --only "${{ github.event.inputs.only }}"; else python tools/dup_lines.py --apply; fi
+          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/dup_lines.py --apply --hot-hours "${{ github.event.inputs.hot_hours || 12 }}" --only "${{ github.event.inputs.only }}"; else python tools/dup_lines.py --apply; fi
       - name: לימוד מהגהות מיכאל
         # פרומפט 98 (25.11.2026): מסכת שבה מיכאל ערך יותר מ-30 עריכות ביממה - כל עריכה מסווגת, והחלפת לשון שחוזרת
         # 3 פעמים נכנסת לפנקס הכללים (docs/rules-ledger.json) ולסבב החוזר שבבודק השלמות. דוח: data/fold/learn/.
@@ -75,7 +79,7 @@ jobs:
           LEOKMEI_ADMIN_KEY: ${{ secrets.LEOKMEI_ADMIN_KEY }}
           PYTHONUNBUFFERED: '1'
         run: |
-          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/integrity_check.py --apply --only "${{ github.event.inputs.only }}"; else python tools/integrity_check.py --apply; fi
+          if [ -n "${{ github.event.inputs.only }}" ]; then python tools/integrity_check.py --apply --hot-hours "${{ github.event.inputs.hot_hours || 12 }}" --only "${{ github.event.inputs.only }}"; else python tools/integrity_check.py --apply; fi
       - name: שמירה ודחיפה
         id: save
         run: |

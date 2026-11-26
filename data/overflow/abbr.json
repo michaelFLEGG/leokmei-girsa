@@ -34,7 +34,7 @@
    "long": "ואחר כך",
    "short": "ואח\"כ",
    "nLong": 76,
-   "nShort": 684,
+   "nShort": 683,
    "kind": "abbr"
   },
   {
@@ -110,8 +110,8 @@
   {
    "long": "על ידי",
    "short": "ע\"י",
-   "nLong": 140,
-   "nShort": 238,
+   "nLong": 139,
+   "nShort": 239,
    "kind": "abbr"
   },
   {
@@ -166,8 +166,8 @@
   {
    "long": "ראש השנה",
    "short": "ר\"ה",
-   "nLong": 37,
-   "nShort": 489,
+   "nLong": 32,
+   "nShort": 493,
    "kind": "abbr"
   },
   {
@@ -202,13 +202,13 @@
    "long": "תלמוד לומר",
    "short": "ת\"ל",
    "nLong": 48,
-   "nShort": 493,
+   "nShort": 492,
    "kind": "abbr"
   },
   {
    "long": "מכל מקום",
    "short": "מ\"מ",
-   "nLong": 74,
+   "nLong": 73,
    "nShort": 95,
    "kind": "abbr"
   },
@@ -370,14 +370,14 @@
    "long": "ארבע",
    "short": "ד'",
    "nLong": 438,
-   "nShort": 611,
+   "nShort": 612,
    "kind": "num"
   },
   {
    "long": "ארבעה",
    "short": "ד'",
-   "nLong": 365,
-   "nShort": 611,
+   "nLong": 364,
+   "nShort": 612,
    "kind": "num"
   },
   {
@@ -425,8 +425,8 @@
   {
    "long": "עשרה",
    "short": "י'",
-   "nLong": 582,
-   "nShort": 189,
+   "nLong": 581,
+   "nShort": 190,
    "kind": "num"
   },
   {

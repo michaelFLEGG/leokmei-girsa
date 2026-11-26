@@ -234,11 +234,11 @@
     "first": 12
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 50,
-    "certain": 0,
-    "applied": 0,
-    "last_applied": "2026-11-25T16:38:13Z",
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 85,
+    "certain": 22,
+    "applied": 22,
+    "last_applied": "2026-11-26T12:04:55Z",
     "first": 78
    },
    "sukkah": {
@@ -524,8 +524,8 @@
     "first": 177
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 171,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 55,
     "certain": 0,
     "applied": 0,
     "last_applied": null,
@@ -814,7 +814,7 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
+    "when": "2026-11-26T12:04:55Z",
     "violations": 0,
     "certain": 0,
     "applied": 0,
@@ -1104,7 +1104,7 @@
     "first": 6
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
+    "when": "2026-11-26T12:04:55Z",
     "violations": 0,
     "certain": 0,
     "applied": 0,
@@ -1394,7 +1394,7 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
+    "when": "2026-11-26T12:04:55Z",
     "violations": 0,
     "certain": 0,
     "applied": 0,
@@ -1684,8 +1684,8 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 2,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 0,
     "certain": 0,
     "applied": 0,
     "last_applied": null,
@@ -1974,8 +1974,8 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 5,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 1,
     "certain": 0,
     "applied": 0,
     "last_applied": null,
@@ -2264,9 +2264,9 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 1,
-    "certain": 1,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 0,
+    "certain": 0,
     "applied": 0,
     "last_applied": null,
     "first": 1
@@ -2554,8 +2554,8 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 0,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 1,
     "certain": 0,
     "applied": 0,
     "last_applied": null,
@@ -2852,7 +2852,7 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
+    "when": "2026-11-26T12:04:55Z",
     "violations": 0,
     "certain": 0,
     "applied": 0,
@@ -3142,9 +3142,9 @@
     "first": 4
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 4,
-    "certain": 4,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 8,
+    "certain": 8,
     "applied": 0,
     "last_applied": null,
     "first": 4
@@ -3432,7 +3432,7 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
+    "when": "2026-11-26T12:04:55Z",
     "violations": 0,
     "certain": 0,
     "applied": 0,
@@ -3722,9 +3722,9 @@
     "first": 10
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 1,
-    "certain": 1,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 0,
+    "certain": 0,
     "applied": 0,
     "last_applied": null,
     "first": 1
@@ -4012,8 +4012,8 @@
     "first": 5
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 0,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 4,
     "certain": 0,
     "applied": 0,
     "last_applied": null,
@@ -4302,8 +4302,8 @@
     "first": 5
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 1,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 16,
     "certain": 0,
     "applied": 0,
     "last_applied": null,
@@ -4592,8 +4592,8 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 0,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 23,
     "certain": 0,
     "applied": 0,
     "last_applied": null,
@@ -4882,7 +4882,7 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
+    "when": "2026-11-26T12:04:55Z",
     "violations": 0,
     "certain": 0,
     "applied": 0,
@@ -5172,8 +5172,8 @@
     "first": 25
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 53,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 50,
     "certain": 0,
     "applied": 0,
     "last_applied": null,
@@ -5462,8 +5462,8 @@
     "first": 11
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 13,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 19,
     "certain": 0,
     "applied": 0,
     "last_applied": null,
@@ -5752,7 +5752,7 @@
     "first": 0
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
+    "when": "2026-11-26T12:04:55Z",
     "violations": 0,
     "certain": 0,
     "applied": 0,
@@ -6042,9 +6042,9 @@
     "first": 68
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
-    "violations": 138,
-    "certain": 138,
+    "when": "2026-11-26T12:04:55Z",
+    "violations": 167,
+    "certain": 167,
     "applied": 0,
     "last_applied": null,
     "first": 138
@@ -6332,7 +6332,7 @@
     "first": 6
    },
    "bava-batra": {
-    "when": "2026-11-26T10:11:21Z",
+    "when": "2026-11-26T12:04:55Z",
     "violations": 18,
     "certain": 18,
     "applied": 0,
@@ -6381,5 +6381,5 @@
    }
   }
  },
- "when": "2026-11-26T10:11:36Z"
+ "when": "2026-11-26T12:04:55Z"
 }

@@ -1750,7 +1750,9 @@ def bar_html(masechet, tzbtn='', tosbtn='', altbtn='', bkbtn='', hgbtn=''):
   '<button id="ntedit" class="adm-b" onmousedown="event.preventDefault()" onclick="ntAdd()" title="הערה פרטית לקלוד (Ctrl+Alt+י)">הערה לקלוד</button>'
   '<button id="mineedit" style="display:none" onclick="mineOpen()" title="ההצעות ששלחת">ההצעות שלי</button></div>'
   '<span id="procnote" class="edpub"></span>'
-  '<button class="ib" onmousedown="event.preventDefault()" onclick="edUndoBtn()" aria-label="בטל" title="בטל (Ctrl+ז)">' + ic('undo') + '<span class="t">בטל</span></button></div>'
+  '<button class="ib" onmousedown="event.preventDefault()" onclick="edUndoBtn()" aria-label="בטל" title="בטל (Ctrl+ז)">' + ic('undo') + '<span class="t">בטל</span></button>'
+  # 26.11.2026: גודל האותיות גם במצב עריכה (תפריט "תצוגה" מוסתר בעריכה, ולכן הכפתורים כאן)
+  '<span class="edfs" role="group" aria-label="גודל האותיות"><button class="ib" onmousedown="event.preventDefault()" onclick="fs(-2)" aria-label="הקטנת האותיות" title="הקטנת האותיות (Ctrl+מינוס)">א<span class="pm">-</span></button><button class="ib" onmousedown="event.preventDefault()" onclick="fs(2)" aria-label="הגדלת האותיות" title="הגדלת האותיות (Ctrl+פלוס)">א<span class="pm">+</span></button></span></div>'
   # ---- מנהל: אזור נפרד בקצה השמאלי. לגולש רגיל נשאר בו רק "הצע תיקון" העדין.
   '<div class="bg admz edsw" data-pri="0" id="admz">'
   # פרומפט 40: "עריכה" ראשון באזור (הקרוב למרכז), כדי שלעולם לא יידחק אל מחוץ למסך
@@ -2861,6 +2863,9 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
   .bar .bg.adm-only{display:none} body.adm .bar .bg.adm-only{display:flex}
   .bar .edonly{display:none}
   body.ed .bar .edonly{display:flex}
+  .bar .edfs{display:inline-flex;gap:2px;margin-inline-start:6px}
+  .bar .edfs button{min-width:30px;font-family:'VilnaG','Vilna',serif;font-size:17px;font-weight:700}
+  .bar .edfs .pm{font-size:13px;margin-inline-start:1px}
   body.ed .bar .bg:not(.loc):not(.edonly):not(.edsw){display:none!important}
   body.ed .bar .loc .seg>button:not(.pkb),body.ed .bar .loc #peresel{display:none}
   body.ed .bar .loc #curdaf{display:none}
@@ -4517,14 +4522,21 @@ def build(json_path, out_path, masechet, hagaha=False, sources=None, spacing=Non
    let rsz;addEventListener('resize',()=>{clearTimeout(rsz);rsz=setTimeout(squeezeRun,250)});
    $('#flow').addEventListener('wheel',e=>{const f=$('#flow');if(f.classList.contains('vert'))return;
      if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){f.scrollLeft-=e.deltaY;e.preventDefault()}},{passive:false});
+   /* 26.11.2026: Ctrl+פלוס / Ctrl+מינוס מגדילים ומקטינים את האותיות גם בעריכה (גם כשהסמן בתוך הטקסט),
+      לפי המקש הפיזי - עובד גם במקלדת עברית. Ctrl+0 נשאר "רווח לפני" של העורך. */
+   window.addEventListener('keydown',e=>{
+     if(!(e.ctrlKey||e.metaKey)||e.altKey)return;
+     if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))return;
+     if(document.getElementById('tzv')&&document.getElementById('tzv').offsetParent)return;
+     const up=e.code==='Equal'||e.code==='NumpadAdd'||e.key==='+'||e.key==='=';
+     const dn=e.code==='Minus'||e.code==='NumpadSubtract'||e.key==='-';
+     if(up||dn){fs(up?2:-2);e.preventDefault();e.stopPropagation()}},true);
    document.addEventListener('keydown',e=>{
      if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)||e.target.isContentEditable||e.target.closest('.modal'))return;
      if(e.key==='PageDown'||e.key===' '){goScreen(1);e.preventDefault()}
      if(e.key==='PageUp'){goScreen(-1);e.preventDefault()}
      if(e.ctrlKey&&e.key==='ArrowLeft'){goDaf(1);e.preventDefault()}
      if(e.ctrlKey&&e.key==='ArrowRight'){goDaf(-1);e.preventDefault()}
-     if(e.ctrlKey&&(e.key==='='||e.key==='+')){fs(2);e.preventDefault()}
-     if(e.ctrlKey&&e.key==='-'){fs(-2);e.preventDefault()}
      if(e.key==='Escape')document.querySelectorAll('.panel').forEach(x=>x.classList.remove('open'))});
    /* קישור עמוק מדף ההגהה: p=מקטע, u=מזהה היחידה. היחידה מודגשת ונגללת אליה. */
    /* שינויי המבנה מוחלים על הנתונים לפני הרנדור הראשון, כדי שמפתחות

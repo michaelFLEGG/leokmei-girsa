@@ -17,6 +17,39 @@ for s in a.only.split(','):
     srv = F.live_doc(s) or {}
     io.open(os.path.join(a.out, s + '.live.json'), 'w', encoding='utf-8').write(json.dumps(srv, ensure_ascii=False))
     print(s, len(pages), 'עמודים', len(srv.get('edits') or []), 'עריכות בשרת')
+    # בדיקה: הצעות סכם שהוכרעו "קבל"/"ערוך" - האם הנוסח החדש נמצא בדף (26.11.2026)
+    import glob, re
+    NIK = re.compile('[\u0591-\u05C7]')
+    def N(t):
+        t = re.sub(r'<[^>]+>', '', str(t)); t = NIK.sub('', t)
+        t = re.sub(r'\{[^{}:\s]{1,4}:|\}', '', t); t = re.sub(r'\[[^\]]*\]', ' ', t)
+        t = re.sub('["\'״׳]|&quot;|&#x27;', '', t)
+        return re.sub(r'\s+', ' ', t).strip()
+    import html as _h
+    plain = ' | '.join(N(_h.unescape(str(l[1]))) for pg in pages for u in pg.get('units') or [] for l in (u.get('l') or []) if len(l) > 1)
+    for f in sorted(glob.glob(os.path.join(here, '..', 'data', 'sakem', 'decisions', s + '-p*.json'))):
+        D = json.load(io.open(f, encoding='utf-8'))
+        jid = os.path.basename(f)[:-5]
+        try:
+            O = json.load(io.open(os.path.join(here, '..', 'data', 'sakem', 'out', jid + '.json'), encoding='utf-8'))
+        except Exception:
+            continue
+        items = {x['iid']: x for x in O.get('items') or []}
+        ok = miss = 0; ms = []
+        for iid, d in (D.get('dec') or {}).items():
+            act = d.get('act') if isinstance(d, dict) else d
+            if act not in ('accept', 'edit') or iid not in items:
+                continue
+            it = items[iid]; txt = (d.get('final') if isinstance(d, dict) else '') or it.get('text') or ''
+            ol = {N(x) for x in str(it.get('orig') or '').split('\n')}
+            cand = [N(x) for x in txt.split('\n') if not x.startswith('[')]
+            cand = [x for x in cand if len(x) > 20 and x not in ol][:4]
+            if not cand:
+                continue
+            hit = sum(1 for x in cand if x in plain)
+            if hit * 2 >= len(cand): ok += 1
+            else: miss += 1; ms.append(iid)
+        print('בדיקת החלה', jid, 'בדף', ok, 'חסר', miss, ' '.join(ms))
     if a.grep:
         import re
         U = [(pg.get('daf'), u) for pg in pages for u in pg.get('units') or []]

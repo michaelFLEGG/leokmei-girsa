@@ -1,0 +1,3391 @@
+{
+ "about": "יומן הממצאים הקבוע של החוקר. לא מוחקים ממנו לעולם.",
+ "findings": {
+  "ba7af6d934f0": {
+   "rule": "T06-gregorian",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "תאריך לועזי (רק תאריכים עבריים): …ראית, א\"ל: עולם הפוך ראיתי, עליונים למטה ותחתונים למעלה.- א\"…",
+   "evidence": {
+    "rect": [
+     11,
+     11579,
+     367,
+     174
+    ],
+    "daf": "י:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "תאריכים עבריים בלבד",
+   "scopes": [
+    "desktop/book",
+    "desktop/flow",
+    "phone/flow",
+    "tablet-l/flow",
+    "tablet-p/book",
+    "tablet-p/flow",
+    "wide/book",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "ed095ac402c0": {
+   "rule": "T08-space-before-punct",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "רווח לפני סימן פיסוק: …ה ד' מאות דינרים לר\"א: ולא קיבל , שלחה לרבא, וקיבל משום שלום…",
+   "evidence": {
+    "rect": [
+     11,
+     12229,
+     367,
+     35
+    ],
+    "daf": "י:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "רווח לפני סימן פיסוק",
+   "scopes": [
+    "desktop/book",
+    "desktop/flow",
+    "phone/flow",
+    "tablet-l/flow",
+    "tablet-p/book",
+    "tablet-p/flow",
+    "wide/book",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "9fe9527af9fa": {
+   "rule": "T08-space-before-punct",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "רווח לפני סימן פיסוק: … הָאֱלֹהִים לְהִתְיַצֵּב עַל ה' , וַיֹּאמֶר ה' אֶל הַשָּׂטָן…",
+   "evidence": {
+    "rect": [
+     11,
+     18954,
+     367,
+     261
+    ],
+    "daf": "טז."
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "רווח לפני סימן פיסוק",
+   "scopes": [
+    "desktop/book",
+    "desktop/flow",
+    "phone/flow",
+    "tablet-l/flow",
+    "tablet-p/book",
+    "tablet-p/flow",
+    "wide/book",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "891fd140dbff": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (25x11): פרק א, משנה א",
+   "evidence": {
+    "rect": [
+     333,
+     104,
+     25,
+     11
+    ],
+    "daf": "ב.",
+    "unit": "7"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:בחירת מסכת או דף",
+    "phone/btn:דף קודם",
+    "phone/btn:חזרה מהירה",
+    "phone/btn:חיפוש",
+    "phone/flow",
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book",
+    "tablet-p/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "9fd771165a5c": {
+   "rule": "L20-pasuk-color",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "פסוק לא בשחור: rgb(46, 63, 107)",
+   "evidence": {
+    "rect": [
+     182,
+     421,
+     6,
+     15
+    ],
+    "daf": "ב:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "פסוקים בשחור",
+   "scopes": [
+    "desktop/book",
+    "desktop/flow",
+    "phone/flow",
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book",
+    "tablet-p/flow",
+    "wide/book",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "15884dc89b81": {
+   "rule": "L13-side-long",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת צד ארוכה מ-3 מילים: ה. רבא לבני מחוזא",
+   "evidence": {
+    "rect": [
+     333,
+     9414,
+     45,
+     19
+    ],
+    "daf": "ט."
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כותרת צד עד שתי מילים, שלוש רק בחריג",
+   "scopes": [
+    "desktop/book",
+    "desktop/flow",
+    "phone/flow",
+    "tablet-l/flow",
+    "tablet-p/book",
+    "tablet-p/flow",
+    "wide/book",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e902eeefa505": {
+   "rule": "L13-side-long",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת צד ארוכה מ-3 מילים: ז. דרש ר\"י בר\"ש",
+   "evidence": {
+    "rect": [
+     333,
+     10725,
+     45,
+     19
+    ],
+    "daf": "י."
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כותרת צד עד שתי מילים, שלוש רק בחריג",
+   "scopes": [
+    "desktop/book",
+    "desktop/flow",
+    "phone/flow",
+    "tablet-l/flow",
+    "tablet-p/book",
+    "tablet-p/flow",
+    "wide/book",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "d8e82ab898fb": {
+   "rule": "L13-side-long",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת צד ארוכה מ-3 מילים: יא. הוא היה אומר,",
+   "evidence": {
+    "rect": [
+     333,
+     11029,
+     45,
+     19
+    ],
+    "daf": "י."
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כותרת צד עד שתי מילים, שלוש רק בחריג",
+   "scopes": [
+    "desktop/book",
+    "desktop/flow",
+    "phone/flow",
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book",
+    "tablet-p/flow",
+    "wide/book",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "b4f66ed9825d": {
+   "rule": "L13-side-long",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת צד ארוכה מ-3 מילים: יב. ר\"ד ברבי ינאי",
+   "evidence": {
+    "rect": [
+     333,
+     11140,
+     45,
+     19
+    ],
+    "daf": "י."
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כותרת צד עד שתי מילים, שלוש רק בחריג",
+   "scopes": [
+    "desktop/book",
+    "desktop/flow",
+    "phone/flow",
+    "tablet-l/flow",
+    "tablet-p/book",
+    "tablet-p/flow",
+    "wide/book",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "f1979bb62af0": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: sheet",
+   "evidence": {
+    "rect": [
+     -684,
+     64,
+     714,
+     1032
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "39d72443ddd8": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: shhd",
+   "evidence": {
+    "rect": [
+     -604,
+     65,
+     633,
+     49
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e75231a7fcbb": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: nm",
+   "evidence": {
+    "rect": [
+     -17,
+     80,
+     46,
+     19
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "391078f0166a": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: df",
+   "evidence": {
+    "rect": [
+     -604,
+     78,
+     15,
+     24
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "70938214710e": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: shbody",
+   "evidence": {
+    "rect": [
+     -606,
+     114,
+     635,
+     941
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "0dad987011a5": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: row perek-start",
+   "evidence": {
+    "rect": [
+     -606,
+     114,
+     635,
+     35
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "90435d04aa82": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: main  b0 a0",
+   "evidence": {
+    "rect": [
+     -555,
+     114,
+     438,
+     35
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "714601505993": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: row",
+   "evidence": {
+    "rect": [
+     -606,
+     149,
+     635,
+     394
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "d6d2b324c073": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: rail hw",
+   "evidence": {
+    "rect": [
+     -117,
+     156,
+     146,
+     19
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "27f2077d97f2": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: win",
+   "evidence": {
+    "rect": [
+     -106,
+     156,
+     47,
+     19
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "37c63ec649e5": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: mlabel mbox",
+   "evidence": {
+    "rect": [
+     -106,
+     156,
+     43,
+     19
+    ],
+    "unit": "7"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "2540ab6cb7f9": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: main mishna",
+   "evidence": {
+    "rect": [
+     -555,
+     149,
+     438,
+     394
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "5a13e7b0cf13": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: b0 a0",
+   "evidence": {
+    "rect": [
+     -552,
+     149,
+     429,
+     26
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "60ab5a878c0d": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (15x15): הזוהר על סוגיא זו",
+   "evidence": {
+    "rect": [
+     -3080,
+     481,
+     15,
+     15
+    ],
+    "daf": "ד."
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:בחירת מסכת או דף",
+    "phone/btn:דף קודם",
+    "phone/btn:חזרה מהירה",
+    "phone/btn:חיפוש",
+    "tablet-l/book",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "12d48ea6d947": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (40x19): פרק א, משנה ג",
+   "evidence": {
+    "rect": [
+     -5297,
+     477,
+     40,
+     19
+    ],
+    "daf": "ד:",
+    "unit": "192"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:דף קודם",
+    "phone/btn:חזרה מהירה",
+    "phone/btn:חיפוש",
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "0b395bd0ff64": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (42x19): פרק א, משנה ד",
+   "evidence": {
+    "rect": [
+     -6039,
+     561,
+     42,
+     19
+    ],
+    "daf": "ה.",
+    "unit": "223"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:דף קודם",
+    "phone/btn:חזרה מהירה",
+    "phone/btn:חיפוש",
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "5a78065705e5": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (42x19): פרק א, משנה ה",
+   "evidence": {
+    "rect": [
+     -9746,
+     776,
+     42,
+     19
+    ],
+    "daf": "ז:",
+    "unit": "378"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "b583c09e5f65": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (39x19): פרק א, משנה ו",
+   "evidence": {
+    "rect": [
+     -21610,
+     561,
+     39,
+     19
+    ],
+    "unit": "752"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow",
+    "tablet-p/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "df8ed001cd32": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: row dh",
+   "evidence": {
+    "rect": [
+     -101,
+     520,
+     456,
+     39
+    ],
+    "daf": "ב:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book",
+    "tablet-l/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "8094d8a07047": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: main dh b1 a0",
+   "evidence": {
+    "rect": [
+     -65,
+     533,
+     315,
+     26
+    ],
+    "daf": "ב:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e49f8e3aeca3": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: row u",
+   "evidence": {
+    "rect": [
+     -101,
+     559,
+     456,
+     45
+    ],
+    "daf": "ב:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e28812c056a9": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: main",
+   "evidence": {
+    "rect": [
+     -65,
+     559,
+     315,
+     45
+    ],
+    "daf": "ב:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "8d8414917c01": {
+   "rule": "T06-gregorian",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "תאריך לועזי (רק תאריכים עבריים): … מה פירש דוד אבא: 'פזר נתן לאביונים צדקתו עומדת לעד קרנו תרו…",
+   "evidence": {
+    "rect": [
+     -11828,
+     477,
+     456,
+     44
+    ],
+    "daf": "י:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "תאריכים עבריים בלבד",
+   "scopes": [
+    "tablet-l/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "25d6c0f8cd02": {
+   "rule": "T06-gregorian",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "תאריך לועזי (רק תאריכים עבריים): …אית? א\"ל: עולם הפוך ראיתי - עליונים למטה ותחתונים למעלה. א\"ל…",
+   "evidence": {
+    "rect": [
+     -11828,
+     589,
+     456,
+     133
+    ],
+    "daf": "י:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "תאריכים עבריים בלבד",
+   "scopes": [
+    "tablet-l/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "25a76f5ef900": {
+   "rule": "G02-offscreen",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "אלמנט חורג מרוחב המסך: b",
+   "evidence": {
+    "rect": [
+     -63,
+     130,
+     309,
+     43
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "אף רכיב לא חורג מרוחב המסך",
+   "scopes": [
+    "tablet-l/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "54605729b1c4": {
+   "rule": "L18-heading-no-space",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת בלי רווח לפניה: שבי קשה מכולם - שכולם ישנם בו. קופה ותמח",
+   "evidence": {
+    "rect": [
+     -8097,
+     567,
+     456,
+     48
+    ],
+    "daf": "ח:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כל כותרת רגילה - תמיד לפחות רווח לפניה כמו Ctrl+0",
+   "scopes": [
+    "tablet-l/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "588db531f790": {
+   "rule": "L18-heading-no-space",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת בלי רווח לפניה: שכפה את רנב\"א, ולקח ממנו ד' מאות זוז לצד",
+   "evidence": {
+    "rect": [
+     -8630,
+     257,
+     456,
+     92
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כל כותרת רגילה - תמיד לפחות רווח לפניה כמו Ctrl+0",
+   "scopes": [
+    "tablet-l/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "d69bffa5e7a2": {
+   "rule": "L18-heading-no-space",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת בלי רווח לפניה: כך היו כותבי ספרים שבירושלים עושין ספריה",
+   "evidence": {
+    "rect": [
+     -16092,
+     726,
+     456,
+     47
+    ],
+    "daf": "יד."
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כל כותרת רגילה - תמיד לפחות רווח לפניה כמו Ctrl+0",
+   "scopes": [
+    "tablet-l/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "b9f35ad12cf8": {
+   "rule": "L13-side-long",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת צד ארוכה מ-3 מילים: - תנאי היא: א. ר\"א",
+   "evidence": {
+    "rect": [
+     -17866,
+     577,
+     47,
+     41
+    ],
+    "daf": "טו:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כותרת צד עד שתי מילים, שלוש רק בחריג",
+   "scopes": [
+    "tablet-l/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "c48f9858a972": {
+   "rule": "L18-heading-no-space",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת בלי רווח לפניה: 'ובנות ילדו להם' - רביה או מריבה לרי\"ו: ",
+   "evidence": {
+    "rect": [
+     -20357,
+     508,
+     456,
+     48
+    ]
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כל כותרת רגילה - תמיד לפחות רווח לפניה כמו Ctrl+0",
+   "scopes": [
+    "tablet-l/book"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "8a2a61504bd9": {
+   "rule": "T06-gregorian",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "תאריך לועזי (רק תאריכים עבריים): …והיינו דפורסין נשבין ליונים בריחוק מישוב שלשים ריס…",
+   "evidence": {
+    "rect": [
+     471,
+     33246,
+     498,
+     21
+    ],
+    "daf": "כב:"
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "תאריכים עבריים בלבד",
+   "scopes": [
+    "desktop/flow",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "da1727d45850": {
+   "rule": "L13-side-long",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כותרת צד ארוכה מ-3 מילים: ב. רב אשי דייק",
+   "evidence": {
+    "rect": [
+     853,
+     38671,
+     73,
+     16
+    ],
+    "daf": "כז."
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "כותרת צד עד שתי מילים, שלוש רק בחריג",
+   "scopes": [
+    "desktop/flow",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "230f1f83fae6": {
+   "rule": "L21-daf-jump",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "רצף ציוני הדף נשבר: יט: ← כא.",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל דף ועמוד מסומן במקומו, ברצף בלי קפיצות",
+   "scopes": [
+    "desktop/flow",
+    "wide/flow"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "67f5e1e7a624": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (70x16): קיצור הדף היומי",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:לדף הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e71acb2e92d2": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (57x16): כל המסכתות",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:לדף הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "92a457f14b50": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (26x16): אודות",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:לדף הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "8b00d7e08425": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (51x16): נ״ך המפורש",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:לדף הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "2144440695b1": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (60x16): ממלכת הזוהר",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:לדף הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "d1b8d5351e17": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (93x20): רישום חזרה על כל עמודי הפרק",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:דף קודם",
+    "phone/btn:חזרה מהירה",
+    "phone/btn:חיפוש"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "75fc45469881": {
+   "rule": "G04-tap-small",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "כפתור קטן מדי למגע (63x20): חזרה לדף המלא",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "low",
+   "title": "כפתורים נוחים למגע בטאבלט ובטלפון",
+   "scopes": [
+    "phone/btn:דף קודם",
+    "phone/btn:חזרה מהירה",
+    "phone/btn:חיפוש"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "cceefa67c514": {
+   "rule": "G05-font-fallback",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גופן לא נטען: Vilna (334 רכיבים)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל גופן שהדף מבקש נטען (לא גופן מערכת חלופי)",
+   "scopes": [
+    "phone/btn:הש\"ס"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "162dc24e4bdb": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "דף קודם: Page.wait_for_selector: Timeout 60000ms exceeded.\nCall log:\n  - waiting for locator(\"#flow .row\") to",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "phone/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "def40f33884b": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "דף הבא: Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"6\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "phone/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "cf8b723e5343": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גמרא: Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"7\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "phone/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "f48843b3a7d5": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "תוס': Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"8\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "phone/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "1cbfe8b3d5a7": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "עוד: Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"9\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn",
+    "phone/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "0d6f2019dab4": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "השתקת צליל הלחיצה: Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"10\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn",
+    "phone/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "1358400488f8": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "דף קודם (Ctrl+חץ ימינה): Page.wait_for_selector: Timeout 60000ms exceeded.\nCall log:\n  - waiting for locator(\"#flow .row\") to",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "076684c92e32": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "דף: Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"4\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "454316304926": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "דף הבא (Ctrl+חץ שמאלה): Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"5\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "8e8b54c06100": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "הגמרא בצד הדף (מ): Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"6\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "be64207913e5": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "תוס': לחיצה מדליקה (פאנל צד); החץ בוחר א: Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"7\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "88aa40767150": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "תצוגה: Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"8\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "0bb70b104ff3": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "שיתוף: Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"9\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "23b150acc8eb": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "חזרה מהירה: Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"10\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "bdf5224f97f5": {
+   "rule": "B01-btn-fail",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "מקור: הגמרא המנוקדת (מקש מ): Page.click: Timeout 4000ms exceeded.\nCall log:\n  - waiting for locator(\"[data-chk=\\\"13\\\"]\")\n",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל כפתור לחיץ ועובד",
+   "scopes": [
+    "desktop/btn"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "83a2ee7baa28": {
+   "rule": "P04-white-gap",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "חלל לבן של 158.5 מ\"מ בעמוד 1",
+   "evidence": {
+    "page": 1
+   },
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "אין חללים לבנים גדולים בהדפסה",
+   "scopes": [
+    "print/a4lg/פרק חמישי|המוכר את הספינה",
+    "print/a4lg/פרק עשירי|גט פשוט",
+    "print/a4lg/פרק ראשון|השותפין",
+    "print/a4lg/פרק רביעי|המוכר את הבית",
+    "print/a4lg/פרק שביעי|בית כור",
+    "print/a4lg/פרק שישי|המוכר פירות",
+    "print/a4lg/פרק שלישי|חזקת",
+    "print/a4lg/פרק שמיני|יש נוחלין",
+    "print/a4lg/פרק שני|לא יחפור",
+    "print/a4lg/פרק תשיעי|מי שמת",
+    "print/b5lg/פרק חמישי|המוכר את הספינה",
+    "print/b5lg/פרק עשירי|גט פשוט",
+    "print/b5lg/פרק ראשון|השותפין",
+    "print/b5lg/פרק רביעי|המוכר את הבית",
+    "print/b5lg/פרק שביעי|בית כור",
+    "print/b5lg/פרק שישי|המוכר פירות",
+    "print/b5lg/פרק שלישי|חזקת",
+    "print/b5lg/פרק שמיני|יש נוחלין",
+    "print/b5lg/פרק שני|לא יחפור",
+    "print/b5lg/פרק תשיעי|מי שמת"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "8289df405f23": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "50 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: י', י\"ב, י\"ט, כ', כ\"ז, כ\"ח, כ\"ט, ל', ל\"א, ל\"ב, ל\"ג, ל\"ה, ל\"ח, מ', מ\"ד, מ\"ה, מ\"ו, נ\"ב, נ\"ג, נ\"ד, נ\"ו, נ\"ח, נ\"ט, ס\"א, ס\"ב, ס\"ג, ס\"ד, ס\"ה, ע', ע\"א, ע\"ג, ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק ראשון|השותפין",
+    "print/b5lg/פרק ראשון|השותפין",
+    "print/book/פרק ראשון|השותפין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "fc408089f44e": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (nose): 14.43 (ב:, יחידה 39)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק ראשון|השותפין",
+    "print/b5lg/פרק ראשון|השותפין",
+    "print/book/פרק ראשון|השותפין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "9e49050b770c": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 9.32 (ג., יחידה 78)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק ראשון|השותפין",
+    "print/b5lg/פרק ראשון|השותפין",
+    "print/book/פרק ראשון|השותפין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "ddbe5659732f": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 13.32 (ד:, יחידה 192)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק ראשון|השותפין",
+    "print/b5lg/פרק ראשון|השותפין",
+    "print/book/פרק ראשון|השותפין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "a9c11caee96f": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 11.27 (ז., יחידה 333)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק ראשון|השותפין",
+    "print/b5lg/פרק ראשון|השותפין",
+    "print/book/פרק ראשון|השותפין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "89ee8926ec56": {
+   "rule": "P05-unbalanced-end",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "סוף הפרק צולע: הפרש 24.4 מ\"מ בין הטורים",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "כל סוף פרק מאוזן בין שני הטורים ולא \"צולע\"",
+   "scopes": [
+    "print/a4lg/פרק שלישי|חזקת",
+    "print/a4lg/פרק שני|לא יחפור",
+    "print/b5lg/פרק רביעי|המוכר את הבית",
+    "print/book/פרק ראשון|השותפין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "993444b7840a": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "80 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: ו', ז', ט', י', י\"א, י\"ד, ט\"ז, י\"ז, כ', כ\"א, כ\"ב, כ\"ד, כ\"ו, כ\"ז, כ\"ח, ל', ל\"א, ל\"ג, ל\"ח, מ', מ\"ב, מ\"ג, מ\"ה, מ\"ו, מ\"ז, מ\"ח, נ', נ\"א, נ\"ב, נ\"ג, נ\"ד, נ\"ה",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק חמישי|המוכר את הספינה",
+    "print/a4lg/פרק עשירי|גט פשוט",
+    "print/a4lg/פרק שני|לא יחפור",
+    "print/b5lg/פרק חמישי|המוכר את הספינה",
+    "print/b5lg/פרק עשירי|גט פשוט",
+    "print/b5lg/פרק שני|לא יחפור"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "b70ec8cf71b9": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 25.64 (יז., יחידה 1273)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שני|לא יחפור",
+    "print/b5lg/פרק שני|לא יחפור"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "dd93efe3e4c2": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 14.32 (יט:, יחידה 1392)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שני|לא יחפור",
+    "print/b5lg/פרק שני|לא יחפור"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "77cf0aaadc9e": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "103 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: א', ה', ו', ז', ח', ט', י\"א, י\"ג, י\"ד, ט\"ו, ט\"ז, י\"ז, י\"ח, י\"ט, כ', כ\"א, כ\"ב, כ\"ג, כ\"ז, ל', ל\"א, ל\"ג, ל\"ו, ל\"ז, ל\"ח, ל\"ט, מ', מ\"א, מ\"ב, מ\"ג, מ\"ז, מ\"ח",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שלישי|חזקת",
+    "print/b5lg/פרק שלישי|חזקת"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "658018d64621": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 16.22 (כח., יחידה 1922)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שלישי|חזקת",
+    "print/b5lg/פרק שלישי|חזקת"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "c9f4b4576147": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 19.32 (כח:, יחידה 1950)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שלישי|חזקת",
+    "print/b5lg/פרק שלישי|חזקת"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "b4000d5160e0": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (nose): 10.27 (מ., יחידה 2420)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שלישי|חזקת",
+    "print/b5lg/פרק שלישי|חזקת"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "9f3fcf1c4b91": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "עוגן תוספות: א' (פרק 4, ס:): העוגן שנקבע (\"מוטב שיהיו שוגגין ואל יהיו מזידין\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק רביעי|המוכר את הבית",
+    "print/b5lg/פרק רביעי|המוכר את הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e79938ca8bc6": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "עוגן תוספות: ג' (פרק 4, ס:): העוגן שנקבע (\"מוטב שיהיו שוגגין ואל יהיו מזידין\") נמצא בפרק אחר - הוצמדה לסוף השורה הקרובה בפרק שלה",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק רביעי|המוכר את הבית",
+    "print/b5lg/פרק רביעי|המוכר את הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "3d9ad196ecb7": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "24 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: ח', ט', ט\"ז, י\"ט, כ\"ב, כ\"ג, כ\"ה, כ\"ו, מ', מ\"ב, מ\"ג, מ\"ד, מ\"ו, מ\"ז, נ\"ג, נ\"ד, נ\"ה, נ\"ו, נ\"ז, נ\"ח, ס\"ו, ס\"ח, ע', ע\"א",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק רביעי|המוכר את הבית",
+    "print/b5lg/פרק רביעי|המוכר את הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e24122372bcb": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 14.22 (סא:, יחידה 3325)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק רביעי|המוכר את הבית",
+    "print/b5lg/פרק רביעי|המוכר את הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "c97cdc4c747e": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 12.37 (סא:, יחידה 1795689740701)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק רביעי|המוכר את הבית",
+    "print/b5lg/פרק רביעי|המוכר את הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "30220b2d2230": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "עמוד סוף פרק גבוה מגובה הנטו: עמוד 39, עב:: 0.8px",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק רביעי|המוכר את הבית",
+    "print/b5lg/פרק רביעי|המוכר את הבית"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "a73a9d756a2b": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 8.27 (עג., יחידה 3834)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק חמישי|המוכר את הספינה",
+    "print/b5lg/פרק חמישי|המוכר את הספינה"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "593760b65f8b": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 7.32 (עח., יחידה 4105)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק חמישי|המוכר את הספינה",
+    "print/b5lg/פרק חמישי|המוכר את הספינה"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "732202f2ba57": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (nose): 8.27 (פג:, יחידה 4406)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק חמישי|המוכר את הספינה",
+    "print/b5lg/פרק חמישי|המוכר את הספינה"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e48742ec726a": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (dh): 7.32 (פח:, יחידה 4658)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק חמישי|המוכר את הספינה",
+    "print/b5lg/פרק חמישי|המוכר את הספינה"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e31c37c95384": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "8 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: ט', י\"א, ט\"ו, י\"ח, י\"ט, כ', ל\"ז, ל\"ח",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שישי|המוכר פירות",
+    "print/b5lg/פרק שישי|המוכר פירות"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "9d07f7d38dd5": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 12.32 (צז:, יחידה 5202)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שישי|המוכר פירות",
+    "print/b5lg/פרק שישי|המוכר פירות"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "c0152c8c56a2": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 10.21 (צח:, יחידה 5237)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שישי|המוכר פירות",
+    "print/b5lg/פרק שישי|המוכר פירות"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "b70b1452800c": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (dh): 10.21 (צח:, יחידה 5254)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שישי|המוכר פירות",
+    "print/b5lg/פרק שישי|המוכר פירות"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "13dea45d97ee": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "עוגן תוספות: א' (פרק 7, קב:): העוגן שנקבע (\"מארבע ועד שמונה\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שביעי|בית כור",
+    "print/b5lg/פרק שביעי|בית כור"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "93ae47ecbf78": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "עוגן תוספות: ב' (פרק 7, קב:): העוגן שנקבע (\"ובדק באלכסון ולא הוו\") נמצא בפרק אחר - הוצמדה למילות הדיבור המתחיל בפרק שלה",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שביעי|בית כור",
+    "print/b5lg/פרק שביעי|בית כור"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "03d58902054e": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "10 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: ג', ד', ו', ז', י\"ד, כ\"א, כ\"ג, כ\"ה, כ\"ו, כ\"ז",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שביעי|בית כור",
+    "print/b5lg/פרק שביעי|בית כור"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "c6ef74ea7f8d": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 15.37 (קג., יחידה 1795690645386)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שביעי|בית כור",
+    "print/b5lg/פרק שביעי|בית כור"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "f95bc0cfd3c2": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 29.22 (קג:, יחידה 5474)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שביעי|בית כור",
+    "print/b5lg/פרק שביעי|בית כור"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "c0a9331426d2": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "41 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: ז', י\"א, י\"ב, י\"ג, ט\"ו, כ\"ח, ל', ל\"א, ל\"ב, ל\"ד, ל\"ז, מ\"ב, מ\"ד, נ\"ג, פ\"א, פ\"ג, פ\"ה, פ\"ז, פ\"ח, צ\"א, צ\"ז, ק\"ד, ק\"ה, ק\"ו, קי\"א, קי\"ב, קי\"ד, קט\"ו, קט\"ז, קי",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שמיני|יש נוחלין",
+    "print/b5lg/פרק שמיני|יש נוחלין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "6841dbe4d869": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 9.27 (קח., יחידה 5647)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שמיני|יש נוחלין",
+    "print/b5lg/פרק שמיני|יש נוחלין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "6a9be1c95541": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 10.53 (קטו., יחידה 5864)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שמיני|יש נוחלין",
+    "print/b5lg/פרק שמיני|יש נוחלין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "ffd582560d1c": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 14.69 (קכה:, יחידה 6304)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק שמיני|יש נוחלין",
+    "print/b5lg/פרק שמיני|יש נוחלין"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e880a0a904f5": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "51 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: ה', ו', ט', י\"ב, י\"ט, כ', כ\"ג, כ\"ד, כ\"ו, כ\"ז, ל\"א, ל\"ז, מ\"ה, מ\"ו, מ\"ז, מ\"ח, נ\"ט, ס\"ג, ס\"ד, ס\"ה, ס\"ט, ע\"ב, ע\"ג, ע\"ד, ע\"ז, פ\"א, צ\"ב, צ\"ז, צ\"ח, ק', ק\"ב, ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק תשיעי|מי שמת",
+    "print/b5lg/פרק תשיעי|מי שמת"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "0e53eea6c576": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 25.33 (קמא., יחידה 6998)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק תשיעי|מי שמת",
+    "print/b5lg/פרק תשיעי|מי שמת"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "de1c2fc3cb83": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 15.74 (קמג:, יחידה 7131)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק תשיעי|מי שמת",
+    "print/b5lg/פרק תשיעי|מי שמת"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "9789bd208edc": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 12.32 (קמו, יחידה 7312)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק תשיעי|מי שמת",
+    "print/b5lg/פרק תשיעי|מי שמת"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "c2173357ad65": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (u): 17.48 (קס., יחידה 8066)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק עשירי|גט פשוט",
+    "print/b5lg/פרק עשירי|גט פשוט"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "53e12eb3eba9": {
+   "rule": "P07-engine-warn",
+   "site": "leokmei",
+   "page": "bava-batra",
+   "text": "גובה פסקה אינו כפולה של גובה השורה (m): 8.21 (קסז:, יחידה 8351)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "med",
+   "title": "מנוע ההדפסה אינו מתריע",
+   "scopes": [
+    "print/a4lg/פרק עשירי|גט פשוט",
+    "print/b5lg/פרק עשירי|גט פשוט"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "ff7c54737a20": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "static.cloudflareinsights.com (17 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "f92bdde0130c": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "leokmei-suggest.m7654301.workers.dev (42 בקשות) שרת ההצעות וההדפסה - לבדוק שנטפרי אינו חוסם (רצוי להעביר תחת leokmei.com)",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "8a68a384d3da": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "www.clarity.ms (9 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "be7acd5b08c0": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "scripts.clarity.ms (9 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "111afc66f5e2": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "c.clarity.ms (2 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "23c1bc5ae47f": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "o.clarity.ms (5 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "b7a545359d5b": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "c.bing.com (1 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "b858fdc8c7da": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "cloudflareinsights.com (1 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "7ac571353359": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "h.clarity.ms (2 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "e648e1d5fd0d": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "q.clarity.ms (3 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "a78a2ee5ab38": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "u.clarity.ms (12 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "7caf3e7ba314": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "p.clarity.ms (3 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "66779e728158": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "g.clarity.ms (3 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "eac348b4678d": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "n.clarity.ms (8 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "d71a3ae84ec2": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "r.clarity.ms (4 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "32e7cd584082": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "s.clarity.ms (8 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "67369c3760f0": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "e.clarity.ms (15 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "2b4016c6a053": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "b.clarity.ms (4 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "2bcf329bf073": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "t.clarity.ms (4 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "dcd22e01bd32": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "f.clarity.ms (4 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "8cf7ff7370db": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "i.clarity.ms (3 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "a19b40b8ba3a": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "m.clarity.ms (4 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  },
+  "da7e41351034": {
+   "rule": "N01-foreign-domain",
+   "site": "*",
+   "page": "*",
+   "text": "a.clarity.ms (4 בקשות) ",
+   "evidence": {},
+   "first": "2026-11-26",
+   "status": "פתוח",
+   "sev": "high",
+   "title": "נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים",
+   "scopes": [
+    "net"
+   ],
+   "history": [
+    [
+     "2026-11-26",
+     "נמצא"
+    ]
+   ],
+   "last": "2026-11-26",
+   "nights": 1
+  }
+ }
+}

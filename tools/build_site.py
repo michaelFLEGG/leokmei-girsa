@@ -1681,7 +1681,7 @@ def dev_scope(css):
 #   שמאל - כלי הלימוד: מקור, תוס', תצוגה, שיתוף, עוד. כלי המנהל באזור נפרד בקצה, ואינם נראים לגולש.
 # כל המזהים וכל הפונקציות של הסרגל הקודם נשמרו (רק עברו מקום); הרשימה המלאה לפני ואחרי בדוח פרומפט 28.
 # העיצוב: tools/topbar.css, וההתנהגות (הזזת כלי המנהל, הצטרפות, רצועת הווטסאפ, הסתרה בגלילה): tools/topbar.js.
-WA_JOIN = 'https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e'
+WA_JOIN = 'https://chat.whatsapp.com/GDrBQEh14zI5r7tx4JP9oU'
 NACH_URL = 'https://nach.leokmei.com/'
 
 

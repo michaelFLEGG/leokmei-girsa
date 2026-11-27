@@ -234,7 +234,7 @@
       else if (m === 'qr') { if (window.qrToggle) qrToggle(); }
       else if (m === 'dup') { if (window.skpTop) skpTop.dup(); }
       else if (m === 'sknext') { if (window.skpTop) skpTop.next(); }
-      else if (m === 'join') { lsSet('lg-wa-joined', '1'); H.classList.add('wa-joined'); window.open('https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e', '_blank', 'noopener'); }
+      else if (m === 'join') { lsSet('lg-wa-joined', '1'); H.classList.add('wa-joined'); window.open('https://chat.whatsapp.com/GDrBQEh14zI5r7tx4JP9oU', '_blank', 'noopener'); }
       else if (m === 'nach') window.open('https://nach.leokmei.com/', '_blank', 'noopener');
       else if (m === 'full') { B.classList.toggle('showbar'); H.style.setProperty('--mtop', '0px'); try { barFit(); } catch (x) { } }
     }, 120);

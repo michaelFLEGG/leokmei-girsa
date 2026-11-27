@@ -285,7 +285,7 @@
     /* קהילת "הדף היומי" בווטסאפ (פרומפט 23, 8.11.2026): הודעה אחת בכל בוקר. רק המנהל כותב בה, והחברים אינם רואים זה את זה */
     var cw = el('div', 'lm-card');
     cw.innerHTML = '<h3>הדף היומי בווטסאפ</h3><p style="margin:0 0 12px">בכל בוקר הודעה אחת: שאלה מן הדף, הדף בקצרה וקישור לקריאה בטלפון. רק המנהל כותב בקבוצה, והחברים אינם רואים זה את זה.</p>' +
-      '<div class="lm-row"><a class="lm-btn pri" href="https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e" target="_blank" rel="noopener">הצטרפות לקהילה בווטסאפ</a><a class="lm-btn ghost" href="/daf">הקיצור של היום</a></div>';
+      '<div class="lm-row"><a class="lm-btn pri" href="https://chat.whatsapp.com/GDrBQEh14zI5r7tx4JP9oU" target="_blank" rel="noopener">הצטרפות לקהילה בווטסאפ</a><a class="lm-btn ghost" href="/daf">הקיצור של היום</a></div>';
     wrap.appendChild(cw);
 
     /* התקדמות במחזור */

@@ -12,7 +12,7 @@
   var W = window, Dc = document, H = Dc.documentElement, B = Dc.body;
   if (!Dc.getElementById('bar') || W.__topbar) return;
   W.__topbar = 1;
-  var WA = 'https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e', JK = 'lg-wa-joined';
+  var WA = 'https://chat.whatsapp.com/GDrBQEh14zI5r7tx4JP9oU', JK = 'lg-wa-joined';
   var $ = function (s, r) { return (r || Dc).querySelector(s); };
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* פרטי או חסום - ממשיכים בלי זכירה */ } }

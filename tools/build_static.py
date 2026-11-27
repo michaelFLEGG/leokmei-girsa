@@ -428,7 +428,7 @@ def write_daf_yomi(site, pages_by_slug, today):
         '<h1>קיצור הדף היומי</h1>%s'
         '<p class="note">הדף היומי בקיצור לאוקמי גירסא - קיצור התלמוד הבבלי, דף אחר דף. הכתובת קבועה, והדף מתחלף מדי יום.</p>'
         '<div id="hy">%s</div>'
-        '<p class="wajn"><a href="https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e" target="_blank" rel="noopener">הצטרפות לקיצור הדף היומי בווטסאפ</a> <span>הודעה אחת בכל בוקר, עם הדף של היום</span></p>'
+        '<p class="wajn"><a href="https://chat.whatsapp.com/GDrBQEh14zI5r7tx4JP9oU" target="_blank" rel="noopener">הצטרפות לקיצור הדף היומי בווטסאפ</a> <span>הודעה אחת בכל בוקר, עם הדף של היום</span></p>'
         '<nav class="near"><h2>השבוע האחרון בדף היומי</h2><ul style="display:block">%s</ul></nav>'
         '<nav class="more"><a href="/%s/">מסכת %s בקיצור - כל הדפים</a> · <a href="/masechtot.html">כל המסכתות</a> · '
         '<a href="/shas.html">מפת הש"ס</a> · <a href="/yomi.html">לוח הדף היומי ומעקב לימוד</a></nav></main>'
@@ -457,6 +457,16 @@ def run(site, built, slug):
     urls = []
     today = il_today()
     tiso = today.isoformat()
+    # leokmei.com/join - כתובת קצרה להצטרפות לקבוצת "קיצור הדף היומי" בווטסאפ (לסרטונים, לקודי סריקה ולאמירה בעל פה).
+    # GitHub Pages אינו יודע הפניית שרת, ולכן רענון מיידי. משנים את הקבוצה כאן בלבד, וכל מה שכבר הופץ ממשיך לעבוד.
+    _join = 'https://chat.whatsapp.com/GDrBQEh14zI5r7tx4JP9oU'
+    os.makedirs(os.path.join(site, 'join'), exist_ok=True)
+    io.open(os.path.join(site, 'join', 'index.html'), 'w', encoding='utf-8').write(
+        '<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="utf-8"><title>הצטרפות לקיצור הדף היומי</title>'
+        '<meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<meta http-equiv="refresh" content="0; url=%s"><script>location.replace("%s")</script>'
+        '<style>body{background:#0b1a33;color:#f3d48b;font-family:sans-serif;text-align:center;padding-top:30vh}a{color:#f3d48b}</style>'
+        '</head><body><p><a href="%s">הצטרפות לקבוצת קיצור הדף היומי בווטסאפ</a></p></body></html>' % (_join, _join, _join))
     led = load_ledger()
     led_before = json.dumps(led, sort_keys=True)
     total = merged = weak_n = alt_n = 0
@@ -513,7 +523,7 @@ def run(site, built, slug):
                     '<p><a class="cta" href="/%s.html#daf=%s">ללימוד אינטראקטיבי של הדף</a></p>'
                     '%s'
                     '<p class="note">קיצור התלמוד הבבלי, דף אחר דף. '
-                    '<a href="/quiz.html?m=%s">בחן את עצמך על %s</a> · <a href="/%s">קיצור הדף היומי</a></p><p class="wajn"><a href="https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e" target="_blank" rel="noopener">הצטרפות לקיצור הדף היומי בווטסאפ</a> <span>הודעה אחת בכל בוקר, עם הדף של היום</span></p>%s'
+                    '<a href="/quiz.html?m=%s">בחן את עצמך על %s</a> · <a href="/%s">קיצור הדף היומי</a></p><p class="wajn"><a href="https://chat.whatsapp.com/GDrBQEh14zI5r7tx4JP9oU" target="_blank" rel="noopener">הצטרפות לקיצור הדף היומי בווטסאפ</a> <span>הודעה אחת בכל בוקר, עם הדף של היום</span></p>%s'
                     '<nav class="near"><h2>דפים קרובים ב%s</h2><ul>%s</ul></nav>'
                     '<nav class="more"><a href="/%s/">%s בקיצור - כל הדפים</a> · <a href="/shas.html">מפת הש"ס</a> · '
                     '<a href="/">דף הבית</a></nav></main>%s</body></html>') % (

@@ -11,7 +11,7 @@
 
 export const TZ = 'Asia/Jerusalem';
 export const CAP_MAX = 1024;
-export const JOIN_URL = 'https://chat.whatsapp.com/DkkfNQeCumeI3cIOXdY73e';
+export const JOIN_URL = 'https://chat.whatsapp.com/GDrBQEh14zI5r7tx4JP9oU';
 export const JOIN_TEXT = 'לקבלת הדף היומי כל בוקר: ';
 const NL = String.fromCharCode(10);
 

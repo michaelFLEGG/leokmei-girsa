@@ -1,16 +1,16 @@
 {
- "date": "2026-11-26",
- "raw": 2109,
- "unique_tonight": 131,
- "new": 131,
+ "date": "2026-11-27",
+ "raw": 38468,
+ "unique_tonight": 3852,
+ "new": 3780,
  "regressed": 0,
- "gone": 0,
+ "gone": 59,
  "open_by_sev": {
-  "med": 73,
-  "low": 16,
-  "high": 42
+  "low": 1164,
+  "med": 1826,
+  "high": 862
  },
- "screens": 9,
- "prints": 21,
- "buttons": 28
+ "screens": 929,
+ "prints": 640,
+ "buttons": 1147
 }

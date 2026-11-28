@@ -1,38 +1,39 @@
-# החוקר - סיכום הלילה 2026-11-27
+# החוקר - סיכום הלילה 2026-11-28
 
-מסכים: 929 · הדפסות: 640 · כפתורים: 1147 · ממצאים ייחודיים: 3852 · חדשים: 3780 · נסיגות: 0 · נעלמו/אומתו: 59
+מסכים: 929 · הדפסות: 640 · כפתורים: 1147 · ממצאים ייחודיים: 3904 · חדשים: 334 · נסיגות: 0 · נעלמו/אומתו: 124
 
 ## לפי כלל (פתוחים הלילה)
 
-- G04-tap-small (1068) - כפתורים נוחים למגע בטאבלט ובטלפון
-- G02-offscreen (736) - אף רכיב לא חורג מרוחב המסך
-- P07-engine-warn (666) - מנוע ההדפסה אינו מתריע
-- B01-btn-fail (528) - כל כפתור לחיץ ועובד
+- G04-tap-small (1059) - כפתורים נוחים למגע בטאבלט ובטלפון
+- G02-offscreen (734) - אף רכיב לא חורג מרוחב המסך
+- P07-engine-warn (667) - מנוע ההדפסה אינו מתריע
+- B01-btn-fail (539) - כל כפתור לחיץ ועובד
 - L13-side-long (212) - כותרת צד עד שתי מילים, שלוש רק בחריג
-- T01-em-dash (111) - מקף ארוך אסור בכל מקום (תצוגה, הדפסה, ייצוא, ממשק)
-- T08-space-before-punct (60) - רווח לפני סימן פיסוק
-- N02-http-error (59) - אין בקשה שנכשלת (404/500)
-- T06-gregorian (57) - תאריכים עבריים בלבד
-- G05-font-fallback (54) - כל גופן שהדף מבקש נטען (לא גופן מערכת חלופי)
-- E01-console (46) - אין שגיאות JavaScript
-- L05-peliga (41) - "חלקו/חולק" במקום פליגא/פלגו/פליג
+- T01-em-dash (147) - מקף ארוך אסור בכל מקום (תצוגה, הדפסה, ייצוא, ממשק)
+- N02-http-error (65) - אין בקשה שנכשלת (404/500)
+- E01-console (62) - אין שגיאות JavaScript
+- T08-space-before-punct (61) - רווח לפני סימן פיסוק
+- T06-gregorian (53) - תאריכים עבריים בלבד
+- G05-font-fallback (49) - כל גופן שהדף מבקש נטען (לא גופן מערכת חלופי)
+- L05-peliga (43) - "חלקו/חולק" במקום פליגא/פלגו/פליג
 - L20-pasuk-color (36) - פסוקים בשחור
 - N01-foreign-domain (30) - נטפרי: הכל תחת דומיין האתר, בלי סקריפטים, גופנים או שרתים חיצוניים
-- T11-final-letter-mid (28) - אות סופית באמצע מילה
+- T11-final-letter-mid (26) - אות סופית באמצע מילה
 - P04-white-gap (23) - אין חללים לבנים גדולים בהדפסה
-- L18-heading-no-space (19) - כל כותרת רגילה - תמיד לפחות רווח לפניה כמו Ctrl+0
+- L18-heading-no-space (18) - כל כותרת רגילה - תמיד לפחות רווח לפניה כמו Ctrl+0
 - L21-daf-jump (18) - כל דף ועמוד מסומן במקומו, ברצף בלי קפיצות
 - P05-unbalanced-end (17) - כל סוף פרק מאוזן בין שני הטורים ולא "צולע"
 - P01-print-fail (17) - כל פרק מודפס בכל פרופיל (A4, B5, חוברת) עד הסוף
 - L03-yesh-beineihem (15) - "נפק"מ" ולא "יש ביניהם"
 - L11-dup-row (2) - שורה כפולה - "ודאי טעות", להסיר בלי לשאול
+- L15-side-two-lines (2) - כותרת צד שלא נכנסת - להקטין מעט ולא לשבור לשורה שנייה ("מבלבל")
 - L23-heading-orphan (2) - לעולם אין להפריד כותרת מהילדים שלה
-- T03-latin (2) - אותיות לועזיות בגוף הטקסט (מותר רק leokmei.com, PDF, QR, A4, B5)
 - L04-shaninu-sham (1) - "תנן שם"/"תנא שם" ולא "שנינו שם"
 - L19-sliku (1) - "סליקו תוספות"/"כאן נשלמו דברי התוס'" ו"הדרן" אינם תוס' - לא להציג ולא למספר
-- L15-side-two-lines (1) - כותרת צד שלא נכנסת - להקטין מעט ולא לשבור לשורה שנייה ("מבלבל")
 - L16-side-repeat (1) - אחרי כותרת אין לכפול בשורה שאחריה את מה שכבר כתוב בה
 - L02-shone-kan (1) - "שאני כאן" ולא "שונה כאן"
+- T03-latin (1) - אותיות לועזיות בגוף הטקסט (מותר רק leokmei.com, PDF, QR, A4, B5)
+- T02-en-dash (1) - מקף בינוני אסור
 
 ## דוגמאות (עד 5 לכל כלל)
 
@@ -75,11 +76,11 @@ Call log:
 - `8a68a384d3da` [פתוח] N01-foreign-domain * · net · www.clarity.ms (9 בקשות) 
 - `be7acd5b08c0` [פתוח] N01-foreign-domain * · net · scripts.clarity.ms (9 בקשות) 
 - `111afc66f5e2` [פתוח] N01-foreign-domain * · net · c.clarity.ms (2 בקשות) 
-- `9115aafb744d` [פתוח] N02-http-error * · net · 403 https://xn--8dbacdxfna0hp.com/d/bk/girsa/_index.js?v=72c8c5a35a
-- `be88b9a37ed1` [פתוח] N02-http-error * · net · 403 https://xn--8dbacdxfna0hp.com/d/bk/girsa/_zref-links.js?v=6018098247
 - `53b90169d9c8` [פתוח] N02-http-error * · net · 403 https://xn--8dbacdxfna0hp.com/%D7%96%D7%95%D7%94%D7%A8-%D7%A8%D7%91%D7%90-%D7%A0%D7%AA%D7%95%D7%A0%D7%99%D7%9D/_index.js?v=fff5567a5fb8
-- `74d69c9b4c4d` [פתוח] N02-http-error * · net · 403 https://xn--8dbacdxfna0hp.com/d/bk/rava/_hekef.js?v=4ad4a3f96c
 - `fe52015d8970` [פתוח] N02-http-error * · net · 403 https://xn--8dbacdxfna0hp.com/api/raza-uploads
+- `74061fd3fa18` [פתוח] N02-http-error * · net · 403 https://xn--8dbacdxfna0hp.com/chumash-rashbi
+- `5829b8b591f8` [פתוח] N02-http-error * · net · 403 https://xn--8dbacdxfna0hp.com/%D7%A9%D7%A2%D7%A8-%D7%A2%D7%A8%D7%9B%D7%99%D7%9D-%D7%A0%D7%AA%D7%95%D7%A0%D7%99%D7%9D/%D7%A9%D7%A2%D7%A8-%D7%
+- `4452862131b8` [פתוח] N02-http-error * · net · 403 https://xn--8dbacdxfna0hp.com/zohar-rava-docx-view.js?v=6fbe8cddd8
 - `be9f70d3b976` [פתוח] P01-print-fail bava-metzia · print/a4lg/פרק חמישי|איזהו נשך,print/a4lg/פרק עשירי|הבית והעלייה,print/a4lg/פרק ראשון|שנים אוחזין · מצב blocked ניתן להדפיס פרק אחד ביום. מחר אפשר להדפיס פרק נוסף.
 - `6c8aad7ba50d` [פתוח] P01-print-fail arakhin · print/a4lg/פרק חמישי|האומר משקלי עלי,print/a4lg/פרק ראשון|הכל מעריכין,print/a4lg/פרק רביעי|השג יד · מצב blocked ניתן להדפיס פרק אחד ביום. מחר אפשר להדפיס פרק נוסף.
 - `18348c41cb76` [פתוח] P01-print-fail bava-batra · print/a4lg/פרק חמישי|המוכר את הספינה,print/a4lg/פרק עשירי|גט פשוט,print/a4lg/פרק ראשון|השותפין · מצב blocked ניתן להדפיס פרק אחד ביום. מחר אפשר להדפיס פרק נוסף.
@@ -100,6 +101,7 @@ Call log:
 - `740d512e6af9` [פתוח] T01-em-dash https://xn--8dbacdxfna0hp.com/%D7%A2%D7%AA%D7%99%D7%93%D7%99%D7%9D-%D7%91%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA-%D7%94%D7%96%D7%95%D7%94%D7%A8 · desktop/page,phone/page,tablet-l/page · מקף ארוך אסור בכל מקום: …לעורכים: כל שם ברשימה — מיקום להכנסת המפרש בפועל . ע…
 - `2a3c91a33d01` [פתוח] T01-em-dash https://xn--8dbacdxfna0hp.com/%D7%96%D7%95%D7%94%D7%A8 · desktop/page,phone/page,tablet-l/page · מקף ארוך אסור בכל מקום: …הטקסטים שבאתר — ההגהה, הניקוד, הפיסוק, התרגו…
 - `d1a82921aed4` [פתוח] T01-em-dash https://xn--8dbacdxfna0hp.com/%D7%96%D7%95%D7%94%D7%A8 · desktop/page,phone/page,tablet-l/page · מקף ארוך אסור בכל מקום: …או הפצה? אין כאן סירוב עקרוני — פנה אלינו ונשמח לסייע בדרך ה…
+- `c96d2db4b616` [פתוח] T02-en-dash https://xn--8dbacdxfna0hp.com/%D7%96%D7%95%D7%94%D7%A8-%D7%91%D7%92%D7%A8%D7%A1%D7%90 · desktop/page,phone/page,tablet-l/page · מקף בינוני אסור בכל מקום: … ע"י ישיבת המקובלים אור הרשב"י– כל הזכויות שמורות. נראה שמסנ…
 - `aa594375d7db` [פתוח] E01-console https://xn--8dbacdxfna0hp.com/%D7%96%D7%95%D7%94%D7%A8-%D7%91%D7%92%D7%A8%D7%A1%D7%90 · desktop/page,phone/page,tablet-l/page · console.error: Failed to load resource: the server responded with a status of 403 ()
 - `e751237be987` [פתוח] E01-console https://xn--8dbacdxfna0hp.com/%D7%96%D7%95%D7%94%D7%A8-%D7%A8%D7%91%D7%90 · desktop/page,phone/page,tablet-l/page · console.error: Failed to load resource: the server responded with a status of 403 ()
 - `add2d718b55e` [פתוח] E01-console https://xn--8dbacdxfna0hp.com/%D7%A8%D7%96%D7%90-%D7%93%D7%A4%D7%A8%D7%A9%D7%AA%D7%90 · desktop/page,phone/page,tablet-l/page · console.error: Failed to load resource: the server responded with a status of 403 ()
@@ -128,28 +130,28 @@ Call log:
 - `7155367ff2a5` [פתוח] L13-side-long beitzah · desktop/book,desktop/flow,phone/flow · כותרת צד ארוכה מ-3 מילים: רבינא ישב לפני ר"א
 - `50cef437ee80` [פתוח] L13-side-long beitzah · desktop/book,desktop/flow,phone/flow · כותרת צד ארוכה מ-3 מילים: ב. רב יוסף ה"ק
 - `b868d1d1b8e7` [פתוח] L15-side-two-lines sukkah · wide/flow · כותרת צד נשברת לשתי שורות: א. לריה"ג: א. רבב"ח מרי"ו: א. מרי"ו
-- `25aa9cf2fc1b` [פתוח] L16-side-repeat sukkah · wide/flow · הטקסט חוזר על כותרת הצד: ת"ר
+- `b0e4cdbf4b73` [פתוח] L15-side-two-lines sukkah · desktop/flow · כותרת צד נשברת לשתי שורות: א. לריה"ג:א. רבב"ח מרי"ו:א. מרי"ו
+- `25aa9cf2fc1b` [פתוח] L16-side-repeat sukkah · desktop/flow,wide/flow · הטקסט חוזר על כותרת הצד: ת"ר
 - `c48f9858a972` [פתוח] L18-heading-no-space bava-batra · desktop/book,desktop/flow,phone/flow · כותרת בלי רווח לפניה: 'ובנות ילדו להם' - רביה או מריבה לרי"ו: 
 - `e6ffc48c1ece` [פתוח] L18-heading-no-space berakhot · desktop/book,desktop/flow,phone/flow · כותרת בלי רווח לפניה: אמר שלמה כנגד דוד אביו, שדר בחמשה עולמים
 - `16c24c31ff58` [פתוח] L18-heading-no-space bava-batra · desktop/book,desktop/flow,phone/flow · כותרת בלי רווח לפניה: 'בִּרְכַּת אֹבֵד עָלַי תָּבֹא' - גוזל שד
-- `3ce4eab36c84` [פתוח] L18-heading-no-space bava-batra · wide/flow · כותרת בלי רווח לפניה: א"כ היה לו לשנות 'חצר אחרת - מותר'! אלא 
-- `1bc88ec00bec` [פתוח] L18-heading-no-space bava-batra · wide/flow · כותרת בלי רווח לפניה: מלמדי תינוקות - הולכתם, מספרם והחלפתם
+- `3ce4eab36c84` [פתוח] L18-heading-no-space bava-batra · desktop/flow,wide/flow · כותרת בלי רווח לפניה: א"כ היה לו לשנות 'חצר אחרת - מותר'! אלא 
+- `1bc88ec00bec` [פתוח] L18-heading-no-space bava-batra · desktop/flow,wide/flow · כותרת בלי רווח לפניה: מלמדי תינוקות - הולכתם, מספרם והחלפתם
 - `9e2b9f104d33` [פתוח] P07-engine-warn berakhot · print/a4lg/פרק ראשון|מאמתי,print/a4lg/פרק שני|היה קורא,print/b5lg/פרק ראשון|מאמתי · 30 תוספות שטקסט העוגן שלהן אינו נמצא עוד בדף (הטקסט נערך אחרי העיגון), והוצמדו בפרק שלהן: ד', ה', י', י"א, י"ב, י"ג, י"ח, כ', כ"ד, כ"ה, כ"ו, כ"ז, כ"ח,
 - `7db0f843b384` [פתוח] P07-engine-warn berakhot · print/a4lg/פרק ראשון|מאמתי,print/b5lg/פרק ראשון|מאמתי,print/book/פרק ראשון|מאמתי · גובה פסקה אינו כפולה של גובה השורה (u): 8.27 (ב:, יחידה 35)
 - `289a38eb36c1` [פתוח] P07-engine-warn berakhot · print/a4lg/פרק ראשון|מאמתי,print/b5lg/פרק ראשון|מאמתי,print/book/פרק ראשון|מאמתי · גובה פסקה אינו כפולה של גובה השורה (m): 10.21 (י:, יחידה 725)
 - `a1c15b30fb33` [פתוח] P07-engine-warn berakhot · print/a4lg/פרק שני|היה קורא,print/b5lg/פרק שני|היה קורא · גובה פסקה אינו כפולה של גובה השורה (m): 5.27 (יג., יחידה 900)
 - `5ef039353365` [פתוח] P07-engine-warn berakhot · print/a4lg/פרק שני|היה קורא,print/b5lg/פרק שני|היה קורא · גובה פסקה אינו כפולה של גובה השורה (u): 13.32 (יג:, יחידה 944)
-- `e9961798a2e6` [פתוח] T03-latin https://xn--8dbacdxfna0hp.com/%D7%90%D7%95%D7%93%D7%95%D7%AA · phone/page · אותיות לועזיות בגוף הטקסט: …ו" אפשר להכיר באתר אור הרשבי: or-harashby.org…
 - `1c1493af50c1` [פתוח] T03-latin https://nach.leokmei.com/about · desktop/page,phone/page,tablet-l/page · אותיות לועזיות בגוף הטקסט: …י, נשמח לשמוע ולתקן: M7654301@gmail.com.…
 - `25d6c0f8cd02` [פתוח] T06-gregorian bava-batra · desktop/book,desktop/flow,phone/flow · תאריך לועזי (רק תאריכים עבריים): …אית? א"ל: עולם הפוך ראיתי - עליונים למטה ותחתונים למעלה. א"ל…
 - `efb36165a914` [פתוח] T06-gregorian berakhot · desktop/book,desktop/flow,phone/flow · תאריך לועזי (רק תאריכים עבריים): …ר"מ ביקש על בריונים שבשכנותו שציערוהו - שימו…
 - `8590b8938314` [פתוח] T06-gregorian beitzah · desktop/book,desktop/flow,phone/flow · תאריך לועזי (רק תאריכים עבריים): …חלפי תרדין, וקלחי כרוב, ודלעת יונית. ר"ע: אף ככרות בעה"ב.…
-- `cca10d17419f` [פתוח] T06-gregorian bava-batra · wide/flow · תאריך לועזי (רק תאריכים עבריים): … יותר? והרי אין פורסין נשבין ליונים אלא רחוק מן הישוב שלשים …
-- `b6ea9539db7c` [פתוח] T06-gregorian bava-batra · wide/flow · תאריך לועזי (רק תאריכים עבריים): …: מעופפות הרבה, אבל כרסן [של היונים] מתמלא בחמשים אמה, ומעופ…
+- `cca10d17419f` [פתוח] T06-gregorian bava-batra · desktop/flow,wide/flow · תאריך לועזי (רק תאריכים עבריים): … יותר? והרי אין פורסין נשבין ליונים אלא רחוק מן הישוב שלשים …
+- `7de71ad2fab3` [פתוח] T06-gregorian shabbat · desktop/flow,wide/flow · תאריך לועזי (רק תאריכים עבריים): …' הִיא חׇכְמָה' וגו' - ובלשון יוני קורין לאחת 'הן'.…
 - `0fcfb13ab574` [פתוח] T11-final-letter-mid beitzah · desktop/book,desktop/flow,phone/flow · אות סופית באמצע מילה: …ן אצל בהמה, ובהמה אצל טבח וסכיןולא תבלין ומדוך אצל מדוכה, ומ…
 - `d63b443737d4` [פתוח] T11-final-letter-mid rosh-hashanah · desktop/book,desktop/flow,phone/flow · אות סופית באמצע מילה: …אש, אבל שלמה המלך שעשה שורה מעץעשאה מלמעלה, והשקיעה בבנין וס…
 - `9d35fd605c47` [פתוח] T11-final-letter-mid sukkah · desktop/book,desktop/flow,phone/flow · אות סופית באמצע מילה: …שוי וכן תל אן ולא פסקן, רב עמרםחסיד אבשם רחב"א בשם רב פסיקתן…
-- `71a6b08159de` [פתוח] T11-final-letter-mid sukkah · wide/flow · אות סופית באמצע מילה: …אביי:תשבוכעיןתדורו, רב:א:פרצהקוראתלגנב, ונ…
+- `71a6b08159de` [פתוח] T11-final-letter-mid sukkah · desktop/flow,wide/flow · אות סופית באמצע מילה: …אביי:תשבוכעיןתדורו, רב:א:פרצהקוראתלגנב, ונ…
 - `d52bd8c38f7a` [פתוח] T11-final-letter-mid kiddushin · desktop/book,desktop/flow,phone/flow · אות סופית באמצע מילה: …י את לעצמך' לאשתו - האם גירושיןלמלאכה אמר לה, או לגמרי?…
 - `891fd140dbff` [פתוח] G04-tap-small bava-batra · phone/btn:בחירת מסכת או דף,phone/btn:דף קודם,phone/btn:חזרה מהירה · כפתור קטן מדי למגע (25x11): פרק א, משנה א
 - `60ab5a878c0d` [פתוח] G04-tap-small bava-batra · phone/btn:בחירת מסכת או דף,phone/btn:דף קודם,phone/btn:חזרה מהירה · כפתור קטן מדי למגע (15x15): הזוהר על סוגיא זו
